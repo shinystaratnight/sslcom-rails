@@ -1,0 +1,21 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('form').submit(function(){
+      if($('input[name*=processed_certificate_recipients]:checkbox').is(':checked'))
+        $('input[name*=processed_certificate_recipients]:checkbox').val(
+        $('#processed_email').val());
+      if($('input[name*=reminder_notice_destinations]:checkbox').is(':checked'))
+        $('input[name*=reminder_notice_destinations]:checkbox').val(
+        $('#reminder_email').val());
+      if($('input[name*=receipt_recipients]:checkbox').is(':checked'))
+        $('input[name*=receipt_recipients]:checkbox').val(
+        $('#receipt_email').val());
+      if($('input[name*=confirmation_recipients]:checkbox').is(':checked'))
+        $('input[name*=confirmation_recipients]:checkbox').val(
+        $('#confirmation_email').val());
+    });
+  });
+});
+</script>

@@ -1,0 +1,33 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $('#next_submit').click(function(){
+      if(!$('input[id$=validation]').attr('checked')){
+        alert('Please click the validated checkbox to proceed with order placement.');
+        return false;
+      }
+    });
+    $('.dropdown, .status_message, .expand, .subject_column > a, .expandable').click(function(){
+      if($(this).parents().filter('tr').next().css('display')!='none'){
+        $(this).parents().filter('tr').next().css('display', 'none');
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/expand.png');
+        $(this).parents().filter('tr').find('.expand').text('expand');
+        this.expanded = false;
+      }
+      else{
+        this.expanded = true;
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/contract.png');
+        $(this).parents().filter('tr').next().show();
+        $(this).parents().filter('tr').find('.expand').text('collapse');
+      }
+    });
+    $('textarea').click(function(){
+      $(this).select();
+    });
+    $('input:radio[name*=status]').click(function(){
+      $(this).parents().filter('form').ajaxSubmit();
+    });
+  });
+});
+</script>

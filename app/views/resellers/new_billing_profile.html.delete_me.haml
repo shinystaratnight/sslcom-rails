@@ -1,0 +1,30 @@
+-content_for :title, "Reseller profile information"
+#form_progress_indicator
+  %ul.clearfix
+    %li
+      %span.finished
+        %strong 1
+        Company Profile
+    %li
+      %span.finished
+        %strong 2
+        Select Tier
+    %li#selected
+      %span
+        %strong 3
+        Billing Information
+    %li
+      %span
+        %strong 4
+        Complete Registration
+=render :partial => "shared/messages"
+#stylized.reseller_registration_form
+  .heading Select Pricing Tier
+  %p Please select the pricing tier that fits your requirements and click the submit button. Pricing information can be found on the right column.
+  -form_for @reseller, :url => account_reseller_path do |f|
+    =f.error_messages
+    =render :partial => "tiers"
+    %div(style='width:100%')
+      #register_submit=image_submit_tag "register.gif"
+    .spacer
+

@@ -1,0 +1,39 @@
+-title = "Duplicate User Login Information Was Found"
+-content_for :title, title
+-logins = ([@user.login]+@user.duplicate_v2_users.map(&:login)).uniq
+-emails = ([@user.email]+@user.duplicate_v2_users.map(&:email)).uniq
+.order_container
+  %h3=title
+  -form_for @user, :url=>consolidate_user_path(@user) do |f|
+    =f.error_messages
+    #stylized.default_form
+      -if logins.count > 1
+        .subheading
+          Please choose permanent login name
+        %p
+          Multiple login names to this account were found. In order to help us
+          consolidate these logins, please select a login name that you want to
+          use. The remaining login names will be deleted and will no longer be
+          active. The order histories of these other logins have been consolidated
+          to your account.
+        .clearfix
+          %label login names
+          .radio_choices
+            -logins.each do |login|
+              .radio_w_desc.clearfix
+                =radio_button_tag 'login', login
+                %span
+                  =login
+                  %span(style='font-size: .9em')=link_to "unrecognized - click here to remove", '#'
+      -if emails.count > 1
+        .subheading
+          Please choose permanent email address:
+        .clearfix
+          %label email addresses
+          .radio_choices
+            -emails.each do |email|
+              .radio_w_desc.clearfix
+                =radio_button_tag 'login', email
+                %span=email
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

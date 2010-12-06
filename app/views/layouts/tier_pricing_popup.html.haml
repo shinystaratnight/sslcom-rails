@@ -1,0 +1,21 @@
+!!!
+%html
+  %head
+    %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
+
+    %title= h(yield(:title) || "SSL Certificates, EV Certificates, Wildcard Certificates, and Internet Security") + " | SSL.com"
+    -if @meta
+      -@meta.each do |key|
+        %meta{:name=>key[0], :content=>key[1]}
+    %meta{ :name => "keywords", :content => "SSL Certificates, EV Certificates, Wildcard Certificates" }
+    %meta{ :name => "description", :content => "SSL.com simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from SSL.com." }
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+    %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
+    =render :partial => "shared/scripts_and_styles"
+  %body.white_background_body.tier_pricing_body
+    #wrapper
+      #content
+        .containerp
+          =render :partial => "shared/messages"
+          =yield

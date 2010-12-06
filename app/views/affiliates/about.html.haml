@@ -1,0 +1,28 @@
+-unless AppConfig.closed_beta_mode
+  .yui-b.sidebar=render :partial => 'shared/login_sidebar'
+
+#yui-main
+  .yui-b.main_column
+    .box
+      %h3
+        =:about_affiliates.l(:site => AppConfig.community_name)
+    %p
+      Looking for a new way to target, promote, and sell to your audience? Try
+      the Eroslife Affiliate Program. Eroslife.com
+      brings together customers, studios, and affiliates to form a community where
+      entities can connect with one another and find or produce adult video clips.
+      Affiliates can choose from among a number of studios to promote spanning
+      all niches and preference types. Studios can set payout rates to
+      affiliates that promote them, and affiliates in turn can choose to
+      promote studios that offer a certain niche or payout rate. As an affiliate
+      you can browse or search for the studios that best fits your needs.
+    %p
+      In addition, affiliates can access a number of promotional tools, and more
+      tools are being added periodically. These tools include real-time feeds,
+      rss feeds, and link codes. Fresh content is uploaded
+      daily and added to real-time feeds or you can create customer referral
+      links to any content or section on eroslife.com. Each referral is tracked
+      through a 90-day cookie. There's even detailed sales reporting, which
+      identifies which links or ads are responsible for each sale.
+    %p.font-size-18
+      ="Getting started is simple, just #{link_to "click here to create a new affiliate account", (logged_in?) ? new_affiliate_path : affiliate_signup_path} and start selling video clips in minutes."

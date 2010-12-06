@@ -1,0 +1,17 @@
+<%if @contact.is_a? Contact -%>
+Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
+
+<%end -%>
+Your SSL.com Site Seal for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has been deactivated.
+
+<%if @certificate_order.site_seal.canceled? -%>
+  Reason: violation of terms of use for display of the SSL.com Site Seal
+
+<%end-%>
+Please contact SSL.com Support at support@ssl.com to determine the appropriate action needed to reactive this site seal.
+
+For more information on your SSL.com Site Seal, please visit the following link: <%=certificate_order_site_seal_url(@certificate_order.site_seal)%>
+
+Thank you for using ssl.com
+
+<%=render(:partial=>"support_contact")%>

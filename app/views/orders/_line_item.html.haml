@@ -1,0 +1,12 @@
+-product = line_item.sellable
+-unless product.blank? or product.price.blank?
+  -@running_total+=line_item.net_profit_price
+  %tr[product]
+    %td= line_item.id
+    %td= line_item.order.created_at.strftime("%m/%d/%y %H:%M:%S")
+    %td= link_to(product.title.shorten(30), release_path(product.studio, product))
+    %td= product.price.format
+    %td= "#{line_item.studio_payout.format}  @#{number_to_percentage((1-line_item.studio_fee_rate)*100, :precision => 0)}"
+    %td.negative_value= "(#{line_item.affiliate_commission.format})  @#{number_to_percentage(line_item.affiliate_payout_rate*100, :precision => 0)}"
+    %td= line_item.net_profit.format
+    %td= Money.new(@running_total).format

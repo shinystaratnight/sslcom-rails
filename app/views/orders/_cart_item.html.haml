@@ -1,0 +1,6 @@
+-unless cart_item.price.blank?
+  %tr[cart_item]
+    %td= image_tag(cart_item.animated_image_path, :width=>"60") unless cart_item.thumbnails.blank? or cart_item.thumbnails[:animated].blank?
+    %td= link_to(cart_item.description.shorten(40), release_path(cart_item.studio, cart_item))
+    %td.amount&= cart_item.price.format :with_currency => true
+    %td= remove_from_cart_link cart_item unless @hide_remove

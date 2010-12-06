@@ -1,0 +1,58 @@
+-content_for :title, "About #{@certificate.title} Certificates"
+%h3#certificate_crumbs
+  =certificate_crumbs
+.leftcolb
+  .go_green_with_ev_image_container
+    =image_tag "go_green_with_ev_ucc.jpg"
+.right_product_desc
+  %h1
+    Cover multiple domains with one EV UCC SSL
+  %h2.product_description
+    Unlock the green address bar with the highest validation assurance
+  .product_description_buy_certificate
+    =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate)
+  =render :partial=>'big_pricing'
+.bottom_product_desc
+  %p
+    The Premium EV Unified Communications Certificate (UCC) provides SSL security for
+    Microsoft Exchange and Communications Server. Unlike standard or even
+    wildcard ssl certificates, a single Premium EV UCC can provide SSL secured
+    communications on a number of different domains, both internal and external,
+    reducing server security administration complexity, and cost. In addition,
+    Premium EV UCC support the Microsoft Exchange Auto discover service, a
+    feature of the Exchange platform which greatly eases client administration.
+  %p
+    Today's sophisticated browsers come with enhanced security features to
+    improve the browsing experience and help build trust and confidence when
+    viewing modern websites. Premium EV UC Certificates were developed to take
+    advantage of these enhanced capabilities.
+  %p
+    Offering the highest validation level to your customers, Premium EV UC
+    Certificates increase trust among visitors by displaying your website
+    address in bold, bright green. This bright green display tells your
+    visitors that your company has gone through a rigorous validation process,
+    backed by SSL Inc and our auditors, and that your website is trustworthy
+    and ready for business. If you're not using Premium EV UC Certificates for
+    your UCC SSL needs, then you're not tapping into the full potential of
+    today's advanced browsers.
+  %p
+    SSL is an essential part of almost all electronic transactions involved in
+    transmitting sensitive data such as usernames and passwords, credit card
+    information, patient data and many other types of private material, and
+    SSL is also a key component of PCI-compliance which is mandated for
+    organizations wanting to accept credit card information. Premium EV UC
+    Certificates meet all the critieria above and even add more value.
+  %p
+    With each EV UCC SSL you implement, you get the
+    confidence building SSL Secure Site Seal, a $250,000 performance guaranty,
+    24/7 telephone support staff, and unlimited reissues for the life of the
+    certificate. We even offer a 30-day unconditional refund policy in the
+    event you change your mind about EV UCC SSL on your website.
+  %p
+    Unlock the latest security features with Premium EV UCC SSL and let your
+    visitors know that you really mean business.
+=render :partial=>'points_and_other_certs'
+.product_description_buy_certificate
+  =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate)
+=render :partial=>'big_pricing'
+

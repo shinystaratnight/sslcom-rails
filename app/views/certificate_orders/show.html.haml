@@ -1,0 +1,234 @@
+-title = "SSL Certificate For #{@certificate_order.subject}"
+-co = @certificate_order
+-@cc = co.certificate_content
+=render 'index_scripts'
+=render 'show_scripts'
+-content_for :title, title
+=render :partial=>'quick_links'
+#certificate_orders
+  %table(cellspacing="0")
+    %caption
+      SSL Certificate For #{@certificate_order.subject}
+      -unless current_user.is_admin?
+        #buy_certificate=link_to image_tag('buy_certificate_btn.gif'), certificates_url
+    %tr.heading_row
+      %th(scope="col") Subject
+      %th(scope="col") Status
+      %th(scope="col") Order Date
+      %th(scope="col") Expires
+      %th(scope="col") Action
+      %tr
+        %td.name.not_expandable
+          .subject_column.center_subject
+            =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>@certificate_order, :single=>true}
+        %td(class="#{status_class(@cc)}")
+          #{status(@cc)}
+        %td
+          =@certificate_order.order.created_at.strftime("%b %d, %Y")
+        %td(class="#{expires_on_class(@cc)}")
+          %span.expires_on=expires_on(@cc)
+        %td=action(@certificate_order)
+      %tr.expanded
+        %td(colspan="5")
+          .certificate_details
+            =render :partial=>'/certificate_orders/menu', :locals=>{:co=>@certificate_order}
+            =render :partial=>'/certificate_orders/co', :object=>@certificate_order
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong certificate contents
+                        -if @cc.csr.blank?
+                          %li no certificate request found
+                        -else
+                          -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
+                          %li
+                            organization:
+                            %span.organization
+                              \#{fields.organization}
+                          %li
+                            department:
+                            %span.department
+                              \#{fields.organization_unit}
+                          %li
+                            city:
+                            %span.city
+                              \#{fields.locality}
+                          %li
+                            state:
+                            %span.state
+                              \#{fields.state}
+                          %li
+                            country:
+                            %span.country
+                              \#{fields.country}
+                        -if current_user.is_admin?
+                          -u = @certificate_order.ssl_account.users.last
+                          %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                        %li=link_to "view order transaction", @certificate_order.order
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong registrant
+                        -unless @cc.registrant.blank?
+                          -r = @cc.registrant
+                          %li
+                            =r.company_name
+                          -unless r.department.blank?
+                            %li
+                              =r.department
+                          -unless r.po_box.blank?
+                            %li
+                              =r.po_box
+                          -unless r.address1.blank?
+                            %li
+                              =r.address1
+                          -unless r.address2.blank?
+                            %li
+                              =r.address2
+                          -unless r.address3.blank?
+                            %li
+                              =r.address3
+                          %li
+                            \#{[r.city, r.state, r.postal_code].join(', ')}
+                          -unless r.country.blank?
+                            %li
+                              =r.country
+                          -unless r.email.blank?
+                            %li
+                              =r.email
+                        -else
+                          %li
+                            -if @cc.workflow_state=="csr_submitted"
+                              =link_to 'create registrant', edit_certificate_order_path(@certificate_order)
+                            -else
+                              none
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong validation documentation
+                        -if @certificate_order.description['validation_level'] == 'Class 1'
+                          %li n/a
+                        -else
+                          -unless @certificate_order.validation.validation_histories.blank?
+                            -@certificate_order.validation.validation_histories.each do |vh|
+                              %li
+                                =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                =vh.document_file_name.shorten(20, false)
+                          -else
+                            %li
+                              %em none submitted
+                          -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
+                            %li
+                              -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                -u=link_to 'upload', new_certificate_order_validation_url(co)
+                              -unless co.validation.validation_histories.blank?
+                                -m=link_to 'manage', edit_certificate_order_validation_url(co)
+                              -s=link_to 'status', certificate_order_validation_url(co)
+                              =[u,m,s].compact.join(" | ")
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    -unless @cc.certificate_contacts.blank?
+                      -CertificateContent::CONTACT_ROLES.each do |role|
+                        .contact_details_box
+                          %ul
+                            %li
+                              %strong
+                                \#{role} contact
+                            -ct = @cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
+                            -unless ct.blank?
+                              %li
+                                =ct.first_name+" "+ct.last_name
+                              -unless ct.po_box.blank?
+                                %li
+                                  =ct.po_box
+                              -unless ct.address1.blank?
+                                %li
+                                  =ct.address1
+                              -unless ct.address2.blank?
+                                %li
+                                  =ct.address2
+                              -unless ct.address3.blank?
+                                %li
+                                  =ct.address3
+                              -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
+                              -unless csp.blank?
+                                %li= csp
+                              -unless ct.country.blank?
+                                %li
+                                  =ct.country
+                              -unless ct.email.blank?
+                                %li
+                                  =ct.email
+                              -unless ct.phone.blank?
+                                %li
+                                  =ct.phone
+                              -if ct.send("is_administrative?".to_sym)
+                                %li
+                                  =link_to 'create/edit contacts', certificate_content_contacts_url(@cc)
+                            -else
+                              none
+            %table(cellspacing="0")
+              %tbody
+                -@certificate_order.certificate_contents.each do |c|
+                  -csr = c.csr
+                  -sc = c.csr.try(:signed_certificate)
+                  %tr
+                    %td(colspan="5")
+                      .certificate_details_box
+                        %strong certificate signing request
+                        -unless csr.blank?
+                          %div
+                            submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
+                          =text_area_tag :csr, csr.body, :size=>"30x10"
+                        -else
+                          no certificate signing request found
+                      .certificate_details_box
+                        %strong signed certificate
+                        -unless permitted_to? :create, SignedCertificate.new
+                          -unless sc.try(:body).blank?
+                            %div
+                              submitted on #{sc.created_at.strftime("%b %d, %Y")}
+                            =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                          -else
+                            %div
+                              no signed certificate found
+                        -else
+                          #signed_certificate_submitted_on
+                            %span.submitted_on
+                              -unless sc.try(:created_at).blank?
+                                submitted on
+                                \#{sc.created_at.strftime("%b %d, %Y")}
+                              -else
+                                &nbsp
+                          -form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                            =f.text_area :body, :cols=>30, :rows=>10
+                            .clearfix
+                              #{check_box_tag "email_customer", true, true}notify customer?
+                            =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                            #temporary_signed_certificate.hidden[csr]
+                              =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                      .certificate_details_box
+                        %ul
+                          %li 
+                            %strong server software
+                          %li
+                            #{c.server_software.title}
+                  %tr
+                    %td(colspan="5")
+                      .notes_box
+                        %ul
+                          %li
+                            %strong notes from SSL team
+                          %li
+                            -unless @certificate_order.notes.blank?
+                              =@certificate_order.notes
+                            -else
+                              no notes found

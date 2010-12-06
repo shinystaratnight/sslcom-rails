@@ -1,0 +1,170 @@
+-if @certificate.is_ucc?
+  -first = @certificate.items_by_domains[0]
+  -second = @certificate.items_by_domains[1]
+-unless @certificate_order.is_unused_credit?
+  .clearfix
+    %label{:for=>"has_csr"}
+      *Do you have your CSR?:
+      %span.label_desc certificate signing request
+    .radio_choices
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, true
+        %span.has_csr_container I want to submit my CSR now
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, false
+        %span.has_csr_container I will submit my CSR later or have someone else do it
+-else
+  =f.hidden_field :has_csr
+-f.fields_for :certificate_contents, @certificate_content do |cert_form|
+  #csr_section
+    %p
+      In order to submit a Certificate Signing Request (CSR), you must first
+      generate it on the web server that will be utilizing the SSL server
+      certificate. If you need instructions on generating a CSR, click here to go
+      to the support pages. Once the CSR is ready, you may copy and paste it
+      into the text box below. Your CSR should appear similar
+      (although not identical) to:
+    %dl.cert_example
+      %dt
+        %dd -----BEGIN NEW CERTIFICATE REQUEST-----
+        %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
+        %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
+        %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
+        %dd (more encoding...)
+        %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
+        %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
+        %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
+        %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
+        %dd -----END NEW CERTIFICATE REQUEST-----
+    %p
+      %em Note:  The Common Name (CN) field in your CSR must conform to the following rules:
+    %ul.cert_reqs
+      -unless @certificate.is_wildcard?
+        -unless @certificate.allow_wildcard_ucc?
+          %li It cannot represent a wildcard domain name (i.e. *.domain.com)
+        %li It must represent your fully-qualified domain name (i.e. submit.domain.com)
+        %li Or, it must represent the name of your server (i.e. localhost or bizserver)
+        %li Or, it must represent an IP address (i.e. 208.113.41.231)
+      -else
+        %li It must represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
+    .clearfix
+      %label{:for=>"certificate_order_certificate_content_server_software"}
+        *CSR:
+        %span.label_desc certificate signing request
+      =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
+    .clearfix
+      %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
+        *Server Software:
+        %span.label_desc software used to generate csr
+      =select_field_for(cert_form, :server_software_id.to_s, ServerSoftware.all.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
+  -unless @certificate_order.is_unused_credit?
+    -if @certificate.is_ucc?
+      .clearfix
+        %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
+          *Additional Domains:
+          =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+          %span.label_desc separated by space or new line
+          %span.label_break
+          %span.label_desc 200 domains maximum
+          %span.label_break
+          %span.label_desc
+            $
+            %span#first_domain_tier_price>
+              #{first.price.format}
+            \ for first 3 domains
+          %span.label_break
+          %span.label_desc
+            $
+            %span#second_domain_tier_price>
+              #{second.price.format}
+            \ ea for domains 4-200
+        =cert_form.text_area :additional_domains, :cols=>40, :rows=>10
+    .clearfix
+      %label{:for=>"server_software"}
+        *Duration:
+        %span.label_desc certificate expires in
+      .radio_choices
+        -unless @certificate.is_ucc?
+          -@certificate.items_by_duration.each_with_index do |item, i|
+            -first = @certificate.items_by_duration[0]
+            .radio_w_desc.clearfix
+              =f.radio_button :duration, i+1, :id => item.model_and_id
+              =item.title
+              #{(item.price / (i+1)).format}#{'/yr' unless i==0}
+              -if i > 0
+                -p = 1.0-(item.price.cents.to_f / (first.price.cents * (i+1)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+        -else
+          -first_year_price = 0
+          -@certificate.first_domains_tiers.each_with_index do |item, i|
+            .radio_w_desc.clearfix
+              =f.radio_button :duration, i+1
+              =pluralize(i+1, "Year")
+              -mod_price = item.price*3
+              -first_year_price = mod_price if i==0
+              #{(mod_price / (i+1)).format}#{'/yr' unless i==0}
+              -if i > 0
+                -p = 1.0-(mod_price.cents.to_f / (first_year_price.cents * (i+1)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+    -if @certificate.is_ucc? or @certificate.is_wildcard?
+      .clearfix
+        %label{:for=>"licenses"}
+          *Number of licenses:
+          =link_to image_tag('question_mark.png'), '#what_is_number_licenses', :rel => 'prettyPhoto', :id => 'what_is_number_licenses_link'
+          %span.label_desc installing on how many servers
+        =select_field_for(f, :server_licenses.to_s, (1..100).collect{|i|[i,i-1]},{:no_label=>true}, {})
+        #server_license_cost_ea_desc
+          $
+          %span#server_license_cost_ea> 10
+    .clearfix
+      %label{:for => "expense_amount"}
+        Order Amount:
+        %span.label_desc total cost of order
+      #order_amount
+        %span#calculated_price $0.0
+        -if @certificate.is_ucc?
+          .order_amount_desc
+            (includes
+            %span 3
+            domains)
+#what_is_number_licenses.hidden
+  #what_is_number_licenses_explain
+    %p
+      Each SSL certificate is licensed to be installed on a single server. Every
+      additional server that the certificate will be installed on requires
+      a valid license. Please specify how many additional
+      servers the SSL certificate will be installed on.
+
+    %p
+      For deployment onto more than 100 servers, please contact sales@ssl.com.
+-if @certificate.is_ucc?
+  #what_are_domains.hidden
+    #domain_pricing_popup
+      %table(cellspacing="0")
+        %tr.heading_row
+          %th(scope="col") Description
+          %th(scope="col") Pricing
+        -@certificate.items_by_domains.each_with_index do |item, i|
+          %tr(class="#{(i.odd?) ? 'alt' : ''}")
+            %td=item.description
+            %td
+              =item.price.format
+            /
+              -if i > 0 && i.even?
+                -p = 1.0-(item.price.cents.to_f / (first.price.cents * (i)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+              -elsif i > 1 && i.odd?
+                -p = 1.0-(item.price.cents.to_f / (second.price.cents * (i)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )

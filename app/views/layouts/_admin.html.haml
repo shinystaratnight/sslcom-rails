@@ -1,0 +1,37 @@
+#header
+  .inner
+    %table#at_a_glance_header
+      -cache 'admin_header_certs_status' do
+        %tbody
+          %tr
+            %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
+            %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
+            -unless current_user.ssl_account.funded_account.blank?
+              %th AVAILABLE FOR USE
+            %th= link_to 'Logout', logout_url
+          %tr#info
+            %td.validations=link_to CertificateOrder.find_unvalidated.count, incomplete_certificate_orders_path
+            %td.certificate_status=link_to CertificateOrder.find_pending.count, pending_certificate_orders_path
+            -unless current_user.ssl_account.funded_account.blank?
+              %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
+            %td
+    %span.logo=link_to "SSL", home_url
+#content
+  .containerp
+    #prog_nav_container
+      %ul(id="prog_nav")
+        %li(id="#{'t-intro' if current_page?(account_url)}")
+          =link_to "Dashboard", account_url
+        %li(id="#{'t-intro' if current_page?(users_url)}")
+          =link_to "Users", users_url
+        %li(id="#{'t-intro' if current_page?(validations_url)}")
+          =link_to "Validations", validations_url
+        %li(id="#{'t-intro' if current_page?(site_seals_url)}")
+          =link_to "Site Seals", site_seals_url
+        %li(id="#{'t-intro' if current_page?(certificate_orders_url)}")
+          =link_to "Orders", certificate_orders_path
+        %li(id="#{'t-intro' if current_page?(orders_url)}")
+          =link_to "Transactions", orders_path
+    .inner
+      =render :partial => "shared/messages"
+      =yield

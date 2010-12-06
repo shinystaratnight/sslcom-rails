@@ -1,0 +1,245 @@
+# Filters added to this controller apply to all controllers in the application.
+# Likewise, all the methods added will be available for all controllers.
+
+class ApplicationController < ActionController::Base
+  layout 'application'
+  #include Authentication
+  rescue_from ActiveRecord::RecordNotFound, :with => :not_found
+  rescue_from ActionController::RoutingError, :with => :not_found
+  rescue_from ActionController::UnknownAction, :with => :not_found
+  helper :all # include all helpers, all the time
+  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  helper_method :current_user_session, :current_user, :is_reseller
+  filter_parameter_logging :password, :password_confirmation
+  before_filter {|c|Authorization.current_user = c.current_user}
+
+  def permission_denied
+    unless current_user
+      store_location
+      flash[:notice] = "You must be logged in to access this page"
+      redirect_to new_user_session_url
+      return false
+    else
+      flash[:error] = "You currently do not have permission to access that page."
+      redirect_to root_url
+    end
+  end
+
+  def current_user
+    return @current_user if defined?(@current_user)
+    @current_user = current_user_session && current_user_session.record
+  end
+
+  def is_reseller?
+    current_user && current_user.ssl_account.is_registered_reseller?
+  end
+
+  def certificates_from_cookie
+    @certificate_orders=[]
+    return @certificate_orders unless cookies[:cart]
+    Order.cart_items session, cookies
+    certs=cookies[:cart].split(":")
+    certs.each do |c|
+      parts = c.split(",")
+      certificate_order = CertificateOrder.new :server_licenses=>parts[2],
+        :duration=>parts[1], :quantity=>parts[4].to_i
+      certificate_order.certificate_contents.build :domains=>parts[3]
+      certificate = Certificate.find_by_product(parts[0])
+      unless current_user.blank?
+        current_user.ssl_account.clear_new_certificate_orders
+        next unless current_user.ssl_account.can_buy?(certificate)
+      end
+      #adjusting duration to reflect number of days validity
+      duration = certificate_order.duration.to_i * 365
+      certificate_order.certificate_contents[0].duration = duration
+      if certificate.is_ucc? || certificate.is_wildcard?
+        psl = certificate.items_by_server_licenses.find{|item|
+          item.value==duration.to_s}
+        so = SubOrderItem.new(:product_variant_item=>psl,
+          :quantity=>certificate_order.server_licenses.to_i,
+          :amount=>psl.amount*certificate_order.server_licenses.to_i)
+        certificate_order.sub_order_items << so
+        if certificate.is_ucc?
+          pd = certificate.items_by_domains.find_all{|item|
+            item.value==duration.to_s}
+          additional_domains = (certificate_order.certificate_contents[0].
+            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+          so = SubOrderItem.new(:product_variant_item=>pd[0],
+            :quantity=>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
+            :amount=>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
+          certificate_order.sub_order_items << so
+          if additional_domains > 0
+            so = SubOrderItem.new(:product_variant_item=>pd[1],
+              :quantity=>additional_domains,
+              :amount=>pd[1].amount*additional_domains)
+            certificate_order.sub_order_items << so
+          end
+        end
+      end
+      unless certificate.is_ucc?
+        pvi = certificate.items_by_duration.find{|item|item.value==duration.to_s}
+        so = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
+          :amount=>pvi.amount)
+        certificate_order.sub_order_items << so
+      end
+      certificate_order.amount = certificate_order.sub_order_items.map(&:amount).sum
+      certificate_order.certificate_contents[0].
+        certificate_order = certificate_order
+      @certificate_orders << certificate_order if certificate_order.valid?
+    end
+  end
+
+  def build_certificate_contents(certificate_orders, order)
+    certificate_orders.each do |cert|
+      cert.quantity.times do |i|
+        new_cert = cert.dclone
+        new_cert.sub_order_items = cert.sub_order_items.dclone
+        new_cert.line_item_qty = cert.quantity if i==cert.quantity-1
+        new_cert.preferred_payment_order = 'prepaid'
+        #the line blow was concocted because a simple assignment resulted in
+        #the certificate_order coming up nil on each certificate_content
+        #and failing the has_csr validation in the certificate_order
+        cert.certificate_contents.each {|cc|
+          cc_tmp = cc.dclone
+          cc_tmp.certificate_order = new_cert
+          new_cert.certificate_contents << cc_tmp}
+        order.line_items.build :sellable=>new_cert
+      end
+    end
+  end
+
+  def find_certificate_orders(options={})
+    if @search = params[:search]
+      (current_user.is_admin? ?
+        (CertificateOrder.search(params[:search], options)+
+          Csr.search(params[:search]).map(&:certificate_orders).flatten).
+          sort{|a,b|b.created_at<=>a.created_at} :
+        current_user.ssl_account.certificate_orders.
+          search_with_csr(params[:search], options)).select{|co|
+        ['paid'].include? co.workflow_state}
+    else
+      (current_user.is_admin? ?
+        CertificateOrder.find_not_new(options) :
+        current_user.ssl_account.certificate_orders.not_new(options))
+    end
+  end
+
+  #this function should be cronned and moved to a more appropriate location
+  def self.flag_expired_certificate_orders
+    Authorization.ignore_access_control(true)
+    CertificateOrder.all(:include=>{:certificate_contents=>
+          {:csr=>:signed_certificates}}).each {|co|
+      expired =
+        ['paid'].include?(co.workflow_state) &&
+        co.created_at < AppConfig.cert_expiration_threshold_days.to_i.days.ago &&
+        (co.certificate_content.csr.nil? ||
+        co.certificate_content.csr.try(:signed_certificate).nil?)
+      co.update_attribute :is_expired, expired
+    }
+  end
+
+  def find_certificate_orders_with_site_seals
+    if @search = params[:search]
+      (current_user.is_admin? ?
+        (CertificateOrder.search(params[:search])+
+          Csr.search(params[:search]).map(&:certificate_orders).flatten) :
+        current_user.ssl_account.certificate_orders.
+          search_with_csr(params[:search])).select{|co|
+        ['paid'].include? co.workflow_state}
+    else
+      (current_user.is_admin? ?
+        CertificateOrder.find_not_new(:include=>:site_seal) :
+        current_user.ssl_account.certificate_orders.not_new(:include=>:site_seal))
+    end
+  end
+
+  private
+  
+  def current_user_session
+    return @current_user_session if defined?(@current_user_session)
+    @current_user_session = UserSession.find(:shadow) || UserSession.find
+  end
+
+  def require_user
+    unless (current_user || @current_admin)
+      store_location
+      flash[:notice] = "You must be logged in to access this page"
+      redirect_to new_user_session_url
+      return false
+    end
+  end
+
+  def require_admin
+    user_not_authorized unless current_user.is_admin?
+  end
+
+  def require_no_user
+    if current_user
+      store_location
+      flash[:notice] = "You must be logged out to access this page"
+      redirect_to account_url
+      return false
+    end
+  end
+
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+
+  def redirect_back_or_default(default)
+    go_to = (session[:return_to] == logout_path) ? nil : session[:return_to]
+    session[:return_to] = nil
+    redirect_to(go_to || default)
+  end
+
+  def finish_reseller_signup
+    redirect_to new_account_reseller_url and return if
+      current_user.ssl_account.has_role?('new_reseller')
+  end
+
+  def user_not_authorized
+    render :text => "403 Forbidden", :status => 403
+  end
+
+  def not_found
+    render :text => "404 Not Found", :status => 404
+  end
+
+  def save_billing_profile
+    profile = current_user.ssl_account.billing_profiles.find_by_card_number @billing_profile.card_number
+    current_user.ssl_account.billing_profiles.delete profile unless profile.nil?
+    current_user.ssl_account.billing_profiles << @billing_profile
+  end
+
+  #this is a band-aid function to make sure the number of item in cookies
+  #aid_li and cart match. however, the problem causing the unsync was found.
+  #this function can be turned back on by the AppConfig.sync_aid_li_and_cart
+  #variable
+  def sync_aid_li_and_cart
+    if cookies[:aid_li] && cookies[:cart]
+      aid_li=cookies[:aid_li].split(":")
+      cart=cookies[:cart].split(":")
+      if aid_li.count!=cart.count
+        if aid_li.count>cart.count
+          (aid_li.count-cart.count).times do
+            aid_li.pop
+          end
+        elsif aid_li.count<cart.count
+          (cart.count-aid_li.count).times do
+            aid_li.push(aid_li.last)
+          end
+        end
+      cookies[:aid_li] = {:value=>aid_li.join(":"), :path => "/",
+        :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+      cookies[:cart] = {:value=>cart.join(":"), :path => "/",
+        :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+      end
+    end
+  end
+
+  def clear_cart
+    cookies.delete(:cart)
+    cookies.delete(:aid_li)
+  end
+
+end

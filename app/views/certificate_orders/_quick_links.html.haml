@@ -1,0 +1,12 @@
+#account_status
+  .quickbox
+    .heading
+      %strong Quick Links
+    %ul
+      %li
+        =link_to 'Buy Certificate', certificates_url
+      -if current_user.ssl_account.reseller
+        %li
+          =link_to 'Deposit Funds', allocate_funds_url
+        %li
+          =link_to 'Certificate Pricing', reseller_tier_url(current_user.ssl_account.reseller.reseller_tier.id)

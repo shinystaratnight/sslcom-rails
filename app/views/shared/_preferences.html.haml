@@ -1,0 +1,39 @@
+/pass in num_cols (integer), prefs (array), and object
+-width ||=0
+-if object.is_a? ActionView::Helpers::FormBuilder
+  -preference = lambda{|attribute|object.check_box("preferred_#{attribute}".intern)}
+-else
+  -preference = lambda{|attribute|check_box_tag(attribute, attribute, object.send("preferred_#{attribute}".intern), :disabled=>true)}
+%table.rounded_corners{:style=>'float:left;padding:5px;margin: 0px 5px;background-color: #efefef;'}
+  %tbody
+    -i, prev_check_box, prev_attr=1,[],[]
+    -for attribute in prefs
+      -if i%num_cols == 0
+        %tr
+          -prev_check_box.count.times do |x|
+            %td
+              =prev_check_box[x]
+            %td{:width=>width}
+              =prev_attr[x]
+          %td
+            =preference.call(attribute)
+          %td{:width=>width}
+            =attribute.humanize
+          -prev_check_box.clear
+          -prev_attr.clear
+      -else
+        -if i==prefs.count
+          %tr
+            -prev_check_box.count.times do |x|
+              %td
+                =prev_check_box[x]
+              %td
+                =prev_attr[x]
+            %td
+              =preference.call(attribute)
+            %td{:colspan=>num_cols-prev_check_box.count}
+              =attribute.humanize
+        -else
+          -prev_check_box<<preference.call(attribute)
+          -prev_attr<<attribute.humanize
+      -i+=1

@@ -1,0 +1,14 @@
+-tier_reseller = "Tier #{@reseller_tier.label} Reseller Partners"
+-content_for :title, "View Pricing For #{tier_reseller}"
+%div(class="#{(@popup == true) ? 'reseller_tier_pricing_popup' : 'reseller_registration_select_tier'}")
+  =error_messages_for :reseller_tier
+  %h3 View Pricing for #{tier_reseller}
+  %p
+    The table below reflects the pricing available to #{tier_reseller} based
+    upon an initial deposit of #{@reseller_tier.price.format}.
+  -if @popup == true
+    %p
+      %em
+        Note: Depending on your screen size and resolution, you may need to
+        scroll the page down to get the complete price listings.
+  =render :partial=>'tier', :object=>@reseller_tier

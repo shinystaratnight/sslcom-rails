@@ -1,0 +1,27 @@
+=render :partial => "dashboard_nav"
+#yui-main
+  .yui-b
+    .box
+      %h3= "#{@affiliate.display_name}'s Dashboard"
+    %p
+      Welcome to your affiliate dashboard. From here you can start exploring
+      which studios you want to promote and the tools you want to use.
+    %p
+      To get started, click any of the links to the right to find out more
+      about what features eroslife.com has to offer. It's recommend you at least add some
+      information to your affiliate profile. Search engines will periodically
+      spider your profile, and studios can search for affiliates that promote
+      similar niches and connect with those affiliates.
+      =link_to "To begin filling out your profile, click here.", edit_profile_affiliate_path(@affiliate)
+    %p
+      Affiliates can access a number of promotional tools, and more
+      tools are being added so check back often for new updates.
+      =link_to "Click here to access your link codes and other promotional toosl.", link_codes_affiliate_path(@affiliate)
+    %p
+      Eroslife.com provides your affiliate account with a blog to keep the
+      community abreast of current developments or future announcements.
+      =link_to "Click here to manage your blog postings and announcements.", manage_affiliate_posts_path(@affiliate)
+    %p
+      To change affiliates settings such as to turning off 
+      commenting on your studio blog,
+      =link_to "click here.", settings_affiliate_path(@affiliate)

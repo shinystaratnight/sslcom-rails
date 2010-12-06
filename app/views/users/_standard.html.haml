@@ -1,0 +1,109 @@
+-title="SSL Customer Dashboard"
+-content_for :title, title
+-user ||= current_user
+.reseller_registration_select_tier
+  %h3=title
+  %p
+    The SSL standard account is designed to streamline your ssl.com certificate
+    purchases by providing an all encompassing interface related to your ssl 
+    certificates including, validations, tracking, reporting, and site seals.
+  -if user.ssl_account.has_only_credits?
+    %p
+      You currently have unused ssl certificate credits. You will need to submit
+      a certificate signing request (csr) for a particular pending ssl.com 
+      certificate credit in order to process the credit into an ssl certificate 
+      for your website.
+      =link_to "Click here to see a list of your ssl.com certificate credits.", credits_certificate_orders_path
+  -unless user.ssl_account.has_certificate_orders?
+    %p
+      To get started and enable encryption and trust services on your website
+      through an ssl.com certificate, you will need to acquire an ssl.com
+      certificate.
+      =link_to "Click here to see a list ssl.com certificate products.", certificates_path
+#dashboard
+  %table(cellspacing="0")
+    %caption
+      ssl account information for #{user.login} #{"(last logged in #{user.last_login_at.strftime("%b %d, %Y")})" unless user.last_login_at.blank?}
+    %tr.heading_row
+      %tr.expanded
+        %td(colspan="5")
+          .certificate_details
+            %table(cellspacing="0")
+              %tbody
+                %tr.alt
+                  %th account type
+                  %th signup date
+                  %th last logged on
+                %tr.alt
+                  %td standard
+                  %td=user.created_at.strftime("%b %d, %Y")
+                  %td=user.updated_at.strftime("%b %d, %Y")
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    .half_width_box
+                      %ul
+                        %li
+                          %strong
+                            login account
+                        %li username: #{user.login}
+                        %li email: #{user.email}
+                        -if permitted_to? :admin_manage, user
+                          %li=link_to "login as #{user.login}", user_session_url(:login=>user.login), :method=>:post, :id=>user.model_and_id
+                        %li=link_to 'edit email address', edit_email_users_url
+                        %li=link_to 'change password', edit_password_users_url
+                    .half_width_box
+                      %ul
+                        %li
+                          %strong
+                            certificates
+                        %li
+                          =link_to 'buy certificate', certificates_url
+                        %li
+                          =link_to 'view purchased certificates', certificate_orders_url
+                        -if user.ssl_account.has_credits?
+                          %li
+                            =link_to 'use certificate credits', credits_certificate_orders_url
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    -unless user.ssl_account.contact.blank?
+                      .contact_details_box
+                        %ul
+                          %li
+                            %strong
+                              contact
+                          -ct = user.ssl_account.contact
+                          -unless ct.blank?
+                            %li
+                              =ct.first_name+" "+ct.last_name
+                            -unless ct.po_box.blank?
+                              %li
+                                =ct.po_box
+                            -unless ct.address1.blank?
+                              %li
+                                =ct.address1
+                            -unless ct.address2.blank?
+                              %li
+                                =ct.address2
+                            -unless ct.address3.blank?
+                              %li
+                                =ct.address3
+                            -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
+                            -unless csp.blank?
+                              %li= csp
+                            -unless ct.country.blank?
+                              %li
+                                =ct.country
+                            -unless ct.email.blank?
+                              %li
+                                =ct.email
+                            -unless ct.phone.blank?
+                              %li
+                                =ct.phone
+                            %li
+                              =link_to 'create/edit contact', edit_ssl_account_url
+                          -else
+                            none

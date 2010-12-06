@@ -1,0 +1,19 @@
+-row_index=1
+-use_model_path ||= false
+-local_name ||= false
+-options ||={}
+-options.reverse_merge!({:style=>'text-align:center;margin:auto;vertical-align:top;'})
+-rows ||= items.count / cols.to_i
+-rows+=1 if items.count % cols.to_i != 0
+-unless items.blank?
+  %table{:style=>style}
+    %tbody
+      -while row_index <= rows
+        %tr
+          -step = cols*(row_index-1)
+          -step.upto((cols*row_index)-1) do |i|
+            -if items[i]
+              -item = items[i]
+            %td{:id=>i,:width=>options[:width], :style=>options[:style]}
+              =(item.blank?) ? '&nbsp;' : render(:partial=> ((use_model_path) ? "/#{item.class.to_s.underscore.pluralize}" : "") + partial, :locals=>{((local_name) ? local_name.to_sym : :user)=>item, :options=>options})
+        -row_index+=1

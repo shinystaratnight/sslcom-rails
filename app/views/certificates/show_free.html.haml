@@ -1,0 +1,47 @@
+-content_for :title, "About #{@certificate.title} Certificates"
+%h3#certificate_crumbs
+  =certificate_crumbs
+.leftcolb
+  .free_ssl_image_container
+    =image_tag "free_ssl.jpg"
+.right_product_desc
+  %h1
+    Get 1 year of trusted SSL encryption - FREE!
+  %h2.product_description
+    Class 1 validation and industry strength encryption at no cost
+  .product_description_buy_certificate
+    =link_to image_tag('get_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+  -duration = @certificate.product_variant_groups.first.product_variant_items.first
+  .get_free_ssl
+    #{duration.price.format}
+.bottom_product_desc
+  %p
+    Nothing beats free, and 1 year of Free SSL encryption with the SSL Site
+    Seal is even better! These free certificate have the same encryption
+    strength and browser acceptance rates as the higher assurance validation 
+    SSL certificates, only they're free. We can offer free ssl certificates
+    since only a domain validation check is performed on Free SSL certificates.
+  %p
+    Because of the lower validation level, these certificates are
+    not ideally suited for ecommerce situations or where establishing trust
+    value is of the utmost importance (see
+    #{link_to "High Assurance", certificate_path(:id=>'high_assurance')} or
+    #{link_to "EV SSL", certificate_path(:id=>'ev')} for commercial grade ssl
+    certificate) since only a class 1 validation check is performed.
+  %p
+    However, these certificates work great for smaller, non-ecommerce sites
+    such as blogs or free sites. They also work great for development purposes.
+    And because they are good for entire year, you don't need to worry about
+    a small timeframe in which to test out ssl functions. You have an entire
+    year to work with a Free SSL certificate!
+  %p
+    And of course SSL is an essential part of almost all electronic
+    transactions involved in
+    transmitting sensitive data such as usernames and passwords, credit card
+    information, patient data and many other types of private material. So get
+    started with a Free SSL Certificate and get secured today!
+=render :partial=>'points_and_other_certs'
+.product_description_buy_certificate
+  =link_to image_tag('get_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+.get_free_ssl
+  #{duration.price.format}

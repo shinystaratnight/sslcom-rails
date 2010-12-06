@@ -1,0 +1,13 @@
+=render :partial => 'releases/footer_scripts'
+.yui-u.first
+  .box.fresh
+    %h3="What's fresh".l
+    -@recent_releases.each do |release|
+      =render :partial => 'releases/footer_recent', :locals => {:release => release}
+
+.yui-u
+  .box
+    %h3="Tags".l
+    - tag_cloud @popular_tags, %w(nube1 nube2 nube3 nube4 nube5) do |name, css_class|
+      = link_to name, tag_path(name), :class => css_class
+    %h6.all=link_to :all_tags.l, tags_path

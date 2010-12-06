@@ -1,0 +1,16 @@
+-co=@certificate_order
+-title = "#{co.is_unused_credit? ? "Process" : "Buy"} #{@certificate.title} Certificate"
+-content_for :title, title
+=render :partial => '/certificates/index_scripts'
+=order_progress_indicator(1, @certificate)
+-form_params=new_certificate_params
+.reseller_registration_profile
+  %h3=title
+  %p Please fill out the required fields below to begin your certificate order.
+  =error_messages_for :certificate_order, :certificate_content
+  -form_for(*form_params) do |f|
+    =hidden_field :certificate, :product
+    #stylized.default_form
+      =render :partial => "/certificates/form", :locals => {:f=>f}
+    #button_container
+      #next_submit=image_submit_tag "next_bl.gif"

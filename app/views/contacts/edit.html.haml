@@ -1,0 +1,18 @@
+-content_for :title, "Create Contacts For #{@certificate_order.subject.downcase} (order ref##{@certificate_order.order.reference_number})"
+.reseller_registration_profile
+  %h3
+    Create Contacts For #{@certificate_order.subject.downcase}
+    (order ref##{@certificate_order.order.reference_number})
+  %p
+    Please fill out the required fields below for the Administrative Contact for
+    \#{@certificate_order.subject.downcase}. Administrative contacts receive
+    all correspondences related to this certificate order including receipts,
+    validation requests, status updates, etc.
+  =error_messages_for :contact
+  -form_for @certificate_content do |f|
+    #stylized.default_form
+      -f.fields_for :contacts do |c|
+        =render 'contact_fields', :f => c
+      =link_to_add_fields "add new contact", f, :contacts
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

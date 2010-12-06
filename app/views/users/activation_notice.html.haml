@@ -1,0 +1,17 @@
+-title = "Resend Activation Notice"
+-content_for :title, title
+.reseller_registration_profile
+  %h3=title
+  -form_tag resend_activation_users_url do |f|
+    %p
+      Enter the login name you used when creating your account. A new
+      activation notice will be sent to the email address associated with the
+      account.
+    #stylized.default_form
+      .clearfix
+        %label
+          Login
+          %span.label_desc name used to log in
+        = text_field_tag :login
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

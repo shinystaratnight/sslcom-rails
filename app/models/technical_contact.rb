@@ -1,0 +1,2 @@
+class TechnicalContact < CertificateContact
+end

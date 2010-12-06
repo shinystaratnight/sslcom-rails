@@ -1,0 +1,60 @@
+-content_for :title, "Deposit Funds Into SSL Account"
+=render :partial => 'index_scripts'
+=render(:partial => '/shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 3]}) if reseller_initial_deposit?
+=order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
+.reseller_registration_select_tier
+  %h3 Deposit Funds
+  %p 
+    -if @funded_account.deduct_order? and (current_order.amount.cents > ssl_account.funded_account.amount.cents)
+      There are insufficient funds in your SSL account to complete your order. 
+      You currently have 
+      %span.order_amount_strong.red
+        #{funded_account_balance :with_currency}
+      in your SSL account and your order total is
+      %span.order_amount_strong
+        #{cart_total_price}.
+      Therefore additional funds are required to complete your order.
+    -else
+      Please fill out the required fields below to complete your reseller
+      account registration.
+    This charge will appear as SSL Corporation
+    on your credit card statement.
+  =error_messages_for :funded_account, :billing_profile, :credit_card, :object_name => 'transaction'
+  -form_for(@funded_account, :url => deposit_funds_path, :html => { :method => :put }) do |f|
+    #stylized.deposit_funds_form
+      =f.hidden_field :deduct_order
+      =f.hidden_field :order_type
+      -unless ssl_account.billing_profiles.empty?
+        %h3.subheading.funding_sources_head Funding Sources
+        #existing_credit_cards
+          %table
+            %tr#existing_credit_cards_header
+              %td Load From
+              %td Card Type
+              %td Card Number
+              %td Expiry Date
+              %td
+            -@funded_account.funding_source = ssl_account.billing_profiles.maximum(:id) if @funded_account.funding_source.nil?
+            -ssl_account.billing_profiles.each do |profile|
+              %tr[profile]
+                %td= f.radio_button :funding_source, profile.id, :class=>'billing_profile_radio'
+                %td= profile.credit_card
+                %td= profile.masked_card_number
+                %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+                %td= destroy_credit_card_link profile
+            %tr
+              %td{:colspan => 6}
+                %a#expand_register_card{:href=>"#"}
+                  =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'
+      #register_card_form{initial_display?}
+        - fields_for :billing_profile, @billing_profile do |form|
+          = render :partial => "billing_profiles/form", :locals => { :form => form }
+      .subheading Amount and Balance
+      = render :partial => "form", :locals => { :f => f, :object => object }
+    #button_container
+      -unless reseller_initial_deposit? or @certificate_order
+        #click_to_load=image_submit_tag "load_funds_bl.gif", :alt=>'Click here to load funds into your account'
+      -else
+        #prev_next_submit
+          =image_submit_tag "prev_bl.gif", :name=>"prev"
+          =image_submit_tag "next_bl.gif", :name=>"next"

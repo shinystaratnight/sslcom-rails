@@ -1,0 +1,21 @@
+#reseller_tiers
+  %table(cellspacing="0")
+    %caption
+      Available Reseller Tiers
+    %tr.heading_row
+      %th(scope="col") Tier
+      %th(scope="col") Recommended For
+      %th(scope="col") Deposit Amount
+      %th(scope="col") Pricing
+      -if current_user && reseller_initial_deposit?
+        %th(scope="col") Choose
+    -ResellerTier.all.each_with_index do |tier, i|
+      %tr(class="#{(i.odd?) ? 'alt' : ''}")
+        %td=tier.label
+        %td=tier.description['ideal_for']
+        %td=tier.price.format
+        -if current_user && reseller_initial_deposit?
+          %td=link_to 'click here', show_popup_reseller_tier_url(tier, :width=>730, :height=>400, :iframe=>true), :rel=>'prettyPhoto'
+          %td=radio_button :reseller_tier, :id, tier.id, :id => tier.model_and_id
+        -else
+          %td=link_to 'click for pricing details', reseller_tier_url(tier)

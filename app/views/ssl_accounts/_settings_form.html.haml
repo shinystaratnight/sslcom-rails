@@ -1,0 +1,141 @@
+.subheading
+  SSL Certificates
+.settings_block.clearfix
+  .destination_block
+    %label
+      Email processed certificates to
+      %span.label_desc settings override default behavior
+  .destination_block.right
+    -if ssl_account.is_registered_reseller? && permitted_to?(:update, ssl_account.reseller)
+      .clearfix
+        =f.radio_button "preferred_processed_include_reseller", 1, :checked=>true
+        %span.destination
+          reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
+    .clearfix
+      =f.check_box "preferred_processed_include_cert_admin"
+      %span.destination
+        include certificate's administrative contact (if provided)
+    .clearfix
+      =f.check_box "preferred_processed_include_cert_tech"
+      %span.destination
+        include certificate's technical contact (if provided)
+    .clearfix
+      -sr = @ssl_account.preferred_processed_certificate_recipients
+      =f.check_box "preferred_processed_certificate_recipients", {}, sr=="0" ? 1 : sr, 0
+      %span#reminder_email_address.destination
+        include address(es):
+      %div(class=cert_recipients_errors)
+        =text_field_tag 'processed_email',sr=="0" ? "" : sr, :size=>10
+      .field_desc
+        %em space separated
+.settings_block.clearfix
+  .destination_block
+    %label
+      Email order receipts to
+      %span.label_desc settings override default behavior
+  .destination_block.right
+    -if ssl_account.is_registered_reseller? && permitted_to?(:update, ssl_account.reseller)
+      .clearfix
+        =f.radio_button "preferred_receipt_include_reseller", 1, :checked=>true
+        %span.destination
+          reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
+    .clearfix
+      =f.check_box "preferred_receipt_include_cert_admin"
+      %span.destination
+        include certificate's administrative contact (if provided)
+    .clearfix
+      =f.check_box "preferred_receipt_include_cert_bill"
+      %span.destination
+        include certificate's billing contact (if provided)
+    .clearfix
+      -sr = @ssl_account.preferred_receipt_recipients
+      =f.check_box "preferred_receipt_recipients", {}, sr=="0" ? 1 : sr, 0
+      %span#reminder_email_address.destination
+        include address(es):
+      %div(class=receipt_emails_errors)
+        =text_field_tag 'receipt_email',sr=="0" ? "" : sr, :size=>10
+      .field_desc
+        %em space separated
+.settings_block.clearfix
+  .destination_block
+    %label
+      Email order confirmations to
+      %span.label_desc settings override default behavior
+  .destination_block.right
+    -if ssl_account.is_registered_reseller? && permitted_to?(:update, ssl_account.reseller)
+      .clearfix
+        =f.radio_button "preferred_confirmation_include_reseller", 1, :checked=>true
+        %span.destination
+          reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
+    .clearfix
+      =f.check_box "preferred_confirmation_include_cert_admin"
+      %span.destination
+        include certificate's administrative contact (if provided)
+    .clearfix
+      =f.check_box "preferred_confirmation_include_cert_bill"
+      %span.destination
+        include certificate's billing contact (if provided)
+    .clearfix
+      -sr = @ssl_account.preferred_confirmation_recipients
+      =f.check_box "preferred_confirmation_recipients", {}, sr=="0" ? 1 : sr, 0
+      %span#reminder_email_address.destination
+        include address(es):
+      %div(class=confirmation_emails_errors)
+        =text_field_tag 'confirmation_email',sr=="0" ? "" : sr, :size=>10
+      .field_desc
+        %em space separated
+.subheading
+  Expiration Reminders
+  =link_to image_tag('question_mark.png'), '#what_are_expiration_notices', :rel => 'prettyPhoto', :id => 'what_are_expiration_notices_link'
+-5.times do |i|
+  -rnt=@ssl_account.preferred_reminder_notice_triggers(ReminderTrigger.find(i+1))
+  .settings_block.clearfix(style="#{'margin-bottom: 1em;' if i==4}")
+    %label 
+      Send expiration reminder in
+      %span.label_desc integer value in range #{SslAccount::TRIGGER_RANGE.to_s}
+    %div(class="#{reminder_trigger_errors(rnt)}")
+      =text_field_tag "reminder_notice_triggers[]", rnt, :size=>2, :max_size=>2
+    .field_desc
+      %em days from expiration
+.settings_block.clearfix
+  .destination_block
+    %label
+      Email reminders to
+  .destination_block.right
+    -if ssl_account.is_registered_reseller? && permitted_to?(:update, ssl_account.reseller)
+      .clearfix
+        =f.radio_button "preferred_reminder_include_reseller", 1, :checked=>true
+        %span.destination
+          reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
+    .clearfix
+      =f.check_box "preferred_reminder_include_cert_admin"
+      %span.destination
+        include certificate's administrative contact
+    .clearfix
+      =f.check_box "preferred_reminder_include_cert_tech"
+      %span.destination
+        include certificate's technical contact
+    .clearfix
+      -rr = @ssl_account.preferred_reminder_notice_destinations
+      =f.check_box "preferred_reminder_notice_destinations", {}, rr=="0" ? 1 : rr, 0
+      %span#reminder_email_address.destination
+        include address(es):
+      %div(class=reminder_emails_errors)
+        =text_field_tag 'reminder_email', rr=="0" ? "" : rr, :size=>10
+        .field_desc
+          %em space separated
+#what_are_expiration_notices.hidden
+  #what_is_number_licenses_explain
+    %p
+      Each SSL Certificate comes with an expiration date. As that date approches
+      SSL.com sends out email reminders of the pending expiration of the
+      certificate to a designated email address, either
+      to a specified default email address or a rule.
+      Specific email addresses for specific SSL certificates can also be set,
+      and these take priority over other addresses.
+    %p
+      You can specify triggers for up to 5 reminder notices. A notice will be
+      sent as the number of days prior to expiration specified in a trigger
+      approaches. For instance, if you set a trigger for 30 days prior to
+      expiration, then on the 30th day before expiration for your SSL
+      certificate(s), a reminder notice is sent to the designated email.

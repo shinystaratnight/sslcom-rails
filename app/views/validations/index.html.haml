@@ -1,0 +1,40 @@
+-content_for :title, "Outstanding Validations for SSL Certificates"
+=render :partial => 'index_scripts'
+-unless @certificate_orders.blank? || @certificate_orders.empty?
+  #search_bar
+    -form_tag :search_validations, :method=>:get do
+      subject or ref#
+      =text_field_tag :search, @search
+      =submit_tag 'search'
+  #validations
+    %table(cellspacing="0")
+      -if will_paginate @certificate_orders
+        %tfoot
+          %tr
+            %td(colspan='6')=will_paginate @certificate_orders
+      %caption
+        Outstanding Validations for SSL Certificates
+        =will_paginate @certificate_orders
+      %tr.heading_row
+        %td
+        %th.name(scope="col")Subject
+        %th(scope="col" colspan="4") Validation Status
+      -@certificate_orders.each_with_index do |co, i|
+        -@cert_order = co
+        -cc = co.certificate_content
+        -next if !co.is_unused_credit? && cc.csr.blank?
+        -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+        -v = co.validation
+        %tr
+          %td.dropdown=image_tag 'expand.png'
+          %td.name
+            =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>co}
+          -os, os_class=overall_status(v.validation_rulings)
+          %td.validation_status_message(class="#{os_class} vs_message_#{i}" colspan="4")=os
+        =render :partial=>"entry", :locals=>{:co=>co, :i=>i}
+-else
+  #validations
+    %table(cellspacing="0")
+      %tr
+        %td
+          No pending validations found

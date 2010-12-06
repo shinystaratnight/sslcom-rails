@@ -1,0 +1,53 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    var signed_certificate_exists = <%=!@cc.csr.signed_certificate.blank?%>;
+    var submit_label;
+    $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
+    $('.new_signed_certificate').ajaxForm({
+      dataType: 'json',
+      beforeSubmit: function(){
+        confirmed = true;
+        if(signed_certificate_exists){
+          confirmed = confirm('Are you sure you want to overwrite the certificate content? This action cannot be undone.');
+        }
+        if(confirmed){
+          $('#waiting_bar').show();
+          $('.submit_signed_certificate').attr('disabled', 'disabled');
+          submit_label = $('.submit_signed_certificate').attr('value');
+          $('.submit_signed_certificate').attr('value', 'Submitting...');
+        }
+        return confirmed;
+      },
+      success: function(data, status){
+        $('#waiting_bar').hide();
+        $('.submit_signed_certificate').attr('disabled', '');
+        $('.submit_signed_certificate').attr('value', submit_label);
+        if(data.signed_certificate){
+          signed_certificate_exists=true;
+          $('textarea#tmp_signed_certificate').val($('#signed_certificate_body').val());
+          $('.common_name').replaceWith(data.signed_certificate.common_name);
+          $('.organization').replaceWith(data.signed_certificate.organization);
+          $('.department').replaceWith(data.signed_certificate.organization_unit);
+          $('.state').replaceWith(data.signed_certificate.state);
+          $('.city').replaceWith(data.signed_certificate.locality);
+          $('.country').replaceWith(data.signed_certificate.country);
+          $('.expires_on').replaceWith(Date.parse(data.signed_certificate.expiration_date).toString("MMM d, yyyy"));
+          $('.issued_on').replaceWith(Date.parse(data.signed_certificate.created_at).toString("MMM d, yyyy"));
+          $('.submitted_on').replaceWith("submitted on " + Date.parse('today').toString("MMM d, yyyy"));
+        }
+        else{
+          $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
+          errorString='';
+          for(i=0;i<data.length;i++)
+            errorString = errorString + ((data[i][0]=='base')? '' : data[i][0]) +' '+data[i][1];
+            if(i<data.length-1)
+              errorString = errorString + ",\n"
+          alert("The signed certificate was not successfully saved. The following errors were reported:\n\n"+errorString);
+        }
+      }
+    });
+  });
+});
+</script>

@@ -1,0 +1,29 @@
+<div id="main_content">
+  <div style="float: right; width: 700px; clear: both;">
+  <fieldset> <legend>Account Upgraded</legend>
+  <div>
+    Order Number: <%= h @order.reference_number %>
+  </div>
+  <div>
+    Date of Purchase: <%= h @order.created_at %>
+  </div>
+  <div>
+    Description: <%= h @product.receipt_description %>
+  </div>
+  <div>
+    Payment Method: Credit Card
+  </div>
+  <div>
+    Name on Card: <%= h @billing_profile.full_name %>
+  </div>
+  <div>
+    <%= h @billing_profile.credit_card %>: xxxx-xxxx-xxxx-<%= h @billing_profile.last_digits %>
+  </div>
+  <div>
+    Amount: $<%= h @order.amount %>USD
+  </div>
+  <div>
+    Customer IP Address: <%= request.remote_addr %>
+  </div>
+</div>
+

@@ -1,0 +1,30 @@
+.clearfix
+  -if @reseller_initial_deposit
+    %label{:for => "expense_amount"}
+      Deposit For:
+      %span.label_desc
+        =current_order.line_items.first.sellable.description
+    #buying_tier_level Reseller Tier #{current_order.line_items.first.sellable.label}
+.clearfix
+  %label{:for => "amount"}
+    - if @certificate_order || @certificate_orders
+      Order Amount:
+    - else
+      Load Amount:
+    %span.label_desc charged in $USD
+  -if @reseller_initial_deposit || @certificate_order || @certificate_orders
+    #tier_load_amount= current_order.amount.format.gsub(/,/, '') + " USD"
+    = f.hidden_field :amount, :value=>(current_order.amount or 0)
+  -else
+    = f.text_field :amount, :value=>(current_order.amount or 0), :size=>10
+.clearfix
+  %label{:for => "expense_amount"}
+    Total Current Balance:
+    %span.label_desc amount currently available
+  #current_balance{:class=>(@certificate_order)?'red':''}= current_user.ssl_account.funded_account(true).amount.format(:with_currency=>true).gsub(/,/, '')
+-unless @certificate_order
+  .clearfix
+    %label{:for => "expense_amount"}
+      Balance After Load:
+      %span.label_desc amount to be made available
+    #balance_after_load $0.0

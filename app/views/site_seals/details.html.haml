@@ -1,0 +1,96 @@
+-title="SSL.com Smart SeaLs"
+-content_for :title, title
+-content_for :header, 'public'
+%h1
+  Display Your Site's SSL With The Smart SeaL
+%h2
+  Boost confidence with the SSL.com Class Rating and Report
+.default_container
+  %h3=title
+  %table.smart_seal_types
+    %tbody
+      %tr
+        %td.pink.seal
+          .center
+            =render :partial=>'/site/smart_seal', :object=>image_tag("a_ssl_seal.gif")
+        %td.light_blue.seal
+          .center
+            =render :partial=>'/site/smart_seal', :object=>image_tag("aa_ssl_seal.gif")
+        %td.light_green.seal
+          .center
+            =render :partial=>'/site/smart_seal', :object=>image_tag("aaa_ssl_seal.gif")
+      %tr
+        %td.pink
+          .center
+            -c = Certificate.find_by_product "free"
+            =link_to c.title, certificate_url(:id=>c.product_root)
+        %td.light_blue
+          .center
+            -c = Certificate.find_by_product "high_assurance"
+            =link_to c.title, certificate_url(:id=>c.product_root)
+        %td.light_green
+          .center
+            -c = Certificate.find_by_product "ev"
+            =link_to c.title, certificate_url(:id=>c.product_root)
+  %p
+    The SSL.com Smart SeaL is a complementary service that
+    establishes trust by declaring your site's use of SSL.com certificates and
+    it comes free with every SSL.com certificate installed.
+    Displaying the SSL.com Smart SeaL let's your customers know that
+    your organization values online security and privacy. When a visitor
+    clicks on the SSL.com Smart SeaL, a real-time generated SSL.com Site Report
+    appears that displays summary information about your organization and status
+    information about the SSL.com certificate installed on your website. There
+    simply is no better way to build trust with your visitors and avoid cart
+    abandonment than by displaying your use of SSL.com certificates.
+  #sample_site_report
+    .caption Sample Site Report (7/10 size scale)
+    =image_tag 'sample_site_report_sm.jpg'
+  %p
+    The SSL.com Site Report displays information such as the website address,
+    the status of and assurances about the SSL.com certificate,
+    basic information about the website's owner/operator, and verification
+    assurances about the website owner's identity. This report helps to reassure
+    the visitor that a third-party, globally-trusted certificate authority such
+    as SSL.com has undertaken the required steps to validate the website as
+    outlined in our Certificate Practices Statement.
+  %p
+    With a trusted name like SSL.com, your website's Site Report not only has the
+    backing of a reputable, globally-trusted certificate authority, but also
+    a company which abides by the Webtrust audit program, the
+    governing program that all globally-trusted certificate authorities must
+    follow. This program is designed to ensure that SSL.com's processes remain
+    transparent and that we strictly follow these processes. In short, your
+    website's SSL.com certificate and Site Report has assurances and features
+    that no other company can offer.
+%h2
+  Increase transparency with the SSL.com Smart SeaL Artifacts
+.default_container
+  %h3 Smart SeaL Artifacts
+  %p
+    To help build upon this trust, SSL.com now offers the validated documents
+    as Smart SeaL Artifacts within the Site Report.
+    This patent pending service increases
+    transparency by optionally allowing your visitors to review the documents
+    we used to validate your organization as part of the process to issue your
+    website's SSL.com certificate.
+  #sample_artifacts
+    .caption Sample Validation Documents Report (7/10 size scale)
+    =image_tag 'sample_artifacts_sm.jpg'
+  %p
+    You have the option to publish all pages,
+    select pages or no pages of these documents. You can even turn this feature
+    off in the event you'd like to only use the Site Report. Depending on which
+    SSL.com certificate you purchase, the validation documents report comes free
+    as part of your SSL.com certificate service
+    or you can purchase the service as an add-on to the
+    SSL.com Smart SeaL that comes with your website's SSL.com certificate.
+  %p
+    The following SSL.com certificate products are Site Seal Artifacts enabled:
+  %ul(style='font-size: 1.2em')
+    -Certificate.root_products.each do |c|
+      %li
+        -if c.product_root =~ /free/
+          =link_to c.title+" (requires add-on purchase)", certificate_url(:id=>c.product_root)
+        -else
+          =link_to c.title, certificate_url(:id=>c.product_root)

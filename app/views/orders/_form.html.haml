@@ -1,0 +1,6 @@
+.clearfix
+  %label{:for => "amount"}
+    Order Amount:
+    %span.label_desc charged in $USD
+  #tier_load_amount= current_order.amount.format.gsub(/,/, '') + " USD"
+  = f.hidden_field :amount, :value=>(current_order.amount.to_s.to_i or 0)

@@ -1,0 +1,24 @@
+-if @ssl_account.blank?
+  -#indicates an signup
+  =f.hidden_field :reseller_tier_id
+.subheading Administrator Information
+-(Reseller::ADMIN_COLUMNS).each do |column|
+  .clearfix
+    %label{:for=>"#{column}"}="#{column.humanize}#{"*" if Reseller::REQUIRED_COLUMNS.include? column}"
+    = f.text_field column, :class => :text_field
+.subheading Business Information
+-(Reseller::FORM_COLUMNS-Reseller::ADMIN_COLUMNS).each do |column|
+  .clearfix
+    %label{:for=>"#{column}"}="#{column.humanize}#{"*" if Reseller::REQUIRED_COLUMNS.include? column}"
+    -if column == "country"
+      =country_select_field_for f, column, BillingProfile::TOP_COUNTRIES, {:no_label=>true}, {}
+    -elsif column == "type_organization"
+      .radio_choices
+        .radio_w_desc.clearfix
+          = f.radio_button column, Reseller::INDIVIDUAL
+          %em Individual
+        .radio_w_desc
+          = f.radio_button column, Reseller::BUSINESS
+          %em Business
+    -else
+      = f.text_field column

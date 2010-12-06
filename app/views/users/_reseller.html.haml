@@ -1,0 +1,135 @@
+-content_for :title, "SSL Reseller Dashboard"
+-user ||= current_user
+-r = user.ssl_account.reseller
+.reseller_registration_select_tier
+  %h3 SSL Reseller Dashboard
+  %p
+    The SSL Reseller Program is designed to ease management of bulk ssl
+    certificate purchases while increasing your bottom line through volume
+    discounting. With the SSL Reseller Program, you can view real-time
+    processing status information of each certificate, run historical reports
+    on your certificate purchases, and do a host of other administrative
+    functions. And that's just the beginning....
+#dashboard
+  %table(cellspacing="0")
+    %caption
+      ssl account information for #{user.login} #{"(last logged in #{user.last_login_at.strftime("%b %d, %Y")})" unless user.last_login_at.blank?}
+    %tr.heading_row
+      %tr.expanded
+        %td(colspan="5")
+          .certificate_details
+            %table(cellspacing="0")
+              %tbody
+                %tr.alt
+                  %th account type
+                  %th partner level
+                  %th signup date
+                  %th validation level
+                %tr.alt
+                  %td reseller partner
+                  %td=r.reseller_tier.label
+                  %td=r.created_at.strftime("%b %d, %Y")
+                  %td class 2
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong reseller administrator
+                        %li name: #{[r.first_name, r.last_name].join(' ')}
+                        %li email: #{r.email}
+                        %li phone: #{r.phone}
+                        -unless r.ext.blank?
+                          %li ext: #{r.ext}
+                        -unless r.fax.blank?
+                          %li fax: #{r.fax}
+                        %li=link_to 'edit', edit_ssl_account_url
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong reseller profile
+                        %li
+                          \#{r.organization}
+                        %li
+                          \#{r.address1}
+                        %li
+                          \#{r.address2}
+                        %li
+                          \#{r.address3}
+                        %li
+                          \#{r.po_box}
+                        %li
+                          \#{[r.city, r.state, r.postal_code].join(', ')}
+                        %li
+                          \#{r.country}
+                        %li
+                          \#{r.website}
+                        %li=link_to 'edit', edit_ssl_account_url
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong deposit account
+                          %li=user.ssl_account.funded_account.amount(true).format :with_currency=>false
+                          %li
+                            =link_to 'deposit funds', allocate_funds_url
+                          %li
+                            =link_to 'buy certificate', certificates_url
+                          %li
+                            =link_to 'certificate pricing', reseller_tier_url(user.ssl_account.reseller.reseller_tier.id)
+                %tr
+                  %td(colspan="5")
+                    .full_width_box
+                      %ul
+                        %li
+                          %strong
+                            login account
+                        %li username: #{user.login}
+                        %li email: #{user.email}
+                        -if permitted_to? :admin_manage, user
+                          %li=link_to "login as #{user.login}", user_session_url(:login=>user.login), :method=>:post, :id=>user.model_and_id
+                        %li=link_to 'edit email address', edit_email_users_url
+                        %li=link_to 'change password', edit_password_users_url
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="5")
+                    -unless user.ssl_account.contact.blank?
+                      .contact_details_box
+                        %ul
+                          %li
+                            %strong
+                              contact
+                          -ct = user.ssl_account.contact
+                          -unless ct.blank?
+                            %li
+                              =ct.first_name+" "+ct.last_name
+                            -unless ct.po_box.blank?
+                              %li
+                                =ct.po_box
+                            -unless ct.address1.blank?
+                              %li
+                                =ct.address1
+                            -unless ct.address2.blank?
+                              %li
+                                =ct.address2
+                            -unless ct.address3.blank?
+                              %li
+                                =ct.address3
+                            -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
+                            -unless csp.blank?
+                              %li= csp
+                            -unless ct.country.blank?
+                              %li
+                                =ct.country
+                            -unless ct.email.blank?
+                              %li
+                                =ct.email
+                            -unless ct.phone.blank?
+                              %li
+                                =ct.phone
+                            %li
+                              =link_to 'create/edit contact', edit_ssl_account_url
+                          -else
+                            none

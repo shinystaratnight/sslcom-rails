@@ -1,0 +1,2 @@
+class BillingContact < CertificateContact
+end

@@ -1,0 +1,25 @@
+-content_for :title, "Create Contacts For #{@certificate_order.subject.downcase} (order ref##{@certificate_order.ref})"
+=render :partial => '/contacts/index_scripts'
+-pos=@certificate_order.preferred_payment_order=='prepaid' ? 3 : 4
+=order_progress_indicator(pos, @certificate_order.certificate) if @certificate_content.info_provided?
+.reseller_registration_profile
+  %h3
+    Create Contacts For #{@certificate_order.subject.downcase}
+    (order ref##{@certificate_order.ref})
+  %p
+    Please provide point of contacts for #{@certificate_order.subject.downcase}.
+  =error_messages_for :certificate_content
+  -form_for setup_certificate_contacts(@certificate_content) do |f|
+    #stylized.default_form
+      -i = 0
+      -f.fields_for :certificate_contacts do |c|
+        -i+=1
+        -roles = CertificateContent::CONTACT_ROLES
+        -roles.each do |role|
+          -roles.delete(role)
+          =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}
+          %div(id="certificate_content_#{role}_form")
+            =render_contact_fields(c, role)
+          -break
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

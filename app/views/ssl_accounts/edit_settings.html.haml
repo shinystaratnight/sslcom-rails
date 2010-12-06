@@ -1,0 +1,12 @@
+-@title = "Edit SSL Account Settings"
+-content_for :title, @title
+=render :partial => 'index_scripts'
+.order_container
+  %h3
+    \#{@title}
+  =error_messages_for :ssl_account
+  -form_for @ssl_account, :url=>update_settings_ssl_account_path do |f|
+    #stylized.default_form
+      =render :partial => "settings_form", :locals => {:f=>f}
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

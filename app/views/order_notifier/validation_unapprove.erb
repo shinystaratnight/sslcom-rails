@@ -1,0 +1,17 @@
+Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
+
+Validation for your SSL.com certificate for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) has not been approved. Please see below for more details:
+
+<%@validation.validation_rulings.each do |vr|-%>
+<%unless vr.approved?-%>
+  Requirement: <%=vr.validation_rule.description%>
+  Status: <%=vr.notes.last.title%>
+  Reason: <%=vr.notes.last.note%>
+
+<%end-%>
+<%end-%>
+
+Thank you for using ssl.com
+
+<%=render(:partial=>"support_contact")%>
+

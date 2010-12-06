@@ -1,0 +1,20 @@
+<%if @contact.is_a? Contact -%>
+Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
+
+<%end -%>
+Your SSL.com Site Seal for <%=@certificate_order.subject%> (order #<%=@certificate_order.order.reference_number%>) is now active and ready for display on your website.
+
+With the SSL.com Site Seal, you get:
+
+  -The Site Seal Report which displays a summary report of the site owner and current status of the installed ssl certificate
+  -The option to increase transparency with your customers and publish your validation documents with the Site Seal Artifacts
+  -Daily site scanning and monitoring
+  -'Recommend This Page to Your Friends' functionality to increase traffic to your site. Plus each time you send a page to a known email contact, SSL.com assures the page has been scanned of malware thus building upon the trust that an SSL.com certificate already instills.
+  -Improved search engine optimization to your site to help you search engine rankings.
+
+For more information on how you can access and configure your SSL.com Site Seal, please visit the following link: <%=certificate_order_site_seal_url(@certificate_order.site_seal)%>
+
+Thank you for using ssl.com
+
+<%=render(:partial=>"support_contact")%>
+

@@ -1,0 +1,24 @@
+-tier_reseller = "Tier #{tier.label} Reseller Partners"
+-compare_tier = ProductVariantItem.find(:all).reject{|c| c.serial=~/\dtr/}
+#reseller_tiers
+  %table(cellspacing="0")
+    %caption
+      Pricing for #{tier_reseller}
+    %tr.heading_row
+      %th(scope="col") Certificate
+      %th(scope="col") Description
+      %th(scope="col") Pricing
+      %th(scope="col") Savings
+    -tier.certificates.all.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten.each_with_index do |item, i|
+      -compare_item = compare_tier.find{|c|c.serial==item.serial.slice(/.+(?=\dtr)/)}
+      %tr(class="#{(i.odd?) ? 'alt' : ''}")
+        %td=item.certificate.description["abbr"]
+        %td=item.description
+        %td=item.price.format
+        %td
+          %span.save
+            -unless item.certificate.product_root=='free'
+              -p = 1.0-(item.price.cents.to_f / compare_item.price.cents.to_f)
+              #{Integer((p*100).ceil)}%
+            -else
+              0%

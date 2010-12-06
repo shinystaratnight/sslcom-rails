@@ -1,0 +1,224 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  var show_new_user_section=true;
+  var count = []; //used to map existing cart items with reindexed cookies
+  $.line_item_total = function(id){
+    qty=$('span[id^=qty_'+id+']').length > 0 ? $('[id^=qty_'+id+']').text() :
+      $('[id^=qty_'+id+']').val();
+    total_str=$('[id^=total_'+id+']').text();
+    price=$('[id^=price_'+id+']').text().match(/[\d\.\,]+/)
+    price=price.toString().replace(/,/,'');
+    total=qty*price;
+    total_str=total_str.replace(/[\d\.\,]+/, total.toFixed(2).toString());
+    $('[id^=total_'+id+']').text(total_str);
+    $.adjust_cart_total();
+  };
+  $.adjust_cart_total = function(){
+    total = 0;
+    $('[id^=total_]').each(function(){
+      total += parseFloat($.toMoneyFloat($(this).text()));
+    });
+    total=(total!=0)?total.toFixed(2).toString():"0.00";
+    $('#cart_total').text('$'+total+" USD");
+  };
+  $.update_cart_qty_display = function(){
+    qty=$('[id^=remove_]').length;
+    $('#cart_items_qty').text($('#cart_items_qty').text().replace(/\d+/,qty));
+    if(qty==1)
+      $('#cart_items_qty').text($('#cart_items_qty').text().replace(/[a-zA-Z]+/,'item'));
+    else
+      $('#cart_items_qty').text($('#cart_items_qty').text().replace(/[a-zA-Z]+/,'items'));
+    $('#cart_items_qty').effect("highlight", {color:'green'}, 500);
+  };
+  $.change_cart_items_qty = function(quantity, indx){
+    if(indx==null)
+      indx=0;
+    cart_qty_indx=null;
+    cart = $.cookie("cart");
+    affiliate = $.cookie("aid");
+    affiliateLineItem = $.cookie("aid_li");
+    remove_af=false;
+    if(cart==null)
+      cart="";
+    if(affiliateLineItem==null)
+      affiliateLineItem="";
+    //structure of a certificate order in the cart is as follows
+    //product,num_years,num_servers,domains,quantity:
+    lis=cart.split(/:/);
+    if(lis.find("").length>0)
+      lis.remove(lis.find(""));
+    $(count).each(function(index, value){
+      if(value==indx){
+        indx=index
+      }
+    });
+    if(quantity>0)
+      lis[indx]=lis[indx].replace(/\d+$/, quantity);
+    else{
+      count.remove(indx);
+      lis.remove(indx);
+      remove_af=true;
+    }
+    if(lis.join(":")=="")
+      cart = "";
+    else
+      cart = lis.join(":")+ ":";
+    if(remove_af==true){
+      lis=affiliateLineItem.split(":");
+      if(lis.find("").length>0)
+        lis.remove(lis.find(""));
+      lis.remove(indx);
+      affiliateLineItem=(lis.join(":")+":");}
+    if(affiliateLineItem==":")
+      affiliateLineItem="";
+    $.cookie("cart", cart, { expires: <%=AppConfig.cart_cookie_days%>, path: '/'});
+    $.cookie("aid_li", affiliateLineItem, { expires: <%=AppConfig.affiliate_cookie_days%>, path: '/'});
+  };
+  $(document).ready(function() {
+    $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
+      if($(this).parents().filter('tr').next().css('display')!='none'){
+        $(this).parents().filter('tr').next().css('display', 'none');
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/expand.png');
+        $(this).parents().filter('tr').find('.expand').text('expand');
+        this.expanded = false;
+      }
+      else{
+        this.expanded = true;
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/contract.png');
+        $(this).parents().filter('tr').next().show();
+        $(this).parents().filter('tr').find('.expand').text('collapse');
+      }
+    });
+    $('textarea').click(function(){
+      $(this).select();
+    });
+    $('.has_account_container').click(function(){
+      $(this).siblings().filter(':radio[name*=has_account]').click();
+    });
+    $(':radio[name*=has_account]').click(function(){
+      if($(this).val()=="true"){
+        show_new_user_section=false;
+        $('#billing_section').hide();
+        $('#new_user_section').hide();
+        $('#login_section').show();
+      }
+      else{
+        show_new_user_section=true;
+        $('#billing_section').show();
+        $('#new_user_section').show();
+        $('#login_section').hide();
+      }
+    });
+    $(':radio[name*=has_account][value=false]').click();
+    // prepare Options Object
+    var options = {
+        dataType: 'json',
+        url: '<%=user_session_path%>',
+        beforeSubmit: function(){
+          $('div[id*=Explanation][class*=Explanation]').remove();
+        },
+        success: function(data, status, $form) {
+          if(typeof(data.record) == "undefined"){
+            msg="Login error(s):\n";
+            for(i=0;i<data.length;i++){
+              if(data[i][0]=='base')
+                msg+=' - '+data[i][1]+"\n";
+              else if(data[i][0]=='login' || data[i][0]=='password')
+                msg+=' - '+data[i][0].toLowerCase()+' '+data[i][1].toLowerCase()+"\n";
+            }
+            alert(msg);
+          }
+          else{
+            if(data.record.user.status=='disabled')
+              alert('This account has been disabled');
+            else if(data.record.user.status=='enabled'){
+              window.location=data.redirect;
+              return true;
+            }
+          }
+          $(':password').clearFields();
+        }
+    };
+    $('input:image').click(function(){
+      if($(':radio[name*=has_account]:checked').val()=="true" && 
+          $(this).attr('name')=='next'){
+        $('form#new_order').ajaxSubmit(options);
+        // return false to prevent normal browser submit and page navigation
+        return false;
+      }
+    });
+    $(':select[id^=qty_]').change(function(){
+      id=$(this).attr("id").match(/\d+$/)[0];
+      $.line_item_total(id);
+      $.change_cart_items_qty(qty, id);
+    });
+    $('span[id^=remove_]').click(function(event, no_cart_qty_update){
+      id=$(this).attr("id").match(/\d+$/)[0];
+      $('tr[class$='+id+']').fadeOut();
+      $('tr[class$='+id+']').remove();
+      $.adjust_cart_total();
+      $.change_cart_items_qty(0, id);
+      if(no_cart_qty_update==null){
+        if(count.length==0)
+          $('span#clear_cart').click();
+        else
+          $.update_cart_qty_display();
+      }
+    });
+    $('span#clear_cart').click(function(){
+      $(count).each(function(index, value){
+        $('span[id^=remove_'+value+']').trigger('click', true);
+      });
+      $('a#shop_more_img').html('<%=image_tag('add_items.gif')%>');
+      $('a#checkout_img').remove();
+      $('#clear_cart').parents().filter('tr').remove();
+      $('#shop_more_checkout').attr('id', 'add_items');
+      $('.empty_cart_desc').show();
+      $.empty_out_cart();
+      $.update_cart_qty_display();
+    });
+    $(':select[id^=qty_]').each(function(index, value){
+      //used for mapping when line items get deleted
+      count.push(index);
+      id=$(this).attr("id").match(/\d+$/);
+      $.line_item_total(id);
+    });
+    var profile_id = "";
+    profile_form_hidden = <%=!initial_display?.empty?%>;
+    $('#expand_register_card').click(function(){
+      if(profile_form_hidden){
+        $('#register_card_form').fadeIn();
+        $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
+        profile_id = $(':radio[name=funding_source]:checked').attr("id");
+        $(':radio[name=funding_source]').attr("checked","");
+        profile_form_hidden = false;
+      }
+      else{
+        $('#register_card_form').fadeOut();
+        $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+        $(':radio[id*='+profile_id+']').attr("checked","checked");
+        profile_form_hidden = true;
+      }
+    });
+    $.last_delete_clicked=function(){
+      if($('.delete_billing_profile').size() <= 1)
+        $('.funding_sources_head, #existing_credit_cards').empty();
+      $('#register_card_form').fadeIn();
+    };
+    $('#register_card_form').click(function(){
+      $(':radio[name=funding_source]').attr("checked","");
+    });
+    $(':radio[name=funding_source]').click(function(){
+      $('#register_card_form').fadeOut();
+      $('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+      profile_form_hidden = true;
+    });
+    if(profile_form_hidden == false){
+      $(':radio[name=funding_source]').attr("checked","");
+      $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
+    }
+$.adjust_cart_total();
+  });
+});
+</script>

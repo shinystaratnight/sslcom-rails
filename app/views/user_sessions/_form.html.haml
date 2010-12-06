@@ -1,0 +1,10 @@
+.clearfix
+  = form.label :login, "Login<span class='label_desc'>your username</span>"
+  = form.text_field :login
+.clearfix
+  = form.label :password, "Password<span class='label_desc'>min. size 4 chars</span>"
+  = form.password_field :password
+.clearfix
+  = form.label :remember_me
+  = form.check_box :remember_me
+

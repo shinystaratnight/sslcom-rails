@@ -1,0 +1,7 @@
+-if @user.new_record?
+  .clearfix
+    = form.label :login, "Login<span class='label_desc'>this will be your username</span>"
+    = form.text_field :login
+.clearfix
+  = form.label :email, "Email<span class='label_desc'>must be a valid address</span>"
+  = form.text_field :email

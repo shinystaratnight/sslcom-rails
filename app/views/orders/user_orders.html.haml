@@ -1,0 +1,30 @@
+-@running_total = 0
+.yui-b
+  .box
+    =render :partial=>'/users/at_a_glance'
+#yui-main
+  .yui-b
+    .box.hfeed
+      %h3
+        ="Orders".l
+    =render '/shared/channel_nav'
+    -if @orders.blank?
+      %div{:style=>"text-align:center;height:400px;",:class=>"font-size-15"}= "There are currently no orders to display".l
+    -else
+      %table#sales_report_table
+        %thead
+          %tr
+            %td Reference #
+            %td Date/Time
+            %td Item
+            %td Amount
+            %td Balance
+        %tbody.striped_tr
+          =render :partial => "order", :collection => @orders
+        %tfoot
+          %tr#sales_total_row
+            %td{:colspan=>3}
+            %td.sales_total
+              ="Total".l
+            %td.sales_total
+              =Money.new(@running_total).format

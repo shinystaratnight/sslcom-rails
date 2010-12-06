@@ -1,0 +1,42 @@
+#header(class="show_sales_number")
+  .inner
+    %ul.nav
+      %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)", show_cart_orders_url
+      %li
+        %a{ :href => "/blog/" }
+          Blog
+      %li
+        %a{ :href => "/about-us/" }
+          About Us
+      %li
+        %a{ :href => "http://support.ssl.com/" }
+          Support
+      -unless current_user
+        %li
+          =link_to "Login", login_url(:subdomain=>false)
+          or
+          =link_to "Sign Up", new_user_url
+      -else
+        %li=link_to "Logout", logout_url
+    %ul#menu
+      -unless current_user
+        %li(class="#{current_page?(root_url(:subdomain => false)) ? 'active' : ''}")
+          =link_to "Home", root_url(:subdomain => false)
+      -else
+        %li(class="#{current_page?(account_url) ? 'active' : ''}")
+          =link_to "Dashboard", account_url
+      %li(class="#{current_page?(root_url(:subdomain=>'reseller')) ? 'active' : ''}")
+        =link_to "Resellers", root_url(:subdomain=>'reseller')
+      %li(class="#{current_page?(details_resellers_path) ? 'active' : ''}")
+        =link_to "Program Details", details_resellers_path
+      %li(class="#{current_page?(reseller_tiers_path) ? 'active' : ''}")
+        =link_to "Pricing & Sign Up", reseller_tiers_path
+    %span.logo.reseller=link_to "SSL", home_url
+    #sales_number_in_header=AppConfig.header_phone_numbers
+#content
+  -if is_public_index_page?
+    =yield
+  -else
+    .containerl
+      .inner
+        =yield

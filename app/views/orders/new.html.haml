@@ -1,0 +1,90 @@
+-title="Checkout"
+-content_for :title, title
+=render :partial => 'index_scripts'
+=order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
+.reseller_registration_select_tier
+  %h3=title
+  %p
+    Please fill out the required fields below to complete your reseller
+    account registration.
+    This charge will appear as SSL Corporation on your credit card statement.
+  =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
+  -form_for Order.new do |f|
+    -if @certificate_order
+      =hidden_field :certificate, :product
+      -fields_for @certificate_order do |f|
+        =f.hidden_field :server_licenses
+        =f.hidden_field :duration
+        -f.fields_for :certificate_contents, @certificate_content do |cert_form|
+          =cert_form.text_area :signing_request, :class=>'hidden'
+          =cert_form.hidden_field :additional_domains
+          =cert_form.hidden_field :server_software_id
+    #stylized.deposit_funds_form
+      -if current_user && ssl_account
+        -unless ssl_account.billing_profiles.empty?
+          %h3.subheading.funding_sources_head Funding Sources
+          #existing_credit_cards
+            %table
+              %tr#existing_credit_cards_header
+                %td Load From
+                %td Card Type
+                %td Card Number
+                %td Expiry Date
+                %td
+              -ssl_account.billing_profiles.each do |profile|
+                %tr[profile]
+                  %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'
+                  %td= profile.credit_card
+                  %td= profile.masked_card_number
+                  %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+                  %td= destroy_credit_card_link profile
+              %tr
+                %td{:colspan => 6}
+                  %a#expand_register_card(href="#{'#'}")
+                    =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'
+      -else
+        .clearfix
+          %label{:for=>"has_csr"}
+            *Have an ssl.com account?:
+            %span.label_desc create or login into an account
+          .radio_choices
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_account, true
+              %span.has_account_container I do and I want to log in now
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_account, false
+              %span.has_account_container I do NOT but I want to create one
+        #login_section
+          -fields_for :user_session, @user_session do |form|
+            .subheading Login Information
+            .clearfix
+              = form.label :login, "*Login<span class='label_desc'>this will be your username</span>"
+              = form.text_field :login
+            .clearfix
+              = form.label :password, "*Password<span class='label_desc'>min. size 4 chars</span>"
+              = form.password_field :password
+        #new_user_section
+          -fields_for :user, @user do |form|
+            .subheading Login Information
+            .clearfix
+              = form.label :login, "*Login<span class='label_desc'>this will be your username</span>"
+              = form.text_field :login
+            .clearfix#email_field
+              = form.label :email, "*Email<span class='label_desc'>must be a valid address</span>"
+              = form.text_field :email
+            .clearfix
+              = form.label :password, "*Password<span class='label_desc'>min. size 4 chars</span>"
+              = form.password_field :password
+            .clearfix#password_confirm_field
+              = form.label :password_confirmation, "*Password again<span class='label_desc'>type the passward again</span>"
+              = form.password_field :password_confirmation
+      #billing_section
+        #register_card_form{initial_display?}
+          -fields_for :billing_profile, @billing_profile do |form|
+            = render :partial => "billing_profiles/form", :locals => { :form => form }
+        .subheading Total Amount To Charge
+        =render :partial => "form", :locals => {:f => f, :object => object}
+    #button_container
+      #prev_next_submit
+        =image_submit_tag "prev_bl.gif", :name=>"prev"
+        =image_submit_tag "next_bl.gif", :name=>"next"

@@ -1,0 +1,37 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $(document).ready(function() {
+    $(':radio[id*=affiliate_payout_method_check]').click(function(){
+      $('#checks_payable_to').show();
+      $('#epassporte').hide();
+      $('#wire_columns').hide();
+    });
+    $(':radio[id*=affiliate_payout_method_epassporte]').click(function(){
+      $('#checks_payable_to').hide();
+      $('#epassporte').show();
+      $('#wire_columns').hide();
+    });
+    $(':radio[id*=affiliate_payout_method_wired]').click(function(){
+      $('#checks_payable_to').hide();
+      $('#epassporte').hide();
+      $('#wire_columns').show();
+    });
+    $(':radio[id*=affiliate_type_organization_individual]').click(function(){
+      $('#affiliate_organization').parents('.edit_entry').hide();
+      $('label[for*=tax_number]').text("SS# or Personal ID*");
+    });
+    $(':radio[id*=affiliate_type_organization_business]').click(function(){
+      $('#affiliate_organization').parents('.edit_entry').show();
+      $('label[for*=tax_number]').text("Tax Number*");
+    });
+    $('#affiliate_country').change(function(){
+      if($(this).find(':selected').text()=="United States")
+        $('label[for*=state]').text("State*");
+      else
+        $('label[for*=state]').text("State/Province");
+    });
+    $(':radio:checked').click();
+  });
+});
+</script>

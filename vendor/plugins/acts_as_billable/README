@@ -1,0 +1,97 @@
+= acts_as_billable
+
+acts_as_billable is an Active Record extension that eases the development of applications that process credit card transactions.
+
+== Requirements
+
+* Active Merchant
+    script/plugin install svn://home.leetsoft.com/active_merchant/trunk/active_merchant
+* Money gem
+    gem install money
+* acts_as_money
+    script/plugin install http://source.collectiveidea.com/public/rails/plugins/acts_as_money
+
+== Installation
+
+  script/plugin install http://source.collectiveidea.com/public/acts_as_billable/trunk
+
+== Configuration
+
+First you must define a default Credit Card gateway in environment.rb. Typically you want different settings in development and production, so you may want something like this:
+
+  # Run gateway in test mode unless on production
+  if ENV['RAILS_ENV'] == 'production'
+    ActiveMerchant::Billing::Base.set_default_gateway :paypal,
+      :login => 'mypaypal@account.com',
+      :password => 'password',
+      :cert_path => "#{RAILS_ROOT}/config/paypal/"
+  else
+    ActiveMerchant::Billing::Base.mode = :test
+  end
+  
+acts_as_billable uses four tables: 
+
+* +orders+
+* +line_items+
+* +invoices+
+* +payments+
+
+To create these tables, run the billable_migration generator:
+
+  script/generate billable_migration add_billable_tables
+  
+And run:
+
+  rake db:migrate
+
+=== Declare your billable models
+
+  class User < ActiveRecord::Base
+    acts_as_billable
+  end
+  
+=== Declare your sellable models
+
+  class Product < ActiveRecord::Base
+    acts_as_sellable
+  end
+
+See the notes for +acts_as_sellable+[link:classes/CollectiveIdea/Acts/Sellable/ClassMethods.html#M000005]
+
+== Usage
+
+  @order = @user.purchase Product.find(1)
+  @order.pay ActiveMerchant::Billing::CreditCard.new :credit_card => {
+		:type => 'visa',
+    :number => '1234567812345678, 
+		:month => '10', 
+		:year => '2007', 
+		:verification_value => '678',
+    :first_name => 'First', 
+		:last_name => 'Last'
+	}
+
+=== Controllers
+
+  def create
+    @credit_card = ActiveMerchant::Billing::CreditCard.new(params[:credit_card])
+    if @credit_card.valid?
+      @order = current_user.purchase(@cart.items)
+      @payment = @order.pay(@credit_card)
+    end
+  rescue Payment::AuthorizationError => error
+    @order.destroy
+    flash[:notice] = error.message
+    render :action => 'new'
+  end
+
+== Running the specs
+
+Tests are written using RSpec in a sample app.  To run the specs, check out http://source.collectiveidea.com/public/acts_as_billable and, after configuring your database, run "rake spec".  It would be appreciated if all patches have specs to go with them.
+
+== To Do
+
+* Recurring billing for gateways that support it
+* Refunds
+* taxes, shipping
+* Seller, multiple gateways

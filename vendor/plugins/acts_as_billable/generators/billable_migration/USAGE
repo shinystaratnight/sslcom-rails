@@ -1,0 +1,12 @@
+Description:
+	The billable migration generator creates a migration with the required tables to use acts_as_billable:
+	
+    orders
+    line_items
+    invoices
+    payments
+
+Example:
+    ./script/generate billable_migration add_billable_tables
+
+    This will create an AddBillableTables migration in db/migrate/.  Run "rake db:migrate" to update your database

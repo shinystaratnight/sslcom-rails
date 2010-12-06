@@ -1,0 +1,8 @@
+Hello <%= @user.login %>
+
+<%= @comment.username %> has commented on <%="#{@comment.commentable_type.humanize.downcase} \"#{@comment.commentable_name}\""%>. Use this link to see the comment:
+
+<%= @url %> 
+
+Thanks,
+The <%= AppConfig.community_name %> Team

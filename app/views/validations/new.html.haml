@@ -1,0 +1,67 @@
+=render :partial => 'index_scripts'
+%script{:type=>"text/javascript"}
+  :plain
+    //# PLUGIN INTEGRATION
+    jQuery(function($){
+      $('#multi_upload').MultiFile({
+        max: 5,
+        accept: '#{ValidationHistory.multi_upload_types}',
+        STRING:{
+        remove: '#{image_tag('minus.gif')}'},
+        afterFileSelect:function(element,value,master){
+       }
+      });
+      $('#upload_files').click(function(){
+        $('#waiting_bar').show();});
+    });
+-content_for :title, "Upload Validation Documentation"
+-co = @certificate_order
+-checkout_in_progress=co.certificate_content.contacts_provided?
+=order_progress_indicator(5, co.certificate) if checkout_in_progress
+.reseller_registration_select_tier
+  %h3 
+    Upload Validation Documentation for
+    =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
+  =error_messages_for :validation
+  -form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
+    #stylized.default_form
+      -if checkout_in_progress
+        %p
+          .clearfix
+            %label{:for=>"skip_validation"}
+              *Validation documents:
+              %span.label_desc you can skip this step for now
+            .radio_choices
+              .radio_w_desc.clearfix
+                =radio_button_tag :has_documents, true
+                %span.has_csr_container I have my documents ready and want to upload them now
+              .radio_w_desc.clearfix
+                =radio_button_tag :has_documents, false
+                %span.has_csr_container I want to skip this step and complete the order later
+      #documents_upload_section
+        %p
+          SSL must verify the existence of your business, the ownership of domain
+          #{co.subject}, and your employment status or authority to
+          request the SSL Certificate for #{co.subject}. We require
+          official government documentation proving your right to do business. These
+          may include:
+        %ul.docs_ul
+          -co.validation_methods.each do |vr|
+            %li=vr
+        %p
+          If we cannot automatically authenticate your company's management
+          responsibility for the domain name #{co.subject}, we will
+          require an authorization letter from that domain's
+          owner. This step prevents applicants from fraudulently or accidentally
+          obtaining an SSL Certificate for #{co.subject}.
+        %p
+          Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
+          they will automatically be unpacked. The following file types are accepted:
+          #{ValidationHistory.acceptable_file_types}
+        =file_field_tag "filedata[]", :id=> "multi_upload"
+        %div(style='width: 100%; text-align: center;')
+          =submit_tag "Upload Files", :id=>"upload_files", :disable_with=>"Uploading..."
+          .clearfix
+            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+      #button_container(style='display : none')
+        #skip_button=link_to image_tag("skip_bl.gif"), co

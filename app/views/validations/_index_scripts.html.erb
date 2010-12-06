@@ -1,0 +1,306 @@
+<script type="text/javascript">
+jQuery(function($) {
+  //This prototype is provided by the Mozilla foundation and
+  //is distributed under the MIT license.
+  //http://www.ibiblio.org/pub/Linux/LICENSES/mit.license
+
+  if (!Array.prototype.every)
+  {
+    Array.prototype.every = function(fun /*, thisp*/)
+    {
+      var len = this.length;
+      if (typeof fun != "function")
+        throw new TypeError();
+
+      var thisp = arguments[1];
+      for (var i = 0; i < len; i++)
+      {
+        if (i in this &&
+            !fun.call(thisp, this[i], i, this))
+          return false;
+      }
+
+      return true;
+    };
+  }
+
+  //This prototype is provided by the Mozilla foundation and
+  //is distributed under the MIT license.
+  //http://www.ibiblio.org/pub/Linux/LICENSES/mit.license
+
+  if (!Array.prototype.some)
+  {
+    Array.prototype.some = function(fun /*, thisp*/)
+    {
+      var len = this.length;
+      if (typeof fun != "function")
+        throw new TypeError();
+
+      var thisp = arguments[1];
+      for (var i = 0; i < len; i++)
+      {
+        if (i in this &&
+            fun.call(thisp, this[i], i, this))
+          return true;
+      }
+
+      return false;
+    };
+  }
+  var is_approved=function(x){
+    return x=='<%=ValidationRuling::APPROVED%>';
+  }
+  var is_unapproved=function(x){
+    return x=='<%=ValidationRuling::UNAPPROVED%>';
+  }
+  var is_requiring_more=function(x){
+    return x=='<%=ValidationRuling::MORE_REQUIRED%>';
+  }
+  $.get_selected_options=function(select, type){
+    options=[];
+    $(select).find(':selected').each(function(c, selected){
+      if(type=='text')
+        options[c] = $(selected).text();
+      else
+        options[c] = $(selected).val();
+    });
+    return options;
+  }
+  $.get_selected_array_options=function(select, index, type){
+    options=[];
+    $($(select)[index]).find(':selected').each(function(c, selected){
+      if(type=='text')
+        options[c] = $(selected).text();
+      else
+        options[c] = $(selected).val();
+    });
+    return options;
+  }
+  $.method_none_selected=function(methods){
+    for(m=0; m<methods.length; m++){
+      if(methods[m]=='<%=Validation::NONE_SELECTED%>')
+        return true;
+    }
+    return false;
+  }
+  $.unapprove_all_methods=function(methods, i){
+    for(m=0; m<methods.length; m++){
+      $('.method_'+i).removeClass("approved_validation_document")
+        .removeClass('crossout');
+      $('.method_'+i+' ul li').remove();
+    }
+  }
+  $(document).ready(function() {
+    $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
+      if($(this).parents().filter('tr').next().css('display')!='none'){
+        $(this).parents().filter('tr').next().css('display', 'none');
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/expand.png');
+        $(this).parents().filter('tr').find('.expand').text('expand');
+        this.expanded = false;
+      }
+      else{
+        this.expanded = true;
+        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/contract.png');
+        $(this).parents().filter('tr').next().show();
+        $(this).parents().filter('tr').find('.expand').text('collapse');
+      }
+    });
+    // prepare Options Object
+    var options = {
+        dataType: 'json',
+        beforeSubmit: function(){
+          return confirm(
+          "This will adjust the approval status of this order. Are you sure?");
+        },
+        success: function(data, status, $form) {
+          alt=$form.attr('alt');
+          all_approvals=[];
+          $form.find(':radio:checked').each(function(i){
+            approval=$(this).val();
+            all_approvals.push(approval);
+            vrl_alt = $(this).attr('alt');
+            reason = $("#ruling_reason_"+vrl_alt).val();
+            $('ul.status_history_'+vrl_alt)
+              .append('<li><em>'+approval+' by '+data.by_user+':</em><ul><li>'+
+                reason+' - '+
+                Date.parse('today').toString("MMM d, yyyy")+
+                '</li></ul></li>');
+            status_span=$('.validation_status_result_'+vrl_alt);
+            if(approval=='<%=ValidationRuling::APPROVED%>'){
+              status_span.text("<%=ValidationRuling::APPROVED%>");
+              status_span
+                .removeClass("<%=ValidationRuling::ATTENTION_CLASS%>")
+                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+                .addClass("<%=ValidationRuling::APPROVED_CLASS%>");
+            }
+            else if(approval=='<%=ValidationRuling::UNAPPROVED%>'){
+              status_span.text("<%=ValidationRuling::UNAPPROVED%>");
+              status_span
+                .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+                .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+            }
+            else if(approval=='<%=ValidationRuling::MORE_REQUIRED%>'){
+              status_span.text("<%=ValidationRuling::INSUFFICIENT%>");
+              status_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+                .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+                .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+            }
+            $('.reason_block_'+alt).hide();
+            $('.no_validation_decisions_'+vrl_alt).remove();
+          });
+          message_span=$('.vs_message_'+alt.split("_")[0]);
+          if(all_approvals.some(is_requiring_more)){
+            message_span.text("<%=ValidationRuling::MORE_REQUIRED_STATUS%>");
+            message_span.removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+          }
+          else if(all_approvals.some(is_unapproved)){
+            message_span.text("<%=ValidationRuling::UNAPPROVED_STATUS%>");
+            message_span
+              .removeClass("<%=ValidationRuling::APPROVED_CLASS%>")
+              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+              .addClass("<%=ValidationRuling::ATTENTION_CLASS%>");
+          }
+          else if(all_approvals.every(is_approved)){
+            message_span.text("<%=ValidationRuling::APPROVED_STATUS%>");
+            message_span
+              .removeClass("<%=ValidationRuling::ATTENTION_CLASS%>")
+              .removeClass("<%=ValidationRuling::WAITING_CLASS%>")
+              .addClass("<%=ValidationRuling::APPROVED_CLASS%>");
+          }
+          alert('Approval status change successful!');
+          $form.reset();
+        }
+    };
+    $('form.edit_validation_ruling').ajaxForm(options);
+    $('input:checkbox[name*=publish_to_site_seal]').click(function(){
+      $(this).parents().filter('form').ajaxSubmit();
+    });
+    $(':radio[name^=ruling_decision]').click(function(){
+      alt=$(this).attr('alt');
+      if($(this).val()=='<%=ValidationRuling::UNAPPROVED%>' ||
+          $(this).val()=='<%=ValidationRuling::MORE_REQUIRED%>'){
+        $('.reason_block_'+alt).show();
+      }
+      else{
+        $('.reason_block_'+alt).hide();
+      }
+    });
+    $('select[id*=validation_history_validation_rules]').change(function(){
+      //prevent other options from being selected if None is selected
+      rules = $.get_selected_options(this, 'text');
+      if($.method_none_selected(rules)){
+        $(this).find(':selected').each(function(c, selected){
+          if($(selected).text()!='<%=Validation::NONE_SELECTED%>')
+            $(selected).attr('selected', false);
+        });
+      }
+      $(this).parents().filter('form').ajaxSubmit();
+      //order index
+      i = $(this).attr('alt').split("_")[0];
+      //doc index
+      doc_i = $(this).attr('alt').split("_")[1];
+      //let's find all applicable doc types
+      types_select = 'select[id*=validation_history_satisfies_validation_methods][alt='+$(this).attr('alt')+']'
+      types=$.get_selected_options(types_select, 'text');
+      alt=$(this).parents().find('span.doc_filename').attr('alt');
+      identifier = alt+'_'+$(this).attr('alt');
+      //get the newly selected rule (should be 'None')
+      rules = $.get_selected_options(this, 'text');
+      //change status to approved
+      for(r=0; r<rules.length; r++){
+        applied=false;
+        if(!applied){
+          for(x=0;x<types.length;x++){
+            $('li[alt=method_'+types[x]+'_'+i+']')
+              .addClass("approved_validation_document").addClass("crossout");
+            $('li[alt=method_'+types[x]+'_'+i+'] ul')
+              .append('<li class="applied_doc tree-connect" alt="'+identifier+
+              '">applied: '+alt+'</li>');
+          }
+          $('ul.applied_docs_summary_'+i).append(
+            '<li class="approved_validation_document applied_doc" alt="'
+            +identifier+'">applied: '+alt+'</li>');
+          applied=true;
+        }
+      }
+      //if None was selected, then change status to pending
+      for(r=0; r<rules.length; r++){
+        if(rules[r]=='<%=Validation::NONE_SELECTED%>'){
+          $('ul.applied_docs_summary_'+i+
+            ' li[class*=approved_validation_document][alt*='+identifier+']')
+            .remove();
+          for(x=0;x<types.length;x++){
+            $('li[alt=method_'+types[x]+'_'+i+'] ul li[alt='+identifier+']')
+              .remove();
+            if($('li[alt=method_'+types[x]+'_'+i+'] ul li').length==0)
+              $('li[alt=method_'+types[x]+'_'+i+']')
+              .removeClass("approved_validation_document").removeClass("crossout");
+          }
+        }
+      }
+    });
+    $('select[id*=validation_history_satisfies_validation_methods]').change(function(){
+      //prevent other options from being selected if None is selected
+      methods=$.get_selected_options(this, 'text');
+      if($.method_none_selected(methods)){
+        $(this).find(':selected').each(function(c, selected){
+          if($(selected).text()!='<%=Validation::NONE_SELECTED%>')
+            $(selected).attr('selected', false);
+        });
+      }
+      $(this).parents().filter('form').ajaxSubmit();
+      //get cert order index
+      i = $(this).attr('alt').split("_")[0];
+      //doc index
+      doc_i = $(this).attr('alt').split("_")[1];
+      rules_select = 'select[id*=validation_history_validation_rules][alt='+$(this).attr('alt')+']'
+      rules=$.get_selected_options(rules_select, 'val');
+      //highlight a selected method
+      $.unapprove_all_methods(methods, i);
+      //get selected values
+      num_docs = $('.val_docs_list_'+i).attr('alt');
+      //poll through each doc and apply each doc to the selected methods unless none is selected
+      for(mi=0; mi<num_docs; mi++){
+        rules_select = 'select[id*=validation_history_validation_rules][alt^='+i+']';
+        rules=$.get_selected_array_options(rules_select, mi, 'val');
+        selects = 'select[id*=validation_history_satisfies_validation_methods][alt^='+i+']';
+        methods = $.get_selected_array_options(selects, mi, 'text');
+        if(!$.method_none_selected(rules)){
+          for(m=0; m<methods.length; m++){
+            for(ri=0; ri<rules.length; ri++){
+              alt=$($(rules_select)[mi]).parents().find('span.doc_filename').attr('alt');
+              identifier = alt+'_'+$($(rules_select)[mi]).attr('alt');
+              method = 'method_'+methods[m]+'_'+i;
+              $('li[alt*='+method+'][class*=rule_'+rules[ri]+']')
+                .addClass("approved_validation_document").addClass("crossout");
+              $('li[alt*='+method+'][class*=rule_'+rules[ri]+'] ul')
+                .append('<li class="applied_doc tree-connect" alt="'+
+                identifier+'">applied: '+alt+'</li>');
+            }
+          }
+        }
+      }
+    });
+    var show_documents=true;
+    $(':radio[name*=has_documents]').click(function(){
+      if($(this).val()=="false"){
+        show_documents=false;
+        $('#documents_upload_section').hide();
+        $('#button_container').fadeIn();
+      }
+      else{
+        show_documents=true;
+        $('#documents_upload_section').show();
+        $('#button_container').fadeOut();
+      }
+    });
+    $('.has_csr_container').click(function(){
+      $(this).siblings().filter(':radio[name*=has_documents]').click();
+    });
+    $(':radio[name*=has_documents][value=true]').click();
+  });
+});
+</script>

@@ -1,0 +1,3 @@
+page.jquery do |jquery|
+  jquery["##{@line_item.model_and_id}"].remove
+end

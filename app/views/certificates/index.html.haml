@@ -1,0 +1,32 @@
+-content_for :title, "SSL Certificate Products"
+#certificate_listing
+  %table(cellspacing="0")
+    %tr
+      %td(colspan=2)
+        %h3
+          =link_to 'single domain ssl certificates', single_domain_certificates_url
+      %td(colspan=2)
+        %h3
+          =link_to 'wildcard and exchange (ucc) ssl certificates', wildcard_or_ucc_certificates_url
+    -@certificates.each_with_index do |c,i|
+      -if i % 2==0
+        %tr
+      %td(valign='top' height='128')
+        %a(href="#{certificate_url :id=>c.product_root}")
+          =image_tag(c.icons["main"], :class=> (c.product_root =~ /ev/) ? 'bordered_prod' : '')
+      %td(valign='top')
+        %a(href="#{certificate_url :id=>c.product_root}")
+          .summary=c.description['summary']
+          .title=c.title
+          .starting_at
+            -unless c.product_root=='free'
+              starting at
+            -else
+              get for
+            =pricing(c)
+        .more_info
+          =link_to image_tag('more_info_sm_bl.gif', :title=>'click to see this certificate'), certificate_url(c.product_root)
+          -unless c.product_root=='free'
+            =link_to image_tag('buy_sm_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(c.product_root)
+          -else
+            =link_to image_tag('get_sm_bl.gif', :title=>'click to get this certificate'), buy_certificate_url(c.product_root)

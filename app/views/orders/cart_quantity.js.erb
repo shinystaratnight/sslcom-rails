@@ -1,0 +1,11 @@
+(function($) {
+  <%=render :partial => "adjust_totals" -%>
+  <% if current_order.line_items.size !=0 -%>
+    $("#<%= @line_item.model_and_id%> input:button").attr({disabled:"disabled"});
+    $("#<%= @line_item.model_and_id%> input:button").attr({disabled:"disabled"});
+  <% else -%>
+    <% @item_classes.each do |item_class| -%>
+      $("[id^=<%= item_class%>_] input:button").attr({disabled:""});
+    <%end-%>
+  <% end -%>
+})(jQuery);

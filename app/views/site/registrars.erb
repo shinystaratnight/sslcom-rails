@@ -1,0 +1,65 @@
+<%
+title=program="SSL.com Registrar Reseller"
+main_title="SSL.com Solutions For Registrars"
+sub_title="Private label of ssl certificates and build your business"
+main_image=image_tag("domains.jpg", :title=>'partner up with SSL.com',
+  :alt=>"#{program}", :title=>"#{program}", :class=>'industry_reseller')
+
+benefits = [
+  "leverage volume #{link_to "discounted pricing", reseller_tiers_url}
+    to increase savings and cash flow",
+  "private label your ssl certificate offerings",
+  "advanced ssl.com certificate management with reporting",
+  "patent pending #{link_to "site seal, site report and document artifacts
+  management", details_site_seals_path}"]
+
+summary="Take advantage of
+ #{link_to "reseller pricing", reseller_tiers_url}
+  while leveraging the most advanced
+  online ssl certificate management system. Expedite issuance and
+  installation of ssl certificates by overseeing the validation process.
+  Seamlessly integrate ssl.com certificates into your product line
+  by integrating with SSL.com's fully tested
+  #{link_to "RESTful API", :controller=>'site', :action=>'restful_api'}."
+
+descriptions=[
+  "As a hosting provider,
+  your customers demand fast response times while expecting the highest value.
+  SSL.com provides all of this and more to you and your customers. Don't let ssl
+  certificate acquisition and installation be the bottleneck.",
+
+  "Once you are approved as a #{program}, you
+  gain full independence over the validation process to expedite the process
+  flow so that your customers are up and running in no time. Since your
+  organization handles the entire process, you're customers can focus on
+  what matters to them without the need to get involved with the ssl
+  certificate process.",
+
+  "Maintaining and managing your customer's ssl.com certificates require an
+  advanced online management tool. With SSL.com's ssl certificate
+  management portal,
+  you control who receives the certificates, receipts, and
+  expiration reminders (or even when the reminders are sent).
+  You also get advanced reporting and automated certificate processing in
+  the event you need to have a certificate reissued or revoked.",
+
+  "In addition to advanced ssl certificate management, you get administrative
+  level control capabilities over your customer's
+  #{link_to "SSL.com Smart SeaLs, Site Reports, and Smart SeaL Artifacts",
+  details_site_seals_path}. As a #{program},
+  you get access to SSL.com's patent pending
+  automated Business Authentication Engine which makes the validation process
+  for you and your customers effortless.",
+
+  "Becoming a #{program} is as easy as signing up and selecting
+  a discounting tier to join. There are no commitments, quotas or contracts,
+  and you have complete flexibility in selecting which
+  #{link_to "ssl.com products", certificates_url} you want to offer. Brand
+  your own ssl certificate products through SSL.com landing pages or
+  integrate ssl certificates into your product offering through SSL.com's
+  RESTful api."]
+%>
+<%=render :partial=>"program", :locals=>{:title=>title, :main_title=>main_title,
+  :sub_title=>sub_title, :benefits=>benefits, :descriptions=>descriptions,
+  :main_image=>main_image, :summary=>summary
+}%>

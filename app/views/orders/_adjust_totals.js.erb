@@ -1,0 +1,2 @@
+  $("#cart_size").text("<%= pluralize current_order.line_items.size, 'items'%> in cart");
+  $("#cart_total").text("<%= cart_total_price %>");

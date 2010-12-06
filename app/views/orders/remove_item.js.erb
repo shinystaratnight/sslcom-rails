@@ -1,0 +1,4 @@
+(function($) {
+  $("#<%=@line_item.model_and_id%>").fadeOut('slow', function(){$(this).remove();});
+  <%= render :partial => "adjust_totals" -%>
+})(jQuery);

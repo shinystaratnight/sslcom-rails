@@ -1,0 +1,12 @@
+-content_for :title, "Edit reseller profile information"
+=render :partial => '/resellers/index_scripts'
+-@reseller = @ssl_account.reseller
+.order_container
+  %h3 Edit Reseller Profile Information
+  =error_messages_for :ssl_account
+  -form_for @ssl_account, :url=>ssl_account_path do |s|
+    -s.fields_for :reseller, @reseller do |f|
+      #stylized.default_form
+        =render :partial => "/resellers/form", :locals => {:f=>f}
+      #button_container
+        #next_submit=image_submit_tag "bl_submit_button.gif"

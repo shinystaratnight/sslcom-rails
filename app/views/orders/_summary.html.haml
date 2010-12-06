@@ -1,0 +1,13 @@
+%table#summary
+  %tr
+    %td Min expense
+    %td.amount
+      = min.format :with_currency
+  %tr
+    %td Max expense
+    %td.amount
+      = max.format :with_currency
+  %tr
+    %td Avg expense
+    %td.amount
+      = avg.format :with_currency

@@ -1,0 +1,22 @@
+#main_content
+  %div{:style=>"float: right; width: 700px; clear: both;"}
+    SSL Account Deposit Details
+    #deposit_ref_num="Reference Number: #{h @deposit.reference_number}"
+    #deposit_date="Date of Deposit: #{h @deposit.created_at}"
+    #deposit_description="Description: #{h @deposit.description}"
+    #deposit_method Payment Method: Credit Card
+    #credit_card_owner="Name on Card: #{h @billing_profile.full_name}"
+    #credit_card_number="#{h @billing_profile.credit_card}: xxxx-xxxx-xxxx-#{h @billing_profile.last_digits}"
+    #credit_card_amount="Amount: #{h @deposit.amount.format :with_currency}"
+    #ip_address="Customer IP Address: #{request.remote_addr}"
+
+    -unless @order.blank?
+      #order
+        Order Details
+        #order_ref_num="Reference Number: #{h @order.reference_number}"
+        #order_date="Date of Order: #{h @order.created_at}"
+        #order_description="Description: #{h @order.description}"
+        #order_amount="Amount: #{h @order.amount.format :with_currency}"
+
+    #account
+      #available_funds="Available Funds in Nutcash Account: #{h @account_total.amount.format :with_currency}"

@@ -1,0 +1,32 @@
+-@running_total = 0
+.yui-b
+  .box
+    = render :partial=>'/affiliates/management'
+#yui-main
+  .yui-b
+    .box.hfeed
+      %h3
+        ="Sales Report for ".l + @affiliate.organization
+    -if @line_items.blank?
+      %div{:style=>"text-align:center;height:400px;",:class=>"font-size-15"}= "There are currently no orders to display".l
+    -else
+      %table#sales_report_table
+        %thead
+          %tr
+            %td Id
+            %td Link Code Id
+            %td Date/Time
+            %td Studio
+            %td Item
+            %td Sale Amount
+            %td Earned Commission
+            %td Balance
+        %tbody.striped_tr
+          =render :partial => "affiliate_line_item", :collection => @line_items, :as => :line_item
+        %tfoot
+          %tr#sales_total_row
+            %td{:colspan=>6}
+            %td.sales_total
+              ="Total".l
+            %td.sales_total
+              =Money.new(@running_total).format

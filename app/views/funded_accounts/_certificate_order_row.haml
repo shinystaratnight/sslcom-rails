@@ -1,0 +1,21 @@
+%tr.line_item
+  %td.description
+    =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
+    -if cert.subject
+      (
+      %em>=cert.subject
+      )
+  %td.quantity
+    =cert.quantity || "1"
+  %td.price= cert.price.format
+-if cert.migrated_from_v2? && !cert.v2_line_items.empty?
+  -cert.v2_line_items.each do |item|
+    %tr.line_item
+      %td.description.subitem= item
+      %td(colspan='2')
+-order_line_items(cert).each do |item|
+  %tr.line_item
+    %td.description.subitem= item
+    %td(colspan='2')
+
+

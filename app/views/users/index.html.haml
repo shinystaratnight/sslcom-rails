@@ -1,0 +1,62 @@
+-title = "User Management"
+-content_for :title, title
+=render :partial => 'index_scripts'
+#search_bar
+  -form_tag :search_users, :method=>:get do
+    username or email
+    =text_field_tag :search, @search
+    =submit_tag 'search'
+#validations
+  %table(cellspacing="0")
+    -if will_paginate @certificate_orders
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @certificate_orders
+    %caption
+      =title
+      =will_paginate @users
+    %tr.heading_row
+      %td
+      %th.name(scope="col")Username
+      %th(scope="col") Email Address
+      %th(scope="col") Account Type
+      %th(scope="col") Created
+      %th(scope="col") Last Login
+      %th(scope="col") Status
+    -@users.each do |u|
+      -unless u==current_user
+        %tr
+          %td.dropdown=image_tag 'expand.png'
+          %td.name.expandable=u.login
+          %td.expandable=u.email
+          %td.expandable=u.role_symbols.join("/").or_else("user")
+          %td.expandable=u.created_at.strftime("%b %d, %Y")
+          %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
+          -us, us_class=user_status(u)
+          %td.expandable.validation_status_message(class="#{us_class}" colspan="2")=us
+        %tr.hidden.expanded
+          %td(colspan="6")
+            .certificate_details
+              -form_for u, :url=>admin_update_user_url(u) do |f|
+                %table(cellspacing="0")
+                  %tbody
+                    %tr
+                      %td(colspan="6")
+                        .half_width_box
+                          %ul
+                            %li
+                              %strong manage account
+                            %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                            %li=link_to 'user dashboard', admin_show_user_path(u)
+                            %li=link_to 'edit email address', edit_email_user_url(u)
+                            %li=link_to 'change password', edit_password_user_url(u)
+                        .half_width_box
+                          %ul
+                            %li
+                              %strong adjust status
+                            %li
+                              =f.radio_button :status, 'enabled'
+                              enabled
+                            %li
+                              =f.radio_button :status, 'disabled'
+                              disabled

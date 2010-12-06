@@ -1,0 +1,11 @@
+<%= error_messages_for 'billing_profile' %>
+<h3>Purchase</h3>
+Order Total: <%=cart_total_price%>
+<% form_for :billing_profile, @billing_profile, 
+  :url => { :action => "create" } do |form| %>
+  <%= render :partial => "form", :locals => { :form => form } %>
+
+  <div class="form_row">  
+    <%= submit_tag "Continue >>", :class => "submit" %> 
+  </div>
+<% end %>

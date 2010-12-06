@@ -1,0 +1,78 @@
+-unless is_receipt?
+  :javascript
+    jQuery(function($) {
+      $(document).ready(function() {
+        $.empty_out_cart();
+      });
+    });
+-title = is_receipt? ? "Show Order Transaction" : "Order Was Successful"
+-content_for :title, title
+=render(:partial => 'shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 4]}) if @reseller_initial_deposit
+-if @certificate_order
+  -pos=@certificate_order.preferred_payment_order=='prepaid' ? 3 : 4
+  =(order_progress_indicator(pos, @certificate_order.certificate)) unless is_receipt?
+.order_container
+  -if @deposit && !@deposit.receipt
+    %p
+      A deposit confirmation email has been sent to the following
+      \#{pluralize(current_user.ssl_account.receipt_recipients.count, 'recipient')}:
+      \#{current_user.ssl_account.receipt_recipients.join(", ")}.
+  -if @order && !(@order.receipt || @order.deposit_mode)
+    %p
+      A confirmation email for your certificate order has been sent to the
+      following #{pluralize(@certificate_order.confirmation_recipients.count, 'recipient')}:
+      \#{@certificate_order.confirmation_recipients.join(", ")}.
+    %p
+      Also, the order receipt has been sent to the following
+      \#{pluralize(@certificate_order.receipt_recipients.count, 'recipient')}:
+      \#{@certificate_order.receipt_recipients.join(", ")}.
+    %p
+      Once processing is completed, your certificate order will be sent to:
+      \#{@certificate_order.processed_recipients.join(", ")}.
+  -if is_receipt?
+    %h3=title
+  -if @certificate_order
+    -if current_user.is_admin?
+      -u=@certificate_order.ssl_account.users.last
+      %p
+        %em admin only:
+        =link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+    -if @certificate_order.is_unused_credit?
+      %p
+        To finish processing this certificate order,
+        =link_to 'click here.', edit_certificate_order_path(@certificate_order)
+    -else
+      %p
+        To view the progress or status of this certificate order,
+        =link_to 'click here.', @certificate_order
+  #completed_order_results
+    -if @deposit
+      #deposit_details.striped_divs
+        %h3.order_results_header SSL Account Deposit Details
+        #deposit_ref_num
+          reference number:
+          %span=h @deposit.reference_number
+        #deposit_date
+          date of deposit:
+          %span=h @deposit.created_at
+        #deposit_description
+          description:
+          %span=h @deposit.description
+        #deposit_method
+          payment method:
+          %span=h @deposit.line_items.first.sellable.payment_method
+        #credit_card_owner
+          name on card:
+          %span=h @deposit.line_items.first.sellable.full_name
+        #credit_card_number
+          =h @deposit.line_items.first.sellable.credit_card+":"
+          %span xxxx-xxxx-xxxx-#{h @deposit.line_items.first.sellable.last_digits}
+        #credit_card_amount
+          load amount:
+          %span=h @deposit.amount.format :with_currency
+    -if @order && (@order.cents > 0 or @order.is_free?)
+      =render :partial=>'/orders/order_report'
+    -unless is_receipt?
+      #available_funds
+        %h3.order_results_header Available Funds in SSL Account
+        #available_funds_amount=h ssl_account.funded_account.amount.format :with_currency

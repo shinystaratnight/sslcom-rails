@@ -1,0 +1,15 @@
+SSL Deposit Confirmation #<%=@deposit.reference_number%>
+
+Dear <%="#{@ssl_account.reseller.first_name} #{@ssl_account.reseller.last_name}"%>,
+
+The following deposit has been posted to your SSL account:
+
+Date: <%=@deposit.created_at.strftime("%B %d, %Y %T")%>
+Reference Number: <%=@deposit.reference_number%>
+Description: <%=@deposit.description%>
+Method: <%=@deposit.billing_profile.credit_card%>
+Name on Card: <%=@deposit.billing_profile.full_name%>
+Card Number: xxxx-xxxx-xxxx-<%=@deposit.billing_profile.last_digits%>
+Amount: <%=@deposit.amount.format :with_currency%>
+
+<%=render(:partial=>"support_contact")%>

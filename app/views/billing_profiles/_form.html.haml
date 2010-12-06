@@ -1,0 +1,60 @@
+-today = Date.today
+#credit_card_owner
+  .subheading Billing Information
+  -for column in BillingProfile::BILLING_INFORMATION_COLUMNS
+    -required = BillingProfile::REQUIRED_COLUMNS.include? column
+    .clearfix
+      -if column == "country"
+        =country_select_field_for form, column, BillingProfile::TOP_COUNTRIES, {:format=>"no_div", :required=>required}, {}
+      -else
+        =text_field_for form, column, (BillingProfile::EXTENDED_FIELDS.include? column)? ADDRESS_FIELD_SIZE : nil, nil, :format=>"no_div", :required=>required
+#credit_card_details
+  .subheading Credit Card Information
+  .clearfix
+    = credit_card_select_field_for(form, :credit_card.to_s, {:format=>"no_div", :class=>"form_row class_billing_profile_"+:credit_card.to_s, :format=>"table", :required=>required}, {}){image_tag('logo_cards_150x26.gif', :style=>'vertical-align: middle;margin-left: 6px;')}
+  .clearfix
+    = text_field_for form, :card_number.to_s, nil, nil, :class=>"form_row class_billing_profile_"+:card_number.to_s, :format=>"table", :required=>required
+  .clearfix
+    %label{:for=>"expiration"} Expiration *:
+    = select_month today, :field_name => "expiration_month", :use_month_numbers => true, :prefix => "billing_profile"
+    = select_year today, :field_name => "expiration_year", :start_year => today.to_formatted_s("%Y").to_i, :end_year => today.to_formatted_s("%Y").to_i + 10, :prefix => "billing_profile"
+  .clearfix
+    = text_field_for(form, :security_code.to_s, 4, nil, :class=>"form_row class_billing_profile_"+:security_code.to_s, :format=>"table", :required=>required)
+    = link_to image_tag('question_mark.png'), '#what_is_security_code', :rel => 'prettyPhoto', :id => 'what_is_security_code_link'
+#what_is_security_code
+  %table#what_is_security_code_table{:align=>"center"}
+    %tbody
+      %tr
+        %td{:colspan=>"2"} Security Code
+      %tr
+        %td{:colspan=>"2"}
+          The card security code
+          is a unique three or four-digit number printed on your
+          debit/credit card. The number is not embossed on the card so
+          that it cannot be printed on receipts - making it difficult
+          for anyone other than the genuine cardholder to know it.
+      %tr
+        %td{:colspan=>"2"} &nbsp;
+      %tr
+        %td= image_tag 'card.gif'
+        %td
+          Some cards, many UK-issued
+          cards for example, have a three-digit number printed at the
+          top of the signature strip on the reverse of the card.
+      %tr
+        %td= image_tag 'amex.gif'
+        %td
+          Others, American Express
+          cards for example, have a four-digit number printed on the
+          front of the card, above the account number.
+      %tr
+        %td{:colspan=>"2"} &nbsp;
+      %tr
+        %td{:colspan=>"2"} Billing Address
+      %tr
+        %td{:colspan=>"2"}
+          This should be the address
+          to which your card statement is sent. It must match the
+          address held by your card issuer exactly. If it does not,
+          the retailer may decline your purchase, or defer acceptance
+          of your payment and seek further proof of your address.

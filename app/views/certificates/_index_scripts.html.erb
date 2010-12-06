@@ -1,0 +1,237 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $.update_balance_after_load = function(){
+    var bracket = $.toMoneyFloat($('#funded_account_amount').val());
+    if(bracket == null || bracket == "" || bracket == ".")
+      bracket = 0;
+    var current_balance = $.toMoneyFloat($('#current_balance').text());
+    $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
+  };
+  $.domains = function(textArea){
+    textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
+      replace('_','').
+      replace(/(\s+|^)([^<%='\*' if @certificate.allow_wildcard_ucc?%>\w])/g, "$1").
+      replace(/[^\s\n\w\.\-<%='\*' if @certificate.allow_wildcard_ucc?%>]/g, "");
+    <%if @certificate.allow_wildcard_ucc?-%>
+      textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
+      textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
+    <%end-%>
+    return textArea.value.split(/\s/);
+  };
+  $.adjust_domain_pricing = function(textArea){
+      domains = $.domains(textArea);
+      if(domains.indexOf("")!=-1)//check if a blank was caught and drop it
+        domains.pop();
+      $('.order_amount_desc span').text((domains.length > 3) ? domains.length : 3);
+      if(domains.length > <%=Certificate::NUM_DOMAINS_TIERS%>)
+        $.update_order_pricing();
+  };
+  $.update_order_pricing = function(){
+    domains_cost = 0.0
+    server_license_cost = 0.0;
+    duration_index = $(':radio[name*=duration]:checked').val();
+    duration_cost = durations[duration_index-1];
+    <%if @certificate.is_ucc? || @certificate.is_wildcard?%>
+      server_license_cost = licenses[duration_index-1] * $('#certificate_order_server_licenses').val();
+      included = "";
+      if(server_license_cost==0)
+        included = " (included)";
+      $('#server_license_cost_ea').text(server_license_cost.toFixed(2)+included);
+      <%if @certificate.is_ucc?%>
+        if(domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>){
+          num_domains_buy = domains.length-<%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
+          domains_cost = durations[duration_index-1][1]*num_domains_buy;
+        }
+        $('#first_domain_tier_price').text(durations[duration_index-1][0].toFixed(2));
+        $('#second_domain_tier_price').text(durations[duration_index-1][1].toFixed(2));
+      <%end%>
+    <%end%>
+    $('#calculated_price').text('$'+((parseFloat(duration_cost)+
+      parseFloat(domains_cost)+parseFloat(server_license_cost)).toFixed(2))+
+      " USD");
+  };
+    var test=0;
+    var show_csr=true;
+  $.change_cart_items = function(add_or_remove){
+    add = (add_or_remove=="add") ? true : false;
+    cart_qty_indx=null;
+    cart = $.cookie("cart");
+    affiliate = $.cookie("aid");
+    affiliateLineItem = $.cookie("aid_li");
+    if(cart==null)
+      cart="";
+    if(affiliateLineItem==null)
+      affiliateLineItem="";
+    //structure of a certificate order in the cart is as follows
+    //product,num_years,num_servers,domains,quantity:
+    configured = $('#certificate_product').val() + "," +
+      $(':radio[name*=duration]:checked').val() + "," +
+      <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
+      $('#certificate_order_server_licenses').val() + "," +
+      <%else%>
+      "0," +
+      <%end%>
+      <%if @certificate.is_ucc?%>
+      $.domains($('textarea[id$=domains]')[0]).join(" ") + ",";
+      <%else%>
+      "0,";
+      <%end%>
+    if(cart.indexOf(configured)==-1)
+      if(add)
+        cart_qty_indx = [cart+configured + "1:", 1, 0]; //line item, qty, index
+      else
+        return;
+    else{
+      indx=null;
+      remove_af=false;
+      lis=cart.split(/:/);
+      lis.remove(lis.find(""));
+      $(lis).each(function(index){
+        if(this.indexOf(configured)!=-1){
+          indx=index;}});
+      qty = lis[indx].match(/\d+$/)[0];
+      if(add)
+        lis[indx]=lis[indx].replace(/\d+$/, ++qty);
+      else
+        if(qty==1){
+          lis.remove(indx);
+          remove_af=true;
+        }
+        else
+          lis[indx]=lis[indx].replace(/\d+$/, --qty);
+      if(lis.join(":")=="")
+        items = "";
+      else
+        items = lis.join(":")+ ":";
+      cart_qty_indx=[items, qty, indx, remove_af];
+    }
+    cart=cart_qty_indx[0];
+    qty=cart_qty_indx[1];
+    indx=cart_qty_indx[2];
+    remove_af=cart_qty_indx[3];
+    if(qty==1 && add)
+        affiliateLineItem=affiliateLineItem+
+        ((affiliate==null)?++test:affiliate)+":";
+    else if(remove_af==true){
+          lis=affiliateLineItem.split(":");
+          lis.remove(lis.find(""));
+          lis.remove(indx);
+          affiliateLineItem=(lis.join(":")+":");}
+    if(affiliateLineItem==":")
+      affiliateLineItem="";
+    $.cookie("cart", cart, { expires: <%=AppConfig.cart_cookie_days%>, path: '/'});
+    $.cookie("aid_li", affiliateLineItem, { expires: <%=AppConfig.affiliate_cookie_days%>, path: '/'});
+    <%#*$(this).attr("disabled", "disabled");%>
+    <%#*$.adjust_items_in_cart();%>
+    <%#*var items = "items";%>
+    <%#*var howMany = ($.cookie("cart")==null)? 0 : $.cookie("cart").split(":").length-1;%>
+    <%#*if(howMany==1)%>
+      <%#*items = "item";%>
+    <%#*$("#cart_size").text(howMany.toString()+" "+items+" in cart")%>
+  };
+
+  $(document).ready(function() {
+    domains = [];
+    durations = new Array(<%=@certificate.num_durations%>);
+    <%c = -1%>
+    <%@certificate.num_durations.times do |i| -%>
+      <%if @certificate.is_ucc?-%>
+        durations[<%=i%>] = new Array(<%=Certificate::NUM_DOMAINS_TIERS%>);
+        <%Certificate::NUM_DOMAINS_TIERS.times do |j|%>
+            durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains[c+=1].price*((j==0)?3:1))%>;
+        <%end%>
+      <%else -%>
+        durations[<%=i%>] = <%=@certificate.items_by_duration[i].price%>;
+      <%end -%>
+    <%end -%>
+    <%if @certificate.is_ucc? || @certificate.is_wildcard?%>
+      licenses = new Array(<%=@certificate.num_durations%>);
+      <%@certificate.num_durations.times do |i| -%>
+        licenses[<%=i%>] = <%=@certificate.items_by_server_licenses[i].price%>;
+      <%end -%>
+    <%end%>
+    $('textarea[id$=domains]').keyup(function () {
+      $.adjust_domain_pricing(this);
+    });
+    $(':radio[name*=duration]').click(function(){
+      duration_index = $(':radio[name*=duration]:checked').val();
+      $.update_order_pricing();
+    });
+    $('#certificate_order_server_licenses').click(function(){
+      $.update_order_pricing();
+    });
+    var profile_id = "";
+    $('#expand_register_card').toggle(
+      function(event){
+          $('#register_card_form').fadeIn();
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
+          $(event.target).text('Click here to hide form');
+          profile_id = $(':radio[id*=funded_account_funding_source]:checked').attr("id");
+          $(':radio[id*=funded_account_funding_source]').attr("checked","");},
+      function(event){
+          $('#register_card_form').fadeOut();
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+          $(event.target).text('Click here to add a new credit card')
+          $(':radio[id*='+profile_id+']').attr("checked","checked")}
+      );
+    $.last_delete_clicked=function(){
+      if($('.delete_billing_profile').size() <= 1)
+        $('.funding_sources_head, #existing_credit_cards').empty();
+      $('#register_card_form').fadeIn();
+    };
+    $('#funded_account_amount').keyup(function () {
+      amount = this.value
+      this.value = this.value.replace(/((\.\d\d).*)/g, "$2").replace(/[^0-9\.]/g,'');
+      $.update_balance_after_load();
+    });
+    $('#register_card_form').click(function(){
+      $(':radio[id*=funded_account_funding_source]').attr("checked","");
+    });
+    $(':radio[id*=funded_account_funding_source]').click(function(){
+      $('#register_card_form').fadeOut();
+    });
+    $('.has_csr_container').click(function(){
+      $(this).siblings().filter(':radio[name*=has_csr]').click();
+    });
+    $(':radio[name*=has_csr]').click(function(){
+      if($(this).val()=="false"){
+        show_csr=false;
+        $('#csr_section').hide();
+        $('#form_progress_indicator').fadeOut();
+      }
+      else{
+        show_csr=true;
+        $('#csr_section').show();
+        $('#form_progress_indicator').fadeIn();
+      }
+    });
+    <%unless @certificate_order.is_unused_credit?%>
+    $('form').submit(function(){
+      //add to cart if csr is not ready
+      if($(':radio[name*=has_csr]').length!=0 &&
+        $(':radio[name*=has_csr]:checked').val()=="false"){
+        $('textarea[name*=signing_request]').remove();
+        $.change_cart_items("add");
+        window.location="<%=show_cart_orders_url%>";
+        return false;}
+    });
+    if($(':radio[name*=has_csr]:checked').val()=="false"){
+      show_csr=false;
+      $('#csr_section').hide();
+      $('#form_progress_indicator').hide();
+    }
+    $('.add_to_cart_button').click(function(){
+      $.change_cart_items("add");
+    });
+    $('.remove_from_cart_button').click(function(){
+      $.change_cart_items("remove");
+    });
+    <%if @certificate.is_ucc?-%>
+      $.adjust_domain_pricing($('textarea[id$=domains]')[0]);
+    <%end-%>
+    $.update_order_pricing();
+    <%end%>
+  });
+});
+</script>

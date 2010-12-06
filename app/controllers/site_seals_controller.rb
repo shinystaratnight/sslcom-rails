@@ -1,0 +1,136 @@
+class SiteSealsController < ApplicationController
+  layout 'application'
+  filter_access_to :all
+  filter_access_to :update, :admin_update, :attribute_check=>false
+  filter_access_to :site_report, :artifacts, :details, :require=>:read
+
+  def search
+    index
+  end
+
+  # GET /site_seals
+  # GET /site_seals.xml
+  def index
+    p = {:page => params[:page]}
+    @site_seals = find_certificate_orders(:include=>:site_seal).
+      map(&:site_seal).uniq.select{|ss|!ss.is_disabled?}.paginate(p)
+    
+    respond_to do |format|
+      format.html { render :action => :index }
+      format.xml  { render :xml => @site_seals }
+    end
+  end
+
+  # GET /site_seals/1
+  # GET /site_seals/1.xml
+  def show
+    @certificate_order = CertificateOrder.
+      find_by_ref(params[:certificate_order_id], :include=>:site_seal)
+    @site_seal = @certificate_order.site_seal
+
+    respond_to do |format|
+      format.html # show.html.erb
+      format.xml  { render :xml => @site_seal }
+    end
+  end
+
+  # GET /site_seals/new
+  # GET /site_seals/new.xml
+  def new
+    @site_seal = SiteSeal.new
+
+    respond_to do |format|
+      format.html # new.html.erb
+      format.xml  { render :xml => @site_seal }
+    end
+  end
+
+  # GET /site_seals/1/edit
+  def edit
+    @site_seal = SiteSeal.find(params[:id])
+  end
+
+  # POST /site_seals
+  # POST /site_seals.xml
+  def create
+    @site_seal = SiteSeal.new(params[:site_seal])
+
+    respond_to do |format|
+      if @site_seal.save
+        flash[:notice] = 'SiteSeal was successfully created.'
+        format.html { redirect_to(@site_seal) }
+        format.xml  { render :xml => @site_seal, :status => :created, :location => @site_seal }
+      else
+        format.html { render :action => "new" }
+        format.xml  { render :xml => @site_seal.errors, :status => :unprocessable_entity }
+      end
+    end
+  end
+
+  # PUT /site_seals/1
+  # PUT /site_seals/1.xml
+  def update
+    @site_seal = SiteSeal.find_by_ref(params[:id])
+    respond_to do |format|
+      if @site_seal.update_attributes(params[:site_seal])
+        format.html { redirect_to(@site_seal) }
+        format.js   { render :json=>@site_seal.to_json}
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @site_seal.errors, :status => :unprocessable_entity }
+        format.js   { render :json=> @site_seal.errors.to_json}
+      end
+    end
+  end
+
+  def admin_update
+    @site_seal = SiteSeal.find_by_ref(params[:id])
+    @co = CertificateOrder.find params[:certificate_order]
+    respond_to do |format|
+      #allows us to bypass attr_protected. note this is admin only function
+      @site_seal.send :attributes=, params[:site_seal], false
+      if @site_seal.save
+        notify_customer if params[:email_customer]
+        format.html { redirect_to(@site_seal) }
+        format.js   { render :json=>@site_seal.to_json}
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @site_seal.errors, :status => :unprocessable_entity }
+        format.js   { render :json=> @site_seal.errors.to_json}
+      end
+    end
+  end
+
+  def site_report
+    @site_seal = SiteSeal.find_by_ref(params[:id])
+    unless @site_seal.is_disabled?
+      render :site_report, :layout=>"site_report"
+    else
+      render :disabled, :layout=>"site_report"
+    end
+  end
+
+  def artifacts
+    @site_seal = SiteSeal.find_by_ref(params[:id])
+    unless @site_seal.is_disabled?
+      render :artifacts, :layout=>"site_report"
+    else
+      render :disabled, :layout=>"site_report"
+    end
+  end
+
+  private
+
+  def notify_customer
+    @co.processed_recipients.each do |c|
+      if @site_seal.fully_activated?
+        OrderNotifier.deliver_site_seal_approve(c, @co)
+      else
+        OrderNotifier.deliver_site_seal_unapprove(c, @co)
+      end
+    end
+  end
+
+end

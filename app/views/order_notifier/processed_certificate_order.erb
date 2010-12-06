@@ -1,0 +1,26 @@
+<%if @contact.is_a? Contact -%>
+Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
+
+<%end -%>
+Thank you for placing your order. The necessary background checks have been successfully completed and we are pleased to announce that your SSL.com <%=@certificate_order.certificate.description["certificate_type"]%> Certificate for <%=@certificate_order.subject%> has been issued.
+
+We strongly recommend that you follow the installation instructions at http://www.ssl.com/support to ensure that your certificate and webserver are correctly configured.
+
+Attached to this email you should find a .zip file containing:
+
+<%@certificate_order.parse_certificate_chain.each do |cc|%>
+    * <%=cc[1]%> - <%=cc[0]-%>
+<%end%>
+    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
+
+You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> for <%=@certificate_order.subject%> in text format at the bottom of this email.
+
+When you have installed your SSL.com Certificate, be sure to display the secure site seal. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services.
+
+Get your secure site seal by clicking here.
+
+Should you have any questions or issues you would like to discuss, please do not hesitate to contact us.
+
+<%=render(:partial=>"support_contact")%>
+
+<%=@signed_certificate.body%>

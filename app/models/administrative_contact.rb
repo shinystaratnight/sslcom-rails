@@ -1,0 +1,2 @@
+class AdministrativeContact < CertificateContact
+end

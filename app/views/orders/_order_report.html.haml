@@ -1,0 +1,27 @@
+#order_details
+  %h3.order_results_header Order Details
+  #order_ref_num 
+    Reference Number:
+    %span=h @order.reference_number
+  #order_date
+    Date of Order:
+    %span=h @order.created_at
+  -unless @order.billing_profile.blank?
+    #credit_card_number
+      payment method:
+      %span xxxx-xxxx-xxxx-#{h @order.billing_profile.last_digits} (#{h @order.billing_profile.credit_card})
+    #credit_card_owner
+      name on card:
+      %span=h [@order.billing_profile.first_name, @order.billing_profile.first_name].join(", ")
+  -else
+    #credit_card_number
+      payment method:
+      -if @order.po_number
+        %span purchase order #{@order.po_number}
+      -elsif @order.quote_number
+        %span quote #{@order.quote_number}
+      -elsif current_user.ssl_account.is_registered_reseller?
+        %span funded account
+      -else
+        %span=@order.state
+  =render :partial=>'/funded_accounts/certificate_order_detail'

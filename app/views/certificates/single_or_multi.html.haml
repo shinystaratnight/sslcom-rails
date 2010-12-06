@@ -1,0 +1,46 @@
+-is_standard = current_page?(single_domain_certificates_url)
+-content_for :title, (is_standard) ? "Standard SSL Certificate Products" : "Wildcard and UCC SSL Certificate Products"
+%h3#p_standard_or_wildcard
+  -if is_standard
+    =link_to "click here for wildcard or ucc (multidomain) ssl certificates", wildcard_or_ucc_certificates_path
+  -else
+    =link_to "click here for single domain ssl certificates", single_domain_certificates_path
+-@certificates.sort{|a,b| a.display_order["index"] <=> b.display_order["index"]}.each do |cert|
+  .product_summary
+    .title 
+      #{cert.title}
+    .p_body(class="#{cert.is_ev? ? 'p_ev' : ''}")
+      %a(href="#{certificate_url(cert.product_root)}")
+        .p_image_container
+          %div(class="#{(cert.is_ev?) ? 'p_ev_image' : ''}")
+            =image_tag(cert.icons["main"])
+      .p_buy_certificate
+        -unless cert.product_root == 'free'
+          =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(cert.product_root)
+        -else
+          =link_to image_tag('get_bl.gif', :title=>'click to get this certificate'), buy_certificate_url(cert.product_root)
+      .p_description
+        %div(class="#{(current_user && current_user.ssl_account.is_registered_reseller?) ? 'reseller_p_starting_at' : 'p_starting_at'}")
+          -unless cert.product_root == 'free'
+            starting at
+          -else
+            get for
+          =pricing(cert)
+        %div=link_to 'click to learn more...', certificate_url(cert.product_root)
+      .p_points_container
+        .p_points
+          =cert.description["points"] unless cert.description.blank?
+          .p_point= link_to "...find out more", certificate_url(cert.product_root)
+    #comes_with_site_seal
+      #container
+        =image_tag cert.site_seal.preferred_seal_image
+        #description
+          Each #{cert.title} certificate comes with the following SSL.com
+          Secured Site Seal logo to be displayed on secured websites.
+          =link_to "Click here for details.", details_site_seals_path
+.p_footer
+  %h3#p_standard_or_wildcard
+    -if is_standard
+      =link_to "...looking for wildcard or ucc (multidomain) ssl certificates? click here.", wildcard_or_ucc_certificates_path
+    -else
+      =link_to "...looking for standard ssl certificates? click here.", single_domain_certificates_path

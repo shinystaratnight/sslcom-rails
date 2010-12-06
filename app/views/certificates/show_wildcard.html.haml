@@ -1,0 +1,49 @@
+-content_for :title, "About #{@certificate.title} Certificates"
+%h3#certificate_crumbs
+  =certificate_crumbs
+.leftcolb
+  .digital_signature_image_container
+    =image_tag "digital_signature.jpg"
+.right_product_desc
+  %h1
+    Secure multiple subdomains with one Wildcard SSL
+  %h2.product_description
+    Eliminate the hassle of managing multiple certificates
+  .product_description_buy_certificate
+    =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+  =render :partial=>'big_pricing'
+.bottom_product_desc
+  %p
+    Wildcard SSL certificates eliminate the need to install a separate digital
+    certificate for each subdomain by allowing you to use an unlimited number
+    of subdomains in the certificate. Any site that has a domain that matches
+    *.yourdomain.com (where * can be anything and yourdomain.com is any domain
+    with the wildcard certificate installed on) will be secured by a Wildcard
+    SSL digital certificate. And since Wildcard SSL is a high assurance ssl
+    certificate, it provides a high level of validation to your customers.
+  %p
+    With a 99.3% acceptance rate of browsers used on the Internet, your website
+    will not get confidence-killing popups that result from untrusted or
+    invalid SSL certificates. These popups scare potential customers away and
+    will result in lost sales. Our vetting process is simple, quick, and meets
+    the recommended requirements of the United States Department of Defense.
+    With each Wildcard SSL certificate, you are extending industry level
+    validation and encryption technology to each customer and transaction.
+  %p
+    SSL is an essential part of almost all electronic transactions involved in
+    transmitting sensitive data such as usernames and passwords, credit card
+    information, patient data and many other types of private material, and SSL
+    is also a key component of PCI-compliance which is mandated for
+    organizations wanting to accept credit card information. High Assurance SSL
+    certificates meet all the critieria above and adds more value.
+  %p
+    With each Wildcard SSL certificate you implement, you get the confidence
+    building SSL Secure Site Seal, a $125,000 performance guaranty, 24/7
+    telephone support staff, and unlimited reissuances for the life of the
+    certificate. We even offer a 30-day unconditional refund policy in the
+    event you change your mind about Wildcard SSL on your website. Start
+    building trust and secure your site today with a Wildcard SSL certificate.
+=render :partial=>'points_and_other_certs'
+.product_description_buy_certificate
+  =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+=render :partial=>'big_pricing'

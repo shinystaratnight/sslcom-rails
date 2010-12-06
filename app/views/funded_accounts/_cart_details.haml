@@ -1,0 +1,29 @@
+-certs ||= @certificate_orders
+-is_receipt ||= false
+%p.empty_cart_desc(class="#{certs.empty? ? '' : 'hidden'}")
+  Your shopping cart is currently empty.
+%table#order_details_table.multiple(cellspacing='0' class="#{is_receipt ? 'receipt' : ''}")
+  %tbody
+    %tr#heading_row
+      %th.description(scope='col') description
+      %th.quantity(scope='col') quantity
+      %th.center_align(scope='col') ea
+      %th.price(scope='col') price
+    =render :partial=>'/funded_accounts/cart_row', :collection=>certs, :locals=>{:is_receipt=>is_receipt}
+    %tr
+      %td.description.total_row total
+      %td#cart_total.price.total_row(colspan='3')= cart_total_price
+    -unless certs.empty? || is_receipt
+      %tr
+        %td.right_align(colspan='4')
+          %span.remove_from_cart#clear_cart clear cart
+-unless is_receipt
+  #button_container
+    -unless certs.empty?
+      #shop_more_checkout
+        =link_to image_tag('shop_more.gif'), certificates_url, :title=>"add more ssl certificates", :id=>:shop_more_img
+        =link_to image_tag('checkout.gif'), new_order_url, :title=>"checkout", :id=>:checkout_img
+    -else
+      #add_items
+        =link_to image_tag('add_items.gif'), certificates_url, :title=>"add ssl certificates", :id=>:add_items_img
+

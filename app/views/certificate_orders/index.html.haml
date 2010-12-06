@@ -1,0 +1,115 @@
+-content_for :title, "Certificate Order Management"
+=render :partial => 'index_scripts'
+#search_bar
+  -form_tag :search_certificate_orders, :method=>:get do
+    subject or ref#
+    =text_field_tag :search, @search
+    =submit_tag 'search'
+=render :partial=>'quick_links'
+#certificate_orders
+  %table(cellspacing="0")
+    -if will_paginate @certificate_orders
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @certificate_orders
+    %caption 
+      SSL Certificates Management
+      =will_paginate @certificate_orders
+    %tr.heading_row
+      %td
+      %th.name(scope="col")Subject
+      %th(scope="col") Status
+      %th(scope="col") Order Date
+      %th(scope="col") Expires
+      %th(scope="col") Action
+    -@certificate_orders.each do |co|
+      -next if co.order.blank?
+      -cc = co.certificate_content
+      -next if !co.is_unused_credit? && cc.csr.blank?
+      -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+      %tr
+        %td.dropdown=image_tag 'expand.png'
+        %td.name
+          =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
+        %td.status_message(class="#{status_class(cc)}")
+          #{status(cc)}
+        %td
+          =co.order.created_at.strftime("%b %d, %Y")
+        %td(class="#{expires_on_class(cc)}")
+          #{expires_on(cc)}
+        %td
+          #{action(co)}
+      %tr.hidden.expanded
+        %td(colspan="6")
+          .certificate_details
+            =render :partial=>'/certificate_orders/co', :object=>co
+            %table(cellspacing="0")
+              %tbody
+                %tr
+                  %td(colspan="6")
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong certificate contents
+                        -unless cc.blank?
+                          -if cc.signed_certificate.blank?
+                            -if cc.csr.blank?
+                              %li no certificate request found
+                            -else
+                              %li organization: #{cc.csr.organization}
+                              %li department: #{cc.csr.organization_unit}
+                              %li city: #{cc.csr.locality}
+                              %li state: #{cc.csr.state}
+                              %li country: #{cc.csr.country}
+                          -else
+                            %li organization: #{cc.signed_certificate.organization}
+                            %li department: #{cc.signed_certificate.organization_unit}
+                            %li city: #{cc.signed_certificate.locality}
+                            %li state: #{cc.signed_certificate.state}
+                            %li country: #{cc.signed_certificate}
+                        -unless co.is_unused_credit?
+                          %li=link_to "view certificate details", co
+                        -if current_user.is_admin?
+                          -u = co.ssl_account.users.last
+                          %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                        %li=link_to "view order transaction", co.order
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong contacts
+                        -unless cc.blank? || cc.certificate_contacts.blank?
+                          -CertificateContent::CONTACT_ROLES.each do |role|
+                            %li
+                              \#{role}:
+                              -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
+                              -unless ct.blank?
+                                =ct.first_name+" "+ct.last_name
+                              -else
+                                none
+                        -unless  cc.blank?
+                          %li
+                            =link_to 'create/edit contacts', certificate_content_contacts_url(cc)
+                    .certificate_details_box
+                      %ul
+                        %li
+                          %strong validation documentation
+                        -if co.description['validation_level'] == 'Class 1'
+                          %li n/a
+                        -else
+                          -unless co.validation.validation_histories.blank?
+                            -co.validation.validation_histories.each do |vh|
+                              %li
+                                =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                =vh.document_file_name.shorten(20, false)
+                          -else
+                            %li
+                              %em none submitted
+                          -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
+                            %li
+                              -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                -u=link_to 'upload', new_certificate_order_validation_url(co)
+                              -unless co.validation.validation_histories.blank?
+                                -m=link_to 'manage', edit_certificate_order_validation_url(co)
+                              -s=link_to 'status', certificate_order_validation_url(co)
+                              =[u,m,s].compact.join(" | ")

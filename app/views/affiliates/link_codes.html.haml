@@ -1,0 +1,31 @@
+.yui-b
+  .box
+    =render :partial=>'management'
+#yui-main
+  .yui-b
+    .box
+      %h3= "#{@affiliate.display_name}'s Link Codes"
+    %p
+      ="Creating your link codes is a fairly easy process, just append \"/afid#{@affiliate.id}\" to the end of any link on eroslife.com and paste this link ontoyour website."
+    %p
+      ="For instance, if you place \"/afid#{@affiliate.id}\" at the end of your profile link \"#{affiliate_url(@affiliate)}\", you will get \"#{affiliate_url(@affiliate)+"/afid"+@affiliate.id.to_s}\"."
+      You can then copy and paste this link onto your website. Once a visitor
+      clicks this link, your affiliate account will get credited for each clip
+      the visitor buys on the eroslife.com website.
+    %p
+      If you want to link to a specific resource on eroslife.com such as an
+      ="image, just append \"/afid#{@affiliate.id}\" to the end of the url."
+      ="So to link to the image "+image_tag('cart.jpg')+", you would copy and paste the image link"
+      ="http://www.eroslife.com/cart.gif/afid#{@affiliate.id} onto your website."
+    %p
+      ="As mentioned earlier, you can append the \"/afid#{@affiliate.id}\" parameter to any"
+      eroslife.com link so you can search for studio clips or feeds throughout
+      this site that you would like to link to on your site(s). Note that
+      some tools on eroslife.com will create the links for you automatically
+      ="so if you already see  \"/afid#{@affiliate.id}\" appended to the"
+      end of a link, there is no need to add it again. The system will simply
+      ="remove the extra  \"/afid#{@affiliate.id}\"s and your affiliate account"
+      will still be credited.
+    %p
+      Each referral link that you create will be tracked so you can view which
+      links are the most efficient at generating sales.

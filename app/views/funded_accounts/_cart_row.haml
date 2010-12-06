@@ -1,0 +1,25 @@
+-cert=cart_row
+-indx=cart_row_counter
+-is_receipt ||= false
+-cert_quantity = if !cert.line_item_qty.blank? : cert.line_item_qty; elsif is_receipt : cert.quantity; else nil; end;
+%tr.line_item(class="row_#{indx}")
+  %td.description
+    =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
+    -if cert.subject
+      (
+      %em>=cert.subject
+      )
+  -if cert_quantity
+    %td.quantity
+      %span(id="qty_#{indx}")=cert_quantity
+  -else
+    %td.quantity(style='width: 9.5em;')
+      =select_tag "qty_#{indx}", options_for_select((1..100).to_a, cert.quantity)
+      %span.remove_from_cart(id="remove_#{indx}") remove
+  %td.center_align(id="price_#{indx}")= cert.price.format
+  -cert_quantity ||= 1
+  %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
+-order_line_items(cert).each do |item|
+  %tr.line_item(class="row_#{indx}")
+    %td.description.subitem= item
+    %td(colspan='3')

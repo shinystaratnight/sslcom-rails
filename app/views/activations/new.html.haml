@@ -1,0 +1,11 @@
+-content_for :title, "Account activation"
+.user_session_format
+  %h3 Activate your account
+  %p Enter a new password that you will use to log onto the system and click the submit button. This will save your new password to your account and complete your account activation.
+  =error_messages_for :user
+  -form_for @user, :url => activate_path(@user.id), :html => { :method => :post } do |f|
+    #stylized.default_form
+      .subheading Assign password
+      =render :partial => "form", :object => f
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

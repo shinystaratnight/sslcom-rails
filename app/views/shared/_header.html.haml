@@ -1,0 +1,122 @@
+-unless current_user.blank?
+  - studio = current_user.studio unless current_user.studios.empty?
+  - affiliate = current_user.affiliates.first unless current_user.affiliates.empty?
+#hd.banner
+  #site_title.hd_dimensions
+    %div{:style=>"height:25px;"}
+      %h1
+        ="#{AppConfig.community_name}"
+      %div{:style=>'padding-top:5px;'}
+        #cart
+          ="#{image_tag 'cart.jpg', {:style=>'vertical-align: bottom;'}}"+"#{link_to pluralize(cart_items.size, "item")<<' in cart', {:controller => :orders, :action => :show_cart, :id => :current}, :id => 'cart_size'}"
+        -form_tag search_path, :method=>:get do
+          #search
+            -if show_studio_only?
+              %span#search_only_studio{:style=>'visibility: hidden;'}
+                =check_box_tag :search_studio, @studio.id
+                %span{:style=>'padding: 0px 3px 0px 0px;'} Search this studio only
+            =image_tag 'magnifier.png', :style=>'vertical-align: text-top;'
+            =text_field_tag :q, params[:q]
+            =select_tag :type, options_for_select([['videos', 'Release'],['images', 'Photo'], ['users','User'], ['studios', 'Studio'], ['blogs', 'Post']], params[:type])
+            =submit_tag "go"
+    %div{:style=>"padding-top:5px"}
+      #account
+        - if logged_in?
+          = render :partial => 'shared/user_menu'
+        - else
+          =:welcome_message.l(:login_link => (link_to :log_in.l, login_path), :signup_link => (link_to "Sign up".l, signup_path))
+      #nicemenu.nav
+        %ul
+          %li
+            %span.head_menu
+              = link_to "Home", home_path
+          - if current_user
+            %li
+              %span.head_menu
+                =link_to "My Profile".l, dashboard_user_path(current_user)
+                %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+              .sub_menu
+                -if current_user.admin?
+                  =link_to 'Admin dashboard'.l, admin_dashboard_path
+                =link_to "Dashboard".l, dashboard_user_path(current_user)
+                =link_to "View profile".l, user_path(current_user)
+                =link_to "Blog".l, user_posts_path(current_user)
+                =link_to "Photos".l, user_photos_path(current_user)
+                =link_to "Friends".l, accepted_user_friendships_path(current_user)
+                =link_to "Edit profile".l, edit_user_path(current_user), :class => "item_line"
+                =link_to "Edit settings".l, edit_account_user_path(current_user)
+                =link_to "Manage blog".l, manage_user_posts_path(current_user)
+                =link_to "Manage friends".l, user_friendships_path(current_user)
+                =link_to "Manage subscriptions".l, user_studio_subscriptions_path(current_user)
+                =link_to "Add new image".l, new_user_photo_path(current_user)
+                =link_to "Show cart".l, {:controller => :orders, :action => :show_cart, :id => :current}, :class => "item_line"
+                =link_to_checkout unless link_to_checkout.blank?
+                =link_to "Load funds".l, allocate_funds_path
+                =link_to "Orders history".l, user_orders_path(current_user)
+                =link_to 'Log out'.l, logout_path, :class => "item_line"
+          %li
+            %span.head_menu
+              = link_to "Destinations", recent_releases_path
+              %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+            .sub_menu
+              = link_to "My Purchased Releases".l, purchased_user_releases_path(current_user) if logged_in?
+              = link_to "Recent Releases".l, recent_releases_path, :class => (logged_in?) ? "item_line" : ""
+              = link_to "Featured Releases".l, featured_releases_path
+              = link_to "Top Rated Releases".l, top_rated_releases_path
+              = link_to "Studios".l, search_path(:type=>'Studio'), :class => "item_line"
+              = link_to "People".l, search_path(:type=>'User')
+              = link_to "Postings".l, search_path(:type=>'Post')
+              = link_to "Images".l, search_path(:type=>'Image')
+          - if current_user
+            - state = current_user.current_state
+            - if !current_user.studios.empty? or state==:pending_studio_registration
+              %li
+                %span.head_menu
+                  -if studio
+                    = link_to "Studio", dashboard_studio_path(studio)
+                  -else
+                    = link_to "Studio", about_studios_path
+                  %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+                .sub_menu
+                  = link_to "About studios", about_studios_path if state==:pending_studio_registration
+                  = link_to "Create your studio".l, new_studio_path if state==:pending_studio_registration
+                  -unless current_user.studios.empty?
+                    = link_to "Studio dashboard".l, dashboard_studio_path(studio)
+                    = link_to "View studio profile".l, studio_path(studio)
+                    = link_to "View studio blog".l, studio_posts_path(studio)
+                    = link_to "View studio releases".l, studio_releases_path(studio)
+                    = link_to "View studio images".l, studio_studio_photos_path(studio)
+                    = link_to "Edit studio profile".l, edit_profile_studio_path(studio), :class => "item_line"
+                    = link_to "Edit studio account".l, edit_studio_path(studio)
+                    = link_to "Manage releases".l, manage_studio_releases_path(studio)
+                    = link_to "Manage video sets".l, manage_video_sets_studio_releases_path(studio)
+                    = link_to "Manage studio blog".l, manage_studio_posts_path(studio)
+                    = link_to "Upload new release".l, new_studio_release_path(studio), :class => "item_line"
+                    = link_to "Create new video set".l, new_video_set_studio_releases_path(studio)
+                    = link_to "Add new posting".l, new_studio_post_path(studio)
+                    = link_to "Add new studio image".l, new_studio_studio_photo_path(studio)
+                    = link_to "Studio sales report".l, studio_orders_path(studio), :class => "item_line"
+            - if !current_user.affiliates.empty? or state==:pending_affiliate_registration
+              %li
+                %span.head_menu
+                  -if affiliate
+                    = link_to "Affiliate".l, dashboard_affiliate_path(affiliate)
+                  -else
+                    = link_to "Affiliate".l, about_affiliates_path
+                  %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+                .sub_menu
+                  -unless affiliate
+                    = link_to "About affiliates", about_affiliates_path
+                    = link_to "Become an affiliate".l, new_affiliate_path
+                  -else
+                    = link_to "Affiliate dashboard".l, dashboard_affiliate_path(affiliate)
+                    = link_to "View affiliate profile".l, affiliate_path(affiliate)
+                    = link_to "View affiliate blog".l, affiliate_posts_path(affiliate)
+                    = link_to "View affiliate images".l, affiliate_affiliate_photos_path(affiliate)
+                    = link_to "Edit affiliate profile".l, edit_profile_affiliate_path(affiliate), :class => "item_line"
+                    = link_to "Edit affiliate account".l, edit_affiliate_path(affiliate)
+                    = link_to "Manage studio promotions".l, affiliate_studio_subscriptions_path(affiliate)
+                    = link_to "Get link codes".l, link_codes_affiliate_path(affiliate)
+                    = link_to "Search studios to promote", search_path(:q=>(affiliate.preferences.blank?) ? "" : affiliate.preferences.map{|k,v|k if v==true}.compact.join(" OR "), :type=>'Studio',:commit=>'go')
+                    = link_to "Sales Report".l, affiliate_orders_path(affiliate)
+/ header

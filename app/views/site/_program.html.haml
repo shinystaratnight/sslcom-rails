@@ -1,0 +1,34 @@
+-content_for :title, title
+-content_for :header, 'public'
+%h1
+  =main_title
+%h2
+  =sub_title
+.default_container
+  %h3=title
+  .contact_us_support
+    .support_panel
+      .contact_us_container.no_top_margin
+        %p.contact_us_header
+          Benefits
+        %ul.benefits
+          -benefits.each do |b|
+            %li=b
+  .contact_us_container
+    %p.contact_us_header
+      Summary
+    %p.description
+      =summary
+    %p.contact_us_header
+      Details
+    -descriptions.each_with_index do |d, i|
+      -if i == 0
+        %p.main_description
+          =main_image
+          =d
+      -else
+        %p.main_description
+          =d
+#become_a_reseller_today
+  %h3 get started today!
+  =link_to "Become a reseller!", new_account_url, :class=>"buttonc"

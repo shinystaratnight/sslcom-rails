@@ -1,0 +1,16 @@
+-content_for :title, "SSL Reseller Program Pricing Details"
+-content_for :header, 'public'
+.reseller_registration_select_tier
+  %h3 SSL Reseller Program Pricing Details
+  %p
+    The #{srp_link} is designed to give you flexibility in
+    appropriating ssl certificates to suit your needs. The table below reflects
+    different pricing tiers based upon your projected volume sales. The higher
+    your project sales volume, the lower your per unit costs for each ssl
+    certificate. If your volume needs change in the future, the #{srp_link}
+    provides the option to effortlessly upgrade your pricing tier with
+    no hassles or hidden costs.
+  =render :partial => "tiers"
+  #become_a_reseller_today
+    %h3 get started today!
+    =link_to "Become a reseller!", new_account_url, :class=>"buttonc"

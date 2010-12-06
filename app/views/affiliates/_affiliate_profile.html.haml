@@ -1,0 +1,12 @@
+.box
+  %h3="Affiliate".l
+  %dl.vcard
+    %dt.photo
+      = render :partial=>'/base/micro_avatar', :locals=>{:user=>affiliate}
+    %dd.fn
+      = link_to affiliate.display_name, affiliate_path(affiliate), :class => 'url'
+    %dd
+    - if affiliate.description
+      = truncate_words( affiliate.description, 12, '...')
+    %dd.member
+      =affiliate.created_at.strftime("Member since: %m/%d/%y")

@@ -1,0 +1,15 @@
+-deposit = order.description =~ /^Deposit$/
+-if deposit
+  -@running_total+=order.amount.cents
+-else
+  -@running_total-=order.amount.cents
+%tr[order]
+  %td= link_to order.reference_number, order_path(order)
+  %td= order.created_at.strftime("%m/%d/%y %H:%M:%S")
+  %td= link_to order.description.shorten(30), order_path(order)
+  -if deposit
+    %td= order.amount.format
+    %td= Money.new(@running_total).format
+  -else
+    %td.negative_value= "(#{order.amount.format})"
+    %td= "(#{Money.new(@running_total).format})"
