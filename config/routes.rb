@@ -5,7 +5,6 @@ SslDocs::Application.routes.draw do
   resource :account do
       resource :reseller
   end
-
   resources :password_resets
   resource :ssl_account do    
     get :edit_settings
