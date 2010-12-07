@@ -8,8 +8,7 @@ class FundedAccountsController < ApplicationController
   before_filter :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds],
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  before_filter :sync_aid_li_and_cart, :only=>[:deposit_funds, :apply_funds],
-    :if=>'#{AppConfig.sync_aid_li_and_cart}'
+  before_filter :sync_aid_li_and_cart, :only=>[:deposit_funds, :apply_funds]
   filter_access_to :all
 
   private :new, :update, :destroy, :show
