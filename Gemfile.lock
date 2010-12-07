@@ -67,6 +67,8 @@ GEM
     braintree (2.6.2)
       builder
     builder (2.1.2)
+    compass (0.10.6)
+      haml (>= 3.0.4)
     crack (0.1.8)
     declarative_authorization (0.5.1)
     erubis (2.6.6)
@@ -123,6 +125,7 @@ DEPENDENCIES
   activemerchant
   authlogic
   awesome_print
+  compass
   declarative_authorization
   haml
   hassle!
