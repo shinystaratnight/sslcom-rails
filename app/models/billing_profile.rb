@@ -1,4 +1,4 @@
-require 'oniguruma'
+#require 'oniguruma'
 
 class BillingProfile < ActiveRecord::Base  
   belongs_to  :ssl_account
