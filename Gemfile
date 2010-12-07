@@ -17,7 +17,8 @@ gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
-gem 'resource_controller'
+gem 'resource_controller', :git => 
+"git://github.com/BDQ/resource_controller.git"
 
 # Use unicorn as the web server
 # gem 'unicorn'
