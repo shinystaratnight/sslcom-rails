@@ -25,6 +25,7 @@ gem "authlogic"
 gem "workflow"
 gem "savon"
 gem 'rubyzip'
+gem 'oniguruma'
 
 # Use unicorn as the web server
 # gem 'unicorn'
