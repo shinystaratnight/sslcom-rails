@@ -48,8 +48,8 @@ require "#{Rails.root}/lib/array.rb"
 require "#{Rails.root}/lib/range.rb"
 require "will_paginate"
 
-class Fixnum;  end
-class Bignum;  end
+class Fixnum; include InWords; end
+class Bignum; include InWords; end
 
 DB_STRING_MAX_LENGTH = 255
 DB_TEXT_MAX_LENGTH = 40000
