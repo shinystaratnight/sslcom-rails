@@ -21,6 +21,10 @@ gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 gem 'declarative_authorization'
 gem 'app_config', :git => 'https://github.com/Oshuma/app_config.git'
+gem "authlogic"
+gem "workflow"
+gem "savon"
+gem 'rubyzip'
 
 # Use unicorn as the web server
 # gem 'unicorn'
