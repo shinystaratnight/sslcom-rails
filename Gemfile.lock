@@ -13,10 +13,11 @@ GIT
       rack
 
 GIT
-  remote: git://github.com/collectiveidea/money
-  revision: 04e2ecb07eefe4e0c2a1621281ecc0c0ceec8a71
+  remote: git://github.com/RubyMoney/money.git
+  revision: 3514491efb62237ff246e87c554ada9f587041ae
   specs:
-    money (1.7.4)
+    money (3.1.5)
+      i18n (~> 0.4)
 
 GIT
   remote: git://github.com/nhowell/subdomain-fu.git
