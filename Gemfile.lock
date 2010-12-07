@@ -65,6 +65,7 @@ GEM
     braintree (2.6.2)
       builder
     builder (2.1.2)
+    declarative_authorization (0.5.1)
     erubis (2.6.6)
       abstract (>= 1.0.0)
     haml (3.0.24)
@@ -114,6 +115,7 @@ PLATFORMS
 DEPENDENCIES
   activemerchant
   awesome_print
+  declarative_authorization
   hassle!
   money!
   mysql (= 2.8.1)

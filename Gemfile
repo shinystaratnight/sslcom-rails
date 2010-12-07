@@ -18,6 +18,7 @@ gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
+gem 'declarative_authorization'
 
 # Use unicorn as the web server
 # gem 'unicorn'
