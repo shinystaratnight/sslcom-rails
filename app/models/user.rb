@@ -11,7 +11,7 @@ class User < ActiveRecord::Base
   attr_readonly :login
   acts_as_authentic do |c|
     c.session_ids = [nil, :shadow],
-    c.transition_from_crypto_providers = Authlogic::CryptoProviders::LegacySslMd5,
+    c.transition_from_crypto_providers = LegacySslMd5,
     c.validates_length_of_password_field_options =
       {:on => :update, :minimum => 4,
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
