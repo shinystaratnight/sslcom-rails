@@ -1,5 +1,5 @@
 SslDocs::Application.routes.draw do
-  match '/' => 'site#index', :as => :root
+  match '/' => 'site#index', :as => [:root, :home]
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
   resource :account do
