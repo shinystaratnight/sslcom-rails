@@ -98,7 +98,6 @@ SslDocs::Application.routes.draw do
     member do
       get :buy
     end
-
   end
 
   match '/register/:activation_code' => 'activations#new', :as => :register
