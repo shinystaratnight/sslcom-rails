@@ -111,5 +111,6 @@ SslDocs::Application.routes.draw do
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
   match '{:controller=>"site"}' => '#index', :as => :with_options
+  
   match '/:controller(/:action(/:id))'
 end
