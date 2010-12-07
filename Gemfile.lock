@@ -20,6 +20,12 @@ GIT
       i18n (~> 0.4)
 
 GIT
+  remote: git://github.com/calebhaye/acts_as_notable.git
+  revision: 4c850236ae11a531fd32f4d3938d38b0e1e1cb26
+  specs:
+    acts_as_notable (1.0)
+
+GIT
   remote: git://github.com/nhowell/subdomain-fu.git
   revision: c6fbf945cf3f4ab344f9c8e0604dc5dcca9ee6cf
   specs:
@@ -128,6 +134,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemerchant
+  acts_as_notable!
   app_config!
   authlogic
   awesome_print
