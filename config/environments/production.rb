@@ -1,5 +1,6 @@
 SslDocs::Application.configure do
   # Settings specified here will take precedence over those in config/environment.rb
+  APP_URL = "http://demo.ssltools.com"
 
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
@@ -8,6 +9,7 @@ SslDocs::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
+  config.action_view.cache_template_loading            = true
 
   # Specifies the header that your server uses for sending files
   config.action_dispatch.x_sendfile_header = "X-Sendfile"
@@ -46,4 +48,29 @@ SslDocs::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
+
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :address    => "smtp.fusemail.net",
+    :port       => 25,
+    :domain     => "ssl.com",
+    :authentication => :login,
+    :user_name => "leo.grove@ssl.com",
+    :password => "jimi2kimi2"
+  }
+
+  config.to_prepare do
+    OrderTransaction.gateway =
+      ActiveMerchant::Billing::AuthorizeNetGateway.new(
+        :login    => '9jFL5k9E',
+        :password => '8b3zEL5H69sN4Pth'
+      )
+    BillingProfile.password = "kama1jama1"
+  end
+
+  #config.log_level = Logger::INFO
+
+  GATEWAY_TEST_CODE=1.0
+  # END ActiveMerchant configuration
+
 end
