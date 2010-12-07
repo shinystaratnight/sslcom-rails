@@ -25,6 +25,8 @@ gem "authlogic"
 gem "workflow"
 gem "savon"
 gem 'rubyzip'
+gem 'acts_as_notable', :git => 
+"git://github.com/calebhaye/acts_as_notable.git"
 
 # Use unicorn as the web server
 # gem 'unicorn'
