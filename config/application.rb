@@ -24,7 +24,7 @@ module SslDocs
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Central Time (US & Canada)'
+    config.time_zone = 'Central Time (US & Canada)'
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
@@ -40,3 +40,32 @@ module SslDocs
     config.filter_parameters += [:password]
   end
 end
+
+require "#{Rails.root}/lib/generator_methods.rb"
+require "#{Rails.root}/lib/base.rb"
+require "#{Rails.root}/lib/asset_tag_helper.rb"
+require "#{Rails.root}/lib/array.rb"
+require "#{Rails.root}/lib/range.rb"
+require "will_paginate"
+
+class Fixnum;  end
+class Bignum;  end
+
+DB_STRING_MAX_LENGTH = 255
+DB_TEXT_MAX_LENGTH = 40000
+HTML_TEXT_FIELD_SIZE = 20
+ADDRESS_FIELD_SIZE = 30
+SERVER_SIDE_CART = false
+SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
+  downcase=='postgresql' ? 'ilike' : 'like'
+
+
+SubdomainFu.configure do |config|
+  config.tld_sizes = {:development => 0,
+   :test => 0,
+   :production => 2} # set all at once (also the defaults)
+end
+
+#uncomment to track down bugs on heroku production
+#ActiveRecord::Base.logger.level = 0 # at any time
+

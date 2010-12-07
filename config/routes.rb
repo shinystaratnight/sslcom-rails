@@ -1,4 +1,4 @@
-SslDoc::Application.routes.draw do
+SslDocs::Application.routes.draw do
   match '/' => 'site#index'
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
@@ -7,11 +7,9 @@ SslDoc::Application.routes.draw do
   end
 
   resources :password_resets
-  resource :ssl_account do
-    collection do
-      get :edit_settings
-      put :update_settings
-    end
+  resource :ssl_account do    
+    get :edit_settings
+    put :update_settings
   end
 
   resources :users do
@@ -50,9 +48,7 @@ SslDoc::Application.routes.draw do
   resource :user_session
   resources :certificate_orders do
     resource :validation do
-      collection do
-        post :upload
-      end
+      post :upload
     end
     resource :site_seal
   end

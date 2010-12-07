@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'activesupport'
+require 'active_support/all'
 require 'net/http'
 require 'uri'
 require 'time'

@@ -6,6 +6,18 @@ gem 'rails', '3.0.1'
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3-ruby', :require => 'sqlite3'
+gem 'mysql', '2.8.1'
+gem 'workflow'
+gem 'preferences'
+gem 'wirble'
+gem 'awesome_print'
+gem 'activemerchant'
+gem 'money', :git=>"git://github.com/collectiveidea/money"
+gem 'will_paginate'
+gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
+gem 'hassle', :git => "git://github.com/Papipo/hassle"
+gem 'paperclip'
+
 
 # Use unicorn as the web server
 # gem 'unicorn'
