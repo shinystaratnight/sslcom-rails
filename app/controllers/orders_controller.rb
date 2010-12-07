@@ -7,8 +7,7 @@ class OrdersController < ApplicationController
   before_filter :find_affiliate, :only => [:affiliate_orders]
   before_filter :require_current_user, :only => [:user_orders]
   before_filter :require_affiliate_ownership, :only => [:affiliate_orders]
-  before_filter :sync_aid_li_and_cart, :only=>[:create],
-    :if=>'#{AppConfig.sync_aid_li_and_cart}'
+  before_filter :sync_aid_li_and_cart, :only=>[:create]
 #  filter_access_to :all, :attribute_check=>false
 
   def show_cart
