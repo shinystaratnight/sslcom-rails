@@ -20,7 +20,7 @@ development:
   reconnect: false
   database: ssl_com_production
   host: 75.101.161.230
-  prot: 3306
+  port: 3306
   pool: 5
   username: ssl_db
   password: kama2jama2
@@ -44,6 +44,8 @@ production:
   encoding: utf8
   reconnect: false
   database: ssl_com_production
+  host: 75.101.161.230
+  port: 3306
   pool: 5
   username: ssl_db
   password: kama2jama2
