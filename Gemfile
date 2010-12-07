@@ -15,6 +15,7 @@ gem 'activemerchant'
 gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
+gem 'haml'
 gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"

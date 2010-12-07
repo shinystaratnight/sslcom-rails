@@ -116,6 +116,7 @@ DEPENDENCIES
   activemerchant
   awesome_print
   declarative_authorization
+  haml
   hassle!
   money!
   mysql (= 2.8.1)
