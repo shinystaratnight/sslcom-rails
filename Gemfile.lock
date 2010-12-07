@@ -25,6 +25,13 @@ GIT
   specs:
     subdomain-fu (1.0.0.beta2)
 
+GIT
+  remote: https://github.com/Oshuma/app_config.git
+  revision: 321fa76d7b7c760e6f2390fc4ee90b7be52780f7
+  specs:
+    app_config (0.6.1)
+      sqlite3-ruby (>= 1.3.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -114,6 +121,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemerchant
+  app_config!
   awesome_print
   declarative_authorization
   haml
