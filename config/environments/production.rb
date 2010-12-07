@@ -1,6 +1,6 @@
 SslDocs::Application.configure do
   # Settings specified here will take precedence over those in config/environment.rb
-  APP_URL = "http://demo.ssltools.com"
+  APP_URL = "http://ssldocs.heroku.com"
 
   # The production environment is meant for finished, "live" apps.
   # Code is not reloaded between requests
