@@ -110,7 +110,10 @@ SslDocs::Application.routes.draw do
   match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
-  match '{:controller=>"site"}' => '#index', :as => :with_options
-  
+  match 'reseller' => 'site#reseller', :as => :reseller,
+      :constraints => {:subdomain=>Reseller::SUBDOMAIN}
+  (Reseller::TARGETED+%w(restful_api)).each do |i|
+    send("match", i=>"site##{i}", :as => i.to_sym)
+  end
   match '/:controller(/:action(/:id))'
 end
