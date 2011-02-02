@@ -20,7 +20,7 @@
     This charge will appear as SSL Corporation
     on your credit card statement.
   =error_messages_for :funded_account, :billing_profile, :credit_card, :object_name => 'transaction'
-  -form_for(@funded_account, :url => deposit_funds_path, :html => { :method => :put }) do |f|
+  =form_for(@funded_account, :url => deposit_funds_path, :html => { :method => :put }) do |f|
     #stylized.deposit_funds_form
       =f.hidden_field :deduct_order
       =f.hidden_field :order_type
@@ -44,13 +44,13 @@
                 %td= destroy_credit_card_link profile
             %tr
               %td{:colspan => 6}
-                %a#expand_register_card{:href=>"#"}
+                %a#expand_register_card{:href=>"javascript:void(0);"}
                   =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'
       #register_card_form{initial_display?}
-        - fields_for :billing_profile, @billing_profile do |form|
+        =fields_for :billing_profile, @billing_profile do |form|
           = render :partial => "billing_profiles/form", :locals => { :form => form }
       .subheading Amount and Balance
-      = render :partial => "form", :locals => { :f => f, :object => object }
+      = render :partial => "form", :locals => { :f => f }
     #button_container
       -unless reseller_initial_deposit? or @certificate_order
         #click_to_load=image_submit_tag "load_funds_bl.gif", :alt=>'Click here to load funds into your account'

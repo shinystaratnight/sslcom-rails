@@ -1,13 +1,6 @@
 <script type="text/javascript">
 jQuery.noConflict();
 jQuery(function($) {
-  $.update_balance_after_load = function(){
-    var bracket = $.toMoneyFloat($('#funded_account_amount').val());
-    if(bracket == null || bracket == "" || bracket == ".")
-      bracket = 0;
-    var current_balance = $.toMoneyFloat($('#current_balance').text());
-    $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
-  };
   $.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
       replace('_','').
@@ -51,84 +44,28 @@ jQuery(function($) {
       parseFloat(domains_cost)+parseFloat(server_license_cost)).toFixed(2))+
       " USD");
   };
-    var test=0;
     var show_csr=true;
+  $.build_cart_item = function(){
+    return {<%=ShoppingCart::PRODUCT_CODE%> : $('#certificate_product').val() ,
+      <%=ShoppingCart::DURATION%> : $(':radio[name*=duration]:checked').val(),
+      <%=ShoppingCart::LICENSES%> :
+      <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
+      $('#certificate_order_server_licenses').val()
+      <%else%>
+      "0"
+      <%end%>
+      , <%=ShoppingCart::DOMAINS%> :
+      <%if @certificate.is_ucc?%>
+      $.domains($('textarea[id$=domains]')[0]).join(" ")
+      <%else%>
+      "0"
+      <%end%>
+      , <%=ShoppingCart::AFFILIATE%> : $.get_affiliate()};
+  };
   $.change_cart_items = function(add_or_remove){
     add = (add_or_remove=="add") ? true : false;
-    cart_qty_indx=null;
-    cart = $.cookie("cart");
-    affiliate = $.cookie("aid");
-    affiliateLineItem = $.cookie("aid_li");
-    if(cart==null)
-      cart="";
-    if(affiliateLineItem==null)
-      affiliateLineItem="";
-    //structure of a certificate order in the cart is as follows
-    //product,num_years,num_servers,domains,quantity:
-    configured = $('#certificate_product').val() + "," +
-      $(':radio[name*=duration]:checked').val() + "," +
-      <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
-      $('#certificate_order_server_licenses').val() + "," +
-      <%else%>
-      "0," +
-      <%end%>
-      <%if @certificate.is_ucc?%>
-      $.domains($('textarea[id$=domains]')[0]).join(" ") + ",";
-      <%else%>
-      "0,";
-      <%end%>
-    if(cart.indexOf(configured)==-1)
-      if(add)
-        cart_qty_indx = [cart+configured + "1:", 1, 0]; //line item, qty, index
-      else
-        return;
-    else{
-      indx=null;
-      remove_af=false;
-      lis=cart.split(/:/);
-      lis.remove(lis.find(""));
-      $(lis).each(function(index){
-        if(this.indexOf(configured)!=-1){
-          indx=index;}});
-      qty = lis[indx].match(/\d+$/)[0];
-      if(add)
-        lis[indx]=lis[indx].replace(/\d+$/, ++qty);
-      else
-        if(qty==1){
-          lis.remove(indx);
-          remove_af=true;
-        }
-        else
-          lis[indx]=lis[indx].replace(/\d+$/, --qty);
-      if(lis.join(":")=="")
-        items = "";
-      else
-        items = lis.join(":")+ ":";
-      cart_qty_indx=[items, qty, indx, remove_af];
-    }
-    cart=cart_qty_indx[0];
-    qty=cart_qty_indx[1];
-    indx=cart_qty_indx[2];
-    remove_af=cart_qty_indx[3];
-    if(qty==1 && add)
-        affiliateLineItem=affiliateLineItem+
-        ((affiliate==null)?++test:affiliate)+":";
-    else if(remove_af==true){
-          lis=affiliateLineItem.split(":");
-          lis.remove(lis.find(""));
-          lis.remove(indx);
-          affiliateLineItem=(lis.join(":")+":");}
-    if(affiliateLineItem==":")
-      affiliateLineItem="";
-    $.cookie("cart", cart, { expires: <%=AppConfig.cart_cookie_days%>, path: '/'});
-    $.cookie("aid_li", affiliateLineItem, { expires: <%=AppConfig.affiliate_cookie_days%>, path: '/'});
-    <%#*$(this).attr("disabled", "disabled");%>
-    <%#*$.adjust_items_in_cart();%>
-    <%#*var items = "items";%>
-    <%#*var howMany = ($.cookie("cart")==null)? 0 : $.cookie("cart").split(":").length-1;%>
-    <%#*if(howMany==1)%>
-      <%#*items = "item";%>
-    <%#*$("#cart_size").text(howMany.toString()+" "+items+" in cart")%>
+    configured = $.build_cart_item();
+    $.add_remove_cart_items(add, configured);
   };
 
   $(document).ready(function() {

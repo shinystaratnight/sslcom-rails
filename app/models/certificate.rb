@@ -2,6 +2,7 @@ class Certificate < ActiveRecord::Base
   has_many    :product_variant_groups, :as => :variantable
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
+  has_many    :discounts, as: :discountable
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
   serialize   :icons
@@ -9,10 +10,40 @@ class Certificate < ActiveRecord::Base
   serialize   :display_order
   serialize   :title
   preference  :certificate_chain, :string
-  
+
   NUM_DOMAINS_TIERS = 2
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200
+
+  #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
+  MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
+    "SSL128TRIAL30 Trial SSL Certificate",
+    "RapidSSL Trial (FreeSSL) SSL Certificate"], "high_assurance", "free"]
+  MAP_TO_OV=[["XRamp Premium Wildcard Certificate",
+    "Comodo Premium SSL Certificate", "Comodo InstantSSL SSL Certificate",
+    "SSL128SCG2.5 SSL Certificate", "Comodo Pro SSL Certificate",
+    "ssl certificate", "RapidSSL SSL Certificate"], "high_assurance",
+    "high_assurance"]
+  MAP_TO_EV=[["thawte SGC SuperCert SSL Certificate",
+    "Geotrust QuickSSL Premium SSL Certificate",
+    "Verisign Secure Site SSL Certificate", "thawte SSL Web Server Cert",
+    "XRamp Premium SSL Certificate", "SSL128SCG10 SSL Certificate",
+    "SSL123 thawte Certificate", "Comodo Platinum SSL Certificate",
+    "XRamp Enterprise SSL Certificate",
+    "Verisign Secure Site Pro SSL Certificate", "Comodo Elite SSL Certificate",
+    "Comodo Gold SSL Certificate"], "ev", "ev"]
+  MAP_TO_WILDCARD=[["Comodo Premium Wildcard Certificate",
+    "RapidSSL Wildcard Certificate", "Comodo Platinum Wildcard Certificate",
+    "XRamp Enterprise Wildcard Certificate",
+    "SSL128WCG10 Wildcard SSL Certificate"], "wildcard", "wildcard"]
+  MAP_TO_UCC=[["SSL UC Certificate"], "ucc", "ucc"]
+
+  def self.map_to_legacy(description, mapping=nil)
+    [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
+      type = mapping=='renew' ? 1 : 2
+      return Certificate.find_by_product(m[type]) if m[0].include?(description)
+    end
+  end
 
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i

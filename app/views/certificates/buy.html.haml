@@ -1,5 +1,8 @@
 -co=@certificate_order
--title = "#{co.is_unused_credit? ? "Process" : "Buy"} #{@certificate.title} Certificate"
+-if @renewing.blank?
+  -title = "#{co.is_unused_credit? ? "Process" : "Buy"} #{@certificate.title} Certificate"
+-else
+  -title = "Renewing #{@certificate.title} Certificate For #{@renewing.subject}"
 -content_for :title, title
 =render :partial => '/certificates/index_scripts'
 =order_progress_indicator(1, @certificate)
@@ -10,6 +13,7 @@
   =error_messages_for :certificate_order, :certificate_content
   -form_for(*form_params) do |f|
     =hidden_field :certificate, :product
+    =recert?
     #stylized.default_form
       =render :partial => "/certificates/form", :locals => {:f=>f}
     #button_container

@@ -12,10 +12,10 @@
   -form_for Order.new do |f|
     -if @certificate_order
       =hidden_field :certificate, :product
-      -fields_for @certificate_order do |f|
+      =fields_for @certificate_order do |f|
         =f.hidden_field :server_licenses
         =f.hidden_field :duration
-        -f.fields_for :certificate_contents, @certificate_content do |cert_form|
+        =f.fields_for :certificate_contents, @certificate_content do |cert_form|
           =cert_form.text_area :signing_request, :class=>'hidden'
           =cert_form.hidden_field :additional_domains
           =cert_form.hidden_field :server_software_id
@@ -55,7 +55,7 @@
               =radio_button_tag :has_account, false
               %span.has_account_container I do NOT but I want to create one
         #login_section
-          -fields_for :user_session, @user_session do |form|
+          =fields_for :user_session, @user_session do |form|
             .subheading Login Information
             .clearfix
               = form.label :login, "*Login<span class='label_desc'>this will be your username</span>"
@@ -64,7 +64,7 @@
               = form.label :password, "*Password<span class='label_desc'>min. size 4 chars</span>"
               = form.password_field :password
         #new_user_section
-          -fields_for :user, @user do |form|
+          =fields_for :user, @user do |form|
             .subheading Login Information
             .clearfix
               = form.label :login, "*Login<span class='label_desc'>this will be your username</span>"
@@ -80,7 +80,7 @@
               = form.password_field :password_confirmation
       #billing_section
         #register_card_form{initial_display?}
-          -fields_for :billing_profile, @billing_profile do |form|
+          =fields_for :billing_profile, @billing_profile do |form|
             = render :partial => "billing_profiles/form", :locals => { :form => form }
         .subheading Total Amount To Charge
         =render :partial => "form", :locals => {:f => f, :object => object}

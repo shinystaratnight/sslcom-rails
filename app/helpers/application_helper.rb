@@ -133,10 +133,11 @@ module ApplicationHelper
   end
 
   def select_field_for(form, field, choices, options = {}, html_options = {})
-    form_field = form.select field, choices, options, html_options
-    label = content_tag("label", "#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }, :for => field) unless options.delete(:no_label)
+    form_field = form.select(field, choices, options, html_options).html_safe
+    label = content_tag("label", "#{field.humanize}:".gsub(/\b\w/){|s|
+        s.upcase }, :for => field) unless options.delete(:no_label)
     append = yield if block_given?
-    create_tags label, form_field, options, append
+    create_tags(label, form_field, options, append)
   end
 
   def add_to_cart_button(item)
@@ -215,11 +216,13 @@ module ApplicationHelper
     append ||= ""
     case format
       when /table/
-        content_tag("th", "#{label}#{asterisk}") + content_tag("td","#{form_field}#{append}")
+        content_tag("th", "#{label}#{asterisk}", nil, false) +
+          content_tag("td","#{form_field}#{append}", nil, false)
       when /no_div/
-        "#{label}#{asterisk} #{form_field}#{append}"
+        "#{label}#{asterisk} #{form_field}#{append}".html_safe
       else
-        content_tag("div", "#{label}#{asterisk} #{form_field}#{append}", :class => tag_class)
+        content_tag("div", "#{label}#{asterisk} #{form_field}#{append}", 
+          {:class => tag_class}, false)
     end
   end
 
@@ -322,6 +325,25 @@ module ApplicationHelper
       message % link_to(*item)
     else
       message % item
+    end.html_safe
+  end
+
+  def remote_login_link(u)
+    link_to("login as #{u.login}", user_session_url(:login=>u.login, 
+        authenticity_token: form_authenticity_token()), :method=>:post,
+        :id=>u.model_and_id)
+  end
+
+  def link_cluster(arry)
+    arry.compact.join(" | ").html_safe
+  end
+
+  def recert?
+    CertificateOrder::RECERTS.each do |r|
+      r_obj = instance_variable_get("@#{r}")
+      unless r_obj.blank?
+        break hidden_field_tag(r.to_sym, r_obj.ref)
+      end
     end
   end
 end

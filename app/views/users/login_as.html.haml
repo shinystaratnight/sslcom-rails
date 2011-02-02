@@ -1,2 +1,2 @@
 =render :partial => 'login_as'
-=link_to "login as #{@user.login}", user_session_url(:login=>@user.login), :method=>:post, :id=>@user.model_and_id
+=remote_login_link(@user)

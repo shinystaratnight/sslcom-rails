@@ -1,7 +1,7 @@
 #header(class="show_sales_number")
   .inner
     %ul.nav
-      %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)", show_cart_orders_url
+      %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)".html_safe, show_cart_orders_url
       %li
         %a{ :href => "/blog/" }
           Blog
@@ -25,8 +25,8 @@
       -else
         %li(class="#{current_page?(account_url) ? 'active' : ''}")
           =link_to "Dashboard", account_url
-      %li(class="#{current_page?(root_url(:subdomain=>'reseller')) ? 'active' : ''}")
-        =link_to "Resellers", root_url(:subdomain=>'reseller')
+      %li(class="#{current_page?(root_url(:subdomain=>Reseller::SUBDOMAIN)) ? 'active' : ''}")
+        =link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
       %li(class="#{current_page?(details_resellers_path) ? 'active' : ''}")
         =link_to "Program Details", details_resellers_path
       %li(class="#{current_page?(reseller_tiers_path) ? 'active' : ''}")

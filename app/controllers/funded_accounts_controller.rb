@@ -1,18 +1,18 @@
 class FundedAccountsController < ApplicationController
   include OrdersHelper, CertificateOrdersHelper, FundedAccountsHelper
-  resource_controller :singleton
+#  resource_controller :singleton
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
-  belongs_to :user
+#  belongs_to :user
 
-  before_filter :require_user, :only => [:allocate_funds_for_order,
-    :deposit_funds, :allocate_funds, :apply_funds],
-    :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  before_filter :sync_aid_li_and_cart, :only=>[:deposit_funds, :apply_funds],
-    :if=>AppConfig.sync_aid_li_and_cart
-  filter_access_to :all
+#  before_filter :require_user, :only => [:allocate_funds_for_order,
+#    :deposit_funds, :allocate_funds, :apply_funds],
+#    :if=>'current_subdomain==Reseller::SUBDOMAIN'
+#  before_filter :sync_aid_li_and_cart, :only=>[:deposit_funds, :apply_funds],
+#    :if=>AppConfig.sync_aid_li_and_cart
+#  filter_access_to :all
 
-  private :new, :update, :destroy, :show
+#  private :new, :update, :destroy, :show
 
   def allocate_funds
     @funded_account = current_user.ssl_account.funded_account
@@ -110,54 +110,68 @@ class FundedAccountsController < ApplicationController
       }),
       :description => "Deposit"
     }
-    respond_to do |format|
-      if (ActiveMerchant::Billing::Base.mode == :test ?
-          true : @credit_card.valid?)
-        if defined?(::GATEWAY_TEST_CODE)
-          @deposit.amount= ::GATEWAY_TEST_CODE
-        else
-          @deposit.amount= @funded_account.amount
-        end
-        @deposit.description = "Deposit"
-        @gateway_response = @deposit.purchase(@credit_card, options)
-        if @gateway_response.success?
-          flash.now[:notice] = @gateway_response.message
-          save_billing_profile if
-            (@funded_account.funding_source == "new credit card")
-          @deposit.billing_profile = @profile
-          if apply_order
-            @order.deducted_from = @deposit
-            current_user.ssl_account.orders << @order
-            @order.save
-          end
-          @account_total.save
-          dep.save
-          @deposit.save
-          if initial_reseller_deposit?
-            account.reseller.completed!
-            account.remove_role! 'new_reseller'
-            account.add_role! 'reseller'
-            account.reseller.reseller_tier = ResellerTier.find_by_label
-              current_order.line_items.first.sellable.label
-          end
-          OrderNotifier.deliver_deposit_completed account, @deposit
-          if @certificate_order
-            @certificate_order.pay! @gateway_response.success?
-            redirect_to edit_certificate_order_path(@certificate_order) and return
-          elsif @certificate_orders
-            clear_cart
-            flash[:notice] = "Order successfully placed. %s"
-            flash[:notice_item] = "Click here to finish processing your
-              ssl.com certificates.", credits_certificate_orders_path
-            format.html { redirect_to @order }
-          end
-          format.html { render :action => "success" }
-        else
-          flash.now[:error] = @gateway_response.message
-        end
-        format.html { render :action => "allocate_funds" }
+    if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
+      if defined?(::GATEWAY_TEST_CODE)
+        @deposit.amount= ::GATEWAY_TEST_CODE
+      else
+        @deposit.amount= @funded_account.amount
       end
-      format.html { render :action => "allocate_funds" }
+      @deposit.description = "Deposit"
+      if initial_reseller_deposit?
+        #get this before transaction so user cannot change the cookie, thus 
+        #resulting in mismatched item purchased
+        immutable_cart_item = ResellerTier.find_by_label(current_order.
+            line_items.first.sellable.label)
+      end
+      @gateway_response = @deposit.purchase(@credit_card, options)
+      if @gateway_response.success?
+        flash.now[:notice] = @gateway_response.message
+        save_billing_profile if
+          (@funded_account.funding_source == "new credit card")
+        @deposit.billing_profile = @profile
+        if apply_order
+          @order.deducted_from = @deposit
+          current_user.ssl_account.orders << @order
+          @order.save
+        end
+        @account_total.save
+        dep.save
+        @deposit.save
+        if initial_reseller_deposit?
+          account.reseller.completed!
+          account.reseller.reseller_tier = immutable_cart_item
+          account.remove_role! 'new_reseller'
+          account.add_role! 'reseller'
+        end
+        OrderNotifier.deliver_deposit_completed account, @deposit
+        if @certificate_order
+          @certificate_order.pay! @gateway_response.success?
+          route ||= "edit"
+        elsif @certificate_orders
+          clear_cart
+          flash[:notice] = "Order successfully placed. %s"
+          flash[:notice_item] = "Click here to finish processing your
+            ssl.com certificates.", credits_certificate_orders_path
+          route ||= "order"
+        end
+        route ||= "success"
+      else
+        flash.now[:error] = @gateway_response.message
+      end
+      route ||= "allocate"
+    end
+    route ||= "allocate"
+    respond_to do |format|
+      case route
+      when /allocate/
+        format.html { render :action => "allocate_funds" }
+      when /success/
+        format.html { render :action => "success" }
+      when /order/
+        format.html { redirect_to @order }
+      when /edit/
+        redirect_to edit_certificate_order_path(@certificate_order) and return
+      end
     end
     rescue Payment::AuthorizationError => error
       flash.now[:error] = error.message
@@ -183,7 +197,7 @@ class FundedAccountsController < ApplicationController
       if @funded_account.cents >= 0 and @order.line_items.size > 0
         @funded_account.deduct_order = true
         if @order.cents > 0
-          order.save
+          @order.save
         end
         @funded_account.save
         flash.now[:notice] = "The transaction was successful."
@@ -192,7 +206,10 @@ class FundedAccountsController < ApplicationController
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
           current_user.ssl_account.orders << @order
-          clear_cart
+          @certificate_orders.each do |co|
+            current_user.ssl_account.certificate_orders << co
+          end
+#          clear_cart
           flash[:notice] = "Order successfully placed. %s"
           flash[:notice_item] = "Click here to finish processing your
             ssl.com certificates.", credits_certificate_orders_path

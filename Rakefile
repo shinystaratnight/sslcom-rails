@@ -4,4 +4,4 @@
 require File.expand_path('../config/application', __FILE__)
 require 'rake'
 
-SslDocs::Application.load_tasks
+SslCom::Application.load_tasks

@@ -1,5 +1,5 @@
 %tr{:id => "expense-#{expense.id}"}
   %td&= expense.description
   %td#amount&= expense.price.format :with_currency
-  %td= link_to_remote 'Destroy', :url => [expense.parent_test, expense], :confirm => 'Are you sure?', :method => :delete
+  %td= link_to 'Destroy', :url => [expense.parent_test, expense], :confirm => 'Are you sure?', :method => :delete, :remote=>true
   %td= button_to_function "Add to cart", remote_function(:url => {:controller => :orders, :action => :add, :id => expense}, :update => { :success => "cart", :failure => "error" }), ({:disabled => "disabled"} if session[:cart_items].include? expense )

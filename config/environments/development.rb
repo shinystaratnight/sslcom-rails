@@ -1,4 +1,4 @@
-SslDocs::Application.configure do
+SslCom::Application.configure do
   APP_URL = "http://dev-station:3000"
   # Settings specified here will take precedence over those in config/environment.rb
 
@@ -24,7 +24,7 @@ SslDocs::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  config.action_mailer.delivery_method = :cache
+  config.action_mailer.delivery_method = :test
 
   config.to_prepare do
     OrderTransaction.gateway =

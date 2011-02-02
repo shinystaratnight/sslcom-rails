@@ -1,7 +1,7 @@
 -cert=cart_row
 -indx=cart_row_counter
 -is_receipt ||= false
--cert_quantity = if !cert.line_item_qty.blank? : cert.line_item_qty; elsif is_receipt : cert.quantity; else nil; end;
+-cert_quantity = if !cert.line_item_qty.blank? ; cert.line_item_qty; elsif is_receipt ; cert.quantity; else nil; end;
 %tr.line_item(class="row_#{indx}")
   %td.description
     =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier

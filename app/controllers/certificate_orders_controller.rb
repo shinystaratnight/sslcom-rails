@@ -4,12 +4,12 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :all
   filter_access_to :credits, :incomplete, :pending, :search, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
-    :require=>[:create, :update, :delete]
+    :renew, :reprocess, :require=>[:create, :update, :delete]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
   cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
-  
+
   def search
     index
   end
@@ -17,7 +17,8 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders
   # GET /certificate_orders.xml
   def index
-    expire_fragment('admin_header_certs_status')
+#    expire_fragment('admin_header_certs_status') if
+#      fragment_exist?('admin_header_certs_status')
     p = {:page => params[:page]}
     @certificate_orders = find_certificate_orders.paginate(p)
 
@@ -37,6 +38,17 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  def renew
+    action = CertificateOrder::RENEWING
+    iv = recert(action)
+    unless iv.blank?
+      redirect_to buy_certificate_url(iv.renewal_certificate,
+        {action.to_sym=>params[:id]})
+    else
+      not_found
+    end
+  end
+
   # GET /certificate_orders/new
   # GET /certificate_orders/new.xml
 #  def new
@@ -51,24 +63,41 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1/edit
   def edit
     @certificate_order = CertificateOrder.find_by_ref(params[:id])
-    if @certificate_order.is_unused_credit?
-      @certificate_order.has_csr=true
-      @certificate = @certificate_order.certificate
-      @certificate_content = @certificate_order.certificate_contents.last
-      return render '/certificates/buy', :layout=>'application'
-    end
-    csr = @certificate_order.certificate_content.csr
-    unless @certificate_order.certificate_content.registrant.blank?
-      @registrant = @certificate_order.certificate_content.registrant
+    unless @certificate_order.blank?
+      if @certificate_order.is_unused_credit?
+        @certificate_order.has_csr=true
+        @certificate = @certificate_order.mapped_certificate
+        @certificate_content = @certificate_order.certificate_contents.last
+        return render '/certificates/buy', :layout=>'application'
+      end
+      csr = @certificate_order.certificate_content.csr
+      unless @certificate_order.certificate_content.registrant.blank?
+        @registrant = @certificate_order.certificate_content.registrant
+      else
+        @registrant = @certificate_order.certificate_content.build_registrant
+      end
+      @registrant.company_name = csr.organization
+      @registrant.department = csr.organization_unit
+      @registrant.city = csr.locality
+      @registrant.state = csr.state
+      @registrant.email = csr.email
+      @registrant.country = csr.country
     else
-      @registrant = @certificate_order.certificate_content.build_registrant
+      not_found
     end
-    @registrant.company_name = csr.organization
-    @registrant.department = csr.organization_unit
-    @registrant.city = csr.locality
-    @registrant.state = csr.state
-    @registrant.email = csr.email
-    @registrant.country = csr.country
+  end
+
+  # GET /certificate_orders/1/reprocess
+  def reprocess
+    @certificate_order = recert(CertificateOrder::REPROCESSING)
+    unless @certificate_order.blank?
+      @certificate_order.has_csr=true
+      @certificate = @certificate_order.mapped_certificate
+      @certificate_content = @certificate_order.certificate_contents.build
+      return render '/certificates/buy', :layout=>'application'
+    else
+      not_found
+    end
   end
 
   # POST /certificate_orders
@@ -98,7 +127,7 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1.xml
   def update
     @certificate_order = CertificateOrder.find_by_ref(params[:id])
-    
+
     respond_to do |format|
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
@@ -239,9 +268,16 @@ class CertificateOrdersController < ApplicationController
       create_signed_cert_zip_bundle
     # End of the block  automatically closes the file.
     # Send it using the right mime type, with a download window and some nice file name.
-    send_file t.path, :type => 'application/zip', :disposition => 'attachment', 
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment',
       :filename => @certificate_order.friendly_common_name+'.zip'
     # The temp file will be deleted some time...
     t.close
+  end
+
+  private
+
+  def recert(action)
+    instance_variable_set("@"+action,CertificateOrder.find_by_ref(params[:id]))
+    instance_variable_get("@"+action)
   end
 end

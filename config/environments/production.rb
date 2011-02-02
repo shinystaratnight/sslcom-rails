@@ -1,4 +1,4 @@
-SslDocs::Application.configure do
+SslCom::Application.configure do
   # Settings specified here will take precedence over those in config/environment.rb
   APP_URL = "http://ssldocs.heroku.com"
 

@@ -9,8 +9,9 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::UnknownAction, :with => :not_found
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user_session, :current_user, :is_reseller
-  filter_parameter_logging :password, :password_confirmation
+  helper_method :current_user_session, :current_user, :is_reseller, :cookies,
+    :cart_contents, :cart_products, :certificates_from_cookie
+  before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter {|c|Authorization.current_user = c.current_user}
 
   def permission_denied
@@ -34,7 +35,99 @@ class ApplicationController < ActionController::Base
     current_user && current_user.ssl_account.is_registered_reseller?
   end
 
+  def add_to_cart line_item
+    session[:cart_items] << line_item.model_and_id
+  end
+
+  def cart_contents
+    cart = cookies[:cart]
+    cart.blank? ? {} : JSON.parse(cookies[:cart])
+  end
+
+  def cart_products
+    cart_contents.collect {|cart_item|
+      pr = cart_item[ShoppingCart::PRODUCT_CODE]
+      if pr.blank?
+        nil
+      elsif (cart_item.count > 1)
+        Certificate.find_by_product(pr)
+      else
+        ActiveRecord::Base.find_from_model_and_id(pr)
+      end
+    }.compact
+  end
+
+  def delete_cart_items
+    cookies.delete :cart
+  end
+
+  def save_cart_items(items)
+    cookies[:cart] = {:value=>JSON.generate(items), :path => "/",
+      :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+  end
+
   def certificates_from_cookie
+    #this is the old, colon delimited version
+    #old_certificates_from_cookie
+    certs=cart_contents
+    @certificate_orders=[]
+    return @certificate_orders if certs.blank?
+    certs.each do |c|
+      next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
+      certificate_order = CertificateOrder.new(
+        :server_licenses=>c[ShoppingCart::LICENSES],
+        :duration=>c[ShoppingCart::DURATION],
+        :quantity=>c[ShoppingCart::QUANTITY].to_i)
+      certificate_order.certificate_contents.build :domains=>
+        c[ShoppingCart::DOMAINS]
+      certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
+      unless current_user.blank?
+        current_user.ssl_account.clear_new_certificate_orders
+        next unless current_user.ssl_account.can_buy?(certificate)
+      end
+      #adjusting duration to reflect number of days validity
+      duration = certificate_order.duration.to_i * 365
+      certificate_order.certificate_content.duration = duration
+      if certificate.is_ucc? || certificate.is_wildcard?
+        psl = certificate.items_by_server_licenses.find{|item|
+          item.value==duration.to_s}
+        so = SubOrderItem.new(:product_variant_item=>psl,
+          :quantity=>certificate_order.server_licenses.to_i,
+          :amount=>psl.amount*certificate_order.server_licenses.to_i)
+        certificate_order.sub_order_items << so
+        if certificate.is_ucc?
+          pd = certificate.items_by_domains.find_all{|item|
+            item.value==duration.to_s}
+          additional_domains = (certificate_order.certificate_contents[0].
+            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+          so = SubOrderItem.new(:product_variant_item=>pd[0],
+            :quantity=>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
+            :amount=>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
+          certificate_order.sub_order_items << so
+          if additional_domains > 0
+            so = SubOrderItem.new(:product_variant_item=>pd[1],
+              :quantity=>additional_domains,
+              :amount=>pd[1].amount*additional_domains)
+            certificate_order.sub_order_items << so
+          end
+        end
+      end
+      unless certificate.is_ucc?
+        pvi = certificate.items_by_duration.find{|item|item.value==duration.to_s}
+        so = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
+          :amount=>pvi.amount)
+        certificate_order.sub_order_items << so
+      end
+      certificate_order.amount = certificate_order.
+        sub_order_items.map(&:amount).sum
+      certificate_order.certificate_contents[0].
+        certificate_order = certificate_order
+      @certificate_orders << certificate_order if certificate_order.valid?
+    end
+    @certificate_orders
+  end
+
+  def old_certificates_from_cookie
     @certificate_orders=[]
     return @certificate_orders unless cookies[:cart]
     Order.cart_items session, cookies
@@ -92,17 +185,19 @@ class ApplicationController < ActionController::Base
   def build_certificate_contents(certificate_orders, order)
     certificate_orders.each do |cert|
       cert.quantity.times do |i|
-        new_cert = cert.dclone
-        new_cert.sub_order_items = cert.sub_order_items.dclone
+        new_cert = cert.clone
+        new_cert.sub_order_items = cert.sub_order_items.clone
+        new_cert.certificate_contents = cert.certificate_contents.clone
         new_cert.line_item_qty = cert.quantity if i==cert.quantity-1
         new_cert.preferred_payment_order = 'prepaid'
         #the line blow was concocted because a simple assignment resulted in
         #the certificate_order coming up nil on each certificate_content
         #and failing the has_csr validation in the certificate_order
-        cert.certificate_contents.each {|cc|
-          cc_tmp = cc.dclone
-          cc_tmp.certificate_order = new_cert
-          new_cert.certificate_contents << cc_tmp}
+#        new_cert.certificate_contents.clear
+#        cert.certificate_contents.each {|cc|
+#          cc_tmp = cc.dclone
+#          cc_tmp.certificate_order = new_cert
+#          new_cert.certificate_contents << cc_tmp} unless cert.certificate_contents.blank?
         order.line_items.build :sellable=>new_cert
       end
     end
@@ -110,10 +205,10 @@ class ApplicationController < ActionController::Base
 
   def find_certificate_orders(options={})
     if @search = params[:search]
+      #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
         (CertificateOrder.search(params[:search], options)+
-          Csr.search(params[:search]).map(&:certificate_orders).flatten).
-          sort{|a,b|b.created_at<=>a.created_at} :
+          Csr.search(params[:search]).map(&:certificate_orders).flatten) :
         current_user.ssl_account.certificate_orders.
           search_with_csr(params[:search], options)).select{|co|
         ['paid'].include? co.workflow_state}
@@ -154,7 +249,19 @@ class ApplicationController < ActionController::Base
   end
 
   private
-  
+
+  #if in process of recerting (renewal, reprocess, etc), this sets instance
+  #variables from params. Only one thing allowed at a time.
+  def detect_recert
+    CertificateOrder::RECERTS.each do |r|
+      unless params[r.to_sym].blank?
+        recert=CertificateOrder.find_by_ref(params[r.to_sym])
+        instance_variable_set("@#{r.to_sym}", recert) if recert
+        break
+      end
+    end
+  end
+
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find(:shadow) || UserSession.find
@@ -218,7 +325,7 @@ class ApplicationController < ActionController::Base
   def sync_aid_li_and_cart
     if cookies[:aid_li] && cookies[:cart]
       aid_li=cookies[:aid_li].split(":")
-      cart=cookies[:cart].split(":")
+      cart=cart_contents
       if aid_li.count!=cart.count
         if aid_li.count>cart.count
           (aid_li.count-cart.count).times do
@@ -241,5 +348,4 @@ class ApplicationController < ActionController::Base
     cookies.delete(:cart)
     cookies.delete(:aid_li)
   end
-
 end

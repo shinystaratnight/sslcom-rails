@@ -2,7 +2,7 @@ class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy],
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  
+
   def index
     @certificates = @tier.blank? ? Certificate.root_products :
       Certificate.tiered_products(@tier)
@@ -58,20 +58,9 @@ class CertificatesController < ApplicationController
   # GET /certificate/buy/wildcard.xml
   def buy
     @certificate = Certificate.find_by_product(params[:id]+@tier)
-    unless @certificate.blank?
-      @certificate_order = CertificateOrder.new(:duration=>
-          (params[:id]=='free') ? 1 : 2)
-      @certificate_order.ssl_account=
-        current_user.ssl_account unless current_user.blank?
-      @certificate_order.has_csr=true
-      @certificate_content = CertificateContent.new()
-      respond_to do |format|
-          format.html # buy.html.haml
-          format.xml  { render :xml => @certificate}
-      end
-    else
-      not_found
-    end
+    @renewing = CertificateOrder.find_by_ref(
+      params[:renewing]) if params[:renewing]
+    prep_purchase
   end
 
   def find_tier
@@ -91,6 +80,25 @@ class CertificatesController < ApplicationController
     else
       @certificates = @certificates.reject{|c|
         c.product=~/\dtr/ || c.is_multi?}
+    end
+  end
+
+  private
+
+  def prep_purchase
+    unless @certificate.blank?
+      @certificate_order = CertificateOrder.new(:duration=>
+          (params[:id]=='free') ? 1 : 2)
+      @certificate_order.ssl_account=
+        current_user.ssl_account unless current_user.blank?
+      @certificate_order.has_csr=true
+      @certificate_content = CertificateContent.new()
+      respond_to do |format|
+          format.html # buy.html.haml
+          format.xml  { render :xml => @certificate}
+      end
+    else
+      not_found
     end
   end
 end

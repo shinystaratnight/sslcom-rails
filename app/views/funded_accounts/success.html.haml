@@ -13,10 +13,11 @@
   =(order_progress_indicator(pos, @certificate_order.certificate)) unless is_receipt?
 .order_container
   -if @deposit && !@deposit.receipt
+    -recipients=current_user.ssl_account.receipt_recipients
     %p
       A deposit confirmation email has been sent to the following
-      \#{pluralize(current_user.ssl_account.receipt_recipients.count, 'recipient')}:
-      \#{current_user.ssl_account.receipt_recipients.join(", ")}.
+      \#{pluralize(recipients.uniq.count, 'recipient')}:
+      \#{recipients.uniq.join(", ")}.
   -if @order && !(@order.receipt || @order.deposit_mode)
     %p
       A confirmation email for your certificate order has been sent to the
@@ -36,7 +37,7 @@
       -u=@certificate_order.ssl_account.users.last
       %p
         %em admin only:
-        =link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+        =remote_login_link(u)
     -if @certificate_order.is_unused_credit?
       %p
         To finish processing this certificate order,
@@ -70,7 +71,7 @@
         #credit_card_amount
           load amount:
           %span=h @deposit.amount.format :with_currency
-    -if @order && (@order.cents > 0 or @order.is_free?)
+    -if @order && !@order.new_record? && (@order.cents > 0 or @order.is_free?)
       =render :partial=>'/orders/order_report'
     -unless is_receipt?
       #available_funds

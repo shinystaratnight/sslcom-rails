@@ -12,7 +12,7 @@
   -form_for setup_certificate_contacts(@certificate_content) do |f|
     #stylized.default_form
       -i = 0
-      -f.fields_for :certificate_contacts do |c|
+      =f.fields_for :certificate_contacts do |c|
         -i+=1
         -roles = CertificateContent::CONTACT_ROLES
         -roles.each do |role|

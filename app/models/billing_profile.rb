@@ -1,5 +1,3 @@
-#require 'oniguruma'
-
 class BillingProfile < ActiveRecord::Base  
   belongs_to  :ssl_account
   has_many    :orders
@@ -44,8 +42,7 @@ class BillingProfile < ActiveRecord::Base
 
   def masked_card_number
     mask = (0..(card_number.size - 8)).inject("") {|array,n|array << '*'}
-    reg = Oniguruma::ORegexp.new '(?<=\d{4})\d+(?=\d{4})'
-    reg.gsub(card_number, mask)
+    card_number.gsub(/(?<=\d{4})\d+(?=\d{4})/, mask)
   end
 
   def american?

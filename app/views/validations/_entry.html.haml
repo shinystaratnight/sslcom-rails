@@ -147,7 +147,7 @@
                     %li
                       %strong login
                     -u = co.ssl_account.users.last
-                    %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                    %li=remote_login_link(u)
                   %li
                     %strong notes
                   %li

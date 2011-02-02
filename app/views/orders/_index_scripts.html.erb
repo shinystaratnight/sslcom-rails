@@ -32,48 +32,21 @@ jQuery(function($) {
     $('#cart_items_qty').effect("highlight", {color:'green'}, 500);
   };
   $.change_cart_items_qty = function(quantity, indx){
-    if(indx==null)
-      indx=0;
-    cart_qty_indx=null;
-    cart = $.cookie("cart");
-    affiliate = $.cookie("aid");
-    affiliateLineItem = $.cookie("aid_li");
-    remove_af=false;
-    if(cart==null)
-      cart="";
-    if(affiliateLineItem==null)
-      affiliateLineItem="";
+    cart = $.get_cart_items();
     //structure of a certificate order in the cart is as follows
     //product,num_years,num_servers,domains,quantity:
-    lis=cart.split(/:/);
-    if(lis.find("").length>0)
-      lis.remove(lis.find(""));
     $(count).each(function(index, value){
       if(value==indx){
-        indx=index
+        indx=index;
       }
     });
     if(quantity>0)
-      lis[indx]=lis[indx].replace(/\d+$/, quantity);
+      cart[indx]["<%=ShoppingCart::QUANTITY%>"]=quantity;
     else{
       count.remove(indx);
-      lis.remove(indx);
-      remove_af=true;
+      cart.remove(indx);
     }
-    if(lis.join(":")=="")
-      cart = "";
-    else
-      cart = lis.join(":")+ ":";
-    if(remove_af==true){
-      lis=affiliateLineItem.split(":");
-      if(lis.find("").length>0)
-        lis.remove(lis.find(""));
-      lis.remove(indx);
-      affiliateLineItem=(lis.join(":")+":");}
-    if(affiliateLineItem==":")
-      affiliateLineItem="";
-    $.cookie("cart", cart, { expires: <%=AppConfig.cart_cookie_days%>, path: '/'});
-    $.cookie("aid_li", affiliateLineItem, { expires: <%=AppConfig.affiliate_cookie_days%>, path: '/'});
+    $.save_cart(cart);
   };
   $(document).ready(function() {
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
@@ -148,7 +121,7 @@ jQuery(function($) {
         return false;
       }
     });
-    $(':select[id^=qty_]').change(function(){
+    $('select[id^=qty_]').change(function(){
       id=$(this).attr("id").match(/\d+$/)[0];
       $.line_item_total(id);
       $.change_cart_items_qty(qty, id);
@@ -178,7 +151,7 @@ jQuery(function($) {
       $.empty_out_cart();
       $.update_cart_qty_display();
     });
-    $(':select[id^=qty_]').each(function(index, value){
+    $('select[id^=qty_]').each(function(index, value){
       //used for mapping when line items get deleted
       count.push(index);
       id=$(this).attr("id").match(/\d+$/);

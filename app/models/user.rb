@@ -119,16 +119,17 @@ class User < ActiveRecord::Base
   end
 
   #temporary function to assist in migration
-  def update_record_without_timestamping
-    class << self
-      def record_timestamps; false; end
-    end
+  if MIGRATING_FROM_LEGACY
+    def update_record_without_timestamping
+      class << self
+        def record_timestamps; false; end
+      end
 
-    save(false)
+      save(false)
 
-    class << self
-      def record_timestamps; super ; end
+      class << self
+        def record_timestamps; super ; end
+      end
     end
   end
-
 end

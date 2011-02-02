@@ -1,5 +1,5 @@
--f.fields_for :certificate_contents, @certificate_content do |cc|
-  -cc.fields_for :registrant, @registrant do |rf|
+=f.fields_for :certificate_contents, @certificate_content do |cc|
+  =cc.fields_for :registrant, @registrant do |rf|
     =rf.hidden_field :company_name
     %p
       Please provide information about the applicant of this certificate.

@@ -4,8 +4,7 @@ class SslAccount < ActiveRecord::Base
   easy_roles :roles
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, :include => [:orders, :certificate_contents],
-    :order=> 'certificate_orders.created_at DESC' do
+  has_many  :certificate_orders, :include => [:orders, :certificate_contents] do
     def unvalidated(options={})
       all(options).find_all{|co|
         next false unless co.certificate_content
@@ -32,8 +31,11 @@ class SslAccount < ActiveRecord::Base
 
     #new certificate orders are the ones still in the shopping cart
     def not_new(options={})
-      find(:all, options){|co|
-        co.workflow_state <=> ['paid']}
+      if options && options.has_key?(:page)
+        self.where("workflow_state = ?",'paid').paginate(options)
+      else
+        self.all(options || {}).find_all{|co|co.paid?}
+      end
     end
 
     def has_csr(options={})
@@ -44,7 +46,7 @@ class SslAccount < ActiveRecord::Base
 
     def credits(options={})
       all(options).find_all{|co|
-        ['paid'].include?(co.workflow_state) && 
+        ['paid'].include?(co.workflow_state) &&
           co.certificate_content.try(:new?)}
     end
 
@@ -153,7 +155,7 @@ class SslAccount < ActiveRecord::Base
 
 
   def total_amount_paid
-    Money.new(orders.select{|op|op.current_state==:paid}.inject(0) do 
+    Money.new(orders.select{|op|op.current_state==:paid}.inject(0) do
         |sum, o| sum+=o.cents end)
   end
 
@@ -199,7 +201,7 @@ class SslAccount < ActiveRecord::Base
   def has_only_credits?
     certificate_orders.credits.count==certificate_orders.not_new.count
   end
-  
+
   def has_credits?
     certificate_orders.unused_credits.count > 0
   end

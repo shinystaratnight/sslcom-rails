@@ -2,9 +2,9 @@ module OrdersHelper
   def cart_items
     if current_user && current_user.ssl_account.has_role?('new_reseller')
       return [current_user.ssl_account.reseller.reseller_tier]
-    elsif @certificate_order
+    elsif !@certificate_order.blank?
       return [@certificate_order]
-    elsif @certificate_orders
+    elsif !@certificate_orders.blank?
       certs=[]
       @certificate_orders.each do |cert|
         cert.quantity.times do
@@ -15,31 +15,16 @@ module OrdersHelper
     elsif @funded_account
       return []
     end
-    session[:cart_items] ||= []
-    Order.cart_items session, cookies
-    session[:cart_items].collect {|cart_item|
-      coa = cart_item.split(/,/)
-      if (coa.count > 1)
-        Certificate.find_by_product(coa.first)
-      else
-        ActiveRecord::Base.find_from_model_and_id(cart_item)
-      end
-    }
+    cart_products
   end
 
   def cart_items_count
-    cookies[:cart].blank? ? 0 : cookies[:cart].split(":").count
+    cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/}.count
   end
 
   def current_order
     order = current_user.nil? ? User.new.build_ssl_account.purchase(*cart_items) :
       current_user.ssl_account.purchase(*cart_items)
-    order.line_items.each_with_index{|line_item,i|
-      affiliates_credits = 
-        (cookies[:aid_li].blank? ? nil : cookies[:aid_li].split(/:/).last)
-      line_item.affiliate = Affiliate.find(affiliates_credits) if
-      Affiliate.exists?(affiliates_credits)
-      }
     order.cents = cart_items.inject(0){|result, element| result +
         element.attributes_before_type_cast["amount"].to_f}
     order

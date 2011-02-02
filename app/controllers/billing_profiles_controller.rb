@@ -2,11 +2,15 @@ class BillingProfilesController < ApplicationController
   include ApplicationHelper, OrdersHelper
   #ssl_required :new
   #helper :profile
+
+  respond_to :json
   
   before_filter :login_required, :only => [:new, :create]
 
   def destroy
-    BillingProfile.destroy(params[:id])
+    @bp=BillingProfile.find(params[:id])
+    @bp.destroy(params[:id])
+    respond_with @bp
   end
 
 end

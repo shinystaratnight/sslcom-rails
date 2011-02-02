@@ -11,20 +11,27 @@ gem 'workflow'
 gem 'preferences'
 gem 'wirble'
 gem 'awesome_print'
-gem 'activemerchant'
-gem 'money', :git => "git://github.com/RubyMoney/money.git"
+gem 'activemerchant', '1.10.0'
+#gem 'money', :git => "git://github.com/RubyMoney/money.git"
+gem 'money', '2.1.0'
 gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml'
-gem 'hassle', :git => "git://github.com/Papipo/hassle"
+#gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
+#gem 'resource_controller', git: "git://github.com/giraffesoft/resource_controller.git"
 gem 'declarative_authorization'
-gem "authlogic"
+gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "workflow"
 gem "savon"
 gem 'rubyzip'
 gem 'compass'
+#gem 'aws-s3'
+gem 'xml-simple'
+gem 'json'
+gem 'easy_roles'
+gem 'meta_where'
 
 # Use unicorn as the web server
 # gem 'unicorn'

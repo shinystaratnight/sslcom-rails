@@ -61,10 +61,6 @@ class OrdersController < ApplicationController
     end
   end
 
-  def add_to_cart line_item
-    session[:cart_items] << line_item.model_and_id
-  end
-
   def user_orders
     @orders = current_user.orders
   end

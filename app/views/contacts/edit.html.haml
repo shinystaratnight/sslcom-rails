@@ -11,7 +11,7 @@
   =error_messages_for :contact
   -form_for @certificate_content do |f|
     #stylized.default_form
-      -f.fields_for :contacts do |c|
+      =f.fields_for :contacts do |c|
         =render 'contact_fields', :f => c
       =link_to_add_fields "add new contact", f, :contacts
     #button_container

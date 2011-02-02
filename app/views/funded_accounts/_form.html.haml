@@ -1,9 +1,7 @@
 .clearfix
-  -if @reseller_initial_deposit
+  -if initial_reseller_deposit?
     %label{:for => "expense_amount"}
       Deposit For:
-      %span.label_desc
-        =current_order.line_items.first.sellable.description
     #buying_tier_level Reseller Tier #{current_order.line_items.first.sellable.label}
 .clearfix
   %label{:for => "amount"}
@@ -12,7 +10,7 @@
     - else
       Load Amount:
     %span.label_desc charged in $USD
-  -if @reseller_initial_deposit || @certificate_order || @certificate_orders
+  -if initial_reseller_deposit? || @certificate_order || @certificate_orders
     #tier_load_amount= current_order.amount.format.gsub(/,/, '') + " USD"
     = f.hidden_field :amount, :value=>(current_order.amount or 0)
   -else

@@ -10,7 +10,7 @@ class Csr < ActiveRecord::Base
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
-  named_scope :search, lambda {|term|
+  scope :search, lambda {|term|
     {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}
   }
 

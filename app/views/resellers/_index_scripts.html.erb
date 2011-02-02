@@ -2,6 +2,13 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
+    $.select_tier = function(radio){
+      $.empty_out_cart();
+      $.add_remove_cart_items("add", {<%=ShoppingCart::PRODUCT_CODE%> :
+          $(radio).attr("id")});
+      $.adjust_items_in_cart();
+      //update cart
+    };
     $.update_country = function(country_select){
       if($(country_select).find(':selected').text()=="United States")
         $('label[for*=state]').text("State*");
@@ -26,27 +33,23 @@ jQuery(function($) {
       $.update_country(this);
     });
     $('label[for*=tax_number]').text("Tax Number*").append("<span class='label_desc'>VAT for EU companies</span>");
-    $(':radio:checked').click();
     $.update_country('#reseller_country');
+    $('input[type=radio][id*=reseller_tier]').each(function(){
+      selected = true;
+      radio = this;
+      $($.get_cart_items()).each(function(){
+        if(this["<%=ShoppingCart::PRODUCT_CODE%>"]==$(radio).attr("id")){
+          $(radio).attr("checked", "checked");
+        }
+      });
+    });
+    $('[id*=reseller_tier]:radio:checked').each(function(){
+      $.select_tier(this);
+    });
   });
   <% unless SERVER_SIDE_CART %>
-  $('input[type=radio][id*=reseller_tier]').click(function(){
-    $.cookie("cart", null, {path: '/'});
-    $.cookie("aid_li", null, {path: '/'});
-    var cart = $.cookie("cart");
-    var affiliate = $.cookie("aid");
-    var affiliateLineItem = $.cookie("aid_li");
-    if(cart==null)
-      cart="";
-    if(affiliateLineItem==null)
-      affiliateLineItem="";
-    if(cart.indexOf($(this).attr("id"))==-1)
-      cart=cart+$(this).attr("id")+":";
-    affiliateLineItem=affiliateLineItem+((affiliate==null)?"n":affiliate)+":";
-    $.cookie("cart", cart, { expires: <%=AppConfig.cart_cookie_days%>, path: '/'});
-    $.cookie("aid_li", affiliateLineItem, { expires: <%=AppConfig.affiliate_cookie_days%>, path: '/'});
-    $.adjust_items_in_cart();
-    //update cart
+  $('[id*=reseller_tier]:radio').click(function(){
+    $.select_tier(this);
   });
   <% end %>
 });

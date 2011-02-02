@@ -1,12 +1,12 @@
-SslDocs::Application.routes.draw do
+SslCom::Application.routes.draw do
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
-  resource :account do
+  resource :account, :controller=>:users do
       resource :reseller
   end
   resources :password_resets
-  resource :ssl_account do    
+  resource :ssl_account do
     get :edit_settings
     put :update_settings
   end
@@ -31,7 +31,7 @@ SslDocs::Application.routes.draw do
     end
   end
 
-  resources :resellers do
+  resources :resellers, :only=>:index do
     collection do
       get :details
       get :restful_api
@@ -46,6 +46,20 @@ SslDocs::Application.routes.draw do
 
   resource :user_session
   resources :certificate_orders do
+    collection do
+      get :credits
+      get :pending
+      get :incomplete
+      get :search
+    end
+
+    member do
+      put :update_csr
+      get :download
+      get :renew
+      get :reprocess
+    end
+
     resource :validation do
       post :upload
     end
@@ -53,7 +67,7 @@ SslDocs::Application.routes.draw do
   end
 
   resources :certificate_contents do
-    resources :contacts
+    resources :contacts, :only=>:index
   end
 
   resources :csrs do
@@ -61,12 +75,12 @@ SslDocs::Application.routes.draw do
   end
 
   resources :validation_histories
-  resources :validations do
+  resources :validations, :only=>[:index, :update] do
     collection do
       get :search
     end
   end
-  resources :site_seals do
+  resources :site_seals, :only=>[:index, :update, :admin_update] do
     collection do
       get :details
       get :search
@@ -101,12 +115,18 @@ SslDocs::Application.routes.draw do
 
   match '/register/:activation_code' => 'activations#new', :as => :register
   match '/activate/:id' => 'activations#create', :as => :activate
-  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
-  match 'secure/allocate_funds_for_order/:id' => 'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds
-  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
-  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
+  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds',
+    :as => :allocate_funds
+  match 'secure/allocate_funds_for_order/:id' =>
+    'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order
+  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds',
+    :as => :deposit_funds
+  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds',
+    :as => :confirm_funds
+  match 'secure/apply_funds' => 'funded_accounts#apply_funds',
+    :as => :apply_funds
+  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders',
+    :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
   match 'reseller' => 'site#reseller', :as => :reseller,
       :constraints => {:subdomain=>Reseller::SUBDOMAIN}

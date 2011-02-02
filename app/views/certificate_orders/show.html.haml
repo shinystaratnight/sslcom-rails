@@ -67,7 +67,7 @@
                               \#{fields.country}
                         -if current_user.is_admin?
                           -u = @certificate_order.ssl_account.users.last
-                          %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                          %li=remote_login_link(u)
                         %li=link_to "view order transaction", @certificate_order.order
                     .certificate_details_box
                       %ul
@@ -129,7 +129,7 @@
                               -unless co.validation.validation_histories.blank?
                                 -m=link_to 'manage', edit_certificate_order_validation_url(co)
                               -s=link_to 'status', certificate_order_validation_url(co)
-                              =[u,m,s].compact.join(" | ")
+                              =link_cluster([u,m,s])
             %table(cellspacing="0")
               %tbody
                 %tr

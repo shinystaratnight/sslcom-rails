@@ -9,8 +9,9 @@ module FundedAccountsHelper
   end
 
   def initial_reseller_deposit?
-    current_user.ssl_account.has_role?('new_reseller') &&
-          current_user.ssl_account.reseller.enter_billing_information?
+    current_user.ssl_account.has_role?('new_reseller') && (
+          current_user.ssl_account.reseller.enter_billing_information? ||
+          current_user.ssl_account.reseller.select_tier?)
   end
 
   def load_amounts(deduct_order)
@@ -44,9 +45,8 @@ module FundedAccountsHelper
   end
 
   def destroy_credit_card_link(item)
-    link_to_remote 'Delete', :url => billing_profile_path(item), 
-      :method => :delete, :confirm => "Are you sure you want to delete the credit card profile for #{item.masked_card_number}? This action cannot be undone.",
-      :complete => visual_effect(:fade, item.model_and_id, :duration => 0.2)+"jQuery.last_delete_clicked();",
-        :html=>{:class => 'delete_billing_profile'}
+    link_to 'delete', billing_profile_path(item), :remote=>true,
+      :class=>'delete_profile', :method => :delete,
+      :confirm => "Are you sure you want to delete the credit card profile for #{item.masked_card_number}? This action cannot be undone."
   end
 end

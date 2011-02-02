@@ -82,7 +82,9 @@ private
         render :action => :select_tier
       end
     elsif @reseller.enter_billing_information?
-      redirect_to allocate_funds_for_order_url
+      redirect_to (current_user.ssl_account.has_role?('new_reseller')) ?
+        allocate_funds_url :
+        allocate_funds_for_order_url
     elsif @reseller.complete?
 
     end

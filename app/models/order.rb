@@ -21,9 +21,11 @@ class Order < ActiveRecord::Base
 
   SSL_CERTIFICATE = "SSL Certificate Purchase"
 
-  default_scope :order => 'orders.created_at DESC'
-  named_scope :search, lambda {|term|
-    {:conditions => ["reference_number #{SQL_LIKE} ?", '%'+term+'%']}
+  default_scope includes(:line_items).where(line_items:
+    [:sellable_type !~ ResellerTier.to_s]).order('created_at desc')
+
+  scope :search, lambda {|term|
+    where(:reference_number =~ '%'+term+'%')
   }
 
   preference  :migrated_from_v2, :default=>false
@@ -176,35 +178,24 @@ class Order < ActiveRecord::Base
     @is_free.try(:eql, true) || (preferred_migrated_from_v2==true || cents==0)
   end
 
-  def self.cart_items(session, cookies)
-    session[:cart_items] = []
-    session[:affiliates_credits] = []
-    unless SERVER_SIDE_CART
-      new_cookie = cookies[:cart]
-      new_aid_li_cookie = cookies[:aid_li]
-      affiliates_credits = cookies[:aid_li].split(/:/) unless cookies[:aid_li].blank?
-      cookies[:cart].split(/:/).each_with_index{|line_item, i|
-        coa = line_item.split(/,/)
-        if (coa.count > 1 && Certificate.find_by_product(coa.first)) ||
-          ActiveRecord::Base.find_from_model_and_id(line_item)
-          session[:cart_items] << line_item
-          session[:affiliates_credits] << affiliates_credits[i]
-        else
-          new_cookie.sub!(line_item+":", "")
-          new_aid_li_cookie.sub!(affiliates_credits[i]+":","")
-          @change_cookie = true
-        end
-      } unless cookies[:cart].blank?
-      if @change_cookie
-        cookies.delete :cart
-        cookies[:cart] = {:value=>new_cookie, :path => "/", 
-          :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
-        cookies.delete :aid_li
-        cookies[:aid_li] = {:value=>new_aid_li_cookie, :path => "/",
-          :expires => AppConfig.affiliate_cookie_days.to_i.days.from_now}
-      end
-    end
-  end
+#  def self.cart_items(session, cookies)
+#    session[:cart_items] = []
+#    unless SERVER_SIDE_CART
+#      cart_items = cart_contents
+#      cart_items.each_with_index{|line_item, i|
+#        pr=line_item[ShoppingCart::PRODUCT_CODE]
+#        if !pr.blank? &&
+#          ((line_item.count > 1 && Certificate.find_by_product(pr)) ||
+#          ActiveRecord::Base.find_from_model_and_id(pr))
+#          session[:cart_items] << line_item
+#        else
+#          cart_items.delete line_item
+#          delete_cart_items
+#          save_cart_items(cart_items)
+#        end
+#      }
+#    end
+#  end
 
   def to_param
     reference_number

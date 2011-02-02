@@ -8,7 +8,7 @@
       %h2
         Gain the competitive edge by displaying your SSL Smart SeaL
       .leftcolb
-        .go_green_with_ev_image_container.center
+        .go_green_with_ev_image_container
           =link_to image_tag("go_green_with_ev_ssl.jpg"), certificate_url('ev')
         .sample_site_seal_container
           %p
@@ -17,11 +17,11 @@
       .rightcolc
         %ul.listd
           %li
-            Comes with 
+            Comes with
             =link_to "Site Seal Artifacts", site_seals_path
             report
           %li
-            Enables the 
+            Enables the
             =link_to "green address bar with ev ssl", certificate_path(:id=>'ev')
           %li
             Around-the-clock global customer support
@@ -48,7 +48,7 @@
           %h3
             Better tools mean better results.
           %p
-            Save time with our simple yet powerful PKI system for resellers. 
+            Save time with our simple yet powerful PKI system for resellers.
             Leverage our complimentary suite of promotional tools to help
             drive sales and increase your bottomline.
       %li
@@ -57,8 +57,8 @@
           %h3
             Save money, increase profits.
           %p
-            The 
-            =link_to "SSL Reseller Program", resellers_path
+            The
+            =link_to "SSL Reseller Program", root_url(:subdomain=>Reseller::SUBDOMAIN)
             allows you to start selling SSL
             certificates immediately with no contracts or commitments.
             Simply choose from multiple prepayment levels to achieve higher
@@ -78,7 +78,7 @@
           %h3
             Detailed reporting.
           %p
-            Keep tabs on your account through our advanced reporting system. 
+            Keep tabs on your account through our advanced reporting system.
             With this tool, you can view details about your certificates,
             account balance, deposits, and much more.
       %li
@@ -87,7 +87,7 @@
           %h3
             Retain customers longer.
           %p
-            Take charge of the renewal process by controlling when and to whom 
+            Take charge of the renewal process by controlling when and to whom
             renewal notices are sent. You can even customize the renewal
             notices to better suit your needs.
       %li
@@ -96,6 +96,6 @@
           %h3
             24-hour worldclass support.
           %p
-            Expedient SSL implementation is essential to maintain proper uptime, 
+            Expedient SSL implementation is essential to maintain proper uptime,
             and we offer multiple levels of support to ensure your SSL
             management and installations go smoothly.

@@ -18,10 +18,14 @@ class UserSessionsController < ApplicationController
         redirect_to show_cart_orders_url and return
       end
     end
-    if !current_user.blank? && current_user.is_admin?
-      @user_session = UserSession.new(User.find_by_login params[:login])
-      @user_session.id = :shadow
-      clear_cart
+    if !current_user.blank?
+      if current_user.is_admin?
+        @user_session = UserSession.new(User.find_by_login params[:login])
+        @user_session.id = :shadow
+        clear_cart
+      else
+        @user_session = current_user_session
+      end
     else
       require_no_user
       @user_session = UserSession.new(params[:user_session])

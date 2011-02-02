@@ -71,7 +71,7 @@ class CertificateContent < ActiveRecord::Base
 
     state :revoked
   end
-  
+
   def domains=(domains)
     write_attribute(:domains, domains.split(/\s+/).uniq.reject{|d|d.blank?})
   end
@@ -125,7 +125,7 @@ class CertificateContent < ActiveRecord::Base
     invalid_chars_msg = "has invalid characters. Only the following characters
       are allowed [A-Za-z0-9.-#{'*' if is_wildcard}]"
     if csr.common_name.blank?
-      errors.add(:signing_request, 'is invalid and cannot be parsed')        
+      errors.add(:signing_request, 'is invalid and cannot be parsed')
     else
       asterisk_found = (csr.common_name=~/^\*\./)==0
       if is_wildcard && !asterisk_found

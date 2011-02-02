@@ -88,7 +88,7 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         -if permitted_to? :admin_manage, user
-                          %li=link_to "login as #{user.login}", user_session_url(:login=>user.login), :method=>:post, :id=>user.model_and_id
+                          %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
             %table(cellspacing="0")

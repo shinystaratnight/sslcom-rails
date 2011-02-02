@@ -15,7 +15,7 @@
         %span.has_csr_container I will submit my CSR later or have someone else do it
 -else
   =f.hidden_field :has_csr
--f.fields_for :certificate_contents, @certificate_content do |cert_form|
+=f.fields_for :certificate_contents, @certificate_content do |cert_form|
   #csr_section
     %p
       In order to submit a Certificate Signing Request (CSR), you must first

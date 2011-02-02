@@ -11,6 +11,11 @@ class CertificateOrder < ActiveRecord::Base
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration
   attr_accessor_with_default :has_csr, false
+
+  #will_paginate
+  cattr_reader :per_page
+  @@per_page = 10
+
   #used to temporarily determine lineitem qty
   attr_accessor_with_default :quantity, 1
   preference  :payment_order, :string, :default=>"normal"
@@ -26,10 +31,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope :order => 'certificate_orders.created_at DESC'
-  named_scope :search, lambda {|term, options|
+  scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
-  named_scope :search_with_csr, lambda {|term, options|
+  
+  scope :search_with_csr, lambda {|term, options|
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
       merge(options)
@@ -41,7 +47,7 @@ class CertificateOrder < ActiveRecord::Base
   PREPAID_EXPRESS = 'prepaid_express'
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%w(Submit\ CSR Payment
     Registrant Contacts Validation Complete)}
-  EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS, 
+  EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts Validation)}
   PREPAID_FULL_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
@@ -57,19 +63,29 @@ class CertificateOrder < ActiveRecord::Base
             INFO_PROVIDED=> 'contacts required',
             REPROCESS_REQUESTED => 'csr required',
             CONTACTS_PROVIDED => 'validation required'}
+
+  RENEWING = 'renewing'
+  REPROCESSING = 'reprocessing'
+  RECERTS = [RENEWING, REPROCESSING]
+
   #changed for the migration
-  validates_presence_of :certificate
-#  validates_presence_of :certificate, :unless=>Proc.new {|co|
-#    !co.orders.last.nil? && co.orders.last.preferred_migrated_from_v2 = true}
+  if MIGRATING_FROM_LEGACY
+    validates :certificate, presence: true
+  else
+    validates :certificate, presence: true, :unless=>Proc.new {|co|
+      !co.orders.last.nil? && co.orders.last.preferred_migrated_from_v2 = true}
+  end
   before_create {|co|
     co.ref='co'+ActiveSupport::SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
     v=co.create_validation
     if co.certificate
       co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
       v.validation_rules << co.certificate.validation_rules
-      v.validation_rulings.each do |vrl|
-          vrl.update_attribute "status", ValidationRuling::WAITING_FOR_DOCS
-      end
+#      if v.validation_rulings
+#        v.validation_rulings.each do |vrl|
+#            vrl.update_attribute "status", ValidationRuling::WAITING_FOR_DOCS
+#        end
+#      end
     end
     co.site_seal=SiteSeal.create
   }
@@ -103,10 +119,26 @@ class CertificateOrder < ActiveRecord::Base
   def certificate_duration
     if migrated_from_v2? && !preferred_v2_line_items.blank?
       preferred_v2_line_items.split('|').detect{|item|
-        item =~/years?/i || item =~/days?/i}
+        item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
     else
       sub_order_items.map(&:product_variant_item).detect{|item|
         item.is_duration?}.try(:description)
+    end
+  end
+
+  def renewal_certificate
+    if migrated_from_v2?
+      Certificate.map_to_legacy(preferred_v2_product_description, 'renew')
+    else
+      certificate
+    end
+  end
+
+  def mapped_certificate
+    if migrated_from_v2?
+      Certificate.map_to_legacy(preferred_v2_product_description)
+    else
+      certificate
     end
   end
 
@@ -126,7 +158,7 @@ class CertificateOrder < ActiveRecord::Base
   def signed_certificate
     certificate_content.csr.signed_certificate
   end
-  
+
   def signup_process(cert=certificate)
     unless is_prepaid?
       if ssl_account && ssl_account.has_role?('reseller')
@@ -213,8 +245,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.find_not_new(options=nil)
-    self.all(options || {}).find_all{|co|['paid'].include?(
-      co.workflow_state)}
+    self.where("workflow_state = ?",'paid')
   end
 
   def self.find_pending
@@ -223,7 +254,7 @@ class CertificateOrder < ActiveRecord::Base
       include?(co.certificate_content.workflow_state) &&
       !co.validation_rules_satisfied?) if co.certificate_content}
   end
-  
+
   def to_param
     ref
   end
@@ -317,7 +348,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def v2_line_items
-    preferred_v2_line_items.split('|')
+    preferred_v2_line_items.split('|') unless preferred_v2_line_items.blank?
   end
 
   def v2_line_items=(line_items)

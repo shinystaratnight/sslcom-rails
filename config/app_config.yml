@@ -1,10 +1,10 @@
-site: 'ssl.com'
+site: 'remote'
 community_name: "SSL.com"
-community_tagline: "copyright 2010"
-community_description:  "SSL.com simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from SSL.com."
+community_tagline: "copyright 2011"
+community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
 support_email:  "support@ssl.com"
-meta_description: 'SSL.com simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from SSL.com.'
-meta_keywords: 'SSL Certificates, EV Certificates, Wildcard Certificates, and Internet Security'
+meta_description: "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
+meta_keywords: "Certificate Authority, SSL Certificates,  SSL.com Certificates, EV Certificates, Wildcard Certificates"
 show_advertising: false
 closed_beta_mode: false
 enable_exception_notifier: true

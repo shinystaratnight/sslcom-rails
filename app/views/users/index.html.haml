@@ -46,7 +46,7 @@
                           %ul
                             %li
                               %strong manage account
-                            %li=link_to "login as #{u.login}", user_session_url(:login=>u.login), :method=>:post, :id=>u.model_and_id
+                            %li=remote_login_link(u)
                             %li=link_to 'user dashboard', admin_show_user_path(u)
                             %li=link_to 'edit email address', edit_email_user_url(u)
                             %li=link_to 'change password', edit_password_user_url(u)

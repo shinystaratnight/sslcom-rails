@@ -1,13 +1,6 @@
 <script type="text/javascript">
 jQuery.noConflict();
 jQuery(function($) {
-  $.update_balance_after_load = function(){
-    var bracket = $.toMoneyFloat($('#funded_account_amount').val());
-    if(bracket == null || bracket == "" || bracket == ".")
-      bracket = 0;
-    var current_balance = $.toMoneyFloat($('#current_balance').text());
-    $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
-  }
   $(document).ready(function() {
     var profile_id = "";
     profile_form_hidden = <%=!initial_display?.empty?%>;
@@ -48,6 +41,22 @@ jQuery(function($) {
       $(':radio[id*=funded_account_funding_source]').attr("checked","");
       $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
     }
+    $('.delete_profile').livequery(
+      'ajax:beforeSend', function(){
+        $(this).parent().parent().children('td').addClass('deleting');
+        $(this).parent().prev().html("<img src='/images/ajax-loader.gif' />");
+        $(this).parent().html("");
+        $(this).bind('ajax:complete', function(event, data, status, xhr){
+          $('tr#billing_profile_'+$(this).attr('href').match(/\d+$/)[0]).remove();
+          if($('#existing_credit_cards tr').length < 3)
+            $('tr:#existing_credit_cards_header').remove();
+          if(data.status==500){
+            alert("Error: problems occurred and profile was not successfully deleted.");
+          }
+        }).bind('ajax:failure', function(event, data, status, xhr){
+          alert("Error: problems occurred and profile was not successfully deleted.");
+        });
+    });
     $.update_balance_after_load();
   });
 });

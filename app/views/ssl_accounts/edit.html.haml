@@ -4,8 +4,8 @@
 .order_container
   %h3 Edit Reseller Profile Information
   =error_messages_for :ssl_account
-  -form_for @ssl_account, :url=>ssl_account_path do |s|
-    -s.fields_for :reseller, @reseller do |f|
+  =form_for @ssl_account, :url=>ssl_account_path do |s|
+    =s.fields_for :reseller, @reseller do |f|
       #stylized.default_form
         =render :partial => "/resellers/form", :locals => {:f=>f}
       #button_container
