@@ -1,0 +1,43 @@
+#global_footer.clearfix
+  #logo_box
+  %ul.section_box
+    %h4 Products
+    -Certificate.root_products.each do |c|
+      %li=link_to c.title, certificate_path(:id=>c.product_root)
+    %li=link_to "Secured Site Seal", details_site_seals_path
+    %li=link_to "Site Seal Artifacts", details_site_seals_path
+  %ul.section_box
+    %h4 Programs
+    %li=link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
+    %li=link_to "RESTful API", restful_api_path
+    -Reseller::TARGETED.each do |t|
+      %li=send :link_to, t.titleize, "#{t}".to_sym
+  %ul.section_box
+    %h4 Support
+    %li=link_to "Resources", "http://support.ssl.com/"
+    %li=link_to "FAQ", "http://faq.ssl.com/"
+    %li=link_to "Forum", "http://forums.ssl.com"
+    %li=link_to "Open Ticket", "http://support.ssl.com/index.php?_m=tickets&_a=submit"
+    %li=link_to "SSL Tools", "http://www.ssltools.com"
+    %li Browser Compatibility
+    %li Chat
+  %ul.section_box
+    %h4 More from SSL.com
+    %li News
+    %li Blog
+    %li SSL.com on Twitter
+    %li SSL.com on Facebook
+  %ul.section_box
+    %h4 Company
+    %li About SSL.com
+    %li=link_to "Contact Us", :controller=>'site', :action=>'contact_us'
+    %li CA Repository
+    =# %li Webtrust Audit
+    %li Help
+    %li Press Room
+    %li Careers
+    %li Sitemap
+#copyright_statement
+  &copy;2011 SSL.COM CORP ALL RIGHTS RESERVED.
+  %a.footer_link{ :href => "/privacy-policy/" } Privacy Policy
+  %a.footer_link{ :href => "/terms_service/" } Terms of Service

@@ -1,0 +1,13 @@
+/* line 1, ../../../app/stylesheets/ie8.sass */
+.certificate_details th {
+  width: 16.7%;
+}
+/* line 4, ../../../app/stylesheets/ie8.sass */
+.certificate_details th.functions {
+  width: 22%;
+}
+
+/* line 7, ../../../app/stylesheets/ie8.sass */
+#user_session_login, #user_session_passord {
+  width: 12em;
+}

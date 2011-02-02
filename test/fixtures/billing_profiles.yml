@@ -1,0 +1,30 @@
+--- 
+"1": 
+  salt: !binary |
+    xuTErv0+7W0=
+
+  company: 
+  city: Houston
+  data: !binary |
+    gn4zX1UxUPspiuXxccwe0Q==
+
+  created_at: 2010-02-27 22:36:58 Z
+  ssl_account_id: 13
+  country: United States
+  updated_at: 2010-02-27 22:36:58 Z
+  security_code: "1234"
+  postal_code: "12341234"
+  notes: 
+  last_digits: "2222"
+  expiration_year: 2020
+  credit_card: Visa
+  card_number: "4222222222222"
+  id: 1
+  address_1: 1234 HTown
+  phone: "12341234"
+  last_name: Bob
+  expiration_month: 2
+  address_2: ""
+  description: 
+  state: Texas
+  first_name: Billy

@@ -78,28 +78,28 @@ module CertificateOrdersHelper
     end
   end
 
-#  def certificate_order_status(certificate_content=nil)
-#    return if certificate_content.blank?
-#    if certificate_content.new?
-#      'waiting for csr'
-#    elsif certificate_content.expired? ||
-#        certificate_content.certificate_order.expired?
-#      'expired'
-#    else
-#      case certificate_content.workflow_state
-#      when "csr_submitted"
-#        'info required'
-#      when "info_provided"
-#        'contacts required'
-#      when "reprocess_requested"
-#        'csr required'
-#      when "contacts_provided"
-#        'validation required'
-#      else
-#         certificate_content.workflow_state.to_s.titleize.downcase
-#      end
-#    end
-#  end
+  def certificate_order_status(certificate_content=nil)
+    return if certificate_content.blank?
+    if certificate_content.new?
+      'waiting for csr'
+    elsif certificate_content.expired? ||
+        certificate_content.certificate_order.expired?
+      'expired'
+    else
+      case certificate_content.workflow_state
+      when "csr_submitted"
+        'info required'
+      when "info_provided"
+        'contacts required'
+      when "reprocess_requested"
+        'csr required'
+      when "contacts_provided"
+        'validation required'
+      else
+         certificate_content.workflow_state.to_s.titleize.downcase
+      end
+    end
+  end
 
   def status_class(certificate_content)
     return 'attention' if certificate_content.new? ||

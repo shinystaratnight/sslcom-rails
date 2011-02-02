@@ -1,0 +1,44 @@
+tier_1:
+  id: 1
+  label: 1
+  description:
+    ideal_for: pay as you go
+  amount: 0
+  roles: tier_1_reseller
+  published_as: live
+
+tier_2:
+  id: 2
+  label: 2
+  description:
+    ideal_for: professionals
+  amount: 20000
+  roles: tier_2_reseller
+  published_as: live
+
+tier_3:
+  id: 3
+  label: 3
+  description:
+    ideal_for: small to medium sized businesses
+  amount: 100000
+  roles: tier_3_reseller
+  published_as: live
+
+tier_4:
+  id: 4
+  label: 4
+  description:
+    ideal_for: large businesses
+  amount: 500000
+  roles: tier_4_reseller
+  published_as: live
+
+tier_5:
+  id: 5
+  label: 5
+  description:
+    ideal_for: enterprise organizations
+  amount: 2000000
+  roles: tier_5_reseller
+  published_as: live

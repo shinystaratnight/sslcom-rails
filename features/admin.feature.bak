@@ -1,0 +1,13 @@
+
+
+
+Feature: User management
+    As an administrator
+    I want to manage users
+    So that I can give or revoke access to people
+
+    Scenario: creating a new user, adding a planner role and removing it
+
+Given the user with username 'nutty' is logged in
+When he logs out
+

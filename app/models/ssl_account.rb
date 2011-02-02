@@ -80,9 +80,11 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-  #migration - uncomment
-#  has_many  :orders, :as=>:billable, :after_add=>:build_line_items
-#  attr_readonly :acct_number
+  
+  unless MIGRATING_FROM_LEGACY
+    has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+    attr_readonly :acct_number
+  end
 
   preference  :reminder_notice_triggers, :string
   preference  :reminder_include_reseller, :default=>true

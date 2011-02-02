@@ -22,7 +22,7 @@
           .subject_column.center_subject
             =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>@certificate_order, :single=>true}
         %td(class="#{status_class(@cc)}")
-          #{status(@cc)}
+          #{certificate_order_status(@cc)}
         %td
           =@certificate_order.order.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(@cc)}")

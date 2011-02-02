@@ -30,7 +30,7 @@ module ValidationsHelper
         end
       else
         cc = @cert_order.certificate_content
-        [status(cc),status_class(cc)]
+        [certificate_order_status(cc),status_class(cc)]
       end
     end
   end

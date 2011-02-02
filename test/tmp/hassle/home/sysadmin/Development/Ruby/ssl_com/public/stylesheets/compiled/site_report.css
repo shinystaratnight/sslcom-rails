@@ -1,0 +1,129 @@
+/* ---global common definitions--- */
+* {
+  font-size: 100.01%; }
+
+html {
+  font-size: 62.5%; }
+
+body {
+  margin: 0;
+  font-family: Helvetica, Arial, sans-serif;
+  background: white; }
+
+img {
+  border: 0; }
+
+p, em {
+  margin: .4em 0 0; }
+
+em {
+  display: block; }
+
+a {
+  color: #6b9029;
+  outline: none;
+  text-decoration: none;
+  border-bottom-style: none; }
+
+a:hover {
+  text-decoration: none; }
+
+#wrapper {
+  padding: 1em;
+  overflow: hidden;
+  font-size: 1.2em; }
+
+/* header */
+#header {
+  background-color: black;
+  padding-left: 0;
+  padding-bottom: 12px;
+  padding-right: 0;
+  padding-top: 0;
+  width: 100%;
+  background-image: url('/images/sitesprite2.png');
+  background-position: 0px -10px;
+  background-repeat: repeat-x;
+  font-family: Helvetica, Arial, sans-serif; }
+
+#header .logo {
+  display: block;
+  width: 300px;
+  height: 47px;
+  margin: 12px 0 0;
+  overflow: hidden;
+  text-indent: -9999px;
+  background-image: url('/images/sitesprite1.png');
+  background-position: -10px -10px;
+  background-repeat: no-repeat; }
+
+#header .logo a {
+  height: 100%;
+  display: block; }
+
+#site_report_title {
+  font-size: 1.1em; }
+
+.section_header, .report_header {
+  padding: 0em 0.4em 1px;
+  background: #e0e0ff;
+  border-top: 1px solid #AAAAFF; }
+
+.report_header {
+  background: #d0ffd0;
+  border-top: 1px solid #11FF11; }
+
+dt {
+  margin-bottom: .2em; }
+
+.attention {
+  background-color: #ffcccc;
+  border-left: 1px solid red;
+  border-right: 1px solid red;
+  padding: 0 .1em; }
+
+.warning, .pending {
+  background-color: lightyellow;
+  border-left: 1px solid yellow;
+  border-right: 1px solid yellow;
+  padding: 0 .1em; }
+
+.approved {
+  border-left: 1px solid green;
+  border-right: 1px solid green;
+  background-color: #ccffcc;
+  padding: 0 .1em; }
+
+dl dd.img {
+  margin: 0; }
+
+dd.img .img_preview img {
+  float: left;
+  margin: 0 8px 0 0;
+  padding: 4px;
+  border: 1px solid #D9E0E6;
+  border-bottom-color: #C8CDD2;
+  border-right-color: #C8CDD2;
+  background: #fff; }
+
+dd.preview {
+  font-size: 80%;
+  margin: 0 0 0 22px;
+  clear: both;
+  width: 7em; }
+  dd.preview a {
+    padding: 2px 0; }
+
+.satisfies_requirements ul {
+  list-style: none; }
+  .satisfies_requirements ul li.requirement {
+    background: url(/images/chkshield.png) no-repeat 3.6em 0;
+    padding: 0.1em 0 0.8em 5.6em; }
+
+.report_icon {
+  vertical-align: middle;
+  padding-right: .2em; }
+
+#report_title {
+  padding: 0 0 .3em .7em;
+  margin-top: -.5em; }

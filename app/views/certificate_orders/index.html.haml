@@ -32,7 +32,7 @@
         %td.name
           =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
         %td.status_message(class="#{status_class(cc)}")
-          #{status(cc)}
+          #{certificate_order_status(cc)}
         %td
           =co.order.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(cc)}")

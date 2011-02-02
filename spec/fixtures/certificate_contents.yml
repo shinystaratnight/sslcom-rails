@@ -1,0 +1,28 @@
+--- 
+"1": 
+  duration: 730
+  certificate_order_id: 1
+  signing_request: |
+    -----BEGIN CERTIFICATE REQUEST-----
+    MIIB9zCCAWACAQAwgbYxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDVDEWMBQGA1UE
+    BxMNTmV3IEZhaXJmaWVsZDEWMBQGA1UEChMNSkxDIENvcHkgSW5jLjEfMB0GA1UE
+    CxMWSW5mb3JtYXRpb24gVGVjaG5vbG9neTEYMBYGA1UEAxMPd3d3LmpsY2NvcHku
+    Y29tMS8wLQYJKoZIhvcNAQkBFiBzZXJ2aWNlQGNqcmJ1c2luZXNzc29sdXRpb25z
+    LmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAxWPgKVf0q/RcXwBBpOBM
+    9+ycMYjth8wFdA71/q4jJ9GA5TTnC4pNAd9d/ErgGtL+kMJXAHPrI7c0Ag+F3AkI
+    YGtwZJyY7OL0zSu12osPqkqsaDMEL5CO7V8fw5D7hbqmXX4IgA2HW5VCwFpB9y8F
+    Celj6UdRqdTaQq0/NvGNEPkCAwEAAaAAMA0GCSqGSIb3DQEBBQUAA4GBADu6M2dx
+    ApE0gpZOOyv2XQcHLdlcdrGR/Tp8xJbn7Awb9g47Lo4eLT7ZpP6xocLwLJ20WPMh
+    HETPZpzYuZkyco1yyAZ+Ug4cmgSeGMd4SVA2G7Snr1SU2gNqIrL6fiWVpIk00sRa
+    RGhQQFW380dRCUAtjGIzFzLC9ob+T61KbGT0
+    -----END CERTIFICATE REQUEST-----
+
+  server_software_id: 8
+  organization_validation_id: 11
+  created_at: 2010-04-05 15:52:08 Z
+  signed_certificate: 
+  updated_at: 2010-04-05 16:26:18 Z
+  domains: 
+  id: 1
+  workflow_state: info_provided
+  domain_validation_id: 

@@ -1,0 +1,26 @@
+--- 
+"3": 
+  contactable_type: CertificateContent
+  city: New Fairfield
+  address1: 123 addy
+  ext: 
+  created_at: 2010-04-05 15:52:43 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 1
+  company_name: JLC Copy Inc.
+  address3: ""
+  updated_at: 2010-04-05 15:52:43 Z
+  postal_code: "123456"
+  notes: 
+  id: 3
+  type: Registrant
+  phone: 
+  last_name: 
+  fax: 
+  department: Information Technology
+  state: CT
+  first_name: 
+  email: 

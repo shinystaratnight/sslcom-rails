@@ -1,0 +1,205 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+<%
+id = 0
+%>
+ev:
+ id: <%=id+=1%>
+ variantable_id: 1
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+ov:
+ id: <%=id+=1%>
+ variantable_id: 2
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+dv:
+ id: <%=id+=1%>
+ variantable_id: 3
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+wildcard:
+ id: <%=id+=1%>
+ variantable_id: 5
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+wildcard_licenses:
+ id: <%=id+=1%>
+ variantable_id: 5
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 2
+ published_as: live
+
+ucc_domains:
+ id: <%=id+=1%>
+ variantable_id: 4
+ variantable_type: Certificate
+ title: Domains
+ description: Domain Names
+ text_only_description: Domain Names
+ status: live
+ display_order: 2
+ published_as: live
+
+ucc_licenses:
+ id: <%=id+=1%>
+ variantable_id: 4
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 3
+ published_as: live
+
+ev_ucc_domains:
+ id: <%=id+=1%>
+ variantable_id: 6
+ variantable_type: Certificate
+ title: Domains
+ description: Domain Names
+ text_only_description: Domain Names
+ status: live
+ display_order: 2
+ published_as: live
+
+ev_ucc_licenses:
+ id: <%=id+=1%>
+ variantable_id: 6
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 3
+ published_as: live
+
+<%
+certificate_id = 6
+for i in 1..5%>
+ev_duration_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+ov_duration_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+dv_duration_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+wildcard_duration_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Duration
+ description: Duration
+ text_only_description: Duration
+ status: live
+ display_order: 1
+ published_as: live
+
+wildcard_licenses_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id)%>
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 2
+ published_as: live
+
+ucc_domains_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Domains
+ description: Domain Names
+ text_only_description: Domain Names
+ status: live
+ display_order: 2
+ published_as: live
+
+ucc_licenses_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id)%>
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 3
+ published_as: live
+
+ev_ucc_domains_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id+=1)%>
+ variantable_type: Certificate
+ title: Domains
+ description: Domain Names
+ text_only_description: Domain Names
+ status: live
+ display_order: 2
+ published_as: live
+
+ev_ucc_licenses_tier_<%=i%>:
+ id: <%=id+=1%>
+ variantable_id: <%=(certificate_id)%>
+ variantable_type: Certificate
+ title: Server Licenses
+ description: Server Licenses
+ text_only_description: Server Licenses
+ status: live
+ display_order: 3
+ published_as: live
+<%end%>
