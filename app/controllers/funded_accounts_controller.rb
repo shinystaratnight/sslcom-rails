@@ -206,10 +206,7 @@ class FundedAccountsController < ApplicationController
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
           current_user.ssl_account.orders << @order
-          @certificate_orders.each do |co|
-            current_user.ssl_account.certificate_orders << co
-          end
-#          clear_cart
+          clear_cart
           flash[:notice] = "Order successfully placed. %s"
           flash[:notice_item] = "Click here to finish processing your
             ssl.com certificates.", credits_certificate_orders_path

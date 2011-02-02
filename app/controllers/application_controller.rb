@@ -83,6 +83,7 @@ class ApplicationController < ActionController::Base
       certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
       unless current_user.blank?
         current_user.ssl_account.clear_new_certificate_orders
+        certificate_order.ssl_account=current_user.ssl_account
         next unless current_user.ssl_account.can_buy?(certificate)
       end
       #adjusting duration to reflect number of days validity
@@ -185,10 +186,16 @@ class ApplicationController < ActionController::Base
   def build_certificate_contents(certificate_orders, order)
     certificate_orders.each do |cert|
       cert.quantity.times do |i|
-        new_cert = cert.clone
-        new_cert.sub_order_items = cert.sub_order_items.clone
-        new_cert.certificate_contents = cert.certificate_contents.clone
-        new_cert.line_item_qty = cert.quantity if i==cert.quantity-1
+        new_cert = CertificateOrder.new(cert.attributes)
+        cert.sub_order_items.each {|soi|
+          new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
+        }
+        cert.certificate_contents.each {|cc|
+          cc_tmp = CertificateContent.new(cc.attributes)
+          cc_tmp.certificate_order = new_cert
+          new_cert.certificate_contents << cc_tmp
+        }
+        new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
         new_cert.preferred_payment_order = 'prepaid'
         #the line blow was concocted because a simple assignment resulted in
         #the certificate_order coming up nil on each certificate_content
