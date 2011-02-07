@@ -1,76 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="made transition to Rails 3">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/controllers/application_controller_spec.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/apis.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/groupings.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/reminder_triggers.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/site_seals.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/validation_history_validations.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/validation_rules.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/fixtures/validation_rulings.yml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/models/migration_spec.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/models/user_spec.rb" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/features/step_definitions/webrat_steps.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/features/step_definitions/webrat_steps.rb.bak" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/spec/fixtures/discounts.yml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/features/account_maintenance.features" afterPath="$PROJECT_DIR$/features/account_maintenance.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/old_site.rb" afterPath="$PROJECT_DIR$/app/models/old_site.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order_notifier.rb" afterPath="$PROJECT_DIR$/app/models/order_notifier.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/user_notifier/follow_up_comment_notice.rhtml" afterPath="$PROJECT_DIR$/app/views/user_notifier/follow_up_comment_notice.rhtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/user_notifier/new_forum_post_notice.rhtml" afterPath="$PROJECT_DIR$/app/views/user_notifier/new_forum_post_notice.rhtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/user_notifier/post_recommendation.rhtml" afterPath="$PROJECT_DIR$/app/views/user_notifier/post_recommendation.rhtml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/database.yml" afterPath="$PROJECT_DIR$/config/database.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/test.rb" afterPath="$PROJECT_DIR$/config/environments/test.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/activation.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/activation.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/email_login.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/email_login.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/login.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/login.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/remember_me.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/remember_me.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/resellers/account.feature" afterPath="$PROJECT_DIR$/features/resellers/account.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/calculator_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/calculator_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/db_cleaner.rb" afterPath="$PROJECT_DIR$/features/support/db_cleaner.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/env.rb" afterPath="$PROJECT_DIR$/features/support/env.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/hooks.rb.rb" afterPath="$PROJECT_DIR$/features/support/hooks.rb.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/paths.rb" afterPath="$PROJECT_DIR$/features/support/paths.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/legacy_ssl_md5.rb" afterPath="$PROJECT_DIR$/lib/legacy_ssl_md5.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/money.rb" afterPath="$PROJECT_DIR$/lib/money.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/assignments.yml" afterPath="$PROJECT_DIR$/spec/fixtures/assignments.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/certificate_contents.yml" afterPath="$PROJECT_DIR$/spec/fixtures/certificate_contents.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/certificate_orders.yml" afterPath="$PROJECT_DIR$/spec/fixtures/certificate_orders.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/certificates.yml" afterPath="$PROJECT_DIR$/spec/fixtures/certificates.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/contacts.yml" afterPath="$PROJECT_DIR$/spec/fixtures/contacts.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/csrs.yml" afterPath="$PROJECT_DIR$/spec/fixtures/csrs.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/funded_accounts.yml" afterPath="$PROJECT_DIR$/spec/fixtures/funded_accounts.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/line_items.yml" afterPath="$PROJECT_DIR$/spec/fixtures/line_items.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/orders.yml" afterPath="$PROJECT_DIR$/spec/fixtures/orders.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/product_variant_groups.yml" afterPath="$PROJECT_DIR$/spec/fixtures/product_variant_groups.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/product_variant_items.yml" afterPath="$PROJECT_DIR$/spec/fixtures/product_variant_items.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/roles.yml" afterPath="$PROJECT_DIR$/spec/fixtures/roles.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/ssl_accounts.yml" afterPath="$PROJECT_DIR$/spec/fixtures/ssl_accounts.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/sub_order_items.yml" afterPath="$PROJECT_DIR$/spec/fixtures/sub_order_items.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/users.yml" afterPath="$PROJECT_DIR$/spec/fixtures/users.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/validations.yml" afterPath="$PROJECT_DIR$/spec/fixtures/validations.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/resellers.yml" afterPath="$PROJECT_DIR$/test/fixtures/resellers.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/ssl_accounts.yml" afterPath="$PROJECT_DIR$/test/fixtures/ssl_accounts.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/users.yml" afterPath="$PROJECT_DIR$/test/fixtures/users.yml" />
-    </list>
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="" />
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
