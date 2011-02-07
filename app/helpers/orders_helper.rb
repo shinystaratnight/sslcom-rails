@@ -101,6 +101,7 @@ module OrdersHelper
     end
   end
   
+=begin
   def setup_certificate_order
     #adjusting duration to reflect number of days validity
     duration = @certificate_order.duration.to_i * 365
@@ -139,4 +140,5 @@ module OrdersHelper
     @certificate_order.certificate_contents[0].
       certificate_order = @certificate_order
   end
+=end
 end

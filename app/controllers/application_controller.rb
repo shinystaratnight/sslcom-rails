@@ -66,6 +66,46 @@ class ApplicationController < ActionController::Base
       :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
   end
 
+  def setup_certificate_order(certificate, certificate_order)
+    duration = certificate_order.duration.to_i * 365
+    certificate_order.certificate_content.duration = duration
+    if certificate.is_ucc? || certificate.is_wildcard?
+      psl = certificate.items_by_server_licenses.find { |item|
+        item.value==duration.to_s }
+      so  = SubOrderItem.new(:product_variant_item=>psl,
+       :quantity            =>certificate_order.server_licenses.to_i,
+       :amount              =>psl.amount*certificate_order.server_licenses.to_i)
+      certificate_order.sub_order_items << so
+      if certificate.is_ucc?
+        pd                 = certificate.items_by_domains.find_all { |item|
+          item.value==duration.to_s }
+        additional_domains = (certificate_order.certificate_contents[0].
+            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        so                 = SubOrderItem.new(:product_variant_item=>pd[0],
+                                              :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
+                                              :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
+        certificate_order.sub_order_items << so
+        if additional_domains > 0
+          so = SubOrderItem.new(:product_variant_item=>pd[1],
+                                :quantity            =>additional_domains,
+                                :amount              =>pd[1].amount*additional_domains)
+          certificate_order.sub_order_items << so
+        end
+      end
+    end
+    unless certificate.is_ucc?
+      pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
+      so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
+                             :amount              =>pvi.amount)
+      certificate_order.sub_order_items << so
+    end
+    certificate_order.amount = certificate_order.
+        sub_order_items.map(&:amount).sum
+    certificate_order.certificate_contents[0].
+        certificate_order    = certificate_order
+    certificate_order
+  end
+
   def certificates_from_cookie
     #this is the old, colon delimited version
     #old_certificates_from_cookie
@@ -87,42 +127,7 @@ class ApplicationController < ActionController::Base
         next unless current_user.ssl_account.can_buy?(certificate)
       end
       #adjusting duration to reflect number of days validity
-      duration = certificate_order.duration.to_i * 365
-      certificate_order.certificate_content.duration = duration
-      if certificate.is_ucc? || certificate.is_wildcard?
-        psl = certificate.items_by_server_licenses.find{|item|
-          item.value==duration.to_s}
-        so = SubOrderItem.new(:product_variant_item=>psl,
-          :quantity=>certificate_order.server_licenses.to_i,
-          :amount=>psl.amount*certificate_order.server_licenses.to_i)
-        certificate_order.sub_order_items << so
-        if certificate.is_ucc?
-          pd = certificate.items_by_domains.find_all{|item|
-            item.value==duration.to_s}
-          additional_domains = (certificate_order.certificate_contents[0].
-            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
-          so = SubOrderItem.new(:product_variant_item=>pd[0],
-            :quantity=>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
-            :amount=>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
-          certificate_order.sub_order_items << so
-          if additional_domains > 0
-            so = SubOrderItem.new(:product_variant_item=>pd[1],
-              :quantity=>additional_domains,
-              :amount=>pd[1].amount*additional_domains)
-            certificate_order.sub_order_items << so
-          end
-        end
-      end
-      unless certificate.is_ucc?
-        pvi = certificate.items_by_duration.find{|item|item.value==duration.to_s}
-        so = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
-          :amount=>pvi.amount)
-        certificate_order.sub_order_items << so
-      end
-      certificate_order.amount = certificate_order.
-        sub_order_items.map(&:amount).sum
-      certificate_order.certificate_contents[0].
-        certificate_order = certificate_order
+      certificate_order = setup_certificate_order(certificate, certificate_order)
       @certificate_orders << certificate_order if certificate_order.valid?
     end
     @certificate_orders

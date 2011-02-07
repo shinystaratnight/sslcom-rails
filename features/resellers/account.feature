@@ -1,3 +1,4 @@
+@firewatir
 Feature: Manage SSL Account
   In order to keep the customer's information up to date
   An appropriately authorized user

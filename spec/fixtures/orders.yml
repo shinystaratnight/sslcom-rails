@@ -229,6 +229,27 @@
   status: active
   state: pending
   deducted_from_id: 
+"27": 
+  reference_number: 27-4c052a1b
+  created_at: 2010-06-01 15:41:15 Z
+  billing_profile_id: 
+  updated_at: 2010-06-01 15:41:15 Z
+  notes: 
+  lock_version: 1
+  cents: 33530
+  id: 27
+  canceled_at: 
+  billable_id: 13
+  billable_type: SslAccount
+  address_id: 
+  paid_at: 
+  description: |
+    2 Year Premium E ...
+
+  currency: USD
+  status: active
+  state: pending
+  deducted_from_id: 
 "16": 
   reference_number: 16-4b86ee97
   created_at: 2010-02-25 21:41:43 Z
@@ -244,6 +265,27 @@
   address_id: 
   paid_at: 
   description: Deposit
+  currency: USD
+  status: active
+  state: pending
+  deducted_from_id: 
+"28": 
+  reference_number: 28-4c052aaa
+  created_at: 2010-06-01 15:43:38 Z
+  billing_profile_id: 
+  updated_at: 2010-06-01 15:43:38 Z
+  notes: 
+  lock_version: 1
+  cents: 93870
+  id: 28
+  canceled_at: 
+  billable_id: 13
+  billable_type: SslAccount
+  address_id: 
+  paid_at: 
+  description: |
+    2 Year Premium E ...
+
   currency: USD
   status: active
   state: pending

@@ -1,4 +1,4 @@
-Story: Remember Me
+Feature: Remember Me
   As a registered user
   I want to log in to my account and choose whether to be remembered
   So that I can safe having to login every time

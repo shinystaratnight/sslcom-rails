@@ -1,0 +1,44 @@
+"1":
+  id: 1
+  description: domain validation
+  operator: AND
+  applicable_validation_methods:
+  - automatic domain lookup
+  - manual domain lookup
+  required_validation_methods:
+  required_validation_methods_operator: AND
+
+"2":
+  id: 2
+  description: organization validation
+  operator: AND
+  applicable_validation_methods:
+  <%ValidationRule::ORG_VALIDATION_METHODS.each do |m|%>
+  - <%=m%>
+  <%end%>
+  required_validation_methods:
+  required_validation_methods_operator: AND
+
+"3":
+  id: 3
+  description: notorized entity
+  operator: AND
+  applicable_validation_methods:
+  <%ValidationRule::ORG_VALIDATION_METHODS.each do |m|%>
+  - <%=m%>
+  <%end%>
+  required_validation_methods:
+  required_validation_methods_operator: AND
+
+"4":
+  id: 4
+  description: notorized corporation
+  operator: AND
+  applicable_validation_methods:
+  <%ValidationRule::ORG_VALIDATION_METHODS.each do |m|%>
+  - <%=m%>
+  <%end%>
+  required_validation_methods:
+  - <%=ValidationRule::ARTICLES_OF_INCORPORATION%>
+  - <%=ValidationRule::CERTIFICATE_OF_FORMATION%>
+  required_validation_methods_operator: OR

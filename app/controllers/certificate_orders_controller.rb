@@ -104,10 +104,10 @@ class CertificateOrdersController < ApplicationController
   # POST /certificate_orders.xml
   def create
     redirect_to new_order_url and return unless current_user
-    @certificate_order = CertificateOrder.new(params[:certificate_order])
+    certificate_order = CertificateOrder.new(params[:certificate_order])
     @certificate = Certificate.find_by_product(params[:certificate][:product])
     determine_eligibility_to_buy
-    setup_certificate_order
+    @certificate_order = setup_certificate_order(@certificate, certificate_order)
     respond_to do |format|
       if @certificate_order.save
         unless is_reseller? && !(current_order.amount.cents >

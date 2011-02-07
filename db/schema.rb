@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101231223811) do
+ActiveRecord::Schema.define(:version => 20110204103124) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(:version => 20101231223811) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_expired"
+    t.integer  "renewal_id"
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
@@ -220,6 +221,18 @@ ActiveRecord::Schema.define(:version => 20101231223811) do
     t.string   "credit_card"
     t.string   "last_digits"
     t.string   "payment_method"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "discounts", :force => true do |t|
+    t.integer  "discountable_id"
+    t.string   "discountable_type"
+    t.string   "value"
+    t.string   "apply_as"
+    t.string   "label"
+    t.string   "ref"
+    t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -333,7 +346,6 @@ ActiveRecord::Schema.define(:version => 20101231223811) do
     t.string   "notes"
     t.string   "po_number"
     t.string   "quote_number"
-    t.string   "amount_in_cents"
   end
 
   add_index "orders", ["billable_id"], :name => "index_orders_on_billable_id"

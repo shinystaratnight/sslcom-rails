@@ -1,4 +1,4 @@
-require 'spec'
+#require 'spec'
  
 class Calculator
   def push(n)

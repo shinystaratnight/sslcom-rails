@@ -1099,3 +1099,17 @@ ev_ucc_2_year_server_license_tier_<%=i%>:
  published_as: live
  serial: evucc256ssl2yrsl<%=i%>tr
 <%end%>
+
+migrated:
+ id: 10000
+ product_variant_group_id: 10000
+ title: n/a
+ description: n/a
+ text_only_description: n/a
+ status: live
+ display_order: 1
+ amount: 0
+ item_type: n/a
+ value: 0
+ published_as: draft
+ serial: mssl

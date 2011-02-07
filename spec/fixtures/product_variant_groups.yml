@@ -203,3 +203,14 @@ ev_ucc_licenses_tier_<%=i%>:
  display_order: 3
  published_as: live
 <%end%>
+
+migrated:
+ id: 10000
+ variantable_id: 10000
+ variantable_type: Certificate
+ title: n/a
+ description: n/a
+ text_only_description: n/a
+ status: live
+ display_order: 1
+ published_as: draft

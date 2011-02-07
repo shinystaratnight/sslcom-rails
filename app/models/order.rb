@@ -6,7 +6,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile
   belongs_to  :deducted_from, :class_name => "Order",
     :foreign_key => "deducted_from_id"
-  has_many    :line_items, :dependent => :destroy
+  has_many    :line_items, :dependent => :destroy, :include=>:sellable
   has_many    :payments
   has_many    :transactions, :class_name => 'OrderTransaction',
                 :dependent => :destroy

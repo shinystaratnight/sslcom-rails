@@ -11,7 +11,7 @@ ev:
    highest trust assurance
   abbr: EV SSL
   certificate_type: Premium EV
-  validation_level: Class 3
+  validation_level: Class 3 DoD
   points: |
     <div class='check'>highest rated trust available</div>
     <div class='check'>enables green navigation bar</div>
@@ -32,8 +32,6 @@ ev:
   all: 1
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: Registered
  serial: ev256
  product: ev
@@ -49,7 +47,7 @@ ov:
    standard ssl
   abbr: High Assurance SSL
   certificate_type: High Assurance
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -67,8 +65,6 @@ ov:
   all: 3
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: Registered
  serial: ov256
  product: high_assurance
@@ -84,7 +80,7 @@ dv:
    minimal trust assurance
   abbr: Free SSL
   certificate_type: Free
-  validation_level: Class 1
+  validation_level: Class 1 DoD
   points: |
     <div class='check'>great for testing or development</div>
     <div class='check'>is free with no cost to you</div>
@@ -97,8 +93,6 @@ dv:
   all: 5
  status: live
  published_as: live
- requires_org_validation: false
- requires_domain_validation: true
  roles: Registered
  serial: dv256
  product: free
@@ -114,7 +108,7 @@ ucc:
    for Exchange and Communications Server
   abbr: UCC SSL
   certificate_type: High Assurance UCC
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -134,8 +128,6 @@ ucc:
   all: 6
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: Registered
  serial: ucc256
  product: ucc
@@ -151,7 +143,7 @@ wildcard:
   summary: high validation and trust value
   abbr: Wildcard SSL
   certificate_type: Wildcard
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -170,8 +162,6 @@ wildcard:
   all: 4
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: Registered
  serial: wc256
  product: wildcard
@@ -187,7 +177,7 @@ ev_ucc:
    for Exchange and Communications Server
   abbr: EV UCC SSL
   certificate_type: EV UCC
-  validation_level: Class 3
+  validation_level: Class 3 DoD
   points: |
     <div class='check'>highest rated trust available</div>
     <div class='check'>enables green navigation bar</div>
@@ -210,8 +200,6 @@ ev_ucc:
   all: 2
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: Registered
  serial: evucc256
  product: evucc
@@ -230,7 +218,7 @@ ev_tier_<%=i%>:
    highest level of trust
   abbr: EV SSL
   certificate_type: Premium EV
-  validation_level: Class 3
+  validation_level: Class 3 DoD
   points: |
     <div class='check'>highest rated trust available</div>
     <div class='check'>enables green navigation bar</div>
@@ -251,8 +239,6 @@ ev_tier_<%=i%>:
   all: 1
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: ev256<%=i%>tr
@@ -268,7 +254,7 @@ ov_tier_<%=i%>:
    standard ssl
   abbr: High Assurance SSL
   certificate_type: High Assurance
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -286,8 +272,6 @@ ov_tier_<%=i%>:
   all: 3
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: ov256<%=i%>tr
@@ -315,8 +299,6 @@ dv_tier_<%=i%>:
   all: 5
  status: live
  published_as: live
- requires_org_validation: false
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: dv256<%=i%>tr
@@ -333,7 +315,7 @@ wildcard_tier_<%=i%>:
     high validation and trust value
   abbr: Wildcard SSL
   certificate_type: Wildcard
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -352,8 +334,6 @@ wildcard_tier_<%=i%>:
   all: 4
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: wc256<%=i%>tr
@@ -370,7 +350,7 @@ ucc_tier_<%=i%>:
    for Exchange and Communications Server
   abbr: UCC SSL
   certificate_type: High Assurance UCC
-  validation_level: Class 2
+  validation_level: Class 2 DoD
   points: |
     <div class='check'>high validation and trust value</div>
     <div class='check'>results in higher sales conversion</div>
@@ -390,8 +370,6 @@ ucc_tier_<%=i%>:
   all: 6
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: ucc256<%=i%>tr
@@ -409,7 +387,7 @@ ev_ucc_tier_<%=i%>:
    for Exchange and Communications Server
   abbr: EV UCC SSL
   certificate_type: EV UCC
-  validation_level: Class 3
+  validation_level: Class 3 DoD
   points: |
     <div class='check'>highest rated trust available</div>
     <div class='check'>enables green navigation bar</div>
@@ -432,11 +410,32 @@ ev_ucc_tier_<%=i%>:
   all: 2
  status: live
  published_as: live
- requires_org_validation: true
- requires_domain_validation: true
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
  serial: evucc256<%=i%>tr
  product: evucc<%=i%>tr
  allow_wildcard_ucc: false
 <%end%>
+
+migrated:
+ id: 10000
+ title: Migrated SSL
+ icons:
+  main: ev_bar_lg.jpg
+ text_only_summary:
+ description:
+  summary: |
+   migrated ssl certificate
+  abbr: MIGRATED SSL
+  certificate_type: n/a
+  validation_level: n/a
+  points: |
+ text_only_description:
+ display_order:
+  index: 1
+  all: 1
+ status: live
+ published_as: draft
+ roles: Registered
+ serial: mssl
+ product: mssl

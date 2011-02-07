@@ -1,4 +1,4 @@
-Story: Logging in
+Feature: Logging in
   As a registered user
   I want to log in to my account
   So that I can manage my details

@@ -1,4 +1,4 @@
-unless Rails.env=='production'
+if Rails.env=='development'
   module OldSite
 
     def self.initialize

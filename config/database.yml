@@ -62,6 +62,7 @@ production:
 cucumber:
   <<: *TEST
 
+<%unless Rails.env=='test'%>
 ssl_store_mssql:
   adapter: sqlserver
   mode: odbc
@@ -69,3 +70,4 @@ ssl_store_mssql:
   username: sa
   password: staticgoat
   dsn: ssl_store_legacy
+<%end%>

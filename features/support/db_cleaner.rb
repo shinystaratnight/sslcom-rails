@@ -1,3 +1,4 @@
+=begin
 require 'database_cleaner'
 DatabaseCleaner.clean_with :truncation # clean once to ensure clean slate
 DatabaseCleaner.strategy = :truncation
@@ -9,3 +10,4 @@ end
 After('@no-txn') do
   DatabaseCleaner.clean
 end
+=end

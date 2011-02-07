@@ -1,3 +1,5 @@
+#only required if we use Base64 (see below)
+require 'digest'
 class LegacySslMd5
   def self.encrypt(*tokens)
     i=tokens
@@ -10,7 +12,9 @@ class LegacySslMd5
     # return true if the crypted string matches the tokens.
     # depending on your algorithm you might decrypt the string then compare it to the token, or you might
     # encrypt the tokens and make sure it matches the crypted string, its up to you
-    hash_with_salt = Base64.decode64 crypted
+    #Ruby 1.8 version - faster but I haven't gotten it to work
+#    hash_with_salt = Base64.decode64 crypted
+    hash_with_salt = crypted.unpack('m')[0]
     salt = hash_with_salt[0..(hash_with_salt.size-16-1)]
     plain_pwd=tokens[0]
     d = Digest::MD5.digest salt+plain_pwd

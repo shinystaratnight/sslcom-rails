@@ -40,25 +40,25 @@ class UserSessionsController < ApplicationController
               reseller_tier.label, :path => "/", :expires => AppConfig.
               cart_cookie_days.to_i.days.from_now}
         end
-        if user.duplicate_v2_users.empty?
+#        if user.duplicate_v2_users.empty?
           flash[:notice] = "Successfully logged in."
           format.html {redirect_back_or_default account_url}
           us_json = @user_session.to_json.chop << ',"redirect":"'+
             (user.ssl_account.is_registered_reseller?  ?
             allocate_funds_for_order_url('order') : new_order_url) +'"}'
           format.js   {render :json=>us_json}
-        else
+#        else
 #          redirect and present choices of user names and emails (if dupes exist) (radios) then
 #            delete the remaining dup_v2_users rename current username the new username
 #          end
           #we'll know what tier the user is even if s/he is not logged in
-          flash[:notice] = "Successfully logged in. Multiple usernames and/or
-            email addresses were found for this account."
-          format.html {redirect_to consolidate_user_url(user)}
-          us_json = @user_session.to_json.chop << ',"redirect":"'+ 
-            consolidate_user_url(user) +'"}'
-          format.js   {render :json=>us_json}
-        end
+#          flash[:notice] = "Successfully logged in. Multiple usernames and/or
+#            email addresses were found for this account."
+#          format.html {redirect_to consolidate_user_url(user)}
+#          us_json = @user_session.to_json.chop << ',"redirect":"'+
+#            consolidate_user_url(user) +'"}'
+#          format.js   {render :json=>us_json}
+#        end
       elsif @user_session.attempted_record &&
         !@user_session.attempted_record.active?
         flash[:notice] = "Your account has not been activated. %s"

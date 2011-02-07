@@ -1,4 +1,4 @@
-Story: Activating an account
+Feature: Activating an account
   As a registered, but not yet activated, user
   I want to be able to activate my account
   So that I can log in to the site

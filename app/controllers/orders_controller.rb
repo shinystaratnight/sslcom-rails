@@ -192,9 +192,9 @@ class OrdersController < ApplicationController
   private
 
   def certificate_order_steps
-    @certificate_order=CertificateOrder.new(params[:certificate_order])
+    certificate_order=CertificateOrder.new(params[:certificate_order])
     determine_eligibility_to_buy
-    setup_certificate_order
+    @certificate_order=setup_certificate_order(@certificate, certificate_order)
     @certificate_order.valid?
   end
 

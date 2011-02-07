@@ -4,6 +4,9 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :ssl_account
   belongs_to  :validation
   belongs_to  :site_seal
+  belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
+  has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
+    :dependent=>:destroy
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy

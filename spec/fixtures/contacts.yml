@@ -1,4 +1,245 @@
 --- 
+"22": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: ""
+  created_at: 2010-06-01 15:45:39 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 5
+  company_name: SSL
+  address3: ""
+  updated_at: 2010-06-01 15:45:49 Z
+  postal_code: "12132"
+  notes: 
+  id: 22
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: ""
+  roles: 
+  - technical
+  department: ""
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"23": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: ""
+  created_at: 2010-06-01 15:45:39 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 5
+  company_name: SSL
+  address3: ""
+  updated_at: 2010-06-01 15:45:49 Z
+  postal_code: "12132"
+  notes: 
+  id: 23
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: ""
+  roles: 
+  - validation
+  department: ""
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"14": 
+  contactable_type: CertificateContent
+  city: Los Angeles
+  address1: 123 Htown St
+  ext: 
+  created_at: 2010-06-01 15:42:15 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 4
+  company_name: Stash
+  address3: ""
+  updated_at: 2010-06-01 15:42:15 Z
+  postal_code: "90201"
+  notes: 
+  id: 14
+  type: Registrant
+  phone: 
+  last_name: 
+  fax: 
+  roles: --- []
+  department: IT
+  state: CA
+  first_name: 
+  email: 
+"15": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: 
+  created_at: 2010-06-01 15:42:15 Z
+  address2: ""
+  title: 
+  po_box: 
+  country: US
+  contactable_id: 4
+  company_name: SSL
+  address3: 
+  updated_at: 2010-06-01 15:42:15 Z
+  postal_code: "12132"
+  notes: 
+  id: 15
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: 
+  roles: 
+  - administrative
+  department: 
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"16": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: 
+  created_at: 2010-06-01 15:42:15 Z
+  address2: ""
+  title: 
+  po_box: 
+  country: US
+  contactable_id: 4
+  company_name: SSL
+  address3: 
+  updated_at: 2010-06-01 15:42:15 Z
+  postal_code: "12132"
+  notes: 
+  id: 16
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: 
+  roles: 
+  - billing
+  department: 
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"17": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: 
+  created_at: 2010-06-01 15:42:15 Z
+  address2: ""
+  title: 
+  po_box: 
+  country: US
+  contactable_id: 4
+  company_name: SSL
+  address3: 
+  updated_at: 2010-06-01 15:42:15 Z
+  postal_code: "12132"
+  notes: 
+  id: 17
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: 
+  roles: 
+  - technical
+  department: 
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"18": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: 
+  created_at: 2010-06-01 15:42:15 Z
+  address2: ""
+  title: 
+  po_box: 
+  country: US
+  contactable_id: 4
+  company_name: SSL
+  address3: 
+  updated_at: 2010-06-01 15:42:15 Z
+  postal_code: "12132"
+  notes: 
+  id: 18
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: 
+  roles: 
+  - validation
+  department: 
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"20": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: ""
+  created_at: 2010-06-01 15:45:39 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 5
+  company_name: SSL
+  address3: ""
+  updated_at: 2010-06-01 15:45:49 Z
+  postal_code: "12132"
+  notes: 
+  id: 20
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: ""
+  roles: 
+  - administrative
+  department: ""
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com
+"19": 
+  contactable_type: CertificateContent
+  city: Saltillo
+  address1: 990 Salt St
+  ext: 
+  created_at: 2010-06-01 15:45:39 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: MX
+  contactable_id: 5
+  company_name: RCG
+  address3: ""
+  updated_at: 2010-06-01 15:45:39 Z
+  postal_code: "11111"
+  notes: 
+  id: 19
+  type: Registrant
+  phone: 
+  last_name: 
+  fax: 
+  roles: --- []
+  department: RCG
+  state: Coahuila
+  first_name: 
+  email: 
 "3": 
   contactable_type: CertificateContent
   city: New Fairfield
@@ -20,7 +261,35 @@
   phone: 
   last_name: 
   fax: 
+  roles: --- []
   department: Information Technology
   state: CT
   first_name: 
   email: 
+"21": 
+  contactable_type: CertificateContent
+  city: Houston
+  address1: 123 Hosting
+  ext: ""
+  created_at: 2010-06-01 15:45:39 Z
+  address2: ""
+  title: 
+  po_box: ""
+  country: US
+  contactable_id: 5
+  company_name: SSL
+  address3: ""
+  updated_at: 2010-06-01 15:45:49 Z
+  postal_code: "12132"
+  notes: 
+  id: 21
+  type: CertificateContact
+  phone: "12123213"
+  last_name: Bob
+  fax: ""
+  roles: 
+  - billing
+  department: ""
+  state: Texas
+  first_name: Jay
+  email: sales@ssl.com

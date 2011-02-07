@@ -17,7 +17,7 @@
   last_name: Bob
   workflow_state: complete
   organization: SSL
-  roles: []
+  roles: --- []
 
   state: Texas
   first_name: Jay

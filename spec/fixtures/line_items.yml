@@ -107,6 +107,15 @@
   id: 15
   currency: USD
   affiliate_payout_rate: 0.0
+"27": 
+  sellable_type: CertificateOrder
+  order_id: 27
+  cents: 33530
+  affiliate_id: 
+  sellable_id: 4
+  id: 27
+  currency: USD
+  affiliate_payout_rate: 0.0
 "16": 
   sellable_type: Deposit
   order_id: 16
@@ -114,6 +123,15 @@
   affiliate_id: 
   sellable_id: 
   id: 16
+  currency: USD
+  affiliate_payout_rate: 0.0
+"28": 
+  sellable_type: CertificateOrder
+  order_id: 28
+  cents: 93870
+  affiliate_id: 
+  sellable_id: 5
+  id: 28
   currency: USD
   affiliate_payout_rate: 0.0
 "17": 

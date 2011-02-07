@@ -1,7 +1,13 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-# one:
-#   column: value
-#
-# two:
-#   column: value
+--- 
+"1": 
+  created_at: 2010-04-27 22:17:13 Z
+  updated_at: 2010-04-27 22:17:13 Z
+  role_id: 1
+  id: 1
+  user_id: 3
+"4":
+  created_at: 2010-04-27 22:23:00 Z
+  updated_at: 2010-04-27 22:23:00 Z
+  role_id: 2
+  id: 4
+  user_id: 4

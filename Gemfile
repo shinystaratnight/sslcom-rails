@@ -53,4 +53,21 @@ gem 'meta_where'
 # and rake tasks are available in development mode:
 # group :development, :test do
 #   gem 'webrat'
+#   gem 'cucumber'
 # end
+
+  group :test do
+    gem 'cucumber-rails'
+    gem 'capybara'
+    gem 'database_cleaner'
+    gem 'webrat'
+    gem 'email_spec'
+    gem 'firewatir'
+    gem 'rspec'
+    gem 'factory_girl_rails'
+  end
+
+  group :test, :development do
+    gem "rspec-rails", ">= 2.0.0.beta.22"
+  end
+

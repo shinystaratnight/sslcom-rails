@@ -111,10 +111,29 @@ class User < ActiveRecord::Base
     role_symbols.include? :customer
   end
 
+  #if user has duplicate v2 users and is not consolidated
+  #then find the duplicate v2 user matching the username
+  #and copy it's username, crypted password, and email in the respective users fields
+  #and mark the user consolidated
   def self.duplicate_logins(obj)
     if obj.is_a? User
+      DuplicateV2User.where(:login=>obj.login)
     else #assume string
-      
+      DuplicateV2User.find_all_by_login(obj)
+    end
+  end
+
+  #TODO this is unfinished, going to instead email all
+  #duplicate_v2_users emails the corresponding consolidated username
+  def self.consolidate_login(obj, password)
+    user=duplicate_logins(obj).last.user
+    dupes=duplicate_logins(obj).last.user.duplicate_v2_users
+    matched=dupes.each do |dupe|
+      break dupe if (LegacySslMd5.matches? dupe.password, password)
+    end
+    if matched
+      user.login=obj
+      user.crypted_password=matched.password
     end
   end
 

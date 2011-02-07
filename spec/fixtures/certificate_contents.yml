@@ -2,6 +2,7 @@
 "1": 
   duration: 730
   certificate_order_id: 1
+  billing_checkbox: 
   signing_request: |
     -----BEGIN CERTIFICATE REQUEST-----
     MIIB9zCCAWACAQAwgbYxCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDVDEWMBQGA1UE
@@ -18,11 +19,77 @@
     -----END CERTIFICATE REQUEST-----
 
   server_software_id: 8
-  organization_validation_id: 11
   created_at: 2010-04-05 15:52:08 Z
   signed_certificate: 
   updated_at: 2010-04-05 16:26:18 Z
   domains: 
   id: 1
+  technical_checkbox: 
   workflow_state: info_provided
-  domain_validation_id: 
+  validation_checkbox: 
+"4": 
+  duration: 730
+  certificate_order_id: 4
+  billing_checkbox: true
+  signing_request: |-
+    -----BEGIN NEW CERTIFICATE REQUEST-----
+    MIIEVjCCAz4CAQAwZzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQH
+    DAtMb3MgQW5nZWxlczEOMAwGA1UECgwFU3Rhc2gxCzAJBgNVBAsMAklUMRgwFgYD
+    VQQDDA9HbG9iYWxTdGFzaC5jb20wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK
+    AoIBAQC9jEPG8ztWnqUoWnVSYu/hBTPpyel2bOK7jDd0z3sCmqeRyKrgyzUA2Mgq
+    UsayYADSvEOye2U0K34c+PagCWsEEOh7fFPyPyEexSww2z/4uMOdEJ/9f6LK6u+w
+    zSLJUjpZhZThpJJAuj413VMPp7kIHtk4aTRF6hZSI1p7XAExGBc3nqijy/XLt43P
+    rnxfll0QnSNGESft/tDgVzEZz2/uaMLxjMc06xzxqvTSQIHl+uRKlEVzZT1k5gVi
+    1NpRDFAkIaADxapVjBCKJYN5fJhlMkgwzzLvqwMSWpj7b0S7AKnEU90JWwG/pOkb
+    rw6g0j+IcQYcUUj9jaU9iogPDaThAgMBAAGgggGoMBoGCisGAQQBgjcNAgMxDBYK
+    Ni4wLjYwMDIuMjBEBgkrBgEEAYI3FRQxNzA1AgEFDA1zdGFmZmVyLU1lZGlhDBRz
+    dGFmZmVyLU1lZGlhXEp1c3RpbgwLSW5ldE1nci5leGUwcgYKKwYBBAGCNw0CAjFk
+    MGICAQEeWgBNAGkAYwByAG8AcwBvAGYAdAAgAFIAUwBBACAAUwBDAGgAYQBuAG4A
+    ZQBsACAAQwByAHkAcAB0AG8AZwByAGEAcABoAGkAYwAgAFAAcgBvAHYAaQBkAGUA
+    cgMBADCBzwYJKoZIhvcNAQkOMYHBMIG+MA4GA1UdDwEB/wQEAwIE8DATBgNVHSUE
+    DDAKBggrBgEFBQcDATB4BgkqhkiG9w0BCQ8EazBpMA4GCCqGSIb3DQMCAgIAgDAO
+    BggqhkiG9w0DBAICAIAwCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBLTALBglghkgB
+    ZQMEAQIwCwYJYIZIAWUDBAEFMAcGBSsOAwIHMAoGCCqGSIb3DQMHMB0GA1UdDgQW
+    BBR8NFRnlk6fKLcCNHOT1LpXFYD6LjANBgkqhkiG9w0BAQUFAAOCAQEAGHlEG3vn
+    m4/t8M4vts4STegr8dqbeW68KbN7QsEVnTsdIoSoqR91l/g53vxahEJITBAOvsYY
+    Wr9ALk/I+hS7dZQUiwzK4R5Gw1j71b8yFshPu3jPqUm7FvRCRySpbblOrtLpdmQO
+    46BnRO6FAljVwqS4A+9EX+Hp/WcbySdfKSqE0XE5L9wg4sVbu/Heu5XKGLPuYtB8
+    qJ+pbUxLh9l4+1WXDEX83LyJlLG3iwR4Fq+AU+AC6rOwuUYMOmjtgIdjZMcbBWvk
+    KwnhAxHO1r2W/DLnMRboWbNy5GUKbm9uczVlsAbS+gawn3HD2u+0DW1QqGV7gs5B
+    i8LRhFVWojHATA==
+    -----END NEW CERTIFICATE REQUEST-----
+  server_software_id: 33
+  created_at: 2010-06-01 15:41:08 Z
+  signed_certificate: 
+  updated_at: 2010-06-01 15:42:15 Z
+  domains: 
+  id: 4
+  technical_checkbox: true
+  workflow_state: info_provided
+  validation_checkbox: true
+"5": 
+  duration: 730
+  certificate_order_id: 5
+  billing_checkbox: true
+  signing_request: |-
+    -----BEGIN NEW CERTIFICATE REQUEST-----
+    MIIBxDCCAS0CAQAwgYMxCzAJBgNVBAYTAlNBMREwDwYDVQQIEwhDb2FodWlsYTERMA8GA1UEBxMI
+    U2FsdGlsbG8xDDAKBgNVBAoTA1JDRzEMMAoGA1UECxMDUkNHMTIwMAYDVQQDEyl3d3cubWljdWVu
+    dGEuY2FibGV2aXNpb25kZXNhbHRpbGxvLmNvbS5teDCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkC
+    gYEApQ6VrU0OgYPSmhOdlbKYIIAfFDqXEGSWoK2cmeFhCCR9D4L9xUzWJGJ4eb2iIlJVTp/11/M4
+    /ws2xEg22NEISO6gsG2Osajt5uSdbukEbne3TzAp+SoileqwI4luvaOzKhwc0vCtS5gK+2YqtU1g
+    3D7QMY7QKcTrr6WStqLZ/30CAwEAAaAAMA0GCSqGSIb3DQEBBAUAA4GBAFO7j7SVBSCd1dMbQUDj
+    XwlYmtBNqoHqYwCnytOxcR4Z+ggJJmfZoBOIQwI8SpwV6JUeEGZEpz0xE64yBemSuxLS+vIwmXC3
+    5gH9TaoYZ6+qyB5Zm0c1jetun4JNEcrst9eusKxq4q0BL/djUdX1RYb0OVPWlmAfPrCWdWzwEhBx
+    -----END NEW CERTIFICATE REQUEST-----
+  server_software_id: 23
+  created_at: 2010-06-01 15:43:22 Z
+  signed_certificate: 
+  updated_at: 2010-06-01 15:45:49 Z
+  domains: 
+  - mail.quantas.com
+  - secure.dudley.co
+  id: 5
+  technical_checkbox: true
+  workflow_state: contacts_provided
+  validation_checkbox: true
