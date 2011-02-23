@@ -1,3 +1,5 @@
+@firewatir
+
 Feature: Manage SSL Account Settings
   In order to customize the overall ssl.com experience
   An appropriately authorized user
@@ -75,13 +77,13 @@ Feature: Manage SSL Account Settings
       And I click the submit image button
     Then I should see the error 'cannot be blank'
       #for the checkbox (not shown), messagebox and for the text box
-      And there should be "3" error field indicators
+      And there should be "1" error field indicators
 
     #select recipients and fill the text field with invalid email addys
     When I fill the "<email_text_field>" "text_field" with "abc"
       And I click the submit image button
     Then I should see the error "has invalid email addresses"
-      And there should be "3" error field indicators
+      And there should be "1" error field indicators
 
     #select recipients and fill the text field with valid email addys
     When I fill the "<email_text_field>" "text_field" with "test@test.com another@yahoo.com"

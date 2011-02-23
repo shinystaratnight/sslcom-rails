@@ -32,7 +32,7 @@ class SslAccount < ActiveRecord::Base
     #new certificate orders are the ones still in the shopping cart
     def not_new(options={})
       if options && options.has_key?(:page)
-        self.where("workflow_state = ?",'paid').paginate(options)
+        self.where(:workflow_state.matches % 'paid').paginate(options)
       else
         self.all(options || {}).find_all{|co|co.paid?}
       end
@@ -147,7 +147,7 @@ class SslAccount < ActiveRecord::Base
     generate_funded_account
   end
 
-  def self.human_attribute_name(attr)
+  def self.human_attribute_name(attr, options={})
      HUMAN_ATTRIBUTES[attr.to_sym] || super
   end
 

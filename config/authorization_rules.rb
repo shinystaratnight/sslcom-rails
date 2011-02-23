@@ -26,12 +26,12 @@ authorization do
     end
     has_permission_on :orders, :certificate_orders, :to => [:create]
     has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
-      if_attribute :ssl_account => is {user.ssl_account}
+      if_attribute ssl_account: {id: is {user.ssl_account.id}}
     end
     has_permission_on :orders, :to => [:read, :update, :delete] do
       if_attribute :billable => is {user.ssl_account}
     end
-    has_permission_on :site_seals, :to => [:read, :update] do
+    has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
       if_permitted_to :update, :certificate_order
     end
     has_permission_on :validations, :to => [:read, :update] do
@@ -44,9 +44,8 @@ authorization do
             :ssl_account => is {user.ssl_account}}}
     end
     has_permission_on :csrs, :to => :create
-    has_permission_on :csrs, :to => [:update] do
-      if_attribute :certificate_content => {:certificate_order => {
-            :ssl_account => is {user.ssl_account}}}
+    has_permission_on :csrs, :to => [:update, :delete] do
+      if_permitted_to :update, :certificate_content
     end
     has_permission_on :signed_certificates, :to => [:show] do
       if_attribute :csr => {:certificate_content => {:certificate_order => {

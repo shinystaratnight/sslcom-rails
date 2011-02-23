@@ -20,6 +20,8 @@ if Rails.env=='development'
       end
     end
 
+    #this function is preferable to initialize because it does not delete existing
+    #records and instead just adds new ones
     def self.dynamic_initialize
       tables=%w(Customer Order Certificate OrderNumber Merchant MerchantContact
         OrdersShoppingCart)

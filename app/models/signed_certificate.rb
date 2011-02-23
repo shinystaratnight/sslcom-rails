@@ -91,6 +91,14 @@ class SignedCertificate < ActiveRecord::Base
     csr.certificate_content.certificate_order
   end
 
+  def expiration_date_js
+    expiration_date.to_s
+  end
+
+  def created_at_js
+    created_at.to_s
+  end
+
   private
 
   def proper_certificate?

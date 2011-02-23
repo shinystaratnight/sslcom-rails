@@ -2,7 +2,6 @@ require 'zip/zip'
 require 'zip/zipfilesystem'
 
 class Csr < ActiveRecord::Base
-  using_access_control
   has_many    :whois_lookups
   has_many    :signed_certificates
   belongs_to  :certificate_content

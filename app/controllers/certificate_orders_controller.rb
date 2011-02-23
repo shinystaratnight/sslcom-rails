@@ -1,6 +1,7 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  before_filter :load_certificate_order, only: [:update, :edit]
   filter_access_to :all
   filter_access_to :credits, :incomplete, :pending, :search, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
@@ -62,20 +63,15 @@ class CertificateOrdersController < ApplicationController
 
   # GET /certificate_orders/1/edit
   def edit
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
     unless @certificate_order.blank?
       if @certificate_order.is_unused_credit?
         @certificate_order.has_csr=true
         @certificate = @certificate_order.mapped_certificate
-        @certificate_content = @certificate_order.certificate_contents.last
+        @certificate_content = @certificate_order.certificate_content
         return render '/certificates/buy', :layout=>'application'
       end
       csr = @certificate_order.certificate_content.csr
-      unless @certificate_order.certificate_content.registrant.blank?
-        @registrant = @certificate_order.certificate_content.registrant
-      else
-        @registrant = @certificate_order.certificate_content.build_registrant
-      end
+      setup_registrant()
       @registrant.company_name = csr.organization
       @registrant.department = csr.organization_unit
       @registrant.city = csr.locality
@@ -106,7 +102,7 @@ class CertificateOrdersController < ApplicationController
     redirect_to new_order_url and return unless current_user
     certificate_order = CertificateOrder.new(params[:certificate_order])
     @certificate = Certificate.find_by_product(params[:certificate][:product])
-    determine_eligibility_to_buy
+    determine_eligibility_to_buy(@certificate, certificate_order)
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
     respond_to do |format|
       if @certificate_order.save
@@ -126,8 +122,6 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
-
     respond_to do |format|
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
@@ -168,6 +162,8 @@ class CertificateOrdersController < ApplicationController
         format.html { redirect_to edit_certificate_order(@certificate_order) }
         format.xml  { head :ok }
       else
+        @registrant=Registrant.new(
+            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes])
         format.html { render :action => "edit" }
         format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
       end
@@ -279,5 +275,17 @@ class CertificateOrdersController < ApplicationController
   def recert(action)
     instance_variable_set("@"+action,CertificateOrder.find_by_ref(params[:id]))
     instance_variable_get("@"+action)
+  end
+
+  def load_certificate_order
+    @certificate_order=CertificateOrder.find_by_ref(params[:id])    
+  end
+
+  def setup_registrant
+    unless @certificate_order.certificate_content.registrant.blank?
+      @registrant = @certificate_order.certificate_content.registrant
+    else
+      @registrant = @certificate_order.certificate_content.build_registrant
+    end
   end
 end

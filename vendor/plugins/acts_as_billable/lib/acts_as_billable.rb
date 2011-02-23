@@ -21,7 +21,7 @@ module CollectiveIdea #:nodoc:
           raise ArgumentError.new("Sellable models must have a :price") unless sellables.all? {|sellable| sellable.respond_to? :price }
           returning self.orders.build do |order|
             sellables.each do |sellable|
-              order.line_items.build :sellable => sellable
+              li=order.line_items.build :sellable => sellable
             end
           end
         end

@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies,
     :cart_contents, :cart_products, :certificates_from_cookie
   before_filter :detect_recert, except: [:renew, :reprocess]
-  before_filter {|c|Authorization.current_user = c.current_user}
+  before_filter :set_current_user
 
   def permission_denied
     unless current_user
@@ -24,11 +24,6 @@ class ApplicationController < ActionController::Base
       flash[:error] = "You currently do not have permission to access that page."
       redirect_to root_url
     end
-  end
-
-  def current_user
-    return @current_user if defined?(@current_user)
-    @current_user = current_user_session && current_user_session.record
   end
 
   def is_reseller?
@@ -260,6 +255,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  protected
+
+  def set_current_user
+    Authorization.current_user = current_user
+  end
+
+
   private
 
   #if in process of recerting (renewal, reprocess, etc), this sets instance
@@ -277,6 +279,11 @@ class ApplicationController < ActionController::Base
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
     @current_user_session = UserSession.find(:shadow) || UserSession.find
+  end
+
+  def current_user
+    return @current_user if defined?(@current_user)
+    @current_user = current_user_session && current_user_session.record
   end
 
   def require_user
@@ -302,7 +309,7 @@ class ApplicationController < ActionController::Base
   end
 
   def store_location
-    session[:return_to] = request.request_uri
+    session[:return_to] = request.fullpath
   end
 
   def redirect_back_or_default(default)

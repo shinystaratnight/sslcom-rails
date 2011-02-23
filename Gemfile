@@ -51,10 +51,11 @@ gem 'meta_where'
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-# group :development, :test do
+  group :development, :test do
 #   gem 'webrat'
 #   gem 'cucumber'
-# end
+    gem 'ruby_parser'
+  end
 
   group :test do
     gem 'cucumber-rails'
@@ -65,6 +66,7 @@ gem 'meta_where'
     gem 'firewatir'
     gem 'rspec'
     gem 'factory_girl_rails'
+    gem 'mainline'
   end
 
   group :test, :development do

@@ -1,5 +1,6 @@
 <%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
-"<%=i%>":
+<%=i%>:
+  id: <%=i%>
   <%case cert.product
   when /^free.*/%>
   validation_rule_id: 1

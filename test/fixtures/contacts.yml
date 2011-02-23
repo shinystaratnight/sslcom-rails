@@ -20,8 +20,7 @@
   phone: "12123213"
   last_name: Bob
   fax: ""
-  roles: 
-  - technical
+  roles: --- - technical
   department: ""
   state: Texas
   first_name: Jay
@@ -47,8 +46,7 @@
   phone: "12123213"
   last_name: Bob
   fax: ""
-  roles: 
-  - validation
+  roles: --- - validation
   department: ""
   state: Texas
   first_name: Jay
@@ -100,8 +98,7 @@
   phone: "12123213"
   last_name: Bob
   fax: 
-  roles: 
-  - administrative
+  roles: --- - administrative
   department: 
   state: Texas
   first_name: Jay
@@ -127,8 +124,7 @@
   phone: "12123213"
   last_name: Bob
   fax: 
-  roles: 
-  - billing
+  roles: --- - billing
   department: 
   state: Texas
   first_name: Jay
@@ -154,8 +150,7 @@
   phone: "12123213"
   last_name: Bob
   fax: 
-  roles: 
-  - technical
+  roles: --- - technical
   department: 
   state: Texas
   first_name: Jay
@@ -181,8 +176,7 @@
   phone: "12123213"
   last_name: Bob
   fax: 
-  roles: 
-  - validation
+  roles: --- - validation
   department: 
   state: Texas
   first_name: Jay
@@ -208,8 +202,7 @@
   phone: "12123213"
   last_name: Bob
   fax: ""
-  roles: 
-  - administrative
+  roles: --- - administrative
   department: ""
   state: Texas
   first_name: Jay
@@ -287,8 +280,7 @@
   phone: "12123213"
   last_name: Bob
   fax: ""
-  roles: 
-  - billing
+  roles: --- - billing
   department: ""
   state: Texas
   first_name: Jay

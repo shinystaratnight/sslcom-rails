@@ -34,7 +34,8 @@ class SignedCertificatesController < ApplicationController
           flash[:notice] = 'Signed certificate was successfully created.'
           redirect_to(@signed_certificate.certificate_content.certificate_order) }
         format.xml  { head :ok }
-        format.js   { render :json=>@signed_certificate.to_json}
+        format.js   { render(json: @signed_certificate, methods:
+            [:expiration_date_js, :created_at_js])}
       else
         format.html { render :action => "edit" }
         format.xml  { render :xml =>@signed_certificate.errors, :status => :unprocessable_entity }

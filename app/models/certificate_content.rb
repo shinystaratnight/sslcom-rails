@@ -73,7 +73,10 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def domains=(domains)
-    write_attribute(:domains, domains.split(/\s+/).uniq.reject{|d|d.blank?})
+    unless domains.blank?
+      domains = domains.split(/\s+/).uniq.reject{|d|d.blank?}
+    end
+    write_attribute(:domains, domains)
   end
 
   def additional_domains=(html_domains)
@@ -87,7 +90,8 @@ class CertificateContent < ActiveRecord::Base
   def signing_request=(signing_request)
     write_attribute(:signing_request, signing_request)
     return unless (signing_request=~SIGNING_REQUEST_REGEX)==0
-    self.csr = Csr.new(:body=>signing_request)
+    self.csr
+    self.build_csr(:body=>signing_request)
     unless self.csr.common_name.blank?
       self.csr.save
     end

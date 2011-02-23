@@ -73,8 +73,7 @@ else
 end
 
 #browser.speed = :zippy
-ActionMailer::Base.delivery_method = :cache
-ActionMailer::Base.perform_deliveries = true
+ActionMailer::Base.delivery_method = :test
 
 browser = Watir::Browser.new
 @popup_text = ""

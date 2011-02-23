@@ -339,11 +339,14 @@ module ApplicationHelper
   end
 
   def recert?
+    recert=nil
     CertificateOrder::RECERTS.each do |r|
       r_obj = instance_variable_get("@#{r}")
       unless r_obj.blank?
-        break hidden_field_tag(r.to_sym, r_obj.ref)
+        recert=hidden_field_tag(r.to_sym, r_obj.ref)
+        break
       end
     end
+    recert
   end
 end

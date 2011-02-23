@@ -10,7 +10,7 @@ class OrderNotifier < ActionMailer::Base
     from          AppConfig.from_email.orders
     recipients    certificate_order.receipt_recipients
     sent_on       Time.now
-    body          :ssl_account=>ssl_account, :certificate_order=>certificate_order
+    body          :ssl_account=>ssl_account, :certificate_order=>certificate_order.reload
   end
 
   def certificate_order_prepaid(ssl_account, order)

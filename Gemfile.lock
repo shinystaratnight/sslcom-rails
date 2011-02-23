@@ -112,6 +112,8 @@ GEM
       activesupport (>= 2.3.6)
       mime-types
       treetop (>= 1.4.5)
+    mainline (1.0.1)
+      rack
     meta_where (0.9.6)
       activerecord (~> 3.0.0)
       activesupport (~> 3.0.0)
@@ -157,6 +159,8 @@ GEM
       activesupport (~> 3.0)
       railties (~> 3.0)
       rspec (~> 2.4.0)
+    ruby_parser (2.0.5)
+      sexp_processor (~> 3.0)
     rubyzip (0.9.4)
     s4t-utils (1.0.4)
       hoe (>= 1.3.0)
@@ -168,6 +172,7 @@ GEM
       ffi (~> 0.6.3)
       json_pure
       rubyzip
+    sexp_processor (3.0.5)
     sqlite3-ruby (1.3.1)
     term-ansicolor (1.0.5)
     thor (0.14.3)
@@ -207,6 +212,7 @@ DEPENDENCIES
   firewatir
   haml
   json
+  mainline
   meta_where
   money (= 2.1.0)
   mysql (= 2.8.1)
@@ -216,6 +222,7 @@ DEPENDENCIES
   resource_controller!
   rspec
   rspec-rails (>= 2.0.0.beta.22)
+  ruby_parser
   rubyzip
   savon
   sqlite3-ruby

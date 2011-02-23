@@ -27,15 +27,15 @@ jQuery(function($) {
         if(data.signed_certificate){
           signed_certificate_exists=true;
           $('textarea#tmp_signed_certificate').val($('#signed_certificate_body').val());
-          $('.common_name').replaceWith(data.signed_certificate.common_name);
-          $('.organization').replaceWith(data.signed_certificate.organization);
-          $('.department').replaceWith(data.signed_certificate.organization_unit);
-          $('.state').replaceWith(data.signed_certificate.state);
-          $('.city').replaceWith(data.signed_certificate.locality);
-          $('.country').replaceWith(data.signed_certificate.country);
-          $('.expires_on').replaceWith(Date.parse(data.signed_certificate.expiration_date).toString("MMM d, yyyy"));
-          $('.issued_on').replaceWith(Date.parse(data.signed_certificate.created_at).toString("MMM d, yyyy"));
-          $('.submitted_on').replaceWith("submitted on " + Date.parse('today').toString("MMM d, yyyy"));
+          $('.common_name').text(data.signed_certificate.common_name);
+          $('.organization').text(data.signed_certificate.organization);
+          $('.department').text(data.signed_certificate.organization_unit);
+          $('.state').text(data.signed_certificate.state);
+          $('.city').text(data.signed_certificate.locality);
+          $('.country').text(data.signed_certificate.country);
+          $('.expires_on').text(Date.parse(data.signed_certificate.expiration_date_js).toString("MMM d, yyyy"));
+          $('.issued_on').text(Date.parse(data.signed_certificate.created_at_js).toString("MMM d, yyyy"));
+          $('.submitted_on').text("submitted on " + Date.parse('today').toString("MMM d, yyyy"));
         }
         else{
           $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());

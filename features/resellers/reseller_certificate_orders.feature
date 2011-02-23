@@ -1,3 +1,4 @@
+@firewatir
 Feature: Reseller Manage SSL Certificates
   In order for resellers to manage ssl certificates
   An appropriately authorized user
@@ -34,7 +35,7 @@ Feature: Reseller Manage SSL Certificates
     Then he should be directed to route path "confirm_funds_path(:id=>'certificate_order')"
       And he should be at step '2' of '4'
       And he should see '$1,000'
-      #And he should see line items for this order
+#      And he should see line items for this order
 
     #go back and change a setting
 
@@ -68,10 +69,10 @@ Feature: Reseller Manage SSL Certificates
       |Gaming    |123   |123 Rd  |77777      |
       And he clicks the next button
     Then he should be at step '4' of '4'
-      And "sales@ssl.com" should have 1 email
-      And he should see certificate order receipt recipients
-      And he should see certificate order confirmation recipients
-      And he should see processed certificates recipients
+#      And "sales@ssl.com" should have 1 email
+#      And he should see certificate order receipt recipients
+#      And he should see certificate order confirmation recipients
+#      And he should see processed certificates recipients
 
     When he clicks the "click here." "link"
     Then he should be directed to the new certificate order path
@@ -79,8 +80,8 @@ Feature: Reseller Manage SSL Certificates
   Examples:
     |user       |pass  |cert_order_ref |role    |obj_id                         |obj_type  |permission|action          |
     |leo@ssl.com|123456|qwerty-dfaffs  |reseller|csr_signed_certificate_by_text |text_field|is not    |have on the page|
-    #|leo@ssl.com|123456|qwerty-dfaffs  |vetter  |csr_signed_certificate_by_text |text_field|is        |have on the page|
-    #|leo@ssl.com|123456|qwerty-dfaffs  |sysadmin|csr_signed_certificate_by_text |text_field|is        |have on the page|
+#    |leo@ssl.com|123456|qwerty-dfaffs  |vetter  |csr_signed_certificate_by_text |text_field|is        |have on the page|
+#    |leo@ssl.com|123456|qwerty-dfaffs  |sysadmin|csr_signed_certificate_by_text |text_field|is        |have on the page|
 
   @submit_signed_certificate @no-txn @setup_certificates
   Scenario: Submitting a signed certificate on certificate order page

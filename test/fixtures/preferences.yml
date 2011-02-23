@@ -23,30 +23,30 @@
   name: reminder_notice_triggers
   created_at: 2010-05-18 23:12:55 Z
   updated_at: 2010-05-18 23:12:55 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 18
   id: 22
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "11": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:41:51 Z
   updated_at: 2010-05-07 22:41:51 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 15
   id: 11
-  group_id: 
+  group_id: 5
   value: "1"
   owner_type: SslAccount
 "6": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:35:44 Z
   updated_at: 2010-05-07 22:35:44 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 14
   id: 6
-  group_id: 
+  group_id: 5
   value: "1"
   owner_type: SslAccount
 "45": 
@@ -73,30 +73,30 @@
   name: reminder_notice_triggers
   created_at: 2010-05-18 23:12:55 Z
   updated_at: 2010-05-18 23:12:55 Z
-  group_type: "2"
+  group_type: ReminderTrigger
   owner_id: 18
   id: 23
-  group_id: 
+  group_id: 2
   value: "30"
   owner_type: SslAccount
 "12": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:41:51 Z
   updated_at: 2010-05-07 22:41:51 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 15
   id: 12
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "7": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:35:44 Z
   updated_at: 2010-05-07 22:35:44 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 14
   id: 7
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "46": 
@@ -133,20 +133,20 @@
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:41:51 Z
   updated_at: 2010-05-07 22:41:51 Z
-  group_type: "2"
+  group_type: ReminderTrigger
   owner_id: 15
   id: 13
-  group_id: 
+  group_id: 2
   value: "30"
   owner_type: SslAccount
 "8": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:35:44 Z
   updated_at: 2010-05-07 22:35:44 Z
-  group_type: "2"
+  group_type: ReminderTrigger
   owner_id: 14
   id: 8
-  group_id: 
+  group_id: 2
   value: "30"
   owner_type: SslAccount
 "47": 
@@ -173,10 +173,10 @@
   name: reminder_notice_triggers
   created_at: 2010-05-18 23:12:55 Z
   updated_at: 2010-05-18 23:12:55 Z
-  group_type: "4"
+  group_type: ReminderTrigger
   owner_id: 18
   id: 25
-  group_id: 
+  group_id: 4
   value: "7"
   owner_type: SslAccount
 "14": 
@@ -193,10 +193,10 @@
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:35:44 Z
   updated_at: 2010-05-07 22:35:44 Z
-  group_type: "3"
+  group_type: ReminderTrigger
   owner_id: 14
   id: 9
-  group_id: 
+  group_id: 3
   value: "14"
   owner_type: SslAccount
 "37": 
@@ -213,10 +213,10 @@
   name: reminder_notice_triggers
   created_at: 2010-05-21 22:54:39 Z
   updated_at: 2010-05-21 22:54:39 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 16
   id: 26
-  group_id: 
+  group_id: 5
   value: "1"
   owner_type: SslAccount
 "15": 
@@ -243,20 +243,20 @@
   name: reminder_notice_triggers
   created_at: 2010-05-21 22:54:39 Z
   updated_at: 2010-05-21 22:54:39 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 16
   id: 27
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "16": 
   name: reminder_notice_triggers
   created_at: 2010-05-18 22:33:31 Z
   updated_at: 2010-05-18 22:33:31 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 17
   id: 16
-  group_id: 
+  group_id: 5
   value: "1"
   owner_type: SslAccount
 "40": 
@@ -293,20 +293,20 @@
   name: reminder_notice_triggers
   created_at: 2010-05-18 22:33:31 Z
   updated_at: 2010-05-18 22:33:31 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 17
   id: 17
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "1": 
   name: reminder_notice_triggers
   created_at: 2010-04-29 22:17:05 Z
   updated_at: 2010-05-22 06:25:15 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 13
   id: 1
-  group_id: 
+  group_id: 5
   value: 
   owner_type: SslAccount
 "41": 
@@ -333,10 +333,10 @@
   name: reminder_notice_triggers
   created_at: 2010-05-21 22:54:39 Z
   updated_at: 2010-05-21 22:54:39 Z
-  group_type: "3"
+  group_type: ReminderTrigger
   owner_id: 16
   id: 29
-  group_id: 
+  group_id: 3
   value: "14"
   owner_type: SslAccount
 "18": 
@@ -353,10 +353,10 @@
   name: reminder_notice_triggers
   created_at: 2010-04-29 22:17:05 Z
   updated_at: 2010-05-24 02:09:39 Z
-  group_type: "1"
+  group_type: ReminderTrigger
   owner_id: 13
   id: 2
-  group_id: 
+  group_id: 1
   value: "60"
   owner_type: SslAccount
 "42": 
@@ -433,39 +433,63 @@
   name: reminder_notice_triggers
   created_at: 2010-05-18 23:12:55 Z
   updated_at: 2010-05-18 23:12:55 Z
-  group_type: "5"
+  group_type: ReminderTrigger
   owner_id: 18
   id: 21
-  group_id: 
+  group_id: 5
   value: "1"
   owner_type: SslAccount
 "10": 
   name: reminder_notice_triggers
   created_at: 2010-05-07 22:35:44 Z
   updated_at: 2010-05-07 22:35:44 Z
-  group_type: "4"
+  group_type: ReminderTrigger
   owner_id: 14
   id: 10
-  group_id: 
+  group_id: 4
   value: "7"
   owner_type: SslAccount
 "4": 
   name: reminder_notice_triggers
   created_at: 2010-04-29 22:17:05 Z
   updated_at: 2010-05-24 02:54:20 Z
-  group_type: "3"
+  group_type: ReminderTrigger
   owner_id: 13
   id: 4
-  group_id: 
+  group_id: 3
   value: "12"
   owner_type: SslAccount
 "5": 
   name: reminder_notice_triggers
   created_at: 2010-04-29 22:17:05 Z
   updated_at: 2010-05-22 06:25:15 Z
-  group_type: "4"
+  group_type: ReminderTrigger
   owner_id: 13
   id: 5
-  group_id: 
+  group_id: 4
   value: 
   owner_type: SslAccount
+"cc":
+  id: 300
+  name: certificate_chain
+  created_at: 2011-01-29 22:17:05 Z
+  updated_at: 2011-01-22 06:25:15 Z
+  group_type:
+  owner_id: 1
+  group_id:
+  value: "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
+  owner_type: CertificateOrder
+<%offset=100
+  Certificate.find_without_published_as(:all).each_with_index do |cert, i|
+  i+=offset%>
+<%=i%>:
+  id: <%=i%>
+  name: certificate_chain
+  created_at: 2011-01-29 22:17:05 Z
+  updated_at: 2011-01-22 06:25:15 Z
+  group_type:
+  owner_id: <%=cert.id%>
+  group_id:
+  value: "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
+  owner_type: Certificate
+<%end%>

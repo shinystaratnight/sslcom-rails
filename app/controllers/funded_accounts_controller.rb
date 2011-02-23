@@ -5,14 +5,10 @@ class FundedAccountsController < ApplicationController
 #    :deposit_funds
 #  belongs_to :user
 
-#  before_filter :require_user, :only => [:allocate_funds_for_order,
-#    :deposit_funds, :allocate_funds, :apply_funds],
-#    :if=>'current_subdomain==Reseller::SUBDOMAIN'
-#  before_filter :sync_aid_li_and_cart, :only=>[:deposit_funds, :apply_funds],
-#    :if=>AppConfig.sync_aid_li_and_cart
-#  filter_access_to :all
-
-#  private :new, :update, :destroy, :show
+  before_filter :require_user, :only => [:allocate_funds_for_order,
+    :deposit_funds, :allocate_funds, :apply_funds],
+    :if=>'current_subdomain==Reseller::SUBDOMAIN'
+  filter_access_to :all
 
   def allocate_funds
     @funded_account = current_user.ssl_account.funded_account
@@ -66,8 +62,7 @@ class FundedAccountsController < ApplicationController
       @account_total.cents += @funded_account.amount.cents - @order.cents
       @funded_account.errors.add(:amount, "being loaded is not sufficient") if @account_total.cents <= 0
       @funded_account.errors.add(:amount,
-        "minimum deposit load amount is #{Money.new(
-        AppConfig.minimum_deposit_amount.to_i*100).format}" ) unless
+        "minimum deposit load amount is #{Money.new(AppConfig.minimum_deposit_amount.to_i*100).format}" ) unless
           !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
             AppConfig.minimum_deposit_amount
     end

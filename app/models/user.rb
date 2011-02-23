@@ -55,15 +55,15 @@ class User < ActiveRecord::Base
   end
 
   def deliver_username_reminder!
-    UserNotifier.deliver_username_reminder(self)
+    UserNotifier.username_reminder(self).deliver
   end
 
   def deliver_password_changed!
-    UserNotifier.deliver_password_changed(self)
+    UserNotifier.password_changed(self).deliver
   end
 
   def deliver_email_changed!(address=self.email)
-    UserNotifier.deliver_email_changed(self, address)
+    UserNotifier.email_changed(self, address).deliver
   end
 
   # we need to make sure that either a password or openid gets set
@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols
-    roles.map do |role|
+    (roles || []).map do |role|
       role.name.underscore.to_sym
     end
   end

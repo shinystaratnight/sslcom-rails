@@ -96,6 +96,12 @@
     </requirement>
     <requirement>
       <requirement>
+        <dependency name="mainline" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
+      </requirement>
+      <source from="Gemfile" />
+    </requirement>
+    <requirement>
+      <requirement>
         <dependency name="meta_where" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
       </requirement>
       <source from="Gemfile" />
@@ -145,6 +151,12 @@
     <requirement>
       <requirement>
         <dependency name="rspec-rails" version="2.0.0.beta.22" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
+      </requirement>
+      <source from="Gemfile" />
+    </requirement>
+    <requirement>
+      <requirement>
+        <dependency name="ruby_parser" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
       </requirement>
       <source from="Gemfile" />
     </requirement>
@@ -273,13 +285,16 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] selenium-webdriver (v0.1.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/selenium-webdriver-0.1.2)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rspec-core (v2.4.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rspec-core-2.4.0)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rspec-rails (v2.4.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rspec-rails-2.4.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] factory_girl_rails (v1.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/factory_girl_rails-1.0.1)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] factory_girl (v1.3.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/factory_girl-1.3.3)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] mainline (v1.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/mainline-1.0.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rake (v0.8.7, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rake-0.8.7)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] resource_controller (v0.6.6, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/bundler/gems/resource_controller-5537625a5215)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] s4t-utils (v1.0.4, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/s4t-utils-1.0.4)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] json_pure (v1.5.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/json_pure-1.5.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] childprocess (v0.1.6, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/childprocess-0.1.6)" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="[gem] i18n (v0.4.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/i18n-0.4.2)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/activemodel-3.0.3)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] i18n (v0.4.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/i18n-0.4.2)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] hoe (v2.9.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/hoe-2.9.0)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] user-choices (v1.1.6.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/user-choices-1.1.6.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/activemodel-3.0.1)" level="application" />
@@ -298,8 +313,8 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] tzinfo (v0.3.24, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/tzinfo-0.3.24)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] gherkin (v2.3.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/gherkin-2.3.3)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] abstract (v1.0.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/abstract-1.0.0)" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="[gem] factory_girl_rails (v1.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/factory_girl_rails-1.0.1)" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="[gem] factory_girl (v1.3.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/factory_girl-1.3.3)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] ruby_parser (v2.0.5, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/ruby_parser-2.0.5)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] sexp_processor (v3.0.5, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/sexp_processor-3.0.5)" level="application" />
   </component>
 </module>
 

@@ -33,7 +33,7 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope joins(:certificate_contents).order(:created_at)
+  default_scope joins(:certificate_contents).order(:created_at).readonly(false)
   
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -79,19 +79,17 @@ class CertificateOrder < ActiveRecord::Base
     validates :certificate, presence: true, :unless=>Proc.new {|co|
       !co.orders.last.nil? && co.orders.last.preferred_migrated_from_v2 = true}
   end
+
   before_create do |co|
     co.ref='co'+ActiveSupport::SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
     v     =co.create_validation
     if co.certificate
       co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
-      v.validation_rules << co.certificate.validation_rules
-=begin
-      if v.validation_rulings
-        v.validation_rulings.each do |vrl|
-            vrl.update_attribute "status", ValidationRuling::WAITING_FOR_DOCS
-        end
+      co.certificate.validation_rulings.each do |cvrl|
+        vrl = cvrl.clone
+        vrl.status = ValidationRuling::WAITING_FOR_DOCS
+        v.validation_rulings << vrl
       end
-=end
     end
     co.site_seal=SiteSeal.create
   end
@@ -251,7 +249,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.find_not_new(options=nil)
-    self.where("workflow_state = ?",'paid')
+    self.where(:workflow_state.matches % 'paid')
   end
 
   def self.find_pending

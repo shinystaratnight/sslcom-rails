@@ -7,7 +7,7 @@
   %h3 Applicant Information
   %p Please fill out the required fields below to complete your certificate order.
   =error_messages_for :certificate_order, :registrant
-  -form_for @certificate_order do |f|
+  =form_for @certificate_order do |f|
     #stylized.default_form
       =render :partial => "/certificate_orders/form", :locals => {:f=>f}
     #button_container
