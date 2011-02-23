@@ -1,58 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="made transition to Rails 3">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/features/step_definitions/web_steps_old.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/firewatir_url.rb" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/features/step_definitions/permissions.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/MIT-LICENSE" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/README" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/Rakefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/TODO" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/about.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/init.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/lib/action_mailer_cache_delivery.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/tasks/action_mailer_cache_delivery_tasks.rake" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/application_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/application_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_content.rb" afterPath="$PROJECT_DIR$/app/models/certificate_content.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/old_site.rb" afterPath="$PROJECT_DIR$/app/models/old_site.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order_notifier.rb" afterPath="$PROJECT_DIR$/app/models/order_notifier.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/registrant.rb" afterPath="$PROJECT_DIR$/app/models/registrant.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/user.rb" afterPath="$PROJECT_DIR$/app/models/user.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" afterPath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/authorization_rules.rb" afterPath="$PROJECT_DIR$/config/authorization_rules.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/test.rb" afterPath="$PROJECT_DIR$/config/environments/test.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/resellers/account_settings.feature" afterPath="$PROJECT_DIR$/features/resellers/account_settings.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/resellers/reseller_certificate_orders.feature" afterPath="$PROJECT_DIR$/features/resellers/reseller_certificate_orders.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/email_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/email_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/web_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/web_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/local_env.rb" afterPath="$PROJECT_DIR$/features/support/local_env.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/money.rb" afterPath="$PROJECT_DIR$/lib/money.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/validation_rulings.yml" afterPath="$PROJECT_DIR$/spec/fixtures/validation_rulings.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/contacts.yml" afterPath="$PROJECT_DIR$/test/fixtures/contacts.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/preferences.yml" afterPath="$PROJECT_DIR$/test/fixtures/preferences.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/reminder_triggers.yml" afterPath="$PROJECT_DIR$/test/fixtures/reminder_triggers.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/validation_rulings.yml" afterPath="$PROJECT_DIR$/test/fixtures/validation_rulings.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_billable/lib/acts_as_billable.rb" afterPath="$PROJECT_DIR$/vendor/plugins/acts_as_billable/lib/acts_as_billable.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -901,6 +851,7 @@
     <frame x="23" y="0" width="1258" height="776" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32659408" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41666666" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -913,7 +864,6 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32659408" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -934,7 +884,7 @@
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="true" />
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="made transition to Rails 3" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing changes" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -948,6 +898,7 @@
     <option name="SHOW_FILE_HISTORY_AS_TREE" value="false" />
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="made transition to Rails 3" />
+    <MESSAGE value="testing changes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
