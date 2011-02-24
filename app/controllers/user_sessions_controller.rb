@@ -7,13 +7,15 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    if params["prev.x".intern]
+    if params["prev.x".intern] || params[:has_account]=="true"
       #assume trying to login during checkout
       if params[:certificate_order]
         @certificate_order=CertificateOrder.new(params[:certificate_order])
         @certificate_order.has_csr=true
-        render(:template => "/certificates/buy",
-          :layout=>"application")
+        if params["prev.x".intern]
+          render(:template => "/certificates/buy",
+            :layout=>"application")
+        end
       else
         redirect_to show_cart_orders_url and return
       end
@@ -45,7 +47,7 @@ class UserSessionsController < ApplicationController
           format.html {redirect_back_or_default account_url}
           us_json = @user_session.to_json.chop << ',"redirect":"'+
             (user.ssl_account.is_registered_reseller?  ?
-            allocate_funds_for_order_url('order') : new_order_url) +'"}'
+            new_order_url(nil, params[:certificate_order], params[:certificate]) : new_order_url) +'"}'
           format.js   {render :json=>us_json}
 #        else
 #          redirect and present choices of user names and emails (if dupes exist) (radios) then

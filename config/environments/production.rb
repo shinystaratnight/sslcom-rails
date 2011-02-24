@@ -72,4 +72,5 @@ SslCom::Application.configure do
   GATEWAY_TEST_CODE=1.0
   # END ActiveMerchant configuration
 
+  SubdomainFu.preferred_mirror = "staging1"
 end

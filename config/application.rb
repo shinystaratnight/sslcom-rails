@@ -71,7 +71,7 @@ SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
 
 
 SubdomainFu.configure do |config|
-  config.tld_sizes = {:development => 0,
+  config.tld_sizes = {:development => 1,
    :test => 0,
    :production => 1} # set all at once (also the defaults)
 end

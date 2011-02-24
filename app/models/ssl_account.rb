@@ -155,7 +155,6 @@ class SslAccount < ActiveRecord::Base
     self.funded_account = FundedAccount.new(:cents=>0)
   end
 
-
   def total_amount_paid
     Money.new(orders.select{|op|op.current_state==:paid}.inject(0) do
         |sum, o| sum+=o.cents end)
