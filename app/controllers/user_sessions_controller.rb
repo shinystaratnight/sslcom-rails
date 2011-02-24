@@ -47,7 +47,7 @@ class UserSessionsController < ApplicationController
           format.html {redirect_back_or_default account_url}
           us_json = @user_session.to_json.chop << ',"redirect":"'+
             (user.ssl_account.is_registered_reseller?  ?
-            new_order_url(nil, params[:certificate_order], params[:certificate]) : new_order_url) +'"}'
+            "create" : new_order_url) +'"}'
           format.js   {render :json=>us_json}
 #        else
 #          redirect and present choices of user names and emails (if dupes exist) (radios) then

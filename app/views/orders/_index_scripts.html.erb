@@ -106,9 +106,12 @@ jQuery(function($) {
             if(data.record.user.status=='disabled')
               alert('This account has been disabled');
             else if(data.record.user.status=='enabled'){
-              //window.location=data.redirect;
-              $('form#new_order').attr("action", "<%=certificate_orders_url%>");
-              $('form#new_order').submit();
+              if(data.redirect='create'){
+                  $('form#new_order').attr("action", "<%=certificate_orders_url%>");
+                  $('form#new_order').submit();
+              }
+              else
+                window.location=data.redirect;
               return true;
             }
           }

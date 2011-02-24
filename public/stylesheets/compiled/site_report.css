@@ -1,4 +1,4 @@
-/* ---global common definitions--- */
+/*---global common definitions--- */
 * {
   font-size: 100.01%;
 }
@@ -18,7 +18,7 @@ img {
 }
 
 p, em {
-  margin: .4em 0 0;
+  margin: 0.4em 0 0;
 }
 
 em {
@@ -50,7 +50,7 @@ a:hover {
   padding-right: 0;
   padding-top: 0;
   width: 100%;
-  background-image: url('/images/sitesprite2.png');
+  background-image: url("/images/sitesprite2.png");
   background-position: 0px -10px;
   background-repeat: repeat-x;
   font-family: Helvetica, Arial, sans-serif;
@@ -63,7 +63,7 @@ a:hover {
   margin: 12px 0 0;
   overflow: hidden;
   text-indent: -9999px;
-  background-image: url('/images/sitesprite1.png');
+  background-image: url("/images/sitesprite1.png");
   background-position: -10px -10px;
   background-repeat: no-repeat;
 }
@@ -80,37 +80,37 @@ a:hover {
 .section_header, .report_header {
   padding: 0em 0.4em 1px;
   background: #e0e0ff;
-  border-top: 1px solid #AAAAFF;
+  border-top: 1px solid #aaaaff;
 }
 
 .report_header {
   background: #d0ffd0;
-  border-top: 1px solid #11FF11;
+  border-top: 1px solid #11ff11;
 }
 
 dt {
-  margin-bottom: .2em;
+  margin-bottom: 0.2em;
 }
 
 .attention {
   background-color: #ffcccc;
   border-left: 1px solid red;
   border-right: 1px solid red;
-  padding: 0 .1em;
+  padding: 0 0.1em;
 }
 
 .warning, .pending {
   background-color: lightyellow;
   border-left: 1px solid yellow;
   border-right: 1px solid yellow;
-  padding: 0 .1em;
+  padding: 0 0.1em;
 }
 
 .approved {
   border-left: 1px solid green;
   border-right: 1px solid green;
   background-color: #ccffcc;
-  padding: 0 .1em;
+  padding: 0 0.1em;
 }
 
 dl dd.img {
@@ -121,10 +121,10 @@ dd.img .img_preview img {
   float: left;
   margin: 0 8px 0 0;
   padding: 4px;
-  border: 1px solid #D9E0E6;
-  border-bottom-color: #C8CDD2;
-  border-right-color: #C8CDD2;
-  background: #fff;
+  border: 1px solid #d9e0e6;
+  border-bottom-color: #c8cdd2;
+  border-right-color: #c8cdd2;
+  background: white;
 }
 
 dd.preview {
@@ -147,10 +147,10 @@ dd.preview a {
 
 .report_icon {
   vertical-align: middle;
-  padding-right: .2em;
+  padding-right: 0.2em;
 }
 
 #report_title {
-  padding: 0 0 .3em .7em;
-  margin-top: -.5em;
+  padding: 0 0 0.3em 0.7em;
+  margin-top: -0.5em;
 }

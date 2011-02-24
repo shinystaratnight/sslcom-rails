@@ -26,7 +26,8 @@ gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "workflow"
 gem "savon"
 gem 'rubyzip'
-gem 'compass'
+gem 'compass', ">= 0.11.beta.2"
+gem 'rb-inotify'
 #gem 'aws-s3'
 gem 'xml-simple'
 gem 'json'
