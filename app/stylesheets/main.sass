@@ -86,6 +86,15 @@ a:hover
   margin: 0 auto
   overflow: hidden
 
+
+@mixin inherit_attr
+  color: inherit
+  font_size: inherit
+
+@mixin small_page_heading
+  font: bold 1.6em Helvetica, Arial, sans-serif
+  margin: 0 0 7px
+
 =clearfixIE5_and_6
   * html &
     height: 1%
@@ -248,16 +257,30 @@ a:hover
   &.product_description
     margin: 0 0 .8em
 
+#buy_certificate_heading
+  h1
+    @include small_page_heading
+    text-align: left
+    letter-spacing: normal
+
+  h2
+    font: 1.4em Helvetica, Arial, sans-serif
+    text-align: left
+    margin: 0
+    color: inherit
+
 #content h3
-  font: bold 1.6em Helvetica, Arial, sans-serif
-  margin: 0 0 7px
+  @include small_page_heading
 
-#content h3 a
-  color: #91b145
-  border-bottom-style: none
+  a
+    color: #91b145
+    border-bottom-style: none
 
-#content h3 a:hover
-  color: black
+    &:hover
+      color: black
+
+  a.inherit_attr
+    @include inherit_attr
 
 .container p, .containerb p
   margin: 10px 0
@@ -4058,6 +4081,23 @@ table#line_items_receipt
 .default_container
   padding-bottom: 1em
 
+  .info_listing
+    font-size: 1.4em
+    ul
+      list-style-type: none
+
+    ul#privacy
+      @extend ul
+
+      li
+        margin: .8em 0
+
+      li:first-child, li:last-child
+        margin: 0
+
+    dd
+      margin-bottom: .6em
+
   table.smart_seal_types
     width: 100%
     border-collapse: collapse
@@ -4659,4 +4699,9 @@ img.industry
 
 .deleting
   text-decoration: line-through
+
+.previous_requests
+  float: left
+  font-weight: bold
+
 

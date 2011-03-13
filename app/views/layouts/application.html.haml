@@ -4,12 +4,12 @@
     %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
 
-    %title= h(yield(:title).or_else(AppConfig.meta_keywords)) + " | SSL.com"
+    %title= h(yield(:title).or_else(AppConfig.meta_title)) + " | SSL.com"
     -if @meta
       -@meta.each do |key|
         %meta{:name=>key[0], :content=>key[1]}
-    %meta{ :name => "keywords", :content => AppConfig.meta_keywords}
-    %meta{ :name => "description", :content => AppConfig.meta_description }
+    %meta{ :name => "keywords", :content => h(yield(:keywords).or_else(AppConfig.meta_keywords))}
+    %meta{ :name => "description", :content => h(yield(:description).or_else(AppConfig.meta_description)) }
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
     =csrf_meta_tag

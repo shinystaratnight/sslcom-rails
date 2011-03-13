@@ -3,7 +3,7 @@ SslCom::Application.routes.draw do
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
   resource :account, :controller=>:users do
-      resource :reseller
+    resource :reseller
   end
   resources :password_resets
   resource :ssl_account do
@@ -128,9 +128,10 @@ SslCom::Application.routes.draw do
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders',
     :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
+  match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
   match 'reseller' => 'site#reseller', :as => :reseller,
       :constraints => {:subdomain=>Reseller::SUBDOMAIN}
-  (Reseller::TARGETED+%w(restful_api)).each do |i|
+  (Reseller::TARGETED+%w(restful_api terms_of_use privacy_policy copyright)).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)
   end
   match '/:controller(/:action(/:id))'

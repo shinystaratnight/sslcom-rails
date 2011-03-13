@@ -13,9 +13,6 @@
     %tr.line_item
       %td.description.subitem= item
       %td(colspan='2')
--order_line_items(cert).each do |item|
-  %tr.line_item
-    %td.description.subitem= item
-    %td(colspan='2')
+=render partial: "funded_accounts/row", locals: {cert: cert, colspan: '2'}
 
 

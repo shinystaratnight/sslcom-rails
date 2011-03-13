@@ -38,6 +38,8 @@ class Certificate < ActiveRecord::Base
     "SSL128WCG10 Wildcard SSL Certificate"], "wildcard", "wildcard"]
   MAP_TO_UCC=[["SSL UC Certificate"], "ucc", "ucc"]
 
+  scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
+
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
       type = mapping=='renew' ? 1 : 2

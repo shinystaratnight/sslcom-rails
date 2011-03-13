@@ -9,8 +9,12 @@
         %p.contact_us_header
           Support Issues
         %ul.phone_numbers
-          %li tel: +1-SSL-Certificate (+1-775-237-8434)
-          %li fax: 832-201-7706
+          %li
+            tel:
+            =AppConfig.corp_phone_tag
+          %li
+            fax:
+            =AppConfig.corp_fax
           %li email: support@ssl.com
         %p.sub_description
           For support issues related to SSL Certificates, email support@ssl.com to
@@ -27,40 +31,58 @@
         %p.contact_us_header
           Documentation Submittal and Validation
         %ul.phone_numbers
-          %li tel: +1-SSL-Certificate (+1-775-237-8434)
-          %li fax: 832-201-7706
+          %li
+            tel:
+            =AppConfig.corp_phone_tag
+          %li
+            fax:
+            =AppConfig.corp_fax
           %li email: support@ssl.com
         %ul.phone_numbers
-          %li SSL
-          %li 2260 W. Holcombe Blvd Ste#600
-          %li Houston, Tx 77030
+          %li SSL Corp
+          %li=AppConfig.mail_address1
+          %li=AppConfig.mail_address2
+          %li=[AppConfig.mail_city, AppConfig.mail_state, AppConfig.mail_zip].join(", ")
   .contact_us_container
     %p.contact_us_header
       Main
     %ul.phone_numbers
-      %li tel: +1-SSL-Certificate (+1-775-237-8434)
-      %li fax: 832-201-7706
+      %li
+        tel:
+        =AppConfig.corp_phone_tag
+      %li
+        fax:
+        =AppConfig.corp_fax
 
   .contact_us_container
     %p.contact_us_header
       Sales
     %ul.phone_numbers
-      %li toll free: 877-SSL-Secure (877-775-7328)
-      %li fax: 832-201-7706
+      %li
+        toll free:
+        =AppConfig.corp_tollfree_tag
+      %li
+        fax:
+        =AppConfig.corp_fax
       %li email: sales@ssl.com
 
   .contact_us_container
     %p.contact_us_header
       SSL Americas
     %ul.phone_numbers
-      %li SSL
-      %li 2260 W. Holcombe Blvd Ste#600
-      %li Houston, Tx 77030
+      %li SSL Corp
+      %li=AppConfig.mail_address1
+      %li=AppConfig.mail_address2
+      %li=[AppConfig.mail_city, AppConfig.mail_state, AppConfig.mail_zip].join(", ")
 
   .contact_us_container
     %p.contact_us_header
       Public Relations
     %ul.phone_numbers
-      %li tel: +1-SSL-Certificate (+1-775-237-8434)
-      %li fax: 832-201-7706
+      %li
+        tel:
+        =AppConfig.corp_phone_tag
+      %li
+        fax:
+        =AppConfig.corp_fax
       %li email: pr@ssl.com

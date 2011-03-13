@@ -5,6 +5,7 @@ authorization do
   end
 
   role :vetter do
+    has_permission_on :orders, :to => :manage
     has_permission_on :certificate_orders, :to => :manage
     has_permission_on :csrs, :to => :manage
     has_permission_on :signed_certificates, :to => :manage
@@ -83,7 +84,7 @@ privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search]
   privilege :manage, :includes => [:create, :read, :update, :delete]
-  privilege :read, :includes => [:index, :show, :search]
+  privilege :read, :includes => [:index, :show, :search, :show_cart]
   privilege :create, :includes => :new
   privilege :update, :includes => [:edit, :edit_update, :edit_email]
   privilege :delete, :includes => :destroy

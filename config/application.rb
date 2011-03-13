@@ -79,3 +79,4 @@ end
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 
+

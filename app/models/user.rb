@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-  using_access_control
+#  using_access_control
   has_many  :assignments
   has_many  :roles, :through => :assignments
   has_many  :legacy_v2_user_mappings, :as=>:user_mappable

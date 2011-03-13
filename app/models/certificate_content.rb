@@ -27,6 +27,8 @@ class CertificateContent < ActiveRecord::Base
 
   attr_accessor  :additional_domains #used to html format results to page
 
+  preference  :reprocessing, default: false
+
   include Workflow
   workflow do
     state :new do
@@ -51,7 +53,9 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :pending_validation do
-      event :validate, :transitions_to => :validated
+      event :validate, :transitions_to => :validated do
+        self.preferred_reprocessing = false if self.preferred_reprocessing?
+      end
       event :cancel, :transitions_to => :canceled
     end
 

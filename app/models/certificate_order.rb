@@ -1,5 +1,5 @@
 class CertificateOrder < ActiveRecord::Base
-  using_access_control
+  #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
   belongs_to  :validation
@@ -33,7 +33,8 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope joins(:certificate_contents).order(:created_at).readonly(false)
+  default_scope includes(:certificate_contents).
+      where(:certificate_contents=>{:id.ne=>nil}).order(:created_at.desc).readonly(false)
   
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -249,7 +250,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.find_not_new(options=nil)
-    self.where(:workflow_state.matches % 'paid')
+    if options && options.has_key?(:includes)
+      includes=method(:includes).call(options[:includes])
+    end
+    (includes || self).where(:workflow_state.matches % 'paid')
   end
 
   def self.find_pending
@@ -261,6 +265,12 @@ class CertificateOrder < ActiveRecord::Base
 
   def to_param
     ref
+  end
+
+  def add_renewal(ren)
+    unless ren.blank?
+      self.renewal_id=CertificateOrder.find_by_ref(ren).id
+    end
   end
 
   def validation_methods

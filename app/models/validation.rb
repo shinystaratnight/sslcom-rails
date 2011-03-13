@@ -48,7 +48,7 @@ class Validation < ActiveRecord::Base
     validation_histories.last.created_at.strftime("%b %d, %Y")
   end
 
-  def modify_validation_rulings
+  def modify_validation_rulings(validation_history)
     validation_rulings.each{|vr| vr.validation_submitted! if vr.new?}
   end
 end

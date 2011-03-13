@@ -239,7 +239,7 @@ class FundedAccountsController < ApplicationController
     @certificate_order = current_user.ssl_account.
       certificate_orders.detect(&:new?)
     @certificate = @certificate_order.certificate
-    @certificate_content = @certificate_order.certificate_contents.last.clone
+    @certificate_content = @certificate_order.certificate_content.clone
     @certificate_order = current_user.ssl_account.
       certificate_orders.detect(&:new?).clone
     @certificate_order.duration = @certificate_content.duration / 365

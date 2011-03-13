@@ -242,8 +242,14 @@ module ApplicationHelper
     link_to_function(name, h("add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")"))
   end
 
+  def skip_payment?
+    cc=@certificate_order.certificate_content
+    !!(@certificate_order.preferred_payment_order=='prepaid' ||
+       (eval("@#{CertificateOrder::REPROCESSING}") || (cc && cc.preferred_reprocessing?)))
+  end
+
   def order_progress_indicator(page, certificate)
-    process = @certificate_order.preferred_payment_order=='prepaid' ?
+    process = skip_payment? ?
       @certificate_order.prepaid_signup_process(certificate) :
       @certificate_order.signup_process(certificate)
     padding = case process

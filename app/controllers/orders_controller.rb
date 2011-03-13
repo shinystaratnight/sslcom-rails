@@ -22,10 +22,10 @@ class OrdersController < ApplicationController
 
   def new
     if params[:certificate_order]
-        @certificate = Certificate.find_by_product(params[:certificate][:product])
-        unless params["prev.x".intern].nil?
-          redirect_to buy_certificate_url(@certificate) and return
-        end
+      @certificate = Certificate.find_by_product(params[:certificate][:product])
+      unless params["prev.x".intern].nil?
+        redirect_to buy_certificate_url(@certificate) and return
+      end
       render(:template => "/certificates/buy",
         :layout=>"application") and return unless certificate_order_steps
     else
@@ -134,6 +134,7 @@ class OrdersController < ApplicationController
     respond_to do |format|
       if params[:certificate_order]
         @certificate_order=CertificateOrder.new(params[:certificate_order])
+#        @certificate_order.add_renewal(@renewal)
         @certificate = Certificate.find_by_product(params[:certificate][:product])
         if params["prev.x".intern] || !certificate_order_steps
           @certificate_order.has_csr=true
@@ -191,6 +192,9 @@ class OrdersController < ApplicationController
     certificate_order=CertificateOrder.new(params[:certificate_order])
     determine_eligibility_to_buy(@certificate, certificate_order)
     @certificate_order=setup_certificate_order(@certificate, certificate_order)
+    @certificate_order.renewal_id=
+        instance_variable_get("@#{CertificateOrder::RENEWING}").id if
+        instance_variable_get("@#{CertificateOrder::RENEWING}")
     @certificate_order.valid?
   end
 

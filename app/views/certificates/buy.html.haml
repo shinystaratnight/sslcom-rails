@@ -1,15 +1,22 @@
+-c={}
+-c[:description]="Purchase ssl certificates from ssl.com. Buy ev, wildcard, uc, or any digital certificate."
+-c[:keywords]="buy ssl certificate purchase certificates low cost prices ev wildcard uc ucc exchange apache java iis"
 -co=@certificate_order
--if @renewing.blank?
-  -title = "#{co.is_unused_credit? ? "Process" : "Buy"} #{@certificate.title} Certificate"
+-if @renewing
+  -c[:title] = "Renewing #{@certificate.title} Certificate For #{@renewing.subject}"
+-elsif @reprocessing
+  -c[:title] = "Reprocessing #{@certificate.title} Certificate For #{co.subject}"
 -else
-  -title = "Renewing #{@certificate.title} Certificate For #{@renewing.subject}"
--content_for :title, title
+  -c[:title] = "#{co.is_unused_credit? ? "Process" : "Buy"} #{@certificate.title} Certificate"
+-c.each do |k, v|
+  -content_for k, c[k]
 =render :partial => '/certificates/index_scripts'
 =order_progress_indicator(1, @certificate)
 -form_params=new_certificate_params
 .reseller_registration_profile
-  %h3=title
-  %p Please fill out the required fields below to begin your certificate order.
+  #buy_certificate_heading
+    %h1=c[:title]
+    %h2 Please fill out the required fields below to begin your certificate order.
   =error_messages_for :certificate_order, :certificate_content
   -form_for(*form_params) do |f|
     =hidden_field :certificate, :product

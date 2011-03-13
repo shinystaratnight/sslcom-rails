@@ -34,10 +34,12 @@
     %li CA Repository
     =# %li Webtrust Audit
     %li Help
-    %li Press Room
-    %li Careers
-    %li Sitemap
+    =#%li Press Room
+    %li=link_to "Investors", :controller=>'site', :action=>'investors'
+    =#%li Careers
+    =#%li Sitemap
 #copyright_statement
   &copy;2011 SSL.COM CORP ALL RIGHTS RESERVED.
-  %a.footer_link{ :href => "/privacy-policy/" } Privacy Policy
-  %a.footer_link{ :href => "/terms_service/" } Terms of Service
+  %a.footer_link=link_to "Privacy Policy", privacy_policy_path
+  %a.footer_link=link_to "Terms of Service", terms_of_use_path
+  %a.footer_link=link_to "Copyright", copyright_path

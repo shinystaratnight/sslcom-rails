@@ -12,13 +12,11 @@ class SiteSealsController < ApplicationController
   # GET /site_seals.xml
   def index
     p = {:page => params[:page]}
-    @site_seals = find_certificate_orders(:include=>:site_seal).
-      map(&:site_seal).uniq.select{|ss|!ss.is_disabled?}.paginate(p)
-    
-    respond_to do |format|
-      format.html { render :action => :index }
-      format.xml  { render :xml => @site_seals }
-    end
+    @certificate_orders = find_certificate_orders.joins(:site_seal).
+        select('distinct certificate_orders.*').
+        where("site_seals.workflow_state NOT IN ('new', 'canceled', 'deactivated')").paginate(p)
+#    @site_seals = find_certificate_orders(includes: :site_seal).
+#      map(&:site_seal).uniq.select{|ss|!ss.is_disabled?}.paginate(p)
   end
 
   # GET /site_seals/1

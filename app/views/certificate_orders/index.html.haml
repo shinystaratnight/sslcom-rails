@@ -108,8 +108,8 @@
                           -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
                             %li
                               -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                -u=link_to 'upload', new_certificate_order_validation_url(co)
+                                -ul=link_to 'upload', new_certificate_order_validation_url(co)
                               -unless co.validation.validation_histories.blank?
                                 -m=link_to 'manage', edit_certificate_order_validation_url(co)
                               -s=link_to 'status', certificate_order_validation_url(co)
-                              =link_cluster([u,m,s])
+                              =link_cluster([ul,m,s])

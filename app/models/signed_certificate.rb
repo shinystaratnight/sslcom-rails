@@ -1,5 +1,5 @@
 class SignedCertificate < ActiveRecord::Base
-  using_access_control
+#  using_access_control
   serialize :organization_unit
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
@@ -20,7 +20,9 @@ class SignedCertificate < ActiveRecord::Base
       response = ssl_util.parse_certificate do |soap|
         soap.body = {:csr => certificate}
       end
-    rescue
+    rescue Exception => ex
+      p ex
+      logger.error ex
     else
       self[:parent_cert] = false
       @parsed = response.to_hash[:multi_ref]

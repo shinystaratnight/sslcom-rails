@@ -14,6 +14,8 @@ class ApplicationController < ActionController::Base
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
 
+#  hide_action :paginated_scope
+
   def permission_denied
     unless current_user
       store_location
@@ -24,6 +26,10 @@ class ApplicationController < ActionController::Base
       flash[:error] = "You currently do not have permission to access that page."
       redirect_to root_url
     end
+  end
+
+  def paginated_scope(relation)
+    instance_variable_set "@#{controller_name}", relation.paginate(params[:page])
   end
 
   def is_reseller?
@@ -113,6 +119,7 @@ class ApplicationController < ActionController::Base
         :server_licenses=>c[ShoppingCart::LICENSES],
         :duration=>c[ShoppingCart::DURATION],
         :quantity=>c[ShoppingCart::QUANTITY].to_i)
+      certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
       certificate_order.certificate_contents.build :domains=>
         c[ShoppingCart::DOMAINS]
       certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
@@ -261,6 +268,11 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = current_user
   end
 
+=begin
+  def responder
+    EnhancedResponder
+  end
+=end
 
   private
 

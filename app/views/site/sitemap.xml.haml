@@ -1,0 +1,40 @@
+-base_url = "http://#{request.host_with_port}"
+!!! XML
+%urlset{:xmlns => "http://www.sitemaps.org/schemas/sitemap/0.9"}
+  -for item in Certificate.sitemap
+    %url
+      %loc #{base_url}#{url_for item}
+      %lastmod=item.updated_at.strftime "%Y-%m-%d"
+      %changefreq monthly
+      %priority 0.5
+    %url
+      %loc #{base_url}#{buy_certificate_path item}
+      %lastmod=item.updated_at.strftime "%Y-%m-%d"
+      %changefreq monthly
+      %priority 0.5
+  -for item in ResellerTier.sitemap
+    %url
+      %loc #{base_url}#{url_for(item)}
+      %lastmod=item.updated_at.strftime "%Y-%m-%d"
+      %changefreq monthly
+      %priority 0.5
+  -# single urls follow
+  -urls=%w(root login)
+  -urls=urls + %w(details_resellers restful_api_resellers resellers reseller_tiers)
+  -urls=urls + %w(details_site_seals)
+  -urls=urls + %w(wildcard_or_ucc_certificates single_domain_certificates)
+  -urls=urls + %w(reseller host_providers registrars merchants restful_api terms_of_use privacy_policy copyright)
+  -urls.each do |url|
+    %url
+      %loc #{send url+"_url"}
+      %lastmod=Date.today.strftime "%Y-%m-%d"
+      %changefreq monthly
+      %priority 0.5
+  -urls=%w(root reseller details_resellers restful_api_resellers resellers reseller_tiers)
+  -urls.each do |url|
+    %url
+      %loc #{eval url+"_url(subdomain: Reseller::SUBDOMAIN)"}
+      %lastmod=Date.today.strftime "%Y-%m-%d"
+      %changefreq monthly
+      %priority 0.5
+

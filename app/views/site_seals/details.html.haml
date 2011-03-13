@@ -1,12 +1,16 @@
--title="SSL.com Smart SeaLs"
--content_for :title, title
+-c={}
+-c[:description]="Displaying SSL.com secure website seals and smart seals build customer trust."
+-c[:keywords]="SSL secure site seal smartseal smart trusted website"
+-c[:title]="SSL Secured Site Seals For Trusted Websites"
+-c.each do |k, v|
+  -content_for k, c[k]
 -content_for :header, 'public'
 %h1
-  Display Your Site's SSL With The Smart SeaL
+  Display Your Website's SSL With The Smart SeaL
 %h2
   Boost confidence with the SSL.com Class Rating and Report
 .default_container
-  %h3=title
+  %h3=c[:title]
   %table.smart_seal_types
     %tbody
       %tr

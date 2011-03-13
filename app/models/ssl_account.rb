@@ -4,10 +4,9 @@ class SslAccount < ActiveRecord::Base
   easy_roles :roles
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, :include => [:orders, :certificate_contents] do
+  has_many  :certificate_orders, :include => [:orders] do
     def unvalidated(options={})
       all(options).find_all{|co|
-        next false unless co.certificate_content
         ['pending_validation', 'contacts_provided'].
         include?(co.certificate_content.workflow_state) &&
         !co.validation_rules_satisfied? && !co.expired?}
@@ -15,7 +14,6 @@ class SslAccount < ActiveRecord::Base
 
     def incomplete(options={})
       all(options).find_all{|co|
-        next false unless co.certificate_content
         ['csr_submitted', 'info_provided', 'contacts_provided'].
         include?(co.certificate_content.workflow_state) &&
         !co.validation_rules_satisfied? && !co.expired?}
@@ -23,7 +21,6 @@ class SslAccount < ActiveRecord::Base
 
     def pending(options={})
       all(options).find_all{|co|
-        next false unless co.certificate_content
         ['pending_validation'].
         include?(co.certificate_content.workflow_state) &&
         !co.validation_rules_satisfied?}
@@ -31,11 +28,7 @@ class SslAccount < ActiveRecord::Base
 
     #new certificate orders are the ones still in the shopping cart
     def not_new(options={})
-      if options && options.has_key?(:page)
-        self.where(:workflow_state.matches % 'paid').paginate(options)
-      else
-        self.all(options || {}).find_all{|co|co.paid?}
-      end
+      self.where(:workflow_state.matches % 'paid')
     end
 
     def has_csr(options={})

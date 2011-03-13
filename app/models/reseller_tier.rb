@@ -6,6 +6,10 @@ class ResellerTier < ActiveRecord::Base
 
   DEFAULT_TIER = 2
 
+  def self.sitemap
+    ResellerTier.all
+  end
+
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i
   end

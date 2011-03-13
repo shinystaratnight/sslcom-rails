@@ -14,9 +14,9 @@ gem 'awesome_print'
 gem 'activemerchant', '1.10.0'
 #gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
-gem 'will_paginate'
+gem 'will_paginate', '3.0.pre2'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
-gem 'haml'
+gem 'haml', '>= 3.1.alpha.50'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
@@ -40,9 +40,6 @@ gem 'meta_where'
 # Deploy with Capistrano
 # gem 'capistrano'
 
-# To use debugger
-# gem 'ruby-debug'
-
 # Bundle the extra gems:
 # gem 'bj'
 # gem 'nokogiri'
@@ -56,6 +53,7 @@ gem 'meta_where'
 #   gem 'webrat'
 #   gem 'cucumber'
     gem 'ruby_parser'
+#    gem 'ruby-debug19', :require => 'ruby-debug'
   end
 
   group :test do

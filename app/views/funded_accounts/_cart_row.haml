@@ -19,7 +19,4 @@
   %td.center_align(id="price_#{indx}")= cert.price.format
   -cert_quantity ||= 1
   %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
--order_line_items(cert).each do |item|
-  %tr.line_item(class="row_#{indx}")
-    %td.description.subitem= item
-    %td(colspan='3')
+=render partial: "funded_accounts/row", locals: {indx: indx, cert: cert}

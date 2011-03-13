@@ -1,30 +1,37 @@
 /*---global common definitions--- */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\000032}}
 * {
   font-size: 100.01%;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\000034}}
 html {
   font-size: 62.5%;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\000036}}
 body {
   margin: 0;
   font-family: Helvetica, Arial, sans-serif;
   background: white;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000311}}
 img {
   border: 0;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000314}}
 p, em {
   margin: 0.4em 0 0;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000317}}
 em {
   display: block;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000320}}
 a {
   color: #6b9029;
   outline: none;
@@ -32,10 +39,12 @@ a {
   border-bottom-style: none;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000326}}
 a:hover {
   text-decoration: none;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000329}}
 #wrapper {
   padding: 1em;
   overflow: hidden;
@@ -43,6 +52,7 @@ a:hover {
 }
 
 /* header */
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000335}}
 #header {
   background-color: black;
   padding-left: 0;
@@ -56,6 +66,7 @@ a:hover {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000347}}
 #header .logo {
   display: block;
   width: 300px;
@@ -68,30 +79,36 @@ a:hover {
   background-repeat: no-repeat;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000358}}
 #header .logo a {
   height: 100%;
   display: block;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000362}}
 #site_report_title {
   font-size: 1.1em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000365}}
 .section_header, .report_header {
   padding: 0em 0.4em 1px;
   background: #e0e0ff;
   border-top: 1px solid #aaaaff;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000370}}
 .report_header {
   background: #d0ffd0;
   border-top: 1px solid #11ff11;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000374}}
 dt {
   margin-bottom: 0.2em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000377}}
 .attention {
   background-color: #ffcccc;
   border-left: 1px solid red;
@@ -99,6 +116,7 @@ dt {
   padding: 0 0.1em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000383}}
 .warning, .pending {
   background-color: lightyellow;
   border-left: 1px solid yellow;
@@ -106,6 +124,7 @@ dt {
   padding: 0 0.1em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000389}}
 .approved {
   border-left: 1px solid green;
   border-right: 1px solid green;
@@ -113,10 +132,12 @@ dt {
   padding: 0 0.1em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000395}}
 dl dd.img {
   margin: 0;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\0000398}}
 dd.img .img_preview img {
   float: left;
   margin: 0 8px 0 0;
@@ -127,29 +148,35 @@ dd.img .img_preview img {
   background: white;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003107}}
 dd.preview {
   font-size: 80%;
   margin: 0 0 0 22px;
   clear: both;
   width: 7em;
 }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003113}}
 dd.preview a {
   padding: 2px 0;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003118}}
 .satisfies_requirements ul {
   list-style: none;
 }
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003121}}
 .satisfies_requirements ul li.requirement {
   background: url(/images/chkshield.png) no-repeat 3.6em 0;
   padding: 0.1em 0 0.8em 5.6em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003125}}
 .report_icon {
   vertical-align: middle;
   padding-right: 0.2em;
 }
 
+@media -sass-debug-info{filename{font-family:file\:\/\/\/home\/sysadmin\/Development\/Ruby\/ssl_com_rails3\/app\/stylesheets\/site_report\.sass}line{font-family:\00003129}}
 #report_title {
   padding: 0 0 0.3em 0.7em;
   margin-top: -0.5em;

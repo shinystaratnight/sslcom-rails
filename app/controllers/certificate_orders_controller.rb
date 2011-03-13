@@ -159,7 +159,7 @@ class CertificateOrdersController < ApplicationController
             format.html { redirect_to certificate_content_contacts_url(cc) }
           end
         end
-        format.html { redirect_to edit_certificate_order(@certificate_order) }
+        format.html { redirect_to edit_certificate_order_url(@certificate_order) }
         format.xml  { head :ok }
       else
         @registrant=Registrant.new(
@@ -177,19 +177,29 @@ class CertificateOrdersController < ApplicationController
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym])
     @certificate_content.certificate_order=@certificate_order
+    @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
 
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.certificate_content
-        cc.signing_request = @certificate_content.signing_request
-        cc.server_software = @certificate_content.server_software
+        if @certificate_content.preferred_reprocessing?
+          @certificate_order.certificate_contents << @certificate_content
+          @certificate_content.create_registrant(cc.registrant.attributes).save
+          cc.certificate_contacts.each do |contact|
+            @certificate_content.certificate_contacts << CertificateContact.new(contact.attributes)
+          end
+          cc = @certificate_order.certificate_content
+        else
+          cc.signing_request = @certificate_content.signing_request
+          cc.server_software = @certificate_content.server_software
+        end
         if cc.new?
           cc.submit_csr!
         elsif cc.validated? || cc.pending_validation?
           cc.pend_validation! if cc.validated?
           format.html { redirect_to(@certificate_order) }
         end
-        format.html { redirect_to edit_certificate_order(@certificate_order) }
+        format.html { redirect_to edit_certificate_order_url(@certificate_order) }
         format.xml  { head :ok }
       else
         @certificate = @certificate_order.certificate

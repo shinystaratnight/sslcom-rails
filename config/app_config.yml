@@ -3,8 +3,9 @@ community_name: "SSL.com"
 community_tagline: "copyright 2011"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
 support_email:  "support@ssl.com"
-meta_description: "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
-meta_keywords: "Certificate Authority, SSL Certificates,  SSL.com Certificates, EV Certificates, Wildcard Certificates"
+meta_description: "SSL.com is a globally trusted certificate authority offering digital EV, wildcard, and uc ssl certificates to secure websites and applications."
+meta_keywords: "certificate authority ssl certificates ssl.com EV Wildcard Digital IDs x509 pki trust certs secure sockets layer https security site seal smartseal"
+meta_title: "SSL Certificates Digital EV SSL Certificate Authority"
 show_advertising: false
 closed_beta_mode: false
 enable_exception_notifier: true
@@ -14,6 +15,20 @@ ucc_max_domains: 200
 cert_expiration_threshold_days: 365
 intermediate_certs_path: "<%=RAILS_ROOT%>/public/cert_bundles/"
 header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
+corp_name: "SSL Corp"
+corp_address1: "2260 W Holcombe Blvd"
+corp_address2: "Suite 700"
+corp_city: "Houston"
+corp_state: "TX"
+corp_zip: "77030"
+corp_phone_tag: "+1-SSL-Certificate (+1-775-237-8434)"
+corp_tollfree_tag: "877-SSL-Secure (877-775-7328)"
+corp_fax: "832-201-7706"
+mail_address1: "2260 W Holcombe Blvd"
+mail_address2: "Suite 700"
+mail_city: "Houston"
+mail_state: "TX"
+mail_zip: "77030"
 # Comment this out if you want to infer the locale
 # off of the http headers
 community_locale: "en"

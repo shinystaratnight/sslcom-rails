@@ -6,7 +6,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile
   belongs_to  :deducted_from, :class_name => "Order",
     :foreign_key => "deducted_from_id"
-  has_many    :line_items, :dependent => :destroy, :include=>:sellable
+  has_many    :line_items, :dependent => :destroy
   has_many    :payments
   has_many    :transactions, :class_name => 'OrderTransaction',
                 :dependent => :destroy
@@ -21,8 +21,8 @@ class Order < ActiveRecord::Base
 
   SSL_CERTIFICATE = "SSL Certificate Purchase"
 
-  default_scope includes(:line_items).where(line_items:
-    [:sellable_type !~ ResellerTier.to_s]).order('created_at desc')
+  default_scope includes(:line_items).where({line_items:
+    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
 
   scope :search, lambda {|term|
     where(:reference_number =~ '%'+term+'%')

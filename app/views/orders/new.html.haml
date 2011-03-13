@@ -15,6 +15,7 @@
       =fields_for @certificate_order do |f|
         =f.hidden_field :server_licenses
         =f.hidden_field :duration
+        =f.hidden_field :renewal_id
         =f.fields_for :certificate_contents, @certificate_content do |cert_form|
           =cert_form.text_area :signing_request, :class=>'hidden'
           =cert_form.hidden_field :additional_domains

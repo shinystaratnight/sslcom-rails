@@ -48,6 +48,9 @@ jQuery(function($) {
   $.build_cart_item = function(){
     return {<%=ShoppingCart::PRODUCT_CODE%> : $('#certificate_product').val() ,
       <%=ShoppingCart::DURATION%> : $(':radio[name*=duration]:checked').val(),
+      <%if instance_variable_get('@'+CertificateOrder::RENEWING)-%>
+        <%=ShoppingCart::RENEWAL_ORDER%> : '<%=instance_variable_get('@'+CertificateOrder::RENEWING).ref%>',
+      <%end-%>
       <%=ShoppingCart::LICENSES%> :
       <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
       $('#certificate_order_server_licenses').val()

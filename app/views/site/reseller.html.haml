@@ -1,10 +1,16 @@
+-c={}
+-c[:description]="SSL.com Reseller Program offers volume discounting and low prices on ssl certificates for resellers."
+-c[:keywords]="SSL reseller host providers hosting webmasters low cost ssl certificate authority ssl resellers"
+-c[:title]="SSL Reseller Program, Low Prices for Resellers"
+-c.each do |k, v|
+  -content_for k, c[k]
 -content_for :header, 'public'
 .container
   .innercontainere.shadow
     .inner
       =render :partial => "shared/messages"
       %h1
-        Increase Your Bottom Line, Not Your Confusion
+        Increase Your Bottom Line With SSL Reseller
       %h2
         SSL Reseller simplifies SSL certificate purchasing and management.
       .leftcolb

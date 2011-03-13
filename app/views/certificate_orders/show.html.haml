@@ -171,66 +171,71 @@
                               -unless ct.phone.blank?
                                 %li
                                   =ct.phone
-                              -if ct.send("is_administrative?".to_sym)
-                                %li
-                                  =link_to 'create/edit contacts', certificate_content_contacts_url(@cc)
                             -else
                               none
+                            %li
+                              =link_to 'create/edit contacts', certificate_content_contacts_url(@cc)
             %table(cellspacing="0")
               %tbody
-                -@certificate_order.certificate_contents.each do |c|
+                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
                   -csr = c.csr
                   -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5")
-                      .certificate_details_box
-                        %strong certificate signing request
-                        -unless csr.blank?
-                          %div
-                            submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
-                          =text_area_tag :csr, csr.body, :size=>"30x10"
-                        -else
-                          no certificate signing request found
-                      .certificate_details_box
-                        %strong signed certificate
-                        -unless permitted_to? :create, SignedCertificate.new
-                          -unless sc.try(:body).blank?
+                  -if current_user.is_admin?
+                    %tr
+                      %td(colspan="5")
+                        -if c!=@certificate_order.certificate_content
+                          %span.previous_requests previous requests
+                  -if c==@certificate_order.certificate_content || current_user.is_admin?
+                    %tr
+                      %td(colspan="5")
+                        .certificate_details_box
+                          %strong certificate signing request
+                          -unless csr.blank?
                             %div
-                              submitted on #{sc.created_at.strftime("%b %d, %Y")}
-                            =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                              submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
+                            =text_area_tag :csr, csr.body, :size=>"30x10"
                           -else
-                            %div
-                              no signed certificate found
-                        -else
-                          #signed_certificate_submitted_on
-                            %span.submitted_on
-                              -unless sc.try(:created_at).blank?
-                                submitted on
-                                \#{sc.created_at.strftime("%b %d, %Y")}
-                              -else
-                                &nbsp
-                          -form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                            =f.text_area :body, :cols=>30, :rows=>10
-                            .clearfix
-                              #{check_box_tag "email_customer", true, true}notify customer?
-                            =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                            #temporary_signed_certificate.hidden[csr]
-                              =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                      .certificate_details_box
-                        %ul
-                          %li 
-                            %strong server software
-                          %li
-                            #{c.server_software.title}
-                  %tr
-                    %td(colspan="5")
-                      .notes_box
-                        %ul
-                          %li
-                            %strong notes from SSL team
-                          %li
-                            -unless @certificate_order.notes.blank?
-                              =@certificate_order.notes
+                            no certificate signing request found
+                        .certificate_details_box
+                          %strong signed certificate
+                          -unless permitted_to? :create, SignedCertificate.new
+                            -unless sc.try(:body).blank?
+                              %div
+                                submitted on #{sc.created_at.strftime("%b %d, %Y")}
+                              =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
                             -else
-                              no notes found
+                              %div
+                                no signed certificate found
+                          -else
+                            #signed_certificate_submitted_on
+                              %span.submitted_on
+                                -unless sc.try(:created_at).blank?
+                                  submitted on
+                                  \#{sc.created_at.strftime("%b %d, %Y")}
+                                -else
+                                  &nbsp
+                            -form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                              =f.text_area :body, :cols=>30, :rows=>10
+                              .clearfix
+                                #{check_box_tag "email_customer", true, true}notify customer?
+                              =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                              #temporary_signed_certificate.hidden[csr]
+                                =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                        .certificate_details_box
+                          %ul
+                            %li
+                              %strong server software
+                            %li
+                              #{c.server_software.title}
+                    %tr
+                      %td(colspan="5")
+                        .notes_box
+                          %ul
+                            %li
+                              %strong notes from SSL team
+                            %li
+                              -unless @certificate_order.notes.blank?
+                                =@certificate_order.notes
+                              -else
+                                no notes found

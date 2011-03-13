@@ -1,7 +1,7 @@
 -content_for :title, "Applicant Information For Certificate Order #{@certificate_order.order.reference_number}"
 =render :partial => '/certificate_orders/index_scripts'
 -@certificate_content = @certificate_order.certificate_content
--pos=@certificate_order.preferred_payment_order=='prepaid' ? 2 : 3
+-pos=skip_payment? ? 2 : 3
 =order_progress_indicator(pos, @certificate_order.certificate)
 .order_container
   %h3 Applicant Information

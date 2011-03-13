@@ -14,11 +14,11 @@ module CertificateOrdersHelper
           unless certificate_order.certificate_contents.empty?
             if email_template
               domains = certificate_order.
-                certificate_contents.last.domains.join(", ")
+                certificate_content.domains.join(", ")
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
             else
               domains = certificate_order.
-                certificate_contents.last.domains.join(", ")
+                certificate_content.domains.join(", ")
               items << content_tag(:dt,pluralize(quantity, "domain")) +
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
@@ -55,23 +55,27 @@ module CertificateOrdersHelper
       case certificate_content.workflow_state
         when "csr_submitted"
           link_to 'provide info',
-            edit_certificate_order_path(certificate_content.certificate_order)
+            edit_certificate_order_path(certificate_order)
         when "info_provided"
           link_to 'provide contacts',
             certificate_content_contacts_url(certificate_content)
         when "reprocess_requested"
           link_to 'submit csr',
-            edit_certificate_order_path(certificate_content.certificate_order)
+            edit_certificate_order_path(certificate_order)
         when "contacts_provided"
           link_to 'provide validation',
-            new_certificate_order_validation_path(certificate_content.certificate_order)
+            new_certificate_order_validation_path(certificate_order)
         when "pending_validation", "validated"
           'please wait'
         when "issued"
           if certificate_content.expired?
-            link_to 'renew', renew_certificate_order_path(certificate_content.certificate_order)
+            if certificate_order.renewal && certificate_order.renewal.paid?
+              link_to 'see renewal', certificate_order_path(certificate_order)
+            else
+              link_to 'renew', renew_certificate_order_path(certificate_order)
+            end
           else
-            link_to 'reprocess', reprocess_certificate_order_path(certificate_content.certificate_order)
+            link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
           end
         when "canceled"
       end
@@ -85,6 +89,8 @@ module CertificateOrdersHelper
     elsif certificate_content.expired? ||
         certificate_content.certificate_order.expired?
       'expired'
+    elsif certificate_content.preferred_reprocessing?
+      'reprocess requested'
     else
       case certificate_content.workflow_state
       when "csr_submitted"
