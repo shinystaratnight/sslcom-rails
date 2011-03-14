@@ -3,15 +3,15 @@
   %ul.section_box
     %h4 Products
     -Certificate.root_products.each do |c|
-      %li=link_to c.title, certificate_path(:id=>c.product_root)
-    %li=link_to "Secured Site Seal", details_site_seals_path
-    %li=link_to "Site Seal Artifacts", details_site_seals_path
+      %li=link_to c.title, certificate_url(:id=>c.product_root)
+    %li=link_to "Secured Site Seal", details_site_seals_url
+    %li=link_to "Site Seal Artifacts", details_site_seals_url
   %ul.section_box
     %h4 Programs
     %li=link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
-    %li=link_to "RESTful API", restful_api_path
+    %li=link_to "RESTful API", restful_api_url
     -Reseller::TARGETED.each do |t|
-      %li=send :link_to, t.titleize, "#{t}".to_sym
+      %li=send :link_to, t.titleize, eval("#{t}_url")
   %ul.section_box
     %h4 Support
     %li=link_to "Resources", "http://support.ssl.com/"
@@ -19,27 +19,27 @@
     %li=link_to "Forum", "http://forums.ssl.com"
     %li=link_to "Open Ticket", "http://support.ssl.com/index.php?_m=tickets&_a=submit"
     %li=link_to "SSL Tools", "http://www.ssltools.com"
-    %li Browser Compatibility
-    %li Chat
+    %li=link_to "Browser Compatibility", browsers_url(subdomain: "browsers")
+    %li=link_to "What is SSL?", "http://info.ssl.com/article.aspx?id=10241"
+    -#%li Chat
   %ul.section_box
     %h4 More from SSL.com
-    %li News
+    %li=link_to "News", news_url
     %li Blog
-    %li SSL.com on Twitter
-    %li SSL.com on Facebook
+    -#%li SSL.com on Twitter
+    -#%li SSL.com on Facebook
   %ul.section_box
     %h4 Company
-    %li About SSL.com
-    %li=link_to "Contact Us", :controller=>'site', :action=>'contact_us'
+    %li=link_to "About SSL.com", about_url
+    %li=link_to "Contact Us", contact_us_url
     %li CA Repository
     =# %li Webtrust Audit
     %li Help
     =#%li Press Room
-    %li=link_to "Investors", :controller=>'site', :action=>'investors'
     =#%li Careers
     =#%li Sitemap
 #copyright_statement
   &copy;2011 SSL.COM CORP ALL RIGHTS RESERVED.
-  %a.footer_link=link_to "Privacy Policy", privacy_policy_path
-  %a.footer_link=link_to "Terms of Service", terms_of_use_path
-  %a.footer_link=link_to "Copyright", copyright_path
+  %a.footer_link=link_to "Privacy Policy", privacy_policy_url
+  %a.footer_link=link_to "Terms of Service", terms_of_use_url
+  %a.footer_link=link_to "Copyright", copyright_url

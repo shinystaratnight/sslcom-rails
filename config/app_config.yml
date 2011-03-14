@@ -14,7 +14,8 @@ ucc_initial_domains_block: 3
 ucc_max_domains: 200
 cert_expiration_threshold_days: 365
 intermediate_certs_path: "<%=RAILS_ROOT%>/public/cert_bundles/"
-header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
+#header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
+header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
 corp_name: "SSL Corp"
 corp_address1: "2260 W Holcombe Blvd"
 corp_address2: "Suite 700"
@@ -58,6 +59,7 @@ affiliate_param_key: afid
 thumbnail_tagline_size: 32
 allow_reseller_validation: true
 sync_aid_li_and_cart: false
+browser_acceptance: "99.3%"
 
 from_email:
   orders: 'orders@ssl.com'

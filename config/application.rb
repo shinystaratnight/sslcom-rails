@@ -74,6 +74,8 @@ SubdomainFu.configure do |config|
   config.tld_sizes = {:development => 1,
    :test => 0,
    :production => 1} # set all at once (also the defaults)
+  config.mirrors = %w(staging1)
+  config.preferred_mirror = "staging1"
 end
 
 #uncomment to track down bugs on heroku production

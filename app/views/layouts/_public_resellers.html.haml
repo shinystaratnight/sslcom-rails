@@ -31,8 +31,7 @@
         =link_to "Program Details", details_resellers_path
       %li(class="#{current_page?(reseller_tiers_path) ? 'active' : ''}")
         =link_to "Pricing & Sign Up", reseller_tiers_path
-    %span.logo.reseller=link_to "SSL", root_url
-    #sales_number_in_header=AppConfig.header_phone_numbers
+    =render partial: "/layouts/logo_header", locals: {reseller: true}
 #content
   -if is_public_index_page?
     =yield

@@ -1,0 +1,24 @@
+-c={}
+-c[:description]="About SSL.com - a globally trusted certificate authority specializing in security products and services."
+-c[:keywords]="about ssl ssl.com certificates what is"
+-c[:title] = "About SSL.com Certificate Authority"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h2=c[:title]
+.default_container
+  %h3 Who We Are
+  %p
+    SSL.com is a globally trusted certificate authority specializing in providing simple yet secure
+    solutions. Our philosophy is to develop products and services that are easy to deploy and
+    offer a high degree of security. We work closely with the development community to ensure that
+    our products and services meet existing needs while remaining relevant with the latest
+    technologies.
+.default_container
+  %h3 What We Do
+  %p
+    As a provider of high assurance ssl certificates, ssl.com offers a range of trust building solutions
+    to enhance your customers' experience. We take our motto, Trust In Everything We Do,
+    very seriously. This is to convey our dedication to delivering the highest standard available in trust
+    services so that our customers can have complete faith from any solution we provide.  As a result, ssl.com
+    solutions are used and trusted by thousands of organizations worldwide.

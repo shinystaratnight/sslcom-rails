@@ -1,26 +1,13 @@
 class SiteController < ApplicationController
   respond_to :xml, :html, only: :sitemap
 
+  STANDARD_PAGES = %w(restful_api terms_of_use privacy_policy copyright about contact_us news)
+
   def index
     if current_subdomain==Reseller::SUBDOMAIN
       flash.now[:notice] ||= params[:notice]
       render  :action=>'reseller'
     end
-  end
-
-  def about
-  end
-
-  def help
-  end
-
-  def contact_us
-  end
-
-  def investors
-  end
-
-  def host_providers
   end
 
   def sitemap
