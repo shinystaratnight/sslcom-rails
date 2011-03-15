@@ -180,12 +180,6 @@
     </requirement>
     <requirement>
       <requirement>
-        <dependency name="sqlite3-ruby" version="0" bound="GREATER_OR_EQUAL" lib="sqlite3" git="false" path="false" doRequire="true" />
-      </requirement>
-      <source from="Gemfile" />
-    </requirement>
-    <requirement>
-      <requirement>
         <dependency name="subdomain-fu" version="0" bound="GREATER_OR_EQUAL" git="true" path="false" doRequire="true" />
       </requirement>
       <source from="Gemfile" />
