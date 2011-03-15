@@ -1,0 +1,21 @@
+embed_assets: on
+
+javascripts:
+  workspace:
+    - public/javascripts/vendor/jquery.js
+    - public/javascripts/lib/*.js
+    - public/javascripts/views/**/*.js
+    - app/views/workspace/*.jst
+
+stylesheets:
+  common:
+    - public/stylesheets/compiled/main.css
+    - public/stylesheets/compiled/jquery-ui-1.8.7.custom.css
+    - public/stylesheets/compiled/jquery.tooltip.css
+    - public/stylesheets/compiled/prettyPhoto.css
+  print:
+    - public/stylesheets/compiled/print.css
+  ie:
+    - public/stylesheets/compiled/ie.css
+  ie8:
+    - public/stylesheets/compiled/ie8.css

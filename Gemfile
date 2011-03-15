@@ -32,6 +32,10 @@ gem 'xml-simple'
 gem 'json'
 gem 'easy_roles'
 gem 'meta_where'
+gem 'yui-compressor'
+gem 'jammit'
+gem "rails_config"
+#gem 'app_config'
 
 # Use unicorn as the web server
 # gem 'unicorn'

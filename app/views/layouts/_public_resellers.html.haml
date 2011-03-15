@@ -5,23 +5,21 @@
       %li
         %a{ :href => "/blog/" }
           Blog
-      %li
-        %a{ :href => "/about-us/" }
-          About Us
+      %li=link_to "About Us", about_url
       %li
         %a{ :href => "http://support.ssl.com/" }
           Support
       -unless current_user
         %li
-          =link_to "Login", login_url(:subdomain=>false)
+          =link_to "Login", login_url
           or
-          =link_to "Sign Up", new_user_url
+          =link_to "Sign Up", new_user_url(subdomain: Reseller::SUBDOMAIN)
       -else
         %li=link_to "Logout", logout_url
     %ul#menu
       -unless current_user
-        %li(class="#{current_page?(root_url(:subdomain => false)) ? 'active' : ''}")
-          =link_to "Home", root_url(:subdomain => false)
+        %li(class="#{current_page?(root_url) ? 'active' : ''}")
+          =link_to "Home", root_url
       -else
         %li(class="#{current_page?(account_url) ? 'active' : ''}")
           =link_to "Dashboard", account_url

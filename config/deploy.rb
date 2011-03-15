@@ -25,7 +25,7 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-set :domain, 'staging1.ssl.com'
+set :domain, 'staging2.ssl.com'
 #set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"

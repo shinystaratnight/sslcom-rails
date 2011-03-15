@@ -32,7 +32,7 @@
             Access 24 hour web and phone support
           %li
             =link_to "Click here for more details...", details_resellers_path
-        =link_to "Become a reseller!", new_account_url, :class=>"buttonc"
+        =link_to "Become a reseller!", new_account_url(:subdomain=>Reseller::SUBDOMAIN), :class=>"buttonc"
         %p
           No contracts to sign. No setup fees. No quotas.
         %div(style='text-align: center;')
