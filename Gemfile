@@ -20,7 +20,6 @@ gem 'haml', '>= 3.1.alpha.50'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
-#gem 'resource_controller', git: "git://github.com/giraffesoft/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "workflow"
