@@ -5,8 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/production.rb" afterPath="$PROJECT_DIR$/config/environments/production.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/sass/ie.sass" afterPath="$PROJECT_DIR$/public/stylesheets/sass/ie.sass" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/sass/print.sass" afterPath="$PROJECT_DIR$/public/stylesheets/sass/print.sass" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/sass/screen.sass" afterPath="$PROJECT_DIR$/public/stylesheets/sass/screen.sass" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -48,10 +50,62 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="production.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="production.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="0" selection-start="2416" selection-end="2416" vertical-scroll-proportion="0.82857144">
+            <state line="50" column="38" selection-start="1830" selection-end="1830" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ie.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="10" selection-start="10" selection-end="10" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ie.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/ie.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="0" selection-start="0" selection-end="44" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="print.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/print.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="18" selection-start="2" selection-end="46" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="screen.sass" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/screen.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="40" column="0" selection-start="1573" selection-end="1573" vertical-scroll-proportion="0.77483445">
+              <folding>
+                <marker date="1300162069000" expanded="true" signature="670:936" placeholder="body.bp" />
+                <marker date="1300162069000" expanded="true" signature="1026:1573" placeholder="body.three-col" />
+                <marker date="1300162069000" expanded="true" signature="1045:1072" placeholder="#container" />
+                <marker date="1300162069000" expanded="true" signature="1077:1132" placeholder="#header, #footer" />
+                <marker date="1300162069000" expanded="true" signature="1137:1317" placeholder="#sidebar" />
+                <marker date="1300162069000" expanded="true" signature="1322:1573" placeholder="#content" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="compass.config" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/compass.config">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -66,55 +120,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="asset_tag_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/asset_tag_helper.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="45" selection-start="535" selection-end="535" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="application.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/application.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="73" column="39" selection-start="2955" selection-end="2955" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/routes.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="135" column="49" selection-start="3371" selection-end="3371" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_public.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_public.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="22" selection-start="1016" selection-end="1016" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_public_resellers.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_resellers.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="68" selection-start="1408" selection-end="1408" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_logo_header.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_logo_header.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="23" selection-start="43" selection-end="43" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -162,9 +171,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/site/contact_us.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_public.html.haml" />
-        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/controllers/site_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/site/news.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificates/index.html.haml" />
@@ -178,6 +184,9 @@
         <option value="$PROJECT_DIR$/lib/asset_tag_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
         <option value="$PROJECT_DIR$/config/environments/production.rb" />
+        <option value="$PROJECT_DIR$/public/stylesheets/sass/ie.sass" />
+        <option value="$PROJECT_DIR$/public/stylesheets/sass/print.sass" />
+        <option value="$PROJECT_DIR$/public/stylesheets/sass/screen.sass" />
       </list>
     </option>
   </component>
@@ -990,16 +999,16 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32561728" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.30092594" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2191358" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.2345679" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.6867284" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.5339506" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3919753" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287037" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23148148" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2191358" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287037" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
@@ -1083,31 +1092,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/site/contact_us.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="84" selection-start="108" selection-end="108" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/site/terms_of_use.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/site/compatibility.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="43" selection-start="833" selection-end="833" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="84" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/privacy_policy.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="142" column="0" selection-start="11747" selection-end="12095" vertical-scroll-proportion="0.0" />
@@ -1172,8 +1156,50 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="0" selection-start="2416" selection-end="2416" vertical-scroll-proportion="0.82857144">
+        <state line="50" column="38" selection-start="1830" selection-end="1830" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="10" selection-start="10" selection-end="10" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/compass.config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/ie.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="0" selection-end="44" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/print.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="18" selection-start="2" selection-end="46" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/sass/screen.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="0" selection-start="1573" selection-end="1573" vertical-scroll-proportion="0.77483445">
+          <folding>
+            <marker date="1300162069000" expanded="true" signature="670:936" placeholder="body.bp" />
+            <marker date="1300162069000" expanded="true" signature="1026:1573" placeholder="body.three-col" />
+            <marker date="1300162069000" expanded="true" signature="1045:1072" placeholder="#container" />
+            <marker date="1300162069000" expanded="true" signature="1077:1132" placeholder="#header, #footer" />
+            <marker date="1300162069000" expanded="true" signature="1137:1317" placeholder="#sidebar" />
+            <marker date="1300162069000" expanded="true" signature="1322:1573" placeholder="#content" />
+          </folding>
         </state>
       </provider>
     </entry>
