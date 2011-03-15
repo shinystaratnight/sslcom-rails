@@ -14,7 +14,7 @@ class Csr < ActiveRecord::Base
   }
 
   def body=(csr)
-    ssl_util = Savon::Client.new AppConfig.csr_parser_wsdl
+    ssl_util = Savon::Client.new Settings.csr_parser_wsdl
     self[:body] = csr
     begin
       response = ssl_util.parse_csr do |soap|

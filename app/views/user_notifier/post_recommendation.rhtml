@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title><%= AppConfig.community_name %> - someone sent you an article!</title>
+	<title><%= Settings.community_name %> - someone sent you an article!</title>
 	<style>
 		<!--
 		p {
@@ -59,7 +59,7 @@
 <body>
 <div class="container">
 	<div class="header">
-		<h1><%= AppConfig.community_name %>&trade; &#8211; <%= AppConfig.community_tagline %></h1>
+		<h1><%= Settings.community_name %>&trade; &#8211; <%= Settings.community_tagline %></h1>
 	</div>
 	<div class="mainbody">
 <h2>
@@ -76,7 +76,7 @@
 			<% if @post.first_image_in_body %>
 				<img src="<%= @post.first_image_in_body  %>" />
 			<% else %>
-				<img src="<%= AppConfig.site + @post.owner.avatar_photo_url(:thumb) %>" />
+				<img src="<%= Settings.site + @post.owner.avatar_photo_url(:thumb) %>" />
 			<% end %>
 		</a>
 	</div>
@@ -90,19 +90,19 @@
 </p>
 
 <p>
-	Use this link to sign up for your own <%= AppConfig.community_name %> account: <a href="<%= @signup_link %>">Sign up!</a>
+	Use this link to sign up for your own <%= Settings.community_name %> account: <a href="<%= @signup_link %>">Sign up!</a>
 </p>
 
 <p>Thanks,<br />
-<%= @name.eql?('Someone') ? "The #{AppConfig.community_name} Team" : @name %></p>
+<%= @name.eql?('Someone') ? "The #{Settings.community_name} Team" : @name %></p>
 
 	<p class="footnote">
-		<%= AppConfig.community_description %><br />
-		For support, or to report abuse, please contact <%= AppConfig.support_email %>.	
+		<%= Settings.community_description %><br />
+		For support, or to report abuse, please contact <%= Settings.support_email %>.
 	</p>
 	</div>
 	<div class="footer">
-		<p class="copyright">Copyright &copy; 2009 <%= AppConfig.community_name %></p>
+		<p class="copyright">Copyright &copy; 2009 <%= Settings.community_name %></p>
 	</div>
 </body>
 </html>

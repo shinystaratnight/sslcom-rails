@@ -15,7 +15,7 @@ class SignedCertificate < ActiveRecord::Base
   def body=(certificate)
     return if certificate.blank?
     self[:body] = certificate
-    ssl_util = Savon::Client.new AppConfig.certificate_parser_wsdl
+    ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
     begin
       response = ssl_util.parse_certificate do |soap|
         soap.body = {:csr => certificate}
@@ -64,7 +64,7 @@ class SignedCertificate < ActiveRecord::Base
     # Give the path of the temp file to the zip outputstream, it won't try to open it as an archive.
     Zip::ZipOutputStream.open(t.path) do |zos|
       co.certificate_chain_names.each do |file_name|
-        file=File.new(AppConfig.intermediate_certs_path+file_name.strip, "r")
+        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
         # Create a new entry with some arbitrary name
         zos.put_next_entry(file_name)
         # Add the contents of the file, don't read the stuff linewise if its binary, instead use direct IO

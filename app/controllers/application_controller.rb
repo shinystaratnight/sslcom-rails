@@ -64,7 +64,7 @@ class ApplicationController < ActionController::Base
 
   def save_cart_items(items)
     cookies[:cart] = {:value=>JSON.generate(items), :path => "/",
-      :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+      :expires => Settings.cart_cookie_days.to_i.days.from_now}
   end
 
   def setup_certificate_order(certificate, certificate_order)
@@ -240,7 +240,7 @@ class ApplicationController < ActionController::Base
           {:csr=>:signed_certificates}}).each {|co|
       expired =
         ['paid'].include?(co.workflow_state) &&
-        co.created_at < AppConfig.cert_expiration_threshold_days.to_i.days.ago &&
+        co.created_at < Settings.cert_expiration_threshold_days.to_i.days.ago &&
         (co.certificate_content.csr.nil? ||
         co.certificate_content.csr.try(:signed_certificate).nil?)
       co.update_attribute :is_expired, expired
@@ -351,7 +351,7 @@ class ApplicationController < ActionController::Base
 
   #this is a band-aid function to make sure the number of item in cookies
   #aid_li and cart match. however, the problem causing the unsync was found.
-  #this function can be turned back on by the AppConfig.sync_aid_li_and_cart
+  #this function can be turned back on by the Settings.sync_aid_li_and_cart
   #variable
   def sync_aid_li_and_cart
     if cookies[:aid_li] && cookies[:cart]
@@ -368,9 +368,9 @@ class ApplicationController < ActionController::Base
           end
         end
       cookies[:aid_li] = {:value=>aid_li.join(":"), :path => "/",
-        :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+        :expires => Settings.cart_cookie_days.to_i.days.from_now}
       cookies[:cart] = {:value=>cart.join(":"), :path => "/",
-        :expires => AppConfig.cart_cookie_days.to_i.days.from_now}
+        :expires => Settings.cart_cookie_days.to_i.days.from_now}
       end
     end
   end

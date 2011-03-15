@@ -11,10 +11,10 @@
         %ul.phone_numbers
           %li
             tel:
-            =AppConfig.corp_phone_tag
+            =Settings.corp_phone_tag
           %li
             fax:
-            =AppConfig.corp_fax
+            =Settings.corp_fax
           %li email: support@ssl.com
         %p.sub_description
           For support issues related to SSL Certificates, email support@ssl.com to
@@ -33,26 +33,26 @@
         %ul.phone_numbers
           %li
             tel:
-            =AppConfig.corp_phone_tag
+            =Settings.corp_phone_tag
           %li
             fax:
-            =AppConfig.corp_fax
+            =Settings.corp_fax
           %li email: support@ssl.com
         %ul.phone_numbers
           %li SSL Corp
-          %li=AppConfig.mail_address1
-          %li=AppConfig.mail_address2
-          %li=[AppConfig.mail_city, AppConfig.mail_state, AppConfig.mail_zip].join(", ")
+          %li=Settings.mail_address1
+          %li=Settings.mail_address2
+          %li=[Settings.mail_city, Settings.mail_state, Settings.mail_zip].join(", ")
   .contact_us_container
     %p.contact_us_header
       Main
     %ul.phone_numbers
       %li
         tel:
-        =AppConfig.corp_phone_tag
+        =Settings.corp_phone_tag
       %li
         fax:
-        =AppConfig.corp_fax
+        =Settings.corp_fax
 
   .contact_us_container
     %p.contact_us_header
@@ -60,10 +60,10 @@
     %ul.phone_numbers
       %li
         toll free:
-        =AppConfig.corp_tollfree_tag
+        =Settings.corp_tollfree_tag
       %li
         fax:
-        =AppConfig.corp_fax
+        =Settings.corp_fax
       %li email: sales@ssl.com
 
   .contact_us_container
@@ -71,9 +71,9 @@
       SSL Americas
     %ul.phone_numbers
       %li SSL Corp
-      %li=AppConfig.mail_address1
-      %li=AppConfig.mail_address2
-      %li=[AppConfig.mail_city, AppConfig.mail_state, AppConfig.mail_zip].join(", ")
+      %li=Settings.mail_address1
+      %li=Settings.mail_address2
+      %li=[Settings.mail_city, Settings.mail_state, Settings.mail_zip].join(", ")
 
   .contact_us_container
     %p.contact_us_header
@@ -81,8 +81,8 @@
     %ul.phone_numbers
       %li
         tel:
-        =AppConfig.corp_phone_tag
+        =Settings.corp_phone_tag
       %li
         fax:
-        =AppConfig.corp_fax
+        =Settings.corp_fax
       %li email: investors@ssl.com

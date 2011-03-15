@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   helper_method :cart_items_from_model_and_id
   before_filter :find_user, :only => [:user_orders]
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
-#    :if=>AppConfig.sync_aid_li_and_cart
+#    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all, :attribute_check=>false
 
   def show_cart

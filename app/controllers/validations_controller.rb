@@ -73,10 +73,10 @@ class ValidationsController < ApplicationController
             (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
           logger.info "creating directory #{RAILS_ROOT}/tmp/zip/temp"
           FileUtils.mkdir_p "#{RAILS_ROOT}/tmp/zip/temp" if !File.exist?("#{RAILS_ROOT}/tmp/zip/temp")
-          if file.size > AppConfig.max_content_size.to_i.megabytes
+          if file.size > Settings.max_content_size.to_i.megabytes
             break error = <<-EOS
               Too Large: zip file #{file.original_filename} is larger than
-              #{help.number_to_human_size(AppConfig.max_content_size.to_i.megabytes)}
+              #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
             EOS
           end
           @zip_file_name=file.original_filename
@@ -84,10 +84,10 @@ class ValidationsController < ApplicationController
             f.write(file.read)
           end
           zf = Zip::ZipFile.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}")
-          if zf.size > AppConfig.max_num_releases.to_i
+          if zf.size > Settings.max_num_releases.to_i
             break error = <<-EOS
               Too Many Files: zip file #{file.original_filename} contains more than
-              #{AppConfig.max_num_releases.to_i} files.
+              #{Settings.max_num_releases.to_i} files.
             EOS
           end
           zf.each do |entry|
@@ -125,7 +125,7 @@ class ValidationsController < ApplicationController
             error << "#{attr} #{msg}: " }
           i+=1 if vh
           error << "Error: Document for #{file.original_filename} was not
-            created. Please notify system admin at #{AppConfig.support_email}" unless vh
+            created. Please notify system admin at #{Settings.support_email}" unless vh
         end
       end
     end

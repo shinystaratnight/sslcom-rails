@@ -1,11 +1,11 @@
--unless AppConfig.closed_beta_mode
+-unless Settings.closed_beta_mode
   .yui-b.sidebar=render :partial => 'shared/login_sidebar'
 
 #yui-main
   .yui-b.main_column
     .box
       %h3
-        =:about_affiliates.l(:site => AppConfig.community_name)
+        =:about_affiliates.l(:site => Settings.community_name)
     %p
       Looking for a new way to target, promote, and sell to your audience? Try
       the Eroslife Affiliate Program. Eroslife.com

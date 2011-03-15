@@ -16,7 +16,7 @@ class Affiliate < ActiveRecord::Base
     PAYMENT_COLUMNS
   #guarantee 10% profit on each sale
   ar=[]
-  0.step((1-0.1-AppConfig.studio_fee_rate.to_f)*100,
+  0.step((1-0.1-Settings.studio_fee_rate.to_f)*100,
     5){|i|ar<<i}
   AFFILIATE_PAYOUT_BRACKETS=ar.collect{|i| [i.to_s+"%",(i.to_f/100).to_s]}
   CHECK = "check"

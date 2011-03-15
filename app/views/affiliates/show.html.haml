@@ -1,4 +1,4 @@
-- @meta = { :description => "#{display_name(object)}'s profile on #{AppConfig.community_name}.", :keywords => "#{display_name(object)}, #{object.preferences.map{|k,v|k if v==true}.compact.join(", ") unless object.preferences.blank?}" }
+- @meta = { :description => "#{display_name(object)}'s profile on #{Settings.community_name}.", :keywords => "#{display_name(object)}, #{object.preferences.map{|k,v|k if v==true}.compact.join(", ") unless object.preferences.blank?}" }
 -#delete the following when done testing
 - unless object.studio_subscriptions.empty?
   -test_imgs = [object.studio_subscriptions[0].studio]*12

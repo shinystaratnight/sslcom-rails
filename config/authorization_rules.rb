@@ -70,6 +70,7 @@ authorization do
   end
 
   role :guest do
+    has_permission_on :orders, :to => :show_cart
     has_permission_on :csrs, :certificate_orders, :orders, :to => :create
     has_permission_on :users, :ssl_accounts, :resellers, :to =>
       [:create, :update]

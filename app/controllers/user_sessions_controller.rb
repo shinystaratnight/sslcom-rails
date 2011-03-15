@@ -39,7 +39,7 @@ class UserSessionsController < ApplicationController
         cookies.delete(:r_tier)
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {:value=>user.ssl_account.reseller.
-              reseller_tier.label, :path => "/", :expires => AppConfig.
+              reseller_tier.label, :path => "/", :expires => Settings.
               cart_cookie_days.to_i.days.from_now}
         end
 #        if user.duplicate_v2_users.empty?

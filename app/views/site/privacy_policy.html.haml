@@ -6,7 +6,7 @@
   %h3 Legal Notices
   %em Last Revised Date, 2011
   %p
-    As an information service provider and a specialist in Internet security, #{AppConfig.corp_name} ("SSL")
+    As an information service provider and a specialist in Internet security, #{Settings.corp_name} ("SSL")
     is entrusted with many types of enterprise data. Protecting the security and confidentiality of
     that data is a responsibility that we take very seriously. No less important to us is the
     protection of your personal privacy. We hope that the following statement will help you to more
@@ -135,14 +135,14 @@
       %li
         snail mail:
         %ul
-          %li=AppConfig.corp_name
+          %li=Settings.corp_name
           %li Attn: Consumer Affairs
-          %li=AppConfig.mail_address1
-          %li=AppConfig.mail_address2
-          %li=[AppConfig.mail_city, AppConfig.mail_state, AppConfig.mail_zip].join(", ")
+          %li=Settings.mail_address1
+          %li=Settings.mail_address2
+          %li=[Settings.mail_city, Settings.mail_state, Settings.mail_zip].join(", ")
       %li
         tel:
-        =AppConfig.corp_phone_tag
+        =Settings.corp_phone_tag
       %li
         fax:
-        =AppConfig.corp_fax
+        =Settings.corp_fax
