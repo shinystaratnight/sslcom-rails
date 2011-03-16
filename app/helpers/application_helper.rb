@@ -227,7 +227,7 @@ module ApplicationHelper
   end
 
   def srp_link
-    link_to "SSL Reseller Program", details_resellers_url
+    link_to "SSL Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)
   end
 
   def link_to_remove_fields(name, f)
