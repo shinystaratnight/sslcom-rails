@@ -4,8 +4,7 @@
     %h4 Products
     -Certificate.root_products.each do |c|
       %li=link_to c.title, certificate_url(:id=>c.product_root)
-    %li=link_to "Secured Site Seal", details_site_seals_url
-    %li=link_to "Site Seal Artifacts", details_site_seals_url
+    %li=link_to "Smart SeaL with Artifacts", details_site_seals_url
   %ul.section_box
     %h4 Programs
     %li=link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
@@ -20,20 +19,20 @@
     %li=link_to "Open Ticket", "http://support.ssl.com/index.php?_m=tickets&_a=submit"
     %li=link_to "SSL Tools", "http://www.ssltools.com"
     %li=link_to "Browser Compatibility", browsers_url
-    %li=link_to "Vpn Compatibility", "http://info.ssl.com/article.aspx?id=10241"
+    -#%li=link_to "Vpn Compatibility", "http://info.ssl.com/article.aspx?id=10241"
     %li=link_to "What is SSL?", "http://info.ssl.com/article.aspx?id=10241"
     -#%li Chat
   %ul.section_box
     %h4 More from SSL.com
     %li=link_to "News", news_url
-    %li Blog
+    -#%li Blog
     -#%li SSL.com on Twitter
     -#%li SSL.com on Facebook
   %ul.section_box
     %h4 Company
     %li=link_to "About SSL.com", about_url
     %li=link_to "Contact Us", contact_us_url
-    %li CA Repository
+    =#%li CA Repository
     =# %li Webtrust Audit
     %li Help
     =#%li Press Room

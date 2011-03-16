@@ -1,13 +1,14 @@
 -c={}
 -c[:description]="SSL.com certificates are globally trusted by #{Settings.browser_acceptance} of browsers"
--c[:keywords]="ssl ssl.com certificates browsers acceptance #{Settings.browser_acceptance} compatible firefox internet explorer safari chrome"
+-c[:keywords]="ssl ssl.com certificates browsers acceptance #{Settings.browser_acceptance} compatible mozilla aol firefox internet explorer safari chrome opera netscape"
 -c[:title] = "SSL.com Certificate Browser Acceptance"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
-%h2=c[:title]
+%h1=c[:title]
+%h2 Universally accepted and trusted by almost all users
 .default_container
-  %h3 Browser Acceptance
+  %h3 Browser Listings
   %p
     SSL.com certificates are accepted by #{Settings.browser_acceptance} of Internet users globally. This
     is the same rate as VeriSign, Thawte, and other leading CAs globally.

@@ -131,7 +131,7 @@ SslCom::Application.routes.draw do
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
   match 'reseller' => 'site#reseller', :as => :reseller,
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}
-  match 'compatibility' => 'site#compatibility', as: :browsers
+  match 'browser_compatibility' => 'site#compatibility', as: :browsers
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)
   end

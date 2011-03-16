@@ -1,5 +1,10 @@
--content_for :title, title
--content_for :header, 'public'
+-c={}
+-#-c[:description]="Buy ssl ev, wildcard, and uc certificates to secure websites and build trust."
+-#-c[:keywords]="buy ssl certificates ev wildcard uc certificate code signing digital signature 99.3 browsers acceptance"
+-c[:title]=title
+-c[:header]='public'
+-c.each do |k, v|
+  -content_for k, c[k]
 %h1
   =main_title
 %h2

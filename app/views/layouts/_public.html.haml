@@ -5,9 +5,7 @@
       %li
         %a{ :href => "/blog/" }
           Blog
-      %li
-        %a{ :href => "/about-us/" }
-          About Us
+      %li=link_to "About Us", about_url
       %li
         %a{ :href => "http://support.ssl.com/" }
           Support
@@ -30,7 +28,7 @@
       %li(class="#{current_page?(certificates_path) ? 'active' : ''}")
         =link_to "Products", certificates_path
       %li(class="#{current_page?(details_site_seals_path) ? 'active' : ''}")
-        =link_to "Site Seal", details_site_seals_path
+        =link_to "Smart SeaL", details_site_seals_path
     =render partial: "/layouts/logo_header"
 #content
   -if is_public_index_page?

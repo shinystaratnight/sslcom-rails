@@ -1,0 +1,26 @@
+-c={}
+-c[:description]="SSL.com RESTful api makes ssl buying easy and seamless."
+-c[:keywords]="ssl certificates restful api rest hosting registrars backend interface integrate system integration resellers"
+-c[:title]='SSL.com RESTful API'
+-c[:header]='public'
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 Make ssl purchasing automatic, seamless, and effortless
+.default_container
+  %h3 Program Overview
+  %p
+    The SSL.com RESTful API Program is an open standards based, RESTful api that allows resellers and systems
+    integrators to automatically manage their ssl certificates through SSL.com's backfacing interface.
+    The api is freely available to users with reseller accounts
+    (#{link_to "click here for more details on SSL.com Reseller Program", details_resellers_url(subdomain: Reseller::SUBDOMAIN)}).
+    However, the api is currently in beta-testing mode and not currently open to
+    general signup. If you are a hosting provider, registrar, or other reseller with specific volume
+    requirements and would like to participate in beta-testing the api, please contact us at support@ssl.com.
+.default_container
+  %h3 API Documentation
+  %p
+    We are excited to provide documentation our open api once the beta-testing phase is completed.
+    In the meantime, please check back regularly or
+    =link_to "register as a reseller", new_user_url(subdomain: Reseller::SUBDOMAIN)
+    where you will be notified when the program has completed beta testing.

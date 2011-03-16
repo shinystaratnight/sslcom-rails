@@ -61,7 +61,7 @@ class OrderNotifier < ActionMailer::Base
   end
 
   def site_seal_approve(contact, certificate_order)
-    subject       "SSL.com Site Seal For #{certificate_order.subject} Is Now Ready"
+    subject       "SSL.com Smart SeaL For #{certificate_order.subject} Is Now Ready"
     from          Settings.from_email.orders
     recipients    contact.is_a?(Contact) ? contact.email : contact
     sent_on       Time.now
@@ -70,7 +70,7 @@ class OrderNotifier < ActionMailer::Base
 
   def site_seal_unapprove(contact, certificate_order)
     abuse = certificate_order.site_seal.canceled? ? "Abuse Reported: " : ""
-    subject       abuse+"SSL.com Site Seal For #{certificate_order.subject} Has Been Disabled"
+    subject       abuse+"SSL.com Smart SeaL For #{certificate_order.subject} Has Been Disabled"
     from          Settings.from_email.orders
     recipients    contact.is_a?(Contact) ? contact.email : contact
     sent_on       Time.now
