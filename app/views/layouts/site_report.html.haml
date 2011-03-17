@@ -12,11 +12,8 @@
     %meta{ :name => "description", :content => "SSL.com simplifies SSL certificate procurement and implementation for companies of any size. Integrate security into your website and applications with SSL certificates from SSL.com." }
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
-    =stylesheet_link_tag "compiled/site_report"
-    = stylesheet_link_tag "prettyPhoto"
-    = javascript_include_tag "jquery"
-    = javascript_include_tag "jquery.form"
-    = javascript_include_tag "jquery.prettyPhoto"
+    = include_stylesheets :site_report
+    = include_javascripts :shared
     :javascript
       jQuery(function($){
         $("a[rel^='prettyPhoto']").prettyPhoto({allowresize:false, theme:'facebook', showTitle:false});

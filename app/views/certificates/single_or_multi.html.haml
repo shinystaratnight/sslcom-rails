@@ -1,5 +1,13 @@
 -is_standard = current_page?(single_domain_certificates_url)
--content_for :title, (is_standard) ? "Standard SSL Certificate Products" : "Wildcard and UCC SSL Certificate Products"
+-c={}
+-c[:description]= (is_standard) ? "SSL.com certificates secure single fully qualified domain names and provide the highest standards in security." : "SSL.com wildcard certificates secure multiple subdomains and provide the highest standards in security."
+-c[:keywords]="certificate ssl certificates ssl.com EV Wildcard Digital IDs x509 pki trust certs secure sockets layer https security tls client"
+-c[:title] = (is_standard) ? "Standard SSL Certificate Products" : "Wildcard and UCC SSL Certificate Products"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 SSL.com certificate authority provides trusted ssl certificates for security
 %h3#p_standard_or_wildcard
   -if is_standard
     =link_to "click here for wildcard or ucc (multidomain) ssl certificates", wildcard_or_ucc_certificates_path
@@ -29,7 +37,7 @@
         %div=link_to 'click to learn more...', certificate_url(cert.product_root)
       .p_points_container
         .p_points
-          =cert.description["points"] unless cert.description.blank?
+          =cert.description["points"].html_safe unless cert.description.blank?
           .p_point= link_to "...find out more", certificate_url(cert.product_root)
     #comes_with_site_seal
       #container
