@@ -5,37 +5,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order_notifier.rb" afterPath="$PROJECT_DIR$/app/models/order_notifier.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/_bottom_info.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/_bottom_info.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/_points_and_other_certs.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/_points_and_other_certs.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_ev.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_ev.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_high_assurance.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_high_assurance.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/single_or_multi.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/single_or_multi.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_admin.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_admin.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_public.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_public.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/_support_contact.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/_support_contact.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/site_seal_approve.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/site_seal_approve.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/site_seal_unapprove.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/site_seal_unapprove.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/resellers/details.html.haml" afterPath="$PROJECT_DIR$/app/views/resellers/details.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/_program.html.haml" afterPath="$PROJECT_DIR$/app/views/site/_program.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/about.html.haml" afterPath="$PROJECT_DIR$/app/views/site/about.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/compatibility.html.haml" afterPath="$PROJECT_DIR$/app/views/site/compatibility.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/contact_us.html.haml" afterPath="$PROJECT_DIR$/app/views/site/contact_us.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/index.html.haml" afterPath="$PROJECT_DIR$/app/views/site/index.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/registrars.erb" afterPath="$PROJECT_DIR$/app/views/site/registrars.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/restful_api.html.haml" afterPath="$PROJECT_DIR$/app/views/site/restful_api.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/users/_standard.html.haml" afterPath="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/edit.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/edit.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common-datauri.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/common.js.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie-datauri.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie-datauri.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie-mhtml.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie-mhtml.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8-datauri.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8-datauri.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8-mhtml.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8-mhtml.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/ie8.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/print-datauri.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/print.css" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/public/assets/print.css.gz" afterPath="" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,15 +50,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="single_or_multi.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/single_or_multi.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="28" selection-start="1941" selection-end="1941" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="show_wildcard.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml">
           <provider selected="true" editor-type-id="text-editor">
@@ -140,10 +122,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_footer.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_footer.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="6" selection-start="874" selection-end="874" vertical-scroll-proportion="0.661442">
+            <state line="13" column="58" selection-start="506" selection-end="506" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="assets.yml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/assets.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -265,102 +256,8 @@
               <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SiteController" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ControllerClassNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SiteController" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ControllerClassNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Partials" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllerPartialsFolder" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ResellersController" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ControllerClassNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="OrdersController" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ControllerClassNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Controllers" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ControllersFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="CertificatesController" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ControllerClassNode" />
+              <option name="myItemId" value="Public" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.PublicFolderNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -1207,13 +1104,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="48" selection-start="622" selection-end="622" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/resellers/details.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="37" column="60" selection-start="1851" selection-end="1851" vertical-scroll-proportion="0.0">
@@ -1314,7 +1204,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="6" selection-start="874" selection-end="874" vertical-scroll-proportion="0.661442">
+        <state line="13" column="58" selection-start="506" selection-end="506" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/assets.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
