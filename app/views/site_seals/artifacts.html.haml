@@ -20,7 +20,7 @@
       %div.clearfix
         %dl
           %dt.section_header=vh.satisfies_validation_methods.join(", ")
-          %dd.img=link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
+          %dd.img=link_to image_tag(vh.authenticated_s3_get_url(style: :thumb)), vh.authenticated_s3_get_url(style: :preview), :class=>'img_preview', :rel=>'prettyPhoto'
           -unless vh.validation_rules.empty?
             %dd.satisfies_requirements
               As part of the validation process to confirm the identity of the

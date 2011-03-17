@@ -67,6 +67,12 @@ class ValidationHistory < ActiveRecord::Base
     (publish_to_site_seal && publish_to_site_seal_approval)
   end
 
+  def authenticated_s3_get_url(options={})
+    options.reverse_merge! :expires_in => 10.minutes, :use_ssl => true
+    AWS::S3::S3Object.url_for document.path(options[:style]),
+      document.options[:bucket], options
+  end
+
   private
 
   def set_random_secret
