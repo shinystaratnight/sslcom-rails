@@ -46,12 +46,12 @@ jQuery(function($) {
   };
     var show_csr=true;
   $.build_cart_item = function(){
-    return {<%=ShoppingCart::PRODUCT_CODE%> : $('#certificate_product').val() ,
-      <%=ShoppingCart::DURATION%> : $(':radio[name*=duration]:checked').val(),
+    return {"<%=ShoppingCart::PRODUCT_CODE%>" : $('#certificate_product').val() ,
+      "<%=ShoppingCart::DURATION%>" : $(':radio[name*=duration]:checked').val(),
       <%if instance_variable_get('@'+CertificateOrder::RENEWING)-%>
-        <%=ShoppingCart::RENEWAL_ORDER%> : '<%=instance_variable_get('@'+CertificateOrder::RENEWING).ref%>',
+        "<%=ShoppingCart::RENEWAL_ORDER%>" : '<%=instance_variable_get('@'+CertificateOrder::RENEWING).ref%>',
       <%end-%>
-      <%=ShoppingCart::LICENSES%> :
+      "<%=ShoppingCart::LICENSES%>" :
       <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
       $('#certificate_order_server_licenses').val()
       <%else%>
@@ -63,7 +63,7 @@ jQuery(function($) {
       <%else%>
       "0"
       <%end%>
-      , <%=ShoppingCart::AFFILIATE%> : $.get_affiliate()};
+      , "<%=ShoppingCart::AFFILIATE%>" : $.get_affiliate()};
   };
   $.change_cart_items = function(add_or_remove){
     add = (add_or_remove=="add") ? true : false;
