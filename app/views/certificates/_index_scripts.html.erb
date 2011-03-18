@@ -57,7 +57,7 @@ jQuery(function($) {
       <%else%>
       "0"
       <%end%>
-      , <%=ShoppingCart::DOMAINS%> :
+      , "<%=ShoppingCart::DOMAINS%>" :
       <%if @certificate.is_ucc?%>
       $.domains($('textarea[id$=domains]')[0]).join(" ")
       <%else%>

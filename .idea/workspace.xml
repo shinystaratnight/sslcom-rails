@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/validation_history.rb" afterPath="$PROJECT_DIR$/app/models/validation_history.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml" afterPath="$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,19 +29,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="ie8.sass" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/stylesheets/ie8.sass">
+      <file leaf-file-name="artifacts.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="32" selection-start="127" selection-end="127" vertical-scroll-proportion="0.0">
+            <state line="24" column="93" selection-start="930" selection-end="930" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="artifacts.html.haml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml">
+      <file leaf-file-name="allocate_funds.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="117" selection-start="794" selection-end="794" vertical-scroll-proportion="0.44207317">
+            <state line="1" column="24" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="1.1153846">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/orders/new.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="28" selection-start="73" selection-end="73" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="59" column="59" selection-start="2785" selection-end="2785" vertical-scroll-proportion="0.6138107">
               <folding />
             </state>
           </provider>
@@ -66,24 +101,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="validation_histories_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/validation_histories_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="details.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/site_seals/details.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
@@ -93,28 +110,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="43" selection-start="927" selection-end="927" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="_public.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_public.html.haml">
           <provider selected="true" editor-type-id="text-editor">
             <state line="37" column="39" selection-start="1347" selection-end="1347" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_public_resellers.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_resellers.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="12" selection-start="1440" selection-end="1440" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -162,7 +161,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml" />
         <option value="$PROJECT_DIR$/app/views/site_seals/details.html.haml" />
         <option value="$PROJECT_DIR$/app/views/site/about.html.haml" />
         <option value="$PROJECT_DIR$/app/views/site/compatibility.html.haml" />
@@ -178,6 +176,7 @@
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/models/validation_history.rb" />
         <option value="$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
       </list>
     </option>
   </component>
@@ -1056,11 +1055,11 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38117284" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.16975309" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22067901" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.2191358" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.42592594" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3919753" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.5478395" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3919753" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287037" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1150,41 +1149,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/site_seals/_report_header.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="111" selection-end="111" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/site_report.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="61" selection-start="3329" selection-end="3329" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="0" selection-start="0" selection-end="30" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/assets.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="0" selection-start="41" selection-end="41" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/site_report.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="19" column="30" selection-start="1096" selection-end="1096" vertical-scroll-proportion="0.0">
@@ -1257,7 +1221,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="117" selection-start="794" selection-end="794" vertical-scroll-proportion="0.44207317">
+        <state line="24" column="93" selection-start="930" selection-end="930" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="24" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="1.1153846">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/orders/new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="28" selection-start="73" selection-end="73" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="59" column="59" selection-start="2785" selection-end="2785" vertical-scroll-proportion="0.6138107">
           <folding />
         </state>
       </provider>
