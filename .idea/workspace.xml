@@ -48,19 +48,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="70" selection-start="3290" selection-end="3290" vertical-scroll-proportion="-5.1538463">
+            <state line="138" column="89" selection-start="5236" selection-end="5236" vertical-scroll-proportion="0.46596858">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="302" column="48" selection-start="12240" selection-end="12240" vertical-scroll-proportion="0.6230366">
+            <state line="304" column="90" selection-start="12259" selection-end="12259" vertical-scroll-proportion="-10.461538">
               <folding />
             </state>
           </provider>
@@ -105,7 +105,7 @@
       <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="134" column="79" selection-start="5999" selection-end="5999" vertical-scroll-proportion="-5.0">
+            <state line="16" column="0" selection-start="681" selection-end="681" vertical-scroll-proportion="4.076923">
               <folding />
             </state>
           </provider>
@@ -1273,23 +1273,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="304" column="90" selection-start="12259" selection-end="12259" vertical-scroll-proportion="-10.461538">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="134" column="79" selection-start="5999" selection-end="5999" vertical-scroll-proportion="-5.0">
+        <state line="16" column="0" selection-start="681" selection-end="681" vertical-scroll-proportion="4.076923">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="85" column="70" selection-start="3290" selection-end="3290" vertical-scroll-proportion="-5.1538463">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="302" column="48" selection-start="12240" selection-end="12240" vertical-scroll-proportion="0.6230366">
+        <state line="138" column="89" selection-start="5236" selection-end="5236" vertical-scroll-proportion="0.46596858">
           <folding />
         </state>
       </provider>
