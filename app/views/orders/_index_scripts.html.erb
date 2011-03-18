@@ -139,14 +139,14 @@ jQuery(function($) {
       $.change_cart_items_qty(0, id);
       if(no_cart_qty_update==null){
         if(count.length==0)
-          $('span#clear_cart').click();
+          $('span#clear_cart').triggerHandler('click');
         else
           $.update_cart_qty_display();
       }
     });
     $('span#clear_cart').click(function(){
       $(count).each(function(index, value){
-        $('span[id^=remove_'+value+']').trigger('click', true);
+        $('span[id^=remove_'+value+']').triggerHandler('click', true);
       });
       $('a#shop_more_img').html('<%=image_tag('add_items.gif')%>');
       $('a#checkout_img').remove();
