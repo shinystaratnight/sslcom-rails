@@ -16,7 +16,7 @@ javascripts:
     - public/javascripts/datejs.js
 
   shared:
-    - public/javascripts/jquery.min.js
+    - public/javascripts/jquery.js
     - public/javascripts/jquery.prettyPhoto.js
     - public/javascripts/jquery.form.js
 
