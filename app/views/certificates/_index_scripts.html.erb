@@ -14,7 +14,7 @@ jQuery(function($) {
   };
   $.adjust_domain_pricing = function(textArea){
       domains = $.domains(textArea);
-      if(domains.indexOf("")!=-1)//check if a blank was caught and drop it
+      if(domains.toString().indexOf("")!=-1)//check if a blank was caught and drop it
         domains.pop();
       $('.order_amount_desc span').text((domains.length > 3) ? domains.length : 3);
       if(domains.length > <%=Certificate::NUM_DOMAINS_TIERS%>)

@@ -77,10 +77,8 @@
       <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="25" selection-start="706" selection-end="706" vertical-scroll-proportion="0.38107416">
-              <folding>
-                <marker date="1300470891000" expanded="true" signature="2216:2597" placeholder="{&quot;&quot;: &quot;&lt;%=ShoppingCart::LICENSES%&gt;&quot;...}" />
-              </folding>
+            <state line="25" column="30" selection-start="1099" selection-end="1099" vertical-scroll-proportion="0.75482094">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -1258,10 +1256,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="25" selection-start="706" selection-end="706" vertical-scroll-proportion="0.38107416">
-          <folding>
-            <marker date="1300470891000" expanded="true" signature="2216:2597" placeholder="{&quot;&quot;: &quot;&lt;%=ShoppingCart::LICENSES%&gt;&quot;...}" />
-          </folding>
+        <state line="25" column="30" selection-start="1099" selection-end="1099" vertical-scroll-proportion="0.75482094">
+          <folding />
         </state>
       </provider>
     </entry>
