@@ -132,7 +132,7 @@ jQuery(function($) {
       $('#register_card_form').fadeOut();
     });
     $('.has_csr_container').click(function(){
-      $(this).siblings().filter(':radio[name*=has_csr]').click();
+      $(this).siblings().filter(':radio[name*=has_csr]').triggerHandler('click');
     });
     $(':radio[name*=has_csr]').click(function(){
       if($(this).val()=="false"){

@@ -67,7 +67,7 @@ jQuery(function($) {
       $(this).select();
     });
     $('.has_account_container').click(function(){
-      $(this).siblings().filter(':radio[name*=has_account]').click();
+      $(this).siblings().filter(':radio[name*=has_account]').triggerHandler('click');
     });
     $(':radio[name*=has_account]').click(function(){
       if($(this).val()=="true"){
@@ -83,7 +83,7 @@ jQuery(function($) {
         $('#login_section').hide();
       }
     });
-    $(':radio[name*=has_account][value=false]').click();
+    $(':radio[name*=has_account][value=false]').triggerHandler('click');
     // prepare Options Object
     var options = {
         dataType: 'json',

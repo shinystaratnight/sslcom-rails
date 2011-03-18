@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -29,15 +30,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_index_scripts.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="1.1153846">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/orders/new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
@@ -56,10 +48,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="141" column="53" selection-start="5354" selection-end="5354" vertical-scroll-proportion="0.47440273">
+            <state line="85" column="70" selection-start="3290" selection-end="3290" vertical-scroll-proportion="-5.1538463">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="302" column="48" selection-start="12240" selection-end="12240" vertical-scroll-proportion="0.6230366">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="24" selection-start="1321" selection-end="1321" vertical-scroll-proportion="-9.0">
               <folding />
             </state>
           </provider>
@@ -95,16 +105,7 @@
       <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="57" column="40" selection-start="2751" selection-end="2751" vertical-scroll-proportion="-1.8461539">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="buy.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="29" selection-start="629" selection-end="629" vertical-scroll-proportion="0.0">
+            <state line="134" column="79" selection-start="5999" selection-end="5999" vertical-scroll-proportion="-5.0">
               <folding />
             </state>
           </provider>
@@ -173,9 +174,9 @@
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/models/validation_history.rb" />
         <option value="$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/public/javascripts/jquery.js" />
         <option value="$PROJECT_DIR$/config/assets.yml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb" />
       </list>
     </option>
@@ -1087,11 +1088,11 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22067901" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.16975309" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22067901" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.2191358" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.42592594" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3919753" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17952883" sideWeight="0.5478395" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3919753" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287037" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1181,20 +1182,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_resellers.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="12" selection-start="1440" selection-end="1440" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="39" selection-start="1347" selection-end="1347" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state line="41" column="31" selection-start="610" selection-end="610" vertical-scroll-proportion="-7.928571">
@@ -1233,13 +1220,6 @@
     <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="29" selection-start="629" selection-end="629" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="40" selection-start="2751" selection-end="2751" vertical-scroll-proportion="-1.8461539">
           <folding />
         </state>
       </provider>
@@ -1286,9 +1266,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="24" selection-start="1321" selection-end="1321" vertical-scroll-proportion="-9.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="134" column="79" selection-start="5999" selection-end="5999" vertical-scroll-proportion="-5.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="141" column="53" selection-start="5354" selection-end="5354" vertical-scroll-proportion="0.47440273">
+        <state line="85" column="70" selection-start="3290" selection-end="3290" vertical-scroll-proportion="-5.1538463">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="302" column="48" selection-start="12240" selection-end="12240" vertical-scroll-proportion="0.6230366">
           <folding />
         </state>
       </provider>
