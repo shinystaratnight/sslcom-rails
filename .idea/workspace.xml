@@ -4,7 +4,21 @@
     <option name="ANALYZE_TEST_SOURCES" value="false" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="" />
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common.css.gz" afterPath="$PROJECT_DIR$/public/assets/common.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common.js.gz" afterPath="$PROJECT_DIR$/public/assets/common.js.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie8-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie8-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie8.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie8.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/print.css.gz" afterPath="$PROJECT_DIR$/public/assets/print.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/shared.js.gz" afterPath="$PROJECT_DIR$/public/assets/shared.js.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/site_report-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/site_report-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/site_report.css.gz" afterPath="$PROJECT_DIR$/public/assets/site_report.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/assets.yml" afterPath="$PROJECT_DIR$/config/assets.yml" />
+    </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -84,7 +98,7 @@
       <file leaf-file-name="assets.yml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/assets.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="47" selection-start="587" selection-end="587" vertical-scroll-proportion="0.03761062">
+            <state line="3" column="18" selection-start="45" selection-end="45" vertical-scroll-proportion="0.11283186">
               <folding />
             </state>
           </provider>
@@ -172,9 +186,9 @@
         <option value="$PROJECT_DIR$/app/models/validation_history.rb" />
         <option value="$PROJECT_DIR$/app/views/site_seals/artifacts.html.haml" />
         <option value="$PROJECT_DIR$/public/javascripts/jquery.js" />
-        <option value="$PROJECT_DIR$/config/assets.yml" />
         <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/config/assets.yml" />
       </list>
     </option>
   </component>
@@ -1254,7 +1268,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/assets.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="47" selection-start="587" selection-end="587" vertical-scroll-proportion="0.03761062">
+        <state line="3" column="18" selection-start="45" selection-end="45" vertical-scroll-proportion="0.11283186">
           <folding />
         </state>
       </provider>
