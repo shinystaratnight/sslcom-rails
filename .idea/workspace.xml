@@ -77,7 +77,16 @@
       <file leaf-file-name="ie.sass" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="26" selection-start="397" selection-end="397" vertical-scroll-proportion="0.67209303">
+            <state line="20" column="0" selection-start="445" selection-end="445" vertical-scroll-proportion="0.7522124">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="4494" column="4" selection-start="84091" selection-end="84091" vertical-scroll-proportion="-13.464286">
               <folding />
             </state>
           </provider>
@@ -87,15 +96,6 @@
         <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="304" column="90" selection-start="12259" selection-end="12259" vertical-scroll-proportion="-10.461538">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="24" selection-start="1321" selection-end="1321" vertical-scroll-proportion="-9.0">
               <folding />
             </state>
           </provider>
@@ -1149,13 +1149,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="29" selection-start="629" selection-end="629" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/validation_history.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="68" column="34" selection-start="2796" selection-end="2796" vertical-scroll-proportion="0.0">
@@ -1254,9 +1247,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4494" column="4" selection-start="84091" selection-end="84091" vertical-scroll-proportion="-13.464286">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="26" selection-start="397" selection-end="397" vertical-scroll-proportion="0.67209303">
+        <state line="20" column="0" selection-start="445" selection-end="445" vertical-scroll-proportion="0.7522124">
           <folding />
         </state>
       </provider>
