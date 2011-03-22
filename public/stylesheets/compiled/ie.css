@@ -1,5 +1,6 @@
-/* line 17, ../../../app/stylesheets/ie.sass */
-table span.expand_or_view_order {
+/* line 20, ../../../app/stylesheets/ie.sass */
+#report table span.expand_or_view_order, #reseller_tiers table span.expand_or_view_order, #domain_pricing_popup table span.expand_or_view_order, #certificate_listing table span.expand_or_view_order,
+#dashboard table span.expand_or_view_order, #certificate_orders table span.expand_or_view_order, #validations table span.expand_or_view_order {
   line-height: normal;
   float: inherit;
 }
