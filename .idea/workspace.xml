@@ -5,19 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common.css.gz" afterPath="$PROJECT_DIR$/public/assets/common.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common.js.gz" afterPath="$PROJECT_DIR$/public/assets/common.js.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie-datauri.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie8-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie8-datauri.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/ie8.css.gz" afterPath="$PROJECT_DIR$/public/assets/ie8.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/print.css.gz" afterPath="$PROJECT_DIR$/public/assets/print.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/shared.js.gz" afterPath="$PROJECT_DIR$/public/assets/shared.js.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/site_report-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/site_report-datauri.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/site_report.css.gz" afterPath="$PROJECT_DIR$/public/assets/site_report.css.gz" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/assets.yml" afterPath="$PROJECT_DIR$/config/assets.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/ie.sass" afterPath="$PROJECT_DIR$/app/stylesheets/ie.sass" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -77,6 +65,24 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="39" column="59" selection-start="1359" selection-end="1359" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ie.sass" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="17" column="26" selection-start="397" selection-end="397" vertical-scroll-proportion="0.67209303">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
@@ -95,28 +101,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="assets.yml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="assets.yml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/assets.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="18" selection-start="45" selection-end="45" vertical-scroll-proportion="0.11283186">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="jquery.min.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/javascripts/jquery.min.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="jquery.js" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/javascripts/jquery.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="939" column="76" selection-start="23582" selection-end="23582" vertical-scroll-proportion="-2.2857144">
+            <state line="12" column="111" selection-start="476" selection-end="476" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -173,7 +161,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/site/compatibility.html.haml" />
         <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificates/single_or_multi.html.haml" />
@@ -189,6 +176,7 @@
         <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/orders/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/config/assets.yml" />
+        <option value="$PROJECT_DIR$/app/stylesheets/ie.sass" />
       </list>
     </option>
   </component>
@@ -1161,20 +1149,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="24" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_index_scripts.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="1.1153846">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="12" column="29" selection-start="629" selection-end="629" vertical-scroll-proportion="0.0">
@@ -1259,6 +1233,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/assets.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="111" selection-start="476" selection-end="476" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/public/stylesheets/compiled/ie8.css">
       <provider selected="true" editor-type-id="text-editor">
         <state line="5" column="67" selection-start="175" selection-end="175" vertical-scroll-proportion="0.0">
@@ -1266,9 +1247,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/assets.yml">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="18" selection-start="45" selection-end="45" vertical-scroll-proportion="0.11283186">
+        <state line="39" column="59" selection-start="1359" selection-end="1359" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="26" selection-start="397" selection-end="397" vertical-scroll-proportion="0.67209303">
           <folding />
         </state>
       </provider>
