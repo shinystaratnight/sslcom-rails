@@ -77,7 +77,7 @@
       <file leaf-file-name="ie.sass" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="19" column="19" selection-start="512" selection-end="512" vertical-scroll-proportion="0.71460176">
+            <state line="25" column="26" selection-start="620" selection-end="620" vertical-scroll-proportion="0.92477876">
               <folding />
             </state>
           </provider>
@@ -86,7 +86,7 @@
       <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3527" column="22" selection-start="67376" selection-end="67376" vertical-scroll-proportion="-10.321428">
+            <state line="4486" column="0" selection-start="83974" selection-end="83990" vertical-scroll-proportion="-5.5">
               <folding />
             </state>
           </provider>
@@ -1249,14 +1249,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3527" column="22" selection-start="67376" selection-end="67376" vertical-scroll-proportion="-10.321428">
+        <state line="4486" column="0" selection-start="83974" selection-end="83990" vertical-scroll-proportion="-5.5">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="19" selection-start="512" selection-end="512" vertical-scroll-proportion="0.71460176">
+        <state line="25" column="26" selection-start="620" selection-end="620" vertical-scroll-proportion="0.92477876">
           <folding />
         </state>
       </provider>

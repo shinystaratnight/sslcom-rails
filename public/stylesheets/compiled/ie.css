@@ -4,3 +4,8 @@
   line-height: normal;
   float: inherit;
 }
+
+/* line 25, ../../../app/stylesheets/ie.sass */
+.subject_column .subject_column {
+  float: left;
+}
