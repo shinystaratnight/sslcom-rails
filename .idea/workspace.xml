@@ -50,7 +50,7 @@
       <file leaf-file-name="ie.css" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/public/stylesheets/compiled/ie.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
+            <state line="6" column="0" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -77,8 +77,10 @@
       <file leaf-file-name="ie.sass" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="13" selection-start="585" selection-end="585" vertical-scroll-proportion="0.8119469">
-              <folding />
+            <state line="24" column="40" selection-start="606" selection-end="606" vertical-scroll-proportion="0.7367257">
+              <folding>
+                <marker date="1300813055000" expanded="true" signature="609:683" placeholder=".subject_column" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -1221,7 +1223,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/public/stylesheets/compiled/ie.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="429" selection-end="429" vertical-scroll-proportion="0.0">
+        <state line="6" column="0" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1256,8 +1258,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/ie.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="13" selection-start="585" selection-end="585" vertical-scroll-proportion="0.8119469">
-          <folding />
+        <state line="24" column="40" selection-start="606" selection-end="606" vertical-scroll-proportion="0.7367257">
+          <folding>
+            <marker date="1300813055000" expanded="true" signature="609:683" placeholder=".subject_column" />
+          </folding>
         </state>
       </provider>
     </entry>

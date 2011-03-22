@@ -10,3 +10,8 @@
 .subject_column .subject_column {
   float: left;
 }
+
+/* line 29, ../../../app/stylesheets/ie.sass */
+#certificate_orders .name .subject_column {
+  float: left;
+}
