@@ -1,11 +1,12 @@
 /* line 20, ../../../app/stylesheets/ie.sass */
 #report table span.expand_or_view_order, #reseller_tiers table span.expand_or_view_order, #domain_pricing_popup table span.expand_or_view_order, #certificate_listing table span.expand_or_view_order,
 #dashboard table span.expand_or_view_order, #certificate_orders table span.expand_or_view_order, #validations table span.expand_or_view_order {
+  text-align: left;
   line-height: normal;
   float: none;
 }
 
-/* line 25, ../../../app/stylesheets/ie.sass */
+/* line 26, ../../../app/stylesheets/ie.sass */
 .subject_column .subject_column {
   float: left;
 }
