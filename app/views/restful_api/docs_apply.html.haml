@@ -1,0 +1,109 @@
+-c={}
+-c[:description]="SSL.com offers a restful api to allow resellers to automate integrate ssl certificate purchasing"
+-c[:keywords]="ssl certificate api rest restful digital certificates integrate resellers automate manage"
+-c[:title] = "SSL.com API For Certificates"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 RESTful api allows for automated and seamless ssl certificate purchasing
+.default_container
+  %h3 SSL Certificate RESTful API Overview
+  %p
+    Software developers can now leverage the power of SSL secure data storage into
+    mobile device platforms and other software that require a secure, remote
+    data storage option. The Lockbox api provides an open standard interface in the
+    form of REST using the well established http protocol and JSON standards.
+    By adopting well-established standards, the api minimizes the learning
+    curve for the development team and results in faster deployment.
+  %p
+    Leveraging this open standard api, developers can reliably store data onto SSL.com's
+    ultra-secure servers. Since SSL Secure Lockbox handles the encryption
+    and redundant data storage, developers only need to focus on the basic elements file
+    operations such as uploading, downloading, renaming, sharing, etc.
+  %h3 Getting Started
+  %p
+    In order to access and even create accounts on behalf of individual users,
+    developer's are required to obtain an account token and secret key pair for
+    each app that will be interfacing with Lockbox. This can be done by creating
+    a standard Lockbox account and clicking the 'create app' link in the dashboard.
+
+%h2
+  SSL API Developer's Guide
+.default_container
+  %h3~"POST /certificates/<version>/apply"
+  %p
+    Apply for an ssl.com certificate. Upon successful application, the price (if any) of the ssl certificate will be
+    deducted from reseller account associated with the account number specified in the account_key.
+  %dl
+    %dt version
+    %dd 1.0
+    %dt example url
+    %dd https://sws.ssl.com/certificates/1.0/apply
+    %dt method
+    %dd POST
+    %dt parameters
+    %dd
+      %dt account_key
+      %dd This is your SWS account key. More information about obtaining an SWS account key can be found here
+    %dd
+      %dt secret_key
+      %dd This is your SWS secret key. More information about obtaining an SWS account key can be found here
+  %h3 POST /folder/<id>/files
+  %p
+    Uploads a file into folder specified by it's numeric id <id>.
+  %dl
+    %dt version
+    %dd 1.0
+    %dt example url
+    %dd https://api.ssl.com/docs/1.0/folder/1/files
+    %dt method
+    %dd POST
+    %dt parameter
+    %dd filedata
+
+  %p
+    From the administrative screen, you can manage the full
+    life-cycle of each ssl certificate request including buying or renewing
+    certificates, reprocessing existing certificates, or even revoking
+    certificates. Manage your dynamic SSL Secured Site Seals from your
+    administrative screen and choose from a number of designs; you can choose
+    a different design for each site.
+  #ssl_reseller_certs_screenshot
+    =image_tag 'ssl_reseller_certs_screenshot.jpg'
+  %p
+    Even the validation process can be handled on your end (subject to agreed
+    Terms and Conditions) to allow you control over all aspects of your ssl
+    certificate issuances or simply let the validation technicians at SSL.com
+    handle validations diligently so you can focus on what matters to you.
+    Our 24/7 excellent customer support is there for you in the event you have
+    any issues ranging from installation problems to validation questions to
+    anything that will help you get up and running with SSL security quickly.
+    You can chat with someone 24 hours a day through our toll free
+    877-SSL-SECURE (877-775-7328) phone number, or visit support@ssl.com to
+    find answers or open a support ticket.
+%h2
+  Automate ssl certificate installs with SSL.com RESTful api
+.default_container
+  %h3 Private Label and Seamless Integration
+  =image_tag 'shop_securely_with_ssl.jpg', :id=>'shop_securely_with_ssl'
+  %p
+    The SSL Reseller Program is the perfect white-label solution for your ssl
+    certificate needs. Set reminders for expiring ssl certificates and
+    customize the reminder notices to gain more control over what is included in
+    each reminder. You can even set the time period when they are sent out and
+    to which email addresses. The detailed reporting allows you more insight
+    into your order history as well as SSL Certificate purchase history.
+    Filters allow you to search based on a number of factors such as domain
+    name, time period reporting, and more.
+  %p
+    Improve efficiency and productivity by interfacing with SSL.com's RESTful
+    api. No need to login through a web page and
+    manage your certificates from your SSL Reseller interface. You can now
+    handle all ssl certificate life-cycle operations through the RESTful api and
+    build
+    a custom solution more tailored to your needs. This great for host
+    providers and other value added resellers or as a white-label solution.
+#become_a_reseller_today
+  %h3 get started today!
+  =link_to "Become a reseller!", new_account_url, :class=>"buttonc"

@@ -1,3 +1,5 @@
+require 'apis/certificates_api_app'
+
 SslCom::Application.routes.draw do
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
@@ -134,6 +136,11 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)
+  match 'certificates/apidocs/apply' => 'restful_api#docs_apply', :as => :user_orders
   end
+
+  #cert api routes
+  match '/certificates/v1/apply' => CertificatesApiApp
+
   match '/:controller(/:action(/:id))'
 end

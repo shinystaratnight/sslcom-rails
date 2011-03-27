@@ -77,9 +77,9 @@ a:hover
   color: #ccc
   font-size: 1.2em
 
-=innercontainer(!position)
+=innercontainer($position)
   background:
-    position = !position
+    position: $position
     repeat: no-repeat
   width: 100%
   margin: 0 auto
@@ -220,8 +220,8 @@ a:hover
 #content
   width: 100%
 
-=background_image(!padding)
-  padding = !padding
+=background_image($padding)
+  padding: $padding
   width: 100%
   background: #fff url('/images/bg-content.gif') repeat-x
 

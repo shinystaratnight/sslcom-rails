@@ -10,7 +10,7 @@ images_dir = "public/images"
 http_images_path = "/images"
 javascripts_dir = "public/javascripts"
 http_javascripts_path = "/javascripts"
-sass_options = {line_numbers: true, style: :expanded}
+sass_options = {line_numbers: true, style: :expanded, never_update: false}
 #sass_options = {debug_info: true, style: :expanded} #use when firesass works for firebug 1.6
 #sass_options = {style: :compressed} #for production use
 # You can select your preferred output style here (can be overridden via the command line):

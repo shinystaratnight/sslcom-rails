@@ -17,6 +17,7 @@ gem 'money', '2.1.0'
 gem 'will_paginate', '3.0.pre2'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
+#gem 'haml'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
@@ -35,10 +36,7 @@ gem 'meta_where'
 gem 'yui-compressor'
 gem 'jammit'
 gem "rails_config"
-#gem 'app_config'
-
-# Use unicorn as the web server
-# gem 'unicorn'
+gem 'sinatra'
 
 # Deploy with Capistrano
 # gem 'capistrano'
@@ -57,6 +55,7 @@ gem "rails_config"
 #   gem 'cucumber'
     gem 'ruby_parser'
 #    gem 'ruby-debug19', :require => 'ruby-debug'
+    gem "rspec-rails", ">= 2.0.0.beta.22"
   end
 
   group :test do
@@ -69,9 +68,7 @@ gem "rails_config"
     gem 'rspec'
     gem 'factory_girl_rails'
     gem 'mainline'
+    gem 'rack-test'
   end
 
-  group :test, :development do
-    gem "rspec-rails", ">= 2.0.0.beta.22"
-  end
 
