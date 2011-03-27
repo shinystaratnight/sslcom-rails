@@ -1,5 +1,4 @@
 class Validation < ActiveRecord::Base
-  using_access_control
   has_many    :certificate_orders
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings

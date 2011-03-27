@@ -9,6 +9,7 @@ class ValidationsController < ApplicationController
   before_filter :find_validation, :only=>[:update]
   filter_access_to :upload, :require=>:create
   filter_access_to :all
+  filter_access_to :requirements, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :edit, :attribute_check=>false
   in_place_edit_for :validation_history, :notes
 

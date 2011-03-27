@@ -1,0 +1,78 @@
+-c={}
+-c[:description]="Validations for SSL.com certificates are designed to expedite issuance while maintaining strict compliance."
+-c[:keywords]="ssl certificates validation requirement documents ev statements bills id license corporate charter business government compliance"
+-c[:title]='SSL Certificate Validation Requirements'
+-c[:header]='public'
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 Expedite issuance while maintaining SSL.com certificate compliance
+.default_container
+  %h3 Overview
+  %p
+    SSL certificates represent the underpinnings of trust in most Web and Internet transactions. As such,
+    there is great responsibility for globally trusted certificate authorities like SSL.com to perform
+    accurate but timely validation and background so that legitimate entities can continue to operate in
+    a secure and trusted manner.
+.default_container
+  %h3 Validation Types
+  %p
+    Depending on which SSL.com certificate is issued, different validation requirements need to be met in
+    order for all parties to maintain strict adherence to SSL.com's Certification Practices Statement. At
+    the minimum, the customer (or subscriber) will be required to validate domain control by responding to
+    an email sent to a predetermined email address. The customer purchasing the SSL.com certificate may be
+    required to submit required validation artifacts and documents attesting to the ownership of or
+    authorization to represent the original entity who registered the domain name represented in the ssl
+    certificate.
+    %dl.listing
+      %dt
+        Domain Control Validation
+      %dd
+        %dl
+          %dt applies to certificates
+          %dd
+            Premium EV SSL, Premium EV Multi-domain UCC SSL, High Assurance SSL,
+            Multi-subdomain Wildcard SSL, Multi-domain UCC SSL, Free SSL
+      %dd
+        %dl
+          %dt validation level
+          %dd minimal
+      %dd
+        %dl
+          %dt description
+          %dd
+            An email from SSL.com Validation Services is sent to a predetermined email address associated
+            with the domain name represented by the ssl certificate.
+            A user with access to the email address then clicks on a link embedded within the email. This
+            will confirm that the customer or authorized party has control of the domain name.
+      %dt
+        Organization Validation
+      %dd
+        %dl
+          %dt applies to certificates
+          %dd
+            Premium EV SSL, Premium EV Multi-domain UCC SSL, High Assurance SSL,
+            Multi-subdomain Wildcard SSL, Multi-domain UCC SSL
+
+      %dd
+        %dl
+          %dt validation level
+          %dd high assurance
+      %dd
+        %dl
+          %dt description
+          %dd
+      %dt
+        Extended Validation
+      %dd
+        %dl
+          %dt
+            applies to Premium EV SSL, Premium EV Multi-domain UCC SSL
+      %dd
+        %dl
+          %dt validation level
+          %dd most stringent validation
+      %dd
+        %dl
+          %dt description
+          %dd
