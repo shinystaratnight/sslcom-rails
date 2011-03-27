@@ -25,14 +25,14 @@
     authorization to represent the original entity who registered the domain name represented in the ssl
     certificate.
     %dl.listing
-      %dt
+      %dt.validation_type
         Domain Control Validation
       %dd
         %dl
-          %dt applies to certificates
+          %dt
+            applies to certificates
           %dd
-            Premium EV SSL, Premium EV Multi-domain UCC SSL, High Assurance SSL,
-            Multi-subdomain Wildcard SSL, Multi-domain UCC SSL, Free SSL
+            Free SSL
       %dd
         %dl
           %dt validation level
@@ -45,7 +45,7 @@
             with the domain name represented by the ssl certificate.
             A user with access to the email address then clicks on a link embedded within the email. This
             will confirm that the customer or authorized party has control of the domain name.
-      %dt
+      %dt.validation_type
         Organization Validation
       %dd
         %dl
@@ -62,17 +62,41 @@
         %dl
           %dt description
           %dd
-      %dt
+            To supplement domain control validation, high assurance validation utilizes supporting
+            documentation to provide additional assurance that the customer owns or is authorized to represent
+            the organization listed as the owner of the domain. The documents can be submitted through each
+            SSL.com certificate's order page or through
+            the #{link_to "the SSL.com RESTful API", restful_apidocs_apply_url}.
+            The accepted documents are as follows:
+            %ul
+              %li Articles of Association
+              %li Business License
+              %li Certificate of Compliance
+              %li Certificate of Incorporation
+              %li Certificate of Authority to Transact Business
+              %li Tax Certification
+              %li Corporate Charter
+              %li Official letter from an authorized representative of a government organization
+              %li Official letter from office of Dean or Principal (for Educational Institutions)
+      %dt.validation_type
         Extended Validation
       %dd
         %dl
           %dt
-            applies to Premium EV SSL, Premium EV Multi-domain UCC SSL
+            applies to certificates
+          %dd
+            Premium EV SSL, Premium EV Multi-domain UCC SSL
       %dd
         %dl
           %dt validation level
-          %dd most stringent validation
+          %dd.green highest standard
       %dd
         %dl
           %dt description
           %dd
+            Extended validation ssl certificate represent the highest in security standards for
+            SSL.com. EV SSL certificates that have gone through the extended validation progress
+            display the browser address bar with a green background. In addition to using domain control and
+            organization validation, extended validation requires that the end customer sign an EV SSL request form
+            which can be found here.
+

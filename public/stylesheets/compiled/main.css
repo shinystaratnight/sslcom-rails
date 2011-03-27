@@ -6295,3 +6295,12 @@ img.industry {
 dl.listing {
   font-size: 1.4em;
 }
+/* line 4727, ../../../app/stylesheets/main.sass */
+dl.listing dt.validation_type {
+  font-weight: bold;
+  margin-top: 1em;
+}
+/* line 4731, ../../../app/stylesheets/main.sass */
+dl.listing .green {
+  color: green;
+}
