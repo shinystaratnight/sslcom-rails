@@ -89,6 +89,7 @@ class CertificateOrder < ActiveRecord::Base
       co.certificate.validation_rulings.each do |cvrl|
         vrl = cvrl.clone
         vrl.status = ValidationRuling::WAITING_FOR_DOCS
+        vrl.workflow_state = "new"
         v.validation_rulings << vrl
       end
     end

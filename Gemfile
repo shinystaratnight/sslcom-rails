@@ -24,7 +24,7 @@ gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "workflow"
-gem "savon"
+gem "savon", "0.7.9"
 gem 'rubyzip'
 gem 'compass', ">= 0.11.beta.2"
 gem 'rb-inotify'

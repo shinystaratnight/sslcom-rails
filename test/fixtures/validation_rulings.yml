@@ -1,6 +1,7 @@
+<%cc=0%>
 <%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
-<%=i%>:
-  id: <%=i%>
+<%=cc+=1%>:
+  id: <%=cc%>
   <%case cert.product
   when /^free.*/%>
   validation_rule_id: 1
@@ -12,6 +13,28 @@
   validation_rulable_id: <%=cert.id%>
   validation_rulable_type: Certificate
   workflow_state: certificate
+<%end%>
+<%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
+  <%case cert.product%>
+  <%when /^ev.*/, /^high_assurance.*/, /^wildcard.*/, /^ucc.*/%>
+  <%=cc+=1%>:
+  id: <%=cc%>
+  validation_rule_id: 1
+  validation_rulable_id: <%=cert.id%>
+  validation_rulable_type: Certificate
+  workflow_state: certificate
+  <%end%>
+<%end%>
+<%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
+  <%case cert.product%>
+  <%when /^ev.*/%>
+  <%=cc+=1%>:
+  id: <%=cc%>
+  validation_rule_id: 2
+  validation_rulable_id: <%=cert.id%>
+  validation_rulable_type: Certificate
+  workflow_state: certificate
+  <%end%>
 <%end%>
 "1060745285":
   validation_rulable_id: 8

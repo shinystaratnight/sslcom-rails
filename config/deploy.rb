@@ -11,7 +11,7 @@ set :rvm_ruby_string, 'default'
 set :rvm_type, :user
 
 #tell git to clone only the latest revision and not the whole repository
-#set :git_shallow_clone, 1
+set :git_shallow_clone, 1
 
 set :keep_releases, 3
 

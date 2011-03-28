@@ -32,13 +32,15 @@
           %dt
             applies to certificates
           %dd
-            Free SSL
+            -certs = Certificate.root_products.select{|c|c.description["validation_level"] =~ /1/}.map do |cert|
+              -link_to(cert.title, certificate_url(cert.product))
+            =certs.join(", ").html_safe
       %dd
         %dl
           %dt validation level
           %dd minimal
       %dd
-        %dl
+        %dl.last_list
           %dt description
           %dd
             An email from SSL.com Validation Services is sent to a predetermined email address associated
@@ -51,15 +53,15 @@
         %dl
           %dt applies to certificates
           %dd
-            Premium EV SSL, Premium EV Multi-domain UCC SSL, High Assurance SSL,
-            Multi-subdomain Wildcard SSL, Multi-domain UCC SSL
-
+            -certs = Certificate.root_products.select{|c|c.description["validation_level"] =~ /2/}.map do |cert|
+              -link_to(cert.title, certificate_url(cert.product))
+            =certs.join(", ").html_safe
       %dd
         %dl
           %dt validation level
           %dd high assurance
       %dd
-        %dl
+        %dl.last_list
           %dt description
           %dd
             To supplement domain control validation, high assurance validation utilizes supporting
@@ -85,18 +87,29 @@
           %dt
             applies to certificates
           %dd
-            Premium EV SSL, Premium EV Multi-domain UCC SSL
+            -certs = Certificate.root_products.select{|c|c.description["validation_level"] =~ /3/}.map do |cert|
+              -link_to(cert.title, certificate_url(cert.product))
+            =certs.join(", ").html_safe
       %dd
         %dl
           %dt validation level
           %dd.green highest standard
       %dd
-        %dl
+        %dl.last_list
           %dt description
           %dd
             Extended validation ssl certificate represent the highest in security standards for
             SSL.com. EV SSL certificates that have gone through the extended validation progress
             display the browser address bar with a green background. In addition to using domain control and
             organization validation, extended validation requires that the end customer sign an EV SSL request form
-            which can be found here.
+            which can be found below:
+          %dd
+            %ul
+              %li
+                %dt Full EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=4"})
+                %dd This form of the EV Request should be used when more than one individual are acting in the roles of Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.)
+              %li
+                %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
+                %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
+
 

@@ -4,10 +4,10 @@ module ContactsHelper
       if cc.certificate_contacts.empty?
         cc.billing_checkbox, cc.technical_checkbox, cc.validation_checkbox =
           true, true, true
-        4.times do
-          contact = cc.certificate_contacts.build
-          contact.country = 'US'
-        end
+#        4.times do
+#          contact = cc.certificate_contacts.build
+#          contact.country = 'US'
+#        end
       end
     end
   end
