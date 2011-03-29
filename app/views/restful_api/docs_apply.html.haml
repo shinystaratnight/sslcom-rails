@@ -6,7 +6,7 @@
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 RESTful api allows for automated and seamless ssl certificate purchasing
+%h2 RESTful api for automated and seamless ssl certificate purchasing
 .default_container
   %h3 SSL Certificate RESTful API Overview
   %p
@@ -41,16 +41,21 @@
     %dd https://sws.ssl.com/certificates/1.0/apply
     %dt method
     %dd POST
-    %dt parameters
+    %dt
+      parameters (!required items are in&nbsp;
+      %span.api_key_or_value> bold
+      , optional items are in&nbsp;
+      %span.optional_api_key> italics
+      )
     %dd
       %dl
         %dt.api_key_or_value account_key
-        %dd Required. The SWS account key of the reseller. More information about obtaining an SWS account key can be found here
+        %dd The SWS account key of the reseller. More information about obtaining an SWS account key can be found here
         %dt.api_key_or_value secret_key
-        %dd Required. The SWS secret key of the reseller. More information about obtaining an SWS account key can be found here
+        %dd The SWS secret key of the reseller. More information about obtaining an SWS account key can be found here
         %dt.api_key_or_value product
         %dd
-          Required. The product code of the ssl certificate being purchased. Select only one code from
+          The product code of the ssl certificate being purchased. Select only one code from
           the following choices:
           %dl
             %dd
@@ -59,9 +64,9 @@
               %em> for Premium EV SSL
               )
             %dd
-              %span.api_key_or_value evucc256
+              %span.api_key_or_value evmd256
               (
-              %em> for Premium EV Multi-domain UCC SSL
+              %em> for Premium EV Multi-domain SSL
               )
             %dd
               %span.api_key_or_value ov256
@@ -74,6 +79,11 @@
               %em> for Multi-subdomain Wildcard SSL
               )
             %dd
+              %span.api_key_or_value md256
+              (
+              %em> for Multi-domain SSL
+              )
+            %dd
               %span.api_key_or_value dv256
               (
               %em> for Free SSL
@@ -81,7 +91,7 @@
             %dd
               %span.api_key_or_value ucc256
               (
-              %em> for Multi-domain UCC SSL
+              %em> for UCC SSL
               )
         %dt.api_key_or_value days
         %dd
@@ -97,25 +107,181 @@
               for EV SSL certs
         %dt.api_key_or_value server_count
         %dd
-          Required only for Wildcard, Multi-domain UCC, or EV Multi-domain UCC (product=wc256, ucc256, or evucc256).
+          Applies to Wildcard, Multi-domain, EV Multi-domain, or UCC (product=wc256, md256, evmd265, or ucc256).
           The number of servers the ssl certificate will be installed on.
         %dt.api_key_or_value server_software
         %dd
-          Required. The server software which the ssl certificate is to be installed on.
+          The server software which the ssl certificate is to be installed on.
           %dl
             -ServerSoftware.all.each do |ss|
               %dd
                 %span.api_key_or_value= ss.id
                 =ss.title
-        %dt.api_key_or_value domains
+        %dt
+          %span.optional_api_key other_domains
         %dd
-          Required only for Multi-domain UCC or EV Multi-domain UCC (product=ucc256 or evucc256). The domains
-          %dl
-            %dd
-              %span.api_key_or_value ev256
-              (
-              %em> for Premium EV SSL
-              )
+          Applies to Multi-domain, EV Multi-domain, or UCC (product=md256, evmd256, or ucc256).
+          A comma-separated (or whitespace-separated) list of Domain Names / IP
+          Addresses to be placed into the SSL Certificate.
+          If the CSR's Subject Alternative Name extension...
+          %ul
+            %li
+              includes 1 or more domain names, and this parameter is&nbsp;
+              %em(style='text-decoration: underline')> omitted
+              , then the domain names from the CSR will be used.
+            %li
+              includes 1 or more domain names, and this parameter is&nbsp;
+              %em(style='text-decoration: underline')> specified
+              , then the domain names from the CSR will be ignored.
+            %li
+              is not present, or is present but includes 0 domain names, then this
+              parameter must be present.
+          NOTE: commas and/or whitespace may need to be manually URL-encoded
+          (e.g. %2C for a comma), depending on whether or not the calling
+          environment does this automatically.
+        %dt.optional_api_key domain
+        %dd
+          Applies to Multi-domain, EV Multi-domain, or UCC (product=md256, evmd256, or ucc256).
+          One of the domain names listed in the 'other_domains' parameter, which should appear
+          as the first Common Name in the Subject DN of the resulting SSL certificate.
+          %ul
+            %li
+              For Multi-domain Certificates: If this parameter is omitted, the Common
+              Names will be listed in alphabetical order within the certificate.
+            %li
+              For Unified Communications Certificates: If this parameter is omitted, then
+              the value of the CSR's Common Name will be used as the primary domain
+              name instead.
+        %dt.optional_api_key common_names
+        %dd
+          Applies to Multi-domain or EV Multi-domain (product=md256 or evmd256).
+          %ul
+            %li
+              If omitted, all of the domain names listed in "other_domains" will be
+              included as Common Names in the Subject DN of the resulting EV Multi-
+              domain SSL Certificate or Multi-domain SSL Certificate.
+            %li
+              If 1, there will only be 1 Common Name in the resulting certificate. This
+              will have the value provided by "domain" (so, in this case,
+              "domain" must have a value).
+            %li
+              If 0, no Common Names will be included in the resulting certificate.
+              Note that all of the domain names listed in "other_domains" will always be
+              included as DNS Name components of the Subject Alternative Name
+              extension in the resulting Multi-domain SSL Certificate or EV Multi-
+              domain SSL Certificate.
+          This parameter need not be specified for Unified Communications
+          Certificates, since UCCs always have this prarmeter set to 1.
+        %dt.api_key_or_value csr
+        %dd
+          Certificate signing request (Base-64 encoded). Opening and closing tags are optional i.e:
+        %dd
+          \-----BEGIN xxxxx-----
+        %dd
+          and
+        %dd
+          \-----END xxxxx-----
+        %dd
+          %ul.csr_fields
+            %li
+              %dt Version
+              %dd 0
+            %li
+              %dt Subject:
+              %dd
+                The fields may be in any order (although multiple street addresses, if
+                present, should be in the correct order). note: DirectoryString is a choice of
+                PrintableString, TeletexString, BMPString, UniversalString (ASCII only) or UTF8String.
+              %dd.api_csr_params_table
+                MUST include these fields:
+                .api_csr_params
+                  %table
+                    %thead
+                      %tr.odd
+                        %th OID
+                        %th description
+                        %th ASN.1 type(s)
+                        %th max length
+                    %tbody
+                      %tr.even
+                        %td.numeric 2.5.4.3
+                        %td Common Name (Fully-Qualified Domain Name)
+                        %td DirectoryString
+                        %td.numeric 64 chars
+              %dd.api_csr_params_table
+                MAY include these fields (all other fields not listed will be ignored):
+                .api_csr_params
+                  %table
+                    %thead
+                      %tr.odd
+                        %th OID
+                        %th description
+                        %th ASN.1 type(s)
+                        %th max length
+                    %tbody
+                      %tr.even
+                        %td.numeric 2.5.4.10
+                        %td Organization Name
+                        %td DirectoryString
+                        %td.numeric 64 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.11
+                        %td Organizational Unit
+                        %td DirectoryString
+                        %td.numeric 64 chars
+                      %tr.even
+                        %td.numeric 2.5.4.18
+                        %td Post Office Box
+                        %td DirectoryString
+                        %td.numeric 40 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.9
+                        %td Street Address 1
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.9
+                        %td Street Address 2
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.9
+                        %td Street Address 3
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.7
+                        %td Locality Name
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.8
+                        %td State or Province Name
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.17
+                        %td Postal Code
+                        %td DirectoryString
+                        %td.numeric 40 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.6
+                        %td Country Name (ISO3166 2-character code)
+                        %td
+                        %td.numeric
+              %dt Subject Public Key Info
+              %dd Algorithm OID = rsaEncryption (PKCS#1)
+              %dd Size = 512 to 8192 bits
+              %dt Attributes
+              %dd Any attributes MAY be present, but will be ignored
+              %dt Signature Algorithm
+              %dd
+                md5WithRSAEncryption (PKCS#1)
+                or sha1WithRSAEncryption (PKCS#1)
+                or sha224WithRSAEncryption (PKCS#1)
+                or sha256WithRSAEncryption (PKCS#1)
+                or sha384WithRSAEncryption (PKCS#1)
+                or sha512WithRSAEncryption (PKCS#1)
   %h3 POST /folder/<id>/files
   %p
     Uploads a file into folder specified by it's numeric id <id>.

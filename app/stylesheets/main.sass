@@ -4739,8 +4739,28 @@ dl.listing
   .green
     color: green
 
-.api_key_or_value
+.optional_api_key, .api_key_or_value
   color: black
+
+.api_key_or_value
   font-weight: bold
 
+.optional_api_key
+  font-style: italic
+
+.api_csr_params_table
+  padding: 1em
+
+.api_csr_params
+  font-size: .8em
+  table
+    $table-color: #fbe1dc
+    @include table-scaffolding
+    @include inner-table-borders(1px, darken($table-color, 40%))
+    @include outer-table-borders(1px)
+    @include alternating-rows-and-columns($table-color, adjust-hue($table-color, -90deg), #111111)
+
+ul.csr_fields
+  @include no-bullets
+  padding: 1em 0 0 0
 

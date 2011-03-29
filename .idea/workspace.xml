@@ -34,7 +34,7 @@
       <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4741" column="17" selection-start="87994" selection-end="88003" vertical-scroll-proportion="-6.75">
+            <state line="4751" column="14" selection-start="88154" selection-end="88154" vertical-scroll-proportion="-4.0">
               <folding />
             </state>
           </provider>
@@ -61,7 +61,7 @@
       <file leaf-file-name="docs_apply.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/restful_api/docs_apply.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="111" column="83" selection-start="4676" selection-end="4676" vertical-scroll-proportion="0.70914125">
+            <state line="277" column="17" selection-start="11941" selection-end="11941" vertical-scroll-proportion="0.43767312">
               <folding />
             </state>
           </provider>
@@ -1295,13 +1295,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4741" column="17" selection-start="87994" selection-end="88003" vertical-scroll-proportion="-6.75">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/spec/fixtures/certificates.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -1330,9 +1323,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4751" column="14" selection-start="88154" selection-end="88154" vertical-scroll-proportion="-4.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/restful_api/docs_apply.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="111" column="83" selection-start="4676" selection-end="4676" vertical-scroll-proportion="0.70914125">
+        <state line="277" column="17" selection-start="11941" selection-end="11941" vertical-scroll-proportion="0.43767312">
           <folding />
         </state>
       </provider>
