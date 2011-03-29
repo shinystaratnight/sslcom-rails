@@ -27,7 +27,6 @@
     developer's are required to obtain an account token and secret key pair for
     each app that will be interfacing with Lockbox. This can be done by creating
     a standard Lockbox account and clicking the 'create app' link in the dashboard.
-
 %h2
   SSL API Developer's Guide
 .default_container
@@ -45,37 +44,77 @@
     %dt parameters
     %dd
       %dl
-        %dt account_key
+        %dt.api_key_or_value account_key
         %dd Required. The SWS account key of the reseller. More information about obtaining an SWS account key can be found here
-        %dt secret_key
+        %dt.api_key_or_value secret_key
         %dd Required. The SWS secret key of the reseller. More information about obtaining an SWS account key can be found here
-        %dt product
+        %dt.api_key_or_value product
         %dd
-          Required. The product code of the ssl certificate being purchased. The following codes are accepted:
+          Required. The product code of the ssl certificate being purchased. Select only one code from
+          the following choices:
           %dl
             %dd
-              ev256 (
+              %span.api_key_or_value ev256
+              (
               %em> for Premium EV SSL
               )
             %dd
-              evucc256 (
+              %span.api_key_or_value evucc256
+              (
               %em> for Premium EV Multi-domain UCC SSL
               )
             %dd
-              ov256 (
+              %span.api_key_or_value ov256
+              (
               %em> for High Assurance SSL
               )
             %dd
-              wc256 (
+              %span.api_key_or_value wc256
+              (
               %em> for Multi-subdomain Wildcard SSL
               )
             %dd
-              dv256 (
+              %span.api_key_or_value dv256
+              (
               %em> for Free SSL
               )
             %dd
-              ucc256 (
+              %span.api_key_or_value ucc256
+              (
               %em> for Multi-domain UCC SSL
+              )
+        %dt.api_key_or_value days
+        %dd
+          ~"Required (except for product=dv256 (Free SSL)). The number of days the certificate is valid for."
+          Depending on the certificate specified by the 'product' key, different options are available (select only one):
+          %dl
+            %dd
+              %span.api_key_or_value 365, 730, 1095, 1460, or 1825
+              for non EV SSL certs
+            %dd
+              %span.api_key_or_value
+                365 or 730
+              for EV SSL certs
+        %dt.api_key_or_value server_count
+        %dd
+          Required only for Wildcard, Multi-domain UCC, or EV Multi-domain UCC (product=wc256, ucc256, or evucc256).
+          The number of servers the ssl certificate will be installed on.
+        %dt.api_key_or_value server_software
+        %dd
+          Required. The server software which the ssl certificate is to be installed on.
+          %dl
+            -ServerSoftware.all.each do |ss|
+              %dd
+                %span.api_key_or_value= ss.id
+                =ss.title
+        %dt.api_key_or_value domains
+        %dd
+          Required only for Multi-domain UCC or EV Multi-domain UCC (product=ucc256 or evucc256). The domains
+          %dl
+            %dd
+              %span.api_key_or_value ev256
+              (
+              %em> for Premium EV SSL
               )
   %h3 POST /folder/<id>/files
   %p

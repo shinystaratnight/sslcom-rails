@@ -6311,3 +6311,9 @@ dl.listing dt.ev_instructions {
 dl.listing .green {
   color: green;
 }
+
+/* line 4742, ../../../app/stylesheets/main.sass */
+.api_key_or_value {
+  color: black;
+  font-weight: bold;
+}
