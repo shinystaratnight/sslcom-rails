@@ -33,7 +33,7 @@ ev:
  status: live
  published_as: live
  roles: Registered
- serial: ev256
+ serial: evssl
  product: ev
 
 ov:
@@ -66,7 +66,7 @@ ov:
  status: live
  published_as: live
  roles: Registered
- serial: ov256
+ serial: ovssl
  product: high_assurance
 
 dv:
@@ -94,7 +94,7 @@ dv:
  status: live
  published_as: live
  roles: Registered
- serial: dv256
+ serial: dvssl
  product: free
 
 ucc:
@@ -129,7 +129,7 @@ ucc:
  status: live
  published_as: live
  roles: Registered
- serial: ucc256
+ serial: uccssl
  product: ucc
  allow_wildcard_ucc: false
 
@@ -163,7 +163,7 @@ wildcard:
  status: live
  published_as: live
  roles: Registered
- serial: wc256
+ serial: wcssl
  product: wildcard
 
 ev_ucc:
@@ -201,7 +201,7 @@ ev_ucc:
  status: live
  published_as: live
  roles: Registered
- serial: evucc256
+ serial: evuccssl
  product: evucc
  allow_wildcard_ucc: false
 
@@ -241,7 +241,7 @@ ev_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: ev256<%=i%>tr
+ serial: evssl<%=i%>tr
  product: ev<%=i%>tr
 
 ov_tier_<%=i%>:
@@ -274,7 +274,7 @@ ov_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: ov256<%=i%>tr
+ serial: ovssl<%=i%>tr
  product: high_assurance<%=i%>tr
 
 dv_tier_<%=i%>:
@@ -301,7 +301,7 @@ dv_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: dv256<%=i%>tr
+ serial: dvssl<%=i%>tr
  product: free<%=i%>tr
  
 wildcard_tier_<%=i%>:
@@ -336,7 +336,7 @@ wildcard_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: wc256<%=i%>tr
+ serial: wcssl<%=i%>tr
  product: wildcard<%=i%>tr
 
 ucc_tier_<%=i%>:
@@ -372,7 +372,7 @@ ucc_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: ucc256<%=i%>tr
+ serial: uccssl<%=i%>tr
  product: ucc<%=i%>tr
  allow_wildcard_ucc: false
 
@@ -412,7 +412,7 @@ ev_ucc_tier_<%=i%>:
  published_as: live
  roles: tier_<%=i%>_reseller
  reseller_tier_id: <%=i%>
- serial: evucc256<%=i%>tr
+ serial: evuccssl<%=i%>tr
  product: evucc<%=i%>tr
  allow_wildcard_ucc: false
 <%end%>

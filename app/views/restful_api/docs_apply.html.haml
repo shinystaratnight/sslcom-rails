@@ -10,17 +10,18 @@
 .default_container
   %h3 SSL Certificate RESTful API Overview
   %p
-    Software developers can now leverage the power of SSL secure data storage into
-    mobile device platforms and other software that require a secure, remote
-    data storage option. The Lockbox api provides an open standard interface in the
+    Software developers can now integrate SSL.com certificate purchasing into their process flows.
+    The SSL.com Certificate API provides an open standards interface in the
     form of REST using the well established http protocol and JSON standards.
     By adopting well-established standards, the api minimizes the learning
     curve for the development team and results in faster deployment.
   %p
-    Leveraging this open standard api, developers can reliably store data onto SSL.com's
-    ultra-secure servers. Since SSL Secure Lockbox handles the encryption
-    and redundant data storage, developers only need to focus on the basic elements file
-    operations such as uploading, downloading, renaming, sharing, etc.
+    Leveraging this open standard api, developers can automatically purchase and manage
+    their ssl certificates. Developers can access status information, as well as cancel
+    and reprocess existing certificates. Even validations can be handled through the api.
+    Responses are in the form of JSON so several return values can be handled in a single response.
+    And best of all, it's all open standards so developers can be up and running quickly and not
+    be tied into a proprietary api language.
   %h3 Getting Started
   %p
     In order to access and even create accounts on behalf of individual users,
@@ -42,46 +43,60 @@
     %dt method
     %dd POST
     %dt
-      parameters (!required items are in&nbsp;
+      parameters
+    %dd
+      (!required items are in&nbsp;
       %span.api_key_or_value> bold
       , optional items are in&nbsp;
       %span.optional_api_key> italics
-      )
+      ; only a single value is allowed per parameter unless otherwise specified)
     %dd
       %dl
         %dt.api_key_or_value account_key
         %dd The SWS account key of the reseller. More information about obtaining an SWS account key can be found here
         %dt.api_key_or_value secret_key
         %dd The SWS secret key of the reseller. More information about obtaining an SWS account key can be found here
+        %dt.optional_api_key test
+        %dd
+          Put this request in test mode. If 'y', then the this will be a test order and will not be
+          charged and funds will not be deducted from the reseller account. If 'n', then the order will be processed
+          normally and funds deducted. Defaults to 'n' if this parameter is not specified.
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (make this request a test - order will not be deducted or saved)
+            %dd
+              %span.api_key_or_value n
+              (default; order will process normally and will be saved)
         %dt.api_key_or_value product
         %dd
           The product code of the ssl certificate being purchased. Select only one code from
           the following choices:
           %dl
             %dd
-              %span.api_key_or_value ev256
+              %span.api_key_or_value evssl
               (for Premium EV SSL)
             %dd
-              %span.api_key_or_value evmd256
+              %span.api_key_or_value evmdssl
               (for Premium EV Multi-domain SSL)
             %dd
-              %span.api_key_or_value ov256
+              %span.api_key_or_value ovssl
               (for High Assurance SSL)
             %dd
-              %span.api_key_or_value wc256
+              %span.api_key_or_value wcssl
               (for Multi-subdomain Wildcard SSL)
             %dd
-              %span.api_key_or_value md256
+              %span.api_key_or_value mdssl
               (for Multi-domain SSL)
             %dd
-              %span.api_key_or_value dv256
+              %span.api_key_or_value dvssl
               (for Free SSL)
             %dd
-              %span.api_key_or_value ucc256
+              %span.api_key_or_value uccssl
               (for UCC SSL)
         %dt.api_key_or_value period
         %dd
-          ~"Required (except for product=dv256 (Free SSL)). The number of days the certificate is valid for."
+          ~"Required (except for product=dvssl (Free SSL)). The number of days the certificate is valid for."
           Depending on the certificate specified by the 'product' key, different options are available (select only one):
           %dl
             %dd
@@ -93,7 +108,7 @@
               for EV SSL certs
         %dt.api_key_or_value server_count
         %dd
-          Applies to Wildcard, Multi-domain, EV Multi-domain, or UCC (product=wc256, md256, evmd265, or ucc256).
+          Applies only to Wildcard, Multi-domain, EV Multi-domain, or UCC (product=wcssl, mdssl, evmd265, or uccssl).
           The number of servers the ssl certificate will be installed on.
         %dt.api_key_or_value server_software
         %dd
@@ -106,7 +121,7 @@
         %dt
           %span.optional_api_key other_domains
         %dd
-          Applies to Multi-domain, EV Multi-domain, or UCC (product=md256, evmd256, or ucc256).
+          Applies only to Multi-domain, EV Multi-domain, or UCC (product=mdssl, evmdssl, or uccssl).
           A comma-separated (or whitespace-separated) list of Domain Names / IP
           Addresses to be placed into the SSL Certificate.
           If the CSR's Subject Alternative Name extension...
@@ -127,7 +142,7 @@
           environment does this automatically.
         %dt.optional_api_key domain
         %dd
-          Applies to Multi-domain, EV Multi-domain, or UCC (product=md256, evmd256, or ucc256).
+          Applies only to Multi-domain, EV Multi-domain, or UCC (product=mdssl, evmdssl, or uccssl).
           One of the domain names listed in the 'other_domains' parameter, which should appear
           as the first Common Name in the Subject DN of the resulting SSL certificate.
           %ul
@@ -140,7 +155,7 @@
               name instead.
         %dt.optional_api_key common_names
         %dd
-          Applies to Multi-domain or EV Multi-domain (product=md256 or evmd256).
+          Applies only to Multi-domain or EV Multi-domain (product=mdssl or evmdssl).
           %ul
             %li
               If omitted, all of the domain names listed in "other_domains" will be
@@ -154,26 +169,25 @@
               If 0, no Common Names will be included in the resulting certificate.
               Note that all of the domain names listed in "other_domains" will always be
               included as DNS Name components of the Subject Alternative Name
-              extension in the resulting Multi-domain SSL Certificate or EV Multi-
-              domain SSL Certificate.
+              extension in the resulting Multi-domain SSL Certificate or EV Multi-domain SSL Certificate.
           This parameter need not be specified for Unified Communications
           Certificates, since UCCs always have this prarmeter set to 1.
         %dt.api_key_or_value csr
         %dd
           Certificate signing request (Base-64 encoded). Opening and closing tags are optional i.e:
         %dd
-          \-----BEGIN xxxxx-----
-        %dd
-          and
-        %dd
-          \-----END xxxxx-----
+          %dl
+            %dt
+            %dd -----BEGIN xxxxx-----
+            %dd and
+            %dd -----END xxxxx-----
         %dd
           %ul.csr_fields
             %li
               %dt Version
               %dd 0
             %li
-              %dt Subject:
+              %dt Subject
               %dd
                 The fields may be in any order (although multiple street addresses, if
                 present, should be in the correct order). note: DirectoryString is a choice of
@@ -268,15 +282,131 @@
                 or sha256WithRSAEncryption (PKCS#1)
                 or sha384WithRSAEncryption (PKCS#1)
                 or sha512WithRSAEncryption (PKCS#1)
-  %h3 POST /folder/<id>/files
-  %p
-    Uploads a file into folder specified by it's numeric id <id>.
-  %dl
-    %dt version
-    %dd 1.0
-    %dt example url
-    %dd https://api.ssl.com/docs/1.0/folder/1/files
-    %dt method
-    %dd POST
-    %dt parameter
-    %dd filedata
+        %dt
+          %span.api_key_or_value organization_name
+          %span.optional_api_key [is optional if Organization Name can be parsed from the csr]
+        %dd
+          Represents the Organization Name.
+        %dt.optional_api_key organization_unit_name
+        %dd
+          Represents the Organization Unit Name (eg department name).
+        %dt.optional_api_key post_office_box
+        %dd
+          Represents the Post Office Box.
+        %dt
+          %span.api_key_or_value street_address_1
+          %span.optional_api_key [is optional if Street Address 1 can be parsed from the csr]
+        %dd
+          Represents the Street Address 1.
+        %dt.optional_api_key street_address_2
+        %dd
+          Represents the Street Address 2
+        %dt.optional_api_key street_address_3
+        %dd
+          Represents the Street Address 3
+        %dt
+          %span.api_key_or_value locality_name
+          %span.optional_api_key [is optional if Locality Name can be parsed from the csr]
+        %dd
+          Represents the Locality Name (eg city or town name).
+        %dt
+          %span.api_key_or_value state_or_province_name
+          %span.optional_api_key [is optional if State or Province Name can be parsed from the csr]
+        %dd
+          Represents the State or Province Name.
+        %dt
+          %span.api_key_or_value postal_code
+          %span.optional_api_key [is optional if Postal Code can be parsed from the csr]
+        %dd
+          Represents the Postal Code.
+        %dt
+          %span.api_key_or_value country_name
+          %span.optional_api_key [is optional if Country Name can be parsed from the csr]
+        %dd
+          Represents the Country Name (ISO3166 2-character country code).
+        %dt.optional_api_key duns_number
+        %dd
+          Represents the Dun and Bradstreet number.
+        %dt.optional_api_key company_number
+        %dd
+          Represents the company registration number.
+        %dt.optional_api_key registered_locality_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL (product=evssl or evmdssl). Represents the city or town (if any) of
+          jurisdiction in which the company is incorporated or registered.
+        %dt.optional_api_key registered_state_or_province_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL (product=evssl or evmdssl). Represents the state or province (if any)
+          of jurisdiction in which the company is incorporated or registered.
+        %dt.api_key_or_value registered_country_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL (product=evssl or evmdssl). Represents the Country Name
+          (ISO3166 2-character country code) of jurisdiction in which the company is incorporated or registered.
+        %dt.api_key_or_value incorporation_date
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL (product=evssl or evmdssl).
+          Represents the date of incorporation of the company (YYYY-MM-DD).
+        %dt.optional_api_key assumed_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL (product=evssl or evmdssl).
+          Represents the dba (doing business as) or assumed named of the company.
+        %dt.optional_api_key business_category
+        %dd
+          Represents the business category (or type) of the company or registrant.
+          %dl
+            %dd
+              %span.optional_api_value b
+              (for Private Organization)
+            %dd
+              %span.optional_api_value c
+              (for Government Entity)
+            %dd
+              %span.optional_api_value d
+              (for Business Entity)
+        %dt.optional_api_key email_address
+        %dd
+          Represents the email address(es) to send the processed ssl certificate to. Multiple addresses
+          can be specified by comma delimit. If this parameter is not specified, then the certificate
+          will be sent to the reseller admin email address. If value 'none' is specified, then the ssl
+          certificate will not be emailed to any email address, but the certificate still can be retrieved
+          via an api call.
+        %dt.optional_api_key contact_email_address
+        %dd
+          Represents an email address will be the only email address that SSL.com
+          Validation Staff will correspond with during the processing of this order. Otherwise reseller admin email
+          address will be used.
+        %dt.api_key_or_value dcv_email_address
+        %dd
+          Represents the email address with which to perform Domain Control Validation for this certificate.
+          See the documentation for the dcv_email_address_list API for more information.
+        %dt.optional_api_key ca_certificate_id
+        %dd
+          Overrides SSL.com’s default choice of CA certificate/key to
+          be used to issue this certificate.
+          This functionality is only available by special agreement with SSL.com.
+        %dt.api_key_or_value is_customer_validated
+        %dd
+          Has the customer been validated according to SSL.com's RA validation guidelines?
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (the host or reseller has validated the customer)
+            %dd
+              %span.api_key_or_value n
+              (SSL.com will perform the validation)
+        %dt.optional_api_key hide_certificate_reference
+        %dd
+          Hide the certificate reference number in the emailed ssl certificate. By default, the ssl certificate
+          reference number is displayed in the email.
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (hide the certificate reference number in the emailed ssl certificate)
+            %dd
+              %span.api_key_or_value n
+              (default; show the certificate reference number in the emailed ssl certificate)
+        %dt.optional_api_key external_order_number
+        %dd
+          This identifier is provided for integration with partner systems. If the external system has a record
+          or identifier that needs to associate with this particular ssl certificate order, then the developer
+          provides an external order number or identifier so that the developer can make the association.

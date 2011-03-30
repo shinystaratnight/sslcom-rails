@@ -15,7 +15,7 @@ ev_1_year:
  item_type: duration
  value: 365
  published_as: live
- serial: ev256ssl1yr
+ serial: evssl1yr
 
 ev_2_years:
  id: <%=id+=1%>
@@ -29,7 +29,7 @@ ev_2_years:
  item_type: duration
  value: 730
  published_as: live
- serial: ev256ssl2yr
+ serial: evssl2yr
 
 ov_1_year:
  id: <%=id+=1%>
@@ -43,7 +43,7 @@ ov_1_year:
  item_type: duration
  value: 365
  published_as: live
- serial: ov256ssl1yr
+ serial: ovssl1yr
 
 ov_2_years:
  id: <%=id+=1%>
@@ -57,7 +57,7 @@ ov_2_years:
  item_type: duration
  value: 730
  published_as: live
- serial: ov256ssl2yr
+ serial: ovssl2yr
 
 ov_3_years:
  id: <%=id+=1%>
@@ -71,7 +71,7 @@ ov_3_years:
  item_type: duration
  value: 1095
  published_as: live
- serial: ov256ssl3yr
+ serial: ovssl3yr
 
 ov_4_years:
  id: <%=id+=1%>
@@ -85,7 +85,7 @@ ov_4_years:
  item_type: duration
  value: 1460
  published_as: live
- serial: ov256ssl4yr
+ serial: ovssl4yr
 
 ov_5_years:
  id: <%=id+=1%>
@@ -99,7 +99,7 @@ ov_5_years:
  item_type: duration
  value: 1825
  published_as: live
- serial: ov256ssl5yr
+ serial: ovssl5yr
 
 dv_1_year:
  id: <%=id+=1%>
@@ -113,7 +113,7 @@ dv_1_year:
  item_type: duration
  value: 365
  published_as: live
- serial: dv256ssl1yr
+ serial: dvssl1yr
 
 wildcard_1_year:
  id: <%=id+=1%>
@@ -127,7 +127,7 @@ wildcard_1_year:
  item_type: duration
  value: 365
  published_as: live
- serial: wc256ssl1yr
+ serial: wcssl1yr
 
 wildcard_2_years:
  id: <%=id+=1%>
@@ -141,7 +141,7 @@ wildcard_2_years:
  item_type: duration
  value: 730
  published_as: live
- serial: wc256ssl2yr
+ serial: wcssl2yr
 
 wildcard_3_years:
  id: <%=id+=1%>
@@ -155,7 +155,7 @@ wildcard_3_years:
  item_type: duration
  value: 1095
  published_as: live
- serial: wc256ssl3yr
+ serial: wcssl3yr
 
 wildcard_4_years:
  id: <%=id+=1%>
@@ -169,7 +169,7 @@ wildcard_4_years:
  item_type: duration
  value: 1460
  published_as: live
- serial: wc256ssl4yr
+ serial: wcssl4yr
 
 wildcard_5_years:
  id: <%=id+=1%>
@@ -183,7 +183,7 @@ wildcard_5_years:
  item_type: duration
  value: 1825
  published_as: live
- serial: wc256ssl5yr
+ serial: wcssl5yr
 
 wildcard_1_year_server_license:
  id: <%=id+=1%>
@@ -197,7 +197,7 @@ wildcard_1_year_server_license:
  item_type: server_license
  value: 365
  published_as: live
- serial: wc256ssl1yrsl
+ serial: wcssl1yrsl
 
 wildcard_2_year_server_license:
  id: <%=id+=1%>
@@ -211,7 +211,7 @@ wildcard_2_year_server_license:
  item_type: server_license
  value: 730
  published_as: live
- serial: wc256ssl2yrsl
+ serial: wcssl2yrsl
 
 wildcard_3_year_server_license:
  id: <%=id+=1%>
@@ -225,7 +225,7 @@ wildcard_3_year_server_license:
  item_type: server_license
  value: 1095
  published_as: live
- serial: wc256ssl3yrsl
+ serial: wcssl3yrsl
 
 wildcard_4_year_server_license:
  id: <%=id+=1%>
@@ -239,7 +239,7 @@ wildcard_4_year_server_license:
  item_type: server_license
  value: 1460
  published_as: live
- serial: wc256ssl4yrsl
+ serial: wcssl4yrsl
 
 wildcard_5_year_server_license:
  id: <%=id+=1%>
@@ -253,7 +253,7 @@ wildcard_5_year_server_license:
  item_type: server_license
  value: 1825
  published_as: live
- serial: wc256ssl5yrsl
+ serial: wcssl5yrsl
 
 ucc_domain_1_year:
  id: <%=id+=1%>
@@ -267,7 +267,7 @@ ucc_domain_1_year:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: ucc256ssl1yrdm
+ serial: uccssl1yrdm
 
 ucc_domain_1_year_additional:
  id: <%=id+=1%>
@@ -281,7 +281,7 @@ ucc_domain_1_year_additional:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: ucc256ssl1yradm
+ serial: uccssl1yradm
 
 ucc_domain_2_years:
  id: <%=id+=1%>
@@ -295,7 +295,7 @@ ucc_domain_2_years:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: ucc256ssl2yrdm
+ serial: uccssl2yrdm
 
 ucc_domain_2_years_additional:
  id: <%=id+=1%>
@@ -309,7 +309,7 @@ ucc_domain_2_years_additional:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: ucc256ssl2yradm
+ serial: uccssl2yradm
 
 ucc_domain_3_years:
  id: <%=id+=1%>
@@ -323,7 +323,7 @@ ucc_domain_3_years:
  item_type: ucc_domain
  value: 1095
  published_as: live
- serial: ucc256ssl3yrdm
+ serial: uccssl3yrdm
 
 ucc_domain_3_years_additional:
  id: <%=id+=1%>
@@ -337,7 +337,7 @@ ucc_domain_3_years_additional:
  item_type: ucc_domain
  value: 1095
  published_as: live
- serial: ucc256ssl3yradm
+ serial: uccssl3yradm
 
 ucc_domain_4_years:
  id: <%=id+=1%>
@@ -351,7 +351,7 @@ ucc_domain_4_years:
  item_type: ucc_domain
  value: 1460
  published_as: live
- serial: ucc256ssl4yrdm
+ serial: uccssl4yrdm
 
 ucc_domain_4_years_additional:
  id: <%=id+=1%>
@@ -365,7 +365,7 @@ ucc_domain_4_years_additional:
  item_type: ucc_domain
  value: 1460
  published_as: live
- serial: ucc256ssl4yradm
+ serial: uccssl4yradm
 
 ucc_domain_5_years:
  id: <%=id+=1%>
@@ -379,7 +379,7 @@ ucc_domain_5_years:
  item_type: ucc_domain
  value: 1825
  published_as: live
- serial: ucc256ssl5yrdm
+ serial: uccssl5yrdm
 
 ucc_domain_5_years_additional:
  id: <%=id+=1%>
@@ -393,7 +393,7 @@ ucc_domain_5_years_additional:
  item_type: ucc_domain
  value: 1825
  published_as: live
- serial: ucc256ssl5yradm
+ serial: uccssl5yradm
 
 ucc_1_year_server_license:
  id: <%=id+=1%>
@@ -407,7 +407,7 @@ ucc_1_year_server_license:
  item_type: server_license
  value: 365
  published_as: live
- serial: ucc256ssl1yrsl
+ serial: uccssl1yrsl
 
 ucc_2_year_server_license:
  id: <%=id+=1%>
@@ -421,7 +421,7 @@ ucc_2_year_server_license:
  item_type: server_license
  value: 730
  published_as: live
- serial: ucc256ssl2yrsl
+ serial: uccssl2yrsl
 
 ucc_3_year_server_license:
  id: <%=id+=1%>
@@ -435,7 +435,7 @@ ucc_3_year_server_license:
  item_type: server_license
  value: 1095
  published_as: live
- serial: ucc256ssl3yrsl
+ serial: uccssl3yrsl
 
 ucc_4_year_server_license:
  id: <%=id+=1%>
@@ -449,7 +449,7 @@ ucc_4_year_server_license:
  item_type: server_license
  value: 1460
  published_as: live
- serial: ucc256ssl4yrsl
+ serial: uccssl4yrsl
 
 ucc_5_year_server_license:
  id: <%=id+=1%>
@@ -463,7 +463,7 @@ ucc_5_year_server_license:
  item_type: server_license
  value: 1825
  published_as: live
- serial: ucc256ssl5yrsl
+ serial: uccssl5yrsl
 
 ev_ucc_domain_1_year:
  id: <%=id+=1%>
@@ -477,7 +477,7 @@ ev_ucc_domain_1_year:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: evucc256ssl1yrdm
+ serial: evuccssl1yrdm
 
 ev_ucc_domain_1_year_additional:
  id: <%=id+=1%>
@@ -491,7 +491,7 @@ ev_ucc_domain_1_year_additional:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: evucc256ssl1yradm
+ serial: evuccssl1yradm
 
 ev_ucc_domain_2_years:
  id: <%=id+=1%>
@@ -505,7 +505,7 @@ ev_ucc_domain_2_years:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: evucc256ssl2yrdm
+ serial: evuccssl2yrdm
 
 ev_ucc_domain_2_years_additional:
  id: <%=id+=1%>
@@ -519,7 +519,7 @@ ev_ucc_domain_2_years_additional:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: evucc256ssl2yradm
+ serial: evuccssl2yradm
 
 ev_ucc_1_year_server_license:
  id: <%=id+=1%>
@@ -533,7 +533,7 @@ ev_ucc_1_year_server_license:
  item_type: server_license
  value: 365
  published_as: live
- serial: evucc256ssl1yrsl
+ serial: evuccssl1yrsl
 
 ev_ucc_2_year_server_license:
  id: <%=id+=1%>
@@ -547,7 +547,7 @@ ev_ucc_2_year_server_license:
  item_type: duration
  value: 730
  published_as: live
- serial: evucc256ssl2yrsl
+ serial: evuccssl2yrsl
 
 <%
 percentages = [1.0, 0.8, 0.75, 0.7, 0.6]
@@ -565,7 +565,7 @@ ev_1_year_tier_<%=i%>:
  item_type: duration
  value: 365
  published_as: live
- serial: ev256ssl1yr<%=i%>tr
+ serial: evssl1yr<%=i%>tr
 
 ev_2_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -579,7 +579,7 @@ ev_2_years_tier_<%=i%>:
  item_type: duration
  value: 730
  published_as: live
- serial: ev256ssl2yr<%=i%>tr
+ serial: evssl2yr<%=i%>tr
 
 ov_1_year_tier_<%=i%>:
  id: <%=id+=1%>
@@ -593,7 +593,7 @@ ov_1_year_tier_<%=i%>:
  item_type: duration
  value: 365
  published_as: live
- serial: ov256ssl1yr<%=i%>tr
+ serial: ovssl1yr<%=i%>tr
 
 ov_2_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -607,7 +607,7 @@ ov_2_years_tier_<%=i%>:
  item_type: duration
  value: 730
  published_as: live
- serial: ov256ssl2yr<%=i%>tr
+ serial: ovssl2yr<%=i%>tr
 
 ov_3_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -621,7 +621,7 @@ ov_3_years_tier_<%=i%>:
  item_type: duration
  value: 1095
  published_as: live
- serial: ov256ssl3yr<%=i%>tr
+ serial: ovssl3yr<%=i%>tr
 
 ov_4_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -635,7 +635,7 @@ ov_4_years_tier_<%=i%>:
  item_type: duration
  value: 1460
  published_as: live
- serial: ov256ssl4yr<%=i%>tr
+ serial: ovssl4yr<%=i%>tr
 
 ov_5_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -649,7 +649,7 @@ ov_5_years_tier_<%=i%>:
  item_type: duration
  value: 1825
  published_as: live
- serial: ov256ssl5yr<%=i%>tr
+ serial: ovssl5yr<%=i%>tr
 
 dv_1_year_tier_<%=i%>:
  id: <%=id+=1%>
@@ -663,7 +663,7 @@ dv_1_year_tier_<%=i%>:
  item_type: duration
  value: 365
  published_as: live
- serial: dv256ssl1yr<%=i%>tr
+ serial: dvssl1yr<%=i%>tr
 
 wildcard_1_year_tier_<%=i%>:
  id: <%=id+=1%>
@@ -677,7 +677,7 @@ wildcard_1_year_tier_<%=i%>:
  item_type: duration
  value: 365
  published_as: live
- serial: wc256ssl1yr<%=i%>tr
+ serial: wcssl1yr<%=i%>tr
 
 wildcard_2_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -691,7 +691,7 @@ wildcard_2_years_tier_<%=i%>:
  item_type: duration
  value: 730
  published_as: live
- serial: wc256ssl2yr<%=i%>tr
+ serial: wcssl2yr<%=i%>tr
 
 wildcard_3_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -705,7 +705,7 @@ wildcard_3_years_tier_<%=i%>:
  item_type: duration
  value: 1095
  published_as: live
- serial: wc256ssl3yr<%=i%>tr
+ serial: wcssl3yr<%=i%>tr
 
 wildcard_4_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -719,7 +719,7 @@ wildcard_4_years_tier_<%=i%>:
  item_type: duration
  value: 1460
  published_as: live
- serial: wc256ssl4yr<%=i%>tr
+ serial: wcssl4yr<%=i%>tr
 
 wildcard_5_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -733,7 +733,7 @@ wildcard_5_years_tier_<%=i%>:
  item_type: duration
  value: 1825
  published_as: live
- serial: wc256ssl5yr<%=i%>tr
+ serial: wcssl5yr<%=i%>tr
 
 wildcard_1_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -747,7 +747,7 @@ wildcard_1_year_server_license_tier_<%=i%>:
  item_type: server_license_tier_<%=i%>
  value: 365
  published_as: live
- serial: wc256ssl1yrsl<%=i%>tr
+ serial: wcssl1yrsl<%=i%>tr
 
 wildcard_2_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -761,7 +761,7 @@ wildcard_2_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 730
  published_as: live
- serial: wc256ssl2yrsl<%=i%>tr
+ serial: wcssl2yrsl<%=i%>tr
 
 wildcard_3_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -775,7 +775,7 @@ wildcard_3_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1095
  published_as: live
- serial: wc256ssl3yrsl<%=i%>tr
+ serial: wcssl3yrsl<%=i%>tr
 
 wildcard_4_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -789,7 +789,7 @@ wildcard_4_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1460
  published_as: live
- serial: wc256ssl4yrsl<%=i%>tr
+ serial: wcssl4yrsl<%=i%>tr
 
 wildcard_5_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -803,7 +803,7 @@ wildcard_5_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1825
  published_as: live
- serial: wc256ssl5yrsl<%=i%>tr
+ serial: wcssl5yrsl<%=i%>tr
 
 ucc_domain_1_year_tier_<%=i%>:
  id: <%=id+=1%>
@@ -817,7 +817,7 @@ ucc_domain_1_year_tier_<%=i%>:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: ucc256ssl1yrdm<%=i%>tr
+ serial: uccssl1yrdm<%=i%>tr
 
 ucc_domain_1_year_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -831,7 +831,7 @@ ucc_domain_1_year_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: ucc256ssl1yradm<%=i%>tr
+ serial: uccssl1yradm<%=i%>tr
 
 ucc_domain_2_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -845,7 +845,7 @@ ucc_domain_2_years_tier_<%=i%>:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: ucc256ssl2yrdm<%=i%>tr
+ serial: uccssl2yrdm<%=i%>tr
 
 ucc_domain_2_years_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -859,7 +859,7 @@ ucc_domain_2_years_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: ucc256ssl2yradm<%=i%>tr
+ serial: uccssl2yradm<%=i%>tr
 
 ucc_domain_3_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -873,7 +873,7 @@ ucc_domain_3_years_tier_<%=i%>:
  item_type: ucc_domain
  value: 1095
  published_as: live
- serial: ucc256ssl3yrdm<%=i%>tr
+ serial: uccssl3yrdm<%=i%>tr
 
 ucc_domain_3_years_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -887,7 +887,7 @@ ucc_domain_3_years_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 1095
  published_as: live
- serial: ucc256ssl3yradm<%=i%>tr
+ serial: uccssl3yradm<%=i%>tr
 
 ucc_domain_4_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -901,7 +901,7 @@ ucc_domain_4_years_tier_<%=i%>:
  item_type: ucc_domain
  value: 1460
  published_as: live
- serial: ucc256ssl4yrdm<%=i%>tr
+ serial: uccssl4yrdm<%=i%>tr
 
 ucc_domain_4_years_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -915,7 +915,7 @@ ucc_domain_4_years_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 1460
  published_as: live
- serial: ucc256ssl4yradm<%=i%>tr
+ serial: uccssl4yradm<%=i%>tr
 
 ucc_domain_5_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -929,7 +929,7 @@ ucc_domain_5_years_tier_<%=i%>:
  item_type: ucc_domain
  value: 1825
  published_as: live
- serial: ucc256ssl5yrdm<%=i%>tr
+ serial: uccssl5yrdm<%=i%>tr
 
 ucc_domain_5_years_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -943,7 +943,7 @@ ucc_domain_5_years_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 1825
  published_as: live
- serial: ucc256ssl5yradm<%=i%>tr
+ serial: uccssl5yradm<%=i%>tr
 
 ucc_1_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -957,7 +957,7 @@ ucc_1_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 365
  published_as: live
- serial: ucc256ssl1yrsl<%=i%>tr
+ serial: uccssl1yrsl<%=i%>tr
 
 ucc_2_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -971,7 +971,7 @@ ucc_2_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 730
  published_as: live
- serial: ucc256ssl2yrsl<%=i%>tr
+ serial: uccssl2yrsl<%=i%>tr
 
 ucc_3_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -985,7 +985,7 @@ ucc_3_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1095
  published_as: live
- serial: ucc256ssl3yrsl<%=i%>tr
+ serial: uccssl3yrsl<%=i%>tr
 
 ucc_4_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -999,7 +999,7 @@ ucc_4_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1460
  published_as: live
- serial: ucc256ssl4yrsl<%=i%>tr
+ serial: uccssl4yrsl<%=i%>tr
 
 ucc_5_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1013,7 +1013,7 @@ ucc_5_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 1825
  published_as: live
- serial: ucc256ssl5yrsl<%=i%>tr
+ serial: uccssl5yrsl<%=i%>tr
 
 ev_ucc_domain_1_year_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1027,7 +1027,7 @@ ev_ucc_domain_1_year_tier_<%=i%>:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: evucc256ssl1yrdm<%=i%>tr
+ serial: evuccssl1yrdm<%=i%>tr
 
 ev_ucc_domain_1_year_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1041,7 +1041,7 @@ ev_ucc_domain_1_year_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 365
  published_as: live
- serial: evucc256ssl1yradm<%=i%>tr
+ serial: evuccssl1yradm<%=i%>tr
 
 ev_ucc_domain_2_years_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1055,7 +1055,7 @@ ev_ucc_domain_2_years_tier_<%=i%>:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: evucc256ssl2yrdm<%=i%>tr
+ serial: evuccssl2yrdm<%=i%>tr
 
 ev_ucc_domain_2_years_additional_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1069,7 +1069,7 @@ ev_ucc_domain_2_years_additional_tier_<%=i%>:
  item_type: ucc_domain
  value: 730
  published_as: live
- serial: evucc256ssl2yradm<%=i%>tr
+ serial: evuccssl2yradm<%=i%>tr
 
 ev_ucc_1_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1083,7 +1083,7 @@ ev_ucc_1_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 365
  published_as: live
- serial: evucc256ssl1yrsl<%=i%>tr
+ serial: evuccssl1yrsl<%=i%>tr
 
 ev_ucc_2_year_server_license_tier_<%=i%>:
  id: <%=id+=1%>
@@ -1097,7 +1097,7 @@ ev_ucc_2_year_server_license_tier_<%=i%>:
  item_type: server_license
  value: 730
  published_as: live
- serial: evucc256ssl2yrsl<%=i%>tr
+ serial: evuccssl2yrsl<%=i%>tr
 <%end%>
 
 migrated:

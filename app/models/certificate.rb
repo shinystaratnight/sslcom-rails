@@ -101,7 +101,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_multi?
-    is_ucc? || is_wildcard?
+    is_ucc? || is_wildcard? || is_multidomain?
+  end
+
+  def is_multidomain?
+    product.include?('md')
   end
 
   def find_tier(tier)
