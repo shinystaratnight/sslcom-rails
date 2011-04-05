@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110204103124) do
+ActiveRecord::Schema.define(:version => 20110404202432) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -89,6 +89,47 @@ ActiveRecord::Schema.define(:version => 20110204103124) do
     t.binary   "data"
     t.binary   "salt"
     t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "certificate_api_requests", :force => true do |t|
+    t.integer  "server_software_id"
+    t.integer  "country_id"
+    t.string   "account_key"
+    t.string   "secret_key"
+    t.boolean  "test"
+    t.string   "product"
+    t.integer  "period"
+    t.integer  "server_count"
+    t.string   "other_domains"
+    t.string   "common_names_flag"
+    t.text     "csr"
+    t.string   "organization_name"
+    t.string   "post_office_box"
+    t.string   "street_address_1"
+    t.string   "street_address_2"
+    t.string   "street_address_3"
+    t.string   "locality_name"
+    t.string   "state_or_province_name"
+    t.string   "postal_code"
+    t.string   "duns_number"
+    t.string   "company_number"
+    t.string   "registered_locality_name"
+    t.string   "registered_state_or_province_name"
+    t.string   "registered_country_name"
+    t.string   "assumed_name"
+    t.string   "business_category"
+    t.string   "email_address"
+    t.string   "contact_email_address"
+    t.string   "dcv_email_address"
+    t.string   "ca_certificate_id"
+    t.date     "incorporation_date"
+    t.boolean  "is_customer_validated"
+    t.boolean  "hide_certificate_reference"
+    t.string   "external_order_number"
+    t.string   "external_order_number_constraint"
+    t.string   "response"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

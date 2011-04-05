@@ -153,7 +153,7 @@
               For Unified Communications Certificates: If this parameter is omitted, then
               the value of the CSR's Common Name will be used as the primary domain
               name instead.
-        %dt.optional_api_key common_names
+        %dt.optional_api_key common_names_flag
         %dd
           Applies only to Multi-domain or EV Multi-domain (product=mdssl or evmdssl).
           %ul
@@ -171,7 +171,7 @@
               included as DNS Name components of the Subject Alternative Name
               extension in the resulting Multi-domain SSL Certificate or EV Multi-domain SSL Certificate.
           This parameter need not be specified for Unified Communications
-          Certificates, since UCCs always have this prarmeter set to 1.
+          Certificates, since UCCs always have this parameter set to 1.
         %dt.api_key_or_value csr
         %dd
           Certificate signing request (Base-64 encoded). Opening and closing tags are optional i.e:
@@ -365,8 +365,8 @@
               (for Business Entity)
         %dt.optional_api_key email_address
         %dd
-          Represents the email address(es) to send the processed ssl certificate to. Multiple addresses
-          can be specified by comma delimit. If this parameter is not specified, then the certificate
+          Represents the email address to send the processed ssl certificate to.
+          If this parameter is not specified, then the certificate
           will be sent to the reseller admin email address. If value 'none' is specified, then the ssl
           certificate will not be emailed to any email address, but the certificate still can be retrieved
           via an api call.

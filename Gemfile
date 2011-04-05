@@ -17,13 +17,11 @@ gem 'money', '2.1.0'
 gem 'will_paginate', '3.0.pre2'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
-#gem 'haml'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
 gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
-gem "workflow"
 gem "savon", "0.7.9"
 gem 'rubyzip'
 gem 'compass', ">= 0.11.beta.2"
@@ -51,10 +49,10 @@ gem 'sinatra'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
   group :development, :test do
-#   gem 'webrat'
-#   gem 'cucumber'
+# gem 'webrat'
+# gem 'cucumber'
     gem 'ruby_parser'
-#    gem 'ruby-debug19', :require => 'ruby-debug'
+# gem 'ruby-debug19', :require => 'ruby-debug'
     gem "rspec-rails", ">= 2.0.0.beta.22"
   end
 
