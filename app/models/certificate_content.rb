@@ -16,6 +16,14 @@ class CertificateContent < ActiveRecord::Base
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
    po_box address1 address2 address3 city state postal_code email phone ext fax)
 
+  #SSL.com=>Comodo
+  COMODO_SERVER_SOFTWARE_MAPPINGS = {
+      1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
+      9=>6, 10=>29, 11=>32, 12=>7, 13=>8, 14=>9, 15=>0,
+      16=>11, 17=>12, 18=>13, 19=>14, 20=>35, 21=>15,
+      22=>16, 23=>17, 24=>18, 25=>30, 26=>19, 27=>20, 28=>21,
+      29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28}
+
   serialize :domains
   validates_presence_of :server_software_id, :signing_request,
     :if => :certificate_order_has_csr
@@ -114,6 +122,10 @@ class CertificateContent < ActiveRecord::Base
 
   def expired?
     csr.signed_certificate.expired? if csr.try(:signed_certificate)
+  end
+
+  def comodo_server_software_id
+    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
   end
 
   private

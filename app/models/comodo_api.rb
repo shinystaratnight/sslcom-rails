@@ -1,17 +1,24 @@
+require 'net/http'
 require 'net/https'
 require 'open-uri'
+
 class ComodoApi
 
-  def apply_for_certificate
-    apply_location = "https://secure.comodo.net/products/!AutoApplySSL"
+  #
+  def self.apply_for_certificate(certificate_order)
+    options = certificate_order.options_for_ca
 
-    url = URI.parse('https://MY_URL')
+    host = "https://secure.comodo.net/products/!AutoApplySSL"
+    url = URI.parse(host)
     req = Net::HTTP::Post.new(url.path)
-    req.form_data = data
-    req.basic_auth url.user, url.password if url.user
-    con = Net::HTTP.new(url.host, url.port)
+    con = Net::HTTP.new(url.host, 443)
+    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
     con.use_ssl = true
-    con.start {|http| http.request(req)}
+    res = con.start do |http|
+      options = options.map{|k,v|"#{k}=#{v}"}
+      http.request_post('/products/!AutoApplySSL', options.join("&"))
+    end
   end
 
   def self.test

@@ -45,7 +45,7 @@ class CertificateOrder < ActiveRecord::Base
       '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
       merge(options)
   }
-
+  
   FULL = 'full'
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
@@ -369,7 +369,42 @@ class CertificateOrder < ActiveRecord::Base
   def v2_line_items=(line_items)
     self.preferred_v2_line_items = line_items.join('|')
   end
+
+  def options_for_ca
+    co_csr = certificate_content.csr
+    options = {
+      'loginName' => 'likx2m7j',
+      'loginPassword' => 'Jimi2Kimi2',
+      'test' => 'Y',
+      'product' => certificate.comodo_product_id.to_s,
+      'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
+      'days' => certificate_content.duration.to_s,
+      'csr' => co_csr.body,
+      'prioritiseCSRValues' => 'N'
+    }
+    fill_csr_fields options, certificate_content.registrant
+    unless co_csr.csr_override.blank?
+      fill_csr_fields options, co_csr.csr_override
+    end
+    options.merge('domainNames'=>'d') if certificate.is_ucc?
+    options
+  end
+
   private
+
+  def fill_csr_fields(options, obj)
+    options.merge(
+      'organizationName' => obj.company_name,
+      'organizationalUnitName' => obj.department,
+      'postOfficeBox' => obj.po_box,
+      'streetAddress1' => obj.address1,
+      'streetAddress2' => obj.address2,
+      'streetAddress3' => obj.address3,
+      'localityName' => obj.city,
+      'stateOrProvinceName' => obj.state,
+      'postalCode' => obj.postal_code,
+      'countryName' => obj.country)
+  end
 
   def post_process_csr
     certificate_content.submit_csr!

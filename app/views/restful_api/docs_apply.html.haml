@@ -31,15 +31,15 @@
 %h2
   SSL API Developer's Guide
 .default_container
-  %h3~"POST /certificates/<version>/apply"
+  %h3~"POST /certificates/<version>/create"
   %p
-    Apply for an ssl.com certificate. Upon successful application, the price (if any) of the ssl certificate will be
+    Create an ssl.com certificate order. Upon successful application, the price (if any) of the ssl certificate will be
     deducted from reseller account associated with the account number specified in the account_key.
   %dl.listing
     %dt version
     %dd 1.0
     %dt example url
-    %dd https://sws.ssl.com/certificates/1.0/apply
+    %dd https://sws.ssl.com/certificates/1.0/create
     %dt method
     %dd POST
     %dt
@@ -410,3 +410,80 @@
           This identifier is provided for integration with partner systems. If the external system has a record
           or identifier that needs to associate with this particular ssl certificate order, then the developer
           provides an external order number or identifier so that the developer can make the association.
+    %dt
+      successful response
+    %dd
+      Upon successful order placement, returns a JSON formatted response containing information about the newly created
+      ssl certificate order:
+      %dl
+        %dt.api_key_or_value order_number
+        %dd This is the order number that should be used when referencing this new order.
+        %dt.api_key_or_value order_status
+        %dd
+          Represents the status of the order. Valid values are:
+          %dl
+            %dd
+              "waiting for domain control validation"
+            %dd
+              "waiting for documents"
+            %dd
+              "pending validation"
+            %dd
+              "validated"
+            %dd
+              "issued"
+        %dt.api_key_or_value certificate_url
+        %dd This is the url where the ssl certificate can be managed or downloaded.
+        %dt.api_key_or_value order_receipt_url
+        %dd This is the url where order receipt is displayed.
+        %dt.api_key_or_value smart_seal_url
+        %dd This is the url where the smart seal can be configured.
+        %dt.api_key_or_value validation_documents_url
+        %dd This is the url where validation documents can be submitted or reviewed for acceptance.
+    %dd
+      Sample JSON return value for a successful request:
+      %dl
+        %dd
+          {"order_number" : "abcd1234", "order_status" : "pending validation",
+          "certificate_url" : "https://www.ssl.com/certificate_orders/abcd1234",
+          "order_receipt_url" : "https://www.ssl.com/orders/abcd1234",
+          "smart_seal_url" : "https://www.ssl.com/smart_seals/abcd1234",
+          "validation_documents_url" : "https://www.ssl.com/validations/abcd1234"}
+    %dt
+      error codes
+    %dd
+      If order placement is unsuccessful, then the JSON response will include only include error_code and
+      error_message keys. Each error_code and it's corresponding error_message are as follows:
+      %dl
+        -CertificateApiRequest::ERROR_CODES.each do |k, v|
+          %dd
+            %span.api_key_or_value=k
+            =v
+    %dd
+      Sample JSON return value for a failed request:
+      %dl
+        %dd
+          {"error_code" : "-3", "error_message" : "The 'CSR' argument is missing!"}
+    %dt
+      error handling
+    %dd
+      All errors are returned using standard HTTP error code syntax. For example, you should recognize a
+      404 error means, roughly, that the certificate you are trying to find can't be found.
+      If there is more information, the SSL.com API will include that info in the body of the return call in
+      standard JSON format.
+      %dl
+        %dt.optional_api_key 400
+        %dd
+          Bad input parameter. Error message body will provide error field name and error reason.
+        %dt.optional_api_key 401
+        %dd
+          Bad or expired key. This can happen if the secret key is expired or revoke. To fix, simply
+          request a new secret key.
+        %dt.optional_api_key 403
+        %dd
+          Access is denied. This could be invalid account_key and/or secret_key values are being used.
+          Standard API layer errors
+        %dt.optional_api_key 405
+        %dd Request method not expected (generally should be GET or POST).
+        %dt.optional_api_key 5xx Server error
+        %dd Temporary system error (try the request again).

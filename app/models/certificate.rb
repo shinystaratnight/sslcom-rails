@@ -38,6 +38,9 @@ class Certificate < ActiveRecord::Base
     "SSL128WCG10 Wildcard SSL Certificate"], "wildcard", "wildcard"]
   MAP_TO_UCC=[["SSL UC Certificate"], "ucc", "ucc"]
 
+  COMODO_PRODUCT_MAPPINGS =
+      {"free"=> 43, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
+
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
   def self.map_to_legacy(description, mapping=nil)
@@ -101,11 +104,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_multi?
-    is_ucc? || is_wildcard? || is_multidomain?
-  end
-
-  def is_multidomain?
-    product.include?('md')
+    is_ucc? || is_wildcard?
   end
 
   def find_tier(tier)
@@ -167,5 +166,9 @@ class Certificate < ActiveRecord::Base
   def parse_certificate_chain
     preferred_certificate_chain.split(",").
       map(&:strip).map{|a|a.split(":")}
+  end
+
+  def comodo_product_id
+    COMODO_PRODUCT_MAPPINGS[product_root]
   end
 end

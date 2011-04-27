@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110404202432) do
+ActiveRecord::Schema.define(:version => 20110427215546) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -222,6 +222,23 @@ ActiveRecord::Schema.define(:version => 20110404202432) do
     t.string  "name"
     t.string  "iso3_code"
     t.integer "num_code"
+  end
+
+  create_table "csr_overrides", :force => true do |t|
+    t.integer  "csr_id"
+    t.string   "common_name"
+    t.string   "organization"
+    t.string   "organization_unit"
+    t.string   "address_1"
+    t.string   "address_2"
+    t.string   "address_3"
+    t.string   "po_box"
+    t.string   "state"
+    t.string   "locality"
+    t.string   "postal_code"
+    t.string   "country"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "csrs", :force => true do |t|
