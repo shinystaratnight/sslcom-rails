@@ -304,7 +304,7 @@ class CertificateOrder < ActiveRecord::Base
 
   %W(processed receipt confirmation).each do |et|
     define_method("#{et}_recipients") do
-      returning addys = [] do
+      [].tap do |addys|
         addys << ssl_account.reseller.email if
           ssl_account.is_registered_reseller? &&
           ssl_account.send("preferred_#{et}_include_reseller?")
@@ -371,29 +371,39 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def options_for_ca
-    co_csr = certificate_content.csr
-    options = {
-      'loginName' => 'likx2m7j',
-      'loginPassword' => 'Jimi2Kimi2',
-      'test' => 'Y',
-      'product' => certificate.comodo_product_id.to_s,
-      'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
-      'days' => certificate_content.duration.to_s,
-      'csr' => co_csr.body,
-      'prioritiseCSRValues' => 'N'
-    }
-    fill_csr_fields options, certificate_content.registrant
-    unless co_csr.csr_override.blank?
-      fill_csr_fields options, co_csr.csr_override
+    {}.tap do |options|
+      certificate_content.csr.tap do |csr|
+        options.merge!(
+          'loginName' => 'likx2m7j',
+          'loginPassword' => 'Jimi2Kimi2',
+          'test' => 'Y',
+          'product' => certificate.comodo_product_id.to_s,
+          'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
+          'days' => certificate_content.duration.to_s,
+          'csr' => CGI::escape(csr.body),
+          'prioritiseCSRValues' => 'N',
+          'isCustomerValidated' => 'Y'
+        )
+        fill_csr_fields options, certificate_content.registrant
+        unless csr.csr_override.blank?
+          fill_csr_fields options, csr.csr_override
+        end
+        if certificate.is_ev?
+          certificate_content.tap do |cc|
+            options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
+            options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
+            options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
+          end
+        end
+        options.merge!('domainNames'=>'d') if certificate.is_ucc?
+      end
     end
-    options.merge('domainNames'=>'d') if certificate.is_ucc?
-    options
   end
 
   private
 
   def fill_csr_fields(options, obj)
-    options.merge(
+    options.merge!(
       'organizationName' => obj.company_name,
       'organizationalUnitName' => obj.department,
       'postOfficeBox' => obj.po_box,

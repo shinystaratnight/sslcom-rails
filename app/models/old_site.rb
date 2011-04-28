@@ -460,7 +460,7 @@ if Rails.env=='development'
       alias_attribute :unsigned_cert, :UnsignedCert
 
       def migrate(co)
-        returning co.certificate_contents.create do |cc|
+        co.certificate_contents.create.tap do |cc|
           cc.created_at=self.SubmitDate
           cc.server_software=OldSite::ServerType.server_software(
             self.ServerType)
@@ -536,7 +536,7 @@ if Rails.env=='development'
       def migrate
         unless user.blank?
           #create order
-          returning ::Order.create(:created_at=>self.OrderDate) do |o|
+          ::Order.create(:created_at=>self.OrderDate).tap do |o|
             o.billable=sa
             o.preferred_migrated_from_v2 = true
             o.cents=(self.OrderTotal*100).to_i
@@ -669,7 +669,7 @@ if Rails.env=='development'
         :foreign_key=>'MerchantID'
 
       def migrate(cc)
-        returning self.copy_attributes_to(cc.create_registrant) do |r|
+        self.copy_attributes_to(cc.create_registrant).tap do |r|
           if r.save && cc.workflow_state!='issued'
             cc.update_attribute :workflow_state, 'info_provided'
           end
@@ -677,7 +677,7 @@ if Rails.env=='development'
       end
 
       def copy_attributes_to(registrant)
-        returning registrant do |r|
+        registrant.tap do |r|
           r.company_name=self.MerchantName
           r.department=self.MerchantDept
           r.address1=self.MerchantStreet1
@@ -703,7 +703,7 @@ if Rails.env=='development'
 
       def migrate(cc)
         unless self.MerchantID==0
-          returning cc.certificate_contacts.build do |c_contact|
+          cc.certificate_contacts.build.tap do |c_contact|
             self.copy_attributes_to c_contact
             if c_contact.save
               cc.update_attribute :workflow_state, 'contacts_provided' unless
@@ -714,7 +714,7 @@ if Rails.env=='development'
       end
 
       def copy_attributes_to(certificate_contact)
-        returning certificate_contact do |cc|
+        certificate_contact.tap do |cc|
           type=self.contact_type.ContactTypeDesc.downcase
           cc.roles = type=='business' ? %w(validation) : [type]
           cc.title=self.MCTitle

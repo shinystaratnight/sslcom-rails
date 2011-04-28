@@ -1,6 +1,6 @@
 module ContactsHelper
   def setup_certificate_contacts(certificate_content)
-    returning(certificate_content) do |cc|
+    certificate_content.tap do |cc|
       if cc.certificate_contacts.empty?
         cc.billing_checkbox, cc.technical_checkbox, cc.validation_checkbox =
           true, true, true

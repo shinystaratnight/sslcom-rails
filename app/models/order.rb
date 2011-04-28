@@ -43,10 +43,10 @@ class Order < ActiveRecord::Base
   def pay(credit_card, options = {})
     response = gateway.purchase(self.amount, credit_card, options_for_payment(options))
     if response.success?
-      returning self.payments.build(:amount => self.amount,
+      self.payments.build(:amount => self.amount,
           :confirmation => response.authorization,
           :cleared_at => Time.now,
-          :address => options[:billing_address]) do |payment|
+          :address => options[:billing_address]).tap do |payment|
         self.paid_at = Time.now
         payment.save && self.save unless new_record?
       end

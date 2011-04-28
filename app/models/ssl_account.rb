@@ -206,7 +206,7 @@ class SslAccount < ActiveRecord::Base
 
   %W(receipt confirmation).each do |et|
     define_method("#{et}_recipients") do
-      returning addys = [] do
+      [].tap do |addys|
         addys << reseller.email if
           is_registered_reseller? &&
           send("preferred_#{et}_include_reseller?")
