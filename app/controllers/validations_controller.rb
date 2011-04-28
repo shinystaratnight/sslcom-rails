@@ -196,6 +196,11 @@ class ValidationsController < ApplicationController
     end
   end
 
+  def send_to_ca
+    @certificate_order = CertificateOrder.find_by_ref(params[:id])
+    ComodoApi.apply_for_certificate(@certificate_order)
+  end
+
   private
 
   def create_with_attachment file

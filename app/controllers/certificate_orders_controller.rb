@@ -280,10 +280,6 @@ class CertificateOrdersController < ApplicationController
     t.close
   end
 
-  def send_to_ca
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
-  end
-
   private
 
   def recert(action)

@@ -155,3 +155,12 @@
                       =co.notes
                     -else
                       no notes found
+                %ul#send_to_ca_box
+                  -if current_user.is_admin?
+                    %li
+                      %strong
+                        process certificate signing request
+                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(co)
+                    %li
+                      #sent_to_ca_results
+

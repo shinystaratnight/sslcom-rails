@@ -19,6 +19,6 @@ class CreateCsrOverrides < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table :csrs
+    drop_table :csrs_overrides
   end
 end

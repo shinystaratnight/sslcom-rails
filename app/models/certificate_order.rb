@@ -11,6 +11,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
+  has_many    :ca_api_requests, dependent: :destroy
+
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration
   attr_accessor_with_default :has_csr, false

@@ -6430,3 +6430,14 @@ ul.csr_fields li, .default_container .info_listing ul.csr_fields#privacy li {
   list-style-type: none;
   margin-left: 0px;
 }
+
+/* line 4767, ../../../app/stylesheets/main.sass */
+ul#send_to_ca_box {
+  -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
+  -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
+  -o-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
+  margin: 1em 0;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}

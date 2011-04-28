@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110427215546) do
+ActiveRecord::Schema.define(:version => 20110428222053) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -89,6 +89,16 @@ ActiveRecord::Schema.define(:version => 20110427215546) do
     t.binary   "data"
     t.binary   "salt"
     t.string   "notes"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "ca_api_requests", :force => true do |t|
+    t.integer  "certificate_order_id"
+    t.string   "request_url"
+    t.string   "parameters"
+    t.string   "method"
+    t.string   "response"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
