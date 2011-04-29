@@ -11,6 +11,7 @@ class ValidationsController < ApplicationController
   filter_access_to :all
   filter_access_to :requirements, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :edit, :attribute_check=>false
+  filter_access_to :send_to_ca, require: :admin_manage
   in_place_edit_for :validation_history, :notes
 
   def new
@@ -197,8 +198,12 @@ class ValidationsController < ApplicationController
   end
 
   def send_to_ca
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
-    ComodoApi.apply_for_certificate(@certificate_order)
+    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
+    result=ComodoApi.apply_for_certificate(@certificate_order)
+    respond_to do |format|
+      format.js {render :json=>{:result=>render_to_string(:partial=>
+          'sent_ca_result', locals: {ca_response: result})}}
+    end
   end
 
   private

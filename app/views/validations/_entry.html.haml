@@ -160,7 +160,11 @@
                     %li
                       %strong
                         process certificate signing request
-                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(co)
+                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(co), remote: true, id: "send_to_ca"
                     %li
-                      #sent_to_ca_results
+                      #processing_ca
+                        =image_tag 'waiting_bar_medium.gif'
+                        %span processing...
+                      %dl#sent_to_ca_results
+                        =render partial: "sent_ca_result", collection: co.ca_api_requests.compact, as: :ca_response
 

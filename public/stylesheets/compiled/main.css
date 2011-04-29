@@ -6437,7 +6437,29 @@ ul#send_to_ca_box {
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
   -o-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
   margin: 1em 0;
   padding-top: 1em;
   padding-bottom: 1em;
+}
+
+/* line 4774, ../../../app/stylesheets/main.sass */
+#sent_to_ca_results {
+  font-size: 0.8em;
+}
+/* line 4778, ../../../app/stylesheets/main.sass */
+#sent_to_ca_results dd {
+  text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6);
+}
+
+/* line 4781, ../../../app/stylesheets/main.sass */
+#processing_ca {
+  text-align: center;
+  margin: 10px auto;
+  display: none;
 }

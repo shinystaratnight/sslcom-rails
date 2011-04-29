@@ -301,6 +301,19 @@ jQuery(function($) {
       $(this).siblings().filter(':radio[name*=has_documents]').click();
     });
     $(':radio[name*=has_documents][value=true]').click();
+    $('#send_to_ca').livequery(
+      'ajax:beforeSend', function(){
+        $('#processing_ca').show();
+      }).livequery(
+      'ajax:success', function(event, data, status, xhr){
+        if(data!="null"){
+          data=$.parseJSON(data);
+          $('dl#sent_to_ca_results').prepend(data.result);
+        }
+      }).livequery(
+      'ajax:complete', function(event, data, status, xhr){
+        $('#processing_ca').hide();
+      });
   });
 });
 </script>
