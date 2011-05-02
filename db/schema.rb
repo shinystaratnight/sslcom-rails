@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110428222053) do
+ActiveRecord::Schema.define(:version => 20110502181625) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(:version => 20110428222053) do
     t.string   "parameters"
     t.string   "method"
     t.string   "response"
+    t.string   "type"
+    t.string   "ca"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -302,6 +304,17 @@ ActiveRecord::Schema.define(:version => 20110428222053) do
     t.string   "label"
     t.string   "ref"
     t.datetime "expires_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "domain_control_validations", :force => true do |t|
+    t.integer  "csr_id"
+    t.string   "email_address"
+    t.string   "candidate_addresses"
+    t.string   "subject"
+    t.datetime "responded_at"
+    t.datetime "sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

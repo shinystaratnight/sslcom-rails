@@ -4,7 +4,7 @@ require 'zip/zipfilesystem'
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups
   has_many    :signed_certificates
-  has_many    :ca_api_requests, as: :api_requestable, dependent: :destroy
+  has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_one     :csr_override
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content

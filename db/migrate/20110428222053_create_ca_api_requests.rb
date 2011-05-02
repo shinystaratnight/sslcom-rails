@@ -6,6 +6,8 @@ class CreateCaApiRequests < ActiveRecord::Migration
 			t.string  :parameters
 			t.string  :method
       t.string  :response
+      t.string  :type
+      t.string  :ca
 
       t.timestamps
     end

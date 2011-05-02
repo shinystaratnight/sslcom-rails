@@ -392,6 +392,9 @@ class CertificateOrder < ActiveRecord::Base
         unless csr.csr_override.blank?
           fill_csr_fields options, csr.csr_override
         end
+        if certificate.is_wildcard?
+
+        end
         if certificate.is_ev?
           certificate_content.tap do |cc|
             options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
@@ -405,7 +408,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def csr_ca_api_requests
-    certificate_contents.map(&:csr).flatten.map(&:ca_api_requests)
+    certificate_contents.map(&:csr).flatten.map(&:ca_certificate_requests)
   end
 
   private

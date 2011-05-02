@@ -1,0 +1,3 @@
+class CaCertificateRequest < CaApiRequest
+
+end
