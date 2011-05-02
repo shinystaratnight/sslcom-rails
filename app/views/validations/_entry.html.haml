@@ -166,5 +166,5 @@
                         =image_tag 'waiting_bar_medium.gif'
                         %span processing...
                       %dl#sent_to_ca_results
-                        =render partial: "sent_ca_result", collection: co.ca_api_requests.compact, as: :ca_response
+                        =render partial: "sent_ca_result", collection: co.csr_ca_api_requests.compact.flatten, as: :ca_response
 

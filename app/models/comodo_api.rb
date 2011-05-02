@@ -15,7 +15,7 @@ class ComodoApi
     res = con.start do |http|
       http.request_post(url.path, options)
     end
-    certificate_order.ca_api_requests.create(request_url: host,
+    certificate_order.certificate_content.csr.ca_api_requests.create(request_url: host,
       parameters: options, method: "post", response: res.body)
   end
 

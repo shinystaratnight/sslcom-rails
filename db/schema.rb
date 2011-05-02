@@ -94,7 +94,8 @@ ActiveRecord::Schema.define(:version => 20110428222053) do
   end
 
   create_table "ca_api_requests", :force => true do |t|
-    t.integer  "certificate_order_id"
+    t.integer  "api_requestable_id"
+    t.string   "api_requestable_type"
     t.string   "request_url"
     t.string   "parameters"
     t.string   "method"

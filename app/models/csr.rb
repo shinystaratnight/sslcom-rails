@@ -4,11 +4,14 @@ require 'zip/zipfilesystem'
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups
   has_many    :signed_certificates
+  has_many    :ca_api_requests, as: :api_requestable, dependent: :destroy
   has_one     :csr_override
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
+
+  default_scope order(:created_at.desc)
 
   scope :search, lambda {|term|
     {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}

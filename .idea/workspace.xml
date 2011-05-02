@@ -6,6 +6,17 @@
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+<<<<<<< HEAD
+=======
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ca_api_request.rb" afterPath="$PROJECT_DIR$/app/models/ca_api_request.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/comodo_api.rb" afterPath="$PROJECT_DIR$/app/models/comodo_api.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_entry.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb" afterPath="$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
+>>>>>>> origin/master
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -30,80 +41,35 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <file leaf-file-name="validations_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="0" selection-start="128" selection-end="128" vertical-scroll-proportion="0.0">
+            <state line="209" column="76" selection-start="8008" selection-end="8008" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="main.sass" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
             <state line="4784" column="0" selection-start="88927" selection-end="88927" vertical-scroll-proportion="0.81785715">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="waiting_bar_medium.gif" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/public/images/waiting_bar_medium.gif">
-          <provider selected="true" editor-type-id="images">
-            <state />
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_entry.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="160" column="42" selection-start="9855" selection-end="9855" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ca_api_request.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="39" selection-start="112" selection-end="112" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="validations_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="204" column="56" selection-start="7978" selection-end="7978" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="312" column="6" selection-start="12568" selection-end="12568" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_sent_ca_result.html.haml" pinned="false" current="false" current-in-tab="false">
+=======
+      <file leaf-file-name="_sent_ca_result.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="25" selection-start="66" selection-end="66" vertical-scroll-proportion="0.0">
+            <state line="2" column="0" selection-start="79" selection-end="79" vertical-scroll-proportion="0.094444446">
+>>>>>>> origin/master
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="authorization_rules.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
+      <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="17" column="57" selection-start="621" selection-end="621" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -112,7 +78,68 @@
       <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="0" selection-start="1458" selection-end="1597" vertical-scroll-proportion="0.0">
+            <state line="13" column="0" selection-start="686" selection-end="686" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ssl_account.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="7" column="91" selection-start="260" selection-end="260" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_content.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+<<<<<<< HEAD
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="312" column="6" selection-start="12568" selection-end="12568" vertical-scroll-proportion="0.0">
+=======
+      <file leaf-file-name="csr.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="39" selection-start="77" selection-end="77" vertical-scroll-proportion="0.0">
+>>>>>>> origin/master
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ca_api_request.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="0" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_entry.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="168" column="0" selection-start="10252" selection-end="10252" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="20110428222053_create_ca_api_requests.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="55" selection-start="162" selection-end="162" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -163,22 +190,28 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/models/order.rb" />
         <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
         <option value="$PROJECT_DIR$/app/models/old_site.rb" />
         <option value="$PROJECT_DIR$/app/views/contacts/index.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
         <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/db/migrate/20110427215546_create_csr_overrides.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+        <option value="$PROJECT_DIR$/app/models/csr.rb" />
+        <option value="$PROJECT_DIR$/app/models/ca_api_request.rb" />
         <option value="$PROJECT_DIR$/app/models/comodo_api.rb" />
         <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/app/models/ca_api_request.rb" />
         <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
+=======
+        <option value="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
+>>>>>>> origin/master
       </list>
     </option>
   </component>
@@ -215,6 +248,10 @@
       <sortByType />
     </navigator>
     <panes>
+<<<<<<< HEAD
+=======
+      <pane id="Favorites" />
+>>>>>>> origin/master
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -267,7 +304,13 @@
           </PATH>
         </subPane>
       </pane>
+<<<<<<< HEAD
       <pane id="Favorites" />
+=======
+      <pane id="RailsProjectView">
+        <subPane />
+      </pane>
+>>>>>>> origin/master
       <pane id="Scope">
         <subPane />
         <subPane subId="Problems" />
@@ -486,7 +529,7 @@
       <recent name="$PROJECT_DIR$/app/views/site" />
     </key>
   </component>
-  <component name="RunManager" selected="Rake.db:migrate">
+  <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
     <configuration default="false" name="db:migrate" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1129,6 +1172,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="24" y="0" width="1256" height="775" extended-state="6" />
     <editor active="true" />
     <layout>
@@ -1139,6 +1183,18 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25588953" sideWeight="0.39814815" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3101852" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34567901" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
+=======
+    <frame x="23" y="0" width="1258" height="776" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23314379" sideWeight="0.48919752" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23314379" sideWeight="0.16975309" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3287037" sideWeight="0.0" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34567901" sideWeight="0.9967506" order="2" side_tool="false" content_ui="tabs" />
+>>>>>>> origin/master
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1240,28 +1296,50 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/validations/show.html.haml">
+    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.2-p136@global/gems/activesupport-3.0.1/lib/active_support/notifications/instrumenter.rb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+=======
+        <state line="23" column="0" selection-start="646" selection-end="646" vertical-scroll-proportion="0.0" />
+>>>>>>> origin/master
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20110427215546_create_csr_overrides.rb">
+    <entry file="file://$PROJECT_DIR$/public/images/waiting_bar_medium.gif">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="18" column="84" selection-start="449" selection-end="449" vertical-scroll-proportion="0.0" />
+=======
+        <state line="312" column="6" selection-start="12568" selection-end="12568" vertical-scroll-proportion="0.0" />
+>>>>>>> origin/master
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20110404202432_create_certificate_api_requests.rb">
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="7" column="52" selection-start="296" selection-end="296" vertical-scroll-proportion="0.0" />
+=======
+        <state line="4780" column="72" selection-start="88869" selection-end="88869" vertical-scroll-proportion="0.0" />
+>>>>>>> origin/master
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_api_request.rb">
+    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="64" column="14" selection-start="3304" selection-end="3304" vertical-scroll-proportion="0.0" />
+=======
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+>>>>>>> origin/master
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/legacy_v2_user_mapping.rb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="8" column="0" selection-start="146" selection-end="247" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
@@ -1298,10 +1376,52 @@
     <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="312" column="6" selection-start="12568" selection-end="12568" vertical-scroll-proportion="0.0">
+=======
+        <state line="1" column="31" selection-start="78" selection-end="78" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20110428222053_create_ca_api_requests.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="55" selection-start="162" selection-end="162" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="91" selection-start="260" selection-end="260" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="39" selection-start="77" selection-end="77" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="57" selection-start="621" selection-end="621" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="209" column="76" selection-start="8008" selection-end="8008" vertical-scroll-proportion="0.0">
+>>>>>>> origin/master
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="25" selection-start="66" selection-end="66" vertical-scroll-proportion="0.0" />
@@ -1310,16 +1430,41 @@
     <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="0" selection-start="115" selection-end="115" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="0" selection-start="686" selection-end="686" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+>>>>>>> origin/master
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state line="39" column="0" selection-start="1458" selection-end="1597" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4784" column="0" selection-start="88927" selection-end="88927" vertical-scroll-proportion="0.81785715">
+=======
+        <state line="168" column="0" selection-start="10252" selection-end="10252" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="0" selection-start="79" selection-end="79" vertical-scroll-proportion="0.094444446">
+>>>>>>> origin/master
           <folding />
         </state>
       </provider>

@@ -11,7 +11,6 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
-  has_many    :ca_api_requests, dependent: :destroy
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration
@@ -384,7 +383,10 @@ class CertificateOrder < ActiveRecord::Base
           'days' => certificate_content.duration.to_s,
           'csr' => CGI::escape(csr.body),
           'prioritiseCSRValues' => 'N',
-          'isCustomerValidated' => 'Y'
+          'isCustomerValidated' => 'Y',
+          'responseFormat' => 1,
+          'showCertificateID' => 'Y',
+          'foreignOrderNumber' => ref
         )
         fill_csr_fields options, certificate_content.registrant
         unless csr.csr_override.blank?
@@ -400,6 +402,10 @@ class CertificateOrder < ActiveRecord::Base
         options.merge!('domainNames'=>'d') if certificate.is_ucc?
       end
     end
+  end
+
+  def csr_ca_api_requests
+    certificate_contents.map(&:csr).flatten.map(&:ca_api_requests)
   end
 
   private
