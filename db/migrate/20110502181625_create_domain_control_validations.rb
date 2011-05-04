@@ -3,8 +3,11 @@ class CreateDomainControlValidations < ActiveRecord::Migration
     create_table :domain_control_validations do |t|
       t.references  :csr
       t.string    :email_address
-      t.string    :candidate_addresses
+      t.text      :candidate_addresses
       t.string    :subject
+      t.string    :address_to_find_identifier
+      t.string    :identifier
+      t.boolean   :identifier_found
       t.datetime  :responded_at
       t.datetime  :sent_at
 

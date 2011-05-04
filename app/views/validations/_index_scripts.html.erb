@@ -288,13 +288,13 @@ jQuery(function($) {
     $(':radio[name*=has_documents]').click(function(){
       if($(this).val()=="false"){
         show_documents=false;
-        $('#documents_upload_section').hide();
-        $('#button_container').fadeIn();
+        $('#documents_upload_instructions, #multi_upload').hide();
+        //$('#button_container').fadeIn();
       }
       else{
         show_documents=true;
-        $('#documents_upload_section').show();
-        $('#button_container').fadeOut();
+        $('#documents_upload_instructions, #multi_upload').show();
+        //$('#button_container').fadeOut();
       }
     });
     $('.has_csr_container').click(function(){

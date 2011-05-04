@@ -65,70 +65,73 @@ class ValidationsController < ApplicationController
     error=""
     @zip_file_name = ""
     @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
-    @files = params[:filedata]
-    if @files.blank?
+    @files = params[:filedata] || []
+    if params[:dcv_email] && params[:dcv_email_id]
+      @dcv = DomainControlValidation.find(params[:dcv_email_id])
+      @dcv.update_attributes email_attribute: params[:dcv_email]
+      error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
+    elsif @files.blank?
       error = 'Please select one or more files to upload.'
-    else
-      @files.each do |file|
-        @created_releases = []
-        if (file.respond_to?(:content_type) && file.content_type.include?("zip")) ||
-            (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
-          logger.info "creating directory #{RAILS_ROOT}/tmp/zip/temp"
-          FileUtils.mkdir_p "#{RAILS_ROOT}/tmp/zip/temp" if !File.exist?("#{RAILS_ROOT}/tmp/zip/temp")
-          if file.size > Settings.max_content_size.to_i.megabytes
-            break error = <<-EOS
-              Too Large: zip file #{file.original_filename} is larger than
-              #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
-            EOS
-          end
-          @zip_file_name=file.original_filename
-          File.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}", "wb") do |f|
-            f.write(file.read)
-          end
-          zf = Zip::ZipFile.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}")
-          if zf.size > Settings.max_num_releases.to_i
-            break error = <<-EOS
-              Too Many Files: zip file #{file.original_filename} contains more than
-              #{Settings.max_num_releases.to_i} files.
-            EOS
-          end
-          zf.each do |entry|
-            begin
-              fpath = File.join("#{RAILS_ROOT}/tmp/zip/temp/",entry.name.downcase)
-              if(File.exists?(fpath))
-                File.delete(fpath)
-              end
-              zf.extract(entry, fpath)
-              @created_releases << create_with_attachment(LocalFile.new(fpath))
-              i+=1
-            rescue Errno::ENOENT, Errno::EISDIR
-              error = "Invalid contents: zip entries with directories not allowed".l
-              break
-            ensure
-              if (File.exists?(fpath))
-                if File.directory?(fpath)
-                  FileUtils.remove_dir fpath, :force=>true
-                else
-                  FileUtils.remove_file fpath, :force=>true
-                end
-              end
-              @created_releases.each {|release| release.destroy} unless error.blank?
-            end
-          end
-          File.delete(zf.name) if (File.exists?(zf.name))
-          @created_releases.each do |doc|
-            doc.errors.each{|attr,msg|
-              error << "#{attr} #{msg}: " }
-          end
-        else
-          vh = create_with_attachment LocalFile.new(file.path,
-            file.original_filename)
-          vh.errors.each{|attr,msg|
-            error << "#{attr} #{msg}: " }
-          i+=1 if vh
-          error << "Error: Document for #{file.original_filename} was not
-            created. Please notify system admin at #{Settings.support_email}" unless vh
+    end
+    @files.each do |file|
+      @created_releases = []
+      if (file.respond_to?(:content_type) && file.content_type.include?("zip")) ||
+          (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
+        logger.info "creating directory #{RAILS_ROOT}/tmp/zip/temp"
+        FileUtils.mkdir_p "#{RAILS_ROOT}/tmp/zip/temp" if !File.exist?("#{RAILS_ROOT}/tmp/zip/temp")
+        if file.size > Settings.max_content_size.to_i.megabytes
+          break error = <<-EOS
+            Too Large: zip file #{file.original_filename} is larger than
+            #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
+          EOS
         end
+        @zip_file_name=file.original_filename
+        File.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}", "wb") do |f|
+          f.write(file.read)
+        end
+        zf = Zip::ZipFile.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}")
+        if zf.size > Settings.max_num_releases.to_i
+          break error = <<-EOS
+            Too Many Files: zip file #{file.original_filename} contains more than
+            #{Settings.max_num_releases.to_i} files.
+          EOS
+        end
+        zf.each do |entry|
+          begin
+            fpath = File.join("#{RAILS_ROOT}/tmp/zip/temp/",entry.name.downcase)
+            if(File.exists?(fpath))
+              File.delete(fpath)
+            end
+            zf.extract(entry, fpath)
+            @created_releases << create_with_attachment(LocalFile.new(fpath))
+            i+=1
+          rescue Errno::ENOENT, Errno::EISDIR
+            error = "Invalid contents: zip entries with directories not allowed".l
+            break
+          ensure
+            if (File.exists?(fpath))
+              if File.directory?(fpath)
+                FileUtils.remove_dir fpath, :force=>true
+              else
+                FileUtils.remove_file fpath, :force=>true
+              end
+            end
+            @created_releases.each {|release| release.destroy} unless error.blank?
+          end
+        end
+        File.delete(zf.name) if (File.exists?(zf.name))
+        @created_releases.each do |doc|
+          doc.errors.each{|attr,msg|
+            error << "#{attr} #{msg}: " }
+        end
+      else
+        vh = create_with_attachment LocalFile.new(file.path,
+          file.original_filename)
+        vh.errors.each{|attr,msg|
+          error << "#{attr} #{msg}: " }
+        i+=1 if vh
+        error << "Error: Document for #{file.original_filename} was not
+          created. Please notify system admin at #{Settings.support_email}" unless vh
       end
     end
     respond_to do |format|

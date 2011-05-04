@@ -16,7 +16,17 @@
                   #validation_requirements_box
                     %li
                       %strong validation requirements
-                      -if current_user.is_admin?
+                      -if !co.certificate_content.has_all_contacts?
+                        %li
+                          %span.rule_name contacts
+                          %ul
+                            %li.rules_methods_block
+                              %em
+                                status:
+                              %ul
+                                %li
+                                  %span.validation_attention contacts are required but are missing
+                      -elsif current_user.is_admin?
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
                           -form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id

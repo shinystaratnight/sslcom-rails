@@ -128,6 +128,12 @@ class CertificateContent < ActiveRecord::Base
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
   end
 
+  def has_all_contacts?
+    CONTACT_ROLES.all? do |role|
+      send "#{role}_contact"
+    end
+  end
+
   private
 
   def domains_validation

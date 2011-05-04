@@ -215,6 +215,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_contents.last
   end
 
+  def csr
+    certificate_content.csr
+  end
+
   def effective_date
     certificate_content.try("csr").try("signed_certificate").try("effective_date")
   end
@@ -371,12 +375,10 @@ class CertificateOrder < ActiveRecord::Base
     self.preferred_v2_line_items = line_items.join('|')
   end
 
-  def options_for_ca
+    def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
         options.merge!(
-          'loginName' => 'likx2m7j',
-          'loginPassword' => 'Jimi2Kimi2',
           'test' => 'Y',
           'product' => certificate.comodo_product_id.to_s,
           'serverSoftware' => certificate_content.comodo_server_software_id.to_s,

@@ -5,6 +5,8 @@ class Csr < ActiveRecord::Base
   has_many    :whois_lookups
   has_many    :signed_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
+  has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
+  has_many    :domain_control_validations
   has_one     :csr_override
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content
@@ -97,4 +99,13 @@ class Csr < ActiveRecord::Base
   def signed_certificate
     signed_certificates.last
   end
+
+  def options_for_ca_dcv
+    {}.tap do |options|
+        options.merge!(
+          'domainName' => common_name)
+    end
+  end
+
+
 end

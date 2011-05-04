@@ -3,9 +3,13 @@ require 'net/https'
 require 'open-uri'
 
 class ComodoApi
+  CREDENTIALS={
+      'loginName' => Settings.comodo_api_username,
+      'loginPassword' => Settings.comodo_api_password}
 
   def self.apply_for_certificate(certificate_order)
-    options = certificate_order.options_for_ca.map{|k,v|"#{k}=#{v}"}.join("&")
+    options = certificate_order.options_for_ca.
+        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = "https://secure.comodo.net/products/!AutoApplySSL"
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
@@ -19,9 +23,11 @@ class ComodoApi
       parameters: options, method: "post", response: res.body, ca: "comodo")
   end
 
-  def self.domain_control_email_choices(certificate_order)
-    options = certificate_order.options_for_ca.map{|k,v|"#{k}=#{v}"}.join("&")
-    host = "https://secure.comodo.net/products/!AutoApplySSL"
+  def self.domain_control_email_choices(csr_or_domain)
+    is_a_csr = csr_or_domain.is_a?(Csr) ? true : false
+    options = {'domainName' => is_a_csr ? csr_or_domain.try(:common_name) : csr_or_domain}.
+        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
@@ -30,8 +36,15 @@ class ComodoApi
     res = con.start do |http|
       http.request_post(url.path, options)
     end
-    certificate_order.certificate_content.csr.ca_certificate_requests.create(request_url: host,
-      parameters: options, method: "post", response: res.body, ca: "comodo")
+    attr = {request_url: host,
+      parameters: options, method: "post", response: res.body, ca: "comodo"}
+    if is_a_csr
+      dcv=csr_or_domain.ca_dcv_requests.create(attr)
+      csr_or_domain.csr.domain_control_validations.create(
+        candidate_addresses: dcv.email_address_choices, subject: dcv.domain_name)
+    else
+      CaDcvRequest.new(attr)
+    end
   end
 
 #  def self.test

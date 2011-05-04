@@ -20,63 +20,76 @@
 =order_progress_indicator(5, co.certificate) if checkout_in_progress
 .reseller_registration_select_tier
   %h3 
-    Upload Validation Documentation for
+    Validation for
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
   =error_messages_for :validation
   -form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
     #stylized.default_form
+
+      #dcv_box
+        .clearfix
+          %label
+            *Proof of Domain Control
+            %span.label_desc where can we send verification email to?
+          .dcv_choices
+            .radio_w_desc.clearfix
+              =select_tag :dcv_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
+        %p
+          In order for SSL.com to issue an SSL certificate for #{co.subject}, proof that you control the domain
+          #{co.subject} is a basic requirement that must be established. A verification email will be sent to the
+          address selected above. Please follow and reply to the verification email to complete this validation step.
       -if checkout_in_progress
-        %p
-          .clearfix
-            %label{:for=>"skip_validation"}
-              *Validation documents:
-              %span.label_desc you can skip this step for now
-            .radio_choices
-              .radio_w_desc.clearfix
-                =radio_button_tag :has_documents, true
-                %span.has_csr_container I have my documents ready and want to upload them now
-              .radio_w_desc.clearfix
-                =radio_button_tag :has_documents, false
-                %span.has_csr_container I want to skip this step and complete the order later
+        .clearfix
+          %label{:for=>"skip_validation"}
+            *Validation documents:
+            %span.label_desc you can skip this step for now
+          .radio_choices
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_documents, true
+              %span.has_csr_container I have my documents ready and want to upload them now
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_documents, false
+              %span.has_csr_container I want to skip this step and upload documents later
       #documents_upload_section
-        %p
-          SSL must verify the existence of your business, the ownership of domain
-          #{co.subject}, and your employment status or authority to
-          request the SSL Certificate for #{co.subject}. Documents required from the registrant listed
-          on this whois record for #{co.subject} may include:
-        -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
-          -unless vr.description =~ /domain/
-            %dl.listing
-              -case vr.description
-              -when /organization/
-                %dt
-                  Any of the following official government documentation proving your right to do
-                  business:
-                %dd
-                  %ul
-                    -vr.applicable_validation_methods.each do |m|
-                      %li=m
-              -when /ev/
-                %dt.ev_instructions
-                  In addition to the above documentation, extended validation certificates require an
-                  authorization form signed by an authorized representative for #{co.subject}.
-                  Please fill out any of the forms below and submit it to complete the extended
-                  validation portion of this order:
-                %dd
-                  %ul
-                    %li
-                      %dt Full EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=4"})
-                      %dd This form of the EV Request should be used when more than one individual are acting in the roles of Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.)
-                    %li
-                      %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
-                      %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
-        %p
-          Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
-          they will automatically be unpacked. The following file types are accepted:
-          #{ValidationHistory.acceptable_file_types}
+        #documents_upload_instructions
+          %p
+            SSL must verify the existence of your business, the ownership of domain
+            #{co.subject}, and your employment status or authority to
+            request the SSL Certificate for #{co.subject}. Documents required from the registrant listed
+            on this whois record for #{co.subject} may include:
+          -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
+            -unless vr.description =~ /domain/
+              %dl.listing
+                -case vr.description
+                -when /organization/
+                  %dt
+                    Any of the following official government documentation proving your right to do
+                    business:
+                  %dd
+                    %ul
+                      -vr.applicable_validation_methods.each do |m|
+                        %li=m
+                -when /ev/
+                  %dt.ev_instructions
+                    In addition to the above documentation, extended validation certificates require an
+                    authorization form signed by an authorized representative for #{co.subject}.
+                    Please fill out any of the forms below and submit it to complete the extended
+                    validation portion of this order:
+                  %dd
+                    %ul
+                      %li
+                        %dt Full EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=4"})
+                        %dd This form of the EV Request should be used when more than one individual are acting in the roles of Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.)
+                      %li
+                        %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
+                        %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
+          %p
+            Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
+            they will automatically be unpacked. The following file types are accepted:
+            #{ValidationHistory.acceptable_file_types}
         =file_field_tag "filedata[]", :id=> "multi_upload"
         %div(style='width: 100%; text-align: center;')
-          =submit_tag "Upload Files", :id=>"upload_files", :disable_with=>"Uploading..."
+          =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Uploading..."
           .clearfix
             =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
       #button_container(style='display : none')
