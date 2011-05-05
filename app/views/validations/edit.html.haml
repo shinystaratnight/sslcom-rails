@@ -9,64 +9,88 @@
 =order_progress_indicator(i, co.certificate) unless i.blank?
 .upload_document_container
   %h3
-    Show Validation Documentation for 
+    Show Submitted Validation for
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
-  -unless vhs.blank?
-    %p
-      =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', new_certificate_order_validation_url(@certificate_order)
-    %p
-      The following validation documents have been uploaded for certificate 
-      =link_to @certificate_order.subject.downcase, certificate_orders_url
-    %p
-      Validation status for this order can be viewed by
-      =link_to 'clicking this link.', validations_url
-    #documents_list
-      -vhs.each do |vh|
-        #documents_entry.clearfix
-          %dl
-            %dd.img
-              =link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
-          .documents_list_notes
-            %div
-              .doc_attribute
-                #{vh.document_file_name.shorten(25, false)}
-              .doc_attribute
-                file size: #{number_to_human_size vh.document_file_size}
-              .doc_attribute
-                created on:
-                #{vh.created_at.strftime("%b %d, %Y")}
-              .doc_attribute
-                modified on:
-                #{vh.updated_at.strftime("%b %d, %Y")}
-              =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
-              =link_to image_tag('download.png', :class=>'blue_icon')+'download', vh.document_url
-          .public_settings
-            -form_for vh do |f|
-              =f.check_box :publish_to_site_seal
-              make publicly available through SSL Smart SeaL Report
-              .document_access_type
-                .clearfix
-                  =f.radio_button :preferred_viewing_method, "thumbnail"
-                  allow only first page preview
-                .clearfix
-                  =f.radio_button :preferred_viewing_method, "download"
-                  allow full document download
-              -if current_user.is_admin?
-                =f.check_box :publish_to_site_seal_approval
-                %span(style="color: red")
-                  %em admin only:
-                  approve for publishing?
-            .site_seal_notes
-              %em
-                notes to admin:
-                -unless vh.notes.blank?
-                  (click below to edit)
-              %br
-              =#in_place_editor_field vh, :notes, {}, {:field_type => 'textarea', :textarea_rows => 8}
-  -else
-    .empty_validation_histories
-      %span
-        There are currently no documents uploaded.
-        =link_to 'Click here', new_certificate_order_validation_url(@certificate_order)
-        to upload documents for validating this certificate order of
-        #{@certificate_order.subject}.
+  #stylized.default_form
+    .subheading Proof of Domain Control
+    #dcv_box
+      %p
+        In order for SSL.com to issue an SSL certificate for #{co.subject}, proof that you control the domain
+        #{co.subject} is a basic requirement that must be established.
+        -unless co.csr.domain_control_validations.blank?
+          A verification email has already been sent
+          to the email address #{co.csr.domain_control_validations.last_sent.email_address}.
+          If you would like to resend the email, simply choose an email address from
+          the options and click the resend button.
+        -else
+          A verification email will be sent to the address selected below. Please follow and reply to the
+          verification email to complete this validation step.
+      .clearfix
+        %label
+          *Send Verification To
+          %span.label_desc whois registered and authority addresses
+        .dcv_choices
+          .clearfix
+            =form_tag send_dcv_email_certificate_order_validation_url(co), remote: true do
+              =select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
+              =hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
+              =submit_tag "send", class: 'shiny_blue_button', disable_with: 'sending'
+    -unless vhs.blank?
+      %p
+        =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', new_certificate_order_validation_url(@certificate_order)
+      %p
+        The following validation documents have been uploaded for certificate
+        =link_to @certificate_order.subject.downcase, certificate_orders_url
+      %p
+        Validation status for this order can be viewed by
+        =link_to 'clicking this link.', validations_url
+      #documents_list
+        -vhs.each do |vh|
+          #documents_entry.clearfix
+            %dl
+              %dd.img
+                =link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
+            .documents_list_notes
+              %div
+                .doc_attribute
+                  #{vh.document_file_name.shorten(25, false)}
+                .doc_attribute
+                  file size: #{number_to_human_size vh.document_file_size}
+                .doc_attribute
+                  created on:
+                  #{vh.created_at.strftime("%b %d, %Y")}
+                .doc_attribute
+                  modified on:
+                  #{vh.updated_at.strftime("%b %d, %Y")}
+                =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
+                =link_to image_tag('download.png', :class=>'blue_icon')+'download', vh.document_url
+            .public_settings
+              -form_for vh do |f|
+                =f.check_box :publish_to_site_seal
+                make publicly available through SSL Smart SeaL Report
+                .document_access_type
+                  .clearfix
+                    =f.radio_button :preferred_viewing_method, "thumbnail"
+                    allow only first page preview
+                  .clearfix
+                    =f.radio_button :preferred_viewing_method, "download"
+                    allow full document download
+                -if current_user.is_admin?
+                  =f.check_box :publish_to_site_seal_approval
+                  %span(style="color: red")
+                    %em admin only:
+                    approve for publishing?
+              .site_seal_notes
+                %em
+                  notes to admin:
+                  -unless vh.notes.blank?
+                    (click below to edit)
+                %br
+                =#in_place_editor_field vh, :notes, {}, {:field_type => 'textarea', :textarea_rows => 8}
+    -else
+      .empty_validation_histories
+        %span
+          There are currently no documents uploaded.
+          =link_to 'Click here', new_certificate_order_validation_url(@certificate_order)
+          to upload documents for validating this certificate order of
+          #{@certificate_order.subject}.

@@ -40,8 +40,9 @@ class ComodoApi
       parameters: options, method: "post", response: res.body, ca: "comodo"}
     if is_a_csr
       dcv=csr_or_domain.ca_dcv_requests.create(attr)
-      csr_or_domain.csr.domain_control_validations.create(
+      csr_or_domain.domain_control_validations.create(
         candidate_addresses: dcv.email_address_choices, subject: dcv.domain_name)
+      dcv
     else
       CaDcvRequest.new(attr)
     end

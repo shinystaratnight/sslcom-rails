@@ -63,8 +63,9 @@ SslCom::Application.routes.draw do
     end
 
     resource :validation do
-      post :upload
+      post :upload, :send_dcv_email
       get :send_to_ca
+
     end
     resource :site_seal
   end

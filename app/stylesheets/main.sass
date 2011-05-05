@@ -3717,7 +3717,8 @@ label.error
 #stylized
   border: solid 1px #ccccff
   background: #fff url(/images/bg.gif) repeat-x
-  // background: #f3f3ff
+  @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
+  @include background(linear-gradient(#DEDEDE, white 20%))
 
   p, .heading, form, button
     border: 0
@@ -3862,16 +3863,12 @@ label.error
   .subheading
     -x-system-font: none
     color: #666666
-    font-family: Georgia,"Times New Roman",Times,serif
-    font-size: 1.4em
-    font-size-adjust: none
-    font-stretch: normal
-    font-style: normal
-    font-variant: normal
-    font-weight: bold
     line-height: normal
     margin: 10px auto
     width: 90%
+    font-size: 1.5em
+    font-weight: bold
+    text-decoration: underline
 
   /* Error Reporting Styles */
   .fieldWithErrors
@@ -4049,13 +4046,15 @@ table#line_items_receipt
 /* ----------- Form Progress Indicator ----------- */
 
 #form_progress_indicator
-  border-top: 1px dashed #cfc
-  border-bottom: 1px dashed #cfc
+  border-top: 1px dashed #afa
+  border-bottom: 1px dashed #afa
   margin: 2em auto 0
   padding: .5em 1em
   background-color: #efe
   font-size: 1.4em
   color: #333
+  //@include text-shadow(1px 1px 1px rgba(255,255,255,.8),  2px 2px 3px rgba(0,0,0,.4))
+  @include background(linear-gradient(#EEFFEE 10%, #FFFFFF, #EEFFEE 90%))
 
   ul
     margin: 0 auto

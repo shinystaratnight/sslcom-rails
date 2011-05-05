@@ -11,7 +11,7 @@ class ValidationsController < ApplicationController
   filter_access_to :all
   filter_access_to :requirements, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :edit, :attribute_check=>false
-  filter_access_to :send_to_ca, require: :admin_manage
+  filter_access_to :send_to_ca, :send_dcv_email, require: :admin_manage
   in_place_edit_for :validation_history, :notes
 
   def new
@@ -60,15 +60,27 @@ class ValidationsController < ApplicationController
     end
   end
 
+  def send_dcv_email
+    if params[:domain_control_validation_email] && params[:domain_control_validation_id]
+      @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
+      @dcv.update_attributes email_address: params[:domain_control_validation_email]
+      error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
+    end
+    respond_to do |format|
+      format.js {render :json=>{:result=>render_to_string(:partial=>
+          'sent_ca_result', locals: {ca_response: result})}}
+    end
+  end
+
   def upload
     i=0
     error=""
     @zip_file_name = ""
     @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
     @files = params[:filedata] || []
-    if params[:dcv_email] && params[:dcv_email_id]
-      @dcv = DomainControlValidation.find(params[:dcv_email_id])
-      @dcv.update_attributes email_attribute: params[:dcv_email]
+    if params[:domain_control_validation_email] && params[:domain_control_validation_id]
+      @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
+      @dcv.update_attributes email_address: params[:domain_control_validation_email]
       error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
     elsif @files.blank?
       error = 'Please select one or more files to upload.'
@@ -136,9 +148,11 @@ class ValidationsController < ApplicationController
     end
     respond_to do |format|
       if error.blank?
-        files_were = (i > 1 or i==0)? "documents were" : "document was"
-        flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}
-          successfully saved."
+        unless @files.blank?
+          files_were = (i > 1 or i==0)? "documents were" : "document was"
+          flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}
+            successfully saved."
+        end
         @certificate_order.certificate_content.pend_validation! if
           @certificate_order.certificate_content.contacts_provided?
         @validation_histories = @certificate_order.validation_histories

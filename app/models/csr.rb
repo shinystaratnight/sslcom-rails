@@ -6,7 +6,11 @@ class Csr < ActiveRecord::Base
   has_many    :signed_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  has_many    :domain_control_validations
+  has_many    :domain_control_validations do
+    def last_sent
+      where(:email_address !~ 'null').last
+    end
+  end
   has_one     :csr_override
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content
