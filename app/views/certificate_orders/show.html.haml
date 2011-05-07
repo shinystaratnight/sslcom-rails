@@ -4,6 +4,9 @@
 =render 'index_scripts'
 =render 'show_scripts'
 -content_for :title, title
+-if params[:checkout] && co.certificate_content.pending_validation?
+  -i=adjusted_position(7, co)
+=order_progress_indicator(i, co.certificate) unless i.blank?
 =render :partial=>'quick_links'
 #certificate_orders
   %table(cellspacing="0")
@@ -110,6 +113,8 @@
                               none
                     .certificate_details_box
                       %ul
+                        -unless @cc.csr.blank?
+                          =render partial: 'validations/dcv', locals: {co: @certificate_order}
                         %li
                           %strong validation documentation
                         -if @certificate_order.description['validation_level'] == 'Class 1'

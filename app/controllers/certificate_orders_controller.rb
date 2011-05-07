@@ -149,17 +149,14 @@ class CertificateOrdersController < ApplicationController
             end
             unless @certificate_order.certificate.is_ev?
               cc.provide_contacts!
-              cc.pend_validation!
             end
           end
-          if @certificate_order.
-              signup_process[:label]==CertificateOrder::EXPRESS
-            format.html { render :template => '/funded_accounts/success' }
-          else #assume ev full signup process
-            format.html { redirect_to certificate_content_contacts_url(cc) }
-          end
         end
-        format.html { redirect_to edit_certificate_order_url(@certificate_order) }
+        if @certificate_order.is_express_signup?
+          format.html { redirect_to new_certificate_order_validation_url(@certificate_order) }
+        else #assume ev full signup process
+          format.html { redirect_to certificate_content_contacts_url(cc) }
+        end
         format.xml  { head :ok }
       else
         @registrant=Registrant.new(

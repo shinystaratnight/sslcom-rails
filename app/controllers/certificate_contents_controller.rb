@@ -15,12 +15,8 @@ class CertificateContentsController < ApplicationController
         flash[:notice] = 'Contacts were successfully updated.'
         if @certificate_content.info_provided?
           @certificate_content.provide_contacts!
-          unless @certificate_order.certificate.is_ev?
-            @certificate_content.pend_validation!
-          else
-            format.html { redirect_to new_certificate_order_validation_url(
-                @certificate_content.certificate_order) }
-          end
+          format.html { redirect_to new_certificate_order_validation_url(
+              @certificate_content.certificate_order) }
         end
         format.html { redirect_to(@certificate_content.certificate_order) }
         format.xml  { head :ok }

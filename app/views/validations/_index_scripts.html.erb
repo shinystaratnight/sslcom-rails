@@ -314,6 +314,33 @@ jQuery(function($) {
       'ajax:complete', function(event, data, status, xhr){
         $('#processing_ca').hide();
       });
+      $('#send_dcv_email').livequery(
+        'ajax:beforeSend', function(){
+            $('#busy_sending').show();
+        }).livequery(
+        'ajax:success', function(event, data, status, xhr){
+          if(data!="null"){
+            data=$.parseJSON(data);
+            var status_bar = $("<div class='flash_message close'></div>");
+            status_bar.hide();
+            $('.upload_document_container').before(status_bar);
+            if(typeof data.email_address=="undefined"){
+              status_bar.addClass('notice').append("<span>Validation email sent to "+
+                      data.domain_control_validation.email_address+".</span>");
+              $('#dcv_sent_to_address').html(data.domain_control_validation.email_address).effect(
+                      "highlight", {color:'green'}, 500);
+            }
+            else{
+              //assume an error
+              status_bar.addClass('error').append("<span>"+data.email_address+"</span>");
+            }
+            status_bar.fadeIn();
+            $('#busy_sending').hide();
+          }
+        }).livequery(
+        'ajax:complete', function(event, data, status, xhr){
+          $('#processing_ca').hide();
+        });
   });
 });
 </script>

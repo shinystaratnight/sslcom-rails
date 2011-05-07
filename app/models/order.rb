@@ -21,8 +21,11 @@ class Order < ActiveRecord::Base
 
   SSL_CERTIFICATE = "SSL Certificate Purchase"
 
-  default_scope includes(:line_items).where({line_items:
-    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
+  #go live with this
+#  default_scope includes(:line_items).where({line_items:
+#    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
+  #need to delete some test accounts
+  default_scope includes(:line_items).order('created_at desc')
 
   scope :search, lambda {|term|
     where(:reference_number =~ '%'+term+'%')

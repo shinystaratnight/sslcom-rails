@@ -1,4 +1,5 @@
 site: 'remote'
+actionmailer_host: "www.ssl.com"
 community_name: "SSL.com"
 community_tagline: "copyright 2011"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."

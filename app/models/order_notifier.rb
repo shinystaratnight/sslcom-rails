@@ -3,7 +3,7 @@ class OrderNotifier < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   helper CertificateOrdersHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
-  ActionMailer::Base.default_url_options[:host] = Settings.site.sub('http://', '')
+  default_url_options[:host] = Settings.actionmailer_host
 
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     subject       "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})"

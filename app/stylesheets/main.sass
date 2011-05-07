@@ -3843,8 +3843,10 @@ label.error
     margin: .4em 0 .4em
 
   .radio_choices, .dcv_choices
-    float: left
     font-size: 1.4em
+
+  .radio_choices, .dcv_choices, .site_seal_radio_choices
+    float: left
     margin: 0 0 10px 10px
 
     .radio_w_desc
@@ -3856,6 +3858,11 @@ label.error
 
       .save
         color: green
+
+  .site_seal_radio_choices
+    .radio_w_desc
+      input
+        margin: 4px 4px 0 0
 
   .dcv_choices
     font-size: 1.2em
@@ -4405,15 +4412,15 @@ ul.docs_ul
   font-size: 1.3em
 
 #documents_entry
+  border-bottom: 2px dotted #CCCCCC
+  border-top: 2px dotted #CCCCCC
+  margin: 0 auto
   padding: 0 20px
-  margin: 0 0 20px
-  border: 2px #ddd solid
-  width: 700px
 
 #documents_list
   float: left
-  padding: 0 0 10px
   font-size: 1.4em
+  width: 100%
 
   dl
     float: left
@@ -4461,15 +4468,6 @@ img.blue_icon
   color: #333
   padding: 14px 0
   float: left
-
-.empty_validation_histories
-  height: 200px
-
-  span
-    display: block
-    margin-top: 100px
-    font-size: 1.5em
-    font-weight: bold
 
 #search_bar
   padding: 0.5em
@@ -4520,7 +4518,8 @@ img.blue_icon
   margin-right: 1em
 
 .site_seal_notes
-  margin-top: .6em
+  margin: 0.6em 0 0 1em
+  clear: both
 
 .approved_validation_document
   background: url(/images/bg-list.gif) no-repeat left top
@@ -4817,3 +4816,11 @@ ul#send_to_ca_box
   border: 1px solid #00387d
   text-shadow: 0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3)
 
+#busy_sending
+  display: none
+
+#dcv_sent_to_address
+  font-weight: bold
+
+.category_border
+  margin-bottom: 1em

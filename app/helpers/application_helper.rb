@@ -12,6 +12,11 @@ module ApplicationHelper
     end
   end
 
+  def adjusted_position(position, certificate_order)
+    position-(CertificateOrder::FULL_SIGNUP_PROCESS[:pages].count -
+        certificate_order.signup_process[:pages].count)
+  end
+
   # from Dan Webb's MinusMOR plugin
   # enhanced with ability to detect partials with template format, i.e.: _post.html.erb
   def partial(name, options={})
@@ -253,14 +258,12 @@ module ApplicationHelper
       @certificate_order.prepaid_signup_process(certificate) :
       @certificate_order.signup_process(certificate)
     padding = case process
-    when CertificateOrder::EXPRESS_SIGNUP_PROCESS
-      'padding: 0 4em'
+    when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
+      'padding: 0 2em'
     when CertificateOrder::FULL_SIGNUP_PROCESS
-      'padding: 0 1.35em'
-    when CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
-      'padding: 0 2.4em'
+      'padding: 0 1.1em'
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
-      'padding: 0 6.5em'
+      'padding: 0 3.5em'
     end
     render(:partial => '/shared/form_progress_indicator',
       :locals => {:pages=>[process[:pages], page],

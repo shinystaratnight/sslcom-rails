@@ -63,12 +63,10 @@ class ValidationsController < ApplicationController
   def send_dcv_email
     if params[:domain_control_validation_email] && params[:domain_control_validation_id]
       @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-      @dcv.update_attributes email_address: params[:domain_control_validation_email]
-      error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
+      @dcv.send_to params[:domain_control_validation_email]
     end
     respond_to do |format|
-      format.js {render :json=>{:result=>render_to_string(:partial=>
-          'sent_ca_result', locals: {ca_response: result})}}
+      format.js {render json: (@dcv.errors.blank? ? @dcv : @dcv.errors).to_json}
     end
   end
 
@@ -80,7 +78,7 @@ class ValidationsController < ApplicationController
     @files = params[:filedata] || []
     if params[:domain_control_validation_email] && params[:domain_control_validation_id]
       @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-      @dcv.update_attributes email_address: params[:domain_control_validation_email]
+      @dcv.send_to params[:domain_control_validation_email]
       error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
     elsif @files.blank?
       error = 'Please select one or more files to upload.'
@@ -156,7 +154,11 @@ class ValidationsController < ApplicationController
         @certificate_order.certificate_content.pend_validation! if
           @certificate_order.certificate_content.contacts_provided?
         @validation_histories = @certificate_order.validation_histories
-        format.html { redirect_to edit_certificate_order_validation_path}
+        if @certificate_order.signup_process[:label]==CertificateOrder::EXPRESS
+          format.html { render :template => '/funded_accounts/success' }
+        else
+          format.html { redirect_to certificate_order_path(@certificate_order, checkout: "true")}
+        end
         format.xml { render :xml => @release,
           :status => :created,
           :location => @release }

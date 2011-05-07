@@ -17,8 +17,11 @@
     $("a[rel^='prettyPhoto']").prettyPhoto({allowresize:false, theme:'facebook', showTitle:false});
     $('.striped_div > div:nth-child(odd)').css("background-color","#eeeeee");
     $('.striped_tr tr:nth-child(odd)').css("background-color","#eeeeee");
-    $('#close_window').click(function(){
+    $('#close_window').live('click', function(){
       window.close();
+    });
+    $('.close').live('click', function(){
+      $(this).remove();
     });
     $("input[name='next']").focus();
     //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}

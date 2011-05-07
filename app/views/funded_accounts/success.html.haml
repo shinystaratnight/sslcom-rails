@@ -9,7 +9,7 @@
 -content_for :title, title
 =render(:partial => 'shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 4]}) if @reseller_initial_deposit
 -if @certificate_order
-  -pos=skip_payment? ? 3 : 4
+  -pos=skip_payment? ? 4 : 5
   =(order_progress_indicator(pos, @certificate_order.certificate)) unless is_receipt?
 .order_container
   -if @deposit && !@deposit.receipt

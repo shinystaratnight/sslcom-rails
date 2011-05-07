@@ -104,6 +104,7 @@
                                             applied: #{name}
               .certificate_details_box
                 %ul
+                  =render partial: 'validations/dcv', locals: {co: co}
                   %li
                     %strong(class="val_docs_list_#{i}" alt="#{v.validation_histories.count}") validation documents
                   -if co.validation.validation_histories.empty?
@@ -157,10 +158,10 @@
                     %li
                       %strong login
                     -u = co.ssl_account.users.last
-                    %li=remote_login_link(u)
+                    %li.category_border=remote_login_link(u)
                   %li
                     %strong notes
-                  %li
+                  %li.category_border
                     -unless co.notes.blank?
                       =co.notes
                     -else

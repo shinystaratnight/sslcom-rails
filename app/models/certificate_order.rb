@@ -52,9 +52,9 @@ class CertificateOrder < ActiveRecord::Base
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%w(Submit\ CSR Payment
-    Registrant Contacts Validation Complete)}
+    Registrant Contacts Provide\ Verification Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
-    :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts Validation)}
+    :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
   PREPAID_FULL_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
@@ -203,12 +203,12 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def is_express_signup?
-    signup_process==EXPRESS_SIGNUP_PROCESS
+    !signup_process[:label].scan(EXPRESS).blank?
   end
 
   def is_express_validation?
     validation.validation_rulings.detect(&:new?) &&
-      signup_process==EXPRESS_SIGNUP_PROCESS
+      !signup_process[:label].scan(EXPRESS).blank?
   end
 
   def certificate_content
