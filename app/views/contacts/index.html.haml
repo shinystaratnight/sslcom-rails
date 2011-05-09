@@ -15,6 +15,7 @@
       -roles = CertificateContent::CONTACT_ROLES
       -contacts = @certificate_content.certificate_contacts.order("roles").to_a
       -contacts = [].tap{|c_tmp|4.times{c_tmp << @certificate_content.certificate_contacts.build(country: 'US')}} if contacts.empty?
+      -#-contacts = [].tap{|c_tmp|4.times{c_tmp << CertificateContact.new(country: 'US')}} if contacts.empty?
       =f.fields_for :certificate_contacts, contacts do |c|
         -i+=1
         -roles.each do |role|

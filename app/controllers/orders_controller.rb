@@ -174,6 +174,7 @@ class OrdersController < ApplicationController
           clear_cart
           format.html { redirect_to @order }
         elsif @certificate_order
+          current_user.ssl_account.certificate_orders << @certificate_order
           @certificate_order.pay! @gateway_response.success?
           format.html { redirect_to edit_certificate_order_path(@certificate_order)}
         end

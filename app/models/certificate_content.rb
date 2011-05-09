@@ -5,6 +5,8 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
 
+#  attr_accessible :certificate_contacts_attributes
+
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
@@ -56,7 +58,9 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
-      event :pend_validation, :transitions_to => :pending_validation
+      event :pend_validation, :transitions_to => :pending_validation do
+        certificate_order.apply_for_certificate if csr.ca_certificate_requests.blank?
+      end
       event :cancel, :transitions_to => :canceled
     end
 

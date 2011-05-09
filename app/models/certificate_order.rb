@@ -155,7 +155,8 @@ class CertificateOrder < ActiveRecord::Base
     else
       year = sub_order_items.map(&:product_variant_item).detect(&:is_duration?)
     end
-    year.blank? ? "" : "#{year.value.to_i/365} Year #{certificate.title}"
+    year.blank? ? "" : (year.value.to_i < 365 ? "#{year.value.to_i} Days" :
+        "#{year.value.to_i/365} Year") + " #{certificate.title}"
   end
 
   def migrated_from_v2?
@@ -253,6 +254,10 @@ class CertificateOrder < ActiveRecord::Base
         next false
       end
 }
+  end
+
+  def apply_for_certificate
+    ComodoApi.apply_for_certificate(self)
   end
 
   def self.find_not_new(options=nil)

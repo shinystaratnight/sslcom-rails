@@ -55,7 +55,8 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_duration
-    product_variant_groups.duration.map(&:product_variant_items).flatten
+    product_variant_groups.duration.map(&:product_variant_items).
+        flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
   def items_by_domains

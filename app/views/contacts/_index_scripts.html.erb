@@ -15,7 +15,7 @@ jQuery(function($) {
         $('#'+form+'_form').hide();
       }
     });
-    $('#next_submit input[type=image]').click(function(){
+    $('form[id^=edit_certificate_content]').submit(function(){
       for(i=0; i<check_boxes.length; i++){
         if($(check_boxes[i+1]).attr("checked"))
           $(form_types[i+1]+" input").each(function(index){

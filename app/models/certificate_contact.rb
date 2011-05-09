@@ -1,7 +1,7 @@
 class CertificateContact < Contact
   include Comparable
   
-  validates_presence_of  :first_name, :last_name, :email, :phone
+  validates_presence_of  :first_name, :last_name, :email, :phone, :roles
   easy_roles :roles
 
   def <=>(contact)

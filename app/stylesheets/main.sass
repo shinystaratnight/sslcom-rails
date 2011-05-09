@@ -3719,6 +3719,7 @@ label.error
   background: #fff url(/images/bg.gif) repeat-x
   @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
   @include background(linear-gradient(#DEDEDE, white 20%))
+  @include border-radius(5px)
 
   p, .heading, form, button
     border: 0
@@ -3755,10 +3756,12 @@ label.error
     text-align: center
     width: 360px
 
-  #forgot_container
+  #forgot_container, #already_have_account
     margin: 0pt auto
     width: 300px
     text-align: left
+    background-color: #EBEBFE
+    @include border-radius(5px)
 
     p
       text-align: inherit
@@ -3767,6 +3770,7 @@ label.error
     border: none
     padding-top: 1em
     text-align: center
+    font-size: 1.2em
 
   #resend_activation
     padding-top: 0
@@ -3819,6 +3823,8 @@ label.error
   input#upload_files
     margin: 1em
     float: none
+    font-size: 1.8em
+    font-weight: bold
     @extend .shiny_blue_button
 
   #multi_upload_wrap

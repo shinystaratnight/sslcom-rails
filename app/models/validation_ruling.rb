@@ -22,7 +22,8 @@ class ValidationRuling < ActiveRecord::Base
   WAITING_CLASS='validation_waiting'
   ATTENTION_CLASS='validation_attention'
 
-  NEW_STATUS = "validation documents have not been uploaded but are required"
+  NEW_STATUS = "validation documents have not been uploaded but may be required"
+  NEW_EV_STATUS = "validation documents have not been uploaded but are required"
   MORE_REQUIRED_STATUS = "the current documentation is insufficient, please upload relevant documents"
   PENDING_STATUS = "performing validations, you will be notified when completed"
   PENDING_EXPRESS_STATUS = "reviewing organization validation, you will be notified when completed"

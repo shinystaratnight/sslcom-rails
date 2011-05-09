@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
   end
 
   def setup_certificate_order(certificate, certificate_order)
-    duration = certificate_order.duration.to_i * 365
+    duration = certificate.items_by_duration[certificate_order.duration.to_i-1].value
     certificate_order.certificate_content.duration = duration
     if certificate.is_ucc? || certificate.is_wildcard?
       psl = certificate.items_by_server_licenses.find { |item|

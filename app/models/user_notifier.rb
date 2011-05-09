@@ -2,7 +2,6 @@ class UserNotifier < ActionMailer::Base
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
-  ActionMailer::Base.default_url_options[:host] = APP_URL.sub('http://', '')
 
   def activation_instructions(user)
     subject       "SSL.com Activation Instructions"

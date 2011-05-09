@@ -3,7 +3,8 @@ module ValidationsHelper
     unless validation_rulings.empty?
       if validation_rulings.detect(&:new?)
         unless @cert_order.is_express_signup?
-          [ValidationRuling::NEW_STATUS, ValidationRuling::ATTENTION_CLASS]
+          [(@cert_order.certificate.is_ev? ? ValidationRuling::NEW_EV_STATUS : ValidationRuling::NEW_STATUS),
+           ValidationRuling::ATTENTION_CLASS]
         else
           [ValidationRuling::PENDING_EXPRESS_STATUS, ValidationRuling::WAITING_CLASS]
         end

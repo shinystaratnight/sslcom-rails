@@ -217,8 +217,7 @@ class ValidationsController < ApplicationController
   end
 
   def send_to_ca
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result=ComodoApi.apply_for_certificate(@certificate_order)
+    result = CertificateOrder.find_by_ref(params[:certificate_order_id]).apply_for_certificate
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}
