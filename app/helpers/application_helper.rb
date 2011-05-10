@@ -259,7 +259,7 @@ module ApplicationHelper
       @certificate_order.signup_process(certificate)
     padding = case process
     when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
-      'padding: 0 2em'
+      'padding: 0 1.95em'
     when CertificateOrder::FULL_SIGNUP_PROCESS
       'padding: 0 1.1em'
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
@@ -267,7 +267,7 @@ module ApplicationHelper
     end
     render(:partial => '/shared/form_progress_indicator',
       :locals => {:pages=>[process[:pages], page],
-        :options=>{:li_style=>padding}})
+        :options=>{:li_style=>padding}, certificate: certificate})
   end
 
   def is_public_index_page?

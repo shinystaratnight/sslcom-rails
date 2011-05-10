@@ -57,23 +57,25 @@
                                 #{check_box_tag "email_customer", true, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
                     -v.validation_rules.each_with_index do |vr, vri|
+                      -is_domain_validation = vr.description=~/^domain/
                       %li
                         %span.rule_name=vr.description
-                        -unless co.is_express_validation?
-                          %ul
-                            %li.rules_methods_block
-                              -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
-                              -status, status_class = validation_status(vrl)
-                              %em
-                                status:
-                              %ul
-                                %li
-                                  %span(class="validation_status_result_#{vrl.id} #{status_class} #{vr.description.gsub(" ", "_")}_#{i}") #{status}
-                              %ul.applied_docs(class="applied_docs_summary_#{i}")
-                                -v.validation_histories.applied_to(vr).each do |vh|
-                                  -name = vh.document_file_name.shorten(20, false)
-                                  %li.applied_doc.approved_validation_document(alt="#{name}_#{i}_#{vh.id}")
-                                    applied: #{name}
+                        %ul
+                          %li.rules_methods_block
+                            -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
+                            -status, status_class = validation_status(vrl)
+                            -status.gsub!("documents", "user reponse") if is_domain_validation
+                            %em
+                              status:
+                            %ul
+                              %li
+                                %span(class="validation_status_result_#{vrl.id} #{status_class} #{vr.description.gsub(" ", "_")}_#{i}") #{status}
+                            %ul.applied_docs(class="applied_docs_summary_#{i}")
+                              -v.validation_histories.applied_to(vr).each do |vh|
+                                -name = vh.document_file_name.shorten(20, false)
+                                %li.applied_doc.approved_validation_document(alt="#{name}_#{i}_#{vh.id}")
+                                  applied: #{name}
+                          -unless is_domain_validation
                             %li.rules_methods_block
                               %em status history:
                               %ul(class="status_history_#{vrl.id}" alt="#{vrl.id}")
@@ -88,6 +90,7 @@
                                 -else
                                   %li(class="no_validation_decisions_#{vrl.id}")
                                     %em none
+                          -unless is_domain_validation
                             %li.rules_methods_block
                               %em applicable documents:
                               %ul.applicable_documents
@@ -166,8 +169,8 @@
                       =co.notes
                     -else
                       no notes found
-                %ul#send_to_ca_box
-                  -if current_user.is_admin?
+                -if current_user.is_admin?
+                  %ul#send_to_ca_box
                     %li
                       %strong
                         process certificate signing request

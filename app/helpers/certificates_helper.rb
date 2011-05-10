@@ -13,11 +13,17 @@ module CertificatesHelper
   def new_certificate_params
     if @certificate_order.is_unused_credit?
       [@certificate_order, {:url=>:update_csr_certificate_order}]
+#    elsif @certificate.is_free?
+#      [@certificate_order, {url: :create_free_ssl}]
     elsif current_user && current_user.ssl_account.is_registered_reseller?
       @certificate_order
     else
       [@certificate_order, {:url=>:new_order}]
     end
+  end
+
+  def buy_or_get
+    @certificate.is_free? ? "Get" : "Buy"
   end
 
   def pricing(certificate)

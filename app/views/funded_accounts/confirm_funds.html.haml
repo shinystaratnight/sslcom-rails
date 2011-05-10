@@ -1,17 +1,22 @@
--content_for :title, "Apply Existing Account Funds To Order Payment"
+-certificate ||= @certificate_order.certificate if @certificate_order
+-title = (current_order.amount.to_s.to_i <= 0) ? new_order_title(certificate) : "Apply Existing Account Funds To Order Payment"
+-content_for :title, title
 -@hide_remove = true
-=order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
+=order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
-  -form_for(FundedAccount.new, :url => apply_funds_path, :html => { :method => :put }) do |f|
+  -form_for FundedAccount.new, :url => apply_or_free, :html => { :method => :put} do |f|
     -if @certificate_order
       =hidden_field_tag("certificate_order")
     -elsif @certificate_orders
       =hidden_field_tag("certificate_orders")
-    %h3 Apply Existing Account Funds To Order Payment
+    %h3=title
     -unless @certificate_orders
       =render 'certificate_order_detail'
     -else
       =render :partial=>'cart_details', :locals=>{:cert=>@certificate_orders, :is_receipt=>true}
+    -if certificate
+      %p By placing this order you agree to the #{Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:title]} below:
+      =text_area_tag :agreement, render(file: Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:location]), :size=>"106x8"
     %p
       You currently have
       %span.order_amount_strong

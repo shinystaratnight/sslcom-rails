@@ -68,7 +68,7 @@ class ApplicationController < ActionController::Base
   end
 
   def setup_certificate_order(certificate, certificate_order)
-    duration = certificate.items_by_duration[certificate_order.duration.to_i-1].value
+    duration = certificate.duration_in_days(certificate_order.duration)
     certificate_order.certificate_content.duration = duration
     if certificate.is_ucc? || certificate.is_wildcard?
       psl = certificate.items_by_server_licenses.find { |item|
@@ -151,7 +151,7 @@ class ApplicationController < ActionController::Base
         next unless current_user.ssl_account.can_buy?(certificate)
       end
       #adjusting duration to reflect number of days validity
-      duration = certificate_order.duration.to_i * 365
+      duration = certificate.duration_in_days(certificate_order.duration)
       certificate_order.certificate_contents[0].duration = duration
       if certificate.is_ucc? || certificate.is_wildcard?
         psl = certificate.items_by_server_licenses.find{|item|

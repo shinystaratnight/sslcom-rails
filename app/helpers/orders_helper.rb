@@ -74,6 +74,10 @@ module OrdersHelper
     cart_items.size==0
   end
 
+  def new_order_title(certificate=nil)
+    "Checkout #{' And Subscriber Agreement' if certificate}"
+  end
+
   def ssl_account
     current_user.ssl_account
   end
@@ -99,6 +103,10 @@ module OrdersHelper
         certificate_order.ssl_account = current_user.ssl_account
       end
     end
+  end
+
+  def url_to_new_order
+    [current_order.amount.to_s.to_i ? create_free_ssl_url : Order.new]
   end
   
 =begin

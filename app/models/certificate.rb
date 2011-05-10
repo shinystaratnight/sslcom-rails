@@ -38,6 +38,16 @@ class Certificate < ActiveRecord::Base
     "SSL128WCG10 Wildcard SSL Certificate"], "wildcard", "wildcard"]
   MAP_TO_UCC=[["SSL UC Certificate"], "ucc", "ucc"]
 
+  SUBSCRIBER_AGREEMENTS = {
+    free: {title: "Free SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+    ev:   {title: "EV SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+    ucc:  {title: "UCC SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+    wildcard: {title: "Wildcard SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
+
   COMODO_PRODUCT_MAPPINGS =
       {"free"=> 43, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
 
@@ -104,6 +114,10 @@ class Certificate < ActiveRecord::Base
     product.include?('free')
   end
 
+  def is_free?
+    product.include?('free')
+  end
+
   def is_multi?
     is_ucc? || is_wildcard?
   end
@@ -154,6 +168,18 @@ class Certificate < ActiveRecord::Base
 
   def to_param
     product_root
+  end
+
+  def subscriber_agreement
+    SUBSCRIBER_AGREEMENTS[product_root.to_sym]
+  end
+
+  def duration_in_days(duration)
+    items_by_duration[duration.to_i-1].value
+  end
+
+  def duration_index(value)
+    items_by_duration.map(&:value).index(value.to_s)+1
   end
 
   def certificate_chain_names

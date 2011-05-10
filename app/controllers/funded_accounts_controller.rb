@@ -174,18 +174,7 @@ class FundedAccountsController < ApplicationController
   end
 
   def apply_funds
-    if params[:certificate_order]
-      @certificate_order = current_user.ssl_account.certificate_orders.current
-      unless params["prev.x".intern].nil?
-        return go_back_to_buy_certificate
-      end
-      @order = current_order
-    elsif params[:certificate_orders]
-      unless params["prev.x".intern].nil?
-        redirect_to show_cart_orders_url and return
-      end
-      setup_certificate_orders
-    end
+    parse_certificate_orders
     @account_total = @funded_account = current_user.ssl_account.funded_account
     @funded_account.cents -= @order.cents unless @funded_account.blank?
     respond_to do |format|
@@ -219,6 +208,39 @@ class FundedAccountsController < ApplicationController
     end
   end
 
+  def create_free_ssl
+    parse_certificate_orders
+    respond_to do |format|
+      if @order.cents == 0 and @order.line_items.size > 0
+        @order.save
+        flash.now[:notice] = "The transaction was successful."
+        if @certificate_order
+          @certificate_order.pay! true
+          return redirect_to edit_certificate_order_path(@certificate_order)
+        elsif @certificate_orders
+          current_user.ssl_account.orders << @order
+          clear_cart
+          flash[:notice] = "Order successfully placed. %s"
+          flash[:notice_item] = "Click here to finish processing your
+            ssl.com certificates.", credits_certificate_orders_path
+          format.html { redirect_to @order }
+        end
+        format.html { render :action => "success" }
+      else
+        if @order.line_items.size == 0
+          flash.now[:error] = "Cart is currently empty"
+        elsif @order.cents > 0
+          flash.now[:error] = "Cannot process non-free products"
+        end
+        if @certificate_order
+          return go_back_to_buy_certificate
+        else
+          format.html { redirect_to show_cart_orders_url }
+        end
+      end
+    end
+  end
+
   def confirm_funds
     if params[:id]=='order'
       certificates_from_cookie
@@ -242,7 +264,7 @@ class FundedAccountsController < ApplicationController
     @certificate_content = @certificate_order.certificate_content.clone
     @certificate_order = current_user.ssl_account.
       certificate_orders.detect(&:new?).clone
-    @certificate_order.duration = @certificate_content.duration / 365
+    @certificate_order.duration = @certificate.duration_index(@certificate_content.duration)
     @certificate_order.has_csr = true
     render(:template => "/certificates/buy", :layout=>"application")
   end
@@ -260,6 +282,21 @@ class FundedAccountsController < ApplicationController
     @order.line_items.each do |cert|
       current_user.ssl_account.certificate_orders << cert.sellable
       cert.sellable.pay! true
+    end
+  end
+
+  def parse_certificate_orders
+    if params[:certificate_order]
+      @certificate_order = current_user.ssl_account.certificate_orders.current
+      unless params["prev.x".intern].nil?
+        return go_back_to_buy_certificate
+      end
+      @order = current_order
+    elsif params[:certificate_orders]
+      unless params["prev.x".intern].nil?
+        redirect_to show_cart_orders_url and return
+      end
+      setup_certificate_orders
     end
   end
 end

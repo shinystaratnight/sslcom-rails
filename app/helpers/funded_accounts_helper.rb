@@ -49,4 +49,8 @@ module FundedAccountsHelper
       :class=>'delete_profile', :method => :delete,
       :confirm => "Are you sure you want to delete the credit card profile for #{item.masked_card_number}? This action cannot be undone."
   end
+
+  def apply_or_free
+    current_order.amount.to_s.to_i <=0 ? create_free_ssl_path : apply_funds_path
+  end
 end

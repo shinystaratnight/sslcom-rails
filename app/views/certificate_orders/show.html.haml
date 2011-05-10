@@ -47,7 +47,8 @@
                         %li
                           %strong certificate contents
                         -if @cc.csr.blank?
-                          %li no certificate request found
+                          %li
+                            %em waiting for csr
                         -else
                           -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
                           %li

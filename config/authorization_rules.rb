@@ -62,7 +62,7 @@ authorization do
       if_attribute :id => is {user.id}
     end
     has_permission_on :certificates, :to => :read
-    has_permission_on :funded_accounts, :to => [:create, :read, :update, 
+    has_permission_on :funded_accounts, :to => [:create, :create_free_ssl, :read, :update,
       :allocate_funds, :allocate_funds_for_order, :deposit_funds, :apply_funds,
       :confirm_funds] do
       if_attribute :ssl_account => is {user.ssl_account}
@@ -75,7 +75,8 @@ authorization do
     has_permission_on :users, :ssl_accounts, :resellers, :to =>
       [:create, :update]
     has_permission_on :certificates, :to => :read
-    has_permission_on :funded_accounts, :to => [:create, :allocate_funds_for_order]
+    has_permission_on :funded_accounts, :to => [:create, :create_free_ssl,
+                                                :allocate_funds_for_order]
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
   end

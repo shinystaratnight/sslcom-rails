@@ -119,6 +119,8 @@ SslCom::Application.routes.draw do
 
   match '/register/:activation_code' => 'activations#new', :as => :register
   match '/activate/:id' => 'activations#create', :as => :activate
+  match 'get_free_ssl' => 'funded_accounts#create_free_ssl',
+    :as => :create_free_ssl
   match 'secure/allocate_funds' => 'funded_accounts#allocate_funds',
     :as => :allocate_funds
   match 'secure/allocate_funds_for_order/:id' =>
