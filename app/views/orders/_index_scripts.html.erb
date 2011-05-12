@@ -90,6 +90,7 @@ jQuery(function($) {
         url: '<%=user_session_path%>',
         beforeSubmit: function(){
           $('div[id*=Explanation][class*=Explanation]').remove();
+          $('#waiting_bar').show();
         },
         success: function(data, status, $form) {
           if(typeof(data.record) == "undefined"){
@@ -106,19 +107,34 @@ jQuery(function($) {
             if(data.record.user.status=='disabled')
               alert('This account has been disabled');
             else if(data.record.user.status=='enabled'){
-              if(data.redirect='create'){
-                  $('form#new_order').attr("action", "<%=certificate_orders_url%>");
+              if(data.redirect_method=='submit'){
+                  //$('form#new_order').attr("action", data.url);
                   $('form#new_order').submit();
               }
-              else
-                window.location=data.redirect;
+              else if(data.redirect_method=='redirect')
+                window.location=data.url;
+              else{
+                //leave only billing fields showing
+                $('#billing_section').show();
+                $('#login_section, #new_user_section').add($('.radio_choices').parent()).remove();
+                var status_bar = $("<div class='flash_message close'></div>");
+                status_bar.hide();
+                $('.reseller_registration_select_tier').before(status_bar);
+                status_bar.addClass('notice').append("<span>Successfully logged in.</span>");
+                status_bar.fadeIn();
+                $('.user_session').html('<%=link_to "Logout", logout_url%>');
+                if(data.billing_profiles){
+                  $('#stylized.deposit_funds_form').prepend(data.billing_profiles);
+                }
+                $('#waiting_bar').hide();
+              }
               return true;
             }
           }
           $(':password').clearFields();
         }
     };
-    $('input:image').click(function(){
+    $('input:image').livequery('click', function(){
       if($(':radio[name*=has_account]:checked').val()=="true" && 
           $(this).attr('name')=='next'){
         $('form#new_order').ajaxSubmit(options);
@@ -196,7 +212,7 @@ jQuery(function($) {
       $(':radio[name=funding_source]').attr("checked","");
       $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
     }
-$.adjust_cart_total();
+    $.adjust_cart_total();
   });
 });
 </script>

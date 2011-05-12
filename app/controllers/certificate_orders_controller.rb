@@ -106,7 +106,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
     respond_to do |format|
       if @certificate_order.save
-        unless is_reseller? && !(current_order.amount.cents >
+        if is_reseller? && (current_order.amount.cents >
               current_user.ssl_account.funded_account.amount.cents)
           format.html {redirect_to allocate_funds_for_order_path(:id=>
                 'certificate')}

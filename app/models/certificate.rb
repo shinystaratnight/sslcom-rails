@@ -43,6 +43,8 @@ class Certificate < ActiveRecord::Base
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     ev:   {title: "EV SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+    high_assurance:  {title: "High Assurance SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     ucc:  {title: "UCC SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     wildcard: {title: "Wildcard SSL Subscriber Agreement",

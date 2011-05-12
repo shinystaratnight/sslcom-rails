@@ -28,6 +28,4 @@
       %em> note: please press only once
       ).
     #button_container
-      #prev_next_submit
-        =image_submit_tag "prev_bl.gif", :name=>"prev"
-        =image_submit_tag "next_bl.gif", :name=>"next"
+      =render partial: 'shared/prev_next_buttons'

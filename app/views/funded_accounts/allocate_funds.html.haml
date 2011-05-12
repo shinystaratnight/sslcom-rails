@@ -15,8 +15,7 @@
         #{cart_total_price}.
       Therefore additional funds are required to complete your order.
     -else
-      Please fill out the required fields below to complete your reseller
-      account registration.
+      Please fill out the required fields below.
     This charge will appear as SSL Corporation
     on your credit card statement.
   =error_messages_for :funded_account, :billing_profile, :credit_card, :object_name => 'transaction'
@@ -55,6 +54,4 @@
       -unless reseller_initial_deposit? or @certificate_order
         #click_to_load=image_submit_tag "load_funds_bl.gif", :alt=>'Click here to load funds into your account'
       -else
-        #prev_next_submit
-          =image_submit_tag "prev_bl.gif", :name=>"prev"
-          =image_submit_tag "next_bl.gif", :name=>"next"
+        =render partial: 'shared/prev_next_buttons'

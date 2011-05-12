@@ -187,6 +187,81 @@ class OrdersController < ApplicationController
       render :action => 'new'
   end
 
+  def create_free_ssl
+    @order = Order.new(params[:order])
+    unless current_user
+      @user = User.new(params[:user])
+    end
+    respond_to do |format|
+      if params[:certificate_order]
+        @certificate_order=CertificateOrder.new(params[:certificate_order])
+        @certificate = Certificate.find_by_product(params[:certificate][:product])
+        if params["prev.x".intern] || !certificate_order_steps
+          @certificate_order.has_csr=true
+          format.html {render(:template => "/certificates/buy",
+            :layout=>"application")}
+        end
+      else
+        unless params["prev.x".intern].nil?
+          redirect_to show_cart_orders_url and return
+        end
+        certificates_from_cookie
+      end
+      if @certificate_orders
+        build_certificate_contents(@certificate_orders, @order)
+      else
+        @order=current_order
+      end
+      if @order.cents == 0 and @order.line_items.size > 0 and (@user ? @user.valid? : true)
+        save_user unless current_user
+        current_user.ssl_account.orders << @order
+        @order.save
+        if @certificate_orders
+          clear_cart
+          format.html { redirect_to @order }
+        elsif @certificate_order
+          current_user.ssl_account.certificate_orders << @certificate_order
+          @certificate_order.pay! true
+          format.html { redirect_to edit_certificate_order_path(@certificate_order)}
+        end
+      else
+        format.html { render :action => "new" }
+      end
+    end
+  end
+
+  def create_multi_free_ssl
+    parse_certificate_orders
+    respond_to do |format|
+      if @order.cents == 0 and @order.line_items.size > 0
+        @order.save
+        if @certificate_order
+          @certificate_order.pay! true
+          return redirect_to edit_certificate_order_path(@certificate_order)
+        elsif @certificate_orders
+          current_user.ssl_account.orders << @order
+          clear_cart
+          flash[:notice] = "Order successfully placed. %s"
+          flash[:notice_item] = "Click here to finish processing your
+            ssl.com certificates.", credits_certificate_orders_path
+          format.html { redirect_to @order }
+        end
+        format.html { render :action => "success" }
+      else
+        if @order.line_items.size == 0
+          flash.now[:error] = "Cart is currently empty"
+        elsif @order.cents > 0
+          flash.now[:error] = "Cannot process non-free products"
+        end
+        if @certificate_order
+          return go_back_to_buy_certificate
+        else
+          format.html { redirect_to show_cart_orders_url }
+        end
+      end
+    end
+  end
+
   private
 
   def certificate_order_steps

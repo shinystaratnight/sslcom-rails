@@ -29,7 +29,7 @@ authorization do
     has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
       if_attribute ssl_account: {id: is {user.ssl_account.id}}
     end
-    has_permission_on :orders, :to => [:read, :update, :delete] do
+    has_permission_on :orders, :to => [:read, :update, :delete, :create_free_ssl, :create_multi_free_ssl] do
       if_attribute :billable => is {user.ssl_account}
     end
     has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
@@ -70,7 +70,7 @@ authorization do
   end
 
   role :guest do
-    has_permission_on :orders, :to => :show_cart
+    has_permission_on :orders, :to => [:show_cart]
     has_permission_on :csrs, :certificate_orders, :orders, :to => :create
     has_permission_on :users, :ssl_accounts, :resellers, :to =>
       [:create, :update]

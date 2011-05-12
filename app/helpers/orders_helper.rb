@@ -106,7 +106,12 @@ module OrdersHelper
   end
 
   def url_to_new_order
-    [current_order.amount.to_s.to_i ? create_free_ssl_url : Order.new]
+    url = @certificate_orders ? create_multi_free_ssl_orders_path : create_free_ssl_orders_path
+    [Order.new]+ (is_order_free? ? [{url: url}] : [])
+  end
+
+  def is_order_free?
+    current_order.amount.to_s.to_i<=0
   end
   
 =begin

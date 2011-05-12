@@ -1,0 +1,21 @@
+-unless ssl_account.billing_profiles.empty?
+  %h3.subheading.funding_sources_head Funding Sources
+  #existing_credit_cards
+    %table
+      %tr#existing_credit_cards_header
+        %td Load From
+        %td Card Type
+        %td Card Number
+        %td Expiry Date
+        %td
+      -ssl_account.billing_profiles.each do |profile|
+        %tr[profile]
+          %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'
+          %td= profile.credit_card
+          %td= profile.masked_card_number
+          %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+          %td= destroy_credit_card_link profile
+      %tr
+        %td{:colspan => 6}
+          %a#expand_register_card(href="#{'#'}")
+            =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'

@@ -103,6 +103,7 @@ SslCom::Application.routes.draw do
     collection do
       get :show_cart
       get :search
+      post :create_free_ssl, :create_multi_free_ssl
     end
   end
 

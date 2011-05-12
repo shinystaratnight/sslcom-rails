@@ -213,7 +213,6 @@ class FundedAccountsController < ApplicationController
     respond_to do |format|
       if @order.cents == 0 and @order.line_items.size > 0
         @order.save
-        flash.now[:notice] = "The transaction was successful."
         if @certificate_order
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
@@ -256,47 +255,12 @@ class FundedAccountsController < ApplicationController
     @object = current_user.ssl_account.funded_account ||= FundedAccount.new(:amount => 0)
   end
 
-  def go_back_to_buy_certificate
-    #need to create new objects and delete the existing ones
-    @certificate_order = current_user.ssl_account.
-      certificate_orders.detect(&:new?)
-    @certificate = @certificate_order.certificate
-    @certificate_content = @certificate_order.certificate_content.clone
-    @certificate_order = current_user.ssl_account.
-      certificate_orders.detect(&:new?).clone
-    @certificate_order.duration = @certificate.duration_index(@certificate_content.duration)
-    @certificate_order.has_csr = true
-    render(:template => "/certificates/buy", :layout=>"application")
-  end
-
-  def setup_certificate_orders
-    #will create @certificate_orders below
-    certificates_from_cookie
-    @order = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
-    build_certificate_contents(@certificate_orders, @order)
-  end
-
   def save_certificate_orders
     current_user.ssl_account.orders << @order
     OrderNotifier.deliver_certificate_order_prepaid @current_user.ssl_account, @order
     @order.line_items.each do |cert|
       current_user.ssl_account.certificate_orders << cert.sellable
       cert.sellable.pay! true
-    end
-  end
-
-  def parse_certificate_orders
-    if params[:certificate_order]
-      @certificate_order = current_user.ssl_account.certificate_orders.current
-      unless params["prev.x".intern].nil?
-        return go_back_to_buy_certificate
-      end
-      @order = current_order
-    elsif params[:certificate_orders]
-      unless params["prev.x".intern].nil?
-        redirect_to show_cart_orders_url and return
-      end
-      setup_certificate_orders
     end
   end
 end

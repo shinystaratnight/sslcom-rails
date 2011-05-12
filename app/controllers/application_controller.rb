@@ -107,9 +107,8 @@ class ApplicationController < ActionController::Base
     certificate_order
   end
 
+  #see old_certificates_from_cookie for previous version
   def certificates_from_cookie
-    #this is the old, colon delimited version
-    #old_certificates_from_cookie
     certs=cart_contents
     @certificate_orders=[]
     return @certificate_orders if certs.blank?
@@ -268,6 +267,73 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = current_user
   end
 
+  def setup_certificate_orders
+    #will create @certificate_orders below
+    certificates_from_cookie
+    @order = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
+    build_certificate_contents(@certificate_orders, @order)
+  end
+
+  def parse_certificate_orders
+    if params[:certificate_order]
+      @certificate_order = current_user.ssl_account.certificate_orders.current
+      unless params["prev.x".intern].nil?
+        return go_back_to_buy_certificate
+      end
+      @order = current_order
+    else
+      unless params["prev.x".intern].nil?
+        redirect_to show_cart_orders_url and return
+      end
+      setup_certificate_orders
+    end
+  end
+
+  def go_back_to_buy_certificate
+    #need to create new objects and delete the existing ones
+    @certificate_order = current_user.ssl_account.
+      certificate_orders.detect(&:new?)
+    @certificate = @certificate_order.certificate
+    @certificate_content = @certificate_order.certificate_content.clone
+    @certificate_order = current_user.ssl_account.
+      certificate_orders.detect(&:new?).clone
+    @certificate_order.duration = @certificate.duration_index(@certificate_content.duration)
+    @certificate_order.has_csr = true
+    render(:template => "/certificates/buy", :layout=>"application")
+  end
+
+#  logged in user
+#      buy single cert -> OrdersController#new
+#      buy multi certs
+#      get single free ssl cert
+#      get multi free ssl certs
+#  reseller logged in user
+#      buy single cert
+#      buy multi certs
+#      get single free ssl cert
+#      get multi free ssl certs
+  def create_ssl_certificate_route(user)
+#    if params[:certificate]
+#      user.ssl_account.is_registered_reseller? ?
+#          ["submit", certificate_orders_url] : ["redirect", new_order_url]
+##    elsif params[:free_certificate]
+##      create_free_ssl_orders_path
+##    elsif params[:free_certificates]
+##      create_multi_free_ssl_orders_path
+##    else #assume non-free certificates
+#    end
+    if user.ssl_account.is_registered_reseller?
+      ["submit", certificate_orders_url]
+    else
+      unless params[:certificate][:product].blank?
+        params[:certificate][:product]=="free" ? ["submit", ""] : ["",""]
+      else
+        ["submit", ""]
+      end
+#      ["redirect", new_order_url]
+    end
+  end
+
 =begin
   def responder
     EnhancedResponder
@@ -314,7 +380,7 @@ class ApplicationController < ActionController::Base
   def require_no_user
     if current_user
       store_location
-      flash[:notice] = "You must be logged out to access this page"
+      flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"
       redirect_to account_url
       return false
     end

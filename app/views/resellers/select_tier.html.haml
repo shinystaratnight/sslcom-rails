@@ -9,7 +9,5 @@
   -form_for @reseller_tier, :url => account_reseller_path do |f|
     =render :partial => "/reseller_tiers/tiers"
     #button_container
-      #prev_next_submit
-        =image_submit_tag "prev_bl.gif", :name=>"prev"
-        =image_submit_tag "next_bl.gif", :name=>"next"
+      =render partial: 'shared/prev_next_buttons'
 

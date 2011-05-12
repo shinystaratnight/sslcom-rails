@@ -261,9 +261,9 @@ module ApplicationHelper
     when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
       'padding: 0 1.95em'
     when CertificateOrder::FULL_SIGNUP_PROCESS
-      'padding: 0 1.1em'
+      'padding: 0 1.0em'
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
-      'padding: 0 3.5em'
+      'padding: 0 3.45em'
     end
     render(:partial => '/shared/form_progress_indicator',
       :locals => {:pages=>[process[:pages], page],

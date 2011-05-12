@@ -7,7 +7,7 @@ class UserSessionsController < ApplicationController
   end
 
   def create
-    if params["prev.x".intern] || params[:has_account]=="true"
+    if params["prev.x".intern]
       #assume trying to login during checkout
       if params[:certificate_order]
         @certificate_order=CertificateOrder.new(params[:certificate_order])
@@ -39,16 +39,18 @@ class UserSessionsController < ApplicationController
         cookies.delete(:r_tier)
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {:value=>user.ssl_account.reseller.
-              reseller_tier.label, :path => "/", :expires => Settings.
-              cart_cookie_days.to_i.days.from_now}
+            reseller_tier.label, :path => "/", :expires => Settings.
+            cart_cookie_days.to_i.days.from_now}
         end
 #        if user.duplicate_v2_users.empty?
-          flash[:notice] = "Successfully logged in."
-          format.html {redirect_back_or_default account_url}
-          us_json = @user_session.to_json.chop << ',"redirect":"'+
-            (user.ssl_account.is_registered_reseller?  ?
-            "create" : new_order_url) +'"}'
-          format.js   {render :json=>us_json}
+        flash[:notice] = "Successfully logged in." unless request.xhr?
+        format.js   {render :json=>url_for_js(user)}
+        format.html {redirect_back_or_default account_url}
+#        us_json = @user_session.to_json.chop << ',"redirect":"'+
+#          (user.ssl_account.is_registered_reseller?  ?
+#          "create" : new_order_url) +'"}'
+
+
 #        else
 #          redirect and present choices of user names and emails (if dupes exist) (radios) then
 #            delete the remaining dup_v2_users rename current username the new username
@@ -94,7 +96,18 @@ class UserSessionsController < ApplicationController
     Authorization.current_user=nil
     flash[:notice] = "Successfully logged out."
     respond_to do |format|
-      format.html {redirect_back_or_default new_user_session_url}
+      format.html {redirect_to new_user_session_url}
     end
   end
 end
+
+private
+
+  def url_for_js(user)
+    redirect = create_ssl_certificate_route(user)
+    @user_session.to_json.chop << ',"redirect_method":"'+redirect[0]+
+      '","url":"'+redirect[1]+'"'+
+        (user.ssl_account.billing_profiles.empty? ? '' :
+        ',"billing_profiles":'+render_to_string(partial: '/orders/billing_profiles',
+        locals: {ssl_account: user.ssl_account }).to_json)+'}'
+  end

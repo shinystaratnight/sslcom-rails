@@ -51,6 +51,6 @@ module FundedAccountsHelper
   end
 
   def apply_or_free
-    current_order.amount.to_s.to_i <=0 ? create_free_ssl_path : apply_funds_path
+    is_order_free? ? create_free_ssl_path : apply_funds_path
   end
 end
