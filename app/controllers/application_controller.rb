@@ -50,8 +50,6 @@ class ApplicationController < ActionController::Base
       pr = cart_item[ShoppingCart::PRODUCT_CODE]
       if pr.blank?
         nil
-      elsif (cart_item.count > 1)
-        Certificate.find_by_product(pr)
       else
         ActiveRecord::Base.find_from_model_and_id(pr)
       end
@@ -263,6 +261,28 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  def set_prev_flag
+    @prev=true if params["prev.x".intern]
+  end
+
+  def prep_certificate_orders_instances
+    if params[:certificate_order]
+      @certificate = Certificate.find_by_product(params[:certificate][:product])
+      co_valid = certificate_order_steps
+      if params["prev.x".intern] || !co_valid
+        @certificate_order.has_csr=true
+        render(:template => "/certificates/buy", :layout=>"application")
+        return false
+      end
+    else
+      unless params["prev.x".intern].nil?
+        redirect_to show_cart_orders_url and return
+        return false
+      end
+      certificates_from_cookie
+    end
+  end
+
   def set_current_user
     Authorization.current_user = current_user
   end
@@ -277,14 +297,8 @@ class ApplicationController < ActionController::Base
   def parse_certificate_orders
     if params[:certificate_order]
       @certificate_order = current_user.ssl_account.certificate_orders.current
-      unless params["prev.x".intern].nil?
-        return go_back_to_buy_certificate
-      end
       @order = current_order
     else
-      unless params["prev.x".intern].nil?
-        redirect_to show_cart_orders_url and return
-      end
       setup_certificate_orders
     end
   end
@@ -302,16 +316,6 @@ class ApplicationController < ActionController::Base
     render(:template => "/certificates/buy", :layout=>"application")
   end
 
-#  logged in user
-#      buy single cert -> OrdersController#new
-#      buy multi certs
-#      get single free ssl cert
-#      get multi free ssl certs
-#  reseller logged in user
-#      buy single cert
-#      buy multi certs
-#      get single free ssl cert
-#      get multi free ssl certs
   def create_ssl_certificate_route(user)
 #    if params[:certificate]
 #      user.ssl_account.is_registered_reseller? ?
@@ -323,15 +327,21 @@ class ApplicationController < ActionController::Base
 ##    else #assume non-free certificates
 #    end
     if user.ssl_account.is_registered_reseller?
-      ["submit", certificate_orders_url]
+      ["submit", params[:certificate] ? certificate_orders_url : new_order_url]
     else
-      unless params[:certificate][:product].blank?
+      if params[:certificate] && params[:certificate][:product]
+        #assume a single cert sale
         params[:certificate][:product]=="free" ? ["submit", ""] : ["",""]
       else
-        ["submit", ""]
+        #shopping cart checkout
+        shopping_cart_amount > 0 ? ["",""] : ["submit", ""]
       end
 #      ["redirect", new_order_url]
     end
+  end
+
+  def shopping_cart_amount
+    certificates_from_cookie.sum(&:amount)
   end
 
 =begin
@@ -343,7 +353,7 @@ class ApplicationController < ActionController::Base
   private
 
   #if in process of recerting (renewal, reprocess, etc), this sets instance
-  #variables from params. Only one thing allowed at a time.
+  #variables from params. Only one type allowed at a time.
   def detect_recert
     CertificateOrder::RECERTS.each do |r|
       unless params[r.to_sym].blank?
@@ -383,6 +393,17 @@ class ApplicationController < ActionController::Base
       flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"
       redirect_to account_url
       return false
+    end
+  end
+
+  def go_prev
+    unless params["prev.x".intern].nil?
+      if params[:certificate_order]
+        go_back_to_buy_certificate
+      else
+        redirect_to(show_cart_orders_url)
+      end
+      false
     end
   end
 

@@ -2,10 +2,15 @@ class OrdersController < ApplicationController
   include OrdersHelper
   resource_controller
   helper_method :cart_items_from_model_and_id
+  before_filter :find_order, :only => [:show]
   before_filter :find_user, :only => [:user_orders]
+  before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
+  before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
+  before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all, :attribute_check=>false
+  filter_access_to :show,:attribute_check=>true
 
   def show_cart
     certificates_from_cookie
@@ -31,9 +36,13 @@ class OrdersController < ApplicationController
     else
       certificates_from_cookie
     end
-    if current_user && current_user.ssl_account.is_registered_reseller?
-      redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-        allocate_funds_for_order_url(:order)) and return
+    if current_user
+      if current_user.ssl_account.is_registered_reseller?
+        redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
+          allocate_funds_for_order_url(:order)) and return
+      elsif @certificate_orders && is_order_free?
+        create_multi_free_ssl
+      end
     end
   end
 
@@ -99,20 +108,17 @@ class OrdersController < ApplicationController
   # GET /orders/1
   # GET /orders/1.xml
   def show
-    order = Order.find_by_reference_number(params[:id])
-    order.receipt=true
-    if order.description == 'Deposit'
-      @deposit = order
-    elsif order.line_items.count==1
-      @order = order
-      @certificate_order = order.line_items.map(&:sellable).flatten.uniq.last
+    @order.receipt=true
+    if @order.description == 'Deposit'
+      @deposit = @order
+    elsif @order.line_items.count==1
+      @certificate_order = @order.line_items.map(&:sellable).flatten.uniq.last
     else
-      @order = order
-      @certificate_orders = order.line_items.map(&:sellable).
-        flatten.uniq.find_all{|cert|!cert.line_item_qty.blank?}
+      @certificate_orders = @order.line_items.map(&:sellable).flatten.uniq.
+          select{|cert|!cert.line_item_qty.blank?}
     end
     respond_to do |format|
-      if order.line_items.count==1
+      if @order.line_items.count==1
         format.html { render "/funded_accounts/success", :layout=>'application'}
       else
         format.html { render :action=>:show}
@@ -132,21 +138,6 @@ class OrdersController < ApplicationController
       end
     end
     respond_to do |format|
-      if params[:certificate_order]
-        @certificate_order=CertificateOrder.new(params[:certificate_order])
-#        @certificate_order.add_renewal(@renewal)
-        @certificate = Certificate.find_by_product(params[:certificate][:product])
-        if params["prev.x".intern] || !certificate_order_steps
-          @certificate_order.has_csr=true
-          format.html {render(:template => "/certificates/buy",
-            :layout=>"application")}
-        end
-      else
-        unless params["prev.x".intern].nil?
-          redirect_to show_cart_orders_url and return
-        end
-        certificates_from_cookie
-      end
       if order_reqs_valid?
         if @certificate_orders
           build_certificate_contents(@certificate_orders, @order)
@@ -193,20 +184,6 @@ class OrdersController < ApplicationController
       @user = User.new(params[:user])
     end
     respond_to do |format|
-      if params[:certificate_order]
-        @certificate_order=CertificateOrder.new(params[:certificate_order])
-        @certificate = Certificate.find_by_product(params[:certificate][:product])
-        if params["prev.x".intern] || !certificate_order_steps
-          @certificate_order.has_csr=true
-          format.html {render(:template => "/certificates/buy",
-            :layout=>"application")}
-        end
-      else
-        unless params["prev.x".intern].nil?
-          redirect_to show_cart_orders_url and return
-        end
-        certificates_from_cookie
-      end
       if @certificate_orders
         build_certificate_contents(@certificate_orders, @order)
       else
@@ -216,6 +193,7 @@ class OrdersController < ApplicationController
         save_user unless current_user
         current_user.ssl_account.orders << @order
         @order.save
+        @order.give_away!
         if @certificate_orders
           clear_cart
           format.html { redirect_to @order }
@@ -235,6 +213,7 @@ class OrdersController < ApplicationController
     respond_to do |format|
       if @order.cents == 0 and @order.line_items.size > 0
         @order.save
+        @order.give_away!
         if @certificate_order
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
@@ -299,12 +278,15 @@ class OrdersController < ApplicationController
       :description => Order::SSL_CERTIFICATE
     }
     @gateway_response = @order.purchase(@credit_card, options)
-    if @gateway_response.success?
-      flash.now[:notice] = @gateway_response.message
-      true
-    else
-      flash.now[:error] = @gateway_response.message
-      false
+    (@gateway_response.success?).tap do |success|
+      if success
+        flash.now[:notice] = @gateway_response.message
+        @order.mark_paid!
+      else
+        flash.now[:error] = @gateway_response.message
+        @order.transaction_declined!
+        @certificate_order.destroy unless @certificate_order.blank?
+      end
     end
   end
 
@@ -317,5 +299,9 @@ class OrdersController < ApplicationController
     @user_session = UserSession.create(@user)
     @current_user_session = @user_session
     Authorization.current_user = @current_user = @user_session.record
+  end
+
+  def find_order
+    @order = Order.find_by_reference_number(params[:id])
   end
 end

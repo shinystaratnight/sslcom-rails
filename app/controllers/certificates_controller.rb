@@ -58,8 +58,6 @@ class CertificatesController < ApplicationController
   # GET /certificate/buy/wildcard.xml
   def buy
     @certificate = Certificate.find_by_product(params[:id]+@tier)
-    @renewing = CertificateOrder.find_by_ref(
-      params[:renewing]) if params[:renewing]
     prep_purchase
   end
 

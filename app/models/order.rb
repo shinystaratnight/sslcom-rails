@@ -19,13 +19,13 @@ class Order < ActiveRecord::Base
   attr_accessor_with_default  :receipt, false
   attr_accessor_with_default  :deposit_mode, false
 
-  SSL_CERTIFICATE = "SSL Certificate Purchase"
+  SSL_CERTIFICATE = "SSL Certificate Order"
 
   #go live with this
 #  default_scope includes(:line_items).where({line_items:
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).order('created_at desc')
+  default_scope includes(:line_items).where(:state ^ 'payment_declined').order(:created_at.desc)
 
   scope :search, lambda {|term|
     where(:reference_number =~ '%'+term+'%')
@@ -74,6 +74,15 @@ class Order < ActiveRecord::Base
   state :authorized
   state :paid
   state :payment_declined
+  state :payment_not_required
+
+  event :give_away do
+    transitions :from => :pending,
+                :to   => :payment_not_required
+
+    transitions :from => :payment_declined,
+                :to   => :payment_not_required
+  end
 
   event :payment_authorized do
     transitions :from => :pending,
@@ -181,6 +190,11 @@ class Order < ActiveRecord::Base
     @is_free.try(:eql, true) || (preferred_migrated_from_v2==true || cents==0)
   end
 
+  def mark_paid!
+    payment_authorized!
+    payment_captured!
+  end
+
 #  def self.cart_items(session, cookies)
 #    session[:cart_items] = []
 #    unless SERVER_SIDE_CART
@@ -206,6 +220,10 @@ class Order < ActiveRecord::Base
 
   def is_deposit?
     Deposit == line_items.first.sellable.class
+  end
+
+  def is_reseller_tier?
+    ResellerTier == line_items.first.sellable.class
   end
 
   def migrated_from

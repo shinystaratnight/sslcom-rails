@@ -22,13 +22,17 @@
       %th(scope="col") Amount
     -@orders.each do |o|
       %tr
-        -unless o.description.blank?
-          %td.name=link_to o.description.shorten(50, false), o, :title=> o.description
-        -else
+        -if o.is_reseller_tier?
+          %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
+        -elsif o.description.blank?
           %td.name=link_to 'nil', o, :title=> o.description
-        %td.validation_status_message(colspan="3")=o.created_at.strftime("%b %d, %Y")
+        -else
+          %td.name=link_to o.description.shorten(50, false), o, :title=> o.description
+        %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
         %td=o.reference_number
         -if o.is_deposit?
           %td=o.amount.format :with_currency
+        -elsif o.is_reseller_tier?
+          %td
         -else
           %td (#{o.amount.format :with_currency})

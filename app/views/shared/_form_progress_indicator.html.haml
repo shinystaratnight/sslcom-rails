@@ -1,3 +1,4 @@
+-certificate ||= nil
 -options ||= {}
 -style = options[:li_style]
 #form_progress_indicator
@@ -7,7 +8,7 @@
       %li(style="#{style}" id="#{pages[1] == adj_index ? 'selected' : ''}")
         %span(class="#{adj_index < pages[1] ? 'finished' : ''}")
           %strong=adj_index
-          -if certificate.is_free? && page=~/Payment/i
+          -if certificate.try("is_free?") && page=~/Payment/i
             Agreement
           -else
             #{page}

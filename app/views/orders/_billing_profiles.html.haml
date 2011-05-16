@@ -17,5 +17,5 @@
           %td= destroy_credit_card_link profile
       %tr
         %td{:colspan => 6}
-          %a#expand_register_card(href="#{'#'}")
+          %a#expand_register_card{:href=>"javascript:void(0);"}
             =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'

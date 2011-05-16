@@ -9,7 +9,7 @@ module Preferences
       options.assert_valid_keys(:default, :group_defaults)
       
       @type = args.first ? args.first.to_sym : :boolean
-      
+
       # Create a column that will be responsible for typecasting
       @column = ActiveRecord::ConnectionAdapters::Column.new(name.to_s, options[:default], @type == :any ? nil : @type.to_s)
       

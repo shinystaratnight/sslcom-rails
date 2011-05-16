@@ -55,7 +55,8 @@ class SslAccountsController < ApplicationController
   end
 
   private
-    def find_ssl_account
-      @ssl_account = current_user.ssl_account
-    end
+
+  def find_ssl_account
+    @ssl_account = current_user.ssl_account
+  end
 end

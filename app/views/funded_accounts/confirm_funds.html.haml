@@ -3,29 +3,33 @@
 -content_for :title, title
 -@hide_remove = true
 =order_progress_indicator(2, certificate) if certificate
+-styles=@certificate_order.blank? ? ['stylized', 'deposit_funds_form'] : ["",""]
 .reseller_registration_select_tier
+  %h3=title
   -form_for FundedAccount.new, :url => apply_or_free, :html => { :method => :put} do |f|
     -if @certificate_order
       =hidden_field_tag("certificate_order")
     -elsif @certificate_orders
       =hidden_field_tag("certificate_orders")
-    %h3=title
-    -unless @certificate_orders
-      =render 'certificate_order_detail'
-    -else
-      =render :partial=>'cart_details', :locals=>{:cert=>@certificate_orders, :is_receipt=>true}
-    -if certificate
-      %p By placing this order you agree to the #{Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:title]} below:
-      =text_area_tag :agreement, render(file: Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:location]), :size=>"106x8"
-    %p
-      You currently have
-      %span.order_amount_strong
-        #{funded_account_balance :with_currency}
-      in your SSL account and your order total is
-      %span.order_amount_strong
-        #{cart_total_price}.
-      Click the 'Next >>' button to confirm order payment (
-      %em> note: please press only once
-      ).
+    %div{id: styles[0],  class: styles[1]}
+      -unless @certificate_orders
+        =render 'certificate_order_detail'
+      -else
+        =render :partial=>'cart_details', :locals=>{:cert=>@certificate_orders, :is_receipt=>true}
+      -if certificate
+        %p By placing this order you agree to the #{Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:title]} below:
+        =text_area_tag :agreement, render(file: Certificate::SUBSCRIBER_AGREEMENTS[certificate.product_root.to_sym][:location]), :size=>"106x8"
+      %p#apply_deduct_instructions
+        You currently have
+        %span.order_amount_strong
+          #{funded_account_balance :with_currency}
+        in your SSL account and your order total is
+        %span.order_amount_strong
+          #{cart_total_price}.
+        Click the 'Next >>' button to confirm order #{"payment" unless is_order_free?} (
+        %em> note: please press only once
+        ).
     #button_container
       =render partial: 'shared/prev_next_buttons'
+    .waiting_bar.clearfix
+      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')

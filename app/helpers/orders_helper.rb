@@ -15,11 +15,12 @@ module OrdersHelper
     elsif @funded_account
       return []
     end
-    cart_products
+    [] #use cart_products if products expand beyond certs
   end
 
   def cart_items_count
-    cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/}.count
+    items=cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/}
+    current_user ? items.select{|i|current_user.ssl_account.can_buy?(i)}.count : items.count
   end
 
   def current_order
@@ -31,7 +32,7 @@ module OrdersHelper
   end
 
   def is_current_order_affordable?
-    current_user.ssl_account.funded_account.amount.cents >
+    current_user.ssl_account.funded_account.amount.cents >=
       current_order.amount.cents
   end
 

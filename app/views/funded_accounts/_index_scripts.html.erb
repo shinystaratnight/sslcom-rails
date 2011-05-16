@@ -2,28 +2,7 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
-    var profile_id = "";
-    profile_form_hidden = <%=!initial_display?.empty?%>;
-    $('#expand_register_card').click(function(){
-      if(profile_form_hidden){
-        $('#register_card_form').fadeIn();
-        $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
-        profile_id = $(':radio[id*=funded_account_funding_source]:checked').attr("id");
-        $(':radio[id*=funded_account_funding_source]').attr("checked","");
-        profile_form_hidden = false;
-      }
-      else{
-        $('#register_card_form').fadeOut();
-        $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
-        $(':radio[id*='+profile_id+']').attr("checked","checked");
-        profile_form_hidden = true;
-      }
-    });
-    $.last_delete_clicked=function(){
-      if($('.delete_billing_profile').size() <= 1)
-        $('.funding_sources_head, #existing_credit_cards').empty();
-      $('#register_card_form').fadeIn();
-    };
+    <%=render partial: 'billing_profiles/profile_scripts'%>
     $('#funded_account_amount').keyup(function () {
       amount = this.value
       this.value = this.value.replace(/((\.\d\d).*)/g, "$2").replace(/[^0-9\.]/g,'');
@@ -36,26 +15,6 @@ jQuery(function($) {
       $('#register_card_form').fadeOut();
       $('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
       profile_form_hidden = true;
-    });
-    if(profile_form_hidden == false){
-      $(':radio[id*=funded_account_funding_source]').attr("checked","");
-      $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
-    }
-    $('.delete_profile').livequery(
-      'ajax:beforeSend', function(){
-        $(this).parent().parent().children('td').addClass('deleting');
-        $(this).parent().prev().html("<img src='/images/ajax-loader.gif' />");
-        $(this).parent().html("");
-        $(this).bind('ajax:complete', function(event, data, status, xhr){
-          $('tr#billing_profile_'+$(this).attr('href').match(/\d+$/)[0]).remove();
-          if($('#existing_credit_cards tr').length < 3)
-            $('tr:#existing_credit_cards_header').remove();
-          if(data.status==500){
-            alert("Error: problems occurred and profile was not successfully deleted.");
-          }
-        }).bind('ajax:failure', function(event, data, status, xhr){
-          alert("Error: problems occurred and profile was not successfully deleted.");
-        });
     });
     $.update_balance_after_load();
   });

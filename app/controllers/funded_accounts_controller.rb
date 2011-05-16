@@ -1,5 +1,6 @@
 class FundedAccountsController < ApplicationController
   include OrdersHelper, CertificateOrdersHelper, FundedAccountsHelper
+  before_filter :go_prev, :parse_certificate_orders, only: [:apply_funds, :create_free_ssl]
 #  resource_controller :singleton
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
@@ -120,6 +121,7 @@ class FundedAccountsController < ApplicationController
       end
       @gateway_response = @deposit.purchase(@credit_card, options)
       if @gateway_response.success?
+        @deposit.mark_paid!
         flash.now[:notice] = @gateway_response.message
         save_billing_profile if
           (@funded_account.funding_source == "new credit card")
@@ -128,6 +130,7 @@ class FundedAccountsController < ApplicationController
           @order.deducted_from = @deposit
           current_user.ssl_account.orders << @order
           @order.save
+          @order.mark_paid!
         end
         @account_total.save
         dep.save
@@ -151,6 +154,7 @@ class FundedAccountsController < ApplicationController
         end
         route ||= "success"
       else
+        @deposit.destroy
         flash.now[:error] = @gateway_response.message
       end
       route ||= "allocate"
@@ -174,7 +178,6 @@ class FundedAccountsController < ApplicationController
   end
 
   def apply_funds
-    parse_certificate_orders
     @account_total = @funded_account = current_user.ssl_account.funded_account
     @funded_account.cents -= @order.cents unless @funded_account.blank?
     respond_to do |format|
@@ -182,6 +185,7 @@ class FundedAccountsController < ApplicationController
         @funded_account.deduct_order = true
         if @order.cents > 0
           @order.save
+          @order.mark_paid!
         end
         @funded_account.save
         flash.now[:notice] = "The transaction was successful."
@@ -209,10 +213,10 @@ class FundedAccountsController < ApplicationController
   end
 
   def create_free_ssl
-    parse_certificate_orders
     respond_to do |format|
       if @order.cents == 0 and @order.line_items.size > 0
         @order.save
+        @order.give_away!
         if @certificate_order
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)

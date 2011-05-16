@@ -15,7 +15,7 @@
   .clearfix
     = text_field_for form, :card_number.to_s, nil, nil, :class=>"form_row class_billing_profile_"+:card_number.to_s, :format=>"table", :required=>required
   .clearfix
-    %label{:for=>"expiration"} Expiration *:
+    %label{:for=>"expiration"} *Expiration:
     = select_month today, :field_name => "expiration_month", :use_month_numbers => true, :prefix => "billing_profile"
     = select_year today, :field_name => "expiration_year", :start_year => today.to_formatted_s("%Y").to_i, :end_year => today.to_formatted_s("%Y").to_i + 10, :prefix => "billing_profile"
   .clearfix

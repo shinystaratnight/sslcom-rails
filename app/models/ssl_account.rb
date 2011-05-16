@@ -82,21 +82,21 @@ class SslAccount < ActiveRecord::Base
   preference  :reminder_notice_triggers, :string
   preference  :reminder_include_reseller, :default=>true
   preference  :reminder_notice_destinations, :string, :default=>"0"
-  preference  :reminder_include_cert_admin, :default=>:determine_default_pref
-  preference  :reminder_include_cert_tech, :default=>:determine_default_pref
+  preference  :reminder_include_cert_admin, :default=>true
+  preference  :reminder_include_cert_tech, :default=>true
   preference  :processed_include_reseller, :default=>true
   preference  :processed_certificate_recipients, :string, :default=>"0"
-  preference  :processed_include_cert_admin, :string, :default=>:determine_default_pref
-  preference  :processed_include_cert_tech, :string, :default=>:determine_default_pref
+  preference  :processed_include_cert_admin, :string, :default=>true
+  preference  :processed_include_cert_tech, :string, :default=>true
   preference  :processed_include_reseller, :default=>true
   preference  :receipt_include_reseller, :default=>true
   preference  :receipt_recipients, :string, :default=>"0"
-  preference  :receipt_include_cert_admin, :string, :default=>:determine_default_pref
-  preference  :receipt_include_cert_bill, :string, :default=>:determine_default_pref
+  preference  :receipt_include_cert_admin, :string, :default=>true
+  preference  :receipt_include_cert_bill, :string, :default=>true
   preference  :confirmation_include_reseller, :default=>true
   preference  :confirmation_recipients, :string, :default=>"0"
-  preference  :confirmation_include_cert_admin, :string, :default=>:determine_default_pref
-  preference  :confirmation_include_cert_bill, :string, :default=>:determine_default_pref
+  preference  :confirmation_include_cert_admin, :string, :default=>true
+  preference  :confirmation_include_cert_bill, :string, :default=>true
 
   before_create :b_create
   after_create  :initial_setup
@@ -176,6 +176,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def can_buy?(item)
+    item = Certificate.find_by_product(item[ShoppingCart::PRODUCT_CODE]) if item.is_a?(Hash)
     if item.reseller_tier.nil?
       return true
     elsif reseller.nil?
@@ -218,6 +219,19 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
+  
+  def set_reseller_default_prefs
+    self.preferred_reminder_include_cert_admin=false
+    self.preferred_reminder_include_cert_tech=false
+    self.preferred_processed_include_cert_admin=false
+    self.preferred_processed_include_cert_tech=false
+    self.preferred_receipt_include_cert_admin=false
+    self.preferred_receipt_include_cert_bill=false
+    self.preferred_confirmation_include_cert_admin=false
+    self.preferred_confirmation_include_cert_bill=false
+    self.save
+  end
+  
   private
 
   SETTINGS_SECTIONS.each do |item|
@@ -246,10 +260,6 @@ class SslAccount < ActiveRecord::Base
     end
     errors.add(:preferred_reminder_notice_destinations,
       'has invalid email addresses') unless (results.empty?)
-  end
-
-  def determine_default_pref
-    not is_registered_reseller?
   end
 
   def preferred_reminder_notice_triggers_format

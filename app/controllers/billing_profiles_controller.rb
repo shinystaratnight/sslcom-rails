@@ -9,7 +9,7 @@ class BillingProfilesController < ApplicationController
 
   def destroy
     @bp=BillingProfile.find(params[:id])
-    @bp.destroy(params[:id])
+    @bp.destroy
     respond_with @bp
   end
 

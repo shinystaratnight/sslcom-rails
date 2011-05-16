@@ -55,3 +55,5 @@
         #click_to_load=image_submit_tag "load_funds_bl.gif", :alt=>'Click here to load funds into your account'
       -else
         =render partial: 'shared/prev_next_buttons'
+    .waiting_bar.clearfix
+      =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')

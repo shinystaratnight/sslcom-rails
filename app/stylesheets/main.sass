@@ -3325,8 +3325,8 @@ label.error
 
   &.multiple
 
-    tr:last-child td:first-child
-      padding-bottom: 1.2em
+    tr:last-child td//:first-child
+      padding-bottom: .8em
 
   &.receipt
     border: none
@@ -3756,7 +3756,7 @@ label.error
     text-align: center
     width: 360px
 
-  #forgot_container, #already_have_account
+  #forgot_container, #already_have_account, #apply_deduct_instructions
     margin: 0pt auto
     width: 300px
     text-align: left
@@ -3766,11 +3766,15 @@ label.error
     p
       text-align: inherit
 
-  #forgot_username_or_password, #already_have_account, #resend_activation
+  #forgot_username_or_password, #already_have_account, #resend_activation, #apply_deduct_instructions
     border: none
     padding-top: 1em
     text-align: center
     font-size: 1.2em
+
+  #apply_deduct_instructions
+    width: 90%
+    background-color: #ff0
 
   #resend_activation
     padding-top: 0
@@ -3809,7 +3813,6 @@ label.error
     float: left
     font-size: 1.4em
     padding: 4px 2px
-    border: solid 1px #aacfe4
     margin: 2px 0 20px 10px
 
   input[type=checkbox], input[type=radio]
@@ -3826,6 +3829,24 @@ label.error
     font-size: 1.8em
     font-weight: bold
     @extend .shiny_blue_button
+
+  //the following should be able to exist outside stylized
+  input, select, textarea
+    font-size: 1.5em
+    @include text-shadow(0px 1px 0px #fff)
+    outline: none
+    @include background(linear-gradient(top,  #ddd,  #fff))
+    @include border-radius(3px)
+    border: 1px solid #717171
+    @include box-shadow(1px 1px 1px 1px #efefef)
+
+    &:focus
+      @include box-shadow(0px 0px 5px #007eff)
+
+  .field_with_errors
+    input, select, textarea
+      border: 1px solid red
+      @include box-shadow(0px 0px 5px red)
 
   #multi_upload_wrap
     padding-left: 20em
@@ -4842,3 +4863,16 @@ ul#send_to_ca_box
 
 .waiting_bar
   text-align: center
+
+.close_flash_message
+  color: #6B9029
+  font-size: .9em
+  float: right
+  margin-right: 1em
+
+  span
+    border: 1px solid
+    padding: 0pt 0.2em
+
+
+

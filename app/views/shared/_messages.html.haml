@@ -3,8 +3,8 @@
     .flash_message{:class => "#{type.to_s}"}
       %span=message_for_item(flash[type.to_sym], flash["#{type}_item".to_sym])
       %small
-        %a.close{:style=>'font-size: .9em; float: right; margin-right: 1em;', :href=>"#"}
-          %span(style='border: 1px solid; padding: 0pt 0.2em;') X
+        %div.close_flash_message
+          %span X
           close
       
       

@@ -10,7 +10,7 @@
       =link_to "Smart SeaLs", site_seals_url
     %li(id="#{'t-intro' if is_on?("certificate_orders")}")
       =link_to "Orders", certificate_orders_path
-    %li(id="#{'t-intro' if is_on?("orders")}")
+    %li(id="#{'t-intro' if is_on?("orders") && !@prev}")
       =link_to "History", orders_path
     %li(id="#{'t-intro' if current_page?(edit_settings_ssl_account_url)}")
       =link_to "Settings", edit_settings_ssl_account_url

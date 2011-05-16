@@ -4,7 +4,7 @@ module FundedAccountsHelper
     return {} unless current_user
     current_user.ssl_account.billing_profiles(true).blank? ||
       @funded_account.try(:funding_source)==FundedAccount::NEW_CREDIT_CARD ||
-      !@billing_profile.try(:errors).blank? ?
+      !@billing_profile.try(:errors).blank? || !flash.now[:error].blank? ?
       {} : {:class => 'hidden'}
   end
 

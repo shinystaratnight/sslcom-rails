@@ -6,7 +6,7 @@
       %em>=cert.subject
       )
   %td.quantity
-    =cert.quantity || "1"
+    =cert.line_item_qty || cert.quantity || "1"
   %td.price= cert.price.format
 -if cert.migrated_from_v2? && !cert.v2_line_items.empty?
   -cert.v2_line_items.each do |item|

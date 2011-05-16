@@ -36,6 +36,7 @@ class UsersController < ApplicationController
     @user.create_ssl_account
     if current_subdomain==Reseller::SUBDOMAIN
       @user.ssl_account.add_role! "new_reseller"
+      @user.ssl_account.set_reseller_default_prefs
       @user.roles << Role.find_by_name(Role::RESELLER)
     else
       @user.roles << Role.find_by_name(Role::CUSTOMER)

@@ -1,11 +1,12 @@
--cert ||= @certificate_order
-%table#order_details_table(cellspacing='0' class="#{cert.paid? ? 'receipt' : ''}")
+-cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
+%table#order_details_table(cellspacing='0' class="#{@order.receipt ? 'receipt' : ''}")
   %tbody
-    %tr#heading_row
-      %th.description(scope='col') description
-      %th.quantity(scope='col') quantity
-      %th.price(scope='col') price
-    =render :partial=>'/funded_accounts/certificate_order_row', :locals=>{:cert=>cert}
+    -unless cert.blank?
+      %tr#heading_row
+        %th.description(scope='col') description
+        %th.quantity(scope='col') quantity
+        %th.price(scope='col') price
+      =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
     %tr
       %td.description.total_row total
-      %td.price.total_row(colspan='2')= cert.price.format
+      %td.price.total_row(colspan='2')= @order.amount.format

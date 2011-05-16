@@ -47,6 +47,8 @@ class Certificate < ActiveRecord::Base
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     ucc:  {title: "UCC SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+    evucc:   {title: "EV SSL Subscriber Agreement",
+          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
 
@@ -177,11 +179,19 @@ class Certificate < ActiveRecord::Base
   end
 
   def duration_in_days(duration)
-    items_by_duration[duration.to_i-1].value
+    if product.include?('ucc')
+      items_by_domains.select{|n|n.display_order==duration.to_i}.last.value
+    else
+      items_by_duration[duration.to_i-1].value
+    end
   end
 
   def duration_index(value)
-    items_by_duration.map(&:value).index(value.to_s)+1
+    if product.include? "ucc"
+      items_by_domains.find{|d|d.value==value.to_s}.display_order
+    else
+      items_by_duration.map(&:value).index(value.to_s)+1
+    end
   end
 
   def certificate_chain_names

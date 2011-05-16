@@ -154,11 +154,7 @@ class ValidationsController < ApplicationController
         @certificate_order.certificate_content.pend_validation! if
           @certificate_order.certificate_content.contacts_provided?
         @validation_histories = @certificate_order.validation_histories
-        if @certificate_order.signup_process[:label]==CertificateOrder::EXPRESS
-          format.html { render :template => '/funded_accounts/success' }
-        else
-          format.html { redirect_to certificate_order_path(@certificate_order, checkout: "true")}
-        end
+        format.html { redirect_to certificate_order_path(@certificate_order, checkout: "true")}
         format.xml { render :xml => @release,
           :status => :created,
           :location => @release }
