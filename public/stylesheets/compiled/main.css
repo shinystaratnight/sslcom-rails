@@ -6528,24 +6528,24 @@ ul#send_to_ca_box {
 #sent_to_ca_results {
   font-size: 0.8em;
 }
-/* line 4818, ../../../app/stylesheets/main.sass */
+/* line 4817, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results dd {
   text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6);
 }
 
-/* line 4821, ../../../app/stylesheets/main.sass */
+/* line 4820, ../../../app/stylesheets/main.sass */
 #processing_ca {
   text-align: center;
   margin: 10px auto;
   display: none;
 }
 
-/* line 4826, ../../../app/stylesheets/main.sass */
+/* line 4825, ../../../app/stylesheets/main.sass */
 #dcv_box {
   margin-bottom: 2em;
 }
 
-/* line 4829, ../../../app/stylesheets/main.sass */
+/* line 4828, ../../../app/stylesheets/main.sass */
 .shiny_silver_button {
   color: #050505;
   padding: 10px 20px;
@@ -6560,7 +6560,7 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px white;
 }
 
-/* line 4842, ../../../app/stylesheets/main.sass */
+/* line 4841, ../../../app/stylesheets/main.sass */
 .shiny_blue_button, #stylized input#upload_files {
   color: white;
   padding: 10px 20px;
@@ -6580,39 +6580,43 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.4), 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* line 4852, ../../../app/stylesheets/main.sass */
+/* line 4851, ../../../app/stylesheets/main.sass */
 #busy_sending {
   display: none;
 }
 
-/* line 4855, ../../../app/stylesheets/main.sass */
+/* line 4854, ../../../app/stylesheets/main.sass */
 #dcv_sent_to_address {
   font-weight: bold;
 }
 
-/* line 4858, ../../../app/stylesheets/main.sass */
+/* line 4857, ../../../app/stylesheets/main.sass */
 .category_border {
   margin-bottom: 1em;
 }
 
-/* line 4861, ../../../app/stylesheets/main.sass */
-#agreement {
+/* line 4860, ../../../app/stylesheets/main.sass */
+#subscriber_agreement {
   font-size: 1.3em;
 }
+/* line 4863, ../../../app/stylesheets/main.sass */
+#subscriber_agreement textarea {
+  width: 100%;
+}
 
-/* line 4864, ../../../app/stylesheets/main.sass */
+/* line 4866, ../../../app/stylesheets/main.sass */
 .waiting_bar {
   text-align: center;
 }
 
-/* line 4867, ../../../app/stylesheets/main.sass */
+/* line 4869, ../../../app/stylesheets/main.sass */
 .close_flash_message {
   color: #6b9029;
   font-size: 0.9em;
   float: right;
   margin-right: 1em;
 }
-/* line 4873, ../../../app/stylesheets/main.sass */
+/* line 4875, ../../../app/stylesheets/main.sass */
 .close_flash_message span {
   border: 1px solid;
   padding: 0pt 0.2em;

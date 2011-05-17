@@ -1,5 +1,6 @@
 -cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
-%table#order_details_table(cellspacing='0' class="#{@order.receipt ? 'receipt' : ''}")
+-order ||= @order || current_order
+%table#order_details_table(cellspacing='0' class="#{order.receipt ? 'receipt' : ''}")
   %tbody
     -unless cert.blank?
       %tr#heading_row
@@ -9,4 +10,4 @@
       =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
     %tr
       %td.description.total_row total
-      %td.price.total_row(colspan='2')= @order.amount.format
+      %td.price.total_row(colspan='2')= order.amount.format

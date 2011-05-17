@@ -77,7 +77,7 @@ jQuery(function($) {
         $('#billing_section').hide();
         $('#new_user_section').hide();
         $('#login_section').show();
-        <%if certificate && !certificate.is_free? -%>
+        <%if certificate -%>
         $('#subscriber_agreement').hide();
         <%end%>
       }
@@ -86,7 +86,7 @@ jQuery(function($) {
         $('#billing_section').show();
         $('#new_user_section').show();
         $('#login_section').hide();
-        <%if certificate && !certificate.is_free? -%>
+        <%if certificate -%>
         $('#subscriber_agreement').show();
         <%end%>
       }
