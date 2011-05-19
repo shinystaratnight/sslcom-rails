@@ -102,6 +102,10 @@ class Certificate < ActiveRecord::Base
     product_variant_groups.first.product_variant_items.first
   end
 
+  def last_duration
+    product_variant_groups.first.product_variant_items.last
+  end
+
   def is_ucc?
     product.include?('ucc')
   end
