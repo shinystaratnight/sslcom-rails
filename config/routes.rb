@@ -141,11 +141,13 @@ SslCom::Application.routes.draw do
   match 'browser_compatibility' => 'site#compatibility', as: :browsers
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)
-  match 'certificates/apidocs/apply' => 'restful_api#docs_apply', :as => :restful_apidocs_apply
   end
+  match 'certificates/apidocs/apply' => 'restful_api#docs_apply', :as => :restful_apidocs_apply
 
   #cert api routes
   match '/certificates/v1/apply' => CertificatesApiApp
+
+  match '*disregard/code/:id'=>'affiliates#refer', via: [:get], constraints: {id: /\w+\/?$/}
 
   match '/:controller(/:action(/:id))'
 end

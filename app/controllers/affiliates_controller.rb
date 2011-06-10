@@ -18,10 +18,10 @@ class AffiliatesController < ApplicationController
   create.wants.html{redirect_to dashboard_affiliate_path(object)}
 
   def refer
-    id = params[:id].gsub(Regexp.new(Settings.affiliate_param_key),"")
+    id = params[:id]
     cookies[:aid] = {:value=>id, :path => "/", :expires => Settings.
         cart_cookie_days.to_i.days.from_now} if Affiliate.exists?(id)
-    redirect_to request.url.gsub(Regexp.new('\/'+Settings.affiliate_param_key+'\d'),"")
+    redirect_to request.url.gsub(/\/code\/\w+\/?$/,"")
   end
 
   def update_profile
