@@ -204,6 +204,12 @@
     </requirement>
     <requirement>
       <requirement>
+        <dependency name="uuidtools" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
+      </requirement>
+      <source from="Gemfile" />
+    </requirement>
+    <requirement>
+      <requirement>
         <dependency name="webrat" version="0" bound="GREATER_OR_EQUAL" git="false" path="false" doRequire="true" />
       </requirement>
       <source from="Gemfile" />
@@ -272,7 +278,6 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] money (v2.1.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/money-2.1.0)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] mysql (v2.8.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/mysql-2.8.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] paperclip (v2.3.8, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/paperclip-2.3.8)" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="[gem] preferences (v0.4.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/preferences-0.4.2)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rails (v3.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rails-3.0.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] railties (v3.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/railties-3.0.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rubyzip (v0.9.4, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rubyzip-0.9.4)" level="application" />
@@ -321,12 +326,13 @@
     <orderEntry type="library" scope="PROVIDED" name="[gem] rspec-core (v2.5.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rspec-core-2.5.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] rspec-mocks (v2.5.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/rspec-mocks-2.5.0)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] savon (v0.7.9, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/savon-0.7.9)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] uuidtools (v2.1.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/uuidtools-2.1.2)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] resource_controller (v0.6.6, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/bundler/gems/resource_controller-5537625a5215)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] s4t-utils (v1.0.4, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/s4t-utils-1.0.4)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] json_pure (v1.5.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/json_pure-1.5.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] childprocess (v0.1.6, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/childprocess-0.1.6)" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/activemodel-3.0.3)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] i18n (v0.4.2, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/i18n-0.4.2)" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.3, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/activemodel-3.0.3)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] hoe (v2.9.0, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/hoe-2.9.0)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] user-choices (v1.1.6.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/user-choices-1.1.6.1)" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="[gem] activemodel (v3.0.1, /home/sysadmin/.rvm/gems/ruby-1.9.2-p136@global/gems/activemodel-3.0.1)" level="application" />

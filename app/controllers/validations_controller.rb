@@ -277,11 +277,6 @@ class ValidationsController < ApplicationController
   end
 
   def help
-    Helper.instance
-  end
-
-  class Helper
-    include Singleton
-    include ActionView::Helpers::NumberHelper
+    Helpers.instance
   end
 end

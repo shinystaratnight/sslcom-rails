@@ -57,4 +57,6 @@ class AffiliatesController < ApplicationController
       access_denied
     end
   end
+
+
 end

@@ -35,6 +35,7 @@ gem 'yui-compressor'
 gem 'jammit'
 gem "rails_config"
 gem 'sinatra'
+gem 'uuidtools'
 
 # Deploy with Capistrano
 # gem 'capistrano'

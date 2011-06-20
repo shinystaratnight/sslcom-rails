@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
     :cart_contents, :cart_products, :certificates_from_cookie
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
+  before_filter :identify_visitor, :record_visit, :except=>[:refer]
 
 #  hide_action :paginated_scope
 
@@ -465,5 +466,41 @@ class ApplicationController < ActionController::Base
   def clear_cart
     cookies.delete(:cart)
     cookies.delete(:aid_li)
+  end
+
+  def identify_visitor
+    cookies[:guid] = {:value=>UUIDTools::UUID.random_create, :path => "/",
+      :expires => 2.years.from_now} unless cookies[:guid]
+    @visitor_token = VisitorToken.find_or_create_by_guid_and_affiliate_id(
+      cookies[:guid],cookies[:aid])
+    @visitor_token.user ||= current_user if current_user
+    @visitor_token.save if @visitor_token.changed? #TODO only if change
+  end
+
+  def record_visit
+    return if request.method != :get
+    md5_current = Digest::MD5.hexdigest(request.url)
+    md5_previous = Digest::MD5.hexdigest(request.referer) if request.referer
+    cur = TrackedUrl.find_or_create_by_md5_and_url(md5_current,request.url)
+    prev = TrackedUrl.find_or_create_by_md5_and_url(md5_previous,request.referer)
+    Tracking.create(:referer=>prev,:visitor_token=>@visitor_token,
+      :tracked_url=>cur)
+#    output = cache(md5) { request.request_uri }
+#    if @visitor
+#      md5 = Digest::MD5.hexdigest(request.request_uri)
+#      output = cache(md5) { request.request_uri }
+#
+#      @tracking = UUID.random_create
+#      cookies[:guid] = {:value=>guid, :path => "/", :expires => 2.years.from_now} unless cookies[:guid]
+#      @visitor_token = VisitorToken.find_or_build_by_guid(cookies[:guid])
+#      @visitor_token.user ||= current_user if current_user
+#      @visitor_token.affiliate_id = cookies[:aid] if cookies[:aid] && token.affiliate_id != cookies[:aid]
+#      @visitor_token.save
+#    end
+  end
+
+  class Helper
+    include Singleton
+    include ActionView::Helpers::NumberHelper
   end
 end

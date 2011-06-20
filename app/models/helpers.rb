@@ -4,4 +4,5 @@
    include ActionView::Helpers::UrlHelper
    include ActionView::Helpers::DateHelper
    include ActionView::Helpers::TagHelper
+   include ActionView::Helpers::NumberHelper
  end

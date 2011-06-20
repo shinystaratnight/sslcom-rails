@@ -1,5 +1,19 @@
 @import 'compass'
 
+@font-face
+  font-family: 'Museo700'
+  src: url('/fonts/Museo700-Regular-webfont.eot')
+  src: local("☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  font-weight: normal
+  font-style: normal
+
+@font-face
+  font-family: 'Museo300'
+  src: url('/fonts/Museo300-Regular-webfont.eot')
+  src: local("☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  font-weight: normal
+  font-style: normal
+
 /*---global common definitions---*/
 *
   font-size: 100.01%
@@ -7,7 +21,7 @@ html
   font-size: 62.5%
 body
   margin: 0
-  font-family: Georgia, "Times New Roman", Times, serif
+  font-family: "Museo300", Georgia, "Times New Roman", Times, serif
   /*background: #10102f*/
   min-width: 980px
   color: #3c3c3c
@@ -247,12 +261,12 @@ a:hover
 
 #content h1
   letter-spacing: -1px
-  font: bold 4.0em Helvetica, Arial, sans-serif
+  font: 3.8em "Museo700", Helvetica, Arial, sans-serif
   margin: 0 0 8px
   text-align: center
 
 #content h2
-  font: bold 2.6em Helvetica, Arial, sans-serif
+  font: 2.6em "Museo700", Helvetica, Arial, sans-serif
   margin: 0 0 24px
   color: #5A79A5
   text-align: center
@@ -364,7 +378,7 @@ a:hover
   background-position: -8px -638px
   background-repeat: no-repeat
   padding: 0 0 0 28px
-  font-size: 2.0em
+  font: 1.9em "Museo700"
 
 .button
   margin-right: auto
@@ -4831,25 +4845,20 @@ ul#send_to_ca_box
 .shiny_silver_button
   color: #050505
   padding: 10px 20px
-  background: -moz-linear-gradient(top,#ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5)
-  background: -webkit-gradient(linear, left top, left bottom, from(#ffffff), color-stop(0.50, #ebebeb), color-stop(0.50, #dbdbdb), to(#b5b5b5))
-  border-radius: 10px
-  -moz-border-radius: 10px
-  -webkit-border-radius: 10px
+  @include background(linear-gradient(top,#ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5))
+  @include border-radius(10px)
   border: 1px solid #949494
-  -moz-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1)
-  -webkit-box-shadow: 0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1)
-  text-shadow: 0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1)
+  @include box-shadow(0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1))
+  @include text-shadow(0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1))
 
 .shiny_blue_button
   color: #ffffff
   padding: 10px 20px
-  background: -moz-linear-gradient(top, #79cff7 0%, #11557a)
-  background: -webkit-gradient(linear, left top, left bottom, from(#79cff7), to(#11557a))
+  @include background(linear-gradient(top, #79cff7 0%, #11557a))
   @include box-shadow(0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7))
   @include border-radius(5px)
   border: 1px solid #00387d
-  text-shadow: 0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3)
+  @include text-shadow(0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3))
 
 #busy_sending
   display: none

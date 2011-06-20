@@ -196,6 +196,7 @@ GEM
       builder (>= 2.1.2)
       s4t-utils (>= 1.0.3)
       xml-simple (>= 1.0.11)
+    uuidtools (2.1.1)
     webrat (0.7.3)
       nokogiri (>= 1.2.0)
       rack (>= 1.0)
@@ -244,6 +245,7 @@ DEPENDENCIES
   savon (= 0.7.9)
   sinatra
   subdomain-fu!
+  uuidtools
   webrat
   will_paginate (= 3.0.pre2)
   wirble
