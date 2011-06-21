@@ -229,6 +229,7 @@ class CertificateOrder < ActiveRecord::Base
     csr = certificate_content.csr
     csr.signed_certificate.try(:common_name) || csr.common_name
   end
+  alias :common_name :subject
 
   def order
     orders.last
@@ -388,15 +389,20 @@ class CertificateOrder < ActiveRecord::Base
           'prioritiseCSRValues' => 'N',
           'isCustomerValidated' => 'Y',
           'responseFormat' => 1,
-          'showCertificateID' => 'Y',
+          'showCertificateID' => 'N',
           'foreignOrderNumber' => ref
         )
+        last_sent = csr.domain_control_validations.last_sent
+        if last_sent.is_eligible_to_send?
+          options.merge!('dcvEmailAddress' => last_sent.(:email_address))
+          last_sent.send!
+        end
         fill_csr_fields options, certificate_content.registrant
         unless csr.csr_override.blank?
           fill_csr_fields options, csr.csr_override
         end
         if certificate.is_wildcard?
-
+          options.merge!('servers' => server_licenses.to_s || '1')
         end
         if certificate.is_ev?
           certificate_content.tap do |cc|
@@ -405,7 +411,12 @@ class CertificateOrder < ActiveRecord::Base
             options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
           end
         end
-        options.merge!('domainNames'=>'d') if certificate.is_ucc?
+        if certificate.is_ucc?
+          options.merge!(
+            'domainNames'=>certificate_content.domains.join(","),
+            'primaryDomainName'=>certificate_content.domains.join(",")
+          )
+        end
       end
     end
   end

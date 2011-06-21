@@ -11,7 +11,7 @@ class Csr < ActiveRecord::Base
       where(:email_address !~ 'null').last
     end
   end
-  has_one     :csr_override
+  has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content
   validates_presence_of :body

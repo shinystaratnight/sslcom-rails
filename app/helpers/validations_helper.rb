@@ -51,4 +51,8 @@ module ValidationsHelper
       ['','']
     end
   end
+
+  def satisfied(last_sent)
+    last_sent.satisfied? ? "dcv_satisfied" : "dcv_not_satisfied"
+  end
 end

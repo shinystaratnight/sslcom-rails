@@ -30,7 +30,7 @@ gem 'rb-inotify'
 gem 'xml-simple'
 gem 'json'
 gem 'easy_roles'
-gem 'meta_where'
+gem 'meta_where' #replace with gem 'squeel' when going to Rails 3.1
 gem 'yui-compressor'
 gem 'jammit'
 gem "rails_config"

@@ -9,9 +9,9 @@ class ValidationsController < ApplicationController
   before_filter :find_validation, :only=>[:update]
   filter_access_to :upload, :require=>:create
   filter_access_to :all
-  filter_access_to :requirements, :domain_control, :ev, :organization, require: :read
+  filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :edit, :attribute_check=>false
-  filter_access_to :send_to_ca, :send_dcv_email, require: :admin_manage
+  filter_access_to :send_to_ca, require: :admin_manage
   in_place_edit_for :validation_history, :notes
 
   def new

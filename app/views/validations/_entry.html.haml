@@ -58,13 +58,13 @@
                               %li.approve_submit=submit_tag 'submit'
                     -v.validation_rules.each_with_index do |vr, vri|
                       -is_domain_validation = vr.description=~/^domain/
-                      %li
+                      %li.validation_section
                         %span.rule_name=vr.description
                         %ul
+                          -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
+                          -status, status_class = validation_status(vrl)
+                          -status = status.gsub("documents", "user reponse") if is_domain_validation
                           %li.rules_methods_block
-                            -vrl = v.validation_rulings.detect do |vrl| vrl.validation_rule == vr end
-                            -status, status_class = validation_status(vrl)
-                            -status.gsub!("documents", "user reponse") if is_domain_validation
                             %em
                               status:
                             %ul
@@ -90,7 +90,6 @@
                                 -else
                                   %li(class="no_validation_decisions_#{vrl.id}")
                                     %em none
-                          -unless is_domain_validation
                             %li.rules_methods_block
                               %em applicable documents:
                               %ul.applicable_documents
@@ -105,9 +104,10 @@
                                           -name = vh.document_file_name.shorten(20, false)
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
+                          -else
+                            =render partial: 'validations/dcv', locals: {co: co}
               .certificate_details_box
                 %ul
-                  =render partial: 'validations/dcv', locals: {co: co}
                   %li
                     %strong(class="val_docs_list_#{i}" alt="#{v.validation_histories.count}") validation documents
                   -if co.validation.validation_histories.empty?

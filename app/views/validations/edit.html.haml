@@ -7,18 +7,42 @@
     Show Submitted Validation for
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
   #stylized.default_form.clearfix
+    .subheading Request Validation From Other Parties
+    %p
+      If you need to request all or part of the validation for this order from other parties, you may
+      send this page to those parties who can provide the requested validation.
+    .clearfix
+      =form_tag request_from_others_certificate_order_validation_url(co), id: 'request_from_others', remote: true do
+        %label{:for=>"has_csr"}
+          send to email address(es):
+          %span.label_desc comma separated
+        .radio_choices
+          -unless co.certificate.is_dv?
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_csr, false
+              %span.has_csr_container send the request for document(s) and proof of domain control
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_csr, false
+              %span.has_csr_container send only the request for proof of domain control
+            .radio_w_desc.clearfix
+              =radio_button_tag :has_csr, true
+              %span.has_csr_container send only the request for document(s)
+          .radio_w_desc.clearfix
+            =radio_button_tag :has_csr, false
+            %span.has_csr_container show the order number
+        =submit_tag "send", class: 'shiny_silver_button', disable_with: 'sending...'
+        %span#busy_sending=image_tag 'waiting_dots.gif'
     .subheading Proof of Domain Control
     #dcv_box
-      %p
+      %p<
         In order for SSL.com to issue an SSL certificate for #{co.subject}, proof that you control the domain
         #{co.subject} is a basic requirement that must be established.
-        -unless co.csr.domain_control_validations.blank?
-          A verification email has already been sent
-          to the email address
+        -if co.csr.domain_control_validations.last_sent.is_eligible_to_resend?
+          A verification email has already been sent to the email address
           %span#dcv_sent_to_address
             #{co.csr.domain_control_validations.last_sent.email_address}
-          \.If you would like to resend the email, simply choose an email address from
-          the options and click the resend button.
+          \. If you would like to resend the email, simply choose an email address from
+          the options and click the send button.
         -else
           A verification email will be sent to the address selected below. Please follow and reply to the
           verification email to complete this validation step.
@@ -32,9 +56,13 @@
               -#=select_tag :domain_control_validation_email, options_for_select(["a", "b"])
               =select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
               =hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
-              =submit_tag "send", class: 'shiny_blue_button', disable_with: 'sending...'
+              =submit_tag "send", class: 'shiny_silver_button', disable_with: 'sending...'
               %span#busy_sending=image_tag 'waiting_dots.gif'
-    .subheading Documents
+        If the above email addresses are no accessible, you will be required to submit an authorization form filled out
+        by an authorized party of the owner of the domain #{co.subject} such as the individual owner or officer of the
+        organization owning the domain #{co.subject}. Click here to download the form. Once the form is filled out and
+        signed by an authorized party, you may submit it through the form at the bottom of this page.
+    .subheading Documents #{"(optional)" if co.certificate.is_dv?}
     -unless vhs.blank?
       %p
         =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', new_certificate_order_validation_url(@certificate_order)
