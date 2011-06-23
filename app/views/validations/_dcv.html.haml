@@ -1,5 +1,5 @@
 -last_sent = co.csr.domain_control_validations.last_sent
--if last_sent.is_eligible_to_resend?
+-if last_sent && last_sent.is_eligible_to_resend?
   %li
     %em automatic verification email sent:
     %ul

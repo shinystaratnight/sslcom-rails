@@ -14,7 +14,7 @@
     #tier_load_amount= current_order.amount.format.gsub(/,/, '') + " USD"
     = f.hidden_field :amount, :value=>(current_order.amount or 0)
   -else
-    = f.text_field :amount, :value=>(current_order.amount or 0), :size=>10
+    = f.text_field :amount, :value=>(current_order.amount or 0), :size=>AMOUNT_FIELD_SIZE
 .clearfix
   %label{:for => "expense_amount"}
     Total Current Balance:

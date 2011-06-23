@@ -300,6 +300,43 @@ jQuery(function($) {
     $('.has_csr_container').click(function(){
       $(this).siblings().filter(':radio[name*=has_documents]').click();
     });
+      $('.clickable_choice').click(function(e){
+        $(this).siblings().filter(':input').click();
+        e.stopPropagation();
+      });
+      $(':radio[name*=refer]').click(function(e){
+        if($(this).val()=="false"){
+          $('#request_validation_from_others').hide();
+          $('#proof_of_dcv_section').show();
+          $('#documents_upload_section').show();
+          $('#documents_upload_heading').show();
+        }
+        else{
+          $('#request_validation_from_others').show();
+          $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').attr("checked", true);
+          $('#proof_of_dcv_section').hide();
+          $('#documents_upload_section').hide();
+          $('#documents_upload_heading').hide();
+        }
+        e.stopPropagation();
+      });
+    $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::DOCUMENTS_SECTION%>]').click(
+      function(){
+        $('#proof_of_dcv_section').show();
+        $('#documents_upload_heading').hide();
+        $('#documents_upload_section').hide();});
+    $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::DCV_SECTION%>]').click(
+      function(){
+        $('#proof_of_dcv_section').hide();
+        $('#documents_upload_heading').show();
+        $('#documents_upload_section').show();});
+    $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').click(
+      function(e){
+        $('#proof_of_dcv_section').hide();
+        $('#documents_upload_heading').hide();
+        $('#documents_upload_section').hide();
+        e.stopPropagation();});
+    $(':radio[name*=refer][value=false]').click();
     $(':radio[name*=has_documents][value=true]').click();
     $('#send_to_ca').livequery(
       'ajax:beforeSend', function(){

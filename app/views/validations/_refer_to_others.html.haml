@@ -1,0 +1,38 @@
+.subheading Request Validation From Other Parties
+%p
+  If you need to refer all or part of the validation for this order to other parties, you may
+  email this page to those parties who can provide the requested validation.
+.clearfix
+  %label
+    *validation provider:
+  .dcv_choices
+    .choice_w_desc.clearfix
+      =radio_button_tag :refer, "false"
+      %span.clickable_choice I can provide all validation
+    .choice_w_desc.clearfix
+      =radio_button_tag :refer, "true"
+      %span.clickable_choice other parties should provide all or partial validation
+#request_validation_from_others.clearfix
+  %label
+    *email request to address(es):
+    %span.label_desc multiple addresses are comma separated
+  .dcv_choices
+    =form_for co.validation.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
+      .choice_w_desc.clearfix
+        =f.text_field :email_addresses, size: HTML_TEXT_FIELD_SIZE
+      -unless co.certificate.is_dv? || local_assigns[:hide_options]
+        .choice_w_desc.clearfix
+          =f.radio_button :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
+          %span.clickable_choice request document(s) and proof of domain control
+        .choice_w_desc.clearfix
+          =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
+          %span.clickable_choice request only proof of domain control
+        .choice_w_desc.clearfix
+          =f.radio_button :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
+          %span.clickable_choice request only document(s)
+      .choice_w_desc.clearfix
+        =f.check_box :preferred_show_order_number
+        %span.clickable_choice allow the order number to be shown in the request
+      .choice_w_desc
+        =submit_tag "send request", class: 'shiny_silver_button dcv_email_choices', disable_with: 'sending...'
+    %span#busy_sending=image_tag 'waiting_dots.gif'
