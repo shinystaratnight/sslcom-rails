@@ -6,7 +6,7 @@ Additional validation information is required in order to issue an SSL.com certi
 <%=@co.subject%>, we need additional validation from you to ensure that we are issuing the SSL.com certificate to
 authorized parties.
 
-Please visit <%=@validation_url%> to complete the validation process.
+Please visit <%=other_party_validation_request_url(@opvr.identifier)%> to complete the validation process.
 
 
 Thank you for your assistance,

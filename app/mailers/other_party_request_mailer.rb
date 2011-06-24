@@ -2,10 +2,16 @@ class OtherPartyRequestMailer < ActionMailer::Base
   default :from => "SSL.com Certificate Services <support@ssl.com>"
   default_url_options[:host] = "www.ssl.com"
 
-  def request_validation(emails, technical_contact, certificate_order)
-    @to=emails
-    @technical_contact = technical_contact
-    @co=certificate_order
+  def request_validation(other_party_validation_request)
+    @opvr = other_party_validation_request
+    @co = @opvr.other_party_requestable
+    @to = @opvr.email_addresses.join(", ")
+    @technical_contact =
+      if @co.administrative_contact
+        [@co.administrative_contact.first_name, @co.administrative_contact.last_name].join(" ")
+      else
+        "An SSL.com customer"
+      end
     subject = "SSL.com Certificate Request For Validation"
     mail(:to => @to, :subject => subject)
   end

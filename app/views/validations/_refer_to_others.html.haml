@@ -1,3 +1,4 @@
+-other_party_request = @other_party_validation_request
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
 .subheading Request Validation From Other Parties
 %p
@@ -35,16 +36,17 @@
         =check_box_tag :preferred_show_order_number
         %span.clickable_choice allow the order number to be shown in the request
     -else
-      =form_for co.validation.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
+      =form_for co.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
         .choice_w_desc.clearfix
           =f.text_field :email_addresses, size: HTML_TEXT_FIELD_SIZE
         -unless co.certificate.is_dv? || local_assigns[:hide_options]
           .choice_w_desc.clearfix
             =f.radio_button :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
             %span.clickable_choice request document(s) and proof of domain control
-          .choice_w_desc.clearfix
-            =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
-            %span.clickable_choice request only proof of domain control
+          -unless hide_dcv?
+            .choice_w_desc.clearfix
+              =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
+              %span.clickable_choice request only proof of domain control
           .choice_w_desc.clearfix
             =f.radio_button :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
             %span.clickable_choice request only document(s)

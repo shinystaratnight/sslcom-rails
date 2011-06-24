@@ -78,7 +78,7 @@ SslCom::Application.routes.draw do
     resources :signed_certificates
   end
 
-  resources :other_party_validation_requests, only: [:create]
+  resources :other_party_validation_requests, only: [:create, :show]
 
   resources :validation_histories
   resources :validations, :only=>[:index, :update] do

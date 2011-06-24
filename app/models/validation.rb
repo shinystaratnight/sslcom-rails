@@ -1,6 +1,5 @@
 class Validation < ActiveRecord::Base
   has_many    :certificate_orders
-  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_many    :validation_history_validations
