@@ -16,7 +16,7 @@
     });
 -content_for :title, "Upload Validation Documentation"
 -co = @certificate_order
--checkout_in_progress=co.certificate_content.contacts_provided?
+-checkout_in_progress=co.validation_stage_checkout_in_progress?
 -if checkout_in_progress
   -i=adjusted_position(5, co)
   =order_progress_indicator(i, co.certificate)
@@ -26,24 +26,10 @@
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
   =error_messages_for :validation, @dcv
   #stylized.default_form
-    =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
     =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
+      =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
       -if checkout_in_progress
-        #proof_of_dcv_section
-          .subheading Proof of Domain Control
-          #dcv_box
-            %p
-              In order for SSL.com to issue an SSL certificate for #{co.subject}, proof that you control the domain
-              #{co.subject} is a basic requirement that must be established. A verification email will be sent to the
-              address selected above. Please follow and reply to the verification email to complete this validation step.
-            .clearfix
-              %label
-                *Send Verification To
-                %span.label_desc whois and authority email addresses
-              .dcv_choices.dcv_email_choices
-                .clearfix
-                  =select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
-                  =hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
+        =render partial: 'proof_of_dcv', locals: {co: co}
         #documents_upload_heading
           .subheading Documentation
           .clearfix
@@ -56,7 +42,7 @@
                 %span.has_csr_container I have my documents ready and want to upload them now
               .radio_w_desc.clearfix
                 =radio_button_tag :has_documents, false
-                %span.has_csr_container I want upload documents later
+                %span.has_csr_container I want to upload documents later
       #documents_upload_section
         #documents_upload_instructions
           %p
@@ -95,9 +81,9 @@
             they will automatically be unpacked. The following file types are accepted:
             #{ValidationHistory.acceptable_file_types}
         =file_field_tag "filedata[]", :id=> "multi_upload"
-        %div(style='width: 100%; text-align: center;')
-          =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
-          .clearfix
-            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+      #upload_validations(style='width: 100%; text-align: center;')
+        =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
+        .clearfix
+          =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
       #button_container(style='display : none')
         #skip_button=link_to image_tag("skip_bl.gif"), co

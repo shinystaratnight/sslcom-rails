@@ -1,3 +1,4 @@
+-checkout_in_progress=co.validation_stage_checkout_in_progress?
 .subheading Request Validation From Other Parties
 %p
   If you need to refer all or part of the validation for this order to other parties, you may
@@ -7,32 +8,50 @@
     *validation provider:
   .dcv_choices
     .choice_w_desc.clearfix
-      =radio_button_tag :refer, "false"
+      =radio_button_tag :refer_to_others, "false"
       %span.clickable_choice I can provide all validation
     .choice_w_desc.clearfix
-      =radio_button_tag :refer, "true"
+      =radio_button_tag :refer_to_others, "true"
       %span.clickable_choice other parties should provide all or partial validation
 #request_validation_from_others.clearfix
   %label
-    *email request to address(es):
+    *email request to:
     %span.label_desc multiple addresses are comma separated
   .dcv_choices
-    =form_for co.validation.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
+    -if checkout_in_progress #non ajax
       .choice_w_desc.clearfix
-        =f.text_field :email_addresses, size: HTML_TEXT_FIELD_SIZE
+        =text_field_tag :email_addresses, nil, size: HTML_TEXT_FIELD_SIZE
       -unless co.certificate.is_dv? || local_assigns[:hide_options]
         .choice_w_desc.clearfix
-          =f.radio_button :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
+          =radio_button_tag :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
           %span.clickable_choice request document(s) and proof of domain control
         .choice_w_desc.clearfix
-          =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
+          =radio_button_tag :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
           %span.clickable_choice request only proof of domain control
         .choice_w_desc.clearfix
-          =f.radio_button :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
+          =radio_button_tag :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
           %span.clickable_choice request only document(s)
       .choice_w_desc.clearfix
-        =f.check_box :preferred_show_order_number
+        =check_box_tag :preferred_show_order_number
         %span.clickable_choice allow the order number to be shown in the request
-      .choice_w_desc
-        =submit_tag "send request", class: 'shiny_silver_button dcv_email_choices', disable_with: 'sending...'
-    %span#busy_sending=image_tag 'waiting_dots.gif'
+    -else
+      =form_for co.validation.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
+        .choice_w_desc.clearfix
+          =f.text_field :email_addresses, size: HTML_TEXT_FIELD_SIZE
+        -unless co.certificate.is_dv? || local_assigns[:hide_options]
+          .choice_w_desc.clearfix
+            =f.radio_button :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
+            %span.clickable_choice request document(s) and proof of domain control
+          .choice_w_desc.clearfix
+            =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
+            %span.clickable_choice request only proof of domain control
+          .choice_w_desc.clearfix
+            =f.radio_button :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
+            %span.clickable_choice request only document(s)
+        .choice_w_desc.clearfix
+          =f.check_box :preferred_show_order_number
+          %span.clickable_choice allow the order number to be shown in the request
+        -unless checkout_in_progress
+          .choice_w_desc
+            =submit_tag "send request", class: 'shiny_blue_button dcv_email_choices', disable_with: 'sending...'
+      %span#busy_sending=image_tag 'waiting_dots.gif'

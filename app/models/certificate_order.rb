@@ -303,6 +303,10 @@ class CertificateOrder < ActiveRecord::Base
     description + " (Tier #{certificate.reseller_tier.label} Reseller)"
   end
 
+  def validation_stage_checkout_in_progress?
+    certificate_content.contacts_provided?
+  end
+
   CertificateContent::CONTACT_ROLES.each do |role|
     define_method("#{role}_contact") do
       certificate_content.send("#{role}_contact".intern)

@@ -222,6 +222,14 @@ class ValidationsController < ApplicationController
 
   private
 
+  def validation_stage_checkout_in_progress?
+    co.certificate_content.contacts_provided?
+  end
+
+  def build_other_party_validation
+
+  end
+
   def create_with_attachment file
     @val_history = ValidationHistory.new(:document => file)
     @certificate_order.validation.

@@ -8,39 +8,7 @@
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
   #stylized.default_form.clearfix
     =render partial: 'refer_to_others', locals: {co: co}
-    #proof_of_dcv_section
-      .subheading Proof of Domain Control
-      #dcv_box
-        %p<
-          In order for SSL.com to issue an SSL certificate for #{co.subject}, proof that you control the domain
-          #{co.subject} is a basic requirement that must be established.
-          -if co.csr.domain_control_validations.last_sent.is_eligible_to_resend?
-            A verification email has already been sent to the email address
-            %span#dcv_sent_to_address
-              #{co.csr.domain_control_validations.last_sent.email_address}
-            \. If you would like to resend the email, simply choose an email address from
-            the options and click the send button.
-          -else
-            A verification email will be sent to the address selected below. Please follow and reply to the
-            verification email to complete this validation step.
-        %p
-          %span#no_emails_accessible
-            Note: If none of the listed email addresses are accessible, you will be required to submit an authorization form filled out
-            by an authorized party of the owner of the domain #{co.subject} such as the individual owner or officer of the
-            organization. Click here to download the form. Once the form is filled out and
-            signed by an authorized party, you may submit it through the form at the bottom of this page.
-        .clearfix
-          %label
-            *Send Verification To
-            %span.label_desc whois and authority email addresses
-          .dcv_email_choices
-            .clearfix
-              =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true do
-                -#=select_tag :domain_control_validation_email, options_for_select(["a", "b"])
-                =select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
-                =hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
-                =submit_tag "send", class: 'shiny_silver_button', disable_with: 'sending...'
-                %span#busy_sending=image_tag 'waiting_dots.gif'
+    =render partial: 'proof_of_dcv', locals: {co: co}
     #documents_upload_section
       .subheading Documents #{"(optional)" if co.certificate.is_dv?}
       -unless vhs.blank?

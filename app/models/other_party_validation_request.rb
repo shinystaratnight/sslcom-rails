@@ -5,4 +5,8 @@ class OtherPartyValidationRequest < OtherPartyRequest
 
   preference  :show_order_number, :default=>false
   preference  :sections, :string, :default=>BOTH_SECTIONS
+
+  after_create do |o|
+    OtherPartyRequestMailer.request_validation
+  end
 end
