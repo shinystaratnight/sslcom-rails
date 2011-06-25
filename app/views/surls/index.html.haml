@@ -8,11 +8,22 @@
       %h2
         Share, track, secure and analyze your links
     %section.search_container#stylized
-      %form#surl_form
-        %label(for="url")
-          url to be shortened:
-        %div
-          =text_field_tag id: "url", name: "url", required: true
-          =submit_tag "Shorten", class: 'shiny_silver_button'
-        %p.legend
-          Not case sensitive. Valid characters include 0-9, A-Z, -, and _
+      =form_for Surl.new, id: "surl_form" do |f|
+        =f.text_field :original, placeholder: "url to be shortened", size: 30
+        =submit_tag "Shorten", class: 'shiny_silver_button'
+        #advanced_options
+          =check_box_tag "advanced_options", "advanced options"
+          .clearfix
+            %label
+              *advanced options:
+            .dcv_choices
+              .choice_w_desc.clearfix
+                =radio_button_tag :refer_to_others, "true"
+                %span.clickable_choice shorten multiple links
+              .choice_w_desc.clearfix
+                =radio_button_tag :refer_to_others, "false"
+                %span.clickable_choice set a username and password to restrict access
+              .choice_w_desc.clearfix
+                =radio_button_tag :refer_to_others, "true"
+                %span.clickable_choice require ssl (https://)
+

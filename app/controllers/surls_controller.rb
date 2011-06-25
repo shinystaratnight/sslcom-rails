@@ -2,8 +2,6 @@ class SurlsController < ApplicationController
   # GET /surls
   # GET /surls.xml
   def index
-    @surls = Surl.all
-
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render :xml => @surls }

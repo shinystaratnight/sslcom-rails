@@ -1,6 +1,10 @@
 #header(class="show_sales_number")
   .inner
     %ul.nav
+      %li#surl_services
+        %a{href: "/surls"}
+          %span NEW!
+          click here to securely shorten your links
       %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)".html_safe, show_cart_orders_url
       %li
         %a{ :href => "/blog/" }
