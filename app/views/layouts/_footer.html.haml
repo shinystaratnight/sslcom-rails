@@ -1,5 +1,8 @@
 #global_footer.clearfix
-  #logo_box
+  %section#logo_share
+    #logo_box
+    =render partial: 'layouts/social_share'
+    .site_seal_footer=render 'site/site_seal'
   %ul.section_box
     %h4 Products
     -Certificate.root_products.each do |c|

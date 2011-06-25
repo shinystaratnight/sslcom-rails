@@ -69,11 +69,11 @@ a:hover
 
 #header .logo
   display: block
-  width: 240px
+  width: 300px
   height: 47px
   margin: 12px 0 0
-  overflow: hidden
-  text-indent: -9999px
+  //overflow: hidden
+  //text-indent: -9999px
   background-image: url('/images/sitesprite1.png')
   background-position: -10px -590px
   background-repeat: no-repeat
@@ -84,6 +84,9 @@ a:hover
 #header .logo a
   height: 100%
   display: block
+  float: left
+  margin-top: -20px
+  width: 180px
 
 #header.show_sales_number
   padding-bottom: 8px
@@ -110,6 +113,10 @@ a:hover
 @mixin small_page_heading
   font: bold 1.6em Helvetica, Arial, sans-serif
   margin: 0 0 7px
+
+=center
+  text-align: center
+  margin: 0 auto
 
 =clearfixIE5_and_6
   * html &
@@ -4667,11 +4674,11 @@ ul[class^=status_history] > li
 
 #copyright_statement
   clear: both
-  color: #333333
+  color: #999
   font-size: 11px
   margin: 0 auto
   padding-top: 2.5em
-  text-align: left
+  text-align: center
   width: 970px
 
 a.footer_link
@@ -4683,10 +4690,10 @@ a.footer_link
   background-position: left top
   background-repeat: no-repeat
   float: left
-  height: 100px
+  height: 30px
   margin-right: 16px
   text-indent: -9999px
-  width: 130px
+  width: 100px
 
 #ssl_site_seal_sample
   float: right
@@ -4756,9 +4763,8 @@ img.industry
   float: right
 
 .center
-  margin: 0 auto
+  +center
   float: none
-  text-align: center
 
 #other_services
   clear: both
@@ -4914,3 +4920,34 @@ textarea[id^=certificate_order]
 span#no_emails_accessible
   font-size: .9em
   color: #FF2626
+
+#social_share
+  float: right
+  margin: 0px 4px 0px 2px
+  padding: 0
+  width: 110px
+
+#logo_share
+  float: left
+  width: 180px
+
+#twitter
+  float: left
+  height: 5px
+
+#facebook
+  float: right
+  width: 50px
+
+#logo_share #social_share
+  float: left
+
+.site_seal_footer
+  float: left
+  margin-top: 30px
+
+#stylized #surl_form
+  +center
+  text-align: left
+  width: 60%
+  font-size: 2em

@@ -1,5 +1,8 @@
 -reseller ||= false
-%span(class="#{reseller ? 'reseller' : ''} logo")=link_to "SSL", root_url
+%span(class="#{reseller ? 'reseller' : ''} logo")
+  =link_to "", root_url
+  =render partial: 'layouts/social_share'
 #sales_number_in_header
   =image_tag 'trust_in.png', title: 'trust in everything we do', alt: 'trust in everything we do'
   =Settings.header_phone_numbers
+

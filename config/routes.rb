@@ -1,6 +1,8 @@
 require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
+  resources :surls
+
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout

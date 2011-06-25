@@ -1,0 +1,18 @@
+-content_for :header, 'public'
+.container
+  .innercontainere
+    .inner
+      =render :partial => "shared/messages"
+      %h1
+        Shrink Urls with SSL Shortened Secure Links
+      %h2
+        Share, track, secure and analyze your links
+    %section.search_container#stylized
+      %form#surl_form
+        %label(for="url")
+          url to be shortened:
+        %div
+          =text_field_tag id: "url", name: "url", required: true
+          =submit_tag "Shorten", class: 'shiny_silver_button'
+        %p.legend
+          Not case sensitive. Valid characters include 0-9, A-Z, -, and _

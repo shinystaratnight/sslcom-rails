@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110622154343) do
+ActiveRecord::Schema.define(:version => 20110625192901) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -596,9 +596,10 @@ ActiveRecord::Schema.define(:version => 20110622154343) do
   end
 
   create_table "server_softwares", :force => true do |t|
-    t.string   "title",      :null => false
+    t.string   "title",       :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "support_url"
   end
 
   create_table "signed_certificates", :force => true do |t|
@@ -663,6 +664,14 @@ ActiveRecord::Schema.define(:version => 20110622154343) do
     t.integer  "product_variant_item_id"
     t.integer  "quantity"
     t.integer  "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "surls", :force => true do |t|
+    t.text     "original"
+    t.string   "crypted_password"
+    t.string   "password_salt"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
