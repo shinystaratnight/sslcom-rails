@@ -6745,20 +6745,19 @@ span#no_emails_accessible {
   text-align: center;
   margin: 0 auto;
   text-align: left;
-  width: 60%;
   font-size: 2em;
 }
-/* line 4962, ../../../app/stylesheets/main.sass */
+/* line 4961, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt {
   text-align: center;
   margin: 0 auto;
-  width: 85%;
+  width: 95%;
 }
-/* line 4966, ../../../app/stylesheets/main.sass */
+/* line 4965, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text] {
-  width: 480px;
+  width: 300px;
 }
-/* line 4969, ../../../app/stylesheets/main.sass */
+/* line 4968, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container {
   width: 100%;
   float: left;
@@ -6775,18 +6774,18 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 4980, ../../../app/stylesheets/main.sass */
+/* line 4979, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options {
   font-size: 0.8em;
-  width: 50%;
+  width: 80%;
   margin: 0pt auto;
 }
 
-/* line 4985, ../../../app/stylesheets/main.sass */
+/* line 4984, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 4988, ../../../app/stylesheets/main.sass */
+/* line 4987, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
