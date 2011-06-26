@@ -3746,6 +3746,7 @@ label.error
   @include background(linear-gradient(#DEDEDE, white 20%))
   @include border-radius(5px)
 
+#stylized, #surl_stylized
   p, .heading, form, button
     border: 0
     margin: 0
@@ -3775,6 +3776,11 @@ label.error
 
   dl.cert_example
     font-family: "courier new",courier,mono
+    width: 65%
+    +center
+
+    .sample_csr
+      text-align: left
 
   .form_input
     margin: 0pt auto
@@ -4947,13 +4953,14 @@ span#no_emails_accessible
   float: left
   margin-top: 30px
 
-#stylized #new_surl
+#surl_stylized #new_surl
   +center
   text-align: left
   width: 60%
   font-size: 2em
 
-  #advanced_options
+  #advanced_options_container
+    width: 100%
     float: left
     margin: 0 auto
     padding-top: 24px
@@ -4962,6 +4969,11 @@ span#no_emails_accessible
     background-color: rgba(220, 223, 254, 0.9)
     border: 1px solid orange
     @include border-radius(10px)
+
+    #advanced_options
+      font-size: 0.8em
+      width: 50%
+      margin: 0pt auto
 
 #surl_services a
   color: red

@@ -1,6 +1,7 @@
 class CreateSurls < ActiveRecord::Migration
   def self.up
     create_table :surls do |t|
+      t.references :user
       t.text      :original
       t.string    :username
       t.string    :crypted_password                                   # optional, see below
