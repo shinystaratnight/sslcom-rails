@@ -6,12 +6,12 @@
       %h1
         Shrink Urls with Shortened Secure Links (SSL)
       %h2
-        Share, track, secure and analyze your links
+        Share, track, protect, scan and analyze your links
     %section.search_container#surl_stylized
       -#=form_for Surl.new, id: "surl_form" do |f|
       -#  =f.text_field :original, placeholder: "url to be shortened", size: 30
       %form#new_surl
-        %div
+        #shorten_prompt
           =text_field_tag :url, nil, placeholder: "url to be shortened", size: 30
           =submit_tag "Shorten", class: 'shiny_silver_button'
         #advanced_options_container
@@ -27,5 +27,11 @@
                 %span.clickable_choice set access restrictions
               .choice_w_desc.clearfix
                 =radio_button_tag :refer_to_others, "true"
+                %span.clickable_choice display share buttons
+              .choice_w_desc.clearfix
+                =radio_button_tag :refer_to_others, "true"
                 %span.clickable_choice require ssl encryption (https://)
+Let everyone know you are using secure links with the foremost name in security by using the ssl.com
+domain name as your secure linking service. All links display an ssl daily scanned report near the top
+to let people know the link is safe.
 
