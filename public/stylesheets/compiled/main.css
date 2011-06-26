@@ -6749,6 +6749,10 @@ span#no_emails_accessible {
   font-size: 2em;
 }
 /* line 4962, ../../../app/stylesheets/main.sass */
+#surl_stylized #new_surl input[type=password], #surl_stylized #new_surl input[type=text] {
+  width: 580px;
+}
+/* line 4965, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container {
   width: 100%;
   float: left;
@@ -6765,15 +6769,11 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 4973, ../../../app/stylesheets/main.sass */
+/* line 4976, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options {
   font-size: 0.8em;
   width: 50%;
   margin: 0pt auto;
-}
-/* line 4978, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #advanced_options_container input[type=password], #surl_stylized #new_surl #advanced_options_container input[type=text] {
-  width: 580px;
 }
 
 /* line 4981, ../../../app/stylesheets/main.sass */
