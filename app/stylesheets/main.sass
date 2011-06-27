@@ -3903,10 +3903,12 @@ label.error
   .radio_choices, .dcv_choices, .surl_choices
     font-size: 1.4em
 
+  .radio_choices, .dcv_choices, .site_seal_radio_choices
+    margin: 0 0 10px 10px
+
   .radio_choices, .dcv_choices, .surl_choices, .site_seal_radio_choices
     float: left
     text-align: left
-    margin: 0 0 10px 10px
 
     .radio_w_desc, .choice_w_desc
       width: 100%
@@ -4958,6 +4960,12 @@ span#no_emails_accessible
   text-align: left
   font-size: 2em
 
+  label
+    font-size: 1.4em
+    display: block
+    color: #222
+    font-weight: bold
+
   #shorten_prompt
     +center
     width: 95%
@@ -4969,7 +4977,7 @@ span#no_emails_accessible
     width: 100%
     float: left
     margin: 0 auto
-    padding-top: 24px
+    padding: 1em 0
     text-align: center
     background-color: rgb(220, 223, 254)
     background-color: rgba(220, 223, 254, 0.9)

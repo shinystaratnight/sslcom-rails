@@ -19,18 +19,18 @@
               #advanced_options.clearfix
                 %label
                   advanced options:
-                .dcv_choices
+                .surl_choices
                   .choice_w_desc.clearfix
-                    =radio_button_tag :refer_to_others, "true"
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice shorten multiple links
                   .choice_w_desc.clearfix
-                    =radio_button_tag :refer_to_others, "false"
+                    =check_box_tag :refer_to_others, "false"
                     %span.clickable_choice set access restrictions
                   .choice_w_desc.clearfix
-                    =radio_button_tag :refer_to_others, "true"
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice display share buttons
                   .choice_w_desc.clearfix
-                    =radio_button_tag :refer_to_others, "true"
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice require ssl encryption (https://)
       .rightcolc
         %ul.listd

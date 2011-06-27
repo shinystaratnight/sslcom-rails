@@ -1,4 +1,6 @@
 class SurlsController < ApplicationController
+  respond_to :json, only: [:create]
+
   # GET /surls
   # GET /surls.xml
   def index
