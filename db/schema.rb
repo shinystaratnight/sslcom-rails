@@ -669,9 +669,14 @@ ActiveRecord::Schema.define(:version => 20110625192901) do
   end
 
   create_table "surls", :force => true do |t|
+    t.integer  "user_id"
     t.text     "original"
+    t.string   "identifier"
+    t.string   "username"
     t.string   "crypted_password"
     t.string   "password_salt"
+    t.boolean  "require_ssl"
+    t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -1,35 +1,21 @@
 class SurlsController < ApplicationController
-  respond_to :json, only: [:create]
 
   # GET /surls
   # GET /surls.xml
   def index
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @surls }
-    end
+    @surl = Surl.new
   end
 
   # GET /surls/1
   # GET /surls/1.xml
   def show
-    @surl = Surl.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @surl }
-    end
+    @surl = Surl.find(params[:id].to_i(36))
   end
 
   # GET /surls/new
   # GET /surls/new.xml
   def new
     @surl = Surl.new
-
-    respond_to do |format|
-      format.html # new.html.erb
-      format.xml  { render :xml => @surl }
-    end
   end
 
   # GET /surls/1/edit
@@ -40,16 +26,9 @@ class SurlsController < ApplicationController
   # POST /surls
   # POST /surls.xml
   def create
-    @surl = Surl.new(params[:surl])
-
+    @surl = Surl.create(params[:surl])
     respond_to do |format|
-      if @surl.save
-        format.html { redirect_to(@surl, :notice => 'Surl was successfully created.') }
-        format.xml  { render :xml => @surl, :status => :created, :location => @surl }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @surl.errors, :status => :unprocessable_entity }
-      end
+      format.js {render(text: @surl.to_json)}
     end
   end
 

@@ -1,5 +1,4 @@
 -content_for :header, 'public'
-=render :partial => '/surls/index_scripts'
 .container
   .innercontainere
     .inner
@@ -10,32 +9,28 @@
         Share, track, protect, scan and analyze your links
       .leftcolb
         %section.search_container#surl_stylized
-          -#%form#new_surl
-          -#  #shorten_prompt
-          -#    =text_field_tag :url, nil, placeholder: "url to be shortened", size: 30
-          =form_for @surl, id: "surl_form" , remote: true do |f|
+          -#=form_for Surl.new, id: "surl_form" do |f|
+          -#  =f.text_field :original, placeholder: "url to be shortened", size: 30
+          %form#new_surl
             #shorten_prompt
-              =f.url_field :original, placeholder: "url to be shortened", size: 30
+              =text_field_tag :url, nil, placeholder: "url to be shortened", size: 30
               =submit_tag "Shorten", class: 'shiny_silver_button'
-              %span#busy_sending
-                processing...
-                =image_tag 'waiting_dots.gif'
             #advanced_options_container
               #advanced_options.clearfix
                 %label
                   advanced options:
                 .surl_choices
                   .choice_w_desc.clearfix
-                    =check_box_tag :multiple_links, false
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice shorten multiple links
                   .choice_w_desc.clearfix
-                    =check_box_tag :set_access_restrictions, false
+                    =check_box_tag :refer_to_others, "false"
                     %span.clickable_choice set access restrictions
                   .choice_w_desc.clearfix
-                    =check_box_tag :share, true
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice display share buttons
                   .choice_w_desc.clearfix
-                    =check_box_tag :require_ssl, true
+                    =check_box_tag :refer_to_others, "true"
                     %span.clickable_choice require ssl encryption (https://)
       .rightcolc
         %ul.listd

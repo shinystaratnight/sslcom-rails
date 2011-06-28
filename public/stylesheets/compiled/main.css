@@ -271,7 +271,7 @@ a:hover {
   float: right;
   list-style: none;
   margin: 0;
-  padding: 10px 0 0;
+  padding: 6px 0 4px;
   clear: right;
 }
 
@@ -5145,7 +5145,7 @@ label.error {
   font-weight: bold;
 }
 /* line 3865, ../../../app/stylesheets/main.sass */
-#stylized input[type=text], #stylized input[type=password], #stylized select, #stylized textarea, #surl_stylized input[type=text], #surl_stylized input[type=password], #surl_stylized select, #surl_stylized textarea {
+#stylized input[type=text], #stylized input[type=url], #stylized input[type=password], #stylized select, #stylized textarea, #surl_stylized input[type=text], #surl_stylized input[type=url], #surl_stylized input[type=password], #surl_stylized select, #surl_stylized textarea {
   font-size: 1.5em;
   text-shadow: 0px 1px 0px white;
   outline: none;
@@ -5165,7 +5165,7 @@ label.error {
   box-shadow: 1px 1px 1px 1px #efefef;
 }
 /* line 3874, ../../../app/stylesheets/main.sass */
-#stylized input[type=text]:focus, #stylized input[type=password]:focus, #stylized select:focus, #stylized textarea:focus, #surl_stylized input[type=text]:focus, #surl_stylized input[type=password]:focus, #surl_stylized select:focus, #surl_stylized textarea:focus {
+#stylized input[type=text]:focus, #stylized input[type=url]:focus, #stylized input[type=password]:focus, #stylized select:focus, #stylized textarea:focus, #surl_stylized input[type=text]:focus, #surl_stylized input[type=url]:focus, #surl_stylized input[type=password]:focus, #surl_stylized select:focus, #surl_stylized textarea:focus {
   -moz-box-shadow: 0px 0px 5px #007eff;
   -webkit-box-shadow: 0px 0px 5px #007eff;
   -o-box-shadow: 0px 0px 5px #007eff;
@@ -6764,7 +6764,7 @@ span#no_emails_accessible {
   width: 95%;
 }
 /* line 4973, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text] {
+#surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url] {
   width: 300px;
 }
 /* line 4976, ../../../app/stylesheets/main.sass */
@@ -6798,4 +6798,15 @@ span#no_emails_accessible {
 /* line 4995, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
+}
+
+/* line 4998, ../../../app/stylesheets/main.sass */
+#surl_link {
+  font-size: 4em;
+  float: left;
+  font-weight: bold;
+}
+/* line 5003, ../../../app/stylesheets/main.sass */
+#surl_link input {
+  width: 400px;
 }
