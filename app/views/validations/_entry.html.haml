@@ -161,7 +161,8 @@
                     %li
                       %strong login
                     -u = co.ssl_account.users.last
-                    %li.category_border=remote_login_link(u)
+                    -unless u.blank?
+                      %li.category_border=remote_login_link(u)
                   %li
                     %strong notes
                   %li.category_border

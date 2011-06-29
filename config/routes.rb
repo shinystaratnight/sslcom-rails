@@ -1,7 +1,6 @@
 require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
-  resources :surls
 
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
@@ -152,6 +151,8 @@ SslCom::Application.routes.draw do
   match '/certificates/v1/apply' => CertificatesApiApp
 
   match '*disregard/code/:id'=>'affiliates#refer', via: [:get], constraints: {id: /\w+\/?$/}
+
+  resources :surls
 
   match '/:controller(/:action(/:id))'
 end

@@ -15,8 +15,9 @@
       \::
       =link_to "site seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
       -u=co.ssl_account.users.last
-      -if permitted_to? :admin_manage, u
-        \::
-        =link_to "user", admin_show_user_path(u), :title=>"view user #{u.login}"
+      -unless u.blank?
+        -if permitted_to? :admin_manage, u
+          \::
+          =link_to "user", admin_show_user_path(u), :title=>"view user #{u.login}"
     -else
       =link_to "finish processing", edit_certificate_order_url(co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'

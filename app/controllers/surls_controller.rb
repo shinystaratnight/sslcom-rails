@@ -10,6 +10,7 @@ class SurlsController < ApplicationController
   # GET /surls/1.xml
   def show
     @surl = Surl.find(params[:id].to_i(36))
+    redirect_to @surl.original
   end
 
   # GET /surls/new

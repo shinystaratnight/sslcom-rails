@@ -36,7 +36,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope includes(:certificate_contents).
-      where(:certificate_contents=>{:id.ne=>nil}).order(:created_at.desc).readonly(false)
+    where(:certificate_contents=>{:id.ne=>nil}).
+    order(:created_at.desc).readonly(false)
   
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -47,7 +48,7 @@ class CertificateOrder < ActiveRecord::Base
       '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
       merge(options)
   }
-  
+
   FULL = 'full'
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
@@ -80,7 +81,7 @@ class CertificateOrder < ActiveRecord::Base
     validates :certificate, presence: true
   else
     validates :certificate, presence: true, :unless=>Proc.new {|co|
-      !co.orders.last.nil? && co.orders.last.preferred_migrated_from_v2 = true}
+      !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
   end
 
   before_create do |co|

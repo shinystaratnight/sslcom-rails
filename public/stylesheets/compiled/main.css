@@ -6810,3 +6810,17 @@ span#no_emails_accessible {
 #surl_link input {
   width: 400px;
 }
+
+/* line 5006, ../../../app/stylesheets/main.sass */
+#surl_instructions {
+  float: left;
+  display: block;
+  font-size: 2.4em;
+  padding: 0.2em 0 0 1em;
+  display: none;
+}
+
+/* line 5013, ../../../app/stylesheets/main.sass */
+input[name=generated_surl] {
+  cursor: pointer;
+}
