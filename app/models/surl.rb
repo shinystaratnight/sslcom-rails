@@ -3,7 +3,8 @@ class Surl < ActiveRecord::Base
 
   validate :url_format
 
-  URL = 'staging1.ssl.com:3000'
+#  URL = 'staging1.ssl.com:3000'
+  URL = 'staging1.ssl.com'
 
   after_create do |s|
     s.update_attribute :identifier, s.id.to_s(36)
@@ -16,5 +17,9 @@ class Surl < ActiveRecord::Base
         URI.parse(original).kind_of?(url_type)
       end
   rescue e
+  end
+
+  def is_http?
+    original =~ /^http/
   end
 end

@@ -1,3 +1,6 @@
+require 'open-uri'
+require 'nokogiri'
+
 class SurlsController < ApplicationController
 
   # GET /surls
@@ -10,7 +13,21 @@ class SurlsController < ApplicationController
   # GET /surls/1.xml
   def show
     @surl = Surl.find(params[:id].to_i(36))
-    redirect_to @surl.original
+    unless @surl.is_http?
+      redirect_to @surl.original
+    else
+      doc = Nokogiri::HTML(open(@surl.original))
+      head = doc.at_css "head"
+      base = Nokogiri::XML::Node.new "base", doc
+      base["href"]=@surl.original
+      body = doc.at_css "body"
+      div = Nokogiri::XML::Node.new "div", doc
+      div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
+      div.inner_html = render_to_string(partial: "d", layout: false)
+      body.children.first.before(div)
+      head.children.first.before(base)
+      render inline: doc.to_html
+    end
   end
 
   # GET /surls/new

@@ -6819,8 +6819,3 @@ span#no_emails_accessible {
   padding: 0.2em 0 0 1em;
   display: none;
 }
-
-/* line 5013, ../../../app/stylesheets/main.sass */
-input[name=generated_surl] {
-  cursor: pointer;
-}

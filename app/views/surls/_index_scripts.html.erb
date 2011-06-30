@@ -95,7 +95,7 @@ jQuery(function($) {
           data=$.parseJSON(data);
           $('#surl_container').html(surl);
           if(typeof data.original=="undefined"){
-            var new_link = "http://"+Surl::URL+"/"+data.surl.identifier;
+            var new_link = "http://<%=Surl::URL%>/"+data.surl.identifier;
             surl.append("&raquo;<input readonly='readonly' name='generated_surl' value='"+new_link+"' />");
             $('#surl_instructions .old_link').html(data.surl.original);
             $('#surl_instructions .click_to_visit').html('<a href="'+new_link+

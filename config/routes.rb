@@ -154,5 +154,7 @@ SslCom::Application.routes.draw do
 
   resources :surls
 
+  match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/}
+
   match '/:controller(/:action(/:id))'
 end
