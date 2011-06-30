@@ -18,6 +18,7 @@ class SurlsController < ApplicationController
     else
       begin
         doc = Nokogiri::HTML(open(@surl.original))
+        doc.encoding = 'UTF-8'
         head = doc.at_css "head"
         base = Nokogiri::XML::Node.new "base", doc
         base["href"]=@surl.original

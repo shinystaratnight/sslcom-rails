@@ -59,7 +59,7 @@
       <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="35" selection-start="957" selection-end="957" vertical-scroll-proportion="0.61263734">
+            <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.7197802">
               <folding />
             </state>
           </provider>
@@ -68,7 +68,7 @@
       <file leaf-file-name="surl.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="8" selection-start="476" selection-end="476" vertical-scroll-proportion="0.0">
+            <state line="5" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1483,6 +1483,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/surls/_d.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="30" selection-start="316" selection-end="316" vertical-scroll-proportion="0.0">
@@ -1490,16 +1497,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="8" selection-start="476" selection-end="476" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="35" selection-start="957" selection-end="957" vertical-scroll-proportion="0.61263734">
+        <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.7197802">
           <folding />
         </state>
       </provider>

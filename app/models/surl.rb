@@ -3,8 +3,8 @@ class Surl < ActiveRecord::Base
 
   validate :url_format
 
-#  URL = 'staging1.ssl.com:3000'
-  URL = 'staging1.ssl.com'
+  URL = 'staging1.ssl.com:3000'
+#  URL = 'staging1.ssl.com'
 
   after_create do |s|
     s.update_attribute :identifier, s.id.to_s(36)
