@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/surl.rb" afterPath="$PROJECT_DIR$/app/models/surl.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -56,19 +55,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="surls_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.7197802">
+            <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surl.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="surl.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="172" selection-end="172" vertical-scroll-proportion="0.42032966">
               <folding />
             </state>
           </provider>
@@ -179,8 +178,8 @@
         <option value="$PROJECT_DIR$/app/views/surls/show.html.haml" />
         <option value="$PROJECT_DIR$/app/views/surls/d.html.haml" />
         <option value="$PROJECT_DIR$/app/views/surls/_d.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/surl.rb" />
         <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/surl.rb" />
       </list>
     </option>
   </component>
@@ -1483,13 +1482,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="76" selection-end="76" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/surls/_d.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="3" column="30" selection-start="316" selection-end="316" vertical-scroll-proportion="0.0">
@@ -1499,7 +1491,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.7197802">
+        <state line="34" column="0" selection-start="897" selection-end="955" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="0" selection-start="172" selection-end="172" vertical-scroll-proportion="0.42032966">
           <folding />
         </state>
       </provider>

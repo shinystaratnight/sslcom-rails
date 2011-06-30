@@ -3,8 +3,11 @@ class Surl < ActiveRecord::Base
 
   validate :url_format
 
+  if Rails.env=='development'
   URL = 'staging1.ssl.com:3000'
-#  URL = 'staging1.ssl.com'
+  else
+  URL = 'staging1.ssl.com'
+  end
 
   after_create do |s|
     s.update_attribute :identifier, s.id.to_s(36)
