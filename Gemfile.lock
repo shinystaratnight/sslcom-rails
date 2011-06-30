@@ -232,6 +232,7 @@ DEPENDENCIES
   meta_where
   money (= 2.1.0)
   mysql (= 2.8.1)
+  nokogiri
   paperclip
   rack-test
   rails (= 3.0.1)
