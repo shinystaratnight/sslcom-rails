@@ -1,4 +1,6 @@
 %div(style="background:#ddd;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:12px;padding:8px;text-align:left")
+  %div(style="float: left; margin-right: 4px;")
+    =link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
   The following page was scanned on #{DateTime.now.strftime("%B %d, %Y")}
   and determined to be free of malware by ssl.com security services.
   This shortened secure link (ssl) points to
@@ -7,9 +9,7 @@
   and shrinking long urls. Visit
   #{link_to "http://links.ssl.com", "http://links.ssl.com", style: "text-decoration:underline;color:#00c"}
   to learn more.
-  %div(style="float: right; width: 180px;")
-    %div(style="float: left;")
-      =link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
+  %div(style="float: right; width: 100px;")
     %div(style="float: left;margin-left:10px;")
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
       %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
