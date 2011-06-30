@@ -16,7 +16,7 @@ class Surl < ActiveRecord::Base
       [URI::HTTP, URI::HTTPS, URI::FTP].find do |url_type|
         URI.parse(original).kind_of?(url_type)
       end
-  rescue e
+  rescue
   end
 
   def is_http?

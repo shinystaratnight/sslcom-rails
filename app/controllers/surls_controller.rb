@@ -28,7 +28,7 @@ class SurlsController < ApplicationController
         body.children.first.before(div)
         head.children.first.before(base)
         render inline: doc.to_html
-      rescue e
+      rescue
         redirect_to @surl.original
       end
     end
