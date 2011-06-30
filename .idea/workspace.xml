@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -59,7 +58,7 @@
       <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.6895307">
+            <state line="32" column="9" selection-start="925" selection-end="925" vertical-scroll-proportion="-2.4945848">
               <folding />
             </state>
           </provider>
@@ -1499,7 +1498,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="0" selection-start="916" selection-end="916" vertical-scroll-proportion="0.6895307">
+        <state line="32" column="9" selection-start="925" selection-end="925" vertical-scroll-proportion="-2.4945848">
           <folding />
         </state>
       </provider>

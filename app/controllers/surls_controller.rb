@@ -30,6 +30,7 @@ class SurlsController < ApplicationController
         render inline: doc.to_html
       rescue e
         redirect_to @surl.original
+      end
     end
   end
 
