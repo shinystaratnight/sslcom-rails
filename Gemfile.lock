@@ -17,6 +17,12 @@ GIT
   specs:
     subdomain-fu (1.0.0.beta2)
 
+GIT
+  remote: git@github.com:codelux/malware_api.git
+  revision: b01ebc462875e90e7628c4e56052da06afdfd581
+  specs:
+    malware_api (0.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -229,6 +235,7 @@ DEPENDENCIES
   jammit
   json
   mainline
+  malware_api!
   meta_where
   money (= 2.1.0)
   mysql (= 2.8.1)

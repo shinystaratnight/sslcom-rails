@@ -36,6 +36,7 @@ gem 'jammit'
 gem "rails_config"
 gem 'sinatra'
 gem 'uuidtools'
+gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 
 # Deploy with Capistrano
 # gem 'capistrano'

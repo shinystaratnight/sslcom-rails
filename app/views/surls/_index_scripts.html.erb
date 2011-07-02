@@ -114,8 +114,9 @@ jQuery(function($) {
         $('#busy_sending').hide();
         $(':submit').show();
       });
-      $("input[name=generated_surl]").livequery('focus', function(){
+      $("input[name=generated_surl]").livequery("click", function(){
           // Select input field contents
+          this.focus();
           this.select();
       });
   });

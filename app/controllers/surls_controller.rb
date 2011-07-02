@@ -16,21 +16,31 @@ class SurlsController < ApplicationController
     unless @surl.is_http?
       redirect_to @surl.original
     else
-      begin
-        doc = Nokogiri::HTML(open(@surl.original))
-        doc.encoding = 'UTF-8'
-        head = doc.at_css "head"
-        base = Nokogiri::XML::Node.new "base", doc
-        base["href"]=@surl.original
-        body = doc.at_css "body"
-        div = Nokogiri::XML::Node.new "div", doc
-        div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
-        div.inner_html = render_to_string(partial: "d", layout: false)
-        body.children.first.before(div)
-        head.children.first.before(base)
-        render inline: doc.to_html
-      rescue
-        redirect_to @surl.original
+      if Malware.is_listed?(@surl.original)
+        render action: "blacklisted"
+      else
+        begin
+          doc = Nokogiri::HTML(open(@surl.original))
+          doc.encoding = 'UTF-8' if doc.encoding.blank?
+          head = doc.at_css "head"
+          base = Nokogiri::XML::Node.new "base", doc
+          base["href"]=@surl.original
+          body = doc.at_css "body"
+          div_position = Nokogiri::XML::Node.new('div', doc)
+          div_position["style"] = "position: relative;"
+          body.children.each do |child|
+            child.parent = div_position
+          end
+          body.add_child(div_position)
+          div = Nokogiri::XML::Node.new "div", doc
+          div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
+          div.inner_html = render_to_string(partial: "d", layout: false)
+          body.children.first.before(div)
+          head.children.first.before(base)
+          render inline: doc.to_html
+        rescue
+          redirect_to @surl.original
+        end
       end
     end
   end

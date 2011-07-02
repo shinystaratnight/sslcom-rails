@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110625192901) do
+ActiveRecord::Schema.define(:version => 20110701233837) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -380,6 +380,19 @@ ActiveRecord::Schema.define(:version => 20110625192901) do
   add_index "line_items", ["sellable_id"], :name => "index_line_items_on_sellable_id"
   add_index "line_items", ["sellable_type"], :name => "index_line_items_on_sellable_type"
 
+  create_table "malware_hashes", :force => true do |t|
+    t.string "url", :limit => 32, :null => false
+  end
+
+  create_table "malwares", :force => true do |t|
+    t.integer  "black_major"
+    t.integer  "black_minor"
+    t.integer  "malware_major"
+    t.integer  "malware_minor"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "notes", :force => true do |t|
     t.string   "title",        :limit => 50, :default => ""
     t.text     "note"
@@ -584,6 +597,14 @@ ActiveRecord::Schema.define(:version => 20110625192901) do
     t.datetime "updated_at"
   end
 
+  create_table "safe_browsing_lookups", :force => true do |t|
+    t.integer  "surl_id"
+    t.integer  "response_code"
+    t.string   "response_body"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "sent_reminders", :force => true do |t|
     t.integer  "signed_certificate_id"
     t.text     "body"
@@ -676,6 +697,7 @@ ActiveRecord::Schema.define(:version => 20110625192901) do
     t.string   "crypted_password"
     t.string   "password_salt"
     t.boolean  "require_ssl"
+    t.boolean  "share"
     t.string   "status"
     t.datetime "created_at"
     t.datetime "updated_at"

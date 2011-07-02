@@ -5,9 +5,10 @@ class CreateSurls < ActiveRecord::Migration
       t.text      :original
       t.string    :identifier
       t.string    :username
-      t.string    :crypted_password                                   # optional, see below
-      t.string    :password_salt                                      # optional, but highly recommended
+      t.string    :crypted_password
+      t.string    :password_salt
       t.boolean   :require_ssl
+      t.boolean   :share
       t.string    :status
 
       t.timestamps

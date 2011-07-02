@@ -32,6 +32,9 @@
                     =check_box_tag :set_access_restrictions, false
                     %span.clickable_choice set access restrictions
                   .choice_w_desc.clearfix
+                    =f.text_field :username
+                    %span.clickable_choice user name
+                  .choice_w_desc.clearfix
                     =check_box_tag :share, true
                     %span.clickable_choice display share buttons
                   .choice_w_desc.clearfix
