@@ -15,13 +15,11 @@ class Surl < ActiveRecord::Base
   after_initialize :default_values
 
   after_create do |s|
-    s.update_attribute :identifier, s.id.to_s(36)
+    s.update_attribute :identifier, s.id.encode62
   end
 
   def is_http?
     original =~ /^http/
-  end
-
   end
 
   private

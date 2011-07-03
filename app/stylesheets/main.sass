@@ -70,8 +70,8 @@ a:hover
 #header .logo
   display: block
   width: 300px
-  height: 47px
-  margin: 12px 0 0
+  height: 44px
+  margin: 8px 0 0
   //overflow: hidden
   //text-indent: -9999px
   background-image: url('/images/sitesprite1.png')
@@ -189,7 +189,7 @@ a:hover
   margin-left: 0
   margin-bottom: 4px
   margin-right: -10px
-  margin-top: 12px
+  margin-top: 8px
   float: right
   list-style: none
   padding: 0
@@ -4965,6 +4965,8 @@ span#no_emails_accessible
     display: block
     color: #222
     font-weight: bold
+    width: 100%
+    text-align: left
 
   #shorten_prompt
     +center
@@ -4977,7 +4979,7 @@ span#no_emails_accessible
     width: 100%
     float: left
     margin: 0 auto
-    padding: 1em 0
+    padding: 1.2em 0
     text-align: center
     background-color: rgb(220, 223, 254)
     background-color: rgba(220, 223, 254, 0.9)
@@ -4996,12 +4998,12 @@ span#no_emails_accessible
     font-weight: bold
 
 #surl_link
-  font-size: 4em
+  font-size: 3.5em
   float: left
   font-weight: bold
 
   input
-    width: 400px
+    width: 360px
 
 #surl_instructions
   float: left
@@ -5009,5 +5011,24 @@ span#no_emails_accessible
   font-size: 2.4em
   padding: .2em 0 0 1em
   display: none
+
+.old_link
+  color: black
+  font-style: italic
+
+#surl_stylized #restriction_field
+  display: none
+  margin-left: 30px
+
+  label
+    font-size: 1em
+    font-weight: normal
+    margin-right: 10px
+    text-align: right
+    width: 38%
+
+  input
+    width: 150px
+    font-size: .7em
 
 

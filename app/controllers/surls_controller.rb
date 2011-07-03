@@ -16,8 +16,8 @@ class SurlsController < ApplicationController
     unless @surl.is_http?
       redirect_to @surl.original
     else
-      if Malware.is_listed?(@surl.original)
-        render action: "blacklisted"
+      if Malware.is_blacklisted?(@surl.original)
+        render action: "blacklisted", layout: false
       else
         begin
           doc = Nokogiri::HTML(open(@surl.original))
@@ -34,7 +34,7 @@ class SurlsController < ApplicationController
           body.add_child(div_position)
           div = Nokogiri::XML::Node.new "div", doc
           div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
-          div.inner_html = render_to_string(partial: "d", layout: false)
+          div.inner_html = render_to_string(partial: "banner", layout: false)
           body.children.first.before(div)
           head.children.first.before(base)
           render inline: doc.to_html

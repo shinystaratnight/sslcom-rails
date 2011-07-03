@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: git@github.com:codelux/malware_api.git
-  revision: b01ebc462875e90e7628c4e56052da06afdfd581
+  revision: 4bcff8d17a3da026102cfb084b8155eb0e0cf51d
   specs:
     malware_api (0.1)
 
@@ -143,6 +143,7 @@ GEM
       rack (>= 1.0.0)
     rack-test (0.5.7)
       rack (>= 1.0)
+    radix62 (0.1.0)
     rails (3.0.1)
       actionmailer (= 3.0.1)
       actionpack (= 3.0.1)
@@ -242,6 +243,7 @@ DEPENDENCIES
   nokogiri
   paperclip
   rack-test
+  radix62
   rails (= 3.0.1)
   rails_config
   rb-inotify

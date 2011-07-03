@@ -384,6 +384,8 @@ ActiveRecord::Schema.define(:version => 20110701233837) do
     t.string "url", :limit => 32, :null => false
   end
 
+  add_index "malware_hashes", ["url"], :name => "index_malware_hashes_on_url"
+
   create_table "malwares", :force => true do |t|
     t.integer  "black_major"
     t.integer  "black_minor"
@@ -593,14 +595,6 @@ ActiveRecord::Schema.define(:version => 20110701233837) do
 
   create_table "roles", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "safe_browsing_lookups", :force => true do |t|
-    t.integer  "surl_id"
-    t.integer  "response_code"
-    t.string   "response_body"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

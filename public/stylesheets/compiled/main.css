@@ -94,8 +94,8 @@ a:hover {
 #header .logo {
   display: block;
   width: 300px;
-  height: 47px;
-  margin: 12px 0 0;
+  height: 44px;
+  margin: 8px 0 0;
   background-image: url("/images/sitesprite1.png");
   background-position: -10px -590px;
   background-repeat: no-repeat;
@@ -234,7 +234,7 @@ a:hover {
   margin-left: 0;
   margin-bottom: 4px;
   margin-right: -10px;
-  margin-top: 12px;
+  margin-top: 8px;
   float: right;
   list-style: none;
   padding: 0;
@@ -6756,23 +6756,25 @@ span#no_emails_accessible {
   display: block;
   color: #222222;
   font-weight: bold;
+  width: 100%;
+  text-align: left;
 }
-/* line 4969, ../../../app/stylesheets/main.sass */
+/* line 4971, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 4973, ../../../app/stylesheets/main.sass */
+/* line 4975, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url] {
   width: 300px;
 }
-/* line 4976, ../../../app/stylesheets/main.sass */
+/* line 4978, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container {
   width: 100%;
   float: left;
   margin: 0 auto;
-  padding: 1em 0;
+  padding: 1.2em 0;
   text-align: center;
   background-color: #dcdffe;
   background-color: rgba(220, 223, 254, 0.9);
@@ -6784,38 +6786,63 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 4987, ../../../app/stylesheets/main.sass */
+/* line 4989, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options {
   font-size: 0.8em;
   width: 80%;
   margin: 0pt auto;
 }
 
-/* line 4992, ../../../app/stylesheets/main.sass */
+/* line 4994, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 4995, ../../../app/stylesheets/main.sass */
+/* line 4997, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 4998, ../../../app/stylesheets/main.sass */
+/* line 5000, ../../../app/stylesheets/main.sass */
 #surl_link {
-  font-size: 4em;
+  font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5003, ../../../app/stylesheets/main.sass */
+/* line 5005, ../../../app/stylesheets/main.sass */
 #surl_link input {
-  width: 400px;
+  width: 360px;
 }
 
-/* line 5006, ../../../app/stylesheets/main.sass */
+/* line 5008, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
   font-size: 2.4em;
   padding: 0.2em 0 0 1em;
   display: none;
+}
+
+/* line 5015, ../../../app/stylesheets/main.sass */
+.old_link {
+  color: black;
+  font-style: italic;
+}
+
+/* line 5019, ../../../app/stylesheets/main.sass */
+#surl_stylized #restriction_field {
+  display: none;
+  margin-left: 30px;
+}
+/* line 5023, ../../../app/stylesheets/main.sass */
+#surl_stylized #restriction_field label {
+  font-size: 1em;
+  font-weight: normal;
+  margin-right: 10px;
+  text-align: right;
+  width: 38%;
+}
+/* line 5030, ../../../app/stylesheets/main.sass */
+#surl_stylized #restriction_field input {
+  width: 150px;
+  font-size: 0.7em;
 }

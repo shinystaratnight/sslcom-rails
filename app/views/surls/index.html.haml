@@ -26,19 +26,19 @@
                   advanced options:
                 .surl_choices
                   .choice_w_desc.clearfix
-                    =check_box_tag :multiple_links, false
-                    %span.clickable_choice shorten multiple links
+                    =f.check_box :share
+                    %span.clickable_choice display social share buttons
                   .choice_w_desc.clearfix
                     =check_box_tag :set_access_restrictions, false
                     %span.clickable_choice set access restrictions
                   .choice_w_desc.clearfix
-                    =f.text_field :username
-                    %span.clickable_choice user name
+                    .clearfix#restriction_field
+                      %label user name
+                      =f.text_field :username
+                      %label.field_name password
+                      =f.text_field :username
                   .choice_w_desc.clearfix
-                    =check_box_tag :share, true
-                    %span.clickable_choice display share buttons
-                  .choice_w_desc.clearfix
-                    =check_box_tag :require_ssl, true
+                    =f.check_box :require_ssl
                     %span.clickable_choice require ssl encryption (https://)
       .rightcolc
         %ul.listd
