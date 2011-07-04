@@ -1,12 +1,16 @@
 %div(style="background:#BAD6B8;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:6px;padding:4px;text-align:left")
   %div(style="float: left; margin-right: 4px;")
     =link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
-  %div(style="float: right; margin-left: 4px;")
-    %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
-    %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
-  The following page was scanned on #{DateTime.now.strftime("%B %d, %Y")} by ssl.com security services
-  and determined to be free of malware. This shortened secure link (ssl) points to
-  #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"}.
+  -if @surl.share
+    %div(style="float: right; margin-left: 4px;")
+      %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
+      %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
+  This shortened secure link (ssl) points to
+  #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"} which
+  was scanned for safe viewing on #{DateTime.now.strftime("%B %d, %Y")} by ssl.com security services.
   Securely shorten links with free ssl.com links. Visit
   #{link_to "http://links.ssl.com", "http://links.ssl.com", style: "text-decoration:underline;color:#00c"}
   to learn more.
+  %br
+  %span(style='font-size: 9px')
+    #{link_to "see disclaimer", "http://links.ssl.com/disclaimer", style: "text-decoration:underline;color:#00c"}

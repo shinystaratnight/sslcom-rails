@@ -6,6 +6,7 @@ class SurlsController < ApplicationController
   # GET /surls
   # GET /surls.xml
   def index
+    @surls=get_valid_surls
     @surl = Surl.new
   end
 
@@ -60,7 +61,7 @@ class SurlsController < ApplicationController
   # POST /surls.xml
   def create
     @surl = Surl.create(params[:surl])
-    add_link_to_cookie(@surl) if @surl.errors.blank?
+    add_link_to_cookie(@surl.guid) if @surl.errors.blank?
     respond_to do |format|
       format.js {render(text: @surl.to_json)}
     end
@@ -95,10 +96,39 @@ class SurlsController < ApplicationController
   end
 
   private
-  def add_link_to_cookie(surl)
+  def add_link_to_cookie(guid)
+    guids=get_guids
+    guids << guid
+    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+  end
+
+  def remove_link_from_cookie(guid)
+    guids=get_guids
+    unless guids.blank? || guids.includes(guid)
+      guids.delete guid
+    end
+    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+  end
+
+  def get_valid_surls
+    guids=get_guids
+    unless guids.blank?
+      guids.map do |g|
+        surl=Surl.find_by_guid(g)
+        if surl.blank? || surl.status==Surl::REMOVE
+          remove_link_from_cookie(g)
+          nil
+        else
+          surl
+        end
+      end.compact
+    else
+      guids
+    end
+  end
+
+  def get_guids
     links=get_cookie("links")
     guids=links.blank? ? [] : links["guid"].split(",")
-    guids << surl.guid
-    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
   end
 end

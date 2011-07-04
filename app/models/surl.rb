@@ -8,6 +8,8 @@ class Surl < ActiveRecord::Base
   validates :identifier, uniqueness: true
   validates :guid, uniqueness: true
 
+  REMOVE="remove"
+
   if Rails.env=='development'
     URL = 'staging1.ssl.com:3000'
   else

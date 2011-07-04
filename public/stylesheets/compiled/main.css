@@ -6847,3 +6847,12 @@ span#no_emails_accessible {
   width: 150px;
   font-size: 0.7em;
 }
+
+/* line 5035, ../../../app/stylesheets/main.sass */
+#current_managed_links {
+  font-size: 1.5em;
+  margin-top: 1em;
+  float: left;
+  width: 100%;
+  border: 1px solid #dddddd;
+}
