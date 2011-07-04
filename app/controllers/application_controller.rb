@@ -353,6 +353,18 @@ class ApplicationController < ActionController::Base
 
   private
 
+  #Saves a cookie using a hash
+  # <tt>options</tt> - Contains keys name, value (a hash), path, and expires
+  def save_cookie(options)
+    cookies[options[:name]] = {:value=>JSON.generate(options[:value]), :path => options[:path],
+      :expires => options[:expires]}
+  end
+
+  def get_cookie(name)
+    name = name.to_sym if name.is_a? String
+    cookies[name].blank? ? {} : JSON.parse(cookies[name])
+  end
+
   #if in process of recerting (renewal, reprocess, etc), this sets instance
   #variables from params. Only one type allowed at a time.
   def detect_recert

@@ -60,6 +60,7 @@ class SurlsController < ApplicationController
   # POST /surls.xml
   def create
     @surl = Surl.create(params[:surl])
+    add_link_to_cookie(@surl) if @surl.errors.blank?
     respond_to do |format|
       format.js {render(text: @surl.to_json)}
     end
@@ -91,5 +92,13 @@ class SurlsController < ApplicationController
       format.html { redirect_to(surls_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+  def add_link_to_cookie(surl)
+    links=get_cookie("links")
+    guids=links.blank? ? [] : links["guid"].split(",")
+    guids << surl.guid
+    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
   end
 end

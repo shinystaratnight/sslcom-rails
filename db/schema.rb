@@ -687,6 +687,7 @@ ActiveRecord::Schema.define(:version => 20110701233837) do
     t.integer  "user_id"
     t.text     "original"
     t.string   "identifier"
+    t.string   "guid"
     t.string   "username"
     t.string   "crypted_password"
     t.string   "password_salt"

@@ -5,6 +5,8 @@ class Surl < ActiveRecord::Base
   belongs_to :user
 
   validate :url_format
+  validates :identifier, uniqueness: true
+  validates :guid, uniqueness: true
 
   if Rails.env=='development'
     URL = 'staging1.ssl.com:3000'
@@ -15,7 +17,7 @@ class Surl < ActiveRecord::Base
   after_initialize :default_values
 
   after_create do |s|
-    s.update_attribute :identifier, s.id.encode62
+    s.update_attributes identifier: s.id.encode62, guid: UUIDTools::UUID.random_create
   end
 
   def is_http?

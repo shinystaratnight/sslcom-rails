@@ -6840,8 +6840,9 @@ span#no_emails_accessible {
   margin-right: 10px;
   text-align: right;
   width: 38%;
+  color: #333333;
 }
-/* line 5030, ../../../app/stylesheets/main.sass */
+/* line 5031, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
