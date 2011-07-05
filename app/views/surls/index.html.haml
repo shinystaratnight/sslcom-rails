@@ -62,16 +62,14 @@
           %span.old_link
           link or
           %span.click_to_visit
-      %table#current_managed_links
+      %table#manage_current_links(cellspacing=0)
         %tr
-          %th
           %th ssl link
           %th original link
           %th visits
           %th details
         -@surls.each_with_index do |surl, i|
-          %tr
-            %td=i
+          %tr(class="#{cycle('even', 'odd')}")
             %td http#{'s' if surl.require_ssl}://ssl.com/#{surl.identifier}
             %td=surl.original
             %td 0

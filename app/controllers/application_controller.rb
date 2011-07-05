@@ -490,7 +490,7 @@ class ApplicationController < ActionController::Base
   end
 
   def record_visit
-    return if request.method != :get
+    return if request.method.downcase != "get"
     md5_current = Digest::MD5.hexdigest(request.url)
     md5_previous = Digest::MD5.hexdigest(request.referer) if request.referer
     cur = TrackedUrl.find_or_create_by_md5_and_url(md5_current,request.url)

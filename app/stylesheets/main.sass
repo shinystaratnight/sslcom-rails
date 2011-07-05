@@ -5032,11 +5032,19 @@ span#no_emails_accessible
     width: 150px
     font-size: .7em
 
-#current_managed_links
+#manage_current_links
+  background: #C4FCD4
+  @include background(linear-gradient(top, #F5FFF6 0%, #C4FCD4))
+  @include border-radius(5px)
+  margin-top: -2em
   font-size: 1.5em
-  margin-top: 1em
   float: left
   width: 100%
-  border: 1px solid #ddd
 
+  td, th
+    text-align: left
+    vertical-align: top
+    padding: .2em .5em
 
+  .odd
+    background: #D6FFBA

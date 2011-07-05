@@ -6849,10 +6849,29 @@ span#no_emails_accessible {
 }
 
 /* line 5035, ../../../app/stylesheets/main.sass */
-#current_managed_links {
+#manage_current_links {
+  background: #c4fcd4;
+  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f5fff6), color-stop(100%, #c4fcd4));
+  background: -moz-linear-gradient(top, #f5fff6 0%, #c4fcd4);
+  background: linear-gradient(top, #f5fff6 0%, #c4fcd4);
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -o-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  border-radius: 5px;
+  margin-top: -2em;
   font-size: 1.5em;
-  margin-top: 1em;
   float: left;
   width: 100%;
-  border: 1px solid #dddddd;
+}
+/* line 5044, ../../../app/stylesheets/main.sass */
+#manage_current_links td, #manage_current_links th {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.2em 0.5em;
+}
+/* line 5049, ../../../app/stylesheets/main.sass */
+#manage_current_links .odd {
+  background: #d6ffba;
 }
