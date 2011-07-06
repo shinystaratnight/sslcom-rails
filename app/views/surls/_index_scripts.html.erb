@@ -48,6 +48,8 @@ jQuery(function($) {
     };
   }
   $(document).ready(function() {
+    $.prettyLoader();
+    $("a[rel^='prettyPopin']").prettyPopin();
     var show_documents=true;
     $(':radio[name*=has_documents]').click(function(){
       if($(this).val()=="false"){
@@ -67,7 +69,7 @@ jQuery(function($) {
     $('.clickable_choice').click(function(e){
       $(this).siblings().filter(':input').click();
     });
-    $(':checkbox[name=set_access_restrictions]').click(function(){
+    $(':checkbox[name*=set_access_restrictions]').click(function(){
       $('#restriction_field').toggle();
     });
     $(':radio[name*=refer_to_others]').click(function(e){
@@ -90,11 +92,12 @@ jQuery(function($) {
       'ajax:beforeSend', function(){
         $('#busy_sending').show();
         $(':submit').hide();
+        $.prettyLoader.show();
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
           data=$.parseJSON(data);
-          if(typeof data.original=="undefined"){
+          if(typeof data.surl!="undefined"){
             var surl = $("<span id='surl_link'></span>");
             surl.hide();
             $('#surl_container').html(surl);
@@ -106,13 +109,29 @@ jQuery(function($) {
             $('#surl_original').val('').attr('placeholder', 'url to be shortened');
             $('#manage_current_links tr:first-child').after(data.row);
             $('.listd').hide();
+            $('#surl_link_error').remove();
             surl.fadeIn();
             $('#surl_instructions').fadeIn();
             $('#manage_current_links tr:eq(1)').effect("highlight", {color:'green'}, 500);
           }
           else{
             //assume an error
-            var surl = $("<span class='error' id='surl_link_error'>"+data.original+"</span>");
+            var error_message = "<ul>";
+            if(typeof data.original!="undefined")
+              error_message=data.original;
+            else{
+              i=0;
+              $.each(data, function(key, value) {
+                i++;
+                //number="";
+                //if(data.length > 1)
+                  //number=" "+i.toString()+") "
+                error_message+="<li>"+key+" "+value+"</li>";
+              });
+              error_message+="</ul>"
+            }
+            $('#surl_link_error').remove();
+            var surl = $("<span class='error' id='surl_link_error'>"+error_message+"</span>");
             $('.container .inner').prepend(surl);
           }
         }
@@ -120,6 +139,7 @@ jQuery(function($) {
       'ajax:complete', function(data, status, xhr){
         $('#busy_sending').hide();
         $(':submit').show();
+        $.prettyLoader.hide();
       });
     $("input[name=generated_surl]").livequery("click", function(){
         // Select input field contents
@@ -128,6 +148,7 @@ jQuery(function($) {
     });
     $('.delete_link').livequery(
       'ajax:beforeSend', function(){
+        $.prettyLoader.show();
         var current_link = $(this).parents('#manage_current_links tr');
         current_link.addClass('deleting');
         $(this).parent().html("<img src='/images/ajax-loader.gif' />");
@@ -140,6 +161,7 @@ jQuery(function($) {
           else
             current_link.parents('#manage_current_links').hide();
           current_link.remove();
+          $.prettyLoader.hide();
           if(data.status==500){
             alert("Error: problems occurred and link was not successfully deleted.");
           }

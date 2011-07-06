@@ -13,6 +13,7 @@ class Surl < ActiveRecord::Base
   validates :password, length: {within: 6..16}, presence: true, :if => :perform_password_validation?
 
   attr_accessor :password
+  attr_accessor_with_default :set_access_restrictions, false
 
   REDIRECTED="redirect"
   RENDERED="render"
@@ -50,6 +51,10 @@ class Surl < ActiveRecord::Base
     guid
   end
 
+  def full_link
+    "http#{'s' if require_ssl}://ssl.com/#{identifier}"
+  end
+
   private
   def default_values
     self.share = true
@@ -81,6 +86,6 @@ class Surl < ActiveRecord::Base
   # Assert wether or not the password validations should be performed. Always on new records, only on existing
   # records if the .password attribute isn't blank.
   def perform_password_validation?
-    !(self.username.blank? && self.password.blank?)
+    not set_access_restrictions=="0"
   end
 end

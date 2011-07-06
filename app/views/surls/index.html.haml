@@ -10,38 +10,10 @@
         Share, track, protect, scan and analyze your links
       .leftcolb
         %section.search_container#surl_stylized
-          -#%form#new_surl
-          -#  #shorten_prompt
-          -#    =text_field_tag :url, nil, placeholder: "url to be shortened", size: 30
           =form_for @surl, id: "surl_form" , remote: true do |f|
-            #shorten_prompt
-              =f.url_field :original, placeholder: "url to be shortened", size: 30
-              =submit_tag "Shorten", class: 'shiny_silver_button'
-              %span#busy_sending
-                processing...
-                =image_tag 'waiting_dots.gif'
-            #advanced_options_container
-              #advanced_options.clearfix
-                %label
-                  advanced options:
-                .surl_choices
-                  .choice_w_desc.clearfix
-                    =f.check_box :share
-                    %span.clickable_choice display social share buttons
-                  .choice_w_desc.clearfix
-                    =check_box_tag :set_access_restrictions, false
-                    %span.clickable_choice set access restrictions
-                  .choice_w_desc.clearfix
-                    .clearfix#restriction_field
-                      %label user name
-                      =f.text_field :username
-                      %label.field_name password
-                      =f.text_field :username
-                  .choice_w_desc.clearfix
-                    =f.check_box :require_ssl
-                    %span.clickable_choice require ssl encryption (https://)
+            =render partial: "form", locals: {f: f}
       .rightcolc
-        %ul.listd.links
+        %ul.listd.ssl_links
           %li
             ssl.com links are small and secure
           %li

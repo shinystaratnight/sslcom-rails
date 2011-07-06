@@ -3,7 +3,7 @@ require 'nokogiri'
 
 class SurlsController < ApplicationController
   skip_filter   :record_visit
-  after_filter  :record_surl_visit
+  after_filter  :record_surl_visit, only: [:show]
 
   # GET /surls
   # GET /surls.xml
@@ -62,7 +62,8 @@ class SurlsController < ApplicationController
 
   # GET /surls/1/edit
   def edit
-    @surl = Surl.find(params[:id])
+    @surl = Surl.find_by_guid(params[:id])
+    render action: "edit"
   end
 
   # POST /surls

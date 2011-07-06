@@ -347,7 +347,7 @@ a:hover
   &.reseller
     margin: 0 0 28px
 
-  &.links
+  &.ssl_links
     margin: 0
 
 .list li
@@ -4958,41 +4958,51 @@ span#no_emails_accessible
   float: left
   margin-top: 30px
 
-#surl_stylized #new_surl
-  +center
-  text-align: left
-  font-size: 2em
-
-  label
-    font-size: 1.4em
-    display: block
-    color: #222
-    font-weight: bold
-    width: 100%
-    text-align: left
-
-  #shorten_prompt
+#surl_stylized
+  #new_surl, .edit_surl
     +center
-    width: 95%
+    text-align: left
+    font-size: 2em
 
+    label
+      font-size: 1.4em
+      display: block
+      color: #222
+      font-weight: bold
+      width: 100%
+      text-align: left
+
+    #shorten_prompt
+      +center
+      width: 95%
+
+      input[type=password], input[type=text], input[type=url]
+        width: 300px
+
+    #advanced_options_container
+      width: 100%
+      float: left
+      margin: 0 auto 1em
+      padding: 1.3em 0
+      text-align: center
+      background-color: rgb(220, 223, 254)
+      background-color: rgba(220, 223, 254, 0.9)
+      border: 1px solid orange
+      @include border-radius(10px)
+
+      #advanced_options
+        font-size: 0.8em
+        width: 80%
+        margin: 0pt auto
+
+  .edit_surl #advanced_options_container
+    width: 50%
+    float: none
+
+  .edit_surl #shorten_prompt
     input[type=password], input[type=text], input[type=url]
-      width: 300px
+      width: 750px
 
-  #advanced_options_container
-    width: 100%
-    float: left
-    margin: 0 auto 1em
-    padding: 1.2em 0
-    text-align: center
-    background-color: rgb(220, 223, 254)
-    background-color: rgba(220, 223, 254, 0.9)
-    border: 1px solid orange
-    @include border-radius(10px)
-
-    #advanced_options
-      font-size: 0.8em
-      width: 80%
-      margin: 0pt auto
 
 #surl_services a
   color: red
@@ -5010,6 +5020,11 @@ span#no_emails_accessible
 
 #surl_link_error
   font-size: 1.5em
+  margin: 1em auto
+
+  ul
+    list-style-type: none
+    margin: 0
 
 #surl_instructions
   float: left

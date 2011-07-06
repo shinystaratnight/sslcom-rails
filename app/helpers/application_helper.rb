@@ -273,7 +273,8 @@ module ApplicationHelper
   def is_public_index_page?
     current_page?(:controller=>:site, :action=>:index) ||
     current_page?(:controller=>:site, :action=>:reseller) ||
-    current_page?(:controller=>:surls, :action=>:index)
+    current_page?(:controller=>:surls, :action=>:index)  ||
+    current_page?(:controller=>:surls, :action=>:edit)
   end
 
   # If the current user meets the given privilege, permitted_to? returns true
