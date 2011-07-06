@@ -8,10 +8,10 @@
     -Certificate.root_products.each do |c|
       %li=link_to c.title, certificate_url(:id=>c.product_root)
     %li=link_to "Smart SeaL with Artifacts", details_site_seals_url
-    %li=link_to "Shortened Secure Links", surls_url
+    %li=link_to "Shortened Secure Links", surls_root_url(:subdomain=>Surl::SUBDOMAIN)
   %ul.section_box
     %h4 Programs
-    %li=link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
+    %li=link_to "Resellers", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
     %li=link_to "RESTful API", restful_api_url
     -Reseller::TARGETED.each do |t|
       %li=send :link_to, t.titleize, eval("#{t}_url")

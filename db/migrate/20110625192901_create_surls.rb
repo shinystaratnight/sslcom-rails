@@ -6,7 +6,7 @@ class CreateSurls < ActiveRecord::Migration
       t.string    :identifier
       t.string    :guid
       t.string    :username
-      t.string    :crypted_password
+      t.string    :password_hash
       t.string    :password_salt
       t.boolean   :require_ssl
       t.boolean   :share

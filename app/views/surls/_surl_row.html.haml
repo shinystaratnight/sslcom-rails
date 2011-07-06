@@ -1,0 +1,9 @@
+-link="http#{'s' if surl.require_ssl}://ssl.com/#{surl.identifier}"
+%tr
+  %td=link_to link, link, target: '_blank'
+  %td=link_to surl.original, surl.original, target: '_blank'
+  %td=surl.surl_visits.count
+  %td
+    =link_to 'delete', surl, :confirm=>"Are you sure you want to delete ssl link '#{link}'? This action cannot be undone.", :method=>:delete, :remote=>true, :class=>'delete_link'
+    |
+    =link_to 'configure', surl

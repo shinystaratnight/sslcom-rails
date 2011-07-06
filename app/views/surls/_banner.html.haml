@@ -1,8 +1,10 @@
 %div(style="background:#BAD6B8;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:6px;padding:4px;text-align:left")
-  %div(style="float: left; margin-right: 4px;")
+  %div(style="float: left;margin-right: 4px;")
     =link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
-  -if @surl.share
-    %div(style="float: right; margin-left: 4px;")
+  %div(style="float: right; margin-left: 4px;")
+    %a(style="cursor:pointer;margin-bottom: 3px;font-size: 9px;text-decoration:underline;color:#00c;text-align: right;display: block" onclick="this.parentNode.parentNode.style.display = 'none';")
+      close x
+    -if @surl.share
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
       %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
   This shortened secure link (ssl) points to
@@ -13,4 +15,4 @@
   to learn more.
   %br
   %span(style='font-size: 9px')
-    #{link_to "see disclaimer", "http://links.ssl.com/disclaimer", style: "text-decoration:underline;color:#00c"}
+    #{link_to "disclaimer", "http://links.ssl.com/disclaimer", style: "text-decoration:underline;color:#00c"}

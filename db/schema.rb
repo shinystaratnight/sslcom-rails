@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110701233837) do
+ActiveRecord::Schema.define(:version => 20110705161309) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -683,13 +683,25 @@ ActiveRecord::Schema.define(:version => 20110701233837) do
     t.datetime "updated_at"
   end
 
+  create_table "surl_visits", :force => true do |t|
+    t.integer  "surl_id"
+    t.integer  "visitor_token_id"
+    t.string   "referer_host"
+    t.string   "referer_address"
+    t.string   "request_uri"
+    t.string   "http_user_agent"
+    t.string   "result"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "surls", :force => true do |t|
     t.integer  "user_id"
     t.text     "original"
     t.string   "identifier"
     t.string   "guid"
     t.string   "username"
-    t.string   "crypted_password"
+    t.string   "password_hash"
     t.string   "password_salt"
     t.boolean  "require_ssl"
     t.boolean  "share"

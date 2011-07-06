@@ -93,35 +93,66 @@ jQuery(function($) {
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
-          var surl = $("<span id='surl_link'></span>");
-          surl.hide();
           data=$.parseJSON(data);
-          $('#surl_container').html(surl);
           if(typeof data.original=="undefined"){
+            var surl = $("<span id='surl_link'></span>");
+            surl.hide();
+            $('#surl_container').html(surl);
             var new_link = "http://<%=Surl::URL%>/"+data.surl.identifier;
             surl.append("&raquo;<input readonly='readonly' name='generated_surl' value='"+new_link+"' />");
             $('#surl_instructions .old_link').html(data.surl.original);
             $('#surl_instructions .click_to_visit').html('<a href="'+new_link+
               '">click here to visit '+new_link+'</a>');
+            $('#surl_original').val('').attr('placeholder', 'url to be shortened');
+            $('#manage_current_links tr:first-child').after(data.row);
+            $('.listd').hide();
+            surl.fadeIn();
+            $('#surl_instructions').fadeIn();
+            $('#manage_current_links tr:eq(1)').effect("highlight", {color:'green'}, 500);
           }
           else{
             //assume an error
-            surl.addClass('error').append("<span>"+data.original+"</span>");
+            var surl = $("<span class='error' id='surl_link_error'>"+data.original+"</span>");
+            $('.container .inner').prepend(surl);
           }
-          $('.listd').hide();
-          surl.fadeIn();
-          $('#surl_instructions').fadeIn();
         }
       }).livequery('ajax:failure', function(xhr, status, error) {alert("failure!");}).livequery(
       'ajax:complete', function(data, status, xhr){
         $('#busy_sending').hide();
         $(':submit').show();
       });
-      $("input[name=generated_surl]").livequery("click", function(){
-          // Select input field contents
-          this.focus();
-          this.select();
-      });
+    $("input[name=generated_surl]").livequery("click", function(){
+        // Select input field contents
+        this.focus();
+        this.select();
+    });
+    $('.delete_link').livequery(
+      'ajax:beforeSend', function(){
+        var current_link = $(this).parents('#manage_current_links tr');
+        current_link.addClass('deleting');
+        $(this).parent().html("<img src='/images/ajax-loader.gif' />");
+        $(this).bind('ajax:success', function(event, data, status, xhr) {
+        }).bind('ajax:complete', function(event, data, status, xhr){
+          //livequery function $('#manage_current_links tr').livequery(function())
+          //below should have worked but doesn't when testing. Perhaps JQuery 4 killed it?
+          if(current_link.siblings().length>1)
+            current_link.parents('#manage_current_links').show();
+          else
+            current_link.parents('#manage_current_links').hide();
+          current_link.remove();
+          if(data.status==500){
+            alert("Error: problems occurred and link was not successfully deleted.");
+          }
+        }).bind('ajax:failure', function(event, data, status, xhr){
+            alert("Error: problems occurred and link was not successfully deleted.");
+        });
+    });
+    $('#manage_current_links tr').livequery(function(){
+      if($(this).siblings().length>0)
+        $(this).parents('#manage_current_links').show();
+      else
+        $(this).parents('#manage_current_links').hide();
+    });
   });
 });
 </script>

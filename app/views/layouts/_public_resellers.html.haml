@@ -23,8 +23,8 @@
       -else
         %li(class="#{current_page?(account_url) ? 'active' : ''}")
           =link_to "Dashboard", account_url
-      %li(class="#{current_page?(root_url(:subdomain=>Reseller::SUBDOMAIN)) ? 'active' : ''}")
-        =link_to "Resellers", root_url(:subdomain=>Reseller::SUBDOMAIN)
+      %li(class="#{current_page?(resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)) ? 'active' : ''}")
+        =link_to "Resellers", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
       %li(class="#{current_page?(details_resellers_path) ? 'active' : ''}")
         =link_to "Program Details", details_resellers_path
       %li(class="#{current_page?(reseller_tiers_path) ? 'active' : ''}")

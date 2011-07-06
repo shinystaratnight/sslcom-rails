@@ -2,6 +2,8 @@ require 'open-uri'
 require 'nokogiri'
 
 class SurlsController < ApplicationController
+  skip_filter   :record_visit
+  after_filter  :record_surl_visit
 
   # GET /surls
   # GET /surls.xml
@@ -13,11 +15,15 @@ class SurlsController < ApplicationController
   # GET /surls/1
   # GET /surls/1.xml
   def show
-    @surl = Surl.find(params[:id].to_i(36))
+    @render_result=Surl::RENDERED
+    @surl = Surl.find_by_identifier(params[:id])
+    not_found and return if @surl.blank?
     unless @surl.is_http?
+      @render_result=Surl::REDIRECTED
       redirect_to @surl.original
     else
       if Malware.is_blacklisted?(@surl.original)
+        @render_result=Surl::BLACKLISTED
         render action: "blacklisted", layout: false
       else
         begin
@@ -39,7 +45,9 @@ class SurlsController < ApplicationController
           body.children.first.before(div)
           head.children.first.before(base)
           render inline: doc.to_html
-        rescue
+        rescue Exception=>e
+          logger.error("Error in SurlsController#show: #{e.message}")
+          @render_result=Surl::REDIRECTED
           redirect_to @surl.original
         end
       end
@@ -61,9 +69,13 @@ class SurlsController < ApplicationController
   # POST /surls.xml
   def create
     @surl = Surl.create(params[:surl])
-    add_link_to_cookie(@surl.guid) if @surl.errors.blank?
+    if @surl.errors.blank?
+      add_link_to_cookie(@surl.guid)
+      @surl_row = render_to_string("_surl_row.html.haml", layout: false, locals: {surl: @surl})
+    end
     respond_to do |format|
-      format.js {render(text: @surl.to_json)}
+      surl_js = @surl.errors.blank? ?  @surl.to_json.chop+", \"row\": #{@surl_row.to_json}}" : @surl.errors.to_json
+      format.js {render(text: surl_js)}
     end
   end
 
@@ -86,25 +98,24 @@ class SurlsController < ApplicationController
   # DELETE /surls/1
   # DELETE /surls/1.xml
   def destroy
-    @surl = Surl.find(params[:id])
+    @surl = Surl.find_by_guid(params[:id])
     @surl.destroy
 
     respond_to do |format|
-      format.html { redirect_to(surls_url) }
-      format.xml  { head :ok }
+      format.js { render text: @surl.to_json }
     end
   end
 
   private
   def add_link_to_cookie(guid)
     guids=get_guids
-    guids << guid
+    guids << guid.to_s
     save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
   end
 
   def remove_link_from_cookie(guid)
     guids=get_guids
-    unless guids.blank? || guids.includes(guid)
+    unless guids.blank? || guids.include?(guid)
       guids.delete guid
     end
     save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
@@ -115,6 +126,7 @@ class SurlsController < ApplicationController
     unless guids.blank?
       guids.map do |g|
         surl=Surl.find_by_guid(g)
+#        surl=Surl.joins(:surl_visits).where(:guid=>g)
         if surl.blank? || surl.status==Surl::REMOVE
           remove_link_from_cookie(g)
           nil
@@ -130,5 +142,15 @@ class SurlsController < ApplicationController
   def get_guids
     links=get_cookie("links")
     guids=links.blank? ? [] : links["guid"].split(",")
+  end
+
+  def record_surl_visit
+    SurlVisit.create visitor_token: @visitor_token,
+                    surl: @surl,
+                    referer_host: request.env['REMOTE_HOST'],
+                    referer_address: request.env['REMOTE_ADDR'],
+                    request_uri: request.env['REQUEST_URI'],
+                    http_user_agent: request.env['HTTP_USER_AGENT'],
+                    result: @render_result
   end
 end

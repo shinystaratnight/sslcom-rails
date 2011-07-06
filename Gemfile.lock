@@ -19,7 +19,7 @@ GIT
 
 GIT
   remote: git@github.com:codelux/malware_api.git
-  revision: 4bcff8d17a3da026102cfb084b8155eb0e0cf51d
+  revision: b968b1556065b29da105b1034c2c62360c98dfa9
   specs:
     malware_api (0.1)
 

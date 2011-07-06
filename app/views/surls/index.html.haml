@@ -41,7 +41,7 @@
                     =f.check_box :require_ssl
                     %span.clickable_choice require ssl encryption (https://)
       .rightcolc
-        %ul.listd
+        %ul.listd.links
           %li
             ssl.com links are small and secure
           %li
@@ -58,22 +58,17 @@
             it's FREE
         #surl_container
         #surl_instructions
-          copy the ssl link above and paste it anywhere to substitute for the
-          %span.old_link
-          link or
+          copy the ssl link above and paste it anywhere to substitute for:
+          %span.old_link.clearfix
           %span.click_to_visit
       %table#manage_current_links(cellspacing=0)
         %tr
           %th ssl link
           %th original link
           %th visits
-          %th details
-        -@surls.each_with_index do |surl, i|
-          %tr(class="#{cycle('even', 'odd')}")
-            %td http#{'s' if surl.require_ssl}://ssl.com/#{surl.identifier}
-            %td=surl.original
-            %td 0
-            %td=link_to "details", surl
+          %th actions
+        -@surls.sort{|a,b|b.created_at<=>a.created_at}.each_with_index do |surl, i|
+          =render partial: "surl_row", locals: {surl: surl}
       -#%p
       -#  Let everyone know you are using secure links with the foremost name in security by using the ssl.com
       -#  domain name as your secure linking service. All links display an ssl daily scanned report near the top

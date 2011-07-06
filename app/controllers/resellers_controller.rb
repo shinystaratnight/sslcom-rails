@@ -1,5 +1,9 @@
 class ResellersController < ApplicationController
-  before_filter :require_user, :except=>[:details]
+  before_filter :require_user, :except=>[:index, :details]
+
+  def index
+    flash.now[:notice] ||= params[:notice]
+  end
 
   def new
     @reseller = current_user.ssl_account.reseller || Reseller.new

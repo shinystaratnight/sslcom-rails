@@ -347,6 +347,9 @@ a:hover
   &.reseller
     margin: 0 0 28px
 
+  &.links
+    margin: 0
+
 .list li
   margin-left: 0
   margin-bottom: 17px
@@ -4978,7 +4981,7 @@ span#no_emails_accessible
   #advanced_options_container
     width: 100%
     float: left
-    margin: 0 auto
+    margin: 0 auto 1em
     padding: 1.2em 0
     text-align: center
     background-color: rgb(220, 223, 254)
@@ -4997,13 +5000,16 @@ span#no_emails_accessible
   span
     font-weight: bold
 
-#surl_link
+#surl_link, #surl_link_error
   font-size: 3.5em
   float: left
   font-weight: bold
 
   input
     width: 360px
+
+#surl_link_error
+  font-size: 1.5em
 
 #surl_instructions
   float: left
@@ -5015,6 +5021,8 @@ span#no_emails_accessible
 .old_link
   color: black
   font-style: italic
+  font-size: 0.8em
+  margin: 0.4em auto
 
 #surl_stylized #restriction_field
   display: none
@@ -5034,17 +5042,24 @@ span#no_emails_accessible
 
 #manage_current_links
   background: #C4FCD4
-  @include background(linear-gradient(top, #F5FFF6 0%, #C4FCD4))
-  @include border-radius(5px)
-  margin-top: -2em
+  @include background(linear-gradient(top, #FFFFF5 0%, #FDFFB8))
+  @include border-radius(15px)
   font-size: 1.5em
   float: left
   width: 100%
+  display: none
 
   td, th
     text-align: left
     vertical-align: top
     padding: .2em .5em
 
-  .odd
-    background: #D6FFBA
+  td
+    border-top: 1px solid #EFC960
+
+.deleting
+  text-decoration: line-through
+
+#deleting_progress_box
+  margin: 12px 0 0px
+  display: none

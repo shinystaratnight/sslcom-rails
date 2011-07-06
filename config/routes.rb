@@ -2,6 +2,8 @@ require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
 
+  match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
+  match ''=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
@@ -152,9 +154,8 @@ SslCom::Application.routes.draw do
 
   match '*disregard/code/:id'=>'affiliates#refer', via: [:get], constraints: {id: /\w+\/?$/}
 
-  resources :surls
-
-  match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/}
+  resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index]
+  match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/i}
 
   match '/:controller(/:action(/:id))'
 end
