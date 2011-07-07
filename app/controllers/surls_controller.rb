@@ -4,7 +4,7 @@ require 'nokogiri'
 class SurlsController < ApplicationController
   skip_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
-  filter_access_to :all, except: :show
+  filter_access_to :edit, :destroy, :update
 
   # GET /surls
   # GET /surls.xml

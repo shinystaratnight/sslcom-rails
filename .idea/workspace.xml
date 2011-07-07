@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/surls/index.html.haml" afterPath="$PROJECT_DIR$/app/views/surls/index.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -40,7 +41,7 @@
       <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="38" selection-start="203" selection-end="203" vertical-scroll-proportion="0.25373134">
+            <state line="8" column="30" selection-start="224" selection-end="224" vertical-scroll-proportion="0.33830845">
               <folding />
             </state>
           </provider>
@@ -112,7 +113,7 @@
       <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/surls/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="15" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
+            <state line="42" column="33" selection-start="1337" selection-end="1337" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -173,11 +174,11 @@
         <option value="$PROJECT_DIR$/app/controllers/activations_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/user.rb" />
-        <option value="$PROJECT_DIR$/app/views/surls/index.html.haml" />
         <option value="$PROJECT_DIR$/config/settings.yml" />
         <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/surls/_surl_row.html.haml" />
         <option value="$PROJECT_DIR$/config/authorization_rules.rb" />
+        <option value="$PROJECT_DIR$/app/views/surls/index.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
       </list>
     </option>
@@ -1345,13 +1346,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/surls/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="15" selection-start="1297" selection-end="1297" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/settings.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="1" column="14" selection-start="15" selection-end="29" vertical-scroll-proportion="0.0">
@@ -1362,13 +1356,6 @@
     <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="68" selection-start="1443" selection-end="1443" vertical-scroll-proportion="-9.25">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/surls/_surl_row.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="181" selection-start="438" selection-end="438" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1394,9 +1381,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/surls/_surl_row.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="181" selection-start="438" selection-end="438" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/surls/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="33" selection-start="1337" selection-end="1337" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="38" selection-start="203" selection-end="203" vertical-scroll-proportion="0.25373134">
+        <state line="8" column="30" selection-start="224" selection-end="224" vertical-scroll-proportion="0.33830845">
           <folding />
         </state>
       </provider>

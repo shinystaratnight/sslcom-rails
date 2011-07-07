@@ -40,7 +40,7 @@
           %th visits
           -if current_user
             %th owner
-          %th actions
+          %th(style="width: 160px") actions
         -@surls.sort{|a,b|b.created_at<=>a.created_at}.each_with_index do |surl, i|
           =render partial: "surl_row", locals: {surl: surl}
       -#%p
