@@ -19,7 +19,7 @@ class SurlsController < ApplicationController
     @render_result=Surl::RENDERED
     @surl = Surl.find_by_identifier(params[:id])
     not_found and return if @surl.blank?
-    unless @surl.is_http?
+    unless @surl.is_http? && @surl.share
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
     else
