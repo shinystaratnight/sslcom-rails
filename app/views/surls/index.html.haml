@@ -5,7 +5,7 @@
     .inner
       =render :partial => "shared/messages"
       %h1
-        Shrink Urls with Shortened Secure Links (SSL)
+        Shrink Urls with Short Secure Links (SSL)
       %h2
         Share, track, protect, scan and analyze your links
       .leftcolb
@@ -38,6 +38,8 @@
           %th ssl link
           %th original link
           %th visits
+          -if current_user
+            %th owner
           %th actions
         -@surls.sort{|a,b|b.created_at<=>a.created_at}.each_with_index do |surl, i|
           =render partial: "surl_row", locals: {surl: surl}

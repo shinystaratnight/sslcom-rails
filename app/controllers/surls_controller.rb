@@ -4,6 +4,7 @@ require 'nokogiri'
 class SurlsController < ApplicationController
   skip_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
+  filter_access_to :all
 
   # GET /surls
   # GET /surls.xml
@@ -69,7 +70,9 @@ class SurlsController < ApplicationController
   # POST /surls
   # POST /surls.xml
   def create
-    @surl = Surl.create(params[:surl])
+    @surl = Surl.new(params[:surl])
+    @surl.user=current_user unless current_user.blank?
+    @surl.save
     if @surl.errors.blank?
       add_link_to_cookie(@surl.guid)
       @surl_row = render_to_string("_surl_row.html.haml", layout: false, locals: {surl: @surl})
@@ -101,57 +104,12 @@ class SurlsController < ApplicationController
   def destroy
     @surl = Surl.find_by_guid(params[:id])
     @surl.destroy
+    flash.now[:notice] = "Link #{@surl.full_link} has been deleted."
 
     respond_to do |format|
-      format.js { render text: @surl.to_json }
+      format.js   { render text: @surl.to_json }
+      format.html { redirect_to surls_root_url(:subdomain=>Surl::SUBDOMAIN) }
     end
   end
 
-  private
-  def add_link_to_cookie(guid)
-    guids=get_guids
-    guids << guid.to_s
-    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
-  end
-
-  def remove_link_from_cookie(guid)
-    guids=get_guids
-    unless guids.blank? || guids.include?(guid)
-      guids.delete guid
-    end
-    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
-  end
-
-  def get_valid_surls
-    guids=get_guids
-    unless guids.blank?
-      guids.map do |g|
-        surl=Surl.find_by_guid(g)
-#        surl=Surl.joins(:surl_visits).where(:guid=>g)
-        if surl.blank? || surl.status==Surl::REMOVE
-          remove_link_from_cookie(g)
-          nil
-        else
-          surl
-        end
-      end.compact
-    else
-      guids
-    end
-  end
-
-  def get_guids
-    links=get_cookie("links")
-    guids=links.blank? ? [] : links["guid"].split(",")
-  end
-
-  def record_surl_visit
-    SurlVisit.create visitor_token: @visitor_token,
-                    surl: @surl,
-                    referer_host: request.env['REMOTE_HOST'],
-                    referer_address: request.env['REMOTE_ADDR'],
-                    request_uri: request.env['REQUEST_URI'],
-                    http_user_agent: request.env['HTTP_USER_AGENT'],
-                    result: @render_result
-  end
 end

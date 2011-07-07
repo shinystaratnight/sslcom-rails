@@ -2,7 +2,10 @@
 -content_for :title, title
 .reseller_registration_profile
   %h3=title
-  %p Login to your SSL Reseller account to manage your SSL certificates
+  %p
+    Login to your SSL.com account to manage your SSL products and services including certificates,
+    links, and monitoring and scanning apps. If you currently do not have an account,
+    #{link_to "click here to create a free ssl.com account", new_user_url}.
   -form_for @user_session, :url => user_session_path do |f|
     =f.error_messages
     #stylized.default_form

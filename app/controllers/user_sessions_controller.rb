@@ -35,6 +35,7 @@ class UserSessionsController < ApplicationController
     respond_to do |format|
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
+        assign_ssl_links(user)
         #we'll know what tier the user is even if s/he is not logged in
         cookies.delete(:r_tier)
         if user.ssl_account.is_registered_reseller?

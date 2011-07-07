@@ -21,11 +21,11 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url
+      redirect_to new_user_session_url :subdomain=>Settings.root_subdomain
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
-      redirect_to root_url
+      redirect_to root_url :subdomain=>Settings.root_subdomain
     end
   end
 
@@ -509,6 +509,60 @@ class ApplicationController < ActionController::Base
 #      @visitor_token.affiliate_id = cookies[:aid] if cookies[:aid] && token.affiliate_id != cookies[:aid]
 #      @visitor_token.save
 #    end
+  end
+
+  #Surl related functions
+  def add_link_to_cookie(guid)
+    guids=get_guids
+    guids << guid.to_s
+    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+  end
+
+  def remove_link_from_cookie(guid)
+    guids=get_guids
+    unless guids.blank? || guids.include?(guid)
+      guids.delete guid
+    end
+    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+  end
+
+  def get_valid_surls
+    guids=get_guids
+    unless guids.blank?
+      guids.map do |g|
+        surl=Surl.find_by_guid(g)
+#        surl=Surl.joins(:surl_visits).where(:guid=>g)
+        if surl.blank? || surl.status==Surl::REMOVE
+          remove_link_from_cookie(g)
+          nil
+        else
+          surl
+        end
+      end.compact
+    else
+      guids
+    end
+  end
+
+  def get_guids
+    links=get_cookie("links")
+    guids=links.blank? ? [] : links["guid"].split(",")
+  end
+
+  def record_surl_visit
+    SurlVisit.create visitor_token: @visitor_token,
+                    surl: @surl,
+                    referer_host: request.env['REMOTE_HOST'],
+                    referer_address: request.env['REMOTE_ADDR'],
+                    request_uri: request.env['REQUEST_URI'],
+                    http_user_agent: request.env['HTTP_USER_AGENT'],
+                    result: @render_result
+  end
+
+  def assign_ssl_links(user)
+    get_valid_surls.each do |surl|
+      user.surls<<surl if surl.user.blank?
+    end
   end
 
   class Helper
