@@ -44,6 +44,7 @@ module SslCom
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password, :password_confirmation]
     config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
+    config.action_controller.session = { :domain => '.ssl.com' }
   end
 end
 
