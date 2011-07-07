@@ -4,10 +4,12 @@
   .innercontainere
     .inner
       =render :partial => "shared/messages"
+      =error_messages_for :surl
       %h1
         Editing SSL link #{@surl.full_link}
       %h2
         change link, access restrictions, ssl protocol, and/or sharing settings
       %section.search_container#surl_stylized
-        =form_for @surl, id: "surl_form" , remote: true do |f|
+        =form_for @surl, id: "surl_form" do |f|
           =render partial: "form", locals: {f: f}
+        =link_to "Go to SSL Links Home", surls_root_path, id: "back_to_links"

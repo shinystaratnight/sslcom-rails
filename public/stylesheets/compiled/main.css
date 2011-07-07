@@ -6912,3 +6912,11 @@ span#no_emails_accessible {
   margin: 12px 0 0px;
   display: none;
 }
+
+/* line 5082, ../../../app/stylesheets/main.sass */
+#back_to_links {
+  display: block;
+  font-size: 3em;
+  text-align: center;
+  margin: 0 auto;
+}

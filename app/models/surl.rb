@@ -30,8 +30,9 @@ class Surl < ActiveRecord::Base
     URL = 'staging1.ssl.com'
   end
 
-  before_save   :hash_password
-  after_initialize :default_values
+  before_save   :tasks_on_save
+  before_create :default_values
+  after_initialize :prep
   after_create do |s|
     s.update_attributes identifier: s.id.encode62, guid: UUIDTools::UUID.random_create.to_s
   end
@@ -61,6 +62,22 @@ class Surl < ActiveRecord::Base
     self.require_ssl = false
   end
 
+  def prep
+    unless self.username.blank? && self.password.blank?
+      self.set_access_restrictions=true
+    else
+      self.username, self.password = [nil,nil]
+    end
+  end
+
+  def tasks_on_save
+    if(perform_password_validation?)
+      hash_password
+    else
+      self.username, self.password=[nil,nil]
+    end
+  end
+
   #validation method to make sure the submitted url is http, https, or ftp
   def url_format
     unless [URI::HTTP, URI::HTTPS, URI::FTP].find {|url_type| URI.parse(original).kind_of?(url_type)}
@@ -83,7 +100,7 @@ class Surl < ActiveRecord::Base
     self.password_hash = self.class.hash_password(self.password,self.password_salt) unless self.password.blank?
   end
 
-  # Assert wether or not the password validations should be performed. Always on new records, only on existing
+  # Assert whether or not the password validations should be performed. Always on new records, only on existing
   # records if the .password attribute isn't blank.
   def perform_password_validation?
     not set_access_restrictions=="0"

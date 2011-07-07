@@ -175,6 +175,10 @@ jQuery(function($) {
       else
         $(this).parents('#manage_current_links').hide();
     });
+    if($("':checkbox[name*=set_access_restrictions]").is(':checked'))
+      $("#restriction_field").show();
+    else
+      $("#restriction_field").hide();
   });
 });
 </script>

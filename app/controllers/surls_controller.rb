@@ -86,11 +86,11 @@ class SurlsController < ApplicationController
   # PUT /surls/1
   # PUT /surls/1.xml
   def update
-    @surl = Surl.find(params[:id])
+    @surl = Surl.find_by_guid(params[:id])
 
     respond_to do |format|
       if @surl.update_attributes(params[:surl])
-        format.html { redirect_to(@surl, :notice => 'Surl was successfully updated.') }
+        format.html { redirect_to(surls_root_path, :notice => 'Surl was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
