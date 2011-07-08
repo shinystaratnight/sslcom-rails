@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_public.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_public.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/surls/index.html.haml" afterPath="$PROJECT_DIR$/app/views/surls/index.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/surls/_banner.html.haml" afterPath="$PROJECT_DIR$/app/views/surls/_banner.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/surls/disclaimer.html.haml" afterPath="$PROJECT_DIR$/app/views/surls/disclaimer.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -56,10 +57,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/surls/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="55" selection-start="303" selection-end="303" vertical-scroll-proportion="0.51829267">
+            <state line="10" column="55" selection-start="303" selection-end="303" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -68,7 +69,7 @@
       <file leaf-file-name="disclaimer.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/surls/disclaimer.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="76" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
+            <state line="1" column="3" selection-start="37" selection-end="37" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -86,16 +87,16 @@
       <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="157" column="53" selection-start="4332" selection-end="4332" vertical-scroll-proportion="0.0">
+            <state line="158" column="38" selection-start="4371" selection-end="4371" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_row.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_row.html.haml">
+      <file leaf-file-name="_banner.html.haml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/surls/_banner.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="17" column="100" selection-start="1316" selection-end="1316" vertical-scroll-proportion="0.6136364">
               <folding />
             </state>
           </provider>
@@ -164,7 +165,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/surls/_surl_row.html.haml" />
         <option value="$PROJECT_DIR$/config/authorization_rules.rb" />
         <option value="$PROJECT_DIR$/app/views/surls/edit.html.haml" />
@@ -174,12 +174,13 @@
         <option value="$PROJECT_DIR$/app/views/surls/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
         <option value="$PROJECT_DIR$/config/initializers/session_store.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
-        <option value="$PROJECT_DIR$/app/views/surls/disclaimer.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_public.html.haml" />
         <option value="$PROJECT_DIR$/app/views/surls/index.html.haml" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/views/surls/disclaimer.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/surls/_banner.html.haml" />
       </list>
     </option>
   </component>
@@ -1161,17 +1162,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="24" y="0" width="1256" height="775" extended-state="1" />
+    <frame x="24" y="0" width="1256" height="775" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32868218" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20710973" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25061026" sideWeight="0.2534776" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25061026" sideWeight="0.25502318" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25061026" sideWeight="0.3771252" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35394126" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35703245" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25061026" sideWeight="0.37867078" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35394126" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35703245" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2962963" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1294,11 +1295,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="0" selection-start="3394" selection-end="3394" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="4" selection-start="372" selection-end="372" vertical-scroll-proportion="0.0">
@@ -1355,30 +1351,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="157" column="53" selection-start="4332" selection-end="4332" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="110" column="49" selection-start="3419" selection-end="3419" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state line="75" column="60" selection-start="1853" selection-end="1853" vertical-scroll-proportion="-3.2857144">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/surls/disclaimer.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="76" selection-start="295" selection-end="295" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1399,7 +1374,35 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/surls/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="55" selection-start="303" selection-end="303" vertical-scroll-proportion="0.51829267">
+        <state line="10" column="55" selection-start="303" selection-end="303" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="110" column="49" selection-start="3419" selection-end="3419" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="158" column="38" selection-start="4371" selection-end="4371" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/surls/disclaimer.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="3" selection-start="37" selection-end="37" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/surls/_banner.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="100" selection-start="1316" selection-end="1316" vertical-scroll-proportion="0.6136364">
           <folding />
         </state>
       </provider>

@@ -156,6 +156,7 @@ SslCom::Application.routes.draw do
 
   resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
   match '/surls/:id' => 'Surls#destroy', method: :get
+  match '/ssl_links_disclaimer'=>'Surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
   match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/i}
 
   match '/:controller(/:action(/:id))'
