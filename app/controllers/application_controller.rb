@@ -531,7 +531,6 @@ class ApplicationController < ActionController::Base
     unless guids.blank?
       guids.map do |g|
         surl=Surl.find_by_guid(g)
-#        surl=Surl.joins(:surl_visits).where(:guid=>g)
         if surl.blank? || surl.status==Surl::REMOVE
           remove_link_from_cookie(g)
           nil

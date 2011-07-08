@@ -16,12 +16,22 @@
       .choice_w_desc.clearfix
         =f.check_box :set_access_restrictions
         %span.clickable_choice set access restrictions
-      .choice_w_desc.clearfix
-        .clearfix#restriction_field
-          %label user name
-          =f.text_field :username
-          %label.field_name password
-          =f.password_field :password
+      -if !@surl.new_record? && @surl.username && @surl.password_hash #editing
+        .choice_w_desc.clearfix
+          .clearfix#restriction_field
+            %label user name:
+            =f.text_field :username
+            %label password:
+            %span(style="float: left") (not viewable)
+            %label change to:
+            =f.password_field :password, placeholder: "blank if no changes"
+      -else
+        .choice_w_desc.clearfix
+          .clearfix#restriction_field
+            %label user name:
+            =f.text_field :username
+            %label password:
+            =f.password_field :password
       .choice_w_desc.clearfix
         =f.check_box :require_ssl
         %span.clickable_choice require ssl encryption (https://)

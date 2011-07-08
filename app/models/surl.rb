@@ -3,17 +3,16 @@ require "uri"
 require "digest/sha1"
 
 class Surl < ActiveRecord::Base
-  belongs_to :user
+  belongs_to  :user
   has_many    :surl_visits
 
-  validate :url_format
-  validates :identifier, uniqueness: true
-  validates :guid, uniqueness: true
-  validates :username, length: {within: 6..16}, presence: true, :if => :perform_password_validation?
+  validate  :url_format
+  validates :guid, uniqueness: true, on: :create
+  validates :username, length: {within: 6..16}, presence: true, :if => :perform_username_validation?
   validates :password, length: {within: 6..16}, presence: true, :if => :perform_password_validation?
 
   attr_accessor :password
-  attr_accessor_with_default :set_access_restrictions, false
+  attr_accessor_with_default :set_access_restrictions, "0"
 
   REDIRECTED="redirect"
   RENDERED="render"
@@ -30,11 +29,11 @@ class Surl < ActiveRecord::Base
     URL = 'staging1.ssl.com'
   end
 
-  before_save   :tasks_on_save
-  before_create :default_values
-  after_initialize :prep
+#  before_create
+  before_save       :tasks_on_save
+  after_initialize  :default_values, :prep
   after_create do |s|
-    s.update_attributes identifier: s.id.encode62, guid: UUIDTools::UUID.random_create.to_s
+    s.update_attributes identifier: s.id.encode62
   end
 
   default_scope order(:created_at.desc)
@@ -58,12 +57,15 @@ class Surl < ActiveRecord::Base
 
   private
   def default_values
-    self.share = true
-    self.require_ssl = false
+    if new_record?
+      self.share = true
+      self.require_ssl = false
+      self.guid=UUIDTools::UUID.random_create.to_s
+    end
   end
 
   def prep
-    unless self.username.blank? && self.password.blank?
+    unless username.blank? && password.blank?
       self.set_access_restrictions=true
     else
       self.username, self.password = [nil,nil]
@@ -73,8 +75,8 @@ class Surl < ActiveRecord::Base
   def tasks_on_save
     if(perform_password_validation?)
       hash_password
-    else
-      self.username, self.password=[nil,nil]
+    elsif(self.set_access_restrictions=="0")
+      self.username, self.password, self.password_hash, self.password_salt = [nil,nil,nil,nil]
     end
   end
 
@@ -103,6 +105,10 @@ class Surl < ActiveRecord::Base
   # Assert whether or not the password validations should be performed. Always on new records, only on existing
   # records if the .password attribute isn't blank.
   def perform_password_validation?
-    not set_access_restrictions=="0"
+    set_access_restrictions=="1" && (new_record? ? true : !(password.blank? && !password_hash.blank?))
+  end
+
+  def perform_username_validation?
+    set_access_restrictions=="1"
   end
 end

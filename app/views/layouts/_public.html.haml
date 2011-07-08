@@ -2,7 +2,7 @@
   .inner
     %ul.nav
       %li#surl_services
-        %a{href: "/surls"}
+        %a{href: surls_root_url(:subdomain=>Surl::SUBDOMAIN)}
           %span FREE!
           click here to securely shorten your links
       %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)".html_safe, show_cart_orders_url
@@ -33,6 +33,8 @@
         =link_to "Products", certificates_path
       %li(class="#{current_page?(details_site_seals_path) ? 'active' : ''}")
         =link_to "Smart SeaL", details_site_seals_path
+      %li(class="#{current_page?(surls_root_path(:subdomain=>Surl::SUBDOMAIN)) ? 'active' : ''}")
+        =link_to "Shorten Links", surls_root_path(:subdomain=>Surl::SUBDOMAIN)
     =render partial: "/layouts/logo_header"
 #content
   -if is_public_index_page?

@@ -90,7 +90,12 @@ class SurlsController < ApplicationController
 
     respond_to do |format|
       if @surl.update_attributes(params[:surl])
-        format.html { redirect_to(surls_root_path, :notice => 'Surl was successfully updated.') }
+        #would have liked to use the bottom link but the flash notice disappears by the time it hits the index action
+        format.html { redirect_to surls_root_path,
+          :notice=> "Link #{@surl.full_link} has been updated."}
+        #flash[:notice]="Link #{@surl.full_link} has been updated."
+        #index
+        #format.html { render action: "index" }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -104,7 +109,7 @@ class SurlsController < ApplicationController
   def destroy
     @surl = Surl.find_by_guid(params[:id])
     @surl.destroy
-    flash.now[:notice] = "Link #{@surl.full_link} has been deleted."
+    flash[:notice] = "Link #{@surl.full_link} has been deleted."
 
     respond_to do |format|
       format.js   { render text: @surl.to_json }

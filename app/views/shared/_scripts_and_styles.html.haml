@@ -11,6 +11,8 @@
 
 :javascript
   jQuery(function($){
+    $.prettyLoader();
+    $("a[rel^='prettyPopin']").prettyPopin();
     $('div.flash_message').click(function(){
       $(this).fadeOut();
     });

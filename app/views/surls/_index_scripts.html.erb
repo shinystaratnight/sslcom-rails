@@ -48,8 +48,6 @@ jQuery(function($) {
     };
   }
   $(document).ready(function() {
-    $.prettyLoader();
-    $("a[rel^='prettyPopin']").prettyPopin();
     var show_documents=true;
     $(':radio[name*=has_documents]').click(function(){
       if($(this).val()=="false"){
@@ -104,7 +102,7 @@ jQuery(function($) {
             var new_link = "http://<%=Surl::URL%>/"+data.surl.identifier;
             surl.append("&raquo;<input readonly='readonly' name='generated_surl' value='"+new_link+"' />");
             $('#surl_instructions .old_link').html(data.surl.original);
-            $('#surl_instructions .click_to_visit').html('<a href="'+new_link+
+            $('#surl_instructions .click_to_visit').html('<a target="_blank" href="'+new_link+
               '">click here to visit '+new_link+'</a>');
             $('#surl_original').val('').attr('placeholder', 'url to be shortened');
             $('#manage_current_links tr:first-child').after(data.row);
@@ -123,9 +121,6 @@ jQuery(function($) {
               i=0;
               $.each(data, function(key, value) {
                 i++;
-                //number="";
-                //if(data.length > 1)
-                  //number=" "+i.toString()+") "
                 error_message+="<li>"+key+" "+value+"</li>";
               });
               error_message+="</ul>"

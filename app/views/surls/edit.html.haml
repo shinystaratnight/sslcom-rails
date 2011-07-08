@@ -4,7 +4,7 @@
   .innercontainere
     .inner
       =render :partial => "shared/messages"
-      =error_messages_for :surl
+      =error_messages_for :surl, object_name: "SSL Link"
       %h1
         Editing SSL link #{@surl.full_link}
       %h2

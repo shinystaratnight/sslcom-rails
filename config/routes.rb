@@ -154,7 +154,8 @@ SslCom::Application.routes.draw do
 
   match '*disregard/code/:id'=>'affiliates#refer', via: [:get], constraints: {id: /\w+\/?$/}
 
-  resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index]
+  resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
+  match '/surls/:id' => 'Surls#destroy', method: :get
   match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/i}
 
   match '/:controller(/:action(/:id))'
