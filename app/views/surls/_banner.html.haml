@@ -16,4 +16,4 @@
   %br
   %span(style='font-size: 9px')
     #{link_to "disclaimer", ssl_links_disclaimer_url(subdomain: Surl::SUBDOMAIN), target: "_blank", style: "text-decoration:underline;color:#00c"}
-    #{link_to "report abuse", "mailto:abuse@ssl.com?subject=#{@surl.full_link}", style: "text-decoration:underline;color:#00c"}
+    #{mail_to "abuse@ssl.com", "report abuse", subject: "ssl link #{@surl.full_link}", style: "text-decoration:underline;color:#00c"}

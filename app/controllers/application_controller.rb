@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user_session, :current_user, :is_reseller, :cookies,
-    :cart_contents, :cart_products, :certificates_from_cookie
+    :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
   before_filter :identify_visitor, :record_visit, :except=>[:refer]
@@ -562,6 +562,11 @@ class ApplicationController < ActionController::Base
     get_valid_surls.each do |surl|
       user.surls<<surl if surl.user.blank?
     end
+  end
+
+  def is_iphone?
+    ua = request.env['HTTP_USER_AGENT'].downcase
+    ua =~ /iphone|itouch|ipod/
   end
 
   class Helper

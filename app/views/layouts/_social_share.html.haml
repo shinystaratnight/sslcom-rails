@@ -1,5 +1,5 @@
 #social_share
-  -if true #unless Rails.env=='development'
+  -unless Rails.env=='development'
     #twitter
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
       %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
