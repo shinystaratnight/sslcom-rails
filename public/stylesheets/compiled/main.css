@@ -6713,49 +6713,53 @@ span#no_emails_accessible {
 
 /* line 4937, ../../../app/stylesheets/main.sass */
 #social_share {
-  float: right;
+  float: left;
   margin: 0px 4px 0px 2px;
   padding: 0;
   width: 110px;
 }
-
 /* line 4943, ../../../app/stylesheets/main.sass */
+#sales_number_in_header #social_share {
+  margin: -4px 4px 0px 2px;
+}
+
+/* line 4946, ../../../app/stylesheets/main.sass */
 #logo_share {
   float: left;
   width: 180px;
 }
 
-/* line 4947, ../../../app/stylesheets/main.sass */
+/* line 4950, ../../../app/stylesheets/main.sass */
 #twitter {
   float: left;
   height: 5px;
 }
 
-/* line 4951, ../../../app/stylesheets/main.sass */
+/* line 4954, ../../../app/stylesheets/main.sass */
 #facebook {
   float: right;
   width: 50px;
 }
 
-/* line 4955, ../../../app/stylesheets/main.sass */
+/* line 4958, ../../../app/stylesheets/main.sass */
 #logo_share #social_share {
   float: left;
 }
 
-/* line 4958, ../../../app/stylesheets/main.sass */
+/* line 4961, ../../../app/stylesheets/main.sass */
 .site_seal_footer {
   float: left;
   margin-top: 30px;
 }
 
-/* line 4963, ../../../app/stylesheets/main.sass */
+/* line 4966, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl, #surl_stylized .edit_surl {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
-/* line 4968, ../../../app/stylesheets/main.sass */
+/* line 4971, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl label, #surl_stylized .edit_surl label {
   font-size: 1.4em;
   display: block;
@@ -6764,17 +6768,17 @@ span#no_emails_accessible {
   width: 100%;
   text-align: left;
 }
-/* line 4976, ../../../app/stylesheets/main.sass */
+/* line 4979, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 4980, ../../../app/stylesheets/main.sass */
+/* line 4983, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 300px;
 }
-/* line 4983, ../../../app/stylesheets/main.sass */
+/* line 4986, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container, #surl_stylized .edit_surl #advanced_options_container {
   width: 100%;
   float: left;
@@ -6791,54 +6795,54 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 4994, ../../../app/stylesheets/main.sass */
+/* line 4997, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
-/* line 4999, ../../../app/stylesheets/main.sass */
+/* line 5002, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #advanced_options_container {
   width: 50%;
   float: none;
 }
-/* line 5004, ../../../app/stylesheets/main.sass */
+/* line 5007, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 750px;
 }
 
-/* line 5008, ../../../app/stylesheets/main.sass */
+/* line 5011, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 5011, ../../../app/stylesheets/main.sass */
+/* line 5014, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 5014, ../../../app/stylesheets/main.sass */
+/* line 5017, ../../../app/stylesheets/main.sass */
 #surl_link, #surl_link_error {
   font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5019, ../../../app/stylesheets/main.sass */
+/* line 5022, ../../../app/stylesheets/main.sass */
 #surl_link input, #surl_link_error input {
   width: 360px;
 }
 
-/* line 5022, ../../../app/stylesheets/main.sass */
+/* line 5025, ../../../app/stylesheets/main.sass */
 #surl_link_error {
   font-size: 1.5em;
   margin: 1em auto;
 }
-/* line 5026, ../../../app/stylesheets/main.sass */
+/* line 5029, ../../../app/stylesheets/main.sass */
 #surl_link_error ul, #surl_link_error .default_container .info_listing ul#privacy, .default_container .info_listing #surl_link_error ul#privacy {
   list-style-type: none;
   margin: 0;
 }
 
-/* line 5030, ../../../app/stylesheets/main.sass */
+/* line 5033, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
@@ -6847,7 +6851,7 @@ span#no_emails_accessible {
   display: none;
 }
 
-/* line 5037, ../../../app/stylesheets/main.sass */
+/* line 5040, ../../../app/stylesheets/main.sass */
 .old_link {
   color: black;
   font-style: italic;
@@ -6855,12 +6859,12 @@ span#no_emails_accessible {
   margin: 0.4em auto;
 }
 
-/* line 5043, ../../../app/stylesheets/main.sass */
+/* line 5046, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field {
   display: none;
   margin-left: 30px;
 }
-/* line 5047, ../../../app/stylesheets/main.sass */
+/* line 5050, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field label {
   font-size: 1em;
   font-weight: normal;
@@ -6869,13 +6873,13 @@ span#no_emails_accessible {
   width: 38%;
   color: #333333;
 }
-/* line 5055, ../../../app/stylesheets/main.sass */
+/* line 5058, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
 }
 
-/* line 5059, ../../../app/stylesheets/main.sass */
+/* line 5062, ../../../app/stylesheets/main.sass */
 #manage_current_links {
   background: #c4fcd4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
@@ -6892,29 +6896,29 @@ span#no_emails_accessible {
   width: 100%;
   display: none;
 }
-/* line 5068, ../../../app/stylesheets/main.sass */
+/* line 5071, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th {
   text-align: left;
   vertical-align: top;
   padding: 0.2em 0.5em;
 }
-/* line 5073, ../../../app/stylesheets/main.sass */
+/* line 5076, ../../../app/stylesheets/main.sass */
 #manage_current_links td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5076, ../../../app/stylesheets/main.sass */
+/* line 5079, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5079, ../../../app/stylesheets/main.sass */
+/* line 5082, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5083, ../../../app/stylesheets/main.sass */
+/* line 5086, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
