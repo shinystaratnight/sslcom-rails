@@ -2,6 +2,8 @@ require 'open-uri'
 require 'nokogiri'
 
 class SurlsController < ApplicationController
+  before_filter :find_surl_by_identifier, only: [:show]
+  before_filter :find_surl_by_guid, only: [:login, :edit, :destroy, :update]
   skip_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
   filter_access_to :edit, :destroy, :update
@@ -13,13 +15,27 @@ class SurlsController < ApplicationController
     @surl = Surl.new
   end
 
+  #POST /surl_login
+  def login
+    @tmp_surl = Surl.new(params[:surl])
+    @tmp_surl.set_access_restrictions = "1" #activates validations
+    if @tmp_surl.valid?
+      show
+    else
+      render action: "restricted", layout: "only_scripts_and_css"
+    end
+  end
+
   # GET /surls/1
   # GET /surls/1.xml
   def show
     @render_result=Surl::RENDERED
-    @surl = Surl.find_by_identifier(params[:id])
     not_found and return if @surl.blank?
-    unless @surl.is_http? && @surl.share
+    if @surl.username && @surl.password_hash && (@tmp_surl.blank? || !@surl.access_granted(@tmp_surl))
+      @tmp_surl.errors.add_to_base "permission denied: invalid username and/or password" unless @tmp_surl.blank?
+      render action: "restricted", layout: "only_scripts_and_css" and return
+    end
+    if !@surl.is_http? || !@surl.share
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
     else
@@ -63,7 +79,6 @@ class SurlsController < ApplicationController
 
   # GET /surls/1/edit
   def edit
-    @surl = Surl.find_by_guid(params[:id])
     render action: "edit"
   end
 
@@ -86,8 +101,6 @@ class SurlsController < ApplicationController
   # PUT /surls/1
   # PUT /surls/1.xml
   def update
-    @surl = Surl.find_by_guid(params[:id])
-
     respond_to do |format|
       if @surl.update_attributes(params[:surl])
         #would have liked to use the bottom link but the flash notice disappears by the time it hits the index action
@@ -107,7 +120,6 @@ class SurlsController < ApplicationController
   # DELETE /surls/1
   # DELETE /surls/1.xml
   def destroy
-    @surl = Surl.find_by_guid(params[:id])
     @surl.destroy
     flash[:notice] = "Link #{@surl.full_link} has been deleted."
 
@@ -115,6 +127,16 @@ class SurlsController < ApplicationController
       format.js   { render text: @surl.to_json }
       format.html { redirect_to surls_root_url(:subdomain=>Surl::SUBDOMAIN) }
     end
+  end
+
+  private
+
+  def find_surl_by_guid
+    @surl = Surl.find_by_guid(params[:id])
+  end
+
+  def find_surl_by_identifier
+    @surl = Surl.find_by_identifier(params[:id])
   end
 
 end

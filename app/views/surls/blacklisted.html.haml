@@ -1,5 +1,12 @@
-%h1 Stop! The link requested has been backlisted.
-%h2 or continue at your own risk #{@surl.original}
+-c={}
+-c[:description]="The original link this ssl shortcut points to has been blacklisted and may contain malware or phishing scams. Continue at you own risk."
+-c[:keywords]="blacklisted malware phishing viruses bad page discontinue"
+-c[:title] = "The original link this ssl shortcut points to has been blacklisted"
+-c.each do |k, v|
+  -content_for k, c[k]
+=link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
+%h1 Stop! The requested link #{@surl.original} has been backlisted and you are advised not to continue.
+%h2 If you understand but want to continue at your own risk, #{link_to "click here", @surl.original}
 -#%div
 -#  Stop - there might be a problem with the requested link
 -#

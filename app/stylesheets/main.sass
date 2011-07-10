@@ -17,6 +17,9 @@
 /*---global common definitions---*/
 *
   font-size: 100.01%
+  margin: 0
+html, body
+  height: 100%
 html
   font-size: 62.5%
 body
@@ -53,14 +56,15 @@ a:hover
 #wrapper
   width: 100%
   margin: 0 auto
+  min-height: 100%
+  height: auto !important
+  height: 100%
+  margin: 0 auto -260px
+
 
 /* header */
 #header
   background-color: black
-  padding-left: 0
-  padding-bottom: 12px
-  padding-right: 0
-  padding-top: 0
   width: 100%
   background-image: url('/images/sitesprite2.png')
   background-position: 0px -10px
@@ -1993,6 +1997,9 @@ a:hover
   width: 273px
   background-image: url('/images/chargify_identity.gif')
 
+#footer, .push
+  height: 260px
+
 #footer
   font-size: 8px
   width: 100%
@@ -2002,7 +2009,6 @@ a:hover
   //background-repeat: repeat-x
   font-family: Helvetica, Arial, sans-serif
   color: #b3b3b3
-  padding: 24px 0
 
 .links
   float: right
@@ -4999,6 +5005,23 @@ span#no_emails_accessible
         width: 85%
         margin: 0pt auto
 
+    #access_restriction_container
+      @extend #advanced_options_container
+      float: none
+      width: 60%
+
+      p
+        text-align: left
+
+      #advanced_options
+        width: 65%
+
+        label
+          width: 6em
+
+      input[type=password], input[type=text], input[type=url]
+        width: 300px
+
   .edit_surl #advanced_options_container
     width: 50%
     float: none
@@ -5088,3 +5111,7 @@ span#no_emails_accessible
   font-size: 3em
   text-align: center
   margin: 0 auto
+
+#access_restriction_submit_button
+  margin: 0pt auto
+  width: 21%

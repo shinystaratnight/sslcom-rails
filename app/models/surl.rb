@@ -31,12 +31,16 @@ class Surl < ActiveRecord::Base
 
 #  before_create
   before_save       :tasks_on_save
-  after_initialize  :default_values, :prep
+  after_initialize  :default_values#, :prep
   after_create do |s|
     s.update_attributes identifier: s.id.encode62
   end
 
   default_scope order(:created_at.desc)
+
+  def access_granted(surl)
+    username==surl.username && valid_password?(surl.password)
+  end
 
   # Returns true if the password passed matches the password in the DB
   def valid_password?(password)
@@ -75,7 +79,7 @@ class Surl < ActiveRecord::Base
   def tasks_on_save
     if(perform_password_validation?)
       hash_password
-    elsif(self.set_access_restrictions=="0")
+    elsif(!set_access_restrictions)
       self.username, self.password, self.password_hash, self.password_salt = [nil,nil,nil,nil]
     end
   end

@@ -1,0 +1,27 @@
+-c={}
+-c[:description]="Access to this SSL link is restricted and requires the correct username and password to be entered."
+-c[:keywords]="ssl link restricted access username password authorization required"
+-c[:title] = "Restricted Access: Username and Password Required"
+-c.each do |k, v|
+  -content_for k, c[k]
+=error_messages_for :tmp_surl, object_name: "SSL Link"
+%h1=c[:title]
+%section.search_container#surl_stylized
+  =form_for (@tmp_surl||Surl.new), url: surl_login_path(@surl), id: "surl_form" do |f|
+    #access_restriction_container
+      -title='ssl links'
+      %p
+        The Secure Short Link '#{@surl.full_link}' is password protected.
+        Please enter the correct username and password and press the
+        'submit' button to continue.
+      #advanced_options.clearfix
+        .choice_w_desc.clearfix
+          .clearfix
+            %label user name:
+            =f.text_field :username
+          .clearfix
+            %label password:
+            =f.password_field :password
+        #access_restriction_submit_button
+          =submit_tag "submit", class: 'shiny_silver_button'
+          =link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com", title: title, alt: title
