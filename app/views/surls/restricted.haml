@@ -4,10 +4,10 @@
 -c[:title] = "Restricted Access: Username and Password Required"
 -c.each do |k, v|
   -content_for k, c[k]
-=error_messages_for :tmp_surl, object_name: "SSL Link"
+=error_messages_for :tmp_surl, object_name: "SSL Link", header_message: "Ooops! - access to the SSL link has been denied", message: "The following fields were a bit of a problem:"
 %h1=c[:title]
 %section.search_container#surl_stylized
-  =form_for (@tmp_surl||Surl.new), url: surl_login_path(@surl), id: "surl_form" do |f|
+  =form_for (@tmp_surl||Surl.new), url: surl_login_path(@surl.identifier), id: "surl_form" do |f|
     #access_restriction_container
       -title='ssl links'
       %p

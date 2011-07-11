@@ -2,8 +2,8 @@ require 'open-uri'
 require 'nokogiri'
 
 class SurlsController < ApplicationController
-  before_filter :find_surl_by_identifier, only: [:show]
-  before_filter :find_surl_by_guid, only: [:login, :edit, :destroy, :update]
+  before_filter :find_surl_by_identifier, only: [:show, :login]
+  before_filter :find_surl_by_guid, only: [:edit, :destroy, :update]
   skip_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
   filter_access_to :edit, :destroy, :update
@@ -32,7 +32,7 @@ class SurlsController < ApplicationController
     @render_result=Surl::RENDERED
     not_found and return if @surl.blank?
     if @surl.username && @surl.password_hash && (@tmp_surl.blank? || !@surl.access_granted(@tmp_surl))
-      @tmp_surl.errors.add_to_base "permission denied: invalid username and/or password" unless @tmp_surl.blank?
+      @tmp_surl.errors[:base]<< "permission denied: invalid username and/or password" unless @tmp_surl.blank?
       render action: "restricted", layout: "only_scripts_and_css" and return
     end
     if !@surl.is_http? || !@surl.share

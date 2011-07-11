@@ -68,6 +68,8 @@ jQuery(function($) {
       $(this).siblings().filter(':input').click();
     });
     $(':checkbox[name*=set_access_restrictions]').click(function(){
+      if($(this).attr("checked") && !$('#surl_require_ssl').attr("checked"))
+        $('#surl_require_ssl').click();
       $('#restriction_field').toggle();
     });
     $(':radio[name*=refer_to_others]').click(function(e){
@@ -170,7 +172,7 @@ jQuery(function($) {
       else
         $(this).parents('#manage_current_links').hide();
     });
-    if($("':checkbox[name*=set_access_restrictions]").is(':checked'))
+    if($(":checkbox[name*=set_access_restrictions]").is(':checked'))
       $("#restriction_field").show();
     else
       $("#restriction_field").hide();

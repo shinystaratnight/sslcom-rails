@@ -152,13 +152,13 @@ SslCom::Application.routes.draw do
   #cert api routes
   match '/certificates/v1/apply' => CertificatesApiApp
 
-  match '*disregard/code/:id'=>'affiliates#refer', via: [:get], constraints: {id: /\w+\/?$/}
+  get '*disregard/code/:id'=>'affiliates#refer', constraints: {id: /\w+\/?$/}
 
   resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
-  match '/surls/:id' => 'Surls#destroy', method: :get
-  match '/surls/login/:id' => 'Surls#login', method: :post, as: :surl_login
-  match '/ssl_links_disclaimer'=>'Surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
-  match ':id'=>'surls#show', via: [:get], constraints: {id: /[0-9a-z]+/i}
+  get '/surls/:id' => 'Surls#destroy', :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  post '/surls/login/:id' => 'Surls#login', as: :surl_login, :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  get '/ssl_links_disclaimer'=>'Surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  get ':id'=>'surls#show', constraints: {id: /[0-9a-z]+/i}
 
   match '/:controller(/:action(/:id))'
 end

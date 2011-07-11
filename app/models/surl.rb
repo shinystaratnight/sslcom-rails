@@ -66,11 +66,12 @@ class Surl < ActiveRecord::Base
       self.require_ssl = false
       self.guid=UUIDTools::UUID.random_create.to_s
     end
+    prep
   end
 
   def prep
     unless username.blank? && password.blank?
-      self.set_access_restrictions=true
+      self.set_access_restrictions="1"
     else
       self.username, self.password = [nil,nil]
     end
@@ -79,7 +80,7 @@ class Surl < ActiveRecord::Base
   def tasks_on_save
     if(perform_password_validation?)
       hash_password
-    elsif(!set_access_restrictions)
+    elsif(set_access_restrictions=="0")
       self.username, self.password, self.password_hash, self.password_salt = [nil,nil,nil,nil]
     end
   end
