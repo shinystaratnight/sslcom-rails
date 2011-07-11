@@ -129,6 +129,10 @@ class SurlsController < ApplicationController
     end
   end
 
+  def disclaimer
+    render action: 'disclaimer', layout: 'only_scripts_and_css'
+  end
+
   private
 
   def find_surl_by_guid

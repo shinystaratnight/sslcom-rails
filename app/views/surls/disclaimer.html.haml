@@ -1,3 +1,10 @@
+-c={}
+-c[:description]="SSL Small Secure Links disclaimer"
+-c[:keywords]="SSL Small Secure Links disclaimer"
+-c[:title] = "SSL Small Secure Links Disclaimer"
+-c.each do |k, v|
+  -content_for k, c[k]
+=link_to image_tag("http://#{Surl::URL}/images/sslscan.png"), "http://links.ssl.com"
 %h1 Small Secure Links Disclaimer
 %h2
   Although our technical staff incorporates the latest in malware detection technology, SSL Corp,
