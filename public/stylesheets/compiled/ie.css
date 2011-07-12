@@ -18,7 +18,7 @@
   width: 57%;
 }
 
-/* line 34, ../../../app/stylesheets/ie.sass */
-#shorten_prompt input[type=password], #shorten_prompt input[type=text], #shorten_prompt input[type=url] {
+/* line 36, ../../../app/stylesheets/ie.sass */
+#surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 280px;
 }
