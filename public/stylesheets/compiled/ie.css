@@ -26,8 +26,12 @@
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 280px;
 }
-
 /* line 42, ../../../app/stylesheets/ie.sass */
+#surl_stylized #new_surl #advanced_options_container, #surl_stylized .edit_surl #advanced_options_container {
+  margin-top: 10px;
+}
+
+/* line 45, ../../../app/stylesheets/ie.sass */
 #header .logo a {
   margin-top: inherit;
 }
