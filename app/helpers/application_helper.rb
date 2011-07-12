@@ -362,8 +362,4 @@ module ApplicationHelper
     end
     recert
   end
-
-  def hide_dcv?
-    @other_party_validation_request && @other_party_validation_request.hide_dcv?
-  end
 end

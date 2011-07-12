@@ -76,12 +76,18 @@ class ValidationsController < ApplicationController
     @zip_file_name = ""
     @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
     @files = params[:filedata] || []
-    if params[:domain_control_validation_email] && params[:domain_control_validation_id]
-      @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-      @dcv.send_to params[:domain_control_validation_email]
-      error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
-    elsif @files.blank?
-      error = 'Please select one or more files to upload.'
+    if params[:refer_to_others]
+      @other_party_validation_request =
+        OtherPartyValidationRequest.create(params[:other_party_validation_request])
+    end
+    unless hide_both?
+      if hide_documents? || (params[:domain_control_validation_email] && params[:domain_control_validation_id])
+        @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
+        @dcv.send_to params[:domain_control_validation_email]
+        error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
+      elsif hide_dcv? || @files.blank?
+        error = 'Please select one or more files to upload.'
+      end
     end
     @files.each do |file|
       @created_releases = []
@@ -145,7 +151,7 @@ class ValidationsController < ApplicationController
       end
     end
     respond_to do |format|
-      if error.blank?
+      if error.blank? && (@other_party_validation_request.blank? ? true : @other_party_validation_request.valid?)
         unless @files.blank?
           files_were = (i > 1 or i==0)? "documents were" : "document was"
           flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}

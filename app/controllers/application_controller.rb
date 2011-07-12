@@ -10,7 +10,8 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user_session, :current_user, :is_reseller, :cookies,
-    :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?"
+    :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?",
+    "hide_documents?", "hide_both?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
   before_filter :identify_visitor, :record_visit, :except=>[:refer]
@@ -567,6 +568,18 @@ class ApplicationController < ActionController::Base
   def is_iphone?
     ua = request.env['HTTP_USER_AGENT'].downcase
     ua =~ /iphone|itouch|ipod/
+  end
+
+  def hide_dcv?
+    @other_party_validation_request && @other_party_validation_request.hide_dcv?
+  end
+
+  def hide_documents?
+    @other_party_validation_request && @other_party_validation_request.hide_documents?
+  end
+
+  def hide_both?
+    @other_party_validation_request && @other_party_validation_request.hide_both?
   end
 
   class Helper

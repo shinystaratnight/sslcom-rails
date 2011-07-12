@@ -12,7 +12,7 @@ class OtherPartyRequestMailer < ActionMailer::Base
       else
         "An SSL.com customer"
       end
-    subject = "SSL.com Certificate Request For Validation"
+    subject = "Validation Request for SSL.com Certificate #{@co.subject}"+(@opvr.preferred_show_order_number? ? " (Order Number #{@co.ref})" : "")
     mail(:to => @to, :subject => subject)
   end
 

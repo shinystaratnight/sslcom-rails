@@ -11,10 +11,19 @@ class OtherPartyValidationRequest < OtherPartyRequest
   end
 
   def allowed(email)
-    email_address.include?(email) ? true : false
+    email_addresses.include?(email)
   end
 
   def hide_dcv?
     preferred_sections==DOCUMENTS_SECTION
   end
+
+  def hide_documents?
+    preferred_sections==DCV_SECTION
+  end
+
+  def hide_both?
+    preferred_sections==BOTH_SECTIONS
+  end
+
 end

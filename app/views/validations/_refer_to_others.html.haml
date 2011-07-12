@@ -36,23 +36,25 @@
         =check_box_tag :preferred_show_order_number
         %span.clickable_choice allow the order number to be shown in the request
     -else
-      =form_for co.other_party_validation_requests.build, id: 'request_from_others', remote: true do |f|
+      =form_for co.other_party_validation_requests.build(other_party_requestable: co), id: 'request_from_others', remote: true do |f|
+        =f.hidden_field :other_party_requestable_type
+        =f.hidden_field :other_party_requestable_id
         .choice_w_desc.clearfix
           =f.text_field :email_addresses, size: HTML_TEXT_FIELD_SIZE
-        -unless co.certificate.is_dv? || local_assigns[:hide_options]
+        -unless co.certificate.is_dv? || local_assigns[:hide_options] || hide_dcv? || hide_documents?
           .choice_w_desc.clearfix
             =f.radio_button :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS
             %span.clickable_choice request document(s) and proof of domain control
-          -unless hide_dcv?
-            .choice_w_desc.clearfix
-              =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
-              %span.clickable_choice request only proof of domain control
+          .choice_w_desc.clearfix
+            =f.radio_button :preferred_sections, OtherPartyValidationRequest::DCV_SECTION
+            %span.clickable_choice request only proof of domain control
           .choice_w_desc.clearfix
             =f.radio_button :preferred_sections, OtherPartyValidationRequest::DOCUMENTS_SECTION
             %span.clickable_choice request only document(s)
-        .choice_w_desc.clearfix
-          =f.check_box :preferred_show_order_number
-          %span.clickable_choice allow the order number to be shown in the request
+        -if @other_party_validation_request.blank? || @other_party_validation_request.preferred_show_order_number?
+          .choice_w_desc.clearfix
+            =f.check_box :preferred_show_order_number
+            %span.clickable_choice allow the order number to be shown in the request
         -unless checkout_in_progress
           .choice_w_desc
             =submit_tag "send request", class: 'shiny_blue_button dcv_email_choices', disable_with: 'sending...'

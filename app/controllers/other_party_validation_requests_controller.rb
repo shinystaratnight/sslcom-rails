@@ -10,12 +10,11 @@ class OtherPartyValidationRequestsController < ApplicationController
 
   def show
     @other_party_validation_request = OtherPartyValidationRequest.find_by_identifier(params[:id])
-    @certificate_order = @other_party_validation_request.other_party_requestable
-    render 'validations/edit'
-#    if @other_party_validation_request && @other_party_validation_request.allowed(current_user.email)
-#      respond_with @other_party_validation_request
-#    else
-#      permission_denied
-#    end
+    if @other_party_validation_request && @other_party_validation_request.allowed(current_user.email)
+      @certificate_order = @other_party_validation_request.other_party_requestable
+      render 'validations/edit'
+    else
+      permission_denied
+    end
   end
 end

@@ -24,7 +24,7 @@
   %h3 
     Validation #{'Documentation' unless checkout_in_progress} for
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
-  =error_messages_for :validation, @dcv
+  =error_messages_for :validation, @dcv, @other_party_validation_request
   #stylized.default_form
     =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
       =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}

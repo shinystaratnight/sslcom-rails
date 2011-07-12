@@ -1,5 +1,6 @@
 Hello,
-Additional validation information is required in order to issue an SSL.com certificate for domain <%=@co.subject%>.
+Additional validation information is required in order to issue an SSL.com certificate for
+domain <%="#{@co.subject}"+(@opvr.preferred_show_order_number? ? " (order number #{@co.ref})" : "")%>.
 
 <%=@technical_contact%> has sent you this request to help complete the SSL.com certificate order for domain
 <%=@co.subject%>. In order for us to issue the globally trusted and warranted SSL.com certificate for domain

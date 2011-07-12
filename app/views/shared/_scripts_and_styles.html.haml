@@ -8,6 +8,8 @@
 = include_javascripts :shared, :common
 /[if IE]
   = javascript_include_tag "jquery.bgiframe.pack"
+/[if lt IE 9]
+  = javascript_include_tag "//html5shim.googlecode.com/svn/trunk/html5.js"
 
 :javascript
   jQuery(function($){
