@@ -1,5 +1,24 @@
-/* Welcome to Compass. Use this file to write IE specific override styles.
- * Import this file using the following HTML or equivalent:
- * <!--[if IE]>
- *   <link href="/stylesheets/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
- * <![endif]--> */
+/* line 20, ../../../app/stylesheets/ie.sass */
+#report table span.expand_or_view_order, #reseller_tiers table span.expand_or_view_order, #domain_pricing_popup table span.expand_or_view_order, #certificate_listing table span.expand_or_view_order,
+#dashboard table span.expand_or_view_order, #certificate_orders table span.expand_or_view_order, #validations table span.expand_or_view_order {
+  text-align: left;
+  line-height: normal;
+  float: left;
+  width: 100%;
+}
+
+/* line 26, ../../../app/stylesheets/ie.sass */
+#header .logo {
+  margin-top: 10px;
+}
+
+/* line 29, ../../../app/stylesheets/ie.sass */
+#menu {
+  display: block;
+  width: 57%;
+}
+
+/* line 34, ../../../app/stylesheets/ie.sass */
+#shorten_prompt input[type=password], #shorten_prompt input[type=text], #shorten_prompt input[type=url] {
+  width: 280px;
+}
