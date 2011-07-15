@@ -1,0 +1,5 @@
+=select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
+=hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
+-unless co.validation_stage_checkout_in_progress?
+  =submit_tag "send verification", class: 'shiny_blue_button', disable_with: 'sending...'
+  %span#busy_sending=image_tag 'waiting_dots.gif'

@@ -3,7 +3,7 @@ class DomainControlValidation < ActiveRecord::Base
   belongs_to :csr
   serialize :candidate_addresses
 
-  validate :email_address_check, unless: lambda{|r| r.email_address.blank?}
+  validate    :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
   IS_INVALID  = "is an invalid email address choice"
 
@@ -36,7 +36,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def is_eligible_to_send?
-    !email_address.blank? && updated_at < 24.hours_ago && !satisfied?
+    !email_address.blank? && updated_at < 24.hours.ago && !satisfied?
   end
 
   def is_eligible_to_resend?

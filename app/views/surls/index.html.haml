@@ -1,4 +1,10 @@
--content_for :header, 'public'
+-c={}
+-c[:header]='public'
+-c[:description]="Secure Short Links by SSL.com are a secure way to shorten long urls and links backed by the ssl.com name."
+-c[:keywords]="secure short links ssl small urls surls shorten twitter social share analytics tracking scanned prevent malware"
+-c[:title] = "Secure Short Links by ssl.com"
+-c.each do |k, v|
+  -content_for k, c[k]
 =render :partial => '/surls/index_scripts'
 .container
   .innercontainere

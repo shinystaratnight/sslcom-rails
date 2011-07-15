@@ -118,7 +118,7 @@
                           =render partial: 'validations/dcv', locals: {co: @certificate_order}
                         %li
                           %strong validation documentation
-                        -if @certificate_order.description['validation_level'] == 'Class 1'
+                        -if @certificate_order.certificate.is_dv?
                           %li n/a
                         -else
                           -unless @certificate_order.validation.validation_histories.blank?

@@ -72,21 +72,28 @@ class ValidationsController < ApplicationController
 
   def upload
     i=0
-    error=""
+    error=[]
     @zip_file_name = ""
     @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
     @files = params[:filedata] || []
-    if params[:refer_to_others]
+    unless params[:refer_to_others]=="false"
+      attrs=%w(email_addresses other_party_requestable_type other_party_requestable_id preferred_sections preferred_show_order_number)
       @other_party_validation_request =
-        OtherPartyValidationRequest.create(params[:other_party_validation_request])
+        OtherPartyValidationRequest.create(Hash[*attrs.map{|a|[a.to_sym,params[a.to_sym]] if params[a.to_sym]}.compact.flatten])
+        unless @other_party_validation_request.valid?
+          error<<@other_party_validation_request.errors.full_messages
+          flash[:opvr_error]=true
+        end
+        flash[:opvr]=true
+        flash[:email_addresses]=params[:email_addresses]
     end
     unless hide_both?
       if hide_documents? || (params[:domain_control_validation_email] && params[:domain_control_validation_id])
         @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
         @dcv.send_to params[:domain_control_validation_email]
-        error = 'Please select a valid verification email address.' unless @dcv.errors.blank?
+        error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
       elsif hide_dcv? || @files.blank?
-        error = 'Please select one or more files to upload.'
+        error<<'Please select one or more files to upload.'
       end
     end
     @files.each do |file|
@@ -165,7 +172,7 @@ class ValidationsController < ApplicationController
           :status => :created,
           :location => @release }
       else
-        flash[:error] = error
+        (flash[:error] = error.is_a?(Array) ? error.join(", ") : error) unless error.blank?
         format.html { redirect_to new_certificate_order_validation_path(
             @certificate_order) }
         format.xml { render :xml => @release.errors,

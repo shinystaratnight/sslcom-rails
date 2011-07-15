@@ -9,19 +9,25 @@
     *validation provider:
   .dcv_choices
     .choice_w_desc.clearfix
-      =radio_button_tag :refer_to_others, "false"
+      =radio_button_tag :refer_to_others, "false", flash[:opvr].blank?
       %span.clickable_choice I can provide all validation
     .choice_w_desc.clearfix
-      =radio_button_tag :refer_to_others, "true"
-      %span.clickable_choice other parties should provide all or partial validation
+      =radio_button_tag :refer_to_others, "true", !flash[:opvr].blank?
+      %span.clickable_choice I will refer this step to other parties
 #request_validation_from_others.clearfix
   %label
     *email request to:
     %span.label_desc multiple addresses are comma separated
   .dcv_choices
     -if checkout_in_progress #non ajax
+      =hidden_field_tag :other_party_requestable_type, co.class.to_s
+      =hidden_field_tag :other_party_requestable_id, co.id
       .choice_w_desc.clearfix
-        =text_field_tag :email_addresses, nil, size: HTML_TEXT_FIELD_SIZE
+        -if flash[:opvr_error]
+          .field_with_errors
+            =text_field_tag :email_addresses, flash[:email_addresses], size: HTML_TEXT_FIELD_SIZE
+        -else
+          =text_field_tag :email_addresses, flash[:email_addresses], size: HTML_TEXT_FIELD_SIZE
       -unless co.certificate.is_dv? || local_assigns[:hide_options]
         .choice_w_desc.clearfix
           =radio_button_tag :preferred_sections, OtherPartyValidationRequest::BOTH_SECTIONS

@@ -20,6 +20,8 @@ class Surl < ActiveRecord::Base
   LOOP_ERROR="Trying to confuse us? Sorry, but ssl links pointing to ssl.com are not allowed,
     otherwise we'll loop forever."
   SUBDOMAIN="links"
+  TIMEOUT_DURATION=1
+  RETRIES=2
 
   REMOVE="remove"
 

@@ -275,6 +275,7 @@ module ApplicationHelper
     current_page?(:controller=>:site, :action=>:index) ||
     current_page?(:controller=>:site, :action=>:reseller) ||
     current_page?(:controller=>:surls, :action=>:index)  ||
+    current_page?(:controller=>:surls, :action=>:update) ||
     current_page?(:controller=>:surls, :action=>:edit) ||
     current_page?(:controller=>:surls, :action=>:show)
   end

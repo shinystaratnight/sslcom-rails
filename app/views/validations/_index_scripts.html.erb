@@ -91,6 +91,25 @@ jQuery(function($) {
       $('.method_'+i+' ul li').remove();
     }
   }
+  jQuery.fn.refer_to_others_toggle=function(){
+    if($(this).val()=="false"){
+      $('#request_validation_from_others').hide();
+      $('#proof_of_dcv_section').show();
+      $('#documents_upload_section').show();
+      $('#documents_upload_heading').show();
+      if(<%=!checkout_in_progress%>)
+        $("#upload_validations").show();
+    }
+    else{
+      $('#request_validation_from_others').show();
+      $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').attr("checked", true);
+      $('#proof_of_dcv_section').hide();
+      $('#documents_upload_section').hide();
+      $('#documents_upload_heading').hide();
+      if(<%=!checkout_in_progress%>)
+        $("#upload_validations").hide();
+    }
+  }
   $(document).ready(function() {
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
@@ -301,28 +320,13 @@ jQuery(function($) {
     $('.has_csr_container').click(function(){
       $(this).siblings().filter(':radio[name*=has_documents]').click();
     });
-      $('.clickable_choice').click(function(e){
-        $(this).siblings().filter(':input').click();
-      });
-      $(':radio[name*=refer_to_others]').click(function(e){
-        if($(this).val()=="false"){
-          $('#request_validation_from_others').hide();
-          $('#proof_of_dcv_section').show();
-          $('#documents_upload_section').show();
-          $('#documents_upload_heading').show();
-          if(<%=!checkout_in_progress%>)
-            $("#upload_validations").show();
-        }
-        else{
-          $('#request_validation_from_others').show();
-          $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').attr("checked", true);
-          $('#proof_of_dcv_section').hide();
-          $('#documents_upload_section').hide();
-          $('#documents_upload_heading').hide();
-          if(<%=!checkout_in_progress%>)
-            $("#upload_validations").hide();
-        }
-      });
+    $('.clickable_choice').click(function(e){
+      $(this).siblings().filter(':input').click();
+    });
+    $(':radio[name*=refer_to_others]').click(function(e){
+      $(this).refer_to_others_toggle();
+    });
+    $(':radio:checked[name*=refer_to_others]').refer_to_others_toggle();
     $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::DOCUMENTS_SECTION%>]').click(
       function(){
         $('#proof_of_dcv_section').show();
@@ -339,7 +343,6 @@ jQuery(function($) {
         $('#documents_upload_heading').hide();
         $('#documents_upload_section').hide();
         });
-    $(':radio[name*=refer][value=false]').click();
     $(':radio[name*=has_documents][value=true]').click();
     $('#send_to_ca').livequery(
       'ajax:beforeSend', function(){

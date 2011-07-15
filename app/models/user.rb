@@ -25,6 +25,8 @@ class User < ActiveRecord::Base
     u.status='enabled'
   }
 
+  validates :email, email: true
+
   default_scope :order => 'users.created_at DESC'
 
   def active?
