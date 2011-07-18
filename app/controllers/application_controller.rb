@@ -551,12 +551,12 @@ class ApplicationController < ActionController::Base
 
   def record_surl_visit
     SurlVisit.create visitor_token: @visitor_token,
-                    surl: @surl,
-                    referer_host: request.env['REMOTE_HOST'],
-                    referer_address: request.env['REMOTE_ADDR'],
-                    request_uri: request.env['REQUEST_URI'],
-                    http_user_agent: request.env['HTTP_USER_AGENT'],
-                    result: @render_result
+      surl: @surl,
+      referer_host: request.env['REMOTE_HOST'],
+      referer_address: request.env['REMOTE_ADDR'],
+      request_uri: request.env['REQUEST_URI'],
+      http_user_agent: request.env['HTTP_USER_AGENT'],
+      result: @render_result
   end
 
   def assign_ssl_links(user)
