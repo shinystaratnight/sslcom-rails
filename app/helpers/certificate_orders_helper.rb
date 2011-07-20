@@ -82,6 +82,10 @@ module CertificateOrdersHelper
     end
   end
 
+  def other_party_request(certificate_order)
+    !(certificate_order.ssl_account==current_user.ssl_account)
+  end
+
   def certificate_order_status(certificate_content=nil)
     return if certificate_content.blank?
     if certificate_content.new?

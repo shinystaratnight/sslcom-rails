@@ -459,6 +459,7 @@ ActiveRecord::Schema.define(:version => 20110705161309) do
   create_table "other_party_requests", :force => true do |t|
     t.integer  "other_party_requestable_id"
     t.string   "other_party_requestable_type"
+    t.integer  "user_id"
     t.text     "email_addresses"
     t.string   "identifier"
     t.datetime "sent_at"

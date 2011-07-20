@@ -6,21 +6,14 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :find_validation, :only=>[:update]
+  before_filter :find_validation, only: [:update]
+  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload]
   filter_access_to :upload, :require=>:create
   filter_access_to :all
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :edit, :attribute_check=>false
   filter_access_to :send_to_ca, require: :admin_manage
   in_place_edit_for :validation_history, :notes
-
-  def new
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
-  end
-
-  def edit
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
-  end
 
   def search
     index
@@ -43,10 +36,6 @@ class ValidationsController < ApplicationController
       format.html { render :action => :index }
       format.xml  { render :xml => @certificate_orders }
     end
-  end
-
-  def show
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
   end
 
   def show_document_file
@@ -74,9 +63,8 @@ class ValidationsController < ApplicationController
     i=0
     error=[]
     @zip_file_name = ""
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
     @files = params[:filedata] || []
-    unless params[:refer_to_others]=="false"
+    unless params[:refer_to_others].blank? || params[:refer_to_others]=="false"
       attrs=%w(email_addresses other_party_requestable_type other_party_requestable_id preferred_sections preferred_show_order_number)
       @other_party_validation_request =
         OtherPartyValidationRequest.create(Hash[*attrs.map{|a|[a.to_sym,params[a.to_sym]] if params[a.to_sym]}.compact.flatten])
@@ -269,6 +257,10 @@ class ValidationsController < ApplicationController
         OrderNotifier.deliver_validation_unapprove(c, @co, @validation)
       end
     end
+  end
+
+  def find_certificate_order
+    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
   end
 
   # source should be a zip file.

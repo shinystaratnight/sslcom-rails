@@ -422,7 +422,7 @@ class ApplicationController < ActionController::Base
   end
 
   def store_location
-    session[:return_to] = request.env['REQUEST_URI']
+    session[:return_to] = request.url
   end
 
   def redirect_back_or_default(default)
@@ -554,7 +554,7 @@ class ApplicationController < ActionController::Base
       surl: @surl,
       referer_host: request.env['REMOTE_HOST'],
       referer_address: request.env['REMOTE_ADDR'],
-      request_uri: request.env['REQUEST_URI'],
+      request_uri: request.url,
       http_user_agent: request.env['HTTP_USER_AGENT'],
       result: @render_result
   end

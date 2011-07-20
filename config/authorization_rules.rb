@@ -27,7 +27,7 @@ authorization do
     end
     has_permission_on :orders, :certificate_orders, :to => [:create]
     has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
-      if_attribute ssl_account: {id: is {user.ssl_account.id}}
+      if_attribute ssl_account: is {user.ssl_account}
     end
     has_permission_on :orders, :to => [:read, :update, :delete, :create_free_ssl, :create_multi_free_ssl] do
       if_attribute :billable => is {user.ssl_account}
@@ -64,6 +64,7 @@ authorization do
     has_permission_on :surls, :to => [:update, :delete] do
       if_attribute :id => is {user.id}
     end
+    has_permission_on :other_party_validation_requests, :to => [:create, :show]
     has_permission_on :surls, :to => [:create, :read]
     has_permission_on :certificates, :to => :read
     has_permission_on :funded_accounts, :to => [:create, :create_free_ssl, :read, :update,

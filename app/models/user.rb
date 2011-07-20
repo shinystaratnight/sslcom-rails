@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many  :roles, :through => :assignments
   has_many  :legacy_v2_user_mappings, :as=>:user_mappable
   has_many  :duplicate_v2_users
+  has_many  :other_party_requests
   belongs_to :ssl_account
   attr_accessor :changing_password, :admin_update
   attr_accessible :login, :email, :password, :password_confirmation,
@@ -24,8 +25,6 @@ class User < ActiveRecord::Base
   before_create {|u|
     u.status='enabled'
   }
-
-  validates :email, email: true
 
   default_scope :order => 'users.created_at DESC'
 

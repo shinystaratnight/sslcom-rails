@@ -8,4 +8,4 @@
   %td
     =link_to 'delete', surl, :confirm=>"Are you sure you want to delete ssl link '#{link}'? This action cannot be undone.", :method=>:delete, :remote=>current_user.blank? ? false : true, :class=>'delete_link'
     |
-    =link_to 'configure', edit_surl_url(surl, subdomain: Surl::SUBDOMAIN)
+    =link_to 'configure', edit_surl_path(surl)

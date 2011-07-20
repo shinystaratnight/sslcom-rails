@@ -27,7 +27,7 @@
       .dcv_email_choices
         .clearfix
           -if co.validation_stage_checkout_in_progress?
-            =render partial: "dcv_options", locals:{co: co}
+            =render partial: "validations/dcv_options", locals:{co: co}
           -else
             =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true do
-              =render partial: "dcv_options", locals:{co: co}
+              =render partial: "validations/dcv_options", locals:{co: co}
