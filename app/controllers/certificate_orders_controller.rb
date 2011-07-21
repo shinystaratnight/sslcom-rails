@@ -1,8 +1,10 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
-  before_filter :load_certificate_order, only: [:update, :edit]
+  before_filter :load_certificate_order,
+                only: [:show, :update, :edit, :download, :destroy, :update_csr]
   filter_access_to :all
+  filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
     :renew, :reprocess, :require=>[:create, :update, :delete]
@@ -32,7 +34,6 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1
   # GET /certificate_orders/1.xml
   def show
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @certificate_order }
@@ -170,7 +171,6 @@ class CertificateOrdersController < ApplicationController
   # PUT /certificate_orders/1
   # PUT /certificate_orders/1.xml
   def update_csr
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym])
     @certificate_content.certificate_order=@certificate_order
@@ -256,7 +256,6 @@ class CertificateOrdersController < ApplicationController
   # DELETE /certificate_orders/1
   # DELETE /certificate_orders/1.xml
   def destroy
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
     @certificate_order.destroy
 
     respond_to do |format|
@@ -266,7 +265,6 @@ class CertificateOrdersController < ApplicationController
   end
 
   def download
-    @certificate_order = CertificateOrder.find_by_ref(params[:id])
     t=@certificate_order.certificate_content.csr.signed_certificate.
       create_signed_cert_zip_bundle
     # End of the block  automatically closes the file.
@@ -285,7 +283,7 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.find_by_ref(params[:id])    
+    @certificate_order=CertificateOrder.find_by_ref(params[:id])
   end
 
   def setup_registrant

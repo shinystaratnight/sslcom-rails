@@ -7,13 +7,19 @@ class SurlsController < ApplicationController
   before_filter :find_surl_by_guid, only: [:edit, :destroy, :update]
   skip_filter   :record_visit
   after_filter  :record_surl_visit, only: [:show]
-  filter_access_to :edit, :destroy, :update
+  filter_access_to  :edit, :destroy, :update, attribute_check: true
+  filter_access_to  :admin_index
 
   # GET /surls
   # GET /surls.xml
   def index
     @surls=get_valid_surls
-    @surl = Surl.new
+    @surl=Surl.new
+  end
+
+  def admin_index
+    p = {:page => params[:page]}
+    @surls=Surl.all.paginate(p)
   end
 
   #POST /surl_login

@@ -8,6 +8,7 @@ class UsersController < ApplicationController
     :consolidate, :dup_info]
 #  before_filter :index, :only=>:search
   filter_access_to  :all
+  filter_access_to  :update, :admin_update, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :require=>:edit

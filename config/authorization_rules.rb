@@ -36,8 +36,8 @@ authorization do
       if_permitted_to :update, :certificate_order
     end
     has_permission_on :validations, :to => [:read, :update] do
-      if_attribute :certificate_orders => intersects_with {user.
-          ssl_account.certificate_orders}
+      if_attribute :certificate_orders => {
+            :ssl_account => is {user.ssl_account}}
     end
     has_permission_on :validations, :site_seals, :to => [:create]
     has_permission_on :validation_histories, :to => :manage, :except=>:delete do
@@ -90,7 +90,7 @@ end
 
 privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
-    :manage_all, :login_as, :search]
+    :manage_all, :login_as, :search, :admin_index]
   privilege :manage, :includes => [:create, :read, :update, :delete]
   privilege :read, :includes => [:index, :show, :search, :show_cart]
   privilege :create, :includes => :new

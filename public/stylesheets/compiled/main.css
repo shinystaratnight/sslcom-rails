@@ -6478,81 +6478,81 @@ dl.listing .green {
 .api_csr_params table {
   border: 1px solid black;
 }
-/* line 2, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 2, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table th {
   text-align: center;
   font-weight: bold;
 }
-/* line 6, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 6, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table td,
 .api_csr_params table th {
   padding: 2px;
 }
-/* line 8, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 8, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table td.numeric,
 .api_csr_params table th.numeric {
   text-align: right;
 }
-/* line 14, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 14, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th, .api_csr_params table td {
   border-right: 1px solid #e64425;
   border-bottom: 1px solid #e64425;
   border-left-width: 0px;
   border-top-width: 0px;
 }
-/* line 21, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 21, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th:last-child, .api_csr_params table th.last, .api_csr_params table td:last-child, .api_csr_params table td.last {
   border-right-width: 0px;
 }
-/* line 29, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 29, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tbody tr:last-child th, .api_csr_params table tbody tr:last-child td, .api_csr_params table tfoot tr:last-child th, .api_csr_params table tfoot tr:last-child td {
   border-bottom-width: 0px;
 }
-/* line 32, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 32, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tbody tr.last th, .api_csr_params table tbody tr.last td, .api_csr_params table tfoot tr.last th, .api_csr_params table tfoot tr.last td {
   border-bottom-width: 0px;
 }
-/* line 4, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 4, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table thead th {
   border-bottom: 1px solid black;
 }
-/* line 7, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 7, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tfoot th, .api_csr_params table tfoot td {
   border-top: 1px solid black;
 }
-/* line 10, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 10, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th:first-child {
   border-right: 1px solid black;
 }
-/* line 2, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 2, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table th {
   background-color: white;
 }
-/* line 4, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 4, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table th.even, .api_csr_params table th:nth-child(2n) {
   background-color: #eeeeee;
 }
-/* line 7, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 7, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.odd td {
   background-color: #f1dcfb;
 }
-/* line 9, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 9, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.odd td.even, .api_csr_params table tr.odd td:nth-child(2n) {
   background-color: #e0cbea;
 }
-/* line 12, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 12, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.even td {
   background-color: #fbe1dc;
 }
-/* line 14, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 14, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.even td.even, .api_csr_params table tr.even td:nth-child(2n) {
   background-color: #ead0cb;
 }
-/* line 17, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 17, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tfoot th, .api_csr_params table tfoot td {
   background-color: white;
 }
-/* line 19, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 19, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tfoot th.even, .api_csr_params table tfoot th:nth-child(2n), .api_csr_params table tfoot td.even, .api_csr_params table tfoot td:nth-child(2n) {
   background-color: #eeeeee;
 }
@@ -6562,7 +6562,7 @@ ul.csr_fields, .default_container .info_listing ul.csr_fields#privacy {
   list-style: none;
   padding: 1em 0 0 0;
 }
-/* line 11, ../../../../../../.rvm/gems/ruby-1.9.2-p136@global/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/typography/lists/_bullets.scss */
+/* line 11, ../../../../../../.rvm/gems/ruby-1.9.2-p136/gems/compass-0.11.beta.3/frameworks/compass/stylesheets/compass/typography/lists/_bullets.scss */
 ul.csr_fields li, .default_container .info_listing ul.csr_fields#privacy li {
   list-style-image: none;
   list-style-type: none;
@@ -6611,6 +6611,7 @@ ul#send_to_ca_box {
 .shiny_silver_button {
   color: #050505;
   padding: 10px 20px;
+  background-color: #ebebeb;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(50%, #ebebeb), color-stop(50%, #dbdbdb), color-stop(100%, #b5b5b5));
   background: -moz-linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
   background: linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
@@ -6628,10 +6629,11 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px white;
 }
 
-/* line 4886, ../../../app/stylesheets/main.sass */
+/* line 4887, ../../../app/stylesheets/main.sass */
 .shiny_blue_button, #stylized input#upload_files, #surl_stylized input#upload_files {
   color: white;
   padding: 10px 20px;
+  background-color: #79cff7;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #79cff7), color-stop(100%, #11557a));
   background: -moz-linear-gradient(top, #79cff7 0%, #11557a);
   background: linear-gradient(top, #79cff7 0%, #11557a);
@@ -6649,60 +6651,60 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.4), 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* line 4895, ../../../app/stylesheets/main.sass */
+/* line 4897, ../../../app/stylesheets/main.sass */
 #busy_sending {
   display: none;
 }
 
-/* line 4898, ../../../app/stylesheets/main.sass */
+/* line 4900, ../../../app/stylesheets/main.sass */
 #dcv_sent_to_address {
   font-weight: bold;
 }
 
-/* line 4901, ../../../app/stylesheets/main.sass */
+/* line 4903, ../../../app/stylesheets/main.sass */
 .category_border {
   margin-bottom: 1em;
 }
 
-/* line 4904, ../../../app/stylesheets/main.sass */
+/* line 4906, ../../../app/stylesheets/main.sass */
 #subscriber_agreement textarea {
   width: 100%;
 }
 
-/* line 4907, ../../../app/stylesheets/main.sass */
+/* line 4909, ../../../app/stylesheets/main.sass */
 textarea[id^=certificate_order] {
   width: 300px;
 }
 
-/* line 4910, ../../../app/stylesheets/main.sass */
+/* line 4912, ../../../app/stylesheets/main.sass */
 #agreement {
   font-size: 1.3em;
 }
 
-/* line 4913, ../../../app/stylesheets/main.sass */
+/* line 4915, ../../../app/stylesheets/main.sass */
 .waiting_bar {
   text-align: center;
 }
 
-/* line 4916, ../../../app/stylesheets/main.sass */
+/* line 4918, ../../../app/stylesheets/main.sass */
 .close_flash_message {
   color: #6b9029;
   font-size: 0.9em;
   float: right;
   margin-right: 1em;
 }
-/* line 4922, ../../../app/stylesheets/main.sass */
+/* line 4924, ../../../app/stylesheets/main.sass */
 .close_flash_message span {
   border: 1px solid;
   padding: 0pt 0.2em;
 }
 
-/* line 4927, ../../../app/stylesheets/main.sass */
+/* line 4929, ../../../app/stylesheets/main.sass */
 #new_user_session input[type=password], #new_user_session input[type=text] {
   width: 196px;
 }
 
-/* line 4930, ../../../app/stylesheets/main.sass */
+/* line 4932, ../../../app/stylesheets/main.sass */
 .dcv_not_satisfied {
   background: #fff7f8;
   border-left: 1px solid #feb6b6;
@@ -6710,7 +6712,7 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4936, ../../../app/stylesheets/main.sass */
+/* line 4938, ../../../app/stylesheets/main.sass */
 .dcv_satisfied {
   background: #f8fff7;
   border-left: 1px solid #d8feb6;
@@ -6718,66 +6720,66 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4942, ../../../app/stylesheets/main.sass */
+/* line 4944, ../../../app/stylesheets/main.sass */
 .validation_section {
   padding-bottom: 1em;
 }
 
-/* line 4945, ../../../app/stylesheets/main.sass */
+/* line 4947, ../../../app/stylesheets/main.sass */
 span#no_emails_accessible {
   font-size: 0.9em;
   color: #ff2626;
 }
 
-/* line 4949, ../../../app/stylesheets/main.sass */
+/* line 4951, ../../../app/stylesheets/main.sass */
 #social_share {
   float: left;
   margin: 0px 4px 0px 2px;
   padding: 0;
   width: 110px;
 }
-/* line 4955, ../../../app/stylesheets/main.sass */
+/* line 4957, ../../../app/stylesheets/main.sass */
 #sales_number_in_header #social_share {
   margin: -4px 4px 0px 2px;
 }
 
-/* line 4958, ../../../app/stylesheets/main.sass */
+/* line 4960, ../../../app/stylesheets/main.sass */
 #logo_share {
   float: left;
   width: 180px;
 }
 
-/* line 4962, ../../../app/stylesheets/main.sass */
+/* line 4964, ../../../app/stylesheets/main.sass */
 #twitter {
   float: left;
   height: 5px;
 }
 
-/* line 4966, ../../../app/stylesheets/main.sass */
+/* line 4968, ../../../app/stylesheets/main.sass */
 #facebook {
   float: right;
   width: 50px;
 }
 
-/* line 4970, ../../../app/stylesheets/main.sass */
+/* line 4972, ../../../app/stylesheets/main.sass */
 #logo_share #social_share {
   float: left;
 }
 
-/* line 4973, ../../../app/stylesheets/main.sass */
+/* line 4975, ../../../app/stylesheets/main.sass */
 .site_seal_footer {
   float: left;
   margin-top: 30px;
 }
 
-/* line 4978, ../../../app/stylesheets/main.sass */
+/* line 4980, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl, #surl_stylized .edit_surl {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
-/* line 4983, ../../../app/stylesheets/main.sass */
+/* line 4985, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl label, #surl_stylized .edit_surl label {
   font-size: 1.4em;
   display: block;
@@ -6786,17 +6788,17 @@ span#no_emails_accessible {
   width: 100%;
   text-align: left;
 }
-/* line 4991, ../../../app/stylesheets/main.sass */
+/* line 4993, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 4995, ../../../app/stylesheets/main.sass */
+/* line 4997, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 300px;
 }
-/* line 4998, ../../../app/stylesheets/main.sass */
+/* line 5000, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   width: 100%;
   float: left;
@@ -6813,75 +6815,75 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 5009, ../../../app/stylesheets/main.sass */
+/* line 5011, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
-/* line 5014, ../../../app/stylesheets/main.sass */
+/* line 5016, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   float: none;
   width: 60%;
 }
-/* line 5019, ../../../app/stylesheets/main.sass */
+/* line 5021, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p {
   text-align: left;
 }
-/* line 5022, ../../../app/stylesheets/main.sass */
+/* line 5024, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
   width: 65%;
 }
-/* line 5025, ../../../app/stylesheets/main.sass */
+/* line 5027, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label {
   width: 6em;
 }
-/* line 5028, ../../../app/stylesheets/main.sass */
+/* line 5030, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url] {
   width: 300px;
 }
-/* line 5031, ../../../app/stylesheets/main.sass */
+/* line 5033, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   width: 50%;
   float: none;
 }
-/* line 5036, ../../../app/stylesheets/main.sass */
+/* line 5038, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 750px;
 }
 
-/* line 5040, ../../../app/stylesheets/main.sass */
+/* line 5042, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 5043, ../../../app/stylesheets/main.sass */
+/* line 5045, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 5046, ../../../app/stylesheets/main.sass */
+/* line 5048, ../../../app/stylesheets/main.sass */
 #surl_link, #surl_link_error {
   font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5051, ../../../app/stylesheets/main.sass */
+/* line 5053, ../../../app/stylesheets/main.sass */
 #surl_link input, #surl_link_error input {
   width: 360px;
 }
 
-/* line 5054, ../../../app/stylesheets/main.sass */
+/* line 5056, ../../../app/stylesheets/main.sass */
 #surl_link_error {
   font-size: 1.5em;
   margin: 1em auto;
 }
-/* line 5058, ../../../app/stylesheets/main.sass */
+/* line 5060, ../../../app/stylesheets/main.sass */
 #surl_link_error ul, #surl_link_error .default_container .info_listing ul#privacy, .default_container .info_listing #surl_link_error ul#privacy {
   list-style-type: none;
   margin: 0;
 }
 
-/* line 5062, ../../../app/stylesheets/main.sass */
+/* line 5064, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
@@ -6890,7 +6892,7 @@ span#no_emails_accessible {
   display: none;
 }
 
-/* line 5069, ../../../app/stylesheets/main.sass */
+/* line 5071, ../../../app/stylesheets/main.sass */
 .old_link {
   color: black;
   font-style: italic;
@@ -6898,12 +6900,12 @@ span#no_emails_accessible {
   margin: 0.4em auto;
 }
 
-/* line 5075, ../../../app/stylesheets/main.sass */
+/* line 5077, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field {
   display: none;
   margin-left: 30px;
 }
-/* line 5079, ../../../app/stylesheets/main.sass */
+/* line 5081, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field label {
   font-size: 1em;
   font-weight: normal;
@@ -6912,13 +6914,13 @@ span#no_emails_accessible {
   width: 38%;
   color: #333333;
 }
-/* line 5087, ../../../app/stylesheets/main.sass */
+/* line 5089, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
 }
 
-/* line 5091, ../../../app/stylesheets/main.sass */
+/* line 5093, ../../../app/stylesheets/main.sass */
 #manage_current_links {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
@@ -6935,29 +6937,29 @@ span#no_emails_accessible {
   width: 100%;
   display: none;
 }
-/* line 5100, ../../../app/stylesheets/main.sass */
+/* line 5102, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th {
   text-align: left;
   vertical-align: top;
   padding: 0.2em 0.5em;
 }
-/* line 5105, ../../../app/stylesheets/main.sass */
+/* line 5107, ../../../app/stylesheets/main.sass */
 #manage_current_links td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5108, ../../../app/stylesheets/main.sass */
+/* line 5110, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5111, ../../../app/stylesheets/main.sass */
+/* line 5113, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5115, ../../../app/stylesheets/main.sass */
+/* line 5117, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -6965,7 +6967,7 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5121, ../../../app/stylesheets/main.sass */
+/* line 5123, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;

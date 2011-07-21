@@ -38,6 +38,7 @@ gem 'sinatra'
 gem 'uuidtools'
 gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
+gem 'sauce'
 
 # Deploy with Capistrano
 # gem 'capistrano'

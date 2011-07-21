@@ -55,32 +55,32 @@ class ContactsController < ApplicationController
     end
   end
 
-  # PUT /contacts/1
-  # PUT /contacts/1.xml
-  def update
-    @contact = Contact.find(params[:id])
+  ## PUT /contacts/1
+  ## PUT /contacts/1.xml
+  #def update
+  #  @contact = Contact.find(params[:id])
+  #
+  #  respond_to do |format|
+  #    if @contact.update_attributes(params[:contact])
+  #      flash[:notice] = 'Contact was successfully updated.'
+  #      format.html { redirect_to(@contact) }
+  #      format.xml  { head :ok }
+  #    else
+  #      format.html { render :action => "edit" }
+  #      format.xml  { render :xml => @contact.errors, :status => :unprocessable_entity }
+  #    end
+  #  end
+  #end
 
-    respond_to do |format|
-      if @contact.update_attributes(params[:contact])
-        flash[:notice] = 'Contact was successfully updated.'
-        format.html { redirect_to(@contact) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @contact.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  # DELETE /contacts/1
-  # DELETE /contacts/1.xml
-  def destroy
-    @contact = Contact.find(params[:id])
-    @contact.destroy
-
-    respond_to do |format|
-      format.html { redirect_to(contacts_url) }
-      format.xml  { head :ok }
-    end
-  end
+  ## DELETE /contacts/1
+  ## DELETE /contacts/1.xml
+  #def destroy
+  #  @contact = Contact.find(params[:id])
+  #  @contact.destroy
+  #
+  #  respond_to do |format|
+  #    format.html { redirect_to(contacts_url) }
+  #    format.xml  { head :ok }
+  #  end
+  #end
 end

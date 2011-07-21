@@ -1,7 +1,8 @@
 class SiteSealsController < ApplicationController
   layout 'application'
+  before_filter :find_site_seal, only: [:artifacts, :site_report, :edit, :update, :admin_update]
   filter_access_to :all
-  filter_access_to :update, :admin_update, :attribute_check=>false
+  filter_access_to :edit, :update, :admin_update, attribute_check: true
   filter_access_to :site_report, :artifacts, :details, :require=>:read
 
   def search
@@ -43,11 +44,6 @@ class SiteSealsController < ApplicationController
     end
   end
 
-  # GET /site_seals/1/edit
-  def edit
-    @site_seal = SiteSeal.find(params[:id])
-  end
-
   # POST /site_seals
   # POST /site_seals.xml
   def create
@@ -68,7 +64,6 @@ class SiteSealsController < ApplicationController
   # PUT /site_seals/1
   # PUT /site_seals/1.xml
   def update
-    @site_seal = SiteSeal.find_by_ref(params[:id])
     respond_to do |format|
       if @site_seal.update_attributes(params[:site_seal])
         format.html { redirect_to(@site_seal) }
@@ -83,7 +78,6 @@ class SiteSealsController < ApplicationController
   end
 
   def admin_update
-    @site_seal = SiteSeal.find_by_ref(params[:id])
     @co = CertificateOrder.find params[:certificate_order]
     respond_to do |format|
       #allows us to bypass attr_protected. note this is admin only function
@@ -102,7 +96,6 @@ class SiteSealsController < ApplicationController
   end
 
   def site_report
-    @site_seal = SiteSeal.find_by_ref(params[:id])
     unless @site_seal.is_disabled?
       render :site_report, :layout=>"site_report"
     else
@@ -111,7 +104,6 @@ class SiteSealsController < ApplicationController
   end
 
   def artifacts
-    @site_seal = SiteSeal.find_by_ref(params[:id])
     unless @site_seal.is_disabled?
       render :artifacts, :layout=>"site_report"
     else
@@ -129,6 +121,10 @@ class SiteSealsController < ApplicationController
         OrderNotifier.deliver_site_seal_unapprove(c, @co)
       end
     end
+  end
+
+  def find_site_seal
+    @site_seal = SiteSeal.find_by_ref(params[:id])
   end
 
 end

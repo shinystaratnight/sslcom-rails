@@ -1,7 +1,7 @@
 class OtherPartyValidationRequestsController < ApplicationController
   respond_to :json, only: :create
   respond_to :html, only: :show
-  filter_access_to :all
+  #filter_access_to :all
 
   def create
     @other_party_validation_request =

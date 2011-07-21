@@ -7,6 +7,8 @@ class CertificateContent < ActiveRecord::Base
 
 #  attr_accessible :certificate_contacts_attributes
 
+  #before_update :delete_duplicate_contacts
+
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
@@ -119,8 +121,12 @@ class CertificateContent < ActiveRecord::Base
   end
 
   CONTACT_ROLES.each do |role|
+    define_method("#{role}_contacts") do
+      certificate_contacts(true).select{|c|c.has_role? role}
+    end
+
     define_method("#{role}_contact") do
-      certificate_contacts.detect{|c|c.has_role? role}
+      send("#{role}_contacts").last
     end
   end
 
@@ -181,5 +187,18 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_order_has_csr
     certificate_order.has_csr=='true' || certificate_order.has_csr==true
+  end
+
+  def delete_duplicate_contacts
+    CONTACT_ROLES.each do |role|
+      contacts = send "#{role}_contacts"
+      if contacts.count > 1
+        contacts.shift
+        contacts.each do |c|
+          c.destroy
+        end
+      end
+    end
+    true
   end
 end

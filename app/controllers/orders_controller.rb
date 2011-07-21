@@ -9,7 +9,7 @@ class OrdersController < ApplicationController
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
-  filter_access_to :all, :attribute_check=>false
+  filter_access_to :all
   filter_access_to :show,:attribute_check=>true
 
   def show_cart

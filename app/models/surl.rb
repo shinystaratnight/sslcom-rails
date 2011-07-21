@@ -22,6 +22,7 @@ class Surl < ActiveRecord::Base
   SUBDOMAIN="links"
   TIMEOUT_DURATION=1
   RETRIES=2
+  DISABLED_STATUS="disabled"
 
   REMOVE="remove"
 
@@ -38,7 +39,7 @@ class Surl < ActiveRecord::Base
     s.update_attributes identifier: s.id.encode62
   end
 
-  default_scope order(:created_at.desc)
+  default_scope where(:status ^ DISABLED_STATUS).order(:created_at.desc)
 
   def access_granted(surl)
     username==surl.username && valid_password?(surl.password)
