@@ -1,6 +1,6 @@
 class CreateCertificateApiRequests < ActiveRecord::Migration
   def self.up
-    create_table :certificate_api_requests do |t|
+    create_table :certificate_api_requests, force: true do |t|
       t.references :server_software, :country
       t.string :account_key, :secret_key
       t.boolean :test

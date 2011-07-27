@@ -7,7 +7,7 @@ class CreateBillableTables < ActiveRecord::Migration
       t.column :mode, :string
     end
 
-    create_table :line_items, :force => true do |t|
+    create_table :line_items, force: true do |t|
       t.references :order
       t.references :affiliate
       t.integer     :sellable_id

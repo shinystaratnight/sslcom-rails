@@ -1,6 +1,6 @@
 class CreateProductVariantItems < ActiveRecord::Migration
   def self.up
-    create_table :product_variant_items do |t|
+    create_table :product_variant_items, force: true do |t|
       t.references  :product_variant_group
       t.string    :title, :status
       t.text      :description, :text_only_description

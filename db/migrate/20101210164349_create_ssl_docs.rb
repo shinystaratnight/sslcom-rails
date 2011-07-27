@@ -1,6 +1,6 @@
 class CreateSslDocs < ActiveRecord::Migration
   def self.up
-    create_table :ssl_docs do |t|
+    create_table :ssl_docs, force: true do |t|
       t.references  :folder
       t.string      :reviewer
       t.string      :notes

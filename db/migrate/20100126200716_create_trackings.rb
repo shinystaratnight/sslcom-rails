@@ -1,6 +1,6 @@
   class CreateTrackings < ActiveRecord::Migration
     def self.up
-      create_table  :trackings do |t|
+      create_table  :trackings, force: true do |t|
         t.references :tracked_url
         t.references :visitor_token
         t.integer    :referer_id

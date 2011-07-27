@@ -76,13 +76,13 @@ class CertificateOrder < ActiveRecord::Base
   REPROCESSING = 'reprocessing'
   RECERTS = [RENEWING, REPROCESSING]
 
-  #changed for the migration
-  if MIGRATING_FROM_LEGACY
-    validates :certificate, presence: true
-  else
-    validates :certificate, presence: true, :unless=>Proc.new {|co|
-      !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
-  end
+  ##changed for the migration
+  #unless MIGRATING_FROM_LEGACY
+  #  validates :certificate, presence: true
+  #else
+  #  validates :certificate, presence: true, :unless=>Proc.new {|co|
+  #    !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
+  #end
 
   before_create do |co|
     co.ref='co-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)

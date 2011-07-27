@@ -1,6 +1,6 @@
 class CreateSignedCertificates < ActiveRecord::Migration
   def self.up
-    create_table :signed_certificates do |t|
+    create_table :signed_certificates, force: true do |t|
       t.references    :csr
       t.integer       :parent_id
       t.string        :common_name

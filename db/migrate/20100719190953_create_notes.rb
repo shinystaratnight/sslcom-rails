@@ -1,6 +1,6 @@
 class CreateNotes < ActiveRecord::Migration
   def self.up
-    create_table :notes do |t|
+    create_table :notes, force: true do |t|
       t.string :title, :limit => 50, :default => "" 
       t.text :note, :default => "" 
       t.references :notable, :polymorphic => true

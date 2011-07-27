@@ -1,6 +1,6 @@
 class CreateSurlVisits < ActiveRecord::Migration
   def self.up
-    create_table  :surl_visits do |t|
+    create_table  :surl_visits, force: true do |t|
       t.references :surl
       t.references :visitor_token
       t.string     :referer_host

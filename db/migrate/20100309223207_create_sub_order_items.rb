@@ -1,6 +1,6 @@
 class CreateSubOrderItems < ActiveRecord::Migration
   def self.up
-    create_table :sub_order_items do |t|
+    create_table :sub_order_items, force: true do |t|
       t.references  :sub_itemable, :polymorphic=>true
       t.references  :product_variant_item
       t.integer     :quantity, :amount

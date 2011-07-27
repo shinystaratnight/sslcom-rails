@@ -1,6 +1,6 @@
 class CreateValidationRules < ActiveRecord::Migration
   def self.up
-    create_table :validation_rules do |t|
+    create_table :validation_rules, force: true do |t|
       t.string      :description
       t.string      :operator
       t.integer     :parent_id

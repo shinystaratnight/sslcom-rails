@@ -1,6 +1,6 @@
 class CreateResellers < ActiveRecord::Migration
   def self.up
-    create_table :resellers do |t|
+    create_table :resellers, force: true do |t|
       t.references  :ssl_account
       t.references  :reseller_tier
       t.string  :first_name

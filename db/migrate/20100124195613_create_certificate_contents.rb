@@ -1,6 +1,6 @@
 class CreateCertificateContents < ActiveRecord::Migration
   def self.up
-    create_table :certificate_contents do |t|
+    create_table :certificate_contents, force: true do |t|
       t.references  :certificate_order, :null => false
       t.text        :signing_request, :null => false
       t.text        :signed_certificate

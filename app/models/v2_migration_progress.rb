@@ -5,7 +5,8 @@ class V2MigrationProgress < ActiveRecord::Base
   def self.find_by_source(obj)
     find_by_old_object(obj)
   end
-  
+
+  #Finds the legacy object based on the transitory object
   def self.find_by_old_object(obj)
     pk=obj.class.primary_key
     self.find_by_source_table_name_and_source_id(obj.class.table_name,
@@ -28,8 +29,23 @@ class V2MigrationProgress < ActiveRecord::Base
     end
   end
 
+  def self.remove_orphans(legacy)
+    l_ids=legacy_ids legacy
+    vs_ids=select(:source_id).where(:source_table_name.eq => legacy.table_name).map(&:source_id)
+    if vs_ids.count > l_ids.count
+      diff = vs_ids - l_ids
+      where(:source_id + diff).delete_all
+    else
+      0
+    end
+  end
+
+  def self.legacy_ids(legacy)
+    legacy.select(legacy.primary_key.to_sym).map(&("#{legacy.primary_key}".to_sym))
+  end
+
   def source_obj
-    o=Object.subclasses_of(OldSite::Base).find{|c|
+    o=OldSite::Base.descendants.find{|c|
       c.table_name==source_table_name}
     eval "#{o.name}.find_by_#{o.primary_key}(source_id)"
   end

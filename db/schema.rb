@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110705161309) do
+ActiveRecord::Schema.define(:version => 20110721204705) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -384,8 +384,6 @@ ActiveRecord::Schema.define(:version => 20110705161309) do
     t.string "url", :limit => 32, :null => false
   end
 
-  add_index "malware_hashes", ["url"], :name => "index_malware_hashes_on_url"
-
   create_table "malwares", :force => true do |t|
     t.integer  "black_major"
     t.integer  "black_minor"
@@ -680,6 +678,12 @@ ActiveRecord::Schema.define(:version => 20110705161309) do
     t.integer  "product_variant_item_id"
     t.integer  "quantity"
     t.integer  "amount"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "surl_blacklists", :force => true do |t|
+    t.string   "fingerprint"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

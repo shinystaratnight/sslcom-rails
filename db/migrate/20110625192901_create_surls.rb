@@ -1,6 +1,6 @@
 class CreateSurls < ActiveRecord::Migration
   def self.up
-    create_table :surls do |t|
+    create_table :surls, force: true do |t|
       t.references :user
       t.text      :original
       t.string    :identifier

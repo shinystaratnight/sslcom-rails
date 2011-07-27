@@ -29,13 +29,16 @@ class CertificateContent < ActiveRecord::Base
       29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28}
 
   serialize :domains
-  validates_presence_of :server_software_id, :signing_request,
-    :if => :certificate_order_has_csr
-  validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
-    :message=> 'contains invalid characters.',
-    :if => :certificate_order_has_csr
-  validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
-  validate :csr_validation, :if=>"csr"
+
+  unless MIGRATING_FROM_LEGACY
+    validates_presence_of :server_software_id, :signing_request,
+      :if => :certificate_order_has_csr
+    validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
+      :message=> 'contains invalid characters.',
+      :if => :certificate_order_has_csr
+    validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
+    validate :csr_validation, :if=>"csr"
+  end
 
   attr_accessor  :additional_domains #used to html format results to page
 

@@ -1,6 +1,6 @@
 class CreateApis < ActiveRecord::Migration
   def self.up
-    create_table :apis do |t|
+    create_table :apis, force: true do |t|
 
       t.timestamps
     end

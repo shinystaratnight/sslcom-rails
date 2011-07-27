@@ -1,6 +1,6 @@
 class CreateDomainControlValidations < ActiveRecord::Migration
   def self.up
-    create_table :domain_control_validations do |t|
+    create_table :domain_control_validations, force: true do |t|
       t.references  :csr
       t.string    :email_address
       t.text      :candidate_addresses

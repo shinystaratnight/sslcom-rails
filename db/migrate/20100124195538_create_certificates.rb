@@ -1,6 +1,6 @@
 class CreateCertificates < ActiveRecord::Migration
   def self.up
-    create_table :certificates do |t|
+    create_table :certificates, force: true do |t|
       t.references  :reseller_tier
       t.string      :title, :status
       t.text        :summary, :text_only_summary, :description,

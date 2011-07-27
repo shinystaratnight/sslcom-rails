@@ -1,6 +1,6 @@
 class CreateServerSoftwares < ActiveRecord::Migration
   def self.up
-    create_table :server_softwares do |t|
+    create_table :server_softwares, force: true do |t|
       t.string  :title, :null=>false
       t.timestamps
     end

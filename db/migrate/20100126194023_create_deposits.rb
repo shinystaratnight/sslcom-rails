@@ -1,6 +1,6 @@
 class CreateDeposits < ActiveRecord::Migration
   def self.up
-    create_table :deposits do |t|
+    create_table :deposits, force: true do |t|
       t.float       :amount
       t.string      :full_name
       t.string      :credit_card

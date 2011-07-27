@@ -1,6 +1,6 @@
 class CreateAffiliates < ActiveRecord::Migration
   def self.up
-    create_table :affiliates do |t|
+    create_table :affiliates, force: true do |t|
       t.references :ssl_account
       t.string :first_name
       t.string :last_name

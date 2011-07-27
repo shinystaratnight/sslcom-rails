@@ -1,6 +1,6 @@
 class CreateCsrs < ActiveRecord::Migration
   def self.up
-    create_table :csrs do |t|
+    create_table :csrs, force: true do |t|
       t.references  :certificate_content
       t.text    :body
       t.integer :duration

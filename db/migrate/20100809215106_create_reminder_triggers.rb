@@ -1,6 +1,6 @@
 class CreateReminderTriggers < ActiveRecord::Migration
   def self.up
-    create_table :reminder_triggers do |t|
+    create_table :reminder_triggers, force: true do |t|
       t.integer :name
       t.timestamps
     end

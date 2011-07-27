@@ -1,6 +1,6 @@
 class CreateTrackedUrls < ActiveRecord::Migration
   def self.up
-    create_table :tracked_urls do |t|
+    create_table :tracked_urls, force: true do |t|
       t.text        :url
       t.string      :md5
       t.timestamps

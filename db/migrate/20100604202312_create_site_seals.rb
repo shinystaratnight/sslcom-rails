@@ -1,6 +1,6 @@
 class CreateSiteSeals < ActiveRecord::Migration
   def self.up
-    create_table :site_seals do |t|
+    create_table :site_seals, force: true do |t|
       t.string      :workflow_state
       t.string      :seal_type
       t.string      :ref

@@ -1,6 +1,6 @@
 class CreateOtherPartyRequests < ActiveRecord::Migration
   def self.up
-    create_table :other_party_requests do |t|
+    create_table :other_party_requests, force: true do |t|
       t.references  :other_party_requestable, polymorphic: true
       t.references  :user
       t.text      :email_addresses

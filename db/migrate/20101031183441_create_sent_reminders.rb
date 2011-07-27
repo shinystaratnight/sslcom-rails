@@ -1,6 +1,6 @@
 class CreateSentReminders < ActiveRecord::Migration
   def self.up
-    create_table :sent_reminders do |t|
+    create_table :sent_reminders, force: true do |t|
       t.references  :signed_certificate
       t.text        :body
       t.string      :recipients, :subject, :trigger_value

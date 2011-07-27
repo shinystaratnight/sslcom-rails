@@ -29,6 +29,8 @@ class PasswordResetsController < ApplicationController
         flash[:notice] =
           "Instructions to reset your password have been emailed to you. Please check your email."
         redirect_to root_url
+      elsif user=DuplicateV2User.find_by_login(params[:login])
+
       else
         flash[:notice] = "No user was found with that login"
         render :action => :new

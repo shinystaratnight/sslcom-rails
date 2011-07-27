@@ -1,6 +1,6 @@
 class CreateResellerTiers < ActiveRecord::Migration
   def self.up
-    create_table :reseller_tiers do |t|
+    create_table :reseller_tiers, force: true do |t|
       t.string  :label
       t.string  :description
       t.integer :amount

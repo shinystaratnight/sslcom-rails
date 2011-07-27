@@ -56,8 +56,10 @@ gem 'nokogiri'
 # gem 'webrat'
 # gem 'cucumber'
     gem 'ruby_parser'
-# gem 'ruby-debug19', :require => 'ruby-debug'
-    gem "rspec-rails", ">= 2.0.0.beta.22"
+    gem 'ruby-debug19', :require => 'ruby-debug'
+    gem "rspec-rails" #, ">= 2.0.0.beta.22"
+    gem 'activerecord-sqlserver-adapter'
+    gem 'ruby-odbc'
   end
 
   group :test do

@@ -81,6 +81,12 @@ class UserSessionsController < ApplicationController
         @user_session = UserSession.new
         format.html {render :action => :new}
         format.js   {render :json=>@user_session}
+      elsif @user_session.user.blank? && ()
+        flash[:error] = "Account has been disabled"
+        @user_session.destroy
+        @user_session = UserSession.new
+        format.html {render :action => :new}
+        format.js   {render :json=>@user_session}
       else
         format.html {render :action => :new}
         format.js   {render :json=>@user_session.errors}

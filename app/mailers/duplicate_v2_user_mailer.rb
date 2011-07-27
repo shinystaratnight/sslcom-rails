@@ -1,10 +1,8 @@
-class OtherPartyRequestMailer < ActionMailer::Base
+class DuplicateV2UserMailer < ActionMailer::Base
   default :from => "SSL.com Certificate Services <support@ssl.com>"
   default_url_options[:host] = "www.ssl.com"
 
-  def request_validation(other_party_validation_request)
-    @opvr = other_party_validation_request
-    @co = @opvr.other_party_requestable
+  def duplicate_found(dup)
     @to = @opvr.email_addresses.join(", ")
     @technical_contact =
       if @co.administrative_contact
@@ -12,7 +10,7 @@ class OtherPartyRequestMailer < ActionMailer::Base
       else
         "An SSL.com customer"
       end
-    subject = "Validation Request for SSL.com Certificate #{@co.subject}"+(@opvr.preferred_show_order_number? ? " (Order Number #{@co.ref})" : "")
+    subject = "Duplicate login info found for #{dup.model_and_id}"
     mail(:to => @to, :subject => subject)
   end
 end

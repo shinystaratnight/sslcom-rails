@@ -1,6 +1,6 @@
 class CreateV2MigrationProgress < ActiveRecord::Migration
   def self.up
-    create_table :v2_migration_progresses do |t|
+    create_table :v2_migration_progresses, force: true do |t|
       t.string      :source_table_name
       t.integer     :source_id
       t.references  :migratable, :polymorphic=>true

@@ -1,6 +1,6 @@
 class CreateCsrOverrides < ActiveRecord::Migration
   def self.up
-    create_table :csr_overrides do |t|
+    create_table :csr_overrides, force: true do |t|
       t.references  :csr
       t.string  :common_name
 			t.string  :organization

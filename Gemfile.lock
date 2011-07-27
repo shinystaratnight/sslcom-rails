@@ -53,10 +53,14 @@ GEM
       activesupport (= 3.0.1)
       arel (~> 1.0.0)
       tzinfo (~> 0.3.23)
+    activerecord-sqlserver-adapter (3.0.7)
+      activerecord (~> 3.0.0)
+      arel (~> 1.0.0)
     activeresource (3.0.1)
       activemodel (= 3.0.1)
       activesupport (= 3.0.1)
     activesupport (3.0.1)
+    archive-tar-minitar (0.5.2)
     arel (1.0.1)
       activesupport (~> 3.0.0)
     awesome_print (0.3.1)
@@ -78,6 +82,7 @@ GEM
     chunky_png (0.12.0)
     closure-compiler (1.0.0)
     cmdparse (2.0.3)
+    columnize (0.3.2)
     commonwatir (1.6.5)
       user-choices
     compass (0.11.beta.3)
@@ -122,6 +127,8 @@ GEM
       yui-compressor (>= 0.9.1)
     json (1.4.6)
     json_pure (1.5.1)
+    linecache19 (0.5.11)
+      ruby_core_source (>= 0.1.4)
     mail (2.2.7)
       activesupport (>= 2.3.6)
       mime-types
@@ -182,6 +189,17 @@ GEM
       activesupport (~> 3.0)
       railties (~> 3.0)
       rspec (~> 2.5.0)
+    ruby-debug-base19 (0.11.24)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby_core_source (>= 0.1.4)
+    ruby-debug19 (0.11.6)
+      columnize (>= 0.3.1)
+      linecache19 (>= 0.5.11)
+      ruby-debug-base19 (>= 0.11.19)
+    ruby-odbc (0.99994)
+    ruby_core_source (0.1.4)
+      archive-tar-minitar (>= 0.5.2)
     ruby_parser (2.0.5)
       sexp_processor (~> 3.0)
     rubyzip (0.9.4)
@@ -237,6 +255,7 @@ PLATFORMS
 
 DEPENDENCIES
   activemerchant (= 1.10.0)
+  activerecord-sqlserver-adapter
   authlogic!
   awesome_print
   capybara
@@ -265,7 +284,9 @@ DEPENDENCIES
   rb-inotify
   resource_controller!
   rspec
-  rspec-rails (>= 2.0.0.beta.22)
+  rspec-rails
+  ruby-debug19
+  ruby-odbc
   ruby_parser
   rubyzip
   sauce

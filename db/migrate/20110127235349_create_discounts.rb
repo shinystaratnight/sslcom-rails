@@ -1,6 +1,6 @@
 class CreateDiscounts < ActiveRecord::Migration
   def self.up
-    create_table :discounts do |t|
+    create_table :discounts, force: true do |t|
       t.references  :discountable, polymorphic: true
       t.string      :value
       t.string      :apply_as

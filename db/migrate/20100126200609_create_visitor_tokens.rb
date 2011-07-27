@@ -1,6 +1,6 @@
 class CreateVisitorTokens < ActiveRecord::Migration
   def self.up
-    create_table  :visitor_tokens do |t|
+    create_table  :visitor_tokens, force: true do |t|
       t.references  :user
       t.references  :affiliate
       t.string      :guid

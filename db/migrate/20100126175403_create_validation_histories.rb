@@ -1,6 +1,6 @@
 class CreateValidationHistories < ActiveRecord::Migration
   def self.up
-    create_table :validation_histories do |t|
+    create_table :validation_histories, force: true do |t|
       t.references  :validation
       t.string      :reviewer
       t.string      :notes

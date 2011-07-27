@@ -1,6 +1,6 @@
 class CreateProductVariantGroups < ActiveRecord::Migration
   def self.up
-    create_table :product_variant_groups do |t|
+    create_table :product_variant_groups, force: true do |t|
       t.references  :variantable, :polymorphic=>true
       t.string    :title, :status
       t.text      :description, :text_only_description

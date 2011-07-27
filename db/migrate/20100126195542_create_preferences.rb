@@ -1,6 +1,6 @@
 class CreatePreferences < ActiveRecord::Migration
   def self.up
-    create_table :preferences do |t|
+    create_table :preferences, force: true do |t|
       t.string :name, :null => false
       t.references :owner, :polymorphic => true, :null => false
       t.references :group, :polymorphic => true

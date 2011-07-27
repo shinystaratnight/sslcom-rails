@@ -1,6 +1,6 @@
 class CreateBillingProfiles < ActiveRecord::Migration
   def self.up
-    create_table :billing_profiles do |t|
+    create_table :billing_profiles, force: true do |t|
       t.references :ssl_account
       t.string  :description
       t.string  :first_name

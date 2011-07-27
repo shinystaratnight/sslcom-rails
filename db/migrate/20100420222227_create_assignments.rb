@@ -1,6 +1,6 @@
 class CreateAssignments < ActiveRecord::Migration
   def self.up
-    create_table :assignments do |t|
+    create_table :assignments, force: true do |t|
       t.references  :user
       t.references  :role
       t.timestamps

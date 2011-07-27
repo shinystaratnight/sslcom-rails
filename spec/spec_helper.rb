@@ -25,3 +25,14 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 end
+
+require 'sauce'
+
+Sauce.config do |conf|
+    conf.browser_url = "http://78303.test/"
+    conf.browsers = [
+        ["Windows 2003", "firefox", "3.6."]
+    ]
+    conf.application_host = "127.0.0.1"
+    conf.application_port = "3001"
+end

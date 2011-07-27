@@ -1,6 +1,6 @@
 class CreateValidations < ActiveRecord::Migration
   def self.up
-    create_table :validations do |t|
+    create_table :validations, force: true do |t|
       t.string :label
       t.string :notes
       t.string :first_name

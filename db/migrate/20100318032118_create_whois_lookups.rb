@@ -1,6 +1,6 @@
 class CreateWhoisLookups < ActiveRecord::Migration
   def self.up
-    create_table :whois_lookups do |t|
+    create_table :whois_lookups, force: true do |t|
       t.references  :csr
       t.text        :raw
       t.string      :status
