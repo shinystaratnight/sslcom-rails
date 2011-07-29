@@ -40,6 +40,14 @@ class V2MigrationProgress < ActiveRecord::Base
     end
   end
 
+  def self.status(obj)
+  unmigrated = V2MigrationProgress.select(:source_id).where(
+      :source_table_name =~ obj.table_name, :migrated_at.eq=>nil).map(&:source_id)
+    p unmigrated.empty? ? "successfully migrated #{obj.table_name}" :
+      "the following #{unmigrated.count} #{obj.class.to_s} failed migration:
+      #{migrated.join(', ')}"
+  end
+
   def self.legacy_ids(legacy)
     legacy.select(legacy.primary_key.to_sym).map(&("#{legacy.primary_key}".to_sym))
   end

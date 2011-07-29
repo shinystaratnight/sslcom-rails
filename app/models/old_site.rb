@@ -1,4 +1,29 @@
 module OldSite
+  def self.quit?
+    begin
+      # See if a 'Q' has been typed yet
+      while c = STDIN.read_nonblock(1)
+        puts "Q pressed"
+        return true if c == 'Q'
+      end
+      # No 'Q' found
+      false
+    rescue Errno::EINTR
+      false
+    rescue Errno::EAGAIN
+      # nothing was ready to be read
+      false
+    rescue EOFError
+      # quit on the end of the input stream
+      # (user hit CTRL-D)
+      true
+    end
+  end
+
+  def self.detect_abort
+    abort('Exit: user terminated') if quit?
+  end
+
   def self.initialize
     tables=%w(Customer Order Certificate OrderNumber Merchant MerchantContact
       OrdersShoppingCart)
@@ -24,17 +49,19 @@ module OldSite
     tables=%w(Customer Order Certificate OrderNumber Merchant MerchantContact
       OrdersShoppingCart)
     tables.each do |t|
+      OldSite.detect_abort
       ap "looking for new records for #{t}"
       tc = ('OldSite::'+t).constantize
       ap "removed #{V2MigrationProgress.remove_orphans(tc)} orphaned records for #{tc.table_name}"
-      source_tables=V2MigrationProgress.where(:source_table_name.eq => tc.table_name) || []
+      source_tables=V2MigrationProgress.select(:source_id).where(:source_table_name.eq => tc.table_name) || []
       #if the number of records on the source table has change, then add the new
       #records
       unless tc.count==source_tables.count
-        legacy_ids=V2MigrationProgress.legacy_ids(tc)
-        missing = source_tables.where(:source_id - legacy_ids)
-        missing.each do |o|
-          ap "creating V2MigrationProgress for #{tc.table_name+'_'+o.send(tc.primary_key)}"
+        legacy_ids=tc.source_ids
+        ap ["legacy count: #{tc.count.to_s}", "migration progress count: #{source_tables.count.to_s}"].join(", ")
+        missing = legacy_ids-source_tables.map(&:source_id)
+        tc.where(tc.primary_key.to_sym + missing).each do |o|
+          ap "creating V2MigrationProgress for #{tc.table_name+'_'+o.send(tc.primary_key).to_s}"
           V2MigrationProgress.create(:source_table_name=>tc.table_name,
             :source_id=>o.source_obj_id)
         end
@@ -47,12 +74,13 @@ module OldSite
   def self.migrate_all
     Authorization.ignore_access_control(true)
     ActiveRecord::Base.logger.level = 3 # at any time
+    ap "Usage: type 'Q' and press Enter to exit this program"
     dynamic_initialize
-    #Customer.migrate_all
+    Customer.migrate_all
     Order.migrate_all
-#      self.adjust_site_seals_workflow
-#      self.adjust_certificate_order_prepaid
-#      self.adjust_certificate_content_workflow
+    #self.adjust_site_seals_workflow
+    #self.adjust_certificate_order_prepaid
+    #self.adjust_certificate_content_workflow
   end
 
   def self.certs_and_line_items_mismatch
@@ -238,21 +266,53 @@ module OldSite
     establish_connection :ssl_store_mssql
     self.abstract_class=true
 
+    def self.source_ids
+      key = self.primary_key.to_sym
+      select(key).map(&key)
+    end
+
     def source_obj_id
       send(self.class.primary_key)
     end
 
+    def v2_migration_progress
+      V2MigrationProgress.find_by_source self
+    end
+
+    def self.v2_migration_progresses
+      V2MigrationProgress.find_all_by_source_table_name(table_name)
+    end
+
+    def self.unmigrated_records
+      ids = source_ids
+      vids=V2MigrationProgress.select(:source_id).
+          where((:source_table_name =~ table_name) & ((:migrated_at ^ nil) |
+          (:migratable_type ^ nil))).map(&:source_id)
+      unmigrated = ids-vids
+      ap ["all #{self.class.to_s} objs: "+ids.count.to_s, "migrated: "+vids.count.to_s,
+          "remaining: "+unmigrated.count.to_s].join(', ')
+      [where(primary_key.to_sym + unmigrated), unmigrated.count]
+    end
+
+    def migratable_exists?
+      vmp=V2MigrationProgress.includes(:migratable).find_by_source(self)
+      vmp && vmp.migrated_at && vmp.migratable
+    end
+
     def record_migration_progress(p=nil)
-      mp = V2MigrationProgress.find_by_old_object(self)
-      if mp.migrated_at.blank?
+      mp = V2MigrationProgress.includes(:migratable).find_by_old_object(self)
+      if mp.blank?
+        msg="Error: V2MigrationProgress record is blank for #{self.model_and_id}"
+        logger.error(msg)
+        ap msg
+      elsif mp.migrated_at.blank? || mp.migratable.blank?
         begin
           migratable=p ? migrate(p) : migrate
         rescue Exception=>e
           msg="Error in #{self.model_and_id}#{' for '+p.model_and_id if p && !p.is_a?(Hash)} : #{e.message}"
           logger.error(msg)
           ap msg
-          ap e.inspect
-          ap e.backtrace
+          ap e.backtrace.inspect
           raise e
         end
         mp.update_attributes :migrated_at=>Time.new,
@@ -290,6 +350,22 @@ module OldSite
     alias_attribute :updated_at, :LastUpdated
     attr_accessor_with_default :status, 'enabled'
 
+    def self.invalid_accounts
+      ia=[]
+      select(primary_key, "Email").find_each do |c|
+        ia << c if c.Email.length <= 6
+      end
+      ia
+    end
+
+    INVALID_ACCOUNTS ||= OldSite::Customer.invalid_accounts
+
+    default_scope where(primary_key.to_sym - OldSite::Customer::INVALID_ACCOUNTS.map(&:CustomerID))
+
+    def self.pk_sym
+      primary_key.to_sym
+    end
+
     def migrate
       lu = LegacyV2UserMapping.create(:old_user_id=>self.id)
       u = User.find_by_login(self.login) || User.find_by_email(self.email)
@@ -298,6 +374,7 @@ module OldSite
           :email=>self.email, :password=>self.crypted_password, :created_at=>
           self.created_at, :updated_at=>self.updated_at)
         du.legacy_v2_user_mappings << lu
+        ap "created DuplicateV2User #{du.model_and_id}"
       else
         u = User.new
         props = %w(id login email crypted_password created_at
@@ -311,11 +388,14 @@ module OldSite
         u.roles << Role.find_by_name(Role::CUSTOMER)
         u.create_ssl_account
         u.legacy_v2_user_mappings << lu
-        u.save
+        if u.save
+          ap "created #{u.model_and_id}"
+        else
+          ap "failed! #{u.model_and_id} not saved: #{u.errors.full_messages.join(", ")}"
+        end
       end
       u || du
     end
-
 
 #    def migrate_from_old
 #      lu = LegacyV2UserMapping.create(:old_user_id=>self.id)
@@ -422,15 +502,15 @@ module OldSite
 #    end
 
     def self.migrate_all
-      self.find_each do |c|
-        c.record_migration_progress if V2MigrationProgress.find_by_source(c).
-          try(:migrated_at).blank?
+      migrate_these = unmigrated_records
+      i=migrate_these[1]
+      unmigrated_records[0].where(primary_key.to_sym - INVALID_ACCOUNTS.map(&pk_sym)).find_each do |c|
+        OldSite.detect_abort
+        i-=1
+        c.record_migration_progress unless c.migratable_exists?
+        ap "#{i} #{table_name} records remaining for migration"
       end
-      migrated = V2MigrationProgress.all.select{|mp|
-        mp.source_table_name==self.table_name && mp.migrated_at.blank?}
-      p migrated.blank? ? "successfully migrated all Customers" :
-        "the following #{migrated.count} Customers failed migration:
-        #{migrated.map{|m|m.send(m.class.primary_key)}.join(', ')}"
+      V2MigrationProgress.status(self)
     end
 
     def self.duplicate_emails
@@ -600,11 +680,13 @@ module OldSite
         ap "migrating legacy OrdersShoppingCart for Order.OrderNumber: #{self.OrderNumber}"
         certs_created=false
         order_number.orders_shopping_carts.each do |osc|
-          if V2MigrationProgress.find_by_source(osc).
-              try(:migrated_at).blank?
+          unless osc.migratable_exists?
+            ap "migrating #{osc.model_and_id}"
             osc.record_migration_progress(:new_order=>order,
               :certs_created=>certs_created)
             certs_created=true
+          else
+            ap "skipping #{osc.model_and_id}, already exists"
           end
         end
       else
@@ -615,22 +697,30 @@ module OldSite
     end
 
     def self.migrate_all
-      ap "Begin legacy Orders fetch"
-      self.where('OrderNumber > 55304').find_each(:include=>{:order_number=>[:certificates,
-          {:orders_shopping_carts=>:orders_kit_carts}]}, batch_size: 20) do |o|
-        if V2MigrationProgress.find_by_source(o).try(:migrated_at).blank?
-          ap "migrating legacy Order.OrderNumber: #{o.OrderNumber}"
-          o.record_migration_progress
+      migrate_these = unmigrated_records
+      i=migrate_these[1]
+      ap "migrating #{i.to_s} #{table_name} records"
+      migrate_these[0].find_each(:include=>[{:order_number=>[:certificates,
+          {:orders_shopping_carts=>:orders_kit_carts}]}, :customer]) do |o|
+        OldSite.detect_abort
+        i-=1
+        unless o.migratable_exists?
+          #o.customer.blank? doesn't seem to use the default_scope of OldSite::Customer'
+          if OldSite::Customer.exists? o.CustomerID
+            ap "migrating #{o.model_and_id}"
+            o.record_migration_progress
+          else
+            ap "skipping migration for #{o.model_and_id} because Customer not found or invalid"
+            ap "#{i} #{table_name} records remaining for migration"
+            next
+          end
         else
-          ap "found and skipping migration for legacy Order.OrderNumber: #{o.OrderNumber}"
+          ap "found and skipping migration for: #{o.model_and_id}"
         end
         o.migrate_orders_shopping_cart
+        ap "#{i} #{table_name} records remaining for migration"
       end
-      migrated = V2MigrationProgress.all.select{|mp|
-        mp.source_table_name==self.table_name && mp.migrated_at.blank?}
-      p migrated.empty? ? "successfully migrated all Orders" :
-        "the following #{migrated.count} Orders failed migration:
-        #{migrated.map{|m|m.send(m.class.primary_key)}.join(', ')}"
+      V2MigrationProgress.status(self)
     end
   end
 
@@ -973,5 +1063,7 @@ module OldSite
       KitCartRecID
     end
   end
+
+  #OldSite::Customer::INVALID_ACCOUNTS=OldSite::Customer.invalid_accounts
 end #if Rails.env=='development' && MIGRATING_FROM_LEGACY
 
