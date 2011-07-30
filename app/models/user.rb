@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   attr_accessor :changing_password, :admin_update
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status
-  attr_readonly :login
+  attr_readonly :login unless MIGRATING_FROM_LEGACY
   acts_as_authentic do |c|
     c.session_ids = [nil, :shadow],
     c.transition_from_crypto_providers = LegacySslMd5,

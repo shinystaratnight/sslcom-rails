@@ -48,11 +48,12 @@ module OldSite
   def self.dynamic_initialize
     tables=%w(Customer Order Certificate OrderNumber Merchant MerchantContact
       OrdersShoppingCart)
+    V2MigrationProgress.remove_migratable_orphans
     tables.each do |t|
       OldSite.detect_abort
       ap "looking for new records for #{t}"
       tc = ('OldSite::'+t).constantize
-      ap "removed #{V2MigrationProgress.remove_orphans(tc)} orphaned records for #{tc.table_name}"
+      V2MigrationProgress.remove_legacy_orphans(tc)
       source_tables=V2MigrationProgress.select(:source_id).where(:source_table_name.eq => tc.table_name) || []
       #if the number of records on the source table has change, then add the new
       #records
@@ -78,6 +79,7 @@ module OldSite
     dynamic_initialize
     Customer.migrate_all
     Order.migrate_all
+    #sync_changed_users
     #self.adjust_site_seals_workflow
     #self.adjust_certificate_order_prepaid
     #self.adjust_certificate_content_workflow
@@ -203,6 +205,71 @@ module OldSite
         end
       end
     end
+  end
+
+  #one time function to correct misplaced v2_migration_progress from users to duplicate_v2_users
+  def self.update_v2_migrations_for_duplicate_users
+    migs = DuplicateV2User.all
+    created = migs.map(&:created_at)
+    dups=[]
+    dup_tmp=created.each{|c|dups<<c if created.count(c) > 1} #find duplicates
+    dup_created_at=migs.select{|c|c.created_at==dup_tmp[0]}
+    migs-=dup_created_at
+    migs_h = Hash[migs.map{|m|[m.created_at.to_s, m]}] #hash migrated dups using created_at.to_s as key
+    oc=OldSite::Customer.select("CustomerID, CreatedOn")
+    oc_h=Hash[oc.map{|o|[o.CreatedOn.to_s, o]}] #hash legacy users using CreatedOn.to_s as key
+    migs_h.merge!(oc_h){|key, old, new|[new, old]}
+    non_matched=migs_h.select{|k,v|!v.is_a?(Array)}
+    non_matched.each{|k,v|migs_h.delete(k)}
+    migs_h.each do |k,v|
+      mp=v[0].v2_migration_progress
+      mp.migratable=v[1]
+      mp.save
+    end
+  end
+
+  #user changes such as passwords or emails (or even logins) are sync using this method
+  def self.sync_changed_users
+    d = DuplicateV2User.all
+    v2_users = V2MigrationProgress.where(:migratable_type =~ "User").map(&:migratable).uniq
+    #get all migrated users into array
+    migs=d+v2_users
+    created = migs.map(&:created_at)
+    dups=[]
+    dup_tmp=created.each{|c|dups<<c if created.count(c) > 1} #find duplicates
+    dup_created_at=migs.select{|c|c.created_at==dup_tmp[0]}
+    migs-=dup_created_at
+    migs_h = Hash[migs.map{|m|[m.created_at.to_s, m]}] #hash migrated users/dups using created_at.to_s as key
+    oc=OldSite::Customer.select("Email, UserName, Password, CreatedOn")
+    oc_h=Hash[oc.map{|o|[o.CreatedOn.to_s, o]}] #hash legacy users using CreatedOn.to_s as key
+    migs_h.merge!(oc_h){|key, old, new|[new, old]}
+    non_matched=migs_h.select{|k,v|!v.is_a?(Array)}
+    non_matched.each{|k,v|migs_h.delete(k)}
+    changed=migs_h.select do |k,v|
+      v[1].email!=v[0].Email || (v[1].is_a?(User) ? v[1].crypted_password : v[1].password)!=v[0].Password ||
+          v[1].login!=v[0].UserName
+    end
+    msgs=[]
+    changed.each do |k,v|
+      msgs<< "changes detected for #{v[1].model_and_id}"
+      if v[1].email!=v[0].Email
+        msgs<< "email changed from #{v[1].email} to #{v[0].Email}"
+        v[1].update_attribute :email, v[0].Email
+      end
+      if (v[1].is_a?(User) ? v[1].crypted_password : v[1].password)!=v[0].Password
+        msgs<< "password changed from #{v[1].is_a?(User) ? v[1].crypted_password : v[1].password} to #{v[0].Password}"
+        v[1].update_attribute (v[1].is_a?(User) ? :crypted_password : :password), v[0].Password
+      end
+      if v[1].login!=v[0].UserName
+        msgs<< "login changed from #{v[1].login} to #{v[0].UserName}"
+        v[1].update_attribute :login, v[0].UserName
+      end
+    end
+    ap msgs
+    #oc_created_at=oc.map(&:CreatedOn)
+    #oc_s=oc_created_at.sort.map(&:to_s)
+    #ca_s=created.sort.map(&:to_s)
+    #diff_s=oc_s-ca_s
   end
 
   def self.adjust_certificate_content_workflow
@@ -352,8 +419,9 @@ module OldSite
 
     def self.invalid_accounts
       ia=[]
-      select(primary_key, "Email").find_each do |c|
-        ia << c if c.Email.length <= 6
+      select(primary_key, "Email", "UserName").find_each do |c|
+        ia << c if (c.Email.length < 6) || (c.UserName.length < 3) ||
+            (c.Email !~ Authlogic::Regex.email) || (c.UserName !~ Authlogic::Regex.login)
       end
       ia
     end
@@ -394,7 +462,7 @@ module OldSite
           ap "failed! #{u.model_and_id} not saved: #{u.errors.full_messages.join(", ")}"
         end
       end
-      u || du
+      du || u
     end
 
 #    def migrate_from_old
@@ -504,7 +572,8 @@ module OldSite
     def self.migrate_all
       migrate_these = unmigrated_records
       i=migrate_these[1]
-      unmigrated_records[0].where(primary_key.to_sym - INVALID_ACCOUNTS.map(&pk_sym)).find_each do |c|
+      unmigrated_records[0].find_each do |c|
+      #unmigrated_records[0].where(primary_key.to_sym - INVALID_ACCOUNTS.map(&pk_sym)).find_each do |c|
         OldSite.detect_abort
         i-=1
         c.record_migration_progress unless c.migratable_exists?

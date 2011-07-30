@@ -29,27 +29,50 @@ class V2MigrationProgress < ActiveRecord::Base
     end
   end
 
-  def self.remove_orphans(legacy)
-    l_ids=legacy_ids legacy
-    vs_ids=select(:source_id).where(:source_table_name.eq => legacy.table_name).map(&:source_id)
-    if vs_ids.count > l_ids.count
-      diff = vs_ids - l_ids
-      where(:source_id + diff).delete_all
+  def self.remove_legacy_orphans(legacy)
+    #l_ids=all_ids legacy
+    #vs_ids=select(:source_id).where(:source_table_name.eq => legacy.table_name).map(&:source_id)
+    #if vs_ids.count > l_ids.count
+    #  diff = vs_ids - l_ids
+    #  where(:source_id + diff).delete_all
+    #else
+    #  0
+    #end
+    options={class: legacy, class_name: legacy.table_name, id: :source_id}
+    remove_orphans options
+  end
+
+  def self.remove_migratable_orphans
+    types = all.map(&:migratable_type).uniq.compact
+    types.each do |type|
+      klass=type.constantize
+      options={class: klass, class_name: type, id: :migratable_id}
+      remove_orphans options
+    end
+  end
+
+  def self.remove_orphans(options)
+    t_ids=all_ids options[:class]
+    vs_ids=select(options[:id]).where(:migratable_type.eq => options[:class_name]).map(&options[:id])
+    diff = vs_ids - t_ids
+    removed=unless diff.empty?
+      where(options[:id] + diff).delete_all
     else
       0
     end
+    ap "removed #{removed} orphaned records for #{options[:class_name]}"
   end
 
   def self.status(obj)
   unmigrated = V2MigrationProgress.select(:source_id).where(
       :source_table_name =~ obj.table_name, :migrated_at.eq=>nil).map(&:source_id)
-    p unmigrated.empty? ? "successfully migrated #{obj.table_name}" :
-      "the following #{unmigrated.count} #{obj.class.to_s} failed migration:
-      #{migrated.join(', ')}"
+    p unmigrated.empty? ? "successfully migrated #{obj.base_class.to_s}" :
+      "the following #{unmigrated.count} #{obj.base_class.to_s} failed migration:
+      #{unmigrated.join(', ')}"
   end
 
-  def self.legacy_ids(legacy)
-    legacy.select(legacy.primary_key.to_sym).map(&("#{legacy.primary_key}".to_sym))
+  def self.all_ids(klass)
+    klass.select(klass.primary_key.to_sym).map(&("#{klass.primary_key}".to_sym))
   end
 
   def source_obj
