@@ -390,6 +390,56 @@ module OldSite
         mp.migratable
       end
     end
+
+    def copy_attributes(corresponding)
+      self.class::ATTR_MAP.each do |k,v|
+        corresponding.send(k, (k!=:country ? self.send(v) : OldSite::MerchantContact.convert_country(self.send(v))))
+      end
+    end
+
+    def unmatched_attributes(corresponding)
+      attrs=self.class::ATTR_MAP.select do |k,v|
+        corresponding.send(k) != (k!=:country ? self.send(v) : OldSite::MerchantContact.convert_country(self.send(v)))
+      end
+    end
+
+    def sync_unmatched_attributes(corresponding)
+      attrs=self.class::ATTR_MAP.each do |k,v|
+        val=(k!=:country ? self.send(v) : OldSite::MerchantContact.convert_country(self.send(v)))
+        if corresponding.send(k) != val
+          corresponding.update_attribute k, val
+        end
+      end
+    end
+
+    def sync_unmatched_attributes_for_migratable
+      migratable_tmp=V2MigrationProgress.find_by_old_object(self).migratable
+      sync_unmatched_attributes(migratable_tmp) if migratable_tmp
+    end
+
+    def unmatched_attributes_for_migratable
+      migratable_tmp=V2MigrationProgress.find_by_old_object(self).migratable
+      unmatched_attributes(migratable_tmp) if migratable_tmp
+    end
+
+    def self.verification_report
+      unmatched, no_migratable = [], []
+      find_each do |r|
+        attrs=r.unmatched_attributes_for_migratable
+        if attrs
+          unless attrs.empty?
+            unmatched << r.id
+            #ap "unmatched attributes #{attrs.to_s} found for #{r.model_and_id}"
+          end
+        else
+          no_migratable<<r.id
+          #ap "migratable no found for #{r.model_and_id}"
+        end
+      end
+      ap "unmatched attributes found for the following #{base_class.to_s}: #{unmatched}"
+      ap "no migratables found for the following #{base_class.to_s}: #{no_migratable}"
+      [unmatched, no_migratable]
+    end
   end
 
   class Customer < Base
@@ -885,6 +935,17 @@ module OldSite
       :foreign_key=>'MerchantID'
     has_many    :merchant_contacts, :class_name=>'OldSite::MerchantContact',
       :foreign_key=>'MerchantID'
+    
+    ATTR_MAP={        
+      company_name: :MerchantName,
+      department: :MerchantDept,
+      address1: :MerchantStreet1,
+      address2: :MerchantStreet2,
+      city: :MerchantCity,
+      state: :MerchantState,
+      country: :MerchantCountry,
+      postal_code: :MerchantPostalCode
+    }
 
     def migrate(cc)
       self.copy_attributes_to(cc.create_registrant).tap do |r|
@@ -896,17 +957,7 @@ module OldSite
 
     def copy_attributes_to(registrant)
       registrant.tap do |r|
-        r.company_name=self.MerchantName
-        r.department=self.MerchantDept
-        r.address1=self.MerchantStreet1
-        r.address2=self.MerchantStreet2
-        r.city=self.MerchantCity
-        r.state=self.MerchantState
-        country=Country.find_by_iso3_code(self.MerchantCountry) ||
-          Country.find_by_iso1_code(self.MerchantCountry) ||
-          Country.find_by_name_caps(self.MerchantCountry.upcase)
-        r.country=country.blank? ? nil : country.iso1_code
-        r.postal_code=self.MerchantPostalCode
+        copy_attributes(r)
       end
     end
   end
@@ -918,6 +969,30 @@ module OldSite
       :foreign_key=>'MerchantID'
     belongs_to  :contact_type, :class_name=>'OldSite::ContactType',
       :foreign_key=>'ContactType'
+      
+    ATTR_MAP={title: :MCTitle,
+      first_name: :MCFirstName,
+      last_name: :MCLastName,
+      company_name: :MCCompanyName,
+      department: :MCDepartment,
+      address1: :MCStreet1,
+      address2: :MCStreet2,
+      city: :MCCity,
+      state: :MCState,
+      country: :MCCountry,
+      postal_code: :MCPostalCode,
+      email: :MCEmailAddress,
+      phone: :MCPhoneNumber,
+      ext: :MCExtension,
+      fax: :MCFaxNumber,
+      notes: :MCNotes}
+    
+    def self.convert_country(old_country)
+      country=Country.find_by_iso3_code(old_country) ||
+        Country.find_by_iso1_code(old_country) ||
+        Country.find_by_name_caps(old_country.upcase)
+      country.blank? ? nil : country.iso1_code
+    end
 
     def migrate(cc)
       unless self.MerchantID==0
@@ -935,25 +1010,7 @@ module OldSite
       certificate_contact.tap do |cc|
         type=self.contact_type.ContactTypeDesc.downcase
         cc.roles = type=='business' ? %w(validation) : [type]
-        cc.title=self.MCTitle
-        cc.first_name=self.MCFirstName
-        cc.last_name=self.MCLastName
-        cc.company_name=self.MCCompanyName
-        cc.department=self.MCDepartment
-        cc.address1=self.MCStreet1
-        cc.address2=self.MCStreet2
-        cc.city=self.MCCity
-        cc.state=self.MCState
-        country=Country.find_by_iso3_code(self.MCCountry) ||
-          Country.find_by_iso1_code(self.MCCountry) ||
-          Country.find_by_name_caps(self.MCCountry.upcase)
-        cc.country=country.blank? ? nil : country.iso1_code
-        cc.postal_code=self.MCPostalCode
-        cc.email=self.MCEmailAddress
-        cc.phone=self.MCPhoneNumber
-        cc.ext=self.MCExtension
-        cc.fax=self.MCFaxNumber
-        cc.notes=self.MCNotes
+        copy_attributes(cc)
       end
     end
   end
