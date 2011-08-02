@@ -14,17 +14,16 @@ class V2MigrationProgress < ActiveRecord::Base
   end
 
   def self.find_by_migratable(migratable, which=:first)
-    find(which) do |v|
-      v.migratable_type==migratable.class.to_s
-      v.migratable_id==migratable.id
+    self.find(which) do |v|
+      v.migratable_type==migratable.class.to_s && v.migratable_id==migratable.id
     end
   end
 
   def self.find_by_migratable_and_source_table_name(
       migratable, source_table_name, which=:first)
     find(which) do |v|
-      v.migratable_type==migratable.class.to_s
-      v.migratable_id==migratable.id
+      v.migratable_type==migratable.class.to_s &&
+      v.migratable_id==migratable.id &&
       v.source_table_name==source_table_name
     end
   end

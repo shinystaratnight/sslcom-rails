@@ -22,7 +22,12 @@ module V2MigrationProgressAddon
     end
   end
 
-  def v2_migration_sources
+  def v2_migration_progresses
     V2MigrationProgress.find_by_migratable(self, :all)
+  end
+
+  def v2_migration_sources
+    vmp=v2_migration_progresses
+    vmp.is_a?(Array) ? vmp.map(&:source_obj) : vmp.source_obj
   end
 end

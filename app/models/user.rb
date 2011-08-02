@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  include V2MigrationProgressAddon
 #  using_access_control
   has_many  :assignments
   has_many  :surls

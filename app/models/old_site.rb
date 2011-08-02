@@ -346,6 +346,10 @@ module OldSite
       V2MigrationProgress.find_by_source self
     end
 
+    def migratable
+      v2_migration_progress.migratable
+    end
+
     def self.v2_migration_progresses
       V2MigrationProgress.find_all_by_source_table_name(table_name)
     end

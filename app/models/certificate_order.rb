@@ -1,4 +1,5 @@
 class CertificateOrder < ActiveRecord::Base
+  include V2MigrationProgressAddon
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account

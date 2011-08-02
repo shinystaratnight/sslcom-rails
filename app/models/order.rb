@@ -1,6 +1,7 @@
 require 'monitor'
 
 class Order < ActiveRecord::Base
+  include V2MigrationProgressAddon
   belongs_to  :billable, :polymorphic => true
   belongs_to  :address
   belongs_to  :billing_profile
