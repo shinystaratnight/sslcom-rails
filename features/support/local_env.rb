@@ -4,8 +4,34 @@ require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 require 'cucumber/rails/world'
 require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
 require 'declarative_authorization/maintenance'
+require 'capybara'
+require 'capybara/rails'
+require 'capybara/cucumber'
+require 'capybara/session'
+require "selenium-webdriver"
+require 'factory_girl/step_definitions'
+
 World(Authorization::Maintenance)
 World(OrdersHelper)
+
+@driver = {browser: :firefox, name: :selenium}#:rack_test :webkit :firewatir}
+if @driver[:name] == :selenium
+  Capybara.register_driver :selenium do |app|
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    #profile.add_extension File.join(Rails.root, "features/support/firebug.xpi")
+    Capybara::Driver::Selenium.new app, :profile => profile
+  end if @driver[:browser] == :firefox
+#Capybara.default_driver = :selenium
+#Capybara.app_host = "http://staging1.ssl.com:3000"
+#@using_selenium = Capybara.default_driver == :selenium
+elsif @driver[:name] == :rack_test
+  Capybara.register_driver :rack_test do |app|
+    Capybara::RackTest::Driver.new(app, :browser => :firefox)
+  end if @driver[:browser] == :firefox
+  Capybara.default_driver = :rack_test
+else
+  Capybara.javascript_driver = :webkit
+end
 
 #Seed the DB
 module FixtureAccess
@@ -56,36 +82,36 @@ World(FixtureAccess)
 #require 'spec/expectations'
 require 'email_spec/cucumber'
 
-if ENV['FIREWATIR'] or RUBY_PLATFORM =~ /(i486|x86_64)-linux/
-  require 'firewatir'
-  Watir::Browser.default = 'firefox'
-else
-  case RUBY_PLATFORM
-  when /darwin/
-    Watir::Browser.default = 'safari'
-  when /win32|mingw/
-    Watir::Browser.default = 'ie'
-  when /java/
-    Watir::Browser.default = 'celerity'
+if @driver==:firewatir
+  if RUBY_PLATFORM =~ /(i486|x86_64)-linux/
+    require 'firewatir'
+    Watir::Browser.default = 'firefox'
   else
-    raise "This platform is not supported (#{RUBY_PLATFORM})"
+    case RUBY_PLATFORM
+    when /darwin/
+      Watir::Browser.default = 'safari'
+    when /win32|mingw/
+      Watir::Browser.default = 'ie'
+    when /java/
+      Watir::Browser.default = 'celerity'
+    else
+      raise "This platform is not supported (#{RUBY_PLATFORM})"
+    end
   end
+  @browser = Watir::Browser.new
 end
 
-#browser.speed = :zippy
 ActionMailer::Base.delivery_method = :test
 
-browser = Watir::Browser.new
 @popup_text = ""
 
 Before do
   # Scenario setup
   ActionMailer::Base.deliveries.clear
-  @browser = browser
 end
 
 at_exit do
   # Global teardown
-  browser.close
+  @browser.close if @driver==:firewatir
   #TempFileManager.clean_up
 end

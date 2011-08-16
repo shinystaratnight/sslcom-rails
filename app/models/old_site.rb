@@ -1193,7 +1193,5 @@ module OldSite
       KitCartRecID
     end
   end
-
-  #OldSite::Customer::INVALID_ACCOUNTS=OldSite::Customer.invalid_accounts
-end #if Rails.env=='development' && MIGRATING_FROM_LEGACY
+end if Rails.env=='development' && MIGRATING_FROM_LEGACY
 

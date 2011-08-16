@@ -5,7 +5,6 @@ gem 'rails', '3.0.1'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-#gem 'sqlite3-ruby', :require => 'sqlite3'
 gem 'mysql', '2.8.1'
 gem 'workflow'
 #gem 'preferences'
@@ -53,18 +52,21 @@ gem 'nokogiri'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
   group :development, :test do
-# gem 'webrat'
-# gem 'cucumber'
+    gem "builder", "~> 2.1.2"
     gem 'ruby_parser'
-    gem 'ruby-debug19', :require => 'ruby-debug'
-    gem "rspec-rails" #, ">= 2.0.0.beta.22"
+    gem 'ruby-debug-base19', "0.11.25"
+    gem 'ruby-debug-ide19'
+    gem "rspec-rails"
     gem 'activerecord-sqlserver-adapter'
     gem 'ruby-odbc'
+    gem 'launchy'
   end
 
   group :test do
     gem 'cucumber-rails'
     gem 'capybara'
+    gem 'capybara-webkit'
+    gem 'selenium-webdriver'
     gem 'database_cleaner'
     gem 'webrat'
     gem 'email_spec'

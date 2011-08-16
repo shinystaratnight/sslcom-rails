@@ -54,8 +54,8 @@ SslCom::Application.configure do
     :port       => 25,
     :domain     => "ssl.com",
     :authentication => :login,
-    :user_name => "leo.grove@ssl.com",
-    :password => "jimi2kimi2"
+    :user_name => "support@ssl.com",
+    :password => "jama1kama1"
   }
 
   config.to_prepare do

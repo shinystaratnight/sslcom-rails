@@ -1,3 +1,5 @@
+@no-txn @javascript
+
 Feature: Logging in
   As a registered user
   I want to log in to my account
@@ -7,8 +9,8 @@ Feature: Logging in
   Scenario: User can login
     Given an activated user Fred exists
      When I login as Fred
-     Then I should be logged in as Fred
-      And I should see a confirmation
+     Then there should be a session
+      And the user should be "Fred"
 
   Scenario: User logins when other users exist
     Given an activated user Fred exists

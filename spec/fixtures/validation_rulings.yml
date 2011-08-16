@@ -15,8 +15,8 @@
   workflow_state: certificate
 <%end%>
 <%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
-  <%case cert.product%>
-  <%when /^ev.*/, /^high_assurance.*/, /^wildcard.*/, /^ucc.*/%>
+  <%case cert.product
+  when /^ev.*/, /^high_assurance.*/, /^wildcard.*/, /^ucc.*/%>
   <%=cc+=1%>:
   id: <%=cc%>
   validation_rule_id: 1
@@ -26,8 +26,8 @@
   <%end%>
 <%end%>
 <%Certificate.find_without_published_as(:all).each_with_index do |cert, i|%>
-  <%case cert.product%>
-  <%when /^ev.*/%>
+  <%case cert.product
+  when /^ev.*/%>
   <%=cc+=1%>:
   id: <%=cc%>
   validation_rule_id: 2

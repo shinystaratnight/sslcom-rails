@@ -11,7 +11,6 @@ When /^I login as (\S+) with my email address$/ do |login|
   When "I login as #{User.find_by_login(login).email} with #{login}pass"
 end
 
-
 When /^I login asking to be remembered$/ do
   visit login_path
   When "I fill in login details with Fred and Fredpass"
@@ -35,12 +34,12 @@ end
 When /^I login as (.+) with (\S+)$/ do |user, password|
   visit login_path
   When "I fill in login details with #{user} and #{password}"
-  click_button
+  find("#next_submit").find("input[type=image]").click
 end
 
 When /^I fill in login details with (.+) and (.+)$/ do |user, password|
-  fill_in(:login, :with => user)
-  fill_in(:password, :with => password)
+  fill_in("user_session_login", :with => user)
+  fill_in("user_session_password", :with => password)
 end
 
 Given /^I am logged out$/ do

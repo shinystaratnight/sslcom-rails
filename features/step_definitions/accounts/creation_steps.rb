@@ -31,7 +31,7 @@ end
 
 # by default create named user with attributes done by convention
 When /^I create a user with login (\w*)$/ do |login|
-  @user = User.generate!(:login => login,
+  @user = FactoryGirl.create(:user, :login => login,
                          :password => login + "pass",
                          :password_confirmation => login + "pass",
                          :email => login + "@example.com")
@@ -39,15 +39,17 @@ end
 
 When /^I register a user with login (\w*)$/ do |login|
   @user = User.find_by_login(login)
-  @user.register!
-  @user.state.should == 'pending'
+  @user.active=true
+  @user.save
+  @user.should be_active
   @user
 end
 
 When /^I activate a user with login (\w*)$/ do |login|
   @user = User.find_by_login(login)
-  @user.activate!
-  @user.state.should == 'active'
+  @user.active=true
+  @user.save
+  @user.should be_active
   @user
 end
 
