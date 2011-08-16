@@ -1,6 +1,9 @@
 FactoryGirl.define do
   factory :user do
     association :ssl_account
+    roles {|roles|[roles.association(:role)]}
+    after_create {|user|user.roles = [FactoryGirl.create(:role, name: "customer")]}
+    #roles [FactoryGirl.create(:role, name: "customer")]
   end
   
   factory :registrant do
@@ -38,6 +41,10 @@ FactoryGirl.define do
     acct_number {'a'+ActiveSupport::SecureRandom.hex(1)+
           '-'+Time.now.to_i.to_s(32)}
   end
-end  
+
+  factory :role do
+
+  end
+end
 
 

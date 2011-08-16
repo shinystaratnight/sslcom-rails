@@ -35,6 +35,7 @@ When /^I login as (.+) with (\S+)$/ do |user, password|
   visit login_path
   When "I fill in login details with #{user} and #{password}"
   find("#next_submit").find("input[type=image]").click
+  #UserSession.create(@user)
 end
 
 When /^I fill in login details with (.+) and (.+)$/ do |user, password|

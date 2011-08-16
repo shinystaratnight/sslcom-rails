@@ -32,9 +32,14 @@ end
 # by default create named user with attributes done by convention
 When /^I create a user with login (\w*)$/ do |login|
   @user = FactoryGirl.create(:user, :login => login,
-                         :password => login + "pass",
-                         :password_confirmation => login + "pass",
-                         :email => login + "@example.com")
+    password: login + "pass",
+    password_confirmation: login + "pass",
+    email: login + "@example.com",
+    password_salt: salt = Authlogic::Random.hex_token,
+    crypted_password: Authlogic::CryptoProviders::Sha512.encrypt(login + "pass" + salt),
+    persistence_token: Authlogic::Random.hex_token,
+    single_access_token: Authlogic::Random.friendly_token,
+    perishable_token: Authlogic::Random.friendly_token)
 end
 
 When /^I register a user with login (\w*)$/ do |login|

@@ -19,8 +19,8 @@ def login_user
 end
 
 def logout_user
-session = UserSession.find
-session.destroy if session
+  session = UserSession.find
+  session.destroy if session
 end
 
 def user_session
@@ -37,11 +37,11 @@ end
 
 Given /^I am logged in as "(.*)"$/ do |login|
   create_user login
-login_user
+  login_user
 end
 
 Given /^I am not logged in$/ do
-logout_user
+  logout_user
 end
 
 When /^I Log In$/ do
@@ -49,7 +49,7 @@ When /^I Log In$/ do
 end
 
 When /^I logout$/ do
-logout_user
+  logout_user
 end
 
 Then /^there should be a session$/ do

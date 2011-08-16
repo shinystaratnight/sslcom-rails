@@ -1,4 +1,4 @@
-@no-txn @javascript
+@javascript @remote @selenium
 
 Feature: Logging in
   As a registered user
