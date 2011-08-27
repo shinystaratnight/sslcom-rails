@@ -71,3 +71,14 @@ When /^(?:he|she|I) enters? (?:his|her|my) credit card payment information$/ do 
     @browser.text_field(:id, "billing_profile_security_code").value = card["security_code"]
   end
 end
+
+When /^(\w*) has a new dv certificate order at the validation prompt stage$/ do |login|
+  @user = User.find_by_login(login)
+  @certificate_order = FactoryGirl.create(:dv_certificate_order,
+    workflow_state: "new", ssl_account: @user.ssl_account)
+  @certificate_content = FactoryGirl.create(:certificate_content_w_contacts,
+    certificate_order: @certificate_order)
+  @certificate_order.certificate_contents << @certificate_content
+  @user.ssl_account.certificate_orders << @certificate_order
+end
+

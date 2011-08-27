@@ -90,8 +90,8 @@ class ValidationsController < ApplicationController
       @created_releases = []
       if (file.respond_to?(:content_type) && file.content_type.include?("zip")) ||
           (file.respond_to?(:original_filename) && file.original_filename.include?("zip"))
-        logger.info "creating directory #{RAILS_ROOT}/tmp/zip/temp"
-        FileUtils.mkdir_p "#{RAILS_ROOT}/tmp/zip/temp" if !File.exist?("#{RAILS_ROOT}/tmp/zip/temp")
+        logger.info "creating directory #{Rails.root}/tmp/zip/temp"
+        FileUtils.mkdir_p "#{Rails.root}/tmp/zip/temp" if !File.exist?("#{Rails.root}/tmp/zip/temp")
         if file.size > Settings.max_content_size.to_i.megabytes
           break error = <<-EOS
             Too Large: zip file #{file.original_filename} is larger than
@@ -99,10 +99,10 @@ class ValidationsController < ApplicationController
           EOS
         end
         @zip_file_name=file.original_filename
-        File.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}", "wb") do |f|
+        File.open("#{Rails.root}/tmp/zip/#{file.original_filename}", "wb") do |f|
           f.write(file.read)
         end
-        zf = Zip::ZipFile.open("#{RAILS_ROOT}/tmp/zip/#{file.original_filename}")
+        zf = Zip::ZipFile.open("#{Rails.root}/tmp/zip/#{file.original_filename}")
         if zf.size > Settings.max_num_releases.to_i
           break error = <<-EOS
             Too Many Files: zip file #{file.original_filename} contains more than
@@ -111,7 +111,7 @@ class ValidationsController < ApplicationController
         end
         zf.each do |entry|
           begin
-            fpath = File.join("#{RAILS_ROOT}/tmp/zip/temp/",entry.name.downcase)
+            fpath = File.join("#{Rails.root}/tmp/zip/temp/",entry.name.downcase)
             if(File.exists?(fpath))
               File.delete(fpath)
             end

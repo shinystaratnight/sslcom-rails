@@ -15,7 +15,7 @@ minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3
 ucc_max_domains: 200
 cert_expiration_threshold_days: 365
-intermediate_certs_path: "<%=RAILS_ROOT%>/public/cert_bundles/"
+intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
 #header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
 header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
 corp_name: "SSL Corp"

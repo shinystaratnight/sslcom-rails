@@ -5,18 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/features/support/capybara.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/features/accounts_examples/permissions.feature" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/validations_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/validation_history.rb" afterPath="$PROJECT_DIR$/app/models/validation_history.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/application.rb" afterPath="$PROJECT_DIR$/config/application.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/login.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/login.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/compass.config" afterPath="$PROJECT_DIR$/config/compass.config" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/accounts/login_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/accounts/login_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/authlogic.rb" afterPath="$PROJECT_DIR$/features/support/authlogic.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/email_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/email_steps.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/capybara.rb" afterPath="$PROJECT_DIR$/features/support/capybara.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/db_cleaner.rb" afterPath="$PROJECT_DIR$/features/support/db_cleaner.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/hooks.rb.rb" afterPath="$PROJECT_DIR$/features/support/hooks.rb.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/local_env.rb" afterPath="$PROJECT_DIR$/features/support/local_env.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/tasks/export_yaml.rake" afterPath="$PROJECT_DIR$/lib/tasks/export_yaml.rake" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/screen.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/screen.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/spec_helper.rb" afterPath="$PROJECT_DIR$/spec/spec_helper.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories.rb" afterPath="$PROJECT_DIR$/test/factories.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/test_helper.rb" afterPath="$PROJECT_DIR$/test/test_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/README" afterPath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/README" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/lib/action_mailer_cache_delivery.rb" afterPath="$PROJECT_DIR$/vendor/plugins/action_mailer_cache_delivery/lib/action_mailer_cache_delivery.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_billable/README" afterPath="$PROJECT_DIR$/vendor/plugins/acts_as_billable/README" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_state_machine/test/test_helper.rb" afterPath="$PROJECT_DIR$/vendor/plugins/acts_as_state_machine/test/test_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendor/plugins/rails_upgrade/lib/application_checker.rb" afterPath="$PROJECT_DIR$/vendor/plugins/rails_upgrade/lib/application_checker.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -39,91 +63,91 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="creation_steps.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="0" selection-start="1509" selection-end="1509" vertical-scroll-proportion="0.0">
+            <state line="406" column="0" selection-start="12073" selection-end="12073" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="local_env.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="0" selection-start="2268" selection-end="2268" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="capybara.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/support/capybara.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="168" selection-end="168" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="login.feature" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/accounts_examples/login.feature">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="hooks.rb.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/features/support/hooks.rb.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="43" selection-start="109" selection-end="109" vertical-scroll-proportion="-0.8040541">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="authlogic.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/support/authlogic.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="44" selection-start="69" selection-end="69" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="authentication_steps.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="0" selection-start="486" selection-end="486" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="factories.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="factories.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/factories.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="82" selection-start="198" selection-end="198" vertical-scroll-proportion="0.0">
+            <state line="25" column="0" selection-start="922" selection-end="1017" vertical-scroll-proportion="0.5406504">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <file leaf-file-name="certificates.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/features/support/certificates.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="391" column="0" selection-start="15180" selection-end="15180" vertical-scroll-proportion="-3.1785715">
+            <state line="13" column="36" selection-start="75" selection-end="742" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="users_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/users_controller.rb">
+      <file leaf-file-name="registrant.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/registrant.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="0" selection-start="2081" selection-end="2081" vertical-scroll-proportion="0.0">
+            <state line="7" column="29" selection-start="269" selection-end="352" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_content.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="140" column="0" selection-start="4233" selection-end="4233" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="validations_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="156" column="0" selection-start="6366" selection-end="6366" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="10" column="0" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_orders_steps.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="231" column="0" selection-start="10016" selection-end="10016" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="permissions.feature" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/features/accounts_examples/permissions.feature">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="14" column="32" selection-start="495" selection-end="495" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shopping_steps.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="78" column="0" selection-start="3530" selection-end="3530" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -172,22 +196,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/features/support/env.rb" />
-        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.2-p136/bin/cucumber" />
-        <option value="$PROJECT_DIR$/test/fixtures/validation_rulings.yml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" />
-        <option value="$PROJECT_DIR$/test/fixtures/ssl_accounts.yml" />
-        <option value="$PROJECT_DIR$/spec/spec_helper.rb" />
         <option value="$PROJECT_DIR$/features/step_definitions/accounts/login_steps.rb" />
-        <option value="$PROJECT_DIR$/config/application.rb" />
-        <option value="$PROJECT_DIR$/features/support/authlogic.rb" />
-        <option value="$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb" />
-        <option value="$PROJECT_DIR$/test/factories.rb" />
-        <option value="$PROJECT_DIR$/features/support/local_env.rb" />
-        <option value="$PROJECT_DIR$/features/support/capybara.rb" />
-        <option value="$PROJECT_DIR$/features/accounts_examples/login.feature" />
+        <option value="$PROJECT_DIR$/config/environments/test.rb" />
+        <option value="$PROJECT_DIR$/test/test_helper.rb" />
+        <option value="$PROJECT_DIR$/spec/spec_helper.rb" />
         <option value="$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb" />
         <option value="$PROJECT_DIR$/features/support/hooks.rb.rb" />
+        <option value="$PROJECT_DIR$/features/support/certificates.rb" />
+        <option value="$PROJECT_DIR$/features/support/local_env.rb" />
+        <option value="$PROJECT_DIR$/features/support/db_cleaner.rb" />
+        <option value="$PROJECT_DIR$/app/models/sub_order_item.rb" />
+        <option value="$PROJECT_DIR$/features/support/capybara.rb" />
+        <option value="$PROJECT_DIR$/features/accounts_examples/permissions.feature" />
+        <option value="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+        <option value="$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" />
+        <option value="$PROJECT_DIR$/test/factories.rb" />
       </list>
     </option>
   </component>
@@ -243,21 +267,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="RailsProjectView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -319,6 +328,42 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="spec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="spec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="helpers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="spec" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="fixtures" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -443,67 +488,19 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="RailsProjectView">
+        <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="shared" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layouts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
@@ -694,20 +691,21 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="72" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="90" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="71" />
-    <property name="recentsLimit" value="5" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="recentsLimit" value="5" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="71" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="95" />
     <property name="RakeTaksPopup.undocumentedIncluded" value="true" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="932" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="95" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="933" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="932" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="95" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="90" />
     <property name="GoToClass.includeJavaFiles" value="false" />
@@ -721,8 +719,8 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="options.lastSelected" value="preferences.sourceCode.General" />
-    <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
     <property name="options.searchVisible" value="true" />
+    <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -733,41 +731,7 @@
       <recent name="$PROJECT_DIR$/db/migrate" />
     </key>
   </component>
-  <component name="RunManager" selected="Cucumber.User can login">
-    <configuration default="false" name="login" type="CucumberRunConfigurationType" factoryName="Cucumber" temporary="true">
-      <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" track_test_folders="true" runner="rcov">
-        <COVERAGE_PATTERN ENABLED="true">
-          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
-        </COVERAGE_PATTERN>
-      </EXTENSION>
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/features/accounts_examples/login.feature" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TAGS_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_NAME_FILTER" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_ARGS" VALUE="--color -r features" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="VERBOSE_OPTION" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
-      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
-      <RunnerSettings RunnerId="RubyDebugRunner" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyDebugRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Rake.routes">
     <configuration default="false" name="User can login" type="CucumberRunConfigurationType" factoryName="Cucumber" temporary="true">
       <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
       <module name="ssl_com_rails3" />
@@ -862,6 +826,40 @@
       </EXTENSION>
       <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$PROJECT_DIR$/app/models/old_site.rb" />
       <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="runner OldSite.migrate_all" />
+      <RunnerSettings RunnerId="RubyDebugRunner" />
+      <RunnerSettings RunnerId="RubyRunner" />
+      <ConfigurationWrapper RunnerId="RubyDebugRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="User can send validation requests for a new order to other users" type="CucumberRunConfigurationType" factoryName="Cucumber" temporary="true">
+      <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/features/accounts_examples/permissions.feature" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TAGS_FILTER" VALUE="" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_NAME_FILTER" VALUE="User\ can\ send\ validation\ requests\ for\ a\ new\ order\ to\ other\ users" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_ARGS" VALUE="--color -r features" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="VERBOSE_OPTION" VALUE="false" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
+      <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
       <RunnerSettings RunnerId="RubyDebugRunner" />
       <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyDebugRunner" />
@@ -966,6 +964,13 @@
       <RUBY_REMOTE_DEBUG_CONFIG NAME="LOCAL_ROOT" VALUE="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
+      <JSRemoteDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSRemoteDebuggerConfigurationSettings>
+      <method />
+    </configuration>
     <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
       <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
       <module name="" />
@@ -994,13 +999,6 @@
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="CUCUMBER_RUNNER_PATH" VALUE="" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_RUNNER" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
-      <JSRemoteDebuggerConfigurationSettings>
-        <option name="engineId" value="embedded" />
-        <option name="fileUrl" />
-      </JSRemoteDebuggerConfigurationSettings>
       <method />
     </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
@@ -1354,18 +1352,18 @@
       <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
       <item index="3" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
       <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="5" class="java.lang.String" itemvalue="Cucumber.login" />
-      <item index="6" class="java.lang.String" itemvalue="Cucumber.User can login" />
-      <item index="7" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="8" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="9" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="11" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="12" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.routes" />
-      <item index="14" class="java.lang.String" itemvalue="Ruby.migration_spec" />
-      <item index="15" class="java.lang.String" itemvalue="Ruby.old_site" />
-      <item index="16" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.User can login" />
+      <item index="6" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="7" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="8" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="9" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="10" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="11" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="12" class="java.lang.String" itemvalue="Rake.routes" />
+      <item index="13" class="java.lang.String" itemvalue="Ruby.migration_spec" />
+      <item index="14" class="java.lang.String" itemvalue="Ruby.old_site" />
+      <item index="15" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="16" class="java.lang.String" itemvalue="Cucumber.User can send validation requests for a new order to other users" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -1422,19 +1420,19 @@
     <frame x="23" y="0" width="1258" height="776" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32253087" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32612056" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32766616" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2361111" sideWeight="0.9812856" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20471162" sideWeight="0.15277778" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20471162" sideWeight="0.21450618" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20471162" sideWeight="0.3935185" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20471162" sideWeight="0.33179012" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.44135803" sideWeight="0.999187" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3564815" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29520866" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32253087" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287037" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
@@ -1533,125 +1531,125 @@
           <line>1032</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb</url>
-          <line>66</line>
+          <url>file://$PROJECT_DIR$/features/step_definitions/accounts/login_steps.rb</url>
+          <line>92</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb</url>
-          <line>26</line>
+          <url>file://$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb</url>
+          <line>231</line>
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/sub_order_item.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="27" selection-start="117" selection-end="117" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/accounts_examples/remember_me.feature">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/test/fixtures/ssl_accounts.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="79" column="15" selection-start="1576" selection-end="1576" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/fixtures/users.yml">
+    <entry file="file://$PROJECT_DIR$/features/accounts_examples/email_login.feature">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/role.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="104" column="0" selection-start="3014" selection-end="3014" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test/factories.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="82" selection-start="198" selection-end="198" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="391" column="0" selection-start="15180" selection-end="15180" vertical-scroll-proportion="-3.1785715">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/users_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="0" selection-start="2081" selection-end="2081" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="0" selection-start="2268" selection-end="2268" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/features/support/capybara.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="168" selection-end="168" vertical-scroll-proportion="0.0">
+        <state line="7" column="0" selection-start="195" selection-end="195" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/features/accounts_examples/login.feature">
+    <entry file="file://$PROJECT_DIR$/features/step_definitions/accounts/login_steps.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
+        <state line="41" column="98" selection-start="1196" selection-end="1196" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb">
+    <entry file="file://$PROJECT_DIR$/features/step_definitions/email_steps.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="0" selection-start="1509" selection-end="1509" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/features/support/authlogic.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="44" selection-start="69" selection-end="69" vertical-scroll-proportion="0.0">
+        <state line="10" column="0" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/features/step_definitions/accounts/authentication_steps.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="0" selection-start="486" selection-end="486" vertical-scroll-proportion="0.0">
+        <state line="156" column="0" selection-start="6366" selection-end="6366" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/features/support/hooks.rb.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="43" selection-start="109" selection-end="109" vertical-scroll-proportion="-0.8040541">
+        <state line="406" column="0" selection-start="12073" selection-end="12073" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="140" column="0" selection-start="4233" selection-end="4233" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/registrant.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="29" selection-start="269" selection-end="352" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/support/certificates.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="36" selection-start="75" selection-end="742" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/accounts_examples/permissions.feature">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="32" selection-start="495" selection-end="495" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="231" column="0" selection-start="10016" selection-end="10016" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="0" selection-start="3530" selection-end="3530" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/factories.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="0" selection-start="922" selection-end="1017" vertical-scroll-proportion="0.5406504">
           <folding />
         </state>
       </provider>

@@ -35,6 +35,7 @@ When /^I login as (.+) with (\S+)$/ do |user, password|
   visit login_path
   When "I fill in login details with #{user} and #{password}"
   find("#next_submit").find("input[type=image]").click
+  page.should have_no_content("error prohibited this user session")
   #UserSession.create(@user)
 end
 
@@ -60,11 +61,7 @@ Then /^I should be logged in$/ do
 end
 
 Then /^I should be logged in as (.*)$/ do |login|
-  controller.logged_in?.should be_true
-  @user = User.find_by_login(login)
-  controller.current_user.should == @user
-  # if you ask if you are logged in then the user variable should be set to you
-  # this allows session store, auth token etc tests to work
+  Then "the user should be \"#{login}\""
   @user
 end
 
@@ -90,4 +87,10 @@ end
 
 Then /^I should not have an auth_token cookie$/ do
   cookies["auth_token"].should be_empty
+end
+
+When /^I'm logged in as (.*)$/ do |login|
+  @user = User.find_by_login(login)
+  UserSession.create(@user)
+  Then "I should be logged in as #{login}"
 end

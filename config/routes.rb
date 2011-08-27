@@ -152,13 +152,16 @@ SslCom::Application.routes.draw do
   #cert api routes
   match '/certificates/v1/apply' => CertificatesApiApp
 
-  get '*disregard/code/:id'=>'affiliates#refer', constraints: {id: /\w+\/?$/}
+  #took the anchor version out /\w+\/?$/ but need to test the results of this,
+  #specifically the aff code should be the last thing and not followed by other characters
+  #that could route this to anything other than an affiliate crediting
+  get '*disregard/code/:id'=>'affiliates#refer', id: /\w+\/?/
 
   resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
   get '/surls/:id' => 'Surls#destroy', :constraints => {:subdomain=>Surl::SUBDOMAIN}
   post '/surls/login/:id' => 'Surls#login', as: :surl_login, :constraints => {:subdomain=>Surl::SUBDOMAIN}
   get '/ssl_links_disclaimer'=>'Surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
-  get ':id'=>'surls#show', constraints: {id: /[0-9a-z]+/i}
+  get ':id'=>'surls#show', id: /[0-9a-z]+/i
 
   match '/:controller(/:action(/:id))'
 end

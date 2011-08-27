@@ -11,13 +11,13 @@ This fork integrates with email_spec
 Installation
 ============
 
-  #$ cd RAILS_ROOT
+  #$ cd Rails.root
   #$ ./script/plugin install git://github.com/ngty/action_mailer_cache_delivery.git
 
 Example
 =======
 
-In your RAILS_ROOT/config/environments/test.rb, make sure you have the line:
+In your Rails.root/config/environments/test.rb, make sure you have the line:
 
   config.action_mailer.delivery_method = :cache
 

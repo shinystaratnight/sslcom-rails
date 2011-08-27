@@ -10,11 +10,11 @@ class ValidationHistory < ActiveRecord::Base
   has_attached_file :document, :url => "/:class/:id/:attachment/:style.:extension",
     # => Use this if we want to store to the file system instead of s3.
     # Comment out the remainder parameters
-#    :path => ":rails_root/attachments/:class/:id/:attachment/:style.:extension",
+#    :path => ":Rails.root/attachments/:class/:id/:attachment/:style.:extension",
 #    :styles=>{:thumb=>['100x100#', :png], :preview=>['400x400#', :png]}
     :styles=>{:thumb=>['100x100#', :png], :preview=>['400x400#', :png]},
     :storage => :s3,
-    :s3_credentials => "#{RAILS_ROOT}/config/s3.yml",
+    :s3_credentials => "#{Rails.root}/config/s3.yml",
     :s3_permissions => :private,
     :s3_protocol => 'http',
     :bucket => 'ssl-validation-docs',

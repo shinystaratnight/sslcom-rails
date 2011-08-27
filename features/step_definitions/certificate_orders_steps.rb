@@ -225,3 +225,14 @@ Then /^(?:he|she|I) should be (?:directed to\s|at\s)the new certificate order pa
   @browser.url.should include(@current_user.ssl_account.
       certificate_orders.last.ref)
 end
+
+When /^(?:he|she|I) request domain control validation from (\S*)$/ do |email|
+  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
+  find("#upload_files").click
+  @user
+  #save_and_open_page
+end
+When /^(?:he|she|I) request domain control validation be sent during checkout$/ do
+  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
+
+end

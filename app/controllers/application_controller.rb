@@ -482,7 +482,7 @@ class ApplicationController < ActionController::Base
   end
 
   def identify_visitor
-    cookies[:guid] = {:value=>UUIDTools::UUID.random_create, :path => "/",
+    cookies[:guid] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
       :expires => 2.years.from_now} unless cookies[:guid]
     @visitor_token = VisitorToken.find_or_create_by_guid_and_affiliate_id(
       cookies[:guid],cookies[:aid])
@@ -566,6 +566,7 @@ class ApplicationController < ActionController::Base
   end
 
   def is_iphone?
+    return false if request.env['HTTP_USER_AGENT'].blank?
     ua = request.env['HTTP_USER_AGENT'].downcase
     ua =~ /iphone|itouch|ipod/
   end

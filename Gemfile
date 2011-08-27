@@ -1,11 +1,11 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.1'
+gem 'rails', '3.0.10'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mysql', '2.8.1'
+gem 'mysql'
 gem 'workflow'
 #gem 'preferences'
 gem 'wirble'
@@ -13,7 +13,7 @@ gem 'awesome_print'
 gem 'activemerchant', '1.10.0'
 #gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
-gem 'will_paginate', '3.0.pre2'
+gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
@@ -23,7 +23,7 @@ gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", "0.7.9"
 gem 'rubyzip'
-gem 'compass', ">= 0.11.beta.2"
+gem 'compass'
 gem 'rb-inotify'
 #gem 'aws-s3'
 gem 'xml-simple'
@@ -52,9 +52,9 @@ gem 'nokogiri'
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
   group :development, :test do
-    gem "builder", "~> 2.1.2"
+    gem "builder"
     gem 'ruby_parser'
-    gem 'ruby-debug-base19', "0.11.25"
+    gem 'ruby-debug-base19'
     gem 'ruby-debug-ide19'
     gem "rspec-rails"
     gem 'activerecord-sqlserver-adapter'
@@ -66,6 +66,7 @@ gem 'nokogiri'
     gem 'cucumber-rails'
     gem 'capybara'
     gem 'capybara-webkit'
+    gem 'capybara-firebug', git: 'git://github.com/jfirebaugh/capybara-firebug.git'
     gem 'selenium-webdriver'
     gem 'database_cleaner'
     gem 'webrat'
@@ -75,6 +76,7 @@ gem 'nokogiri'
     gem 'factory_girl_rails'
     gem 'mainline'
     gem 'rack-test'
+    gem 'machinist', '>= 2.0.0.beta2'
   end
 
 

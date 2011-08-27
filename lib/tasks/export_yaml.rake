@@ -25,7 +25,7 @@ namespace :db do
     if ENV['MODELS'].nil? || ENV['MODELS'].blank?
       raise "Please enter valid models names separated by coma. Ex: MODELS=User,Account or MODELS=ALL"
     elsif ENV['MODELS'].upcase == "ALL"
-      Find.find(RAILS_ROOT + '/app/models') do |path|
+      Find.find(Rails.root + '/app/models') do |path|
         unless File.directory?(path) then models << path.match(/(\w+).rb/)[1] end
       end
       models = models.collect { |arg| arg.strip.camelize.constantize }
@@ -49,7 +49,7 @@ namespace :db do
         collection.each do |object|
           output.store(object.to_param, object.attributes)
         end
-        file_path = "#{RAILS_ROOT}/tmp/#{model.table_name}.yml"# /tmp/
+        file_path = "#{Rails.root}/tmp/#{model.table_name}.yml"# /tmp/
         File.open(file_path, "w+") { |file| file.write(output.to_yaml) }
       end
     end

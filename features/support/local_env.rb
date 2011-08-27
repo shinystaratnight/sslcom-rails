@@ -4,8 +4,11 @@ require File.expand_path(File.dirname(__FILE__) + '/../../config/environment')
 require 'cucumber/rails/world'
 require 'cucumber/formatter/unicode' # Comment out this line if you don't want Cucumber Unicode support
 require 'declarative_authorization/maintenance'
+require 'database_cleaner'
+require 'database_cleaner/cucumber'
 
-World(Authorization::Maintenance)
+#bypasses declarative authorization to allow creating objects
+#World(Authorization::Maintenance)
 World(OrdersHelper)
 
 #Seed the DB
@@ -14,7 +17,7 @@ module FixtureAccess
   def self.extended(base)
 
     Fixtures.reset_cache
-    fixtures_folder = File.join(RAILS_ROOT, 'test', 'fixtures')
+    fixtures_folder = File.join(Rails.root, 'test', 'fixtures')
     fixtures = Dir[File.join(fixtures_folder, '*.yml')].map {|f| File.basename(f, '.yml') }
     fixtures += Dir[File.join(fixtures_folder, '*.csv')].map {|f| File.basename(f, '.csv') }
 
@@ -68,6 +71,7 @@ end
 
 at_exit do
   # Global teardown
-  @browser.close if @driver==:firewatir
+  @browser.close if @driver && @driver[:name]==:firewatir
   #TempFileManager.clean_up
 end
+

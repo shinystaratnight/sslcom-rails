@@ -24,7 +24,7 @@ First you must define a default Credit Card gateway in environment.rb. Typically
     ActiveMerchant::Billing::Base.set_default_gateway :paypal,
       :login => 'mypaypal@account.com',
       :password => 'password',
-      :cert_path => "#{RAILS_ROOT}/config/paypal/"
+      :cert_path => "#{Rails.root}/config/paypal/"
   else
     ActiveMerchant::Billing::Base.mode = :test
   end

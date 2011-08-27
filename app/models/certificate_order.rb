@@ -384,11 +384,11 @@ class CertificateOrder < ActiveRecord::Base
     self.preferred_v2_line_items = line_items.join('|')
   end
 
-    def options_for_ca
+  def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
         options.merge!(
-          'test' => 'Y',
+          'test' => Rails.env =~ /production/i ? "N" : 'Y',
           'product' => certificate.comodo_product_id.to_s,
           'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
           'days' => certificate_content.duration.to_s,

@@ -40,6 +40,7 @@ When /^I create a user with login (\w*)$/ do |login|
     persistence_token: Authlogic::Random.hex_token,
     single_access_token: Authlogic::Random.friendly_token,
     perishable_token: Authlogic::Random.friendly_token)
+
 end
 
 When /^I register a user with login (\w*)$/ do |login|
