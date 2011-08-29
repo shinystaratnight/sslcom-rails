@@ -400,8 +400,8 @@ class CertificateOrder < ActiveRecord::Base
           'foreignOrderNumber' => ref
         )
         last_sent = csr.domain_control_validations.last_sent
-        if last_sent.is_eligible_to_send?
-          options.merge!('dcvEmailAddress' => last_sent.(:email_address))
+        if last_sent.try "is_eligible_to_send?"
+          options.merge!('dcvEmailAddress' => last_sent.email_address)
           last_sent.send!
         end
         fill_csr_fields options, certificate_content.registrant

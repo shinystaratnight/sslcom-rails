@@ -1,28 +1,37 @@
-#use rack_test for inline and selenium for remote
-#@rack_test
-@selenium @no-txn @remote
-@setup_certificates @firebug
-
-
+#use driver @rack_test for inline and @selenium for remote
+#when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
+#also all comments must appear before tags with no comments in-between tags
+#@firebug
+#@selenium @no-txn @remote
+@rack_test
+@setup_certificates
 
 Feature: Permissions to pages
   As a user
   I want to be able to access certain pages while restricting others from accessing those pages
   So that my security is not compromised from unintended or illicit use
 
+  @passed_selenium_remote @passed_rack_test
   Scenario: User can must sent validation requests from one of the selected email addresses
-    Given a registered user Fred exists
+    Given an activated user Fred exists
       And Fred has a new dv certificate order at the validation prompt stage
       And I login as Fred
      When I request domain control validation be sent during checkout
      Then a domain control validation request should be sent
 
+  #email testing doesn't work with selenium_remote
   Scenario: User can send validation requests for a new order to other users
-    Given a registered user Fred exists
+    Given an activated user Fred exists
       And Fred has a new dv certificate order at the validation prompt stage
       And I login as Fred
+#      And I'm logged in as Fred
      When I request domain control validation from somebody@example.com
-#     Then somebody should receive a request email
+      And "somebody@example.com" opens the email
+     Then "somebody@example.com" should have an email
+      And they should see "Validation Request for SSL.com Certificate lobby.sb.betsoftgaming.com" in the email subject
+      And they should see "Additional validation information is required" in the email body
+      And they should see "lobby.sb.betsoftgaming.com" in the email body
+
 #      And somebody should have access to the validation submittal page
 #      And somebodyelse should not have access to the validation submittal page
 

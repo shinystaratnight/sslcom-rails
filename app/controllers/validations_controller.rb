@@ -69,7 +69,9 @@ class ValidationsController < ApplicationController
     unless params[:refer_to_others].blank? || params[:refer_to_others]=="false"
       attrs=%w(email_addresses other_party_requestable_type other_party_requestable_id preferred_sections preferred_show_order_number)
       @other_party_validation_request =
-        OtherPartyValidationRequest.create(Hash[*attrs.map{|a|[a.to_sym,params[a.to_sym]] if params[a.to_sym]}.compact.flatten])
+        OtherPartyValidationRequest.new(Hash[*attrs.map{|a|[a.to_sym,params[a.to_sym]] if params[a.to_sym]}.
+            compact.flatten])
+      current_user.other_party_requests << @other_party_validation_request
         unless @other_party_validation_request.valid?
           error<<@other_party_validation_request.errors.full_messages
           flash[:opvr_error]=true

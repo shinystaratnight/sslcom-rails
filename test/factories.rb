@@ -1,18 +1,3 @@
-@lobby_sb_betsoftgaming_com_csr = <<EOS
------BEGIN CERTIFICATE REQUEST-----
-MIIBtTCCAR4CAQAwdTELMAkGA1UEBhMCQ1kxEDAOBgNVBAgTB05pY29zaWExEjAQ
-BgNVBAcTCVN0cm92b2xvczEbMBkGA1UEChMSQmV0c29mdGdhbWluZyBMVEQuMSMw
-IQYDVQQDExpsb2JieS5zYi5iZXRzb2Z0Z2FtaW5nLmNvbTCBnzANBgkqhkiG9w0B
-AQEFAAOBjQAwgYkCgYEAsrTRXbve5Y7dhSorB11hIkHqbKZgxbDPQ2w0BacHIx2U
-7M1RtyXaPYizUXHOrjCiCoe9NyivZ9Oip63kfIb5vpArIgVfnM2K2aizcmi6pdj2
-kbePrp1Uz86nxxbEso013XWlmu2lgTRTeBETeRFebYzSKH7hHvFR37kaQRIdHckC
-AwEAAaAAMA0GCSqGSIb3DQEBBQUAA4GBADAknB7B/3CnvuZUJrH5O6oD3USft4QU
-uuMti01ffH4ZyTMfyLdDcd0gdeXPej+JGvScuXPjzpMb92cpfufTRKsTBUG1C2T6
-TYrJ9O3d5oKph8nICihGT0fDIqJCzGar6W9ZbL8PiIDL4hFymVUZk409NPfrND1g
-yIeY8v/sjOUW
------END CERTIFICATE REQUEST-----
-EOS
-
 FactoryGirl.define do
   factory :user do
     association :ssl_account
@@ -46,7 +31,7 @@ FactoryGirl.define do
     state "Nicosia"
     postal_code "00000"
     country "CY"
-    contactable{ |i| i.association(:certificate_content) }
+    association :contactable, :factory=>:certificate_content
   end
 
   factory :certificate_content do
@@ -55,7 +40,7 @@ FactoryGirl.define do
     server_software {ServerSoftware.where(:title =~ "%java%").first}
 
     factory :certificate_content_w_registrant do
-      after_create{|cc|FactoryGirl.create :registrant, cc}
+      after_create{|cc|FactoryGirl.create :registrant, contactable: cc}
 
       factory :certificate_content_w_contacts do
         workflow_state "contacts_provided"
@@ -118,7 +103,8 @@ EOS
   
   factory :dv_product_variant_item, class: "ProductVariantItem" do |pvi|
     pvi.product_variant_group{|product_variant_group|
-      product_variant_group.association(:product_variant_group, variantable: FactoryGirl.create(:dv_certificate))}
+      product_variant_group.association(:product_variant_group, variantable:
+          Certificate.where(product: "free").first)}#FactoryGirl.create(:dv_certificate))}
   end
 
   factory :product_variant_group do

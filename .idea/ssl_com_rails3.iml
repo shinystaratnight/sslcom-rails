@@ -262,12 +262,12 @@
     <orderEntry type="library" scope="PROVIDED" name="tilt (v1.3.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="malware_api (v0.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activerecord (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="mime-types (v1.16, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="gherkin (v2.4.15, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-debug-ide19 (v0.4.12, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mime-types (v1.16, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="firewatir (v1.9.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="factory_girl (v2.0.5, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json_pure (v1.5.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="factory_girl (v2.0.5, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-debug-base19 (v0.11.25, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="archive-tar-minitar (v0.5.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="yui-compressor (v0.9.6, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
@@ -296,21 +296,20 @@
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.5.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.5.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="arel (v2.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="mysql (v2.8.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-ssh-gateway (v1.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="cocaine (v0.2.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="mysql (v2.8.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby-odbc (v0.99994, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="cocaine (v0.2.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="will_paginate (v3.0.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails_config (v0.2.4, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rake (v0.9.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tzinfo (v0.3.29, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v1.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="hoe (v2.12.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="capybara-firebug (v0.0.9, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activemerchant (v1.10.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="capybara-firebug (v0.0.9, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sauce (v1.0.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="declarative_authorization (v0.5.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="savon (v0.7.9, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="declarative_authorization (v0.5.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chunky_png (v1.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="abstract (v1.0.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="actionpack (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
@@ -319,12 +318,12 @@
     <orderEntry type="library" scope="PROVIDED" name="email_spec (v1.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sexp_processor (v3.0.6, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="machinist (v2.0.0.beta2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="highline (v1.6.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="workflow (v0.8.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="highline (v1.6.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="Platform (v0.4.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activemodel (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="capybara-webkit (v0.6.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="radix62 (v0.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="capybara-webkit (v0.6.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="user-choices (v1.1.6.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="authlogic (v3.0.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="haml (v3.2.0.alpha.8, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
@@ -340,8 +339,10 @@
     <orderEntry type="library" scope="PROVIDED" name="erubis (v2.6.6, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-rails (v2.6.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v1.0.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="polyglot (v0.3.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="spork (v0.9.0.rc9, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="ruby-debug19 (v0.11.6, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="selenium-webdriver (v2.5.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="polyglot (v0.3.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="childprocess (v0.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="compass (v0.11.5, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cmdparse (v2.0.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
@@ -358,12 +359,13 @@
     <orderEntry type="library" scope="PROVIDED" name="sinatra (v1.2.6, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="columnize (v0.3.4, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rdoc (v3.9.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="xml-simple (v1.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="POpen4 (v0.1.4, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="xml-simple (v1.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activesupport (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="commonwatir (v2.0.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="net-ssh (v2.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rake (v0.8.7, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="net-ssh (v2.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ffi (v1.0.9, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.1.7, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
   </component>

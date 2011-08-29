@@ -1,10 +1,9 @@
-@javascript @remote @selenium
+@rack_test
 
 Feature: Logging in
   As a registered user
   I want to log in to my account
   So that I can manage my details
-
 
   Scenario: User can login
     Given an activated user Fred exists

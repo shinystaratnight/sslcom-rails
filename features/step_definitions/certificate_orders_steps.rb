@@ -226,13 +226,23 @@ Then /^(?:he|she|I) should be (?:directed to\s|at\s)the new certificate order pa
       certificate_orders.last.ref)
 end
 
-When /^(?:he|she|I) request domain control validation from (\S*)$/ do |email|
+When /^(?:he|she|I) request domain control validation be sent during checkout$/ do
+  @domain_control_validation_count = DomainControlValidation.count
   visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
   find("#upload_files").click
-  @user
-  #save_and_open_page
 end
-When /^(?:he|she|I) request domain control validation be sent during checkout$/ do
-  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
 
+When /^(?:he|she|I) request domain control validation from (\S+)$/ do |email|
+  @domain_control_validation_count = DomainControlValidation.count
+  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
+  choose "refer_to_others_true"
+  fill_in "email_addresses", with: email
+  find("#upload_files").click
+end
+
+Then /^a domain control validation request should be sent$/ do
+  DomainControlValidation.count.should eql(@domain_control_validation_count+1)
+  dcv = DomainControlValidation.last
+  page.should have_content(dcv.email_address)
+  page.should have_content(dcv.sent_at.strftime("%b %d, %Y %R"))
 end

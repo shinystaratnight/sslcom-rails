@@ -4,7 +4,7 @@ gem 'rails', '3.0.10'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-
+gem "rake", "0.8.7" #the latest version 0.9.2 causes conflicts
 gem 'mysql'
 gem 'workflow'
 #gem 'preferences'
@@ -56,10 +56,12 @@ gem 'nokogiri'
     gem 'ruby_parser'
     gem 'ruby-debug-base19'
     gem 'ruby-debug-ide19'
+    gem 'ruby-debug19'
     gem "rspec-rails"
     gem 'activerecord-sqlserver-adapter'
     gem 'ruby-odbc'
     gem 'launchy'
+    gem 'spork', '~> 0.9.0.rc'
   end
 
   group :test do
@@ -73,7 +75,7 @@ gem 'nokogiri'
     gem 'email_spec'
     gem 'firewatir'
     gem 'rspec'
-    gem 'factory_girl_rails'
+    gem 'factory_girl_rails', require: false
     gem 'mainline'
     gem 'rack-test'
     gem 'machinist', '>= 2.0.0.beta2'

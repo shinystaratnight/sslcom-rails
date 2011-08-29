@@ -3,7 +3,7 @@ class DomainControlValidation < ActiveRecord::Base
   belongs_to :csr
   serialize :candidate_addresses
 
-  validate    :email_address_check, unless: lambda{|r| r.email_address.blank?}
+  validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
   IS_INVALID  = "is an invalid email address choice"
 
