@@ -10,7 +10,7 @@ When /^(?:he|she|I) (uncheck|check) the checkbox with ['"]([^'"]*)['"](?:\s)?['"
 end
 
 When /^(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]$/ do |element, text, attribute|
-  @browser.send(element.intern, attribute.intern, Regexp.new(text)).click
+  get_element(element, attribute, text).click
 end
 
 When /^(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"]$/ do |element, text|
@@ -31,10 +31,18 @@ When /^(?:he|she|I) clicks? the submit button$/ do
 end
 
 When /^(?:he|she|I) clicks? the (?:next|submit) (?:image\s)?button$/ do
-  if @browser.button(:src, /next_bl\.gif/).exists?
-    @browser.button(:src, /next_bl\.gif/).click
-  elsif @browser.button(:src, Regexp.new('submit_button')).exists?
-    @browser.button(:src, Regexp.new('submit_button')).click
+  if is_capybara?
+    unless find("[src*=next_bl]").blank?
+      find("[src*=next_bl]").click
+    else
+      find("[src*=submit_button]").click
+    end
+  else
+    if @browser.button(:src, /next_bl\.gif/).exists?
+      @browser.button(:src, /next_bl\.gif/).click
+    elsif @browser.button(:src, Regexp.new('submit_button')).exists?
+      @browser.button(:src, Regexp.new('submit_button')).click
+    end
   end
 end
 
@@ -52,7 +60,7 @@ When /^(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"]['"
 end
 
 When /^(?:he|she|I) fills? the ['"]([^'"]*)['"] having attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"] with$/ do |element, attribute, attribute_val, pystring|
-  @browser.send(element.intern, attribute.intern, Regexp.new(attribute_val)).value = pystring
+  set_element(element, attribute, attribute_val, pystring)
 end
 
 When /^(?:he|she|I) fills? the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] with ['"]([^'"]*)['"]$/ do |id, element, text|
@@ -116,7 +124,7 @@ Then /^(?:he|she|I) should see a form$/ do
 end
 
 Then /^(?:he|she|I) should see ['"]([^'"]*)['"]$/ do |text|
-  @browser.text.downcase.should include(text.downcase)
+  is_capybara? ? (page.should have_content(text)) : (@browser.text.downcase.should include(text.downcase))
 end
 
 Then /^(?:he|she|I) should not see ['"]([^'"]*)['"]$/ do |text|
@@ -190,4 +198,26 @@ def transform_element(element)
   else
     element
   end
+end
+
+def get_element(element, attribute, attribute_val)
+  if is_capybara?
+    case element
+      when /radio/, /checkbox/
+        element="input"
+        page.first(:xpath, "//#{element}[@#{attribute}='#{attribute_val}']")
+      when /text_field/
+        %w(input textarea).map do |text_elem|
+          page.first(text_elem, attribute.intern=>attribute_val)
+        end.compact.last
+    end
+  else
+    @browser.send(element.intern, attribute.intern, Regexp.new(attribute_val))
+  end
+end
+
+def set_element(element, attribute, attribute_val, value)
+  elem=get_element(element, attribute, attribute_val)
+  is_capybara? ? elem.set(value) : elem.send(element.intern, attribute.intern, Regexp.new(attribute_val)).value = value
+
 end

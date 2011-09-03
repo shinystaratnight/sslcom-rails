@@ -34,6 +34,27 @@ FactoryGirl.define do
     association :contactable, :factory=>:certificate_content
   end
 
+  factory :certificate_contact do
+    first_name "Billy"
+    last_name "Bob"
+    email "bb@example.com"
+    phone "123-456-7890"
+    association :contactable, :factory=>:certificate_content
+
+    factory :billing_certificate_contact do
+      roles ["billing"]
+    end
+    factory :administrative_certificate_contact do
+      roles ["administrative"]
+    end
+    factory :technical_certificate_contact do
+      roles ["technical"]
+    end
+    factory :business_certificate_contact do
+      roles ["business"]
+    end
+  end
+
   factory :certificate_content do
     association :certificate_order
     association :csr
@@ -44,6 +65,12 @@ FactoryGirl.define do
 
       factory :certificate_content_w_contacts do
         workflow_state "contacts_provided"
+        after_create {|cc|
+          FactoryGirl.create(:billing_certificate_contact, contactable: cc)
+          FactoryGirl.create(:administrative_certificate_contact, contactable: cc)
+          FactoryGirl.create(:business_certificate_contact, contactable: cc)
+          FactoryGirl.create(:technical_certificate_contact, contactable: cc)
+        }
       end
     end
   end
@@ -54,12 +81,17 @@ FactoryGirl.define do
     #association :sub_order_item
     orders{|orders|[orders.association(:order)]}
 
-    factory :dv_certificate_order do
+    factory :new_dv_certificate_order do
+      workflow_state "new"
       after_create do |co|
         FactoryGirl.create(:sub_order_item,
           sub_itemable: co,
           product_variant_item:
             FactoryGirl.create(:dv_product_variant_item))
+      end
+
+      factory :completed_unvalidated_dv_certificate_order do
+        workflow_state :paid
       end
     end
   end

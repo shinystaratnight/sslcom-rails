@@ -98,7 +98,7 @@ class SslAccount < ActiveRecord::Base
   preference  :confirmation_include_cert_admin, :string, :default=>true
   preference  :confirmation_include_cert_bill, :string, :default=>true
 
-  before_create :b_create
+  before_validation :b_create, on: :create
   after_create  :initial_setup
 
   PULL_RESELLER = "pull_from_reseller"
@@ -121,7 +121,7 @@ class SslAccount < ActiveRecord::Base
   validate :reminder_notice_destinations_format,
     :unless=>"preferred_reminder_notice_destinations=='0'"
   validate :preferred_reminder_notice_triggers_format
-  validates_uniqueness_of :acct_number, :on=>:create
+  validate :acct_number, presence: true, uniqueness: true, on: :create
 
   default_scope :order => 'created_at DESC'
 

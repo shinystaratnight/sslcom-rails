@@ -3,7 +3,7 @@ Feature: Manage SSL Certificates
   An appropriately authorized user
   Should be able to view, procure, edit, and update ssl certificates
 
-  @no-txn @anonymous_user_ordering_certificate_no_csr
+  @no-txn @passed_selenium_remote @anonymous_user_ordering_certificate_no_csr @selenium @remote
   Scenario: Anonymous user buying ssl certificates with no csr
     Given I am not logged in
     And my cart is empty

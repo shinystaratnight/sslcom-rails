@@ -49,36 +49,49 @@ end
 When /^(?:he|she|I) enters? (?:his|her|my) profile information$/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
-    @browser.text_field(:id, "billing_profile_first_name").value = profile["first_name"]
-    @browser.text_field(:id, "billing_profile_last_name").value = profile["last_name"]
-    @browser.text_field(:id, "billing_profile_address_1").value = profile["address1"]
-    @browser.text_field(:id, "billing_profile_address_2").value = profile["address2"]
-    @browser.text_field(:id, "billing_profile_city").value = profile["city"]
-    @browser.text_field(:id, "billing_profile_state").value = profile["state"]
-    @browser.text_field(:id, "billing_profile_postal_code").value = profile["postal_code"]
-    @browser.select_list(:id, "billing_profile_country").set profile["country"]
-    @browser.text_field(:id, "billing_profile_phone").value = profile["phone"]
+    {"billing_profile_first_name"=>profile["first_name"],
+    "billing_profile_last_name"=>profile["last_name"],
+    "billing_profile_address_1"=>profile["address1"],
+    "billing_profile_address_2"=>profile["address2"],
+    "billing_profile_city"=>profile["city"],
+    "billing_profile_state"=>profile["state"],
+    "billing_profile_postal_code"=>profile["postal_code"],
+    "billing_profile_country"=>profile["country"],
+    "billing_profile_phone"=>profile["phone"]}.each do |k,v|
+      fill_text(k,v)
+    end
   end
 end
 
 When /^(?:he|she|I) enters? (?:his|her|my) credit card payment information$/ do |table|
   cards = (defined? table.hashes) ? table.hashes : [table]
   cards.each do |card|
-    @browser.select_list(:id, "billing_profile_credit_card").value = card["card_type"]
-    @browser.text_field(:id, "billing_profile_card_number").value = card["card_number"]
-    @browser.select_list(:id, "billing_profile_expiration_month").value = card["exp_mo"]
-    @browser.select_list(:id, "billing_profile_expiration_year").value = card["exp_yr"]
-    @browser.text_field(:id, "billing_profile_security_code").value = card["security_code"]
+    {"billing_profile_credit_card"=>card["card_type"],
+    "billing_profile_card_number"=>card["card_number"],
+    "billing_profile_expiration_month"=>card["exp_mo"],
+    "billing_profile_expiration_year"=>card["exp_yr"],
+    "billing_profile_security_code"=>card["security_code"]}.each do |k,v|
+      fill_text(k,v)
+    end
   end
 end
 
-When /^(\w*) has a new dv certificate order at the validation prompt stage$/ do |login|
+Given /^(\w*) has a new dv certificate order at the validation prompt stage$/ do |login|
   @user = User.find_by_login(login)
-  @certificate_order = FactoryGirl.create(:dv_certificate_order,
-    workflow_state: "new", ssl_account: @user.ssl_account)
+  @certificate_order = FactoryGirl.create(:new_dv_certificate_order,
+    ssl_account: @user.ssl_account)
   @certificate_content = FactoryGirl.create(:certificate_content_w_contacts,
     certificate_order: @certificate_order)
   @certificate_order.certificate_contents << @certificate_content
   @user.ssl_account.certificate_orders << @certificate_order
 end
 
+Given /^(\w*) has a completed but unvalidated dv certificate order$/ do |login|
+  @user = User.find_by_login(login)
+  @certificate_order = FactoryGirl.create(:completed_unvalidated_dv_certificate_order,
+    ssl_account: @user.ssl_account)
+  @certificate_content = FactoryGirl.create(:certificate_content_w_contacts,
+    certificate_order: @certificate_order)
+  @certificate_order.certificate_contents << @certificate_content
+  @user.ssl_account.certificate_orders << @certificate_order
+end

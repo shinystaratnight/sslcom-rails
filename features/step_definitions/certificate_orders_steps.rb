@@ -9,9 +9,14 @@ Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] ['"]([^'"]*)['"] year certificate 
 end
 
 Given /^(?:his|her|my)(?: shopping)? cart is empty$/ do
-  @browser.goto APP_URL + show_cart_orders_path
-  @browser.span(:id, 'clear_cart').click if
-    @browser.span(:id, 'clear_cart').exists?
+  if is_capybara?
+    visit(show_cart_orders_path)
+    find("#clear_cart").click if page.has_selector?("#clear_cart")
+  else
+    @browser.goto APP_URL + show_cart_orders_path
+    @browser.span(:id, 'clear_cart').click if
+      @browser.span(:id, 'clear_cart').exists?
+  end
 end
 
 Given /^the following non-wildcard signed certificate exists$/ do |pystring|
@@ -57,23 +62,23 @@ When /^(?:he|she|I) add(?:s)? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certi
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
     And "he clicks the 'radio' with '#{duration}' 'value'"
-  @browser.button(:src, /next_bl\.gif/).click
+    And "he clicks the next image button"
 end
 
 When /^(?:he|she|I) add(?:s)? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate with domains ['"]([^'"]*)['"] to the cart$/ do |duration, type, domains|
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
-    And "he fills the 'text_field' having attribute 'name' == 'signing_request' with", domains
+    And "he fills the 'text_field' having attribute 'name' == 'additional_domains' with", domains
     And "he clicks the 'radio' with '#{duration}' 'value'"
-  @browser.button(:src, /next_bl\.gif/).click
+    And "he clicks the next image button"
 end
 
 When /^(?:he|she|I) check(?:s)?out$/ do
-  @browser.goto APP_URL + new_order_path
+  goto new_order_path
 end
 
 When /^(?:he|she|I) go(?:es)? to the ['"]([^'"]*)['"] certificate buy page$/ do |type|
-  @browser.goto APP_URL + buy_certificate_path(type)
+  lambda{|x|is_capybara? ? visit(x) : @browser.goto(APP_URL+x)}.(buy_certificate_path(type))
 end
 
 When /^(?:he|she|I) applies the order to the reseller account$/ do
@@ -135,15 +140,14 @@ end
 When /^(?:he|she|I) enters? (?:his|her|my) new user information$/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
-    @browser.text_field(:id, "user_login").value = profile["login"]
-    @browser.text_field(:id, "user_email").value = profile["email"]
-    @browser.text_field(:id, "user_password").value = profile["password"]
-    @browser.text_field(:id, "user_password_confirmation").value =
-      profile["confirm"]
+    {"user_login"=>profile["login"],"user_email"=>profile["email"],
+    "user_password"=>profile["password"],"user_password_confirmation"=>profile["confirm"]}.each do |k,v|
+      fill_text(k,v)
+    end
   end
 end
 
-When /^(?:he|she|I) add an ssl certificate to the cart$/ do |table|
+When /^(?:he|she|I) add (?:an\s)?ssl certificates? to the cart$/ do |table|
   @order_total=0
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
@@ -234,9 +238,15 @@ end
 
 When /^(?:he|she|I) request domain control validation from (\S+)$/ do |email|
   @domain_control_validation_count = DomainControlValidation.count
-  visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
+  co=@user.ssl_account.certificate_orders.last
+  if co.new?
+    visit(new_certificate_order_validation_path(co))
+  elsif co.paid?
+    visit(edit_certificate_order_validation_path(co))
+  end
   choose "refer_to_others_true"
   fill_in "email_addresses", with: email
+  #submit button is missing for existing order
   find("#upload_files").click
 end
 

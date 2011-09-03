@@ -40,9 +40,9 @@ Given /^I am logged in as "(.*)"$/ do |login|
   login_user
 end
 
-Given /^I am not logged in$/ do
-  logout_user
-end
+#Given /^I am not logged in$/ do
+#  logout_user
+#end
 
 When /^I Log In$/ do
   login_user

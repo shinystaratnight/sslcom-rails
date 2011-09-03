@@ -6,6 +6,22 @@
 require 'rubygems'
 require 'spork'
 
+def is_capybara?
+  is_selenium? || is_rack_test? || is_webkit?
+end
+
+def is_rack_test?
+  page && page.driver.is_a?(Capybara::RackTest::Driver)
+end
+
+def is_selenium?
+  page && page.driver.is_a?(Capybara::Selenium::Driver)
+end
+
+def is_webkit?
+  page && page.driver.is_a?(Capybara::Driver::Webkit)
+end
+
 Spork.prefork do
   # Sets up the Rails environment for Cucumber
   ENV["RAILS_ENV"] = "test"
@@ -58,8 +74,8 @@ Spork.prefork do
   #end
 
   DatabaseCleaner.clean_with :truncation # clean once to ensure clean slate
-  #DatabaseCleaner.strategy = :truncation # for selenium
-  DatabaseCleaner.strategy = :transaction
+  DatabaseCleaner.strategy = :truncation # for selenium
+  #DatabaseCleaner.strategy = :transaction
 
   #bypasses declarative authorization to allow creating objects
   #World(Authorization::Maintenance)

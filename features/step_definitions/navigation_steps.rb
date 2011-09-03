@@ -21,7 +21,11 @@ Given /^(?:he|she|I) logs? in with username ['"]([^'"]*)['"] and password ['"]([
 end
 
 Given /^(?:he|she|I) (?:am|are) not logged in$/ do
-  @browser.goto APP_URL + logout_path
+  if is_capybara?
+    visit(logout_path)
+  else
+    @browser.goto APP_URL + logout_path
+  end
 end
 
 When /^(?:he|she|I) logs? out$/ do
@@ -33,18 +37,44 @@ When /^(?:he|she|I) visit (.*)$/ do |url|
 end
 
 Then /^(?:he|she|I) should be (?:directed to|at) path ['|"]([^'"]*)['|"]$/ do |text|
-  @browser.url.should include(text)
+  url_should_include(text)
 end
 
 Then /^(?:he|she|I) should be (?:directed to|at) route path "([^\"]*)"$/ do |text|
-  @browser.url.should include(eval(text))
+  url_should_include(eval(text))
 end
 
 Then /^(?:he|she|I) should be directed to the login path$/ do
-  @browser.url.should include(login_path)
+  url_should_include(login_path)
 end
 
 Then /^(?:he|she|I) should be directed to the order page$/ do
-  @order = Order.last
-  @browser.url.should include(order_path(@order))
+  @order = Order.first
+  url_should_include(order_path(@order))
+end
+
+def goto(path)
+  lambda{|x|is_capybara? ? visit(x) : @browser.goto(APP_URL+x)}.(path)
+end
+
+def fill_text(key,value)
+  if is_capybara?
+    case key
+    when /country$/, /credit_card$/, /expiration_(month|year)$/
+      select value, from: key
+    else
+      fill_in(key, with: value)
+    end
+  else
+    case key
+    when /country$/, /credit_card$/, /expiration_[month|year]$/
+      @browser.select_list(:id, key).set value
+    else
+      @browser.text_field(:id, key).value = value
+    end
+  end
+end
+
+def url_should_include(text)
+  (is_capybara? ? current_path : @browser.url).should include(text)
 end

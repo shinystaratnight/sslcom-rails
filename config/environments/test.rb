@@ -32,6 +32,20 @@ SslCom::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  config.to_prepare do
+    OrderTransaction.gateway =
+      ActiveMerchant::Billing::AuthorizeNetGateway.new(
+        :login    => '9jFL5k9E',
+        :password => '8b3zEL5H69sN4Pth'
+      )
+    BillingProfile.password = "kama1jama1"
+  end
+
+  #config.log_level = Logger::INFO
+
+  GATEWAY_TEST_CODE=1.0
+  # END ActiveMerchant configuration
 end
 
 require "#{Rails.root}/lib/firewatir_url.rb"
