@@ -90,7 +90,7 @@ Given /^(\w*) has a completed but unvalidated dv certificate order$/ do |login|
   @user = User.find_by_login(login)
   @certificate_order = FactoryGirl.create(:completed_unvalidated_dv_certificate_order,
     ssl_account: @user.ssl_account)
-  @certificate_content = FactoryGirl.create(:certificate_content_w_contacts,
+  @certificate_content = FactoryGirl.create(:certificate_content_pending_validation,
     certificate_order: @certificate_order)
   @certificate_order.certificate_contents << @certificate_content
   @user.ssl_account.certificate_orders << @certificate_order

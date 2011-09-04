@@ -2,8 +2,9 @@
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
 #also all comments must appear before tags with no comments in-between tags
 #@rack_test
+@selenium
+@remote
 @firebug
-@selenium @no-txn @remote
 @setup_certificates
 
 Feature: Permissions to pages
@@ -35,6 +36,7 @@ Feature: Permissions to pages
       And they should see "lobby.sb.betsoftgaming.com" in the email body
 
   #email testing doesn't work with selenium_remote
+  @passed_rack_test
   Scenario: User can send validation requests for a completed order to other users
     Given an activated user Fred exists
       And Fred has a completed but unvalidated dv certificate order
@@ -46,17 +48,23 @@ Feature: Permissions to pages
       And they should see "Additional validation information is required" in the email body
       And they should see "lobby.sb.betsoftgaming.com" in the email body
 
-#      And somebody should have access to the validation submittal page
-#      And somebodyelse should not have access to the validation submittal page
-
-  Scenario: Person who received a validation request should be able to supply validation
+  @passed_selenium
+  Scenario: Person who received a validation request must register to supply validation
     Given a registered user Fred exists
-      And Fred has a certificate order
-      And I'm logged in as Fred
-     When I request domain control validation from somebody@example.com
-     Then somebody should receive a request email
-      And somebody should have access to the validation submittal page
-      And somebody else should not have access to the validation submittal page
+      And Fred has a completed but unvalidated dv certificate order
+      And somebody@example.com received a domain control validation request from Fred
+     When somebody@example.com attempts to supply domain control validation
+     Then somebody@example.com should be required to register
+
+  Scenario: Person who received a validation request and is registered should be able to supply validation
+    Given a registered user Fred exists
+      And a registered user Susan exists
+      And Fred has a completed but unvalidated dv certificate order
+      And Susan received a domain control validation request from Fred
+      And I login as Susan
+     When I supply domain control validation
+     Then I am able to supply domain control validation
+
 
   Scenario: Person who received a validation request should be able to forward request
   Scenario: Person who did not receive a validation request should not be able to supply validation

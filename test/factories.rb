@@ -71,6 +71,10 @@ FactoryGirl.define do
           FactoryGirl.create(:business_certificate_contact, contactable: cc)
           FactoryGirl.create(:technical_certificate_contact, contactable: cc)
         }
+
+        factory :certificate_content_pending_validation do
+          workflow_state "pending_validation"
+        end
       end
     end
   end
@@ -163,6 +167,9 @@ EOS
 
   factory :role do
 
+  end
+
+  factory :other_party_validation_request do
   end
 end
 

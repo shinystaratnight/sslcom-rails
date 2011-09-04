@@ -6990,3 +6990,13 @@ span#no_emails_accessible {
   margin: 0pt auto;
   width: 21%;
 }
+
+/* line 5127, ../../../app/stylesheets/main.sass */
+#send_verification_box {
+  width: 100%;
+}
+/* line 5130, ../../../app/stylesheets/main.sass */
+#send_verification_box #send_verification {
+  float: inherit;
+  width: 20%;
+}

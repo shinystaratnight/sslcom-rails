@@ -241,13 +241,16 @@ When /^(?:he|she|I) request domain control validation from (\S+)$/ do |email|
   co=@user.ssl_account.certificate_orders.last
   if co.new?
     visit(new_certificate_order_validation_path(co))
+    choose "refer_to_others_true"
+    fill_in "email_addresses", with: email
+    find("#upload_files").click
   elsif co.paid?
     visit(edit_certificate_order_validation_path(co))
+    choose "refer_to_others_true"
+    fill_in "other_party_validation_request_email_addresses", with: email
+    click_on "send request"
   end
-  choose "refer_to_others_true"
-  fill_in "email_addresses", with: email
   #submit button is missing for existing order
-  find("#upload_files").click
 end
 
 Then /^a domain control validation request should be sent$/ do
@@ -255,4 +258,24 @@ Then /^a domain control validation request should be sent$/ do
   dcv = DomainControlValidation.last
   page.should have_content(dcv.email_address)
   page.should have_content(dcv.sent_at.strftime("%b %d, %Y %R"))
+end
+
+When /^(\S+) received a domain control validation request from (\S+)$/ do |recipient, sender|
+  validation_provider = User.find_by_login(recipient) ? User.find_by_login(recipient).email : recipient
+  user=User.find_by_login(sender)
+  @other_party_validation_request = FactoryGirl.create(:other_party_validation_request, user: user,
+    other_party_requestable: @certificate_order, email_addresses: validation_provider)
+end
+
+When /^(\S+) attempts? to supply domain control validation$/ do |user|
+  visit(other_party_validation_request_path(@other_party_validation_request.identifier))
+end
+
+When /^(\S+) supply domain control validation$/ do |user|
+  visit(other_party_validation_request_path(@other_party_validation_request.identifier))
+  click_on "send verification"
+end
+
+Then /^(\S+) (?:am|are) able to supply domain control validation$/ do |user|
+  @should see something
 end

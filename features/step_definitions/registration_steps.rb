@@ -57,5 +57,7 @@ Then /^['"](user .+?)['"] should be an activated reseller$/ do |user|
 end
 
 
-
-
+Then /^(\S+) should be required to register$/ do |user|
+  page.has_content?("You must be logged in")
+  current_path.should == new_user_session_path
+end

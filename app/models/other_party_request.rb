@@ -6,7 +6,7 @@ class OtherPartyRequest < ActiveRecord::Base
   validates   :other_party_requestable, :email_addresses, presence: true
   validate    :email_addresses_formats
 
-  before_create do |o|
+  before_validation on: :create do |o|
     o.identifier='opvr-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
   end
 
