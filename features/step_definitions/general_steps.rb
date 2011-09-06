@@ -78,7 +78,11 @@ When /^(?:he|she|I) fills? all the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]s with
 end
 
 When /^(?:he|she|I) selects? ['"]([^'"]*)['"] as ['"]([^'"]*)['"]$/ do |value, id|
-  @browser.select_list(:id, Regexp.new(id)).value = value
+  if is_capybara?
+    find("select[id*='#{id}']").set(value)
+  else
+    @browser.select_list(:id, Regexp.new(id)).value = value
+  end
 end
 
 When /^(?:he|she|I) (?:is|am) prompted (?:to|for|with) ['"]([^'"]*)['"]$/ do |text|
@@ -189,6 +193,10 @@ Given /^['"](user .+?)['"]'s roles? ['"]([^'"]*)['"] ['"]([^'"]*)['"]$/ do |user
   end
 end
 
+Then /^(\S+) should be denied$/ do |user|
+  page.should have_content("You currently do not have permission to access that page.")
+end
+
 def transform_element(element)
   case element
   when "link"
@@ -219,5 +227,4 @@ end
 def set_element(element, attribute, attribute_val, value)
   elem=get_element(element, attribute, attribute_val)
   is_capybara? ? elem.set(value) : elem.send(element.intern, attribute.intern, Regexp.new(attribute_val)).value = value
-
 end

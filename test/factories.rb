@@ -1,8 +1,26 @@
 FactoryGirl.define do
-  factory :user do
+  factory :user  do
     association :ssl_account
     roles {|roles|[roles.association(:role)]}
-    after_create {|user|user.roles = [FactoryGirl.create(:role, name: "customer")]}
+
+    factory :customer do
+      after_create {|user|user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]}
+    end
+
+    factory :sysadmin do
+      after_create {|user|user.roles = [FactoryGirl.create(:role, name: "sysadmin")]}
+    end
+
+    factory :reseller_user do
+      after_create {|user|user.roles = [FactoryGirl.create(:role, name: Role::RESELLER)]}
+
+      factory :tier_2_reseller do
+        after_create{|user|
+          user.ssl_account=FactoryGirl.create(:ssl_account_reseller_tier_2)
+          user.save
+        }
+      end
+    end
   end
   
   #factory :registrant do
@@ -162,6 +180,42 @@ EOS
     preferred_reminder_notice_destinations '0'
     sequence :acct_number do |n|
       n.to_s+ActiveSupport::SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
+    end
+
+    factory :ssl_account_reseller do
+      after_create {|sa|
+        sa.add_role! "reseller"
+        sa.set_reseller_default_prefs
+      }
+      factory :ssl_account_reseller_tier_1 do
+        after_create {|sa|
+          FactoryGirl.create(:registered_reseller, ssl_account: sa, reseller_tier: ResellerTier.find(1))}
+      end
+      factory :ssl_account_reseller_tier_2 do
+        after_create {|sa|
+          FactoryGirl.create(:registered_reseller, ssl_account: sa, reseller_tier: ResellerTier.find(2))}
+      end
+    end
+  end
+
+  factory :reseller do
+    type_organization Reseller::BUSINESS
+    organization "Acme Inc"
+    website "www.example.com"
+    address1 "123 Abc St"
+    postal_code 12345
+    city "Some City"
+    state "NY"
+    tax_number "123-45-1234"
+    country "US"
+    first_name "Billy"
+    last_name "Bob"
+    email "someone@example.com"
+    phone "111-111-1111"
+    association :ssl_account
+
+    factory :registered_reseller do
+      workflow_state "complete"
     end
   end
 

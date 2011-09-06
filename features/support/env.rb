@@ -78,15 +78,13 @@ Spork.prefork do
   #DatabaseCleaner.strategy = :transaction
 
   #bypasses declarative authorization to allow creating objects
-  #World(Authorization::Maintenance)
+  World(Authorization::Maintenance)
   World(OrdersHelper)
 
   # Make visible for testing
   #BaseController.send(:public, :logged_in?, :current_user, :authorized?)
 
-
   ActionMailer::Base.delivery_method = :test
-
 
   class ActiveRecord::Base
     mattr_accessor :shared_connection
@@ -288,18 +286,17 @@ Spork.each_run do
     @browser = Watir::Browser.new
   end
 
-  Before('@no-txn') do
+  Before('no-txn') do
     DatabaseCleaner.start
   end
 
-  After('@no-txn') do
+  After('no-txn') do
     DatabaseCleaner.clean
   end
 
   Before("@remote") do
     Capybara.run_server = false
   end
-
 end
 
 

@@ -30,17 +30,18 @@ Then /^there should be an account for Fred$/ do
 end
 
 # by default create named user with attributes done by convention
-When /^I create a user with login (\w*)$/ do |login|
-  @user = FactoryGirl.create(:user, :login => login,
-    password: login + "pass",
-    password_confirmation: login + "pass",
-    email: login + "@example.com",
-    password_salt: salt = Authlogic::Random.hex_token,
-    crypted_password: Authlogic::CryptoProviders::Sha512.encrypt(login + "pass" + salt),
-    persistence_token: Authlogic::Random.hex_token,
-    single_access_token: Authlogic::Random.friendly_token,
-    perishable_token: Authlogic::Random.friendly_token)
-
+When /^I create an? (\S+) with login (\w*)$/ do |type, login|
+  without_access_control do
+    @user = FactoryGirl.create(type.to_sym, :login => login,
+      password: login + "pass",
+      password_confirmation: login + "pass",
+      email: login + "@example.com",
+      password_salt: salt = Authlogic::Random.hex_token,
+      crypted_password: Authlogic::CryptoProviders::Sha512.encrypt(login + "pass" + salt),
+      persistence_token: Authlogic::Random.hex_token,
+      single_access_token: Authlogic::Random.friendly_token,
+      perishable_token: Authlogic::Random.friendly_token)
+  end
 end
 
 When /^I register a user with login (\w*)$/ do |login|
@@ -59,13 +60,16 @@ When /^I activate a user with login (\w*)$/ do |login|
   @user
 end
 
-Given /^a registered user (\w*) exists$/ do |user|
-  When "I create a user with login #{user}"
+Given /^a registered (\S+) (\w*) exists$/ do |type, user|
+  type = "customer" if type=="user"
+  When "I create a #{type} with login #{user}"
    And "I register a user with login #{user}"
+
 end
 
-Given /^an activated user (\w*) exists$/ do |user|
-  When "I create a user with login #{user}"
+Given /^an activated (\S+) (\w*) exists$/ do |type, user|
+  type = "customer" if type=="user"
+  When "I create a #{type} with login #{user}"
    And "I register a user with login #{user}"
    And "I activate a user with login #{user}"
 end

@@ -1,11 +1,10 @@
 Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] ['"]([^'"]*)['"] year certificate using csr ['"]([^'"]*)['"]$/ do |type, duration, csr|
   csr = eval("@#{csr}").gsub(/\r\n/,"\n")
   When "he goes to the '#{type}' certificate buy page"
-  Then "he should be at step '1' of '4'"
-  When "he fills the 'text_field' having attribute 'id' == 'signing_request' with", csr
+    And "he fills the 'text_field' having attribute 'id' == 'signing_request' with", csr
     And "he selects '1' as 'server_software'"
     And "he clicks the 'radio' with '#{duration}' 'value'"
-  @browser.button(:src, /next_bl\.gif/).click
+    And "he clicks the next image button"
 end
 
 Given /^(?:his|her|my)(?: shopping)? cart is empty$/ do
@@ -206,8 +205,15 @@ Then /^(?:he|she|I) ['"]([^'"]*)['"] authorized to ['"]([^'"]*)['"] the ['"]([^'
 end
 
 Then /^(?:he|she|I) should be at step ['"]([^'"]*)['"] of ['"]([^'"]*)['"]$/ do |index, count|
-  @browser.elements_by_xpath("//li[@id='selected']").first.text.should include(index+" ")
-  @browser.elements_by_xpath("//div[@id='form_progress_indicator']/ul/li").count.should eql(count.to_i)
+  lambda{|e|(is_capybara? ? find(:xpath, e) :
+      @browser.elements_by_xpath(e)).first.text.should include(index+" ")}.call("//li[@id='selected']")
+  lambda{|e|(is_capybara? ? find(:xpath, e) :
+      @browser.elements_by_xpath(e)).count.should eql(count.to_i)}.call("//div[@id='form_progress_indicator']/ul/li")
+end
+
+Then /^(?:he|she|I) should see (\d+) steps to complete my ssl.com certificate order$/ do |count|
+  lambda{|e|(is_capybara? ? page.all(:xpath, e) :
+      @browser.elements_by_xpath(e)).count.should eql(count.to_i)}.call("//div[@id='form_progress_indicator']/ul/li")
 end
 
 Then /^(?:he|she|I) should see certificate order receipt recipients$/ do
@@ -238,19 +244,15 @@ end
 
 When /^(?:he|she|I) request domain control validation from (\S+)$/ do |email|
   @domain_control_validation_count = DomainControlValidation.count
-  co=@user.ssl_account.certificate_orders.last
-  if co.new?
-    visit(new_certificate_order_validation_path(co))
-    choose "refer_to_others_true"
-    fill_in "email_addresses", with: email
-    find("#upload_files").click
-  elsif co.paid?
-    visit(edit_certificate_order_validation_path(co))
-    choose "refer_to_others_true"
-    fill_in "other_party_validation_request_email_addresses", with: email
-    click_on "send request"
-  end
-  #submit button is missing for existing order
+  request_dcv_from_email(@user.ssl_account.certificate_orders.last, email)
+end
+
+When /^(?:he|she|I) forward domain control validation request to (\S+)$/ do |email|
+  @domain_control_validation_count = DomainControlValidation.count
+  visit(other_party_validation_request_path(@other_party_validation_request.identifier))
+  choose "refer_to_others_true"
+  fill_in "other_party_validation_request_email_addresses", with: email
+  click_on "send request"
 end
 
 Then /^a domain control validation request should be sent$/ do
@@ -271,11 +273,30 @@ When /^(\S+) attempts? to supply domain control validation$/ do |user|
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
 end
 
-When /^(\S+) supply domain control validation$/ do |user|
+def request_dcv_from_email(co, email)
+  if co.new?
+    visit(new_certificate_order_validation_path(co))
+    choose "refer_to_others_true"
+    fill_in "email_addresses", with: email
+    find("#upload_files").click
+  elsif co.paid?
+    visit(edit_certificate_order_validation_path(co))
+    choose "refer_to_others_true"
+    fill_in "other_party_validation_request_email_addresses", with: email
+    click_on "send request"
+  end
+end
+
+
+When /^(\S+) sends? domain control validation verification$/ do |user|
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
   click_on "send verification"
 end
 
-Then /^(\S+) (?:am|are) able to supply domain control validation$/ do |user|
-  @should see something
+Then /^domain control validation confirmation should appear$/ do
+  page.should have_content("Validation email sent to #{find("#domain_control_validation_email").value}")
+end
+
+Then /^domain control validation request should be created$/ do
+  DomainControlValidation.last.email_address.should == find("#domain_control_validation_email").value
 end

@@ -1,6 +1,7 @@
 #use driver @rack_test for inline and @selenium for remote
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
 #also all comments must appear before tags with no comments in-between tags
+#email tests do not work with remote selenium
 #@rack_test
 @selenium
 @remote
@@ -48,7 +49,7 @@ Feature: Permissions to pages
       And they should see "Additional validation information is required" in the email body
       And they should see "lobby.sb.betsoftgaming.com" in the email body
 
-  @passed_selenium
+  @passed_selenium_remote
   Scenario: Person who received a validation request must register to supply validation
     Given a registered user Fred exists
       And Fred has a completed but unvalidated dv certificate order
@@ -56,65 +57,38 @@ Feature: Permissions to pages
      When somebody@example.com attempts to supply domain control validation
      Then somebody@example.com should be required to register
 
+  @passed_selenium_remote
   Scenario: Person who received a validation request and is registered should be able to supply validation
     Given a registered user Fred exists
       And a registered user Susan exists
       And Fred has a completed but unvalidated dv certificate order
       And Susan received a domain control validation request from Fred
       And I login as Susan
-     When I supply domain control validation
-     Then I am able to supply domain control validation
+     When I send domain control validation verification
+     Then domain control validation confirmation should appear
+      And domain control validation request should be created
 
+  @passed_rack_test @passed_selenium_remote
+  Scenario: Person who received a validation request and is registered should be able to forward validation
+    Given a registered user Fred exists
+      And a registered user Susan exists
+      And Fred has a completed but unvalidated dv certificate order
+      And Susan received a domain control validation request from Fred
+      And I login as Susan
+     When I forward domain control validation request to somebody@example.com
+      And "somebody@example.com" opens the email
+     Then "somebody@example.com" should have an email
+      And they should see "Validation Request for SSL.com Certificate lobby.sb.betsoftgaming.com" in the email subject
+      And they should see "Additional validation information is required" in the email body
+      And they should see "lobby.sb.betsoftgaming.com" in the email body
 
-  Scenario: Person who received a validation request should be able to forward request
+  @passed_rack_test @passed_selenium_remote
   Scenario: Person who did not receive a validation request should not be able to supply validation
-  Scenario: Anonymous users should not be able to see any validation pages
-  Scenario: User logins when other users exist
     Given an activated user Fred exists
-      And an activated user Bill exists
-     When I login as Fred
-     Then I should be logged in as Fred
-      And I should not be logged in as Bill
-      And I should have my user id in my session store
-
-  Scenario: Logged-in user who fails logs in should be logged out
-    Given an activated user Fred exists
-     When I login as Fred
-     Then I should be logged in as Fred
-     When I login as someone else and fail
-     Then I should not be logged in
-      And I should see an error
-      And I should not have an auth_token cookie
-      And I should not have a user id in my session store
-
-  Scenario: Logged out user can log out.
-    Given I am logged out
-     When I logout
-     Then I should not be logged in
-      And I should not have an auth_token cookie
-      And I should not have a user id in my session store
-
-  Scenario Outline: Log-in with bogus info should fail until it doesn't
-  # TODO These stories rely on a user called 'fred' with a password 'fredpass'.
-  # It might be a good idea to remove this coupling
-
-    Given an activated user Fred exists
-     When I login as Fred with password
-     Then my login status should be out
-
-    Examples:
-      | user | login | pass | status |
-      | Fred | Fred | haxor3 | out |
-      | bill | bill | haxor3 | out |
-      | Fred | Fred | peeppass | out |
-      | Fred | Fred | Fredpass | in |
-
-  Scenario: Logged in user can log out.
-    Given an activated user Fred exists
-     When I login as Fred
-     Then I should be logged in as Fred
-     When I logout
-     Then I should see a confirmation
-      And I should not be logged in
-      And I should not have an auth_token cookie
-      And I should not have a user id in my session store
+      And an activated user Nosey exists
+      And an activated user Susan exists
+      And Fred has a completed but unvalidated dv certificate order
+      And Susan received a domain control validation request from Fred
+      And I login as Nosey
+     When I attempt to supply domain control validation
+     Then I should be denied

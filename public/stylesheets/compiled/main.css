@@ -6994,8 +6994,10 @@ span#no_emails_accessible {
 /* line 5127, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
+  text-align: center;
+  margin: 0 auto;
 }
-/* line 5130, ../../../app/stylesheets/main.sass */
+/* line 5132, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;
