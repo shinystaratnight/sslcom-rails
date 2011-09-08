@@ -189,37 +189,83 @@ YefSExBnHUItfHe7ABcxH66dPaQHfhForDD9TL8KtSzP3whwSQhQ2uH51J279IfB
 EyM422Ir
 -----END CERTIFICATE-----
 EOS
+
+  @ssl_danskkabeltv_dk_2048_csr = <<EOS
+-----BEGIN CERTIFICATE REQUEST-----
+MIIC6jCCAdICAQAwgaQxCzAJBgNVBAYTAkRLMRMwEQYDVQQIEwpDb3BlbmhhZ2Vu
+MRQwEgYDVQQHEwtBbGJlcnRzbHVuZDEPMA0GA1UECxMGVGVrbmlrMRcwFQYDVQQK
+Ew5EYW5zayBLYWJlbCBUVjEcMBoGA1UEAxMTc3NsLmRhbnNra2FiZWx0di5kazEi
+MCAGCSqGSIb3DQEJARYTc2xoQGRhbnNra2FiZWx0di5kazCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBANG+v2MNf5oD/iQhOuKlBzJRqAFHMj3KuKejfw29
+eubsO+PATjwJAoyuN+smnlSjzL8or6Yb1wNaBPbDY3OprO4+KJ7tgMfxnqScrbdi
+RuqbhFy2WOs/UmsMyP0Eb7GSf2dPktgvhK8h5Y8lsGpZFpWj05CdewdFYD2THz9f
+uonFBk0OsaMKu48wE9exT0PsdtSG5Z2bEYs24gHO4IgqyKtSSsciUBghx161NBX/
+1d6xwiXwv25SKEOr2vww/IYUGvfIKZNHDcren2PShmSUE+WW5uTeY18Lbzs51Gxh
+MTjRZvrI9VSoxYp3hjh/CIpuIDL/ACe/3Ht90nQ3RAXz0PsCAwEAAaAAMA0GCSqG
+SIb3DQEBBQUAA4IBAQDFxzw9pi2agvF6bRl1RxyinfnBLVrZcszp07rEf+D6sLcE
+m/hEPcd5cisk/NAOU1YrWZPBmVxyQeNP/9t22P98cZvVxGam257/D/hKLCFvT6O+
+8qR/i6wAl19BMX0jLMODNkXHRMHq4v/Uv9DkpejcwvqzcrH2EbKL/ZYgM4e7CtlK
+Sv4v5KfdNucQPgoaWB76OFkqmVsLTZAeFhT9+R8c1kXAeaqWk5wSYVyJVofFG5Ox
+dqdBYOw9UwEsiFwYYMk6XSRXDPA9ldBYqgb/ck/BxFVFzdLg2p8plZWjuhqcNI9E
+wJ4W0jbRq+eaj9c10Q3cPAT65yYggar+AKD7Gr+H
+-----END CERTIFICATE REQUEST-----
+EOS
+
+  @star_corp_crowdfactory_com_2048_csr = <<EOS
+-----BEGIN CERTIFICATE REQUEST-----
+MIIC0TCCAbkCAQAwgYsxCzAJBgNVBAYTAnVzMQ8wDQYDVQQIEwZPcmVnb24xETAP
+BgNVBAcTCFBvcnRsYW5kMRswGQYDVQQKExJDcm93ZCBGYWN0b3J5IEluYy4xGTAX
+BgNVBAsTEE9wZXJhdGlvbnMgR3JvdXAxIDAeBgNVBAMMFyouY29ycC5jcm93ZGZh
+Y3RvcnkuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq5f0CVkd
+zR6lMoI/ejRvK/8Q+TLOk9SEyKxAx9hpmwf8+qLnt5Et6w1gplpqgjREQj6LMpcj
+99gNoRTfkGGu+AO23wOPjmknAPHUEHAoPR3JIv643Dk4vTXGTLTAeoi5equEaq5l
+6iz32UtSpROBHPRJjVHg/wC/UkolDT2tfhVOYELyzTW44OkWaVAgvjLEXEu2Wq2J
+LZuShvfA6dPHfpgfZVAQD1/ucnlkbDXaGcb/vldgirEND8OvA0uufuKFUOjd+NdQ
+eCCxHgN5YiKax4EMZ5Xu3BQK1XNkcbee8pW/fdhPX8ZpraoamgjU1aFfW9GGiKpH
+JSl/u5EkcYFl/wIDAQABoAAwDQYJKoZIhvcNAQEFBQADggEBAJiiuHHG3sIfZqqd
+J1MYS1S8pp9z8fzwEagl1PseGpr4tzqdI/YyAmsKbJ/5Vcjl7omnH5EbjbrWHxnT
+HI/yD9iYzys5APRYuWTsu2062E1oBuqCUZlambofM3OJ3ZOaqKDMuKPOYaZXZ5oa
+wo5DnhHydWM5oueaWbMuLv8ydbqolP+MrBhbA8CQp+nlwsxeJHyFhJINL0Ewb/GE
+oMFCVp27p9bIE35qpNqOaYAcLxp6wTFTPRg048vpYbZxNfwV07uMTJnge7YdQ9KP
+yMi36slJID403aJwthhX8cwWVOLpbBjDG9gcucR1l3TSDW8QVWDMari4ih5mIIQP
+xMajgLU=
+-----END CERTIFICATE REQUEST-----
+EOS
 }
 
-Selenium::WebDriver::Firefox::Profile.firebug_version = '1.8.1'
+  Selenium::WebDriver::Firefox::Profile.firebug_version = '1.8.1'
 
-Capybara.app_host = "http://staging1.ssl.com:3000"
+  Capybara.app_host = "http://staging1.ssl.com:3000"
 
-def driver_selection
-  if @driver[:name]==:firewatir
-    if RUBY_PLATFORM =~ /(i486|x86_64)-linux/
-      require 'firewatir'
-      Watir::Browser.default = 'firefox'
-    else
-      case RUBY_PLATFORM
-      when /darwin/
-        Watir::Browser.default = 'safari'
-      when /win32|mingw/
-        Watir::Browser.default = 'ie'
-      when /java/
-        Watir::Browser.default = 'celerity'
+  def driver_selection
+    if @driver[:name]==:firewatir
+      if RUBY_PLATFORM =~ /(i486|x86_64)-linux/
+        require 'firewatir'
+        Watir::Browser.default = 'firefox'
       else
-        raise "This platform is not supported (#{RUBY_PLATFORM})"
+        case RUBY_PLATFORM
+        when /darwin/
+          Watir::Browser.default = 'safari'
+        when /win32|mingw/
+          Watir::Browser.default = 'ie'
+        when /java/
+          Watir::Browser.default = 'celerity'
+        else
+          raise "This platform is not supported (#{RUBY_PLATFORM})"
+        end
       end
+      @browser = Watir::Browser.new
     end
-    @browser = Watir::Browser.new
   end
-end
 
-require "authlogic/test_case"
+  require "authlogic/test_case"
 
-#World(Authlogic::TestCase)
+  #World(Authlogic::TestCase)
 
+  #selenium synchronize not working properly
+  Before do
+    page.driver.options[:resynchronize] = false
+  end
 end
 
 Spork.each_run do

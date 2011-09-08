@@ -1,5 +1,6 @@
 require 'zip/zip'
 require 'zip/zipfilesystem'
+require 'openssl-extensions/all'
 
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups
@@ -14,6 +15,7 @@ class Csr < ActiveRecord::Base
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   has_many    :certificate_orders, :through=>:certificate_content
+  serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
@@ -24,29 +26,54 @@ class Csr < ActiveRecord::Base
   }
 
   def body=(csr)
-    ssl_util = Savon::Client.new Settings.csr_parser_wsdl
-    self[:body] = csr
-    begin
-      response = ssl_util.parse_csr do |soap|
-        soap.body = {:csr => csr}
+    unless Settings.csr_parser=="remote"
+      self[:body] = csr
+      begin
+        parsed = OpenSSL::X509::Request.new csr
+      rescue
+        location = "CertificateContent.id=#{certificate_content.id}=>" if
+          certificate_content
+        location +="Csr.id=#{id}=>" unless id.blank?
+          certificate_content
+        logger.error "could not parse #{location || 'unknown'} for #{csr}"
+      else
+        self[:common_name] = parsed.subject.common_name
+        self[:organization] = parsed.subject.organization
+        self[:organization_unit] = parsed.subject.organizational_unit
+        self[:state] = parsed.subject.region
+        self[:locality] = parsed.subject.locality
+        self[:country] = parsed.subject.country
+        self[:email] = parsed.subject.email
+        self[:sig_alg] = parsed.signature_algorithm
+        self[:subject_alternative_names] = parsed.subject_alternative_names
+        self[:strength] = parsed.strength
+        self[:challenge_password] = parsed.challenge_password?
       end
-    rescue
-      location = "CertificateContent.id=#{certificate_content.id}=>" if
-        certificate_content
-      location +="Csr.id=#{id}=>" unless id.blank?
-        certificate_content
-      logger.error "could not parse #{location || 'unknown'} for #{csr}"
     else
-      parsed = response.to_hash[:multi_ref]
-      self[:duration] = parsed[:duration] unless parsed[:duration].is_a? Hash
-      self[:common_name] = parsed[:common_name] unless parsed[:common_name].is_a? Hash
-      self[:organization] = parsed[:organization] unless parsed[:organization].is_a? Hash
-      self[:organization_unit] = parsed[:organization_unit] unless parsed[:organization_unit].is_a? Hash
-      self[:state] = parsed[:state] unless parsed[:state].is_a? Hash
-      self[:locality] = parsed[:locality] unless parsed[:locality].is_a? Hash
-      self[:country] = parsed[:country] unless parsed[:country].is_a? Hash
-      self[:email] = parsed[:email] unless parsed[:email].is_a? Hash
-      self[:sig_alg] = parsed[:sig_alg] unless parsed[:sig_alg].is_a? Hash
+      ssl_util = Savon::Client.new Settings.csr_parser_wsdl
+      self[:body] = csr
+      begin
+        response = ssl_util.parse_csr do |soap|
+          soap.body = {:csr => csr}
+        end
+      rescue
+        location = "CertificateContent.id=#{certificate_content.id}=>" if
+          certificate_content
+        location +="Csr.id=#{id}=>" unless id.blank?
+          certificate_content
+        logger.error "could not parse #{location || 'unknown'} for #{csr}"
+      else
+        parsed = response.to_hash[:multi_ref]
+        self[:duration] = parsed[:duration] unless parsed[:duration].is_a? Hash
+        self[:common_name] = parsed[:common_name] unless parsed[:common_name].is_a? Hash
+        self[:organization] = parsed[:organization] unless parsed[:organization].is_a? Hash
+        self[:organization_unit] = parsed[:organization_unit] unless parsed[:organization_unit].is_a? Hash
+        self[:state] = parsed[:state] unless parsed[:state].is_a? Hash
+        self[:locality] = parsed[:locality] unless parsed[:locality].is_a? Hash
+        self[:country] = parsed[:country] unless parsed[:country].is_a? Hash
+        self[:email] = parsed[:email] unless parsed[:email].is_a? Hash
+        self[:sig_alg] = parsed[:sig_alg] unless parsed[:sig_alg].is_a? Hash
+      end
     end
   end
 

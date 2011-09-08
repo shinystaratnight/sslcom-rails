@@ -39,11 +39,11 @@ When /^['"]([^'"]*)['"] makes a deposit$/ do |person, profiles|
 end
 
 When /^(?:he|she|I) visits?\b "([^"]*)"$/ do |path|
-  @browser.goto APP_URL + path
+  goto path
 end
 
 When /^(?:he|she|I) visits?\b the payment page$/ do
-  @browser.goto APP_URL + billing_profiles_path(:new)
+  goto billing_profiles_path(:new)
 end
           
 When /^(?:he|she|I) enters? (?:his|her|my) profile information$/ do |table|

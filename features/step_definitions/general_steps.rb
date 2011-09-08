@@ -162,12 +162,16 @@ end
 
 Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]$/ do |text, id, element|
   element=transform_element(element)
-  tag=@browser.elements_by_xpath("//#{element}[contains(@id,\'#{id}\')]").find do |tag|
+  if is_capybara?
+   find(:xpath, "//#{element}[contains(@id,\'#{id}\')]").should have_content(text)
+  else
+    tag=@browser.elements_by_xpath("//#{element}[contains(@id,\'#{id}\')]").find do |tag|
+      tm = tag.method(element=='input' ? :value : :text)
+      tm.call.downcase.include?(text.downcase)
+    end
     tm = tag.method(element=='input' ? :value : :text)
-    tm.call.downcase.include?(text.downcase)
+    tm.call.downcase.should include(text.downcase)
   end
-  tm = tag.method(element=='input' ? :value : :text)
-  tm.call.downcase.should include(text.downcase)
 end
 
 Then /^(?:he|she|I) should see the checkbox with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] (unchecked|checked)$/ do |attribute_val,attribute,status|
@@ -208,23 +212,3 @@ def transform_element(element)
   end
 end
 
-def get_element(element, attribute, attribute_val)
-  if is_capybara?
-    case element
-      when /radio/, /checkbox/
-        element="input"
-        page.first(:xpath, "//#{element}[@#{attribute}='#{attribute_val}']")
-      when /text_field/
-        %w(input textarea).map do |text_elem|
-          page.first(text_elem, attribute.intern=>attribute_val)
-        end.compact.last
-    end
-  else
-    @browser.send(element.intern, attribute.intern, Regexp.new(attribute_val))
-  end
-end
-
-def set_element(element, attribute, attribute_val, value)
-  elem=get_element(element, attribute, attribute_val)
-  is_capybara? ? elem.set(value) : elem.send(element.intern, attribute.intern, Regexp.new(attribute_val)).value = value
-end

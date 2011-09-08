@@ -95,7 +95,7 @@ When /^(?:he|she|I) clicks the link to the current certificate order in progress
 end
 
 When /^(?:he|she|I) go(?:es)? to the certificate order page for ['"]([^'"]*)['"]$/ do |ref|
-  @browser.goto APP_URL + certificate_order_path(ref)
+  goto certificate_order_path(ref)
 end
 
 When /^certificate order ['"]([^'"]*)['"] is expiring in ['"]([^'"]*)['"]$/ do |ref, days|
@@ -116,19 +116,31 @@ When /^(?:he|she|I) fills in the applicant information using$/ do |table|
 end
 
 When /^(?:he|she|I) submits? ['"]([^'"]*)['"] as the signed certificate$/ do |cert|
-  @browser.text_field(:id, 'signed_certificate_body').value = cert
-  @browser.startClicker('OK')
-  @browser.button(:class, 'submit_signed_certificate').click_no_wait
-  #@browser.get_popup_text.should include('invalid')
-  #p.should include('valid')
+  fill_text 'signed_certificate_body',  cert
+  if is_capybara?
+    click_on "Submit certificate"
+    page.driver.browser.switch_to.alert.text.should have_content("invalid")
+    page.driver.browser.switch_to.alert.dismiss
+  else
+    @browser.startClicker('OK')
+    @browser.button(:class, 'submit_signed_certificate').click_no_wait
+    #@browser.get_popup_text.should include('invalid')
+    #p.should include('valid')
+  end
 end
 
 When /^(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed certificate$/ do |resubmit,cert|
-  @browser.text_field(:id, 'signed_certificate_body').value = eval("#{cert}").gsub(/\r\n/,"\n")
-  @browser.startClicker('OK') if resubmit
-  @browser.button(:class, 'submit_signed_certificate').click
-  #give a chance for the fields to be updated
-  sleep 5
+  fill_text 'signed_certificate_body', eval("#{cert}").gsub(/\r\n/,"\n")
+  if is_capybara?
+    click_on "Submit certificate"
+    page.driver.browser.switch_to.alert.text.should have_content("invalid")
+    page.driver.browser.switch_to.alert.dismiss
+  else
+    @browser.startClicker('OK') if resubmit
+    @browser.button(:class, 'submit_signed_certificate').click
+    #give a chance for the fields to be updated
+    sleep 5
+  end
 end
 
 When /^(?:he|she|I) clicks? the action link for the currently displayed order$/ do

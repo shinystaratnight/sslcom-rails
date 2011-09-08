@@ -38,6 +38,7 @@ gem 'uuidtools'
 gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
 gem 'sauce'
+gem 'openssl-extensions', :require => 'openssl-extensions/all'
 
 # Deploy with Capistrano
 # gem 'capistrano'
@@ -55,7 +56,7 @@ gem 'nokogiri'
     gem "builder"
     gem 'ruby_parser'
     gem 'ruby-debug-base19'
-    gem 'ruby-debug-ide19'
+    #gem 'ruby-debug-ide19'
     gem 'ruby-debug19'
     gem "rspec-rails"
     gem 'activerecord-sqlserver-adapter'

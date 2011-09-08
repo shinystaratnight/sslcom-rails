@@ -16,8 +16,36 @@ Feature: Ordering SSL.com Certificates intuitively
   @passed_rack_test @passed_selenium_remote
   Scenario Outline: Anonymous user buying ssl certificates should see the steps needed to buy ssl.com certificates
     Given I am not logged in
-     When I buy a "<certificate_type>" "1" year certificate using csr "lobby_sb_betsoftgaming_com_csr"
+     When I buy a "<certificate_type>" "1" year certificate using csr "<csr>"
      Then I should see <num_of_steps> steps to complete my ssl.com certificate order
+  Examples:
+    |certificate_type|num_of_steps|csr                                |
+    |free            |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |ev              |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |high_assurance  |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |wildcard        |6           |star_corp_crowdfactory_com_2048_csr|
+    |ucc             |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |evucc           |6           |ssl_danskkabeltv_dk_2048_csr       |
+
+  @passed_rack_test @passed_selenium_remote
+  Scenario Outline: Anonymous user cannot purchase an ssl.com certificate with wildcard 1024 bit csr
+    Given I am not logged in
+     When I buy a "<certificate_type>" "1" year certificate using csr "star_arrownet_dk_csr"
+     Then I should see "cannot begin with *"
+      And I should see "must have a 2048 bit"
+  Examples:
+    |certificate_type|
+    |free            |
+    |ev              |
+    |high_assurance  |
+    |ucc             |
+    |evucc           |
+
+  @passed_rack_test @passed_selenium_remote
+  Scenario Outline: Anonymous user cannot purchase an ssl.com certificate with 1024 bit csr
+    Given I am not logged in
+     When I buy a "<certificate_type>" "1" year certificate using csr "lobby_sb_betsoftgaming_com_csr"
+      And I should see "must have a 2048 bit"
   Examples:
     |certificate_type|num_of_steps|
     |free            |6           |
@@ -26,27 +54,37 @@ Feature: Ordering SSL.com Certificates intuitively
     |wildcard        |6           |
     |ucc             |6           |
     |evucc           |6           |
+
+  @passed_rack_test @passed_selenium_remote
+  Scenario Outline: Anonymous user cannot purchase a wildcard ssl.com certificate with non-wildcard 1024 bit csr
+    Given I am not logged in
+     When I buy a "<certificate_type>" "1" year certificate using csr "lobby_sb_betsoftgaming_com_csr"
+      And I should see "must have a 2048 bit"
+      And I should see "so it must begin with *"
+  Examples:
+    |certificate_type    |
+    |wildcard            |
 
   @passed_rack_test @passed_selenium_remote
   Scenario Outline: Standard customer buying ssl certificates should see the steps needed to buy ssl.com certificates
     Given an activated customer Fred exists
       And I login as Fred
-     When I buy a "<certificate_type>" "1" year certificate using csr "lobby_sb_betsoftgaming_com_csr"
+     When I buy a "<certificate_type>" "1" year certificate using csr "<csr>"
      Then I should see <num_of_steps> steps to complete my ssl.com certificate order
   Examples:
     |certificate_type|num_of_steps|
-    |free            |6           |
-    |ev              |6           |
-    |high_assurance  |6           |
-    |wildcard        |6           |
-    |ucc             |6           |
-    |evucc           |6           |
+    |free            |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |ev              |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |high_assurance  |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |wildcard        |6           |star_corp_crowdfactory_com_2048_csr|
+    |ucc             |6           |ssl_danskkabeltv_dk_2048_csr       |
+    |evucc           |6           |ssl_danskkabeltv_dk_2048_csr       |
 
   @passed_rack_test @passed_selenium_remote
   Scenario Outline: Reseller customer buying ssl certificates should see the steps needed to buy ssl.com certificates
     Given an activated tier_2_reseller Fred exists
       And I login as Fred
-     When I buy a "<certificate_type>" "1" year certificate using csr "lobby_sb_betsoftgaming_com_csr"
+     When I buy a "<certificate_type>" "1" year certificate using csr "ssl_danskkabeltv_dk_2048_csr"
      Then I should see <num_of_steps> steps to complete my ssl.com certificate order
   Examples:
     |certificate_type|num_of_steps|

@@ -39,11 +39,14 @@ jQuery(function($) {
         }
         else{
           $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
-          errorString='';
-          for(i=0;i<data.length;i++)
-            errorString = errorString + ((data[i][0]=='base')? '' : data[i][0]) +' '+data[i][1];
-            if(i<data.length-1)
-              errorString = errorString + ",\n"
+          errorArray=[];
+          i=0;
+          for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+              errorArray.push(((key=="base")? "" : (key + ": ")) + data[key].join(", "));
+            }
+          }
+          errorString = errorArray.join(",\n");
           alert("The signed certificate was not successfully saved. The following errors were reported:\n\n"+errorString);
         }
       }

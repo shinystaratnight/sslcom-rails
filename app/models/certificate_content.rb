@@ -13,6 +13,7 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
+  MIN_KEY_SIZE = 2048
 
   ADMINISTRATIVE_ROLE = 'administrative'
   CONTACT_ROLES = %w(administrative billing technical validation)
@@ -176,6 +177,9 @@ class CertificateContent < ActiveRecord::Base
       end
       errors.add(:signing_request, invalid_chars_msg) unless
         domain_validation_regex(is_wildcard, csr.common_name)
+      errors.add(:signing_request, "must have a 2048 bit key size.
+        Please submit a new ssl.com certificate signing request with the proper key size.") if
+          csr.strength != MIN_KEY_SIZE
     end
   end
 

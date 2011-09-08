@@ -15,36 +15,71 @@ class SignedCertificate < ActiveRecord::Base
   def body=(certificate)
     return if certificate.blank?
     self[:body] = certificate
-    ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
-    begin
-      response = ssl_util.parse_certificate do |soap|
-        soap.body = {:csr => certificate}
+    unless Settings.csr_parser=="remote"
+      begin
+        parsed = OpenSSL::X509::Certificate.new certificate
+      rescue Exception => ex
+        logger.error ex
+      else
+        self[:parent_cert] = false
+        self[:organization] = parsed.subject.organization
+        self[:organization_unit] = parsed.subject.organizational_unit
+        self[:state] = parsed.subject.region
+        self[:locality] = parsed.subject.locality
+        self[:country] = parsed.subject.country
+        self[:address1] = parsed.subject.common_name
+        self[:signature] = parsed.subject.common_name
+        self[:fingerprint] = parsed.subject.common_name
+        self[:fingerprint_sha] = parsed.subject.common_name
+        self[:effective_date] = parsed.subject.common_name
+        self[:expiration_date] = parsed.subject.common_name
+        logger.error parsed.subject
+        logger.error parsed
+
+
+        #self[:common_name] = parsed.subject.common_name
+        #self[:organization] = parsed.subject.organization
+        #self[:organization_unit] = parsed.subject.organizational_unit
+        #self[:state] = parsed.subject.region
+        #self[:locality] = parsed.subject.locality
+        #self[:country] = parsed.subject.country
+        #self[:email] = parsed.subject.email
+        #self[:sig_alg] = parsed.signature_algorithm
+        #self[:subject_alternative_names] = parsed.subject_alternative_names
+        #self[:strength] = parsed.strength
+        #self[:challenge_password] = parsed.challenge_password?
       end
-    rescue Exception => ex
-      p ex
-      logger.error ex
     else
-      self[:parent_cert] = false
-      @parsed = response.to_hash[:multi_ref]
-      unless @parsed.is_a? Array
-        return
-      end
-      certs = []
-      1.times do |i|
-        certs[i] = (i == 0) ? self : certs[i-1].create_parent(:parent_cert=>true)
-        certs[i][:common_name] = @parsed[i][:cn][:cn]
-        certs[i][:organization] = @parsed[i][:o][:o]
-        certs[i][:organization_unit] = @parsed[i][:ou][:ou]
-        certs[i][:address1] = @parsed[i][:street][:street]
-        certs[i][:state] = @parsed[i][:st][:st]
-        certs[i][:locality] = @parsed[i][:l][:l]
-        certs[i][:country] = @parsed[i][:c][:c]
-        certs[i][:signature] = @parsed[i][:signature]
-        certs[i][:fingerprint] = @parsed[i][:fingerprint]
-        certs[i][:fingerprint_sha] = @parsed[i][:fingerprint_sha]
-        certs[i][:effective_date] = @parsed[i][:eff_date]
-        certs[i][:expiration_date] = @parsed[i][:exp_date]
-        certs[i].save unless i==0
+      ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
+      begin
+        response = ssl_util.parse_certificate do |soap|
+          soap.body = {:csr => certificate}
+        end
+      rescue Exception => ex
+        logger.error ex
+      else
+        self[:parent_cert] = false
+        @parsed = response.to_hash[:multi_ref]
+        unless @parsed.is_a? Array
+          return
+        end
+        certs = []
+        1.times do |i|
+          certs[i] = (i == 0) ? self : certs[i-1].create_parent(:parent_cert=>true)
+          certs[i][:common_name] = @parsed[i][:cn][:cn]
+          certs[i][:organization] = @parsed[i][:o][:o]
+          certs[i][:organization_unit] = @parsed[i][:ou][:ou]
+          certs[i][:address1] = @parsed[i][:street][:street]
+          certs[i][:state] = @parsed[i][:st][:st]
+          certs[i][:locality] = @parsed[i][:l][:l]
+          certs[i][:country] = @parsed[i][:c][:c]
+          certs[i][:signature] = @parsed[i][:signature]
+          certs[i][:fingerprint] = @parsed[i][:fingerprint]
+          certs[i][:fingerprint_sha] = @parsed[i][:fingerprint_sha]
+          certs[i][:effective_date] = @parsed[i][:eff_date]
+          certs[i][:expiration_date] = @parsed[i][:exp_date]
+          certs[i].save unless i==0
+        end
       end
     end
   end

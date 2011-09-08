@@ -1,3 +1,12 @@
+#use driver @rack_test for inline and @selenium for remote
+#when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
+#also all comments must appear before tags with no comments in-between tags
+#email tests do not work with remote selenium
+#@rack_test
+#@firebug
+@selenium
+@remote
+
 Feature: Manage SSL Certificates
   In order to manage ssl certificates
   An appropriately authorized user
