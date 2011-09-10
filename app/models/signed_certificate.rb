@@ -20,34 +20,30 @@ class SignedCertificate < ActiveRecord::Base
         parsed = OpenSSL::X509::Certificate.new certificate
       rescue Exception => ex
         logger.error ex
+        errors.add_to_base 'error: could not parse certificate'
       else
         self[:parent_cert] = false
         self[:organization] = parsed.subject.organization
-        self[:organization_unit] = parsed.subject.organizational_unit
+        self[:organization_unit] = ou_array(parsed.subject.to_s)
         self[:state] = parsed.subject.region
         self[:locality] = parsed.subject.locality
+        pc=field_array("postalCode", parsed.subject.to_s)
+        self[:postal_code] = pc.first unless pc.blank?
         self[:country] = parsed.subject.country
-        self[:address1] = parsed.subject.common_name
-        self[:signature] = parsed.subject.common_name
-        self[:fingerprint] = parsed.subject.common_name
-        self[:fingerprint_sha] = parsed.subject.common_name
-        self[:effective_date] = parsed.subject.common_name
-        self[:expiration_date] = parsed.subject.common_name
-        logger.error parsed.subject
-        logger.error parsed
-
-
-        #self[:common_name] = parsed.subject.common_name
-        #self[:organization] = parsed.subject.organization
-        #self[:organization_unit] = parsed.subject.organizational_unit
-        #self[:state] = parsed.subject.region
-        #self[:locality] = parsed.subject.locality
-        #self[:country] = parsed.subject.country
-        #self[:email] = parsed.subject.email
-        #self[:sig_alg] = parsed.signature_algorithm
-        #self[:subject_alternative_names] = parsed.subject_alternative_names
-        #self[:strength] = parsed.strength
-        #self[:challenge_password] = parsed.challenge_password?
+        street=field_array("street", parsed.subject.to_s)
+        unless street.blank?
+          street.each_with_index do |s, i|
+            self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
+            break if i>=2
+          end
+        end
+        self[:signature] = parsed.subject_key_identifier
+        self[:fingerprint] = parsed.serial
+        self[:fingerprint_sha] = parsed.signature_algorithm
+        self[:effective_date] = parsed.not_before
+        self[:expiration_date] = parsed.not_after
+        self[:subject_alternative_names] = parsed.subject_alternative_names
+        self[:strength] = parsed.strength
       end
     else
       ssl_util = Savon::Client.new Settings.certificate_parser_wsdl
@@ -136,16 +132,38 @@ class SignedCertificate < ActiveRecord::Base
     created_at.to_s
   end
 
+  def ou_array(subject)
+    s=subject_to_array(subject)
+    s.select do |o|
+      h=Hash[*o]
+      true unless (h["OU"]).blank?
+    end.map{|ou|ou[1]}
+  end
+
+  def field_array(field,subject)
+    s=subject_to_array(subject)
+    s.select do |o|
+      h=Hash[*o]
+      true unless (h[field]).blank?
+    end.map{|f|f[1]}
+  end
+
   private
 
   def proper_certificate?
-    errors.add_to_base 'invalid certificate' unless @parsed.is_a?(Array)
+    if Settings.csr_parser=="remote"
+      errors.add_to_base 'invalid certificate' unless @parsed.is_a?(Array)
+    end
   end
 
   def same_as_previously_signed_certificate?
     if csr.signed_certificate && csr.signed_certificate.body == body
 #      errors.add_to_base "signed certificate is the same as previously saved one"
     end
+  end
+
+  def subject_to_array(subject)
+    subject.split("/").reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
 end
 

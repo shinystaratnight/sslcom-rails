@@ -100,7 +100,7 @@ Feature: Manage SSL Certificates
 #    #|leo@ssl.com|123456|qwerty-dfaffs  |sysadmin|csr_signed_certificate_by_text |text_field|is        |have on the page|
 
   @submit_signed_certificate @no-txn @setup_certificates
-  Scenario: Submitting a signed certificate on certificate order page
+  Scenario: Submitting an invalid signed certificate on certificate order page
     Given there is an open certificate order with ref number 'qwerty-dfaffs'
       And the admin user with username 'sy_adm1n_' and password 'kool1o' is logged in
       And he goes to the certificate order page for 'qwerty-dfaffs'
@@ -109,9 +109,16 @@ Feature: Manage SSL Certificates
     When he submits "some bogus value for a signed certificate" as the signed certificate
     Then he should see "" in the "signed_certificate_body" "textarea"
 
+  @submit_signed_certificate @no-txn @setup_certificates
+  Scenario: Submitting a signed certificate on certificate order page
+    Given a registered user Fred exists
+      And Fred has a completed but unvalidated dv certificate order
+      And the admin user with username 'sy_adm1n_' and password 'kool1o' is logged in
+      And he goes to the certificate order page
+
     #submit valid signed certificate
-    When he submits the variable "@lobby_sb_betsoftgaming_com_signed_cert" as the signed certificate
-    Then the certificate content fields should be updated with "@lobby_sb_betsoftgaming_com_signed_cert" fields
+    When he submits the variable "@www_motostore_com_cn_2048_cert" as the signed certificate
+    Then the certificate content fields should be updated with "@www_motostore_com_cn_2048_cert" fields
 
     #resubmit the same signed certificate
     When he resubmits the variable "@lobby_sb_betsoftgaming_com_signed_cert" as the signed certificate

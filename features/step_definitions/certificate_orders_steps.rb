@@ -98,6 +98,10 @@ When /^(?:he|she|I) go(?:es)? to the certificate order page for ['"]([^'"]*)['"]
   goto certificate_order_path(ref)
 end
 
+When /^(?:he|she|I) go(?:es)? to the certificate order page$/ do
+  visit certificate_order_path(@certificate_order.ref)
+end
+
 When /^certificate order ['"]([^'"]*)['"] is expiring in ['"]([^'"]*)['"]$/ do |ref, days|
   without_access_control do
     co = CertificateOrder.find_by_ref(ref)
@@ -133,8 +137,7 @@ When /^(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed ce
   fill_text 'signed_certificate_body', eval("#{cert}").gsub(/\r\n/,"\n")
   if is_capybara?
     click_on "Submit certificate"
-    page.driver.browser.switch_to.alert.text.should have_content("invalid")
-    page.driver.browser.switch_to.alert.dismiss
+    page.driver.browser.switch_to.alert.accept
   else
     @browser.startClicker('OK') if resubmit
     @browser.button(:class, 'submit_signed_certificate').click
@@ -198,14 +201,17 @@ end
 
 Then /^the certificate content fields should (?:remain the same as|be updated with) ['"]([^'"]*)['"] fields$/ do |cert|
   sc=SignedCertificate.new(:body=>eval("#{cert}"))
-  @browser.text.should include(sc.common_name)
-  @browser.text.should include(sc.organization)
-  @browser.text.should include(sc.organization_unit) unless sc.organization_unit.blank?
-  @browser.text.should include(sc.state) unless sc.state.blank?
-  @browser.text.should include(sc.locality) unless sc.locality.blank?
-  @browser.text.should include(sc.country)
-  @browser.text.should include(sc.expiration_date.strftime("%b %d, %Y"))
-  @browser.text.should include("submitted on "+Date.today.strftime("%b %d, %Y"))
+  sc_fields=[sc.common_name,
+  sc.organization,
+  sc.country,
+  sc.expiration_date.strftime("%b %d, %Y"),
+  "submitted on "+Date.today.strftime("%b %d, %Y")]
+  sc_fields << sc.organization_unit unless sc.organization_unit.blank?
+  sc_fields << sc.state unless sc.state.blank?
+  sc_fields << sc.locality unless sc.locality.blank?
+  sc_fields.each do |f|
+    should_have(f)
+  end
 end
 
 Then /^(?:he|she|I) ['"]([^'"]*)['"] authorized to ['"]([^'"]*)['"] the ['"]([^'"]*)['"] ['"]([^'"]*)['"] object$/ do |permission, action, id, element|

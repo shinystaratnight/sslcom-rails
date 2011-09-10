@@ -642,6 +642,8 @@ ActiveRecord::Schema.define(:version => 20110907164002) do
     t.boolean  "parent_cert"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "subject_alternative_names"
+    t.integer  "strength"
   end
 
   create_table "site_seals", :force => true do |t|

@@ -39,11 +39,11 @@ class CertificateOrder < ActiveRecord::Base
   default_scope includes(:certificate_contents).
     where(:certificate_contents=>{:id.ne=>nil}).
     order(:created_at.desc).readonly(false)
-  
+
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
-  
+
   scope :search_with_csr, lambda {|term, options|
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
@@ -123,7 +123,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate
-    sub_order_items[0].product_variant_item.certificate if sub_order_items[0]
+    sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
+        sub_order_items[0].product_variant_item
   end
 
   def certificate_duration

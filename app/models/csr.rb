@@ -36,6 +36,7 @@ class Csr < ActiveRecord::Base
         location +="Csr.id=#{id}=>" unless id.blank?
           certificate_content
         logger.error "could not parse #{location || 'unknown'} for #{csr}"
+        errors.add_to_base 'error: could not parse csr'
       else
         self[:common_name] = parsed.subject.common_name
         self[:organization] = parsed.subject.organization

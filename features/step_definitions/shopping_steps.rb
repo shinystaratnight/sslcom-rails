@@ -82,8 +82,6 @@ Given /^(\w*) has a new dv certificate order at the validation prompt stage$/ do
     ssl_account: @user.ssl_account)
   @certificate_content = FactoryGirl.create(:certificate_content_w_contacts,
     certificate_order: @certificate_order)
-  @certificate_order.certificate_contents << @certificate_content
-  @user.ssl_account.certificate_orders << @certificate_order
 end
 
 Given /^(\w*) has a completed but unvalidated dv certificate order$/ do |login|
@@ -92,6 +90,4 @@ Given /^(\w*) has a completed but unvalidated dv certificate order$/ do |login|
     ssl_account: @user.ssl_account)
   @certificate_content = FactoryGirl.create(:certificate_content_pending_validation,
     certificate_order: @certificate_order)
-  @certificate_order.certificate_contents << @certificate_content
-  @user.ssl_account.certificate_orders << @certificate_order
 end

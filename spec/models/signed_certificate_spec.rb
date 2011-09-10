@@ -11,4 +11,11 @@ describe SignedCertificate, "as an ssl.com signed certificate" do
     #parsed.sig_alg.should == "sha1WithRSAEncryption"
     #parsed.strength.should == 1024
   end
+
+  it "should serialize ou fields" do
+    parsed = OpenSSL::X509::Certificate.new @star_corp_crowdfactory_com_2048_cert
+    sc = SignedCertificate.new
+    sc.ou_array(parsed.subject.to_s).should ==
+        ["Operations Group", "Hosted by Secure Sockets Laboratories, LLC", "Comodo PremiumSSL Wildcard"]
+  end
 end
