@@ -33,9 +33,9 @@ jQuery(function($) {
           $('.state').text(data.signed_certificate.state);
           $('.city').text(data.signed_certificate.locality);
           $('.country').text(data.signed_certificate.country);
-          $('.expires_on').text(Date.parse(data.signed_certificate.expiration_date_js).toString("MMM d, yyyy"));
-          $('.issued_on').text(Date.parse(data.signed_certificate.created_at_js).toString("MMM d, yyyy"));
-          $('.submitted_on').text("submitted on " + Date.parse('today').toString("MMM d, yyyy"));
+          $('.expires_on').text(Date.parse(data.signed_certificate.expiration_date_js).toString("MMM dd, yyyy"));
+          $('.issued_on').text(Date.parse(data.signed_certificate.created_at_js).toString("MMM dd, yyyy"));
+          $('.submitted_on').text("submitted on " + Date.parse('today').toString("MMM dd, yyyy"));
         }
         else{
           $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());

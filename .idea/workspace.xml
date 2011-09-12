@@ -8,33 +8,10 @@
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" line="48" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="fixed subdomain links">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/models/certificate_content_spec.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/spec/models/certificate_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_content.rb" afterPath="$PROJECT_DIR$/app/models/certificate_content.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order_notifier.rb" afterPath="$PROJECT_DIR$/app/models/order_notifier.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/permissions.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/permissions.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" afterPath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/capybara_firewatir.rb" afterPath="$PROJECT_DIR$/features/support/capybara_firewatir.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/env.rb" afterPath="$PROJECT_DIR$/features/support/env.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/certificates.yml" afterPath="$PROJECT_DIR$/spec/fixtures/certificates.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/fixtures/preferences.yml" afterPath="$PROJECT_DIR$/spec/fixtures/preferences.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/models/certificate_order_spec.rb" afterPath="$PROJECT_DIR$/spec/models/certificate_order_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/models/csr_spec.rb" afterPath="$PROJECT_DIR$/spec/models/csr_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/models/signed_certificate_spec.rb" afterPath="$PROJECT_DIR$/spec/models/signed_certificate_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories.rb" afterPath="$PROJECT_DIR$/test/factories.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/certificates.yml" afterPath="$PROJECT_DIR$/test/fixtures/certificates.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/preferences.yml" afterPath="$PROJECT_DIR$/test/fixtures/preferences.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/fixtures/product_variant_groups.yml" afterPath="$PROJECT_DIR$/test/fixtures/product_variant_groups.yml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -75,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_show_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_show_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="84" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.0">
+            <state line="37" column="87" selection-start="2005" selection-end="2005" vertical-scroll-proportion="0.36842105">
               <folding />
             </state>
           </provider>
@@ -111,10 +88,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_orders_steps.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="certificate_orders_steps.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="207" column="44" selection-start="8448" selection-end="8448" vertical-scroll-proportion="0.425">
+            <state line="207" column="44" selection-start="8448" selection-end="8448" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1466,23 +1443,23 @@
       <method />
     </configuration>
     <list size="17">
-      <item index="0" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate should be able to create zip bundle for downloading" />
-      <item index="1" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate should have certificate_chain_names" />
-      <item index="2" class="java.lang.String" itemvalue="RSpec.CertificateContent as a ssl.com certificate order using FactoryGirl this should be junked" />
-      <item index="3" class="java.lang.String" itemvalue="Cucumber.Submitting a signed certificate on certificate order page" />
-      <item index="4" class="java.lang.String" itemvalue="Ruby.Cucumber: Spork DRb server" />
-      <item index="5" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
-      <item index="6" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
-      <item index="7" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
-      <item index="8" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
-      <item index="9" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="10" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="11" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="12" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="13" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="14" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="15" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="16" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="0" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="1" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="3" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="5" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="6" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="7" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="8" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="9" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="10" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="11" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="12" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate should be able to create zip bundle for downloading" />
+      <item index="13" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate should have certificate_chain_names" />
+      <item index="14" class="java.lang.String" itemvalue="RSpec.CertificateContent as a ssl.com certificate order using FactoryGirl this should be junked" />
+      <item index="15" class="java.lang.String" itemvalue="Cucumber.Submitting a signed certificate on certificate order page" />
+      <item index="16" class="java.lang.String" itemvalue="Ruby.Cucumber: Spork DRb server" />
     </list>
   </component>
   <component name="ShelveChangesManager" show_recycled="false" />
@@ -1537,13 +1514,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="23" y="0" width="1258" height="776" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32561728" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32253087" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32561728" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20389926" sideWeight="0.5648148" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20389926" sideWeight="0.37808642" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20389926" sideWeight="0.4228395" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20389926" sideWeight="0.28395063" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35493827" sideWeight="0.0" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4521605" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29475307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
@@ -1551,7 +1529,6 @@
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29475307" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32253087" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287037" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
@@ -1583,7 +1560,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed subdomain links" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing signed certificates with capybara" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1601,6 +1578,7 @@
     <MESSAGE value="fixed prev button for non registered users by removing sync_aid_li_cart. It was having problems converting AppConfig value to string. Also fixed json login midway through certificate order" />
     <MESSAGE value="reprocess functional" />
     <MESSAGE value="fixed subdomain links" />
+    <MESSAGE value="testing signed certificates with capybara" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1653,13 +1631,6 @@
         <state line="4" column="15" selection-start="155" selection-end="155" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="84" selection-start="1510" selection-end="1510" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/order_notifier.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="3" selection-start="1803" selection-end="1803" vertical-scroll-proportion="0.0" />
@@ -1696,7 +1667,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="207" column="44" selection-start="8448" selection-end="8448" vertical-scroll-proportion="0.425">
+        <state line="207" column="44" selection-start="8448" selection-end="8448" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="37" column="87" selection-start="2005" selection-end="2005" vertical-scroll-proportion="0.36842105">
           <folding />
         </state>
       </provider>
