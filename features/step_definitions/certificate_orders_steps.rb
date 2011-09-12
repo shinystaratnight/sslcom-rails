@@ -137,7 +137,7 @@ When /^(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed ce
   fill_text 'signed_certificate_body', eval("#{cert}").gsub(/\r\n/,"\n")
   if is_capybara?
     click_on "Submit certificate"
-    page.driver.browser.switch_to.alert.accept
+    handle_js_confirm(true){page.driver.browser.switch_to.alert.accept}
   else
     @browser.startClicker('OK') if resubmit
     @browser.button(:class, 'submit_signed_certificate').click
@@ -204,12 +204,12 @@ Then /^the certificate content fields should (?:remain the same as|be updated wi
   sc_fields=[sc.common_name,
   sc.organization,
   sc.country,
-  sc.expiration_date.strftime("%b %d, %Y"),
-  "submitted on "+Date.today.strftime("%b %d, %Y")]
+  sc.expiration_date.strftime("%b %e, %Y"),
+  "submitted on "+Date.today.strftime("%b %e, %Y")]
   sc_fields << sc.organization_unit unless sc.organization_unit.blank?
   sc_fields << sc.state unless sc.state.blank?
   sc_fields << sc.locality unless sc.locality.blank?
-  sc_fields.each do |f|
+  sc_fields.flatten.each do |f|
     should_have(f)
   end
 end

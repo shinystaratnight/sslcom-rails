@@ -30,17 +30,15 @@ class OrderNotifier < ActionMailer::Base
   end
 
   def processed_certificate_order(contact, certificate_order, file)
-    subject       "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{certificate_order.subject}"
-    from          Settings.from_email.orders
-    recipients    contact
-    sent_on       Time.now
-    attachment    'application/zip' do |a|
-                    a.body = File.read(file.path)
-                    a.filename = certificate_order.friendly_common_name+'.zip'
-                  end
-    body          :contact=>contact, :certificate_order=>certificate_order,
-                  :signed_certificate=>
-                  certificate_order.certificate_content.csr.signed_certificate
+    attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file.path)
+    @contact=contact
+    @certificate_order=certificate_order
+    @signed_certificate=certificate_order.certificate_content.csr.signed_certificate
+    mail(
+      to: contact,
+      from: Settings.from_email.orders,
+      subject: "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{certificate_order.subject}"
+    )
   end
 
   def validation_approve(contact, certificate_order)

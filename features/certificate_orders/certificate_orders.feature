@@ -2,10 +2,10 @@
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
 #also all comments must appear before tags with no comments in-between tags
 #email tests do not work with remote selenium
-#@rack_test
-#@firebug
-@selenium
-@remote
+@firebug
+@webkit @remote
+@selenium @remote
+@javascript
 
 Feature: Manage SSL Certificates
   In order to manage ssl certificates
@@ -99,7 +99,7 @@ Feature: Manage SSL Certificates
 #    #|leo@ssl.com|123456|qwerty-dfaffs  |vetter  |csr_signed_certificate_by_text |text_field|is        |have on the page|
 #    #|leo@ssl.com|123456|qwerty-dfaffs  |sysadmin|csr_signed_certificate_by_text |text_field|is        |have on the page|
 
-  @submit_signed_certificate @no-txn @setup_certificates
+  @submit_invalid_signed_certificate @no-txn @setup_certificates
   Scenario: Submitting an invalid signed certificate on certificate order page
     Given there is an open certificate order with ref number 'qwerty-dfaffs'
       And the admin user with username 'sy_adm1n_' and password 'kool1o' is logged in
@@ -109,7 +109,7 @@ Feature: Manage SSL Certificates
     When he submits "some bogus value for a signed certificate" as the signed certificate
     Then he should see "" in the "signed_certificate_body" "textarea"
 
-  @submit_signed_certificate @no-txn @setup_certificates
+  @submit_signed_certificate @setup_certificates
   Scenario: Submitting a signed certificate on certificate order page
     Given a registered user Fred exists
       And Fred has a completed but unvalidated dv certificate order

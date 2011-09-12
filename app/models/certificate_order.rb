@@ -36,8 +36,13 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
+  # the below script was used to ease migration but caused
+  # tests to fail
+  #default_scope includes(:certificate_contents).
+  #  where(:certificate_contents=>{:id.ne=>nil}).
+  #  order(:created_at.desc).readonly(false)
+
   default_scope includes(:certificate_contents).
-    where(:certificate_contents=>{:id.ne=>nil}).
     order(:created_at.desc).readonly(false)
 
   scope :search, lambda {|term, options|
@@ -77,25 +82,23 @@ class CertificateOrder < ActiveRecord::Base
   REPROCESSING = 'reprocessing'
   RECERTS = [RENEWING, REPROCESSING]
 
-  ##changed for the migration
-  #unless MIGRATING_FROM_LEGACY
-  #  validates :certificate, presence: true
-  #else
-  #  validates :certificate, presence: true, :unless=>Proc.new {|co|
-  #    !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
-  #end
+  # changed for the migration
+  unless MIGRATING_FROM_LEGACY
+    validates :certificate, presence: true
+  else
+    validates :certificate, presence: true, :unless=>Proc.new {|co|
+      !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
+  end
 
   before_create do |co|
     co.ref='co-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     v     =co.create_validation
-    if co.certificate
-      co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
-      co.certificate.validation_rulings.each do |cvrl|
-        vrl = cvrl.clone
-        vrl.status = ValidationRuling::WAITING_FOR_DOCS
-        vrl.workflow_state = "new"
-        v.validation_rulings << vrl
-      end
+    co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
+    co.certificate.validation_rulings.each do |cvrl|
+      vrl = cvrl.clone
+      vrl.status = ValidationRuling::WAITING_FOR_DOCS
+      vrl.workflow_state = "new"
+      v.validation_rulings << vrl
     end
     co.site_seal=SiteSeal.create
   end

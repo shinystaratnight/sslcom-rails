@@ -32,7 +32,7 @@ class SignedCertificatesController < ApplicationController
         co=@signed_certificate.csr.certificate_content.certificate_order
         format.html {
           flash[:notice] = 'Signed certificate was successfully created.'
-          redirect_to(@signed_certificate.certificate_content.certificate_order) }
+          redirect_to(@signed_certificate.certificate_order) }
         format.xml  { head :ok }
         format.js   { render(json: @signed_certificate, methods:
             [:expiration_date_js, :created_at_js])}

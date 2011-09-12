@@ -1,14 +1,12 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
+---
 ev:
- id: 1
  title: Premium EV SSL
  icons:
   main: ev_bar_lg.jpg
  text_only_summary:
  description:
   summary: |
-   highest trust assurance
+   highest trust assurance             R
   abbr: EV SSL
   certificate_type: Premium EV
   validation_level: Class 3 DoD
@@ -37,7 +35,6 @@ ev:
  product: ev
 
 ov:
- id: 2
  title: High Assurance SSL
  icons:
   main: gold_lock_lg.gif
@@ -70,7 +67,6 @@ ov:
  product: high_assurance
 
 dv:
- id: 3
  text_only_summary:
  title: Free SSL
  icons:
@@ -98,7 +94,6 @@ dv:
  product: free
 
 ucc:
- id: 4
  text_only_summary:
  title: Multi-domain UCC SSL
  icons:
@@ -134,7 +129,6 @@ ucc:
  allow_wildcard_ucc: false
 
 wildcard:
- id: 5
  title: Multi-subdomain Wildcard SSL
  icons:
   main: gold_locks_lg.gif
@@ -167,7 +161,6 @@ wildcard:
  product: wildcard
 
 ev_ucc:
- id: 6
  title: Premium EV Multi-domain UCC SSL
  icons:
   main: ev_bar_lg.jpg
@@ -205,10 +198,8 @@ ev_ucc:
  product: evucc
  allow_wildcard_ucc: false
 
-<% id = 6 %>
 <% for i in 1..5 %>
 ev_tier_<%=i%>:
- id: <%=id+=1%>
  title: Premium EV SSL
  icons:
   main: ev_bar_lg.jpg
@@ -245,7 +236,6 @@ ev_tier_<%=i%>:
  product: ev<%=i%>tr
 
 ov_tier_<%=i%>:
- id: <%=id+=1%>
  title: High Assurance SSL
  icons:
   main: gold_lock_lg.gif
@@ -278,7 +268,6 @@ ov_tier_<%=i%>:
  product: high_assurance<%=i%>tr
 
 dv_tier_<%=i%>:
- id: <%=id+=1%>
  text_only_summary:
  title: Free SSL
  icons:
@@ -306,7 +295,6 @@ dv_tier_<%=i%>:
  product: free<%=i%>tr
  
 wildcard_tier_<%=i%>:
- id: <%=id+=1%>
  title: Multi-subdomain Wildcard SSL
  icons:
   main: gold_locks_lg.gif
@@ -341,7 +329,6 @@ wildcard_tier_<%=i%>:
  product: wildcard<%=i%>tr
 
 ucc_tier_<%=i%>:
- id: <%=id+=1%>
  text_only_summary:
  title: Multi-domain UCC SSL
  icons:
@@ -378,7 +365,6 @@ ucc_tier_<%=i%>:
  allow_wildcard_ucc: false
 
 ev_ucc_tier_<%=i%>:
- id: <%=id+=1%>
  title: Premium EV Multi-domain UCC SSL
  icons:
   main: ev_bar_lg.jpg
@@ -419,7 +405,7 @@ ev_ucc_tier_<%=i%>:
 <%end%>
 
 migrated:
- id: 10000
+ id: 1000
  title: Migrated SSL
  icons:
   main: ev_bar_lg.jpg

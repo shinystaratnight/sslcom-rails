@@ -9,7 +9,7 @@ We strongly recommend that you follow the installation instructions at http://ww
 Attached to this email you should find a .zip file containing:
 
 <%@certificate_order.parse_certificate_chain.each do |cc|%>
-    * <%=cc[1]%> - <%=cc[0]-%>
+    * <%=cc[1]%> - <%=cc[0]%>
 <%end%>
     * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
 

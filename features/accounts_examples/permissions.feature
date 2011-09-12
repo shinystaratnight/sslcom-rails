@@ -14,7 +14,7 @@ Feature: Permissions to pages
   So that my security is not compromised from unintended or illicit use
 
   @passed_selenium_remote @passed_rack_test
-  Scenario: User can must sent validation requests from one of the selected email addresses
+  Scenario: User must sent validation requests from one of the selected email addresses
     Given an activated user Fred exists
       And Fred has a new dv certificate order at the validation prompt stage
       And I login as Fred

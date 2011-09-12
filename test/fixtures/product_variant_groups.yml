@@ -106,8 +106,7 @@ certificate_id = 6
 for i in 1..5%>
 ev_duration_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: ev_tier_<%=i%> (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -117,8 +116,7 @@ ev_duration_tier_<%=i%>:
 
 ov_duration_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: ov_tier_<%=i%> (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -128,8 +126,7 @@ ov_duration_tier_<%=i%>:
 
 dv_duration_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: dv_tier_<%=i%> (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -139,8 +136,7 @@ dv_duration_tier_<%=i%>:
 
 wildcard_duration_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: wildcard_tier_<%=i%> (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -150,8 +146,7 @@ wildcard_duration_tier_<%=i%>:
 
 wildcard_licenses_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id)%>
- variantable_type: Certificate
+ variantable: wildcard_tier_<%=i%> (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses
@@ -161,8 +156,7 @@ wildcard_licenses_tier_<%=i%>:
 
 ucc_domains_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: ucc_tier_<%=i%> (Certificate)
  title: Domains
  description: Domain Names
  text_only_description: Domain Names
@@ -172,8 +166,7 @@ ucc_domains_tier_<%=i%>:
 
 ucc_licenses_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id)%>
- variantable_type: Certificate
+ variantable: ucc_tier_<%=i%> (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses
@@ -183,8 +176,7 @@ ucc_licenses_tier_<%=i%>:
 
 ev_ucc_domains_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id+=1)%>
- variantable_type: Certificate
+ variantable: ev_ucc_tier_<%=i%> (Certificate)
  title: Domains
  description: Domain Names
  text_only_description: Domain Names
@@ -194,8 +186,7 @@ ev_ucc_domains_tier_<%=i%>:
 
 ev_ucc_licenses_tier_<%=i%>:
  id: <%=id+=1%>
- variantable_id: <%=(certificate_id)%>
- variantable_type: Certificate
+ variantable: ev_ucc_tier_<%=i%> (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses

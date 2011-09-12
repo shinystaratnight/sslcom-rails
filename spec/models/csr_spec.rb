@@ -11,4 +11,8 @@ describe Csr, "as an ssl.com certificate signing request" do
     parsed.sig_alg.should == "sha1WithRSAEncryption"
     parsed.strength.should == 1024
   end
+
+  it "should be able to be created" do
+    csr = Factory(:ssl_danskkabeltv_dk_2048_csr)
+  end
 end

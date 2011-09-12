@@ -23,6 +23,7 @@ class SignedCertificate < ActiveRecord::Base
         errors.add_to_base 'error: could not parse certificate'
       else
         self[:parent_cert] = false
+        self[:common_name] = parsed.subject.common_name
         self[:organization] = parsed.subject.organization
         self[:organization_unit] = ou_array(parsed.subject.to_s)
         self[:state] = parsed.subject.region
@@ -111,8 +112,8 @@ class SignedCertificate < ActiveRecord::Base
     file = create_signed_cert_zip_bundle
     co=csr.certificate_content.certificate_order
     co.processed_recipients.each do |c|
-      OrderNotifier.deliver_processed_certificate_order(c, co, file)
-      OrderNotifier.deliver_site_seal_approve(c, co)
+      OrderNotifier.processed_certificate_order(c, co, file).deliver
+      OrderNotifier.site_seal_approve(c, co).deliver
     end
   end
 
@@ -163,7 +164,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def subject_to_array(subject)
-    subject.split("/").reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
+    subject.split(/\/(?=\w+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
 end
 

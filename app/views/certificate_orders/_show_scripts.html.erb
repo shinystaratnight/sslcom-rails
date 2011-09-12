@@ -29,7 +29,7 @@ jQuery(function($) {
           $('textarea#tmp_signed_certificate').val($('#signed_certificate_body').val());
           $('.common_name').text(data.signed_certificate.common_name);
           $('.organization').text(data.signed_certificate.organization);
-          $('.department').text(data.signed_certificate.organization_unit);
+          $('.department').text(data.signed_certificate.organization_unit.join(", "));
           $('.state').text(data.signed_certificate.state);
           $('.city').text(data.signed_certificate.locality);
           $('.country').text(data.signed_certificate.country);

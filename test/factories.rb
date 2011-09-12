@@ -28,6 +28,8 @@ FactoryGirl.define do
   #end
 
   factory :certificate do
+    after_create {|c|Factory(:certificate_preference, owner: c)}
+
     factory :dv_certificate do
       product "free"
     end
@@ -74,14 +76,20 @@ FactoryGirl.define do
   end
 
   factory :certificate_content do
-    association :certificate_order
     server_software {ServerSoftware.where(:title =~ "%java%").first}
+    workflow_state "new"
+
+    trait :standard_csr do
+      csr {|c|c.association(:ssl_danskkabeltv_dk_2048_csr)}
+    end
 
     factory :certificate_content_w_csr do
-      association :csr
+      workflow_state "csr_submitted"
+      standard_csr
 
       factory :certificate_content_w_registrant do
         after_create{|cc|FactoryGirl.create :registrant, contactable: cc}
+        workflow_state "info_provided"
 
         factory :certificate_content_w_contacts do
           workflow_state "contacts_provided"
@@ -124,10 +132,11 @@ FactoryGirl.define do
     factory :new_dv_certificate_order do
       new
       dv
+    end
 
-      factory :completed_unvalidated_dv_certificate_order do
-        paid
-      end
+    factory :completed_unvalidated_dv_certificate_order do
+      paid
+      dv
     end
   end
 
@@ -139,7 +148,15 @@ FactoryGirl.define do
   end
 
   factory :csr do
-    body <<EOS
+    #association :certificate_content
+
+    trait :has_standard_signed_cert do
+      signed_certificates {|sc|[sc.association(:signed_certificate)]}
+    end
+
+    factory :ssl_danskkabeltv_dk_2048_csr do
+      has_standard_signed_cert
+      body <<EOS
 -----BEGIN CERTIFICATE REQUEST-----
 MIIC6jCCAdICAQAwgaQxCzAJBgNVBAYTAkRLMRMwEQYDVQQIEwpDb3BlbmhhZ2Vu
 MRQwEgYDVQQHEwtBbGJlcnRzbHVuZDEPMA0GA1UECxMGVGVrbmlrMRcwFQYDVQQK
@@ -159,9 +176,10 @@ dqdBYOw9UwEsiFwYYMk6XSRXDPA9ldBYqgb/ck/BxFVFzdLg2p8plZWjuhqcNI9E
 wJ4W0jbRq+eaj9c10Q3cPAT65yYggar+AKD7Gr+H
 -----END CERTIFICATE REQUEST-----
 EOS
+  end
 
-  factory :wildcard_csr do
-    body <<EOS
+    factory :wildcard_csr do
+      body <<EOS
 -----BEGIN CERTIFICATE REQUEST-----
 MIIC0TCCAbkCAQAwgYsxCzAJBgNVBAYTAnVzMQ8wDQYDVQQIEwZPcmVnb24xETAP
 BgNVBAcTCFBvcnRsYW5kMRswGQYDVQQKExJDcm93ZCBGYWN0b3J5IEluYy4xGTAX
@@ -274,6 +292,52 @@ EOS
   end
 
   factory :other_party_validation_request do
+  end
+
+  factory :signed_certificate do
+    body <<-EOS
+-----BEGIN CERTIFICATE-----
+MIIF8TCCBNmgAwIBAgIRAIhAUCbwe96rLRlCxal/S8MwDQYJKoZIhvcNAQEFBQAw
+gYkxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAO
+BgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMS8wLQYD
+VQQDEyZDT01PRE8gSGlnaC1Bc3N1cmFuY2UgU2VjdXJlIFNlcnZlciBDQTAeFw0x
+MTA0MTUwMDAwMDBaFw0xNDA0MTQyMzU5NTlaMIIBADELMAkGA1UEBhMCREsxDTAL
+BgNVBBETBDI2MjAxEzARBgNVBAgTCkNvcGVuaGFnZW4xFDASBgNVBAcTC0FsYmVy
+dHNsdW5kMRYwFAYDVQQJEw1Sb2hvbG1zdmVqIDE5MRswGQYDVQQKExJEYW5zayBL
+YWJlbCBUViBBL1MxEjAQBgNVBAsTCUludGVybiBJVDEzMDEGA1UECxMqSG9zdGVk
+IGJ5IFNlY3VyZSBTb2NrZXRzIExhYm9yYXRvcmllcywgTExDMRowGAYDVQQLExFD
+b21vZG8gSW5zdGFudFNTTDEdMBsGA1UEAxMUY2FwYS5kYW5za2thYmVsdHYuZGsw
+ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC1P4LoIL5aK4NULdr+N/EK
+yf6HOZvha862euuuXtZrmWzCU2DIcJltQLOaqh6EdAl7CdOqEV2OO18Yz8aVpWOF
+aACFz3Y1G3xYa/l9mVM/WLU01eFCHExSHJwl6ClYEjdGZnqcvTNWgV7+cQrBRgT1
+dD5P9UCHJ89LXY0gsuMCIgXgy7UJf3qK9tjqYfgXfF3A67y62wCutY6BlnQ9Rxaj
+lvLnDFMG5ikiAENJYvqSTec3XM61bmMbxodFb2LxYNXW62BEHXew+ROIwhDHS3aH
+HxCASh9lGc+gD+BTb+PqkW4/i6ZKeFojStvgXFU6KO6WFxZlrY2lSd+YBiHuPTtT
+AgMBAAGjggHYMIIB1DAfBgNVHSMEGDAWgBQ/1bXQ1kR5UEoXo5uMSty4sCJkazAd
+BgNVHQ4EFgQUol7CxsiPp3niNZ7ahxCo34ZwsnswDgYDVR0PAQH/BAQDAgWgMAwG
+A1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMEYGA1Ud
+IAQ/MD0wOwYMKwYBBAGyMQECAQMEMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2Vj
+dXJlLmNvbW9kby5jb20vQ1BTME8GA1UdHwRIMEYwRKBCoECGPmh0dHA6Ly9jcmwu
+Y29tb2RvY2EuY29tL0NPTU9ET0hpZ2gtQXNzdXJhbmNlU2VjdXJlU2VydmVyQ0Eu
+Y3JsMIGABggrBgEFBQcBAQR0MHIwSgYIKwYBBQUHMAKGPmh0dHA6Ly9jcnQuY29t
+b2RvY2EuY29tL0NPTU9ET0hpZ2gtQXNzdXJhbmNlU2VjdXJlU2VydmVyQ0EuY3J0
+MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20wOQYDVR0RBDIw
+MIIUY2FwYS5kYW5za2thYmVsdHYuZGuCGHd3dy5jYXBhLmRhbnNra2FiZWx0di5k
+azANBgkqhkiG9w0BAQUFAAOCAQEAzONarfSOGna5wXOXhS9+t3Rh65Cd/dVJz2Ak
+8biAQKVNc5XEzCDSnvKPFIUE+IFYi1f0jsd3RWVI3VUSlwwdB6MijCINuWLTrBi1
+IbfulbWwPZ+ZrgdM6Vv4MJ2KUH/RMxkQwpHWdoFPZibS69m45xHCkwzgRkaXFXqq
+HolkkgHVQi+XfSEUfWssi7OdWvPSEKakhS3zHdeaNm9IkKl4lo6Yee4mT/cY4TKn
+A3XqCNBvjA3l3JOwlqjrm+Cus2xwg//XWE7T6XUbI/L5U6FMbV9E8gmKyhfYSQ2n
+dp6YRn8XDWkkbOWgSCHfQGqD52BCZ82ZsAziZun+pSwYDNNSdg==
+-----END CERTIFICATE-----
+    EOS
+  end
+
+  factory :preference do
+    factory :certificate_preference do
+      name "certificate_chain"
+      value "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
+    end
   end
 end
 
