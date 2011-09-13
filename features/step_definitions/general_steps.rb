@@ -95,17 +95,37 @@ Then /^(?:he|she|I) should see a confirmation$/ do
 end
 
 Then /^(?:he|she|I) should see an error$/ do
-  response.should have_flash
-  response.flash.keys == [:error]
+  if is_capybara?
+    page.should have_css('.flash_message.error')
+  else
+    response.should have_flash
+    response.flash.keys == [:error]
+  end
+end
+
+Then /^(?:he|she|I) should see a flash error message ['"]([^'"]*)['"]$/ do |msg|
+  if is_capybara?
+    page.should have_css('.flash_message.error')
+    page.should have_content(msg)
+  end
 end
 
 Then /^(?:he|she|I) should see an? error explanation$/ do
-  @browser.div(:class, "errorExplanation").should be
+  if is_capybara?
+    page.should have_css('.errorExplanation')
+  else
+    @browser.div(:class, "errorExplanation").should be
+  end
 end
 
-Then /^(?:he|she|I) should see a notice explanation$/ do
-  @browser.div(:class, "flash_message").should be
-  @browser.div(:class, "notice").should be
+Then /^(?:he|she|I) should see a notice explanation/ do
+  if is_capybara?
+    page.should have_css('.flash_message')
+    page.should have_css('.notice')
+  else
+    @browser.div(:class, "flash_message").should be
+    @browser.div(:class, "notice").should be
+  end
 end
 
 Then /^(?:he|she|I) should see (?:the\s)?(notice|error) ['"]([^'"]*)['"]$/ do |type, text|
@@ -115,7 +135,11 @@ Then /^(?:he|she|I) should see (?:the\s)?(notice|error) ['"]([^'"]*)['"]$/ do |t
 end
 
 Then /^there should be an error field indicator$/ do
-  @browser.div(:class, "fieldWithErrors").should be
+  if is_capybara?
+    page.should have_css('.fieldWithErrors')
+  else
+    @browser.div(:class, "fieldWithErrors").should be
+  end
 end
 
 Then /^there should be ['"](\d)['"] error field indicators?$/ do |count|

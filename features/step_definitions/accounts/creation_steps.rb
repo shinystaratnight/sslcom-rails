@@ -86,3 +86,8 @@ end
 Then /^Fred's details should be unchanged$/ do
   @user.should == User.find_by_login('Fred')
 end
+
+Given /^a duplicate login (\S+) exists$/ do |login|
+  FactoryGirl.create(:duplicate_v2_user, :login => login)
+  FactoryGirl.create(:duplicate_v2_user, :login => login)
+end

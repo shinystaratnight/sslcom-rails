@@ -6,10 +6,6 @@ describe CertificateContent, "as a ssl.com certificate order using FactoryGirl" 
     co = Factory(:certificate_content_w_csr, certificate_order: @certificate_order)
     co.csr.should_not be_blank
   end
-
-  it "this should be junked" do
-    p Preference.count
-  end
 end
 
 

@@ -74,8 +74,8 @@ Spork.prefork do
   #end
 
   DatabaseCleaner.clean_with :truncation # clean once to ensure clean slate
-  DatabaseCleaner.strategy = :truncation # for selenium
-  #DatabaseCleaner.strategy = :transaction
+  DatabaseCleaner.strategy = :truncation # for selenium and web_kit
+  #DatabaseCleaner.strategy = :transaction #only rack_test supports this
 
   #bypasses declarative authorization to allow creating objects
   World(Authorization::Maintenance)

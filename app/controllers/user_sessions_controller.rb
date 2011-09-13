@@ -1,6 +1,7 @@
 class UserSessionsController < ApplicationController
-  before_filter :require_no_user, :only => [:new]
-  before_filter :require_user, :only => :destroy
+  before_filter :require_no_user, only: [:new]
+  before_filter :find_dup_login, only: [:create]
+  before_filter :require_user, only: :destroy
 
   def new
     @user_session = UserSession.new
@@ -75,14 +76,8 @@ class UserSessionsController < ApplicationController
           to have your activation notice resent")
         format.html {render :action => :new}
         format.js   {render :json=>@user_session.errors}
-      elsif !@user_session.user.blank? && @user_session.user.is_disabled?
-        flash[:error] = "Account has been disabled"
-        @user_session.destroy
-        @user_session = UserSession.new
-        format.html {render :action => :new}
-        format.js   {render :json=>@user_session}
-      elsif @user_session.user.blank? && ()
-        flash[:error] = "Account has been disabled"
+      elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_disabled?)
+        flash[:error] = "Account has been disabled" unless @user_session.user.blank?
         @user_session.destroy
         @user_session = UserSession.new
         format.html {render :action => :new}
@@ -106,7 +101,6 @@ class UserSessionsController < ApplicationController
       format.html {redirect_to new_user_session_url}
     end
   end
-end
 
 private
 
@@ -118,3 +112,20 @@ private
         ',"billing_profiles":'+render_to_string(partial: '/orders/billing_profiles',
         locals: {ssl_account: user.ssl_account }).to_json)+'}'
   end
+
+  %W(email login).each do |u|
+    define_method("find_dup_#{u}") do
+      @dup=DuplicateV2User.find_by_email(params[u.to_sym]) unless User.send("find_by_#{u}", params[u.to_sym])
+      unless @dup.blank?
+        flash[:error]="Ooops, duplicate #{u=="email" ? "addresses" : "logins"} belong to this account.
+          Please contact support at support@ssl.com to consolidate the account." unless request.xhr?
+        DuplicateV2UserMailer.attempted_login_by(@dup).deliver
+        respond_to do |format|
+          format.html {redirect_back_or_default login_url}
+          #assume checkout
+          format.js   {render :json=>@dup}
+        end
+      end
+    end
+  end
+end

@@ -1,5 +1,6 @@
 class PasswordResetsController < ApplicationController
   before_filter :require_no_user
+  before_filter :find_dup_login, :find_dup_email, only: [:create]
   before_filter :load_user_using_perishable_token, :only => [:edit, :update]
 
   def edit
@@ -29,8 +30,6 @@ class PasswordResetsController < ApplicationController
         flash[:notice] =
           "Instructions to reset your password have been emailed to you. Please check your email."
         redirect_to root_url
-      elsif user=DuplicateV2User.find_by_login(params[:login])
-
       else
         flash[:notice] = "No user was found with that login"
         render :action => :new

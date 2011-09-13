@@ -339,6 +339,10 @@ dp6YRn8XDWkkbOWgSCHfQGqD52BCZ82ZsAziZun+pSwYDNNSdg==
       value "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
     end
   end
+
+  factory :duplicate_v2_user do
+
+  end
 end
 
 

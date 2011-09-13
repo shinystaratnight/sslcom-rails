@@ -2,9 +2,9 @@
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb
 #also all comments must appear before tags with no comments in-between tags
 #email tests do not work with remote selenium
+#@selenium @remote
 @firebug
 @webkit @remote
-@selenium @remote
 @javascript
 
 Feature: Manage SSL Certificates

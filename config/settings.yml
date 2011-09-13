@@ -68,6 +68,7 @@ thumbnail_tagline_size: 32
 allow_reseller_validation: true
 sync_aid_li_and_cart: false
 browser_acceptance: "99.3%"
+notify_address: "support@ssl.com"
 
 from_email:
   orders: 'orders@ssl.com'
