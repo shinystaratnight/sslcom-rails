@@ -571,6 +571,30 @@ class ApplicationController < ActionController::Base
     ua =~ /iphone|itouch|ipod/
   end
 
+  %W(email login).each do |u|
+    define_method("find_dup_#{u}") do
+      is_new_session = params[:user_session]
+      attr=is_new_session.blank? ? params[u.to_sym] : is_new_session[u.to_sym]
+      @dup=DuplicateV2User.send("find_by_#{u}", attr) unless
+          User.send("find_by_#{u}", attr)
+      unless @dup.blank?
+        flash.now[:error]="Ooops, #{u=="email" ? @dup.email : @dup.login} has been consolidated with a primary account.
+          Please contact support@ssl.com for assistance or more information." unless request.xhr?
+        if is_new_session
+          DuplicateV2UserMailer.attempted_login_by(@dup).deliver
+          @user_session = UserSession.new(:login=>is_new_session[u.to_sym])
+        else
+          DuplicateV2UserMailer.duplicates_found(@dup, u).deliver
+        end
+        respond_to do |format|
+          format.html {render action: :new}
+          #assume checkout
+          format.js   {render :json=>@dup}
+        end
+      end
+    end
+  end
+
   def hide_dcv?
     @other_party_validation_request && @other_party_validation_request.hide_dcv?
   end

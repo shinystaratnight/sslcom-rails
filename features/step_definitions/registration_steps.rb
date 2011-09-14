@@ -14,7 +14,7 @@ When /^(?:he|she|I) resets? the password for email ['"]([^'"]*)['"]$/ do |email|
 end
 
 When /^(?:he|she|I) request a username reminder for email ['"]([^'"]*)['"]$/ do |email|
-  @browser.goto APP_URL + new_password_reset_path
+  goto new_password_reset_path
   steps %Q{
     When I enter "#{email}" in the "email""text_field"
       And I click the submit image button

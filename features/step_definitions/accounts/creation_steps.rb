@@ -91,3 +91,8 @@ Given /^a duplicate login (\S+) exists$/ do |login|
   FactoryGirl.create(:duplicate_v2_user, :login => login)
   FactoryGirl.create(:duplicate_v2_user, :login => login)
 end
+
+Given /^a duplicate email (\S+) exists/ do |email|
+  FactoryGirl.create(:duplicate_v2_user, :email => email)
+  FactoryGirl.create(:duplicate_v2_user, :email => email)
+end

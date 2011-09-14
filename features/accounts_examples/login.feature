@@ -64,17 +64,30 @@ Feature: Logging in
   @rack_test
   Scenario: Duplicate usernames result in notification
     Given a duplicate login duplicate_user exists
-    When I login as duplicate_user
-    Then I should see a flash error message "Ooops, duplicate logins belong to this account."
-    And  "support@ssl.com" should receive an email
-    And  "support@ssl.com" should have 1 email
-    And  "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
+      And an activated user duplicate_user exists
+     When I login as duplicate_user
+     Then I should see a flash error message "Ooops, duplicate logins belong to this account."
+     And  "support@ssl.com" should receive an email
+     And  "support@ssl.com" should have 1 email
+     And  "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
 
     When "support@ssl.com" opens the email
     Then they should see "duplicate_user" in the email body
 
   Scenario: Duplicate usernames during checkout result in notification
     Given a duplicate login duplicate_user exists
-    When I login as duplicate_user
-    Then I should see an error
-    And an email should be sent to support@ssl.com
+     When I login as duplicate_user
+     Then I should see an error
+      And an email should be sent to support@ssl.com
+
+  @selenium @remote @firebug
+  Scenario: Duplicate email address result in notification
+    Given a duplicate email dup@duplicate.com exists
+     When I request a username reminder for email "dup@duplicate.com"
+     Then I should see a flash error message "Ooops, duplicate emails belong to this account."
+     And  "support@ssl.com" should receive an email
+     And  "support@ssl.com" should have 1 email
+     And  "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
+
+    When "support@ssl.com" opens the email
+    Then they should see "duplicate_user" in the email body

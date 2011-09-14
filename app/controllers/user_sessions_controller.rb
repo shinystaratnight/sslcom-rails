@@ -78,8 +78,6 @@ class UserSessionsController < ApplicationController
         format.js   {render :json=>@user_session.errors}
       elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_disabled?)
         flash[:error] = "Account has been disabled" unless @user_session.user.blank?
-        @user_session.destroy
-        @user_session = UserSession.new
         format.html {render :action => :new}
         format.js   {render :json=>@user_session}
       else
@@ -111,21 +109,5 @@ private
         (user.ssl_account.billing_profiles.empty? ? '' :
         ',"billing_profiles":'+render_to_string(partial: '/orders/billing_profiles',
         locals: {ssl_account: user.ssl_account }).to_json)+'}'
-  end
-
-  %W(email login).each do |u|
-    define_method("find_dup_#{u}") do
-      @dup=DuplicateV2User.find_by_email(params[u.to_sym]) unless User.send("find_by_#{u}", params[u.to_sym])
-      unless @dup.blank?
-        flash[:error]="Ooops, duplicate #{u=="email" ? "addresses" : "logins"} belong to this account.
-          Please contact support at support@ssl.com to consolidate the account." unless request.xhr?
-        DuplicateV2UserMailer.attempted_login_by(@dup).deliver
-        respond_to do |format|
-          format.html {redirect_back_or_default login_url}
-          #assume checkout
-          format.js   {render :json=>@dup}
-        end
-      end
-    end
   end
 end

@@ -20,5 +20,12 @@ class DuplicateV2UserMailer < ActionMailer::Base
     subject = "SSL.com System Notification: login attempt by duplicate login"
     mail(:to => @to, :subject => subject)
   end
+
+  def duplicates_found(dup, email_or_login)
+    @dup, @email_or_login=dup, email_or_login
+    @to = Settings.notify_address
+    subject = "SSL.com System Notification: attempted reset of user with duplicate #{email_or_login}"
+    mail(:to => @to, :subject => subject)
+  end
 end
 

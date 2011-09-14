@@ -32,10 +32,10 @@ end
 
 When /^(?:he|she|I) clicks? the (?:next|submit) (?:image\s)?button$/ do
   if is_capybara?
-    unless find("[src*=next_bl]").blank?
-      find("[src*=next_bl]").click
+    unless first("[src*=next_bl]").blank?
+      first("[src*=next_bl]").click
     else
-      find("[src*=submit_button]").click
+      first("[src*=submit_button]").click
     end
   else
     if @browser.button(:src, /next_bl\.gif/).exists?
@@ -56,7 +56,7 @@ When /^(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"] wi
 end
 
 When /^(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"]['"]([^'"]*)['"]$/ do |text, id, element|
-  @browser.send(element.intern, :id, id).value = text
+  set_element(element, "id", id, text)
 end
 
 When /^(?:he|she|I) fills? the ['"]([^'"]*)['"] having attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"] with$/ do |element, attribute, attribute_val, pystring|
