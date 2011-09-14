@@ -9,20 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/duplicate_v2_user_mailer/attempted_login_by.erb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/features/accounts_examples/forgot_account.feature" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/password_resets_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/password_resets_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/mailers/duplicate_v2_user_mailer.rb" afterPath="$PROJECT_DIR$/app/mailers/duplicate_v2_user_mailer.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/accounts_examples/login.feature" afterPath="$PROJECT_DIR$/features/accounts_examples/login.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" afterPath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/accounts/creation_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/general_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/general_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/env.rb" afterPath="$PROJECT_DIR$/features/support/env.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/spec/models/certificate_content_spec.rb" afterPath="$PROJECT_DIR$/spec/models/certificate_content_spec.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/factories.rb" afterPath="$PROJECT_DIR$/test/factories.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -1458,7 +1445,7 @@
     <option name="CHECK_COMMIT_MESSAGE_SPELLING" value="true" />
     <option name="DEFAULT_PATCH_EXTENSION" value="patch" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing signed certificates with capybara" />
+    <option name="LAST_COMMIT_MESSAGE" value="notify admin when dup username or email is being used to login or reset credentials" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1477,6 +1464,7 @@
     <MESSAGE value="reprocess functional" />
     <MESSAGE value="fixed subdomain links" />
     <MESSAGE value="testing signed certificates with capybara" />
+    <MESSAGE value="notify admin when dup username or email is being used to login or reset credentials" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
