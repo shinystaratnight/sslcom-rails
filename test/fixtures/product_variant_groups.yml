@@ -4,8 +4,7 @@ id = 0
 %>
 ev:
  id: <%=id+=1%>
- variantable_id: 1
- variantable_type: Certificate
+ variantable: ev (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -15,8 +14,7 @@ ev:
 
 ov:
  id: <%=id+=1%>
- variantable_id: 2
- variantable_type: Certificate
+ variantable: ov (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -26,8 +24,7 @@ ov:
 
 dv:
  id: <%=id+=1%>
- variantable_id: 3
- variantable_type: Certificate
+ variantable: dv (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -37,8 +34,7 @@ dv:
 
 wildcard:
  id: <%=id+=1%>
- variantable_id: 5
- variantable_type: Certificate
+ variantable: wildcard (Certificate)
  title: Duration
  description: Duration
  text_only_description: Duration
@@ -48,8 +44,7 @@ wildcard:
 
 wildcard_licenses:
  id: <%=id+=1%>
- variantable_id: 5
- variantable_type: Certificate
+ variantable: wildcard (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses
@@ -59,8 +54,7 @@ wildcard_licenses:
 
 ucc_domains:
  id: <%=id+=1%>
- variantable_id: 4
- variantable_type: Certificate
+ variantable: ucc (Certificate)
  title: Domains
  description: Domain Names
  text_only_description: Domain Names
@@ -70,8 +64,7 @@ ucc_domains:
 
 ucc_licenses:
  id: <%=id+=1%>
- variantable_id: 4
- variantable_type: Certificate
+ variantable: ucc (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses
@@ -81,8 +74,7 @@ ucc_licenses:
 
 ev_ucc_domains:
  id: <%=id+=1%>
- variantable_id: 6
- variantable_type: Certificate
+ variantable: ev_ucc (Certificate)
  title: Domains
  description: Domain Names
  text_only_description: Domain Names
@@ -92,8 +84,7 @@ ev_ucc_domains:
 
 ev_ucc_licenses:
  id: <%=id+=1%>
- variantable_id: 6
- variantable_type: Certificate
+ variantable: ev_ucc (Certificate)
  title: Server Licenses
  description: Server Licenses
  text_only_description: Server Licenses

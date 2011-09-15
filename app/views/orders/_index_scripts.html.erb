@@ -101,15 +101,23 @@ jQuery(function($) {
           $('#waiting_bar').show();
         },
         success: function(data, status, $form) {
+          $('#waiting_bar').hide();
           if(typeof(data.record) == "undefined"){
+            errorArray=[];
             msg="Login error(s):\n";
-            for(i=0;i<data.length;i++){
-              if(data[i][0]=='base')
-                msg+=' - '+data[i][1]+"\n";
-              else if(data[i][0]=='login' || data[i][0]=='password')
-                msg+=' - '+data[i][0].toLowerCase()+' '+data[i][1].toLowerCase()+"\n";
+            if(typeof(data.errors) != "undefined"){
+              for (var key in data.errors) {
+                if (data.errors.hasOwnProperty(key)) {
+                  errorArray.push(key + ": " + data.errors[key].join(", "));
+                }
+              }
             }
-            alert(msg);
+            else if (typeof(data.duplicate_v2_user) != "undefined"){
+              errorArray.push(
+                 "Ooops, '"+data.duplicate_v2_user.login+"' has been consolidated with a primary account. Please contact support@ssl.com for assistance or more information.");
+            }
+            errorString = errorArray.join(",\n");
+            alert(msg+errorString);
           }
           else{
             if(data.record.user.status=='disabled')
@@ -143,7 +151,6 @@ jQuery(function($) {
                     profile_form_hidden = true;
                   }
                 }
-                $('#waiting_bar').hide();
               }
               return true;
             }

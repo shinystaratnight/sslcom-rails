@@ -1,4 +1,4 @@
-#@rack_test
+@rack_test
 
 Feature: Logging in
   As a registered user
@@ -61,33 +61,65 @@ Feature: Logging in
       And I should not have an auth_token cookie
       And I should not have a user id in my session store
 
-  @rack_test
   Scenario: Duplicate usernames result in notification
     Given a duplicate login duplicate_user exists
-      And an activated user duplicate_user exists
      When I login as duplicate_user
-     Then I should see a flash error message "Ooops, duplicate logins belong to this account."
-     And  "support@ssl.com" should receive an email
-     And  "support@ssl.com" should have 1 email
-     And  "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
+     Then I should see a flash error message "Ooops, duplicate_user has been consolidated with a primary account"
+      And "support@ssl.com" should receive an email
+      And "support@ssl.com" should have 1 email
+      And "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
 
-    When "support@ssl.com" opens the email
-    Then they should see "duplicate_user" in the email body
+     When "support@ssl.com" opens the email
+     Then they should see "duplicate_user" in the email body
 
+  @selenium @remote
   Scenario: Duplicate usernames during checkout result in notification
     Given a duplicate login duplicate_user exists
-     When I login as duplicate_user
-     Then I should see an error
-      And an email should be sent to support@ssl.com
+      And I am not logged in
+      And my cart is empty
 
-  @selenium @remote @firebug
+    #add stuff to cart
+    When I add an ssl certificate to the cart
+      |product       |years|domains                   |price |
+      |high_assurance|1    |                          |69.00 |
+      And I checkout
+    Then I should be directed to route path "new_order_path"
+
+    When I click the "radio" with "has_account_true" "id"
+      And I ajax log in using
+      |login         |password      |
+      |duplicate_user|duplicate_user|
+      And "support@ssl.com" should receive an email
+      And "support@ssl.com" should have 1 email
+      And "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
+      When "support@ssl.com" opens the email
+     Then they should see "duplicate_user" in the email body
+
+  Scenario: User with duplicate usernames can log in
+   Given a duplicate login duplicate_user exists
+     And an activated user duplicate_user exists
+    When I login as duplicate_user
+    Then there should be a session
+     And the user should be "duplicate_user"
+
   Scenario: Duplicate email address result in notification
     Given a duplicate email dup@duplicate.com exists
      When I request a username reminder for email "dup@duplicate.com"
-     Then I should see a flash error message "Ooops, duplicate emails belong to this account."
+     Then I should see a flash error message "Ooops, dup@duplicate.com has been consolidated with a primary account"
      And  "support@ssl.com" should receive an email
      And  "support@ssl.com" should have 1 email
-     And  "support@ssl.com" should receive an email with subject "login attempt by duplicate login"
+     And  "support@ssl.com" should receive an email with subject "attempted reset of user with duplicate"
 
     When "support@ssl.com" opens the email
-    Then they should see "duplicate_user" in the email body
+    Then they should see "duplicate_v2_user_1" in the email body
+
+  Scenario: Duplicate login result in notification
+    Given a duplicate login duplicate_user exists
+     When I reset the password for username "duplicate_user"
+     Then I should see a flash error message "Ooops, duplicate_user has been consolidated with a primary account"
+     And  "support@ssl.com" should receive an email
+     And  "support@ssl.com" should have 1 email
+     And  "support@ssl.com" should receive an email with subject "attempted reset of user with duplicate"
+
+    When "support@ssl.com" opens the email
+    Then they should see "duplicate_v2_user_1" in the email body

@@ -339,9 +339,9 @@ EOS
   #World(Authlogic::TestCase)
 
   #selenium synchronize not working properly
-  #Before do
-  #  page.driver.options[:resynchronize] = false
-  #end
+  Before do
+    page.driver.options[:resynchronize] = false
+  end
 end
 
 Spork.each_run do

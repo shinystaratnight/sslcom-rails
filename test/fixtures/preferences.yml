@@ -479,12 +479,6 @@
   group_id:
   value: "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
   owner_type: CertificateOrder
-test:
-  name: certificate_chain
-  group_type:
-  owner: ev_ucc_tier_1 (Certificate)
-  group_id:
-  value: "AddTrustExternalCARoot.crt:Root CA Certificate, UTNAddTrustServerCA.crt:Intermediate CA Certificate"
 <% %w(ev ov dv ucc wildcard ev_ucc).each do |c|%>
 <%=c%>:
   name: certificate_chain

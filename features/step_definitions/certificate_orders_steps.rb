@@ -161,6 +161,29 @@ When /^(?:he|she|I) enters? (?:his|her|my) new user information$/ do |table|
   end
 end
 
+When /^(?:he|she|I) enters? (?:his|her|my) login information$/ do |table|
+  profiles = (defined? table.hashes) ? table.hashes : [table]
+  profiles.each do |profile|
+    {"user_session_login"=>profile["login"],
+    "user_session_password"=>profile["password"]}.each do |k,v|
+      fill_text(k,v)
+    end
+  end
+end
+
+When /^(?:he|she|I) ajax logs? in using/ do |table|
+  profiles = (defined? table.hashes) ? table.hashes : [table]
+  profiles.each do |profile|
+    {"user_session_login"=>profile["login"],
+    "user_session_password"=>profile["password"]}.each do |k,v|
+      fill_text(k,v)
+    end
+  end
+  And "I click the submit image button"
+  #Then "I should see a popup containing 'Ooops'"
+  page.driver.browser.switch_to.alert.accept
+end
+
 When /^(?:he|she|I) add (?:an\s)?ssl certificates? to the cart$/ do |table|
   @order_total=0
   profiles = (defined? table.hashes) ? table.hashes : [table]
@@ -180,7 +203,11 @@ Then /^the order amount displayed should be the same as the cart amount$/ do
 end
 
 Then /^(?:he|she|I) should see a popup containing ['"]([^'"]*)['"]$/ do |text|
-  @browser.get_popup_text.should include(text)
+  if is_capybara?
+    page.driver.browser.switch_to.alert.text.should have_content(text)
+  else
+    @browser.get_popup_text.should include(text)
+  end
 end
 
 Then /^there should ['"]([^'"]*)['"] be an (expiring|expired) indicator$/ do |be_or_not, status|
@@ -304,7 +331,6 @@ def request_dcv_from_email(co, email)
     click_on "send request"
   end
 end
-
 
 When /^(\S+) sends? domain control validation verification$/ do |user|
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
