@@ -72,6 +72,7 @@ module OldSite
     end
   end
 
+  # this is the main function to do the migration
   def self.migrate_all
     Authorization.ignore_access_control(true)
     ActiveRecord::Base.logger.level = 3 # at any time
@@ -272,6 +273,15 @@ module OldSite
     #diff_s=oc_s-ca_s
   end
 
+  def self.sync_duplicate_v2_user_attributes
+    DuplicateV2User.sync_mismatched_attributes if DuplicateV2User.mismatched_attributes.blank?
+    if DuplicateV2User.mismatched_attributes.blank?
+      "successfully synced DuplicateV2User attributes"
+    else
+      "failed syncing DuplicateV2User attributes"
+    end
+  end
+
   def self.adjust_certificate_content_workflow
     CertificateContent.find_each(:include=>
       [:registrant,:certificate_contacts, {:csr=>:signed_certificates}]) do |cc|
@@ -325,6 +335,32 @@ module OldSite
         end
         ss.update_seal_type
       end
+    end
+
+    # this function will make accounts with duplicates to use the latest
+    # login with the most "updated_at" changed field the primary login
+    def self.make_latest_login_primary
+
+    end
+
+    # we need to verify at the data level that migration integrity has been maintained
+    # compare non-duplicate user accounts and their orders and certificates
+    # then compare duplicates
+    def self.verify_migration_integrity
+      # for each v1 user, find the corresponding v2 user
+      # compare orders quantity and prices
+      # compare csrs and signed certificates (quantity and contents)
+      # we'll start off with non dupllicates and verify 1-to-1 mappings to orders
+      OldSite::Customer.non_duplicates.find_each do |c|
+        # need to get v2 user
+        user = c.migratable.class == User ? c.migratable : c.migratable.user
+        user.ssl_account.orders.count >= c.orders.count
+      end
+      #OldSite::Customer.duplicates.find_each do |c|
+      #  # need to get v2 user
+      #  user = c.migratable.class == User ? c.migratable : c.migratable.user
+      #  user.ssl_account.orders.count >= c.orders.count
+      #end
     end
   end
 
@@ -472,12 +508,12 @@ module OldSite
     attr_accessor_with_default :status, 'enabled'
 
     def self.invalid_accounts
-      ia=[]
-      select(primary_key, "Email", "UserName").find_each do |c|
-        ia << c if (c.Email.length < 6) || (c.UserName.length < 3) ||
-            (c.Email !~ Authlogic::Regex.email) || (c.UserName !~ Authlogic::Regex.login)
+      [].tap do |ia|
+        unscoped.select([primary_key, "Email", "UserName"]).find_each do |c|
+          ia << c if (c.Email.length < 6) || (c.UserName.length < 3) ||
+              (c.Email !~ Authlogic::Regex.email) || (c.UserName !~ Authlogic::Regex.login)
+        end
       end
-      ia
     end
 
     INVALID_ACCOUNTS ||= OldSite::Customer.invalid_accounts
@@ -636,15 +672,18 @@ module OldSite
       V2MigrationProgress.status(self)
     end
 
+    # find email addresses of v1 accounts that are duplicates
     def self.duplicate_emails
       all(:group=>'Email', :select=>'Email', :having=>'count(Email)>1')
     end
 
+    # find logins of v1 accounts that are duplicates
     def self.duplicate_logins
       all(:group=>'UserName', :select=>'UserName',
         :having=>'count(UserName)>1')
     end
 
+    # find duplicate usernames based on v1 users with duplicate email addresses
     def self.find_dup_email_and_username
       names=duplicate_emails.map(&:email).map {|e|
         OldSite::Customer.find_all_by_Email(e)}.map{|e| e.map(&:UserName)}
@@ -656,6 +695,20 @@ module OldSite
         end
       end
       global_dup
+    end
+
+    #these customers are not 'corrupted' with duplicate usernames or emails
+    def self.non_duplicates
+      de = duplicate_emails.map(&:Email)
+      dl = duplicate_logins.map(&:UserName)
+      where((:Email - de) & (:UserName - dl))
+    end
+
+    #these customers are 'corrupted' with either duplicate usernames or emails
+    def self.duplicates
+      de = duplicate_emails.map(&:Email)
+      dl = duplicate_logins.map(&:UserName)
+      where((:Email + de) | (:UserName + dl))
     end
 
     def self.unmigrate_all
