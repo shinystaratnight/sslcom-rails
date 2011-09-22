@@ -81,6 +81,7 @@ module OldSite
     Customer.migrate_all
     Order.migrate_all
     Customer.sync_attributes_with_v2
+    ::DuplicateV2User.make_latest_login_primary
     #self.adjust_site_seals_workflow
     #self.adjust_certificate_order_prepaid
     #self.adjust_certificate_content_workflow

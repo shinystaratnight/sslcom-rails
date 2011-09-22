@@ -2,6 +2,8 @@ class DuplicateV2User < ActiveRecord::Base
   belongs_to  :user
   has_many    :legacy_v2_user_mappings, :as=>:user_mappable
 
+  IGNORE = %w(leo@ssl.com rabbit sy_adm1n buttysquirrel)
+
   def source_obj
     m = V2MigrationProgress.find_by_migratable(self)
     m.source_obj unless m.blank?
@@ -60,6 +62,7 @@ class DuplicateV2User < ActiveRecord::Base
     users = DuplicateV2User.all.map(&:user).uniq
     swap=[]
     users.each do |user|
+      next if IGNORE.include? user.login
       recent_dup=user.duplicate_v2_users.sort{|a,b|a.updated_at<=>b.updated_at}.last
       if recent_dup.updated_at.to_date > user.updated_at.to_date
         swap << user
@@ -89,7 +92,7 @@ class DuplicateV2User < ActiveRecord::Base
       dup=user.v2_migration_progresses.last
       p "swapping v2_migration_progresses for #{user.model_and_id} and #{dup.model_and_id}"
       ump=dup
-      vmp=v2_migration_progress
+      vmp=v2_migration_progress.last
       mtype, mid, mstable, msid=ump.migratable_type, ump.migratable_id, ump.source_table_name, ump.source_id
       ump.update_attributes migratable_type: vmp.migratable_type,
                             migratable_id: vmp.migratable_id,
@@ -100,10 +103,10 @@ class DuplicateV2User < ActiveRecord::Base
                             source_table_name: mstable,
                             source_id: msid
       #swap legacy_v2_user_mappings
-      if(!user.legacy_v2_user_mappings.empty? && !dup.legacy_v2_user_mappings.empty?)
+      if(!user.legacy_v2_user_mappings.empty? && !legacy_v2_user_mappings.empty?)
         p "swapping legacy_v2_users for #{user.model_and_id} and #{dup.model_and_id}"
         ulms=user.legacy_v2_user_mappings
-        dlms=dup.legacy_v2_user_mappings
+        dlms=legacy_v2_user_mappings
         ulms.each do |ulm|
           p "assigning #{ulm.model_and_id} to #{dup.model_and_id}"
           ulm.user_mappable=dup
