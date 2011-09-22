@@ -7,6 +7,10 @@ class DuplicateV2User < ActiveRecord::Base
     m.source_obj unless m.blank?
   end
 
+  def v2_migration_progress
+    m = V2MigrationProgress.find_by_migratable(self, :all)
+  end
+
   def self.find_and_notify(params)
     if dup = find_by_login(params[:login]) || find_by_email(params[:email])
       DuplicateV2UserMailer.duplicate_found(dup).deliver!
@@ -43,6 +47,72 @@ class DuplicateV2User < ActiveRecord::Base
         so = d.source_obj
         unless so.blank?
          d.update_attributes(login: so.login, email: so.email) if (so.login!=d.login || so.email!=d.email)
+        end
+      end
+    end
+  end
+
+
+  # this function will make accounts with duplicates to use the latest
+  # login with the most "updated_at" changed field the primary login
+  def self.make_latest_login_primary
+    #add each user to a hash
+    users = DuplicateV2User.all.map(&:user).uniq
+    swap=[]
+    users.each do |user|
+      recent_dup=user.duplicate_v2_users.sort{|a,b|a.updated_at<=>b.updated_at}.last
+      if recent_dup.updated_at.to_date > user.updated_at.to_date
+        swap << user
+        p "#{user.model_and_id} (#{user.login}) being swapped"
+        recent_dup.swap_with(user)
+      end
+    end
+    swap
+  end
+
+  INVALID_DUPS ||= V2MigrationProgress.find_non_mapped(DuplicateV2User)+
+      V2MigrationProgress.find_multiple_mapped(DuplicateV2User)
+
+  INVALID_USERS ||= V2MigrationProgress.find_non_mapped(User)+
+      V2MigrationProgress.find_multiple_mapped(User)
+
+  #swap attributes and v2_migration_progress
+  def swap_with(user)
+    if INVALID_DUPS.include? self
+      p "DuplicateV2User #{model_and_id} (#{login}) has no or multiple v2_migration_progresses"
+    elsif INVALID_USERS.include? user
+      p "User #{user.model_and_id} (#{user.login}) has no or multiple v2_migration_progresses"
+    else
+      #swap user<->dup attrs
+      l,p,c,u=user.login, user.crypted_password, user.created_at, user.updated_at
+      #swap v2_migration_progress
+      dup=user.v2_migration_progresses.last
+      p "swapping v2_migration_progresses for #{user.model_and_id} and #{dup.model_and_id}"
+      ump=dup
+      vmp=v2_migration_progress
+      mtype, mid, mstable, msid=ump.migratable_type, ump.migratable_id, ump.source_table_name, ump.source_id
+      ump.update_attributes migratable_type: vmp.migratable_type,
+                            migratable_id: vmp.migratable_id,
+                            source_table_name: vmp.source_table_name,
+                            source_id: vmp.source_id
+      vmp.update_attributes migratable_type: mtype,
+                            migratable_id: mid,
+                            source_table_name: mstable,
+                            source_id: msid
+      #swap legacy_v2_user_mappings
+      if(!user.legacy_v2_user_mappings.empty? && !dup.legacy_v2_user_mappings.empty?)
+        p "swapping legacy_v2_users for #{user.model_and_id} and #{dup.model_and_id}"
+        ulms=user.legacy_v2_user_mappings
+        dlms=dup.legacy_v2_user_mappings
+        ulms.each do |ulm|
+          p "assigning #{ulm.model_and_id} to #{dup.model_and_id}"
+          ulm.user_mappable=dup
+          ulm.save
+        end
+        dlms.each do |dlm|
+          p "assigning #{dlm.model_and_id} to #{user.model_and_id}"
+          dlm.user_mappable=user
+          dlm.save
         end
       end
     end

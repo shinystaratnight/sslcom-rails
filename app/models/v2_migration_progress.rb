@@ -13,10 +13,20 @@ class V2MigrationProgress < ActiveRecord::Base
       obj.send(pk))
   end
 
+  def self.find_non_mapped(klass)
+    ids=klass.all.map(&:id)
+    vps=where({:migratable_type=>klass.to_s} & :migratable_id + ids)
+    klass.find((ids-vps.map(&:migratable_id)))
+  end
+
+  def self.find_multiple_mapped(klass)
+    ids=klass.all.map(&:id)
+    vps=where({:migratable_type=>klass.to_s} & :migratable_id + ids).
+        group(:migratable_id).having("count(migratable_id)>1")
+  end
+
   def self.find_by_migratable(migratable, which=:first)
-    self.find(which) do |v|
-      v.migratable_type==migratable.class.to_s && v.migratable_id==migratable.id
-    end
+    where(:migratable_type=>migratable.class.to_s, :migratable_id=>migratable.id)
   end
 
   def self.find_by_migratable_and_source_table_name(

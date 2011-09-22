@@ -339,27 +339,6 @@ module OldSite
     end
   end
 
-  # this function will make accounts with duplicates to use the latest
-  # login with the most "updated_at" changed field the primary login
-  def self.make_latest_login_primary
-    #add each user to a hash
-    users = DuplicateV2User.all.map(&:user).uniq
-
-  end
-
-  # get user and all associated duplicate_v2_users, then get their corresponding OldSite::Customer objs
-  # then determine the record with most recent updated_at value and designate that the primary account
-  # change the user attrs to that record's attrs including username, password, and hash
-  # if a duplicate_v2_user record was 'promoted' to primary, then place the old primary values into
-  # the vacated slot of the duplicate_v2_user and remember to update the old customer reference as well
-  def self.designated_primary_user
-    User.each do |u|
-      unless u.v2_migration_sources.blank?
-
-      end
-    end
-  end
-
   # we need to verify at the data level that migration integrity has been maintained
   # compare non-duplicate user accounts and their orders and certificates
   # then compare duplicates
@@ -797,6 +776,10 @@ module OldSite
         p "processed batch #{count} of 1000 records: \n
           #{l} logins, #{e} emails, #{p} passwords, #{c} created_at, and #{u} updated_at synced"
       end
+    end
+
+    def designate_primary_account
+
     end
   end
 
