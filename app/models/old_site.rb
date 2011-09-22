@@ -80,7 +80,7 @@ module OldSite
     dynamic_initialize
     Customer.migrate_all
     Order.migrate_all
-    #sync_changed_users
+    Customer.sync_attributes_with_v2
     #self.adjust_site_seals_workflow
     #self.adjust_certificate_order_prepaid
     #self.adjust_certificate_content_workflow
@@ -229,6 +229,7 @@ module OldSite
     end
   end
 
+  #DEPRECATED - see OldSite::Customer.sync_attributes_with_v2
   #user changes such as passwords or emails (or even logins) are sync using this method
   def self.sync_changed_users
     d = DuplicateV2User.all
@@ -336,34 +337,64 @@ module OldSite
         ss.update_seal_type
       end
     end
+  end
 
-    # this function will make accounts with duplicates to use the latest
-    # login with the most "updated_at" changed field the primary login
-    def self.make_latest_login_primary
+  # this function will make accounts with duplicates to use the latest
+  # login with the most "updated_at" changed field the primary login
+  def self.make_latest_login_primary
+    #add each user to a hash
+    users = DuplicateV2User.all.map(&:user).uniq
 
-    end
+  end
 
-    # we need to verify at the data level that migration integrity has been maintained
-    # compare non-duplicate user accounts and their orders and certificates
-    # then compare duplicates
-    def self.verify_migration_integrity
-      # for each v1 user, find the corresponding v2 user
-      # compare orders quantity and prices
-      # compare csrs and signed certificates (quantity and contents)
-      # we'll start off with non dupllicates and verify 1-to-1 mappings to orders
-      OldSite::Customer.non_duplicates.find_each do |c|
-        # need to get v2 user
-        user = c.migratable.class == User ? c.migratable : c.migratable.user
-        user.ssl_account.orders.count >= c.orders.count
+  # get user and all associated duplicate_v2_users, then get their corresponding OldSite::Customer objs
+  # then determine the record with most recent updated_at value and designate that the primary account
+  # change the user attrs to that record's attrs including username, password, and hash
+  # if a duplicate_v2_user record was 'promoted' to primary, then place the old primary values into
+  # the vacated slot of the duplicate_v2_user and remember to update the old customer reference as well
+  def self.designated_primary_user
+    User.each do |u|
+      unless u.v2_migration_sources.blank?
+
       end
-      #OldSite::Customer.duplicates.find_each do |c|
-      #  # need to get v2 user
-      #  user = c.migratable.class == User ? c.migratable : c.migratable.user
-      #  user.ssl_account.orders.count >= c.orders.count
-      #end
     end
   end
 
+  # we need to verify at the data level that migration integrity has been maintained
+  # compare non-duplicate user accounts and their orders and certificates
+  # then compare duplicates
+  def self.verify_migration_integrity
+    # for each v1 user, find the corresponding v2 user
+    # compare orders quantity and prices
+    # compare csrs and signed certificates (quantity and contents)
+    # we'll start off with non dupllicates and verify 1-to-1 mappings to orders
+    [].tap do |order_count_mismatch|
+      i=0
+      nd=OldSite::Customer.non_duplicates
+      p "total  #{nd.count.to_s} legacy users to process"
+      nd.find_each do |c|
+        # need to get v2 user
+        p "processed #{i.to_s} legacy users" if i%100==0
+        user = c.migratable
+        if user.is_a?(User) && user.ssl_account
+          if user.ssl_account.orders.count == c.orders.count
+            #user.ssl_account.orders.each do |o|
+            #  o
+            #end
+          else
+            order_count_mismatch << user
+            p "#{user.login} (#{user.mode_and_id}) doesn't have the same number of orders as the legacy user"
+          end
+        end
+        i+=1
+      end
+    end
+    #OldSite::Customer.duplicates.find_each do |c|
+    #  # need to get v2 user
+    #  user = c.migratable.class == User ? c.migratable : c.migratable.user
+    #  user.ssl_account.orders.count >= c.orders.count
+    #end
+  end
 
   class Base < ActiveRecord::Base
     establish_connection :ssl_store_mssql
@@ -433,7 +464,7 @@ module OldSite
 
     def copy_attributes(corresponding)
       self.class::ATTR_MAP.each do |k,v|
-        corresponding.send(k, (k!=:country ? self.send(v) : OldSite::MerchantContact.convert_country(self.send(v))))
+        corresponding.send(k.to_s+"=", (k!=:country ? self.send(v) : OldSite::MerchantContact.convert_country(self.send(v))))
       end
     end
 
@@ -718,6 +749,54 @@ module OldSite
           u=User.find(c.id)
           u.ssl_account.destroy
         end}
+    end
+
+    def self.sync_attributes_with_v2
+      count=0
+      select([:CustomerID, :UserName, :Email, :Password, :CreatedOn, :LastUpdated]).find_in_batches do |customers|
+        l, e, p, c, u = 0,0,0,0,0
+        V2MigrationProgress.includes(:migratable).
+            where({:source_table_name=>"Customer"} & :source_id + customers.map(&:CustomerID)).each do |v|
+          o=customers.find{|c|c.CustomerID==v.source_id}
+          n=v.migratable
+          if n.login != o.UserName
+            p "changing username from #{n.login} to #{o.UserName}"
+            n.update_attribute(:login, o.UserName)
+            l+=1
+          end
+          if n.email != o.Email
+            p "changing email from #{n.email} to #{o.Email}"
+            n.update_attribute(:email, o.Email)
+            e+=1
+          end
+          if n.created_at.to_date != o.CreatedOn.to_date
+            p "changing created_at from #{n.created_at} to #{o.CreatedOn}"
+            n.update_attribute(:created_at, o.CreatedOn)
+            c+=1
+          end
+          if n.updated_at.to_date != o.LastUpdated.to_date
+            p "changing updated_at from #{n.updated_at} to #{o.LastUpdated}"
+            n.update_attribute(:updated_at, o.LastUpdated)
+            u+=1
+          end
+          if n.is_a? DuplicateV2User
+            if n.password != o.Password
+              p "changing password for duplicate user from #{n.password} to #{o.Password}"
+              n.update_attribute(:password, o.Password)
+              p+=1
+            end
+          else #assume User
+            if n.crypted_password != o.Password
+              p "changing password for user from #{n.crypted_password} to #{o.Password}"
+              n.update_attribute(:crypted_password, o.Password)
+              p+=1
+            end
+          end
+        end
+        count+=1
+        p "processed batch #{count} of 1000 records: \n
+          #{l} logins, #{e} emails, #{p} passwords, #{c} created_at, and #{u} updated_at synced"
+      end
     end
   end
 

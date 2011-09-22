@@ -47,8 +47,11 @@ class Csr < ActiveRecord::Base
         self[:email] = parsed.subject.email
         self[:sig_alg] = parsed.signature_algorithm
         self[:subject_alternative_names] = parsed.subject_alternative_names
-        self[:strength] = parsed.strength
-        self[:challenge_password] = parsed.challenge_password?
+        begin
+          self[:strength] = parsed.strength
+          self[:challenge_password] = parsed.challenge_password?
+        rescue
+        end
       end
     else
       ssl_util = Savon::Client.new Settings.csr_parser_wsdl

@@ -405,7 +405,7 @@ a:hover {
 }
 
 /* line 317, ../../../app/stylesheets/main.sass */
-.container p, .containerb p {
+.container p, .containerb p, .containerl p {
   margin: 10px 0;
   font-size: 1.4em;
   line-height: 20px;
@@ -6315,7 +6315,7 @@ a.footer_link {
 
 /* line 4727, ../../../app/stylesheets/main.sass */
 #sample_site_report, #sample_artifacts {
-  margin-right: 10px;
+  margin-right: 10px 10px 0 0;
   float: left;
   width: 300px;
 }
