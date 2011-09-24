@@ -12,9 +12,12 @@ class SignedCertificate < ActiveRecord::Base
 
   attr :parsed
 
+  BEGIN_TAG="-----BEGIN CERTIFICATE-----\n"
+  END_TAG="-----END CERTIFICATE-----\n"
+
   def body=(certificate)
     return if certificate.blank?
-    self[:body] = certificate
+    self[:body] = enclose_with_tags(certificate)
     unless Settings.csr_parser=="remote"
       begin
         parsed = OpenSSL::X509::Certificate.new certificate
@@ -166,5 +169,10 @@ class SignedCertificate < ActiveRecord::Base
   def subject_to_array(subject)
     subject.split(/\/(?=\w+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
+  
+  def enclose_with_tags(cert)
+    cert = BEGIN_TAG << cert unless cert =~ Regexp.new(BEGIN_TAG)
+    cert = cert << END_TAG unless cert =~ Regexp.new(END_TAG)
+  end  
 end
 

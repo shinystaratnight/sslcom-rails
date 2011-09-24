@@ -115,7 +115,9 @@ class CertificateContent < ActiveRecord::Base
     self.csr
     self.build_csr(:body=>signing_request)
     unless self.csr.common_name.blank?
-      self.csr.save
+      unless self.csr.save
+        logger.error "error #{self.model_and_id}#signing_request saving #{signing_request}"
+      end
     end
   end
 

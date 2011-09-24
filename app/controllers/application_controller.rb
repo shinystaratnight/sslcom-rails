@@ -220,8 +220,7 @@ class ApplicationController < ActionController::Base
     if @search = params[:search]
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
-        (CertificateOrder.search(params[:search], options)+
-          Csr.search(params[:search]).map(&:certificate_orders).flatten) :
+        (CertificateOrder.search_with_csr(params[:search], options)) :
         current_user.ssl_account.certificate_orders.
           search_with_csr(params[:search], options)).select{|co|
         ['paid'].include? co.workflow_state}

@@ -4329,7 +4329,8 @@ label.error {
 /* line 3314, ../../../app/stylesheets/main.sass */
 #prog_nav_container {
   width: 100%;
-  background: black;
+  background: #060511;
+  padding-top: 4px;
 }
 /* line 137, ../../../app/stylesheets/main.sass */
 #prog_nav_container:after {
@@ -4348,7 +4349,7 @@ label.error {
   min-height: 1px;
 }
 
-/* line 3319, ../../../app/stylesheets/main.sass */
+/* line 3320, ../../../app/stylesheets/main.sass */
 #prog_nav {
   width: 900px;
   margin: 0 auto;
@@ -4357,7 +4358,7 @@ label.error {
   background: black;
 }
 
-/* line 3326, ../../../app/stylesheets/main.sass */
+/* line 3327, ../../../app/stylesheets/main.sass */
 #prog_nav li {
   float: left;
   margin: 0 1px 0 0;
@@ -4366,7 +4367,7 @@ label.error {
   letter-spacing: 0.15em;
 }
 
-/* line 3333, ../../../app/stylesheets/main.sass */
+/* line 3334, ../../../app/stylesheets/main.sass */
 #prog_nav a {
   float: left;
   display: block;
@@ -4375,27 +4376,27 @@ label.error {
   color: #eeeeee;
   text-decoration: none;
   border-bottom: none;
-  background: black;
+  background: #060511;
 }
 
-/* line 3343, ../../../app/stylesheets/main.sass */
+/* line 3344, ../../../app/stylesheets/main.sass */
 #prog_nav a:hover, #t-intro a {
   color: #333333;
   background: white url(/images/on_bg.gif) repeat-x top left;
 }
 
-/* line 3347, ../../../app/stylesheets/main.sass */
+/* line 3348, ../../../app/stylesheets/main.sass */
 .order_amount_strong {
   font-size: 110%;
   font-weight: bold;
 }
 
-/* line 3351, ../../../app/stylesheets/main.sass */
+/* line 3352, ../../../app/stylesheets/main.sass */
 .red {
   color: red;
 }
 
-/* line 3354, ../../../app/stylesheets/main.sass */
+/* line 3355, ../../../app/stylesheets/main.sass */
 #order_details_table {
   margin: 1em auto;
   border: 1px solid #cccccc;
@@ -4403,76 +4404,76 @@ label.error {
   width: 100%;
   font-size: 1.4em;
 }
-/* line 3363, ../../../app/stylesheets/main.sass */
+/* line 3364, ../../../app/stylesheets/main.sass */
 #order_details_table.multiple tr:last-child td {
   padding-bottom: 0.8em;
 }
-/* line 3366, ../../../app/stylesheets/main.sass */
+/* line 3367, ../../../app/stylesheets/main.sass */
 #order_details_table.receipt {
   border: none;
   margin-bottom: 0px;
 }
-/* line 3370, ../../../app/stylesheets/main.sass */
+/* line 3371, ../../../app/stylesheets/main.sass */
 #order_details_table.receipt tr#heading_row {
   border: none;
   color: #666666;
 }
-/* line 3374, ../../../app/stylesheets/main.sass */
+/* line 3375, ../../../app/stylesheets/main.sass */
 #order_details_table.receipt td, #order_details_table.receipt th {
   padding: 0em 1em 0.1em;
 }
-/* line 3377, ../../../app/stylesheets/main.sass */
+/* line 3378, ../../../app/stylesheets/main.sass */
 #order_details_table.receipt th {
   font-weight: normal;
 }
-/* line 3380, ../../../app/stylesheets/main.sass */
+/* line 3381, ../../../app/stylesheets/main.sass */
 #order_details_table tr#heading_row {
   border-bottom: 1px dashed #cccccc;
 }
-/* line 3383, ../../../app/stylesheets/main.sass */
+/* line 3384, ../../../app/stylesheets/main.sass */
 #order_details_table td, #order_details_table th {
   padding: 1em;
 }
-/* line 3385, ../../../app/stylesheets/main.sass */
+/* line 3386, ../../../app/stylesheets/main.sass */
 #order_details_table td.description, #order_details_table th.description {
   text-align: left;
 }
-/* line 3388, ../../../app/stylesheets/main.sass */
+/* line 3389, ../../../app/stylesheets/main.sass */
 #order_details_table td.description.subitem, #order_details_table th.description.subitem {
   padding: 0 0 0 2em;
   font-size: 0.8em;
   color: #333333;
 }
-/* line 3393, ../../../app/stylesheets/main.sass */
+/* line 3394, ../../../app/stylesheets/main.sass */
 #order_details_table td.quantity, #order_details_table td.center_align, #order_details_table th.quantity, #order_details_table th.center_align {
   text-align: center;
 }
-/* line 3396, ../../../app/stylesheets/main.sass */
+/* line 3397, ../../../app/stylesheets/main.sass */
 #order_details_table td.price, #order_details_table td.right_align, #order_details_table th.price, #order_details_table th.right_align {
   text-align: right;
 }
-/* line 3399, ../../../app/stylesheets/main.sass */
+/* line 3400, ../../../app/stylesheets/main.sass */
 #order_details_table td.total_row, #order_details_table th.total_row {
   padding-top: 1em;
   font-weight: bold;
 }
-/* line 3403, ../../../app/stylesheets/main.sass */
+/* line 3404, ../../../app/stylesheets/main.sass */
 #order_details_table .line_item td {
   padding-bottom: 0;
 }
-/* line 3406, ../../../app/stylesheets/main.sass */
+/* line 3407, ../../../app/stylesheets/main.sass */
 #order_details_table .remove_from_cart {
   border: 1px dashed #cccccc;
   margin: 0pt 0pt 0pt 5px;
   padding: 0pt 0.5em;
 }
-/* line 3411, ../../../app/stylesheets/main.sass */
+/* line 3412, ../../../app/stylesheets/main.sass */
 #order_details_table .remove_from_cart:hover {
   cursor: pointer;
   background: lightyellow;
 }
 
-/* line 3415, ../../../app/stylesheets/main.sass */
+/* line 3416, ../../../app/stylesheets/main.sass */
 #report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
 #dashboard, #certificate_orders, #validations {
   line-height: 1.5em;
@@ -4480,7 +4481,7 @@ label.error {
   background: white;
   margin: 20px 0 5px;
 }
-/* line 3421, ../../../app/stylesheets/main.sass */
+/* line 3422, ../../../app/stylesheets/main.sass */
 #report table, #reseller_tiers table, #domain_pricing_popup table, #certificate_listing table,
 #dashboard table, #certificate_orders table, #validations table {
   width: 100%;
@@ -4488,7 +4489,7 @@ label.error {
   background: white;
   border-bottom: none;
 }
-/* line 3427, ../../../app/stylesheets/main.sass */
+/* line 3428, ../../../app/stylesheets/main.sass */
 #report table caption, #reseller_tiers table caption, #domain_pricing_popup table caption, #certificate_listing table caption,
 #dashboard table caption, #certificate_orders table caption, #validations table caption {
   margin: 0;
@@ -4498,7 +4499,7 @@ label.error {
   border-bottom: none;
   background: white;
 }
-/* line 3435, ../../../app/stylesheets/main.sass */
+/* line 3436, ../../../app/stylesheets/main.sass */
 #report table th, #report table td, #reseller_tiers table th, #reseller_tiers table td, #domain_pricing_popup table th, #domain_pricing_popup table td, #certificate_listing table th, #certificate_listing table td,
 #dashboard table th,
 #dashboard table td, #certificate_orders table th, #certificate_orders table td, #validations table th, #validations table td {
@@ -4507,17 +4508,17 @@ label.error {
   text-align: center;
   border-bottom: 1px solid #ccccff;
 }
-/* line 3441, ../../../app/stylesheets/main.sass */
+/* line 3442, ../../../app/stylesheets/main.sass */
 #report table th, #reseller_tiers table th, #domain_pricing_popup table th, #certificate_listing table th,
 #dashboard table th, #certificate_orders table th, #validations table th {
   color: #888888;
 }
-/* line 3444, ../../../app/stylesheets/main.sass */
+/* line 3445, ../../../app/stylesheets/main.sass */
 #report table tr.heading_row, #reseller_tiers table tr.heading_row, #domain_pricing_popup table tr.heading_row, #certificate_listing table tr.heading_row,
 #dashboard table tr.heading_row, #certificate_orders table tr.heading_row, #validations table tr.heading_row {
   background: #ccffcc;
 }
-/* line 3448, ../../../app/stylesheets/main.sass */
+/* line 3449, ../../../app/stylesheets/main.sass */
 #report table td.name, #report table .dropdown, #report table .validation_status_message, #report table .status_message, #report table .expandable, #reseller_tiers table td.name, #reseller_tiers table .dropdown, #reseller_tiers table .validation_status_message, #reseller_tiers table .status_message, #reseller_tiers table .expandable, #domain_pricing_popup table td.name, #domain_pricing_popup table .dropdown, #domain_pricing_popup table .validation_status_message, #domain_pricing_popup table .status_message, #domain_pricing_popup table .expandable, #certificate_listing table td.name, #certificate_listing table .dropdown, #certificate_listing table .validation_status_message, #certificate_listing table .status_message, #certificate_listing table .expandable,
 #dashboard table td.name,
 #dashboard table .dropdown,
@@ -4526,7 +4527,7 @@ label.error {
 #dashboard table .expandable, #certificate_orders table td.name, #certificate_orders table .dropdown, #certificate_orders table .validation_status_message, #certificate_orders table .status_message, #certificate_orders table .expandable, #validations table td.name, #validations table .dropdown, #validations table .validation_status_message, #validations table .status_message, #validations table .expandable {
   cursor: pointer;
 }
-/* line 3451, ../../../app/stylesheets/main.sass */
+/* line 3452, ../../../app/stylesheets/main.sass */
 #report table td.name.not_expandable, #report table .dropdown.not_expandable, #report table .validation_status_message.not_expandable, #report table .status_message.not_expandable, #report table .expandable.not_expandable, #reseller_tiers table td.name.not_expandable, #reseller_tiers table .dropdown.not_expandable, #reseller_tiers table .validation_status_message.not_expandable, #reseller_tiers table .status_message.not_expandable, #reseller_tiers table .expandable.not_expandable, #domain_pricing_popup table td.name.not_expandable, #domain_pricing_popup table .dropdown.not_expandable, #domain_pricing_popup table .validation_status_message.not_expandable, #domain_pricing_popup table .status_message.not_expandable, #domain_pricing_popup table .expandable.not_expandable, #certificate_listing table td.name.not_expandable, #certificate_listing table .dropdown.not_expandable, #certificate_listing table .validation_status_message.not_expandable, #certificate_listing table .status_message.not_expandable, #certificate_listing table .expandable.not_expandable,
 #dashboard table td.name.not_expandable,
 #dashboard table .dropdown.not_expandable,
@@ -4535,32 +4536,32 @@ label.error {
 #dashboard table .expandable.not_expandable, #certificate_orders table td.name.not_expandable, #certificate_orders table .dropdown.not_expandable, #certificate_orders table .validation_status_message.not_expandable, #certificate_orders table .status_message.not_expandable, #certificate_orders table .expandable.not_expandable, #validations table td.name.not_expandable, #validations table .dropdown.not_expandable, #validations table .validation_status_message.not_expandable, #validations table .status_message.not_expandable, #validations table .expandable.not_expandable {
   cursor: default;
 }
-/* line 3454, ../../../app/stylesheets/main.sass */
+/* line 3455, ../../../app/stylesheets/main.sass */
 #report table tr, #reseller_tiers table tr, #domain_pricing_popup table tr, #certificate_listing table tr,
 #dashboard table tr, #certificate_orders table tr, #validations table tr {
   background: white;
 }
-/* line 3457, ../../../app/stylesheets/main.sass */
+/* line 3458, ../../../app/stylesheets/main.sass */
 #report table tr.alt, #reseller_tiers table tr.alt, #domain_pricing_popup table tr.alt, #certificate_listing table tr.alt,
 #dashboard table tr.alt, #certificate_orders table tr.alt, #validations table tr.alt {
   background: #f3f3f3;
 }
-/* line 3460, ../../../app/stylesheets/main.sass */
+/* line 3461, ../../../app/stylesheets/main.sass */
 #report table td a, #reseller_tiers table td a, #domain_pricing_popup table td a, #certificate_listing table td a,
 #dashboard table td a, #certificate_orders table td a, #validations table td a {
   font-weight: bold;
 }
-/* line 3463, ../../../app/stylesheets/main.sass */
+/* line 3464, ../../../app/stylesheets/main.sass */
 #report table td .pagination a, #reseller_tiers table td .pagination a, #domain_pricing_popup table td .pagination a, #certificate_listing table td .pagination a,
 #dashboard table td .pagination a, #certificate_orders table td .pagination a, #validations table td .pagination a {
   font-weight: normal;
 }
-/* line 3466, ../../../app/stylesheets/main.sass */
+/* line 3467, ../../../app/stylesheets/main.sass */
 #report table td.selected, #reseller_tiers table td.selected, #domain_pricing_popup table td.selected, #certificate_listing table td.selected,
 #dashboard table td.selected, #certificate_orders table td.selected, #validations table td.selected {
   border-bottom: none;
 }
-/* line 3470, ../../../app/stylesheets/main.sass */
+/* line 3471, ../../../app/stylesheets/main.sass */
 #report table .attention, #report table .validation_attention, #report table .alert, #reseller_tiers table .attention, #reseller_tiers table .validation_attention, #reseller_tiers table .alert, #domain_pricing_popup table .attention, #domain_pricing_popup table .validation_attention, #domain_pricing_popup table .alert, #certificate_listing table .attention, #certificate_listing table .validation_attention, #certificate_listing table .alert,
 #dashboard table .attention,
 #dashboard table .validation_attention,
@@ -4569,7 +4570,7 @@ label.error {
   border-left: 1px solid red;
   border-right: 1px solid red;
 }
-/* line 3475, ../../../app/stylesheets/main.sass */
+/* line 3476, ../../../app/stylesheets/main.sass */
 #report table .expiration_warning, #report table .validation_waiting, #report table .caution, #report table .pending, #reseller_tiers table .expiration_warning, #reseller_tiers table .validation_waiting, #reseller_tiers table .caution, #reseller_tiers table .pending, #domain_pricing_popup table .expiration_warning, #domain_pricing_popup table .validation_waiting, #domain_pricing_popup table .caution, #domain_pricing_popup table .pending, #certificate_listing table .expiration_warning, #certificate_listing table .validation_waiting, #certificate_listing table .caution, #certificate_listing table .pending,
 #dashboard table .expiration_warning,
 #dashboard table .validation_waiting,
@@ -4579,7 +4580,7 @@ label.error {
   border-left: 1px solid yellow;
   border-right: 1px solid yellow;
 }
-/* line 3480, ../../../app/stylesheets/main.sass */
+/* line 3481, ../../../app/stylesheets/main.sass */
 #report table .validation_approved, #report table .good, #report table .approved, #reseller_tiers table .validation_approved, #reseller_tiers table .good, #reseller_tiers table .approved, #domain_pricing_popup table .validation_approved, #domain_pricing_popup table .good, #domain_pricing_popup table .approved, #certificate_listing table .validation_approved, #certificate_listing table .good, #certificate_listing table .approved,
 #dashboard table .validation_approved,
 #dashboard table .good,
@@ -4588,20 +4589,20 @@ label.error {
   border-right: 1px solid green;
   background-color: #ccffcc;
 }
-/* line 3485, ../../../app/stylesheets/main.sass */
+/* line 3486, ../../../app/stylesheets/main.sass */
 #report .certificate_details, #reseller_tiers .certificate_details, #domain_pricing_popup .certificate_details, #certificate_listing .certificate_details,
 #dashboard .certificate_details, #certificate_orders .certificate_details, #validations .certificate_details {
   font-size: 0.9em;
   margin: 0;
   color: #444444;
 }
-/* line 3489, ../../../app/stylesheets/main.sass */
+/* line 3490, ../../../app/stylesheets/main.sass */
 #report .certificate_details table, #reseller_tiers .certificate_details table, #domain_pricing_popup .certificate_details table, #certificate_listing .certificate_details table,
 #dashboard .certificate_details table, #certificate_orders .certificate_details table, #validations .certificate_details table {
   width: 100%;
   border: 0px;
 }
-/* line 3493, ../../../app/stylesheets/main.sass */
+/* line 3494, ../../../app/stylesheets/main.sass */
 #report .certificate_details table caption, #reseller_tiers .certificate_details table caption, #domain_pricing_popup .certificate_details table caption, #certificate_listing .certificate_details table caption,
 #dashboard .certificate_details table caption, #certificate_orders .certificate_details table caption, #validations .certificate_details table caption {
   margin: 0;
@@ -4611,7 +4612,7 @@ label.error {
   border-bottom: none;
   background: white;
 }
-/* line 3501, ../../../app/stylesheets/main.sass */
+/* line 3502, ../../../app/stylesheets/main.sass */
 #report .certificate_details table th, #report .certificate_details table td, #reseller_tiers .certificate_details table th, #reseller_tiers .certificate_details table td, #domain_pricing_popup .certificate_details table th, #domain_pricing_popup .certificate_details table td, #certificate_listing .certificate_details table th, #certificate_listing .certificate_details table td,
 #dashboard .certificate_details table th,
 #dashboard .certificate_details table td, #certificate_orders .certificate_details table th, #certificate_orders .certificate_details table td, #validations .certificate_details table th, #validations .certificate_details table td {
@@ -4620,62 +4621,62 @@ label.error {
   text-align: center;
   border: 0;
 }
-/* line 3507, ../../../app/stylesheets/main.sass */
+/* line 3508, ../../../app/stylesheets/main.sass */
 #report .certificate_details table th, #reseller_tiers .certificate_details table th, #domain_pricing_popup .certificate_details table th, #certificate_listing .certificate_details table th,
 #dashboard .certificate_details table th, #certificate_orders .certificate_details table th, #validations .certificate_details table th {
   color: #999999;
 }
-/* line 3510, ../../../app/stylesheets/main.sass */
+/* line 3511, ../../../app/stylesheets/main.sass */
 #report .certificate_details table .name, #report .certificate_details table .dropdown, #reseller_tiers .certificate_details table .name, #reseller_tiers .certificate_details table .dropdown, #domain_pricing_popup .certificate_details table .name, #domain_pricing_popup .certificate_details table .dropdown, #certificate_listing .certificate_details table .name, #certificate_listing .certificate_details table .dropdown,
 #dashboard .certificate_details table .name,
 #dashboard .certificate_details table .dropdown, #certificate_orders .certificate_details table .name, #certificate_orders .certificate_details table .dropdown, #validations .certificate_details table .name, #validations .certificate_details table .dropdown {
   text-align: left;
 }
-/* line 3513, ../../../app/stylesheets/main.sass */
+/* line 3514, ../../../app/stylesheets/main.sass */
 #report .certificate_details table tr.alt, #reseller_tiers .certificate_details table tr.alt, #domain_pricing_popup .certificate_details table tr.alt, #certificate_listing .certificate_details table tr.alt,
 #dashboard .certificate_details table tr.alt, #certificate_orders .certificate_details table tr.alt, #validations .certificate_details table tr.alt {
   background: #f1f1f1;
 }
-/* line 3516, ../../../app/stylesheets/main.sass */
+/* line 3517, ../../../app/stylesheets/main.sass */
 #report .certificate_details table tr.order_menu, #reseller_tiers .certificate_details table tr.order_menu, #domain_pricing_popup .certificate_details table tr.order_menu, #certificate_listing .certificate_details table tr.order_menu,
 #dashboard .certificate_details table tr.order_menu, #certificate_orders .certificate_details table tr.order_menu, #validations .certificate_details table tr.order_menu {
   background: #e0e0ff;
 }
-/* line 3519, ../../../app/stylesheets/main.sass */
+/* line 3520, ../../../app/stylesheets/main.sass */
 #report .certificate_details table tr.order_menu td, #reseller_tiers .certificate_details table tr.order_menu td, #domain_pricing_popup .certificate_details table tr.order_menu td, #certificate_listing .certificate_details table tr.order_menu td,
 #dashboard .certificate_details table tr.order_menu td, #certificate_orders .certificate_details table tr.order_menu td, #validations .certificate_details table tr.order_menu td {
   padding: 0.5em 0;
   width: 25%;
 }
-/* line 3523, ../../../app/stylesheets/main.sass */
+/* line 3524, ../../../app/stylesheets/main.sass */
 #report .certificate_details table td a, #reseller_tiers .certificate_details table td a, #domain_pricing_popup .certificate_details table td a, #certificate_listing .certificate_details table td a,
 #dashboard .certificate_details table td a, #certificate_orders .certificate_details table td a, #validations .certificate_details table td a {
   font-weight: bold;
 }
-/* line 3526, ../../../app/stylesheets/main.sass */
+/* line 3527, ../../../app/stylesheets/main.sass */
 #report .certificate_details .doc_filename a, #reseller_tiers .certificate_details .doc_filename a, #domain_pricing_popup .certificate_details .doc_filename a, #certificate_listing .certificate_details .doc_filename a,
 #dashboard .certificate_details .doc_filename a, #certificate_orders .certificate_details .doc_filename a, #validations .certificate_details .doc_filename a {
   font-size: 1em;
   font-weight: normal;
 }
-/* line 3530, ../../../app/stylesheets/main.sass */
+/* line 3531, ../../../app/stylesheets/main.sass */
 #report .certificate_details dl, #reseller_tiers .certificate_details dl, #domain_pricing_popup .certificate_details dl, #certificate_listing .certificate_details dl,
 #dashboard .certificate_details dl, #certificate_orders .certificate_details dl, #validations .certificate_details dl {
   padding-left: 4.2em;
 }
-/* line 3533, ../../../app/stylesheets/main.sass */
+/* line 3534, ../../../app/stylesheets/main.sass */
 #report .certificate_details dl dt, #reseller_tiers .certificate_details dl dt, #domain_pricing_popup .certificate_details dl dt, #certificate_listing .certificate_details dl dt,
 #dashboard .certificate_details dl dt, #certificate_orders .certificate_details dl dt, #validations .certificate_details dl dt {
   font-style: italic;
 }
-/* line 3537, ../../../app/stylesheets/main.sass */
+/* line 3538, ../../../app/stylesheets/main.sass */
 #report .certificate_details table em, #report .certificate_details table span, #reseller_tiers .certificate_details table em, #reseller_tiers .certificate_details table span, #domain_pricing_popup .certificate_details table em, #domain_pricing_popup .certificate_details table span, #certificate_listing .certificate_details table em, #certificate_listing .certificate_details table span,
 #dashboard .certificate_details table em,
 #dashboard .certificate_details table span, #certificate_orders .certificate_details table em, #certificate_orders .certificate_details table span, #validations .certificate_details table em, #validations .certificate_details table span {
   padding-left: 4px;
   padding-right: 4px;
 }
-/* line 3541, ../../../app/stylesheets/main.sass */
+/* line 3542, ../../../app/stylesheets/main.sass */
 #report .certificate_details table .validation_attention, #report .certificate_details table .attention, #reseller_tiers .certificate_details table .validation_attention, #reseller_tiers .certificate_details table .attention, #domain_pricing_popup .certificate_details table .validation_attention, #domain_pricing_popup .certificate_details table .attention, #certificate_listing .certificate_details table .validation_attention, #certificate_listing .certificate_details table .attention,
 #dashboard .certificate_details table .validation_attention,
 #dashboard .certificate_details table .attention, #certificate_orders .certificate_details table .validation_attention, #certificate_orders .certificate_details table .attention, #validations .certificate_details table .validation_attention, #validations .certificate_details table .attention {
@@ -4683,7 +4684,7 @@ label.error {
   border-left: 1px solid red;
   border-right: 1px solid red;
 }
-/* line 3546, ../../../app/stylesheets/main.sass */
+/* line 3547, ../../../app/stylesheets/main.sass */
 #report .certificate_details table .validation_waiting, #report .certificate_details table .caution, #report .certificate_details table .pending, #reseller_tiers .certificate_details table .validation_waiting, #reseller_tiers .certificate_details table .caution, #reseller_tiers .certificate_details table .pending, #domain_pricing_popup .certificate_details table .validation_waiting, #domain_pricing_popup .certificate_details table .caution, #domain_pricing_popup .certificate_details table .pending, #certificate_listing .certificate_details table .validation_waiting, #certificate_listing .certificate_details table .caution, #certificate_listing .certificate_details table .pending,
 #dashboard .certificate_details table .validation_waiting,
 #dashboard .certificate_details table .caution,
@@ -4692,7 +4693,7 @@ label.error {
   border-left: 1px solid yellow;
   border-right: 1px solid yellow;
 }
-/* line 3551, ../../../app/stylesheets/main.sass */
+/* line 3552, ../../../app/stylesheets/main.sass */
 #report .certificate_details table .validation_approved, #report .certificate_details table .approved, #reseller_tiers .certificate_details table .validation_approved, #reseller_tiers .certificate_details table .approved, #domain_pricing_popup .certificate_details table .validation_approved, #domain_pricing_popup .certificate_details table .approved, #certificate_listing .certificate_details table .validation_approved, #certificate_listing .certificate_details table .approved,
 #dashboard .certificate_details table .validation_approved,
 #dashboard .certificate_details table .approved, #certificate_orders .certificate_details table .validation_approved, #certificate_orders .certificate_details table .approved, #validations .certificate_details table .validation_approved, #validations .certificate_details table .approved {
@@ -4700,12 +4701,12 @@ label.error {
   border-right: 1px solid green;
   background-color: #ccffcc;
 }
-/* line 3556, ../../../app/stylesheets/main.sass */
+/* line 3557, ../../../app/stylesheets/main.sass */
 #report .certificate_details textarea, #reseller_tiers .certificate_details textarea, #domain_pricing_popup .certificate_details textarea, #certificate_listing .certificate_details textarea,
 #dashboard .certificate_details textarea, #certificate_orders .certificate_details textarea, #validations .certificate_details textarea {
   width: 195px;
 }
-/* line 3560, ../../../app/stylesheets/main.sass */
+/* line 3561, ../../../app/stylesheets/main.sass */
 #report table span.expand_or_view_order, #reseller_tiers table span.expand_or_view_order, #domain_pricing_popup table span.expand_or_view_order, #certificate_listing table span.expand_or_view_order,
 #dashboard table span.expand_or_view_order, #certificate_orders table span.expand_or_view_order, #validations table span.expand_or_view_order {
   font-weight: normal;
@@ -4714,61 +4715,61 @@ label.error {
   font-size: 0.7em;
   clear: both;
 }
-/* line 3567, ../../../app/stylesheets/main.sass */
+/* line 3568, ../../../app/stylesheets/main.sass */
 #report table span.expand_or_view_order a, #reseller_tiers table span.expand_or_view_order a, #domain_pricing_popup table span.expand_or_view_order a, #certificate_listing table span.expand_or_view_order a,
 #dashboard table span.expand_or_view_order a, #certificate_orders table span.expand_or_view_order a, #validations table span.expand_or_view_order a {
   font-weight: bold;
   float: none;
 }
 
-/* line 3571, ../../../app/stylesheets/main.sass */
+/* line 3572, ../../../app/stylesheets/main.sass */
 #certificate_orders {
   margin: 0.8em 0 0.5em;
 }
 
-/* line 3574, ../../../app/stylesheets/main.sass */
+/* line 3575, ../../../app/stylesheets/main.sass */
 #certificate_listing {
   line-height: normal;
   width: 300px;
 }
-/* line 3578, ../../../app/stylesheets/main.sass */
+/* line 3579, ../../../app/stylesheets/main.sass */
 #certificate_listing table, #certificate_listing table caption {
   border: 0;
 }
-/* line 3581, ../../../app/stylesheets/main.sass */
+/* line 3582, ../../../app/stylesheets/main.sass */
 #certificate_listing table td, #certificate_listing table caption td {
   border: 0;
   text-align: left;
 }
-/* line 3585, ../../../app/stylesheets/main.sass */
+/* line 3586, ../../../app/stylesheets/main.sass */
 #certificate_listing table td a, #certificate_listing table caption td a {
   font-weight: normal;
 }
-/* line 3588, ../../../app/stylesheets/main.sass */
+/* line 3589, ../../../app/stylesheets/main.sass */
 #certificate_listing table td .title, #certificate_listing table caption td .title {
   font-size: 1.2em;
   font-weight: bold;
 }
-/* line 3592, ../../../app/stylesheets/main.sass */
+/* line 3593, ../../../app/stylesheets/main.sass */
 #certificate_listing table td .summary, #certificate_listing table td .starting_at, #certificate_listing table td .more_info, #certificate_listing table caption td .summary, #certificate_listing table caption td .starting_at, #certificate_listing table caption td .more_info {
   color: #333333;
   float: left;
   width: 300px;
 }
-/* line 3597, ../../../app/stylesheets/main.sass */
+/* line 3598, ../../../app/stylesheets/main.sass */
 #certificate_listing table td .summary, #certificate_listing table caption td .summary {
   font-style: italic;
 }
-/* line 3600, ../../../app/stylesheets/main.sass */
+/* line 3601, ../../../app/stylesheets/main.sass */
 #certificate_listing table td .more_info, #certificate_listing table caption td .more_info {
   margin: 0.3em 0 0;
 }
-/* line 3603, ../../../app/stylesheets/main.sass */
+/* line 3604, ../../../app/stylesheets/main.sass */
 #certificate_listing table td .starting_at, #certificate_listing table caption td .starting_at {
   color: black;
 }
 
-/* line 3607, ../../../app/stylesheets/main.sass */
+/* line 3608, ../../../app/stylesheets/main.sass */
 #report > table, #dashboard > table, #certificate_orders > table, #validations > table {
   float: right;
   width: 82%;
@@ -4776,28 +4777,28 @@ label.error {
   border-bottom: 1px solid #ccccff;
   border-top: none;
 }
-/* line 3614, ../../../app/stylesheets/main.sass */
+/* line 3615, ../../../app/stylesheets/main.sass */
 #report > table th, #report > table td, #dashboard > table th, #dashboard > table td, #certificate_orders > table th, #certificate_orders > table td, #validations > table th, #validations > table td {
   border-bottom: none;
   border-top: 1px solid #ccccff;
 }
-/* line 3619, ../../../app/stylesheets/main.sass */
+/* line 3620, ../../../app/stylesheets/main.sass */
 #report > table tr.expanded th, #report > table tr.expanded td, #dashboard > table tr.expanded th, #dashboard > table tr.expanded td, #certificate_orders > table tr.expanded th, #certificate_orders > table tr.expanded td, #validations > table tr.expanded th, #validations > table tr.expanded td {
   border-top: none;
   padding-top: 0px;
 }
 
-/* line 3623, ../../../app/stylesheets/main.sass */
+/* line 3624, ../../../app/stylesheets/main.sass */
 #certificate_orders > table {
   width: 84%;
 }
 
-/* line 3626, ../../../app/stylesheets/main.sass */
+/* line 3627, ../../../app/stylesheets/main.sass */
 #validations > table {
   width: 100%;
 }
 
-/* line 3629, ../../../app/stylesheets/main.sass */
+/* line 3630, ../../../app/stylesheets/main.sass */
 #dashboard > table {
   float: none;
   margin: 0 auto;
@@ -4805,13 +4806,13 @@ label.error {
   width: 70%;
 }
 
-/* line 3636, ../../../app/stylesheets/main.sass */
+/* line 3637, ../../../app/stylesheets/main.sass */
 #reseller_tiers table th, #reseller_tiers table td, #domain_pricing_popup table th, #domain_pricing_popup table td {
   margin: 0;
   padding: 8px 10px;
 }
 
-/* line 3640, ../../../app/stylesheets/main.sass */
+/* line 3641, ../../../app/stylesheets/main.sass */
 #domain_pricing_popup {
   font-size: 1.3em;
   font-family: Helvetica, Arial, sans-serif;
@@ -4819,20 +4820,20 @@ label.error {
 }
 
 /* Flexible box */
-/* line 3648, ../../../app/stylesheets/main.sass */
+/* line 3649, ../../../app/stylesheets/main.sass */
 .quickbox {
   background: url(/images/quickbox_bottom_bg.gif) no-repeat bottom left;
   font-size: 1.4em;
 }
 
-/* line 3652, ../../../app/stylesheets/main.sass */
+/* line 3653, ../../../app/stylesheets/main.sass */
 .quickbox .heading {
   color: #333333;
   border-bottom: 1px solid #7e8dfd;
   background: url(/images/quickbox_header_bg.gif) no-repeat top left;
 }
 
-/* line 3657, ../../../app/stylesheets/main.sass */
+/* line 3658, ../../../app/stylesheets/main.sass */
 .quickbox strong {
   display: block;
   margin: 0;
@@ -4840,7 +4841,7 @@ label.error {
   background: url(/images/quickbox_header_rt.gif) no-repeat top right;
 }
 
-/* line 3663, ../../../app/stylesheets/main.sass */
+/* line 3664, ../../../app/stylesheets/main.sass */
 .quickbox ul, .quickbox .default_container .info_listing ul#privacy, .default_container .info_listing .quickbox ul#privacy {
   margin: 0;
   padding: 14px 10px;
@@ -4848,18 +4849,18 @@ label.error {
   background: url(/images/quickbox_bottom_rt.gif) no-repeat bottom right;
 }
 
-/* line 3669, ../../../app/stylesheets/main.sass */
+/* line 3670, ../../../app/stylesheets/main.sass */
 .quickbox li {
   margin: 0 0 6px;
   padding: 0;
 }
 
-/* line 3674, ../../../app/stylesheets/main.sass */
+/* line 3675, ../../../app/stylesheets/main.sass */
 #account_status_container {
   width: 100%;
 }
 
-/* line 3677, ../../../app/stylesheets/main.sass */
+/* line 3678, ../../../app/stylesheets/main.sass */
 #account_status {
   width: 14%;
   margin: 1.2em auto;
@@ -4882,24 +4883,24 @@ label.error {
   min-height: 1px;
 }
 
-/* line 3683, ../../../app/stylesheets/main.sass */
+/* line 3684, ../../../app/stylesheets/main.sass */
 #at_a_glance_box {
   width: 273px;
   float: left;
 }
 
-/* line 3687, ../../../app/stylesheets/main.sass */
+/* line 3688, ../../../app/stylesheets/main.sass */
 #account_balance_box {
   width: 273px;
   float: right;
 }
 
-/* line 3691, ../../../app/stylesheets/main.sass */
+/* line 3692, ../../../app/stylesheets/main.sass */
 .certificate_details th {
   width: 16.7%;
 }
 
-/* line 3694, ../../../app/stylesheets/main.sass */
+/* line 3695, ../../../app/stylesheets/main.sass */
 .certificate_details_box, .contact_details_box, .notes_box, .full_width_box,
 .half_width_box {
   float: left;
@@ -4907,22 +4908,22 @@ label.error {
   padding: 20px 0px;
   line-height: normal;
 }
-/* line 3701, ../../../app/stylesheets/main.sass */
+/* line 3702, ../../../app/stylesheets/main.sass */
 .certificate_details_box a, .contact_details_box a, .notes_box a, .full_width_box a,
 .half_width_box a {
   font-size: 0.8em;
 }
-/* line 3704, ../../../app/stylesheets/main.sass */
+/* line 3705, ../../../app/stylesheets/main.sass */
 .certificate_details_box strong, .contact_details_box strong, .notes_box strong, .full_width_box strong,
 .half_width_box strong {
   color: #999999;
 }
-/* line 3707, ../../../app/stylesheets/main.sass */
+/* line 3708, ../../../app/stylesheets/main.sass */
 .certificate_details_box textarea, .contact_details_box textarea, .notes_box textarea, .full_width_box textarea,
 .half_width_box textarea {
   color: #444444;
 }
-/* line 3710, ../../../app/stylesheets/main.sass */
+/* line 3711, ../../../app/stylesheets/main.sass */
 .certificate_details_box ul, .certificate_details_box .default_container .info_listing ul#privacy, .default_container .info_listing .certificate_details_box ul#privacy, .contact_details_box ul, .contact_details_box .default_container .info_listing ul#privacy, .default_container .info_listing .contact_details_box ul#privacy, .notes_box ul, .notes_box .default_container .info_listing ul#privacy, .default_container .info_listing .notes_box ul#privacy, .full_width_box ul, .full_width_box .default_container .info_listing ul#privacy, .default_container .info_listing .full_width_box ul#privacy,
 .half_width_box ul,
 .half_width_box .default_container .info_listing ul#privacy, .default_container .info_listing
@@ -4930,80 +4931,80 @@ label.error {
   list-style: none;
   margin: 0;
 }
-/* line 3714, ../../../app/stylesheets/main.sass */
+/* line 3715, ../../../app/stylesheets/main.sass */
 .certificate_details_box ul li, .certificate_details_box .default_container .info_listing ul#privacy li, .default_container .info_listing .certificate_details_box ul#privacy li, .contact_details_box ul li, .contact_details_box .default_container .info_listing ul#privacy li, .default_container .info_listing .contact_details_box ul#privacy li, .notes_box ul li, .notes_box .default_container .info_listing ul#privacy li, .default_container .info_listing .notes_box ul#privacy li, .full_width_box ul li, .full_width_box .default_container .info_listing ul#privacy li, .default_container .info_listing .full_width_box ul#privacy li,
 .half_width_box ul li,
 .half_width_box .default_container .info_listing ul#privacy li, .default_container .info_listing
 .half_width_box ul#privacy li {
   text-align: left;
 }
-/* line 3717, ../../../app/stylesheets/main.sass */
+/* line 3718, ../../../app/stylesheets/main.sass */
 .certificate_details_box .extra_box, .contact_details_box .extra_box, .notes_box .extra_box, .full_width_box .extra_box,
 .half_width_box .extra_box {
   padding-top: 2em;
 }
 
-/* line 3720, ../../../app/stylesheets/main.sass */
+/* line 3721, ../../../app/stylesheets/main.sass */
 .certificate_details_box ul, .certificate_details_box .default_container .info_listing ul#privacy, .default_container .info_listing .certificate_details_box ul#privacy {
   padding-left: 20px;
 }
 
-/* line 3723, ../../../app/stylesheets/main.sass */
+/* line 3724, ../../../app/stylesheets/main.sass */
 .contact_details_box {
   width: 25%;
 }
 
-/* line 3726, ../../../app/stylesheets/main.sass */
+/* line 3727, ../../../app/stylesheets/main.sass */
 .half_width_box {
   width: 50%;
 }
 
-/* line 3729, ../../../app/stylesheets/main.sass */
+/* line 3730, ../../../app/stylesheets/main.sass */
 .notes_box, .full_width_box {
   width: 100%;
 }
 
-/* line 3732, ../../../app/stylesheets/main.sass */
+/* line 3733, ../../../app/stylesheets/main.sass */
 .spacer {
   clear: both;
   height: 1px;
 }
 
 /* ----------- Specific Forms (modify label width)----------- */
-/* line 3737, ../../../app/stylesheets/main.sass */
+/* line 3738, ../../../app/stylesheets/main.sass */
 .registration_form, .deposit_funds_form, .reseller_registration_form,
 .default_form {
   margin: 3em auto;
   width: 60%;
   padding: 1.4em 0;
 }
-/* line 3742, ../../../app/stylesheets/main.sass */
+/* line 3743, ../../../app/stylesheets/main.sass */
 .registration_form label, .deposit_funds_form label, .reseller_registration_form label,
 .default_form label {
   width: 37%;
 }
 
-/* line 3745, ../../../app/stylesheets/main.sass */
+/* line 3746, ../../../app/stylesheets/main.sass */
 .reseller_registration_form, .deposit_funds_form, .default_form {
   width: 100%;
 }
-/* line 3747, ../../../app/stylesheets/main.sass */
+/* line 3748, ../../../app/stylesheets/main.sass */
 .reseller_registration_form label, .deposit_funds_form label, .default_form label {
   width: 30%;
 }
 
-/* line 3750, ../../../app/stylesheets/main.sass */
+/* line 3751, ../../../app/stylesheets/main.sass */
 .default_form {
   margin: 2em auto;
 }
 
 /* ----------- Generic Form ----------- */
-/* line 3755, ../../../app/stylesheets/main.sass */
+/* line 3756, ../../../app/stylesheets/main.sass */
 #plain_form {
   font-size: 1.4em;
 }
 
-/* line 3758, ../../../app/stylesheets/main.sass */
+/* line 3759, ../../../app/stylesheets/main.sass */
 #stylized {
   border: solid 1px #ccccff;
   background: white url(/images/bg.gif) repeat-x;
@@ -5025,17 +5026,17 @@ label.error {
   border-radius: 5px;
 }
 
-/* line 3765, ../../../app/stylesheets/main.sass */
+/* line 3766, ../../../app/stylesheets/main.sass */
 #stylized, #surl_stylized {
   /* Error Reporting Styles */
 }
-/* line 3766, ../../../app/stylesheets/main.sass */
+/* line 3767, ../../../app/stylesheets/main.sass */
 #stylized p, #stylized .heading, #stylized form, #stylized button, #surl_stylized p, #surl_stylized .heading, #surl_stylized form, #surl_stylized button {
   border: 0;
   margin: 0;
   padding: 0;
 }
-/* line 3771, ../../../app/stylesheets/main.sass */
+/* line 3772, ../../../app/stylesheets/main.sass */
 #stylized .heading, #surl_stylized .heading {
   color: #4444ff;
   letter-spacing: 0.1em;
@@ -5044,40 +5045,40 @@ label.error {
   font-weight: bold;
   margin-bottom: 0.5em;
 }
-/* line 3779, ../../../app/stylesheets/main.sass */
+/* line 3780, ../../../app/stylesheets/main.sass */
 #stylized ul.cert_reqs, #stylized .default_container .info_listing ul.cert_reqs#privacy, .default_container .info_listing #stylized ul.cert_reqs#privacy, #surl_stylized ul.cert_reqs, #surl_stylized .default_container .info_listing ul.cert_reqs#privacy, .default_container .info_listing #surl_stylized ul.cert_reqs#privacy {
   margin: 0 1.5em 2em;
   font-size: 1.3em;
   color: red;
 }
-/* line 3784, ../../../app/stylesheets/main.sass */
+/* line 3785, ../../../app/stylesheets/main.sass */
 #stylized p, #stylized dl, #surl_stylized p, #surl_stylized dl {
   color: #333333;
   padding: 1.5em;
   padding-top: 0;
 }
-/* line 3790, ../../../app/stylesheets/main.sass */
+/* line 3791, ../../../app/stylesheets/main.sass */
 #stylized p.description, #surl_stylized p.description {
   padding: 0 3em 1.2em;
 }
-/* line 3793, ../../../app/stylesheets/main.sass */
+/* line 3794, ../../../app/stylesheets/main.sass */
 #stylized dl.cert_example, #surl_stylized dl.cert_example {
   font-family: "courier new", courier, mono;
   width: 65%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 3798, ../../../app/stylesheets/main.sass */
+/* line 3799, ../../../app/stylesheets/main.sass */
 #stylized dl.cert_example .sample_csr, #surl_stylized dl.cert_example .sample_csr {
   text-align: left;
 }
-/* line 3801, ../../../app/stylesheets/main.sass */
+/* line 3802, ../../../app/stylesheets/main.sass */
 #stylized .form_input, #surl_stylized .form_input {
   margin: 0pt auto;
   text-align: center;
   width: 360px;
 }
-/* line 3806, ../../../app/stylesheets/main.sass */
+/* line 3807, ../../../app/stylesheets/main.sass */
 #stylized #forgot_container, #stylized #already_have_account, #stylized #apply_deduct_instructions, #surl_stylized #forgot_container, #surl_stylized #already_have_account, #surl_stylized #apply_deduct_instructions {
   margin: 0pt auto;
   width: 300px;
@@ -5090,27 +5091,27 @@ label.error {
   -khtml-border-radius: 5px;
   border-radius: 5px;
 }
-/* line 3813, ../../../app/stylesheets/main.sass */
+/* line 3814, ../../../app/stylesheets/main.sass */
 #stylized #forgot_container p, #stylized #already_have_account p, #stylized #apply_deduct_instructions p, #surl_stylized #forgot_container p, #surl_stylized #already_have_account p, #surl_stylized #apply_deduct_instructions p {
   text-align: inherit;
 }
-/* line 3816, ../../../app/stylesheets/main.sass */
+/* line 3817, ../../../app/stylesheets/main.sass */
 #stylized #forgot_username_or_password, #stylized #already_have_account, #stylized #resend_activation, #stylized #apply_deduct_instructions, #surl_stylized #forgot_username_or_password, #surl_stylized #already_have_account, #surl_stylized #resend_activation, #surl_stylized #apply_deduct_instructions {
   border: none;
   padding-top: 1em;
   text-align: center;
   font-size: 1.2em;
 }
-/* line 3822, ../../../app/stylesheets/main.sass */
+/* line 3823, ../../../app/stylesheets/main.sass */
 #stylized #apply_deduct_instructions, #surl_stylized #apply_deduct_instructions {
   width: 90%;
   background-color: yellow;
 }
-/* line 3826, ../../../app/stylesheets/main.sass */
+/* line 3827, ../../../app/stylesheets/main.sass */
 #stylized #resend_activation, #surl_stylized #resend_activation {
   padding-top: 0;
 }
-/* line 3829, ../../../app/stylesheets/main.sass */
+/* line 3830, ../../../app/stylesheets/main.sass */
 #stylized label, #surl_stylized label {
   font-size: 1.4em;
   display: block;
@@ -5118,7 +5119,7 @@ label.error {
   float: left;
   color: #222222;
 }
-/* line 3836, ../../../app/stylesheets/main.sass */
+/* line 3837, ../../../app/stylesheets/main.sass */
 #stylized .label_desc, #stylized .order_amount_desc, #stylized #server_license_cost_ea_desc, #surl_stylized .label_desc, #surl_stylized .order_amount_desc, #surl_stylized #server_license_cost_ea_desc {
   color: #666666;
   font-size: 0.7em;
@@ -5126,51 +5127,51 @@ label.error {
   text-align: right;
   font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
 }
-/* line 3843, ../../../app/stylesheets/main.sass */
+/* line 3844, ../../../app/stylesheets/main.sass */
 #stylized .label_desc, #stylized .label_break, #surl_stylized .label_desc, #surl_stylized .label_break {
   display: block;
 }
-/* line 3846, ../../../app/stylesheets/main.sass */
+/* line 3847, ../../../app/stylesheets/main.sass */
 #stylized .order_amount_desc, #stylized #server_license_cost_ea_desc, #surl_stylized .order_amount_desc, #surl_stylized #server_license_cost_ea_desc {
   font-size: 0.98em;
   float: left;
   margin: 0.6em 0 0 -0.5em;
 }
-/* line 3851, ../../../app/stylesheets/main.sass */
+/* line 3852, ../../../app/stylesheets/main.sass */
 #stylized #server_license_cost_ea_desc, #surl_stylized #server_license_cost_ea_desc {
   margin: 1em 0pt 0pt 0.5em;
 }
-/* line 3854, ../../../app/stylesheets/main.sass */
+/* line 3855, ../../../app/stylesheets/main.sass */
 #stylized .label_break, #surl_stylized .label_break {
   border-bottom: 1px solid #cccccc;
   margin: 0.1em auto;
   width: 1em;
 }
-/* line 3859, ../../../app/stylesheets/main.sass */
+/* line 3860, ../../../app/stylesheets/main.sass */
 #stylized input, #stylized select, #stylized textarea, #surl_stylized input, #surl_stylized select, #surl_stylized textarea {
   float: left;
   font-size: 1.4em;
   padding: 4px 2px;
   margin: 2px 0 20px 10px;
 }
-/* line 3865, ../../../app/stylesheets/main.sass */
+/* line 3866, ../../../app/stylesheets/main.sass */
 #stylized input[type=checkbox], #stylized input[type=radio], #surl_stylized input[type=checkbox], #surl_stylized input[type=radio] {
   border: none;
 }
-/* line 3868, ../../../app/stylesheets/main.sass */
+/* line 3869, ../../../app/stylesheets/main.sass */
 #stylized input#multi_upload, #stylized #multi_upload_F1, #surl_stylized input#multi_upload, #surl_stylized #multi_upload_F1 {
   padding: 0;
   margin: 0;
   float: none;
 }
-/* line 3873, ../../../app/stylesheets/main.sass */
+/* line 3874, ../../../app/stylesheets/main.sass */
 #stylized input#upload_files, #surl_stylized input#upload_files {
   margin: 1em;
   float: none;
   font-size: 1.8em;
   font-weight: bold;
 }
-/* line 3881, ../../../app/stylesheets/main.sass */
+/* line 3882, ../../../app/stylesheets/main.sass */
 #stylized input[type=text], #stylized input[type=url], #stylized input[type=password], #stylized select, #stylized textarea, #surl_stylized input[type=text], #surl_stylized input[type=url], #surl_stylized input[type=password], #surl_stylized select, #surl_stylized textarea {
   font-size: 1.5em;
   text-shadow: 0px 1px 0px white;
@@ -5193,14 +5194,14 @@ label.error {
   -o-box-shadow: 1px 1px 1px 1px #efefef;
   box-shadow: 1px 1px 1px 1px #efefef;
 }
-/* line 3890, ../../../app/stylesheets/main.sass */
+/* line 3891, ../../../app/stylesheets/main.sass */
 #stylized input[type=text]:focus, #stylized input[type=url]:focus, #stylized input[type=password]:focus, #stylized select:focus, #stylized textarea:focus, #surl_stylized input[type=text]:focus, #surl_stylized input[type=url]:focus, #surl_stylized input[type=password]:focus, #surl_stylized select:focus, #surl_stylized textarea:focus {
   -moz-box-shadow: 0px 0px 5px #007eff;
   -webkit-box-shadow: 0px 0px 5px #007eff;
   -o-box-shadow: 0px 0px 5px #007eff;
   box-shadow: 0px 0px 5px #007eff;
 }
-/* line 3894, ../../../app/stylesheets/main.sass */
+/* line 3895, ../../../app/stylesheets/main.sass */
 #stylized .field_with_errors input, #stylized .field_with_errors select, #stylized .field_with_errors textarea, #surl_stylized .field_with_errors input, #surl_stylized .field_with_errors select, #surl_stylized .field_with_errors textarea {
   border: 1px solid red;
   -moz-box-shadow: 0px 0px 5px red;
@@ -5208,68 +5209,68 @@ label.error {
   -o-box-shadow: 0px 0px 5px red;
   box-shadow: 0px 0px 5px red;
 }
-/* line 3898, ../../../app/stylesheets/main.sass */
+/* line 3899, ../../../app/stylesheets/main.sass */
 #stylized #multi_upload_wrap, #surl_stylized #multi_upload_wrap {
   padding-left: 20em;
 }
-/* line 3901, ../../../app/stylesheets/main.sass */
+/* line 3902, ../../../app/stylesheets/main.sass */
 #stylized .MultiFile-label, #surl_stylized .MultiFile-label {
   font-size: 1.4em;
   clear: both;
 }
-/* line 3905, ../../../app/stylesheets/main.sass */
+/* line 3906, ../../../app/stylesheets/main.sass */
 #stylized .show_hide_contact_form, #surl_stylized .show_hide_contact_form {
   font-size: 1.3em;
   margin: 10px 30px;
   background: #eceff5 none repeat scroll 0 0;
 }
-/* line 3910, ../../../app/stylesheets/main.sass */
+/* line 3911, ../../../app/stylesheets/main.sass */
 #stylized .show_hide_contact_form input, #surl_stylized .show_hide_contact_form input {
   margin: 0.2em;
 }
-/* line 3913, ../../../app/stylesheets/main.sass */
+/* line 3914, ../../../app/stylesheets/main.sass */
 #stylized span, #surl_stylized span {
   color: #333333;
 }
-/* line 3916, ../../../app/stylesheets/main.sass */
+/* line 3917, ../../../app/stylesheets/main.sass */
 #stylized .billing_profile_radio, #surl_stylized .billing_profile_radio {
   margin: 0.4em 0 0.4em;
 }
-/* line 3919, ../../../app/stylesheets/main.sass */
+/* line 3920, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices, #stylized .dcv_choices, #stylized .surl_choices, #surl_stylized .radio_choices, #surl_stylized .dcv_choices, #surl_stylized .surl_choices {
   font-size: 1.4em;
 }
-/* line 3922, ../../../app/stylesheets/main.sass */
+/* line 3923, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices, #stylized .dcv_choices, #stylized .site_seal_radio_choices, #surl_stylized .radio_choices, #surl_stylized .dcv_choices, #surl_stylized .site_seal_radio_choices {
   margin: 0 0 10px 10px;
 }
-/* line 3925, ../../../app/stylesheets/main.sass */
+/* line 3926, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices, #stylized .dcv_choices, #stylized .surl_choices, #stylized .site_seal_radio_choices, #surl_stylized .radio_choices, #surl_stylized .dcv_choices, #surl_stylized .surl_choices, #surl_stylized .site_seal_radio_choices {
   float: left;
   text-align: left;
 }
-/* line 3929, ../../../app/stylesheets/main.sass */
+/* line 3930, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices .radio_w_desc, #stylized .radio_choices .choice_w_desc, #stylized .dcv_choices .radio_w_desc, #stylized .dcv_choices .choice_w_desc, #stylized .surl_choices .radio_w_desc, #stylized .surl_choices .choice_w_desc, #stylized .site_seal_radio_choices .radio_w_desc, #stylized .site_seal_radio_choices .choice_w_desc, #surl_stylized .radio_choices .radio_w_desc, #surl_stylized .radio_choices .choice_w_desc, #surl_stylized .dcv_choices .radio_w_desc, #surl_stylized .dcv_choices .choice_w_desc, #surl_stylized .surl_choices .radio_w_desc, #surl_stylized .surl_choices .choice_w_desc, #surl_stylized .site_seal_radio_choices .radio_w_desc, #surl_stylized .site_seal_radio_choices .choice_w_desc {
   width: 100%;
 }
-/* line 3932, ../../../app/stylesheets/main.sass */
+/* line 3933, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices .radio_w_desc input, #stylized .radio_choices .choice_w_desc input, #stylized .dcv_choices .radio_w_desc input, #stylized .dcv_choices .choice_w_desc input, #stylized .surl_choices .radio_w_desc input, #stylized .surl_choices .choice_w_desc input, #stylized .site_seal_radio_choices .radio_w_desc input, #stylized .site_seal_radio_choices .choice_w_desc input, #surl_stylized .radio_choices .radio_w_desc input, #surl_stylized .radio_choices .choice_w_desc input, #surl_stylized .dcv_choices .radio_w_desc input, #surl_stylized .dcv_choices .choice_w_desc input, #surl_stylized .surl_choices .radio_w_desc input, #surl_stylized .surl_choices .choice_w_desc input, #surl_stylized .site_seal_radio_choices .radio_w_desc input, #surl_stylized .site_seal_radio_choices .choice_w_desc input {
   float: left;
   margin: 4px 10px 10px 0;
 }
-/* line 3936, ../../../app/stylesheets/main.sass */
+/* line 3937, ../../../app/stylesheets/main.sass */
 #stylized .radio_choices .radio_w_desc .save, #stylized .radio_choices .choice_w_desc .save, #stylized .dcv_choices .radio_w_desc .save, #stylized .dcv_choices .choice_w_desc .save, #stylized .surl_choices .radio_w_desc .save, #stylized .surl_choices .choice_w_desc .save, #stylized .site_seal_radio_choices .radio_w_desc .save, #stylized .site_seal_radio_choices .choice_w_desc .save, #surl_stylized .radio_choices .radio_w_desc .save, #surl_stylized .radio_choices .choice_w_desc .save, #surl_stylized .dcv_choices .radio_w_desc .save, #surl_stylized .dcv_choices .choice_w_desc .save, #surl_stylized .surl_choices .radio_w_desc .save, #surl_stylized .surl_choices .choice_w_desc .save, #surl_stylized .site_seal_radio_choices .radio_w_desc .save, #surl_stylized .site_seal_radio_choices .choice_w_desc .save {
   color: green;
 }
-/* line 3941, ../../../app/stylesheets/main.sass */
+/* line 3942, ../../../app/stylesheets/main.sass */
 #stylized .site_seal_radio_choices .radio_w_desc input, #surl_stylized .site_seal_radio_choices .radio_w_desc input {
   margin: 4px 4px 0 0;
 }
-/* line 3944, ../../../app/stylesheets/main.sass */
+/* line 3945, ../../../app/stylesheets/main.sass */
 #stylized .dcv_email_choices, #surl_stylized .dcv_email_choices {
   font-size: 1.2em;
 }
-/* line 3947, ../../../app/stylesheets/main.sass */
+/* line 3948, ../../../app/stylesheets/main.sass */
 #stylized .subheading, #surl_stylized .subheading {
   -x-system-font: none;
   color: #666666;
@@ -5280,71 +5281,71 @@ label.error {
   font-weight: bold;
   text-decoration: underline;
 }
-/* line 3959, ../../../app/stylesheets/main.sass */
+/* line 3960, ../../../app/stylesheets/main.sass */
 #stylized .fieldWithErrors input, #stylized .fieldWithErrors textarea, #stylized .fieldWithErrors select, #stylized .fieldWithErrors checkbox, #surl_stylized .fieldWithErrors input, #surl_stylized .fieldWithErrors textarea, #surl_stylized .fieldWithErrors select, #surl_stylized .fieldWithErrors checkbox {
   padding: 3px 0 4px;
   border: 2px solid red;
 }
-/* line 3963, ../../../app/stylesheets/main.sass */
+/* line 3964, ../../../app/stylesheets/main.sass */
 #stylized #register_submit, #stylized #login_submit, #surl_stylized #register_submit, #surl_stylized #login_submit {
   clear: both;
   width: 125px;
   height: 31px;
   margin: 1em auto;
 }
-/* line 3969, ../../../app/stylesheets/main.sass */
+/* line 3970, ../../../app/stylesheets/main.sass */
 #stylized #register_submit input, #stylized #login_submit input, #surl_stylized #register_submit input, #surl_stylized #login_submit input {
   border: none;
   padding: 0;
   margin: 0;
 }
-/* line 3974, ../../../app/stylesheets/main.sass */
+/* line 3975, ../../../app/stylesheets/main.sass */
 #stylized .settings_block, #surl_stylized .settings_block {
   margin: 0 auto;
   width: 550px;
 }
-/* line 3978, ../../../app/stylesheets/main.sass */
+/* line 3979, ../../../app/stylesheets/main.sass */
 #stylized .settings_block label, #surl_stylized .settings_block label {
   width: 13.8em;
 }
-/* line 3981, ../../../app/stylesheets/main.sass */
+/* line 3982, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .field_desc, #surl_stylized .settings_block .field_desc {
   line-height: 3em;
 }
-/* line 3984, ../../../app/stylesheets/main.sass */
+/* line 3985, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .field_desc em, #surl_stylized .settings_block .field_desc em {
   color: #333333;
 }
-/* line 3987, ../../../app/stylesheets/main.sass */
+/* line 3988, ../../../app/stylesheets/main.sass */
 #stylized .settings_block input, #surl_stylized .settings_block input {
   margin: 2px 10px 20px;
 }
-/* line 3990, ../../../app/stylesheets/main.sass */
+/* line 3991, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .destination, #surl_stylized .settings_block .destination {
   font-size: 1.2em;
 }
-/* line 3993, ../../../app/stylesheets/main.sass */
+/* line 3994, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .destination_block, #surl_stylized .settings_block .destination_block {
   float: left;
   padding: 0.3em 0;
 }
-/* line 3997, ../../../app/stylesheets/main.sass */
+/* line 3998, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .destination_block #reminder_email_address, #surl_stylized .settings_block .destination_block #reminder_email_address {
   float: left;
 }
-/* line 4000, ../../../app/stylesheets/main.sass */
+/* line 4001, ../../../app/stylesheets/main.sass */
 #stylized .settings_block .destination_block.right, #surl_stylized .settings_block .destination_block.right {
   width: 355px;
 }
 
-/* line 4003, ../../../app/stylesheets/main.sass */
+/* line 4004, ../../../app/stylesheets/main.sass */
 .error.warning, #errorExplanation, .errorExplanation {
   border: 2px solid #cc0000;
   padding-bottom: 12px;
   margin-bottom: 20px;
   background-color: #ffcccc;
 }
-/* line 4009, ../../../app/stylesheets/main.sass */
+/* line 4010, ../../../app/stylesheets/main.sass */
 .error.warning h2, #errorExplanation h2, .errorExplanation h2 {
   font-size: 1.2em;
   text-align: left;
@@ -5353,14 +5354,14 @@ label.error {
   background-color: #cc0000;
   color: white;
 }
-/* line 4017, ../../../app/stylesheets/main.sass */
+/* line 4018, ../../../app/stylesheets/main.sass */
 .error.warning p, #errorExplanation p, .errorExplanation p {
   color: red;
   margin-bottom: 0;
   padding: 0 7px;
   border: none;
 }
-/* line 4023, ../../../app/stylesheets/main.sass */
+/* line 4024, ../../../app/stylesheets/main.sass */
 .error.warning ul li, .error.warning .default_container .info_listing ul#privacy li, .default_container .info_listing .error.warning ul#privacy li, #errorExplanation ul li, #errorExplanation .default_container .info_listing ul#privacy li, .default_container .info_listing #errorExplanation ul#privacy li, .errorExplanation ul li, .errorExplanation .default_container .info_listing ul#privacy li, .default_container .info_listing .errorExplanation ul#privacy li {
   list-style: square;
   font-size: 1.2em;
@@ -5368,19 +5369,19 @@ label.error {
 }
 
 /* Error Reporting Styles */
-/* line 4029, ../../../app/stylesheets/main.sass */
+/* line 4030, ../../../app/stylesheets/main.sass */
 .fieldWithErrors input {
   padding: 3px 0 4px;
   border: 2px solid red;
 }
 
 /* Flash Notice Style */
-/* line 4034, ../../../app/stylesheets/main.sass */
+/* line 4035, ../../../app/stylesheets/main.sass */
 .flash_message {
   cursor: pointer;
 }
 
-/* line 4037, ../../../app/stylesheets/main.sass */
+/* line 4038, ../../../app/stylesheets/main.sass */
 .notice, .warning, .error {
   width: 100%;
   border-top: 1px solid green;
@@ -5390,12 +5391,12 @@ label.error {
   text-align: center;
   background-color: #ccffcc;
 }
-/* line 4046, ../../../app/stylesheets/main.sass */
+/* line 4047, ../../../app/stylesheets/main.sass */
 .notice span, .warning span, .error span {
   font-size: 1.4em;
 }
 
-/* line 4049, ../../../app/stylesheets/main.sass */
+/* line 4050, ../../../app/stylesheets/main.sass */
 .warning {
   border-top: 1px solid #ffcc00;
   border-bottom: 1px solid #ffcc00;
@@ -5403,7 +5404,7 @@ label.error {
   color: #6b5e2b;
 }
 
-/* line 4055, ../../../app/stylesheets/main.sass */
+/* line 4056, ../../../app/stylesheets/main.sass */
 .error {
   border-top: 1px solid #cc0000;
   border-bottom: 1px solid #cc0000;
@@ -5411,82 +5412,82 @@ label.error {
   color: #cc0000;
 }
 
-/* line 4061, ../../../app/stylesheets/main.sass */
+/* line 4062, ../../../app/stylesheets/main.sass */
 #at_a_glance_header {
   float: right;
   color: gray;
 }
-/* line 4064, ../../../app/stylesheets/main.sass */
+/* line 4065, ../../../app/stylesheets/main.sass */
 #at_a_glance_header th, #at_a_glance_header td {
   padding: 0 10px;
   text-transform: uppercase;
 }
-/* line 4067, ../../../app/stylesheets/main.sass */
+/* line 4068, ../../../app/stylesheets/main.sass */
 #at_a_glance_header #info {
   font-weight: bold;
   font-size: 1.5em;
   color: white;
 }
-/* line 4071, ../../../app/stylesheets/main.sass */
+/* line 4072, ../../../app/stylesheets/main.sass */
 #at_a_glance_header .validations, #at_a_glance_header .validations a {
   display: block;
   color: red;
 }
-/* line 4074, ../../../app/stylesheets/main.sass */
+/* line 4075, ../../../app/stylesheets/main.sass */
 #at_a_glance_header #logout_header_link {
   text-transform: none;
   padding-left: 60px;
 }
-/* line 4077, ../../../app/stylesheets/main.sass */
+/* line 4078, ../../../app/stylesheets/main.sass */
 #at_a_glance_header th.certificate_status, #at_a_glance_header th.certificate_status a {
   color: gray;
 }
-/* line 4079, ../../../app/stylesheets/main.sass */
+/* line 4080, ../../../app/stylesheets/main.sass */
 #at_a_glance_header td.certificate_status a {
   display: block;
   color: white;
 }
-/* line 4082, ../../../app/stylesheets/main.sass */
+/* line 4083, ../../../app/stylesheets/main.sass */
 #at_a_glance_header td:hover {
   text-decoration: underline;
 }
 
-/* line 4086, ../../../app/stylesheets/main.sass */
+/* line 4087, ../../../app/stylesheets/main.sass */
 #buy_certificate {
   float: right;
 }
 
 /* Receipt Page */
-/* line 4090, ../../../app/stylesheets/main.sass */
+/* line 4091, ../../../app/stylesheets/main.sass */
 #available_funds {
   margin: 1.5em 0 1em;
 }
 
-/* line 4093, ../../../app/stylesheets/main.sass */
+/* line 4094, ../../../app/stylesheets/main.sass */
 #available_funds_amount {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0 1em;
 }
 
-/* line 4098, ../../../app/stylesheets/main.sass */
+/* line 4099, ../../../app/stylesheets/main.sass */
 #deposit_details, #order_details {
   margin: 0 0 1em;
 }
-/* line 4100, ../../../app/stylesheets/main.sass */
+/* line 4101, ../../../app/stylesheets/main.sass */
 #deposit_details div, #order_details div {
   margin: 0 0 0 1em;
   font-size: 1.4em;
   color: #666666;
   text-transform: lowercase;
 }
-/* line 4105, ../../../app/stylesheets/main.sass */
+/* line 4106, ../../../app/stylesheets/main.sass */
 #deposit_details div span, #order_details div span {
   color: black;
   text-transform: none;
 }
 
-/* line 4109, ../../../app/stylesheets/main.sass */
+/* line 4110, ../../../app/stylesheets/main.sass */
 #completed_order_results {
   margin: 2em auto 4em;
   width: 100%;
@@ -5494,31 +5495,31 @@ label.error {
   border: 1px #cccccc solid;
 }
 
-/* line 4115, ../../../app/stylesheets/main.sass */
+/* line 4116, ../../../app/stylesheets/main.sass */
 .order_results_header {
   border-bottom: 1px dashed #cccccc;
   padding: 0.5em;
 }
 
-/* line 4119, ../../../app/stylesheets/main.sass */
+/* line 4120, ../../../app/stylesheets/main.sass */
 table#line_items_receipt {
   margin: 0pt auto;
   font-size: 1.3em;
   color: black;
 }
-/* line 4123, ../../../app/stylesheets/main.sass */
+/* line 4124, ../../../app/stylesheets/main.sass */
 table#line_items_receipt td {
   padding: 2px 10px;
 }
 
-/* line 4126, ../../../app/stylesheets/main.sass */
+/* line 4127, ../../../app/stylesheets/main.sass */
 #order_amount_receipt {
   background-color: #c2fcbf;
   border: 1px solid #faf999;
 }
 
 /* ----------- Form Progress Indicator ----------- */
-/* line 4132, ../../../app/stylesheets/main.sass */
+/* line 4133, ../../../app/stylesheets/main.sass */
 #form_progress_indicator {
   border-top: 1px dashed #aaffaa;
   border-bottom: 1px dashed #aaffaa;
@@ -5534,19 +5535,19 @@ table#line_items_receipt td {
   background: -ms-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
   background: linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
 }
-/* line 4143, ../../../app/stylesheets/main.sass */
+/* line 4144, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul, #form_progress_indicator .default_container .info_listing ul#privacy, .default_container .info_listing #form_progress_indicator ul#privacy {
   margin: 0 auto;
   padding: 0;
   list-style: none;
 }
-/* line 4148, ../../../app/stylesheets/main.sass */
+/* line 4149, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li, #form_progress_indicator .default_container .info_listing ul#privacy li, .default_container .info_listing #form_progress_indicator ul#privacy li {
   margin: 0pt 3px 0pt 0pt;
   padding: 0 2.5em;
   float: left;
 }
-/* line 4153, ../../../app/stylesheets/main.sass */
+/* line 4154, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span, #form_progress_indicator .default_container .info_listing ul#privacy li span, .default_container .info_listing #form_progress_indicator ul#privacy li span {
   margin: 0;
   padding: 0.3em 1em;
@@ -5554,24 +5555,24 @@ table#line_items_receipt td {
   font-size: 0.9em;
   font-weight: bold;
 }
-/* line 4160, ../../../app/stylesheets/main.sass */
+/* line 4161, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span strong, #form_progress_indicator .default_container .info_listing ul#privacy li span strong, .default_container .info_listing #form_progress_indicator ul#privacy li span strong {
   padding: 0pt 0.2em;
   font-size: 1.5em;
 }
-/* line 4164, ../../../app/stylesheets/main.sass */
+/* line 4165, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span.finished, #form_progress_indicator .default_container .info_listing ul#privacy li span.finished, .default_container .info_listing #form_progress_indicator ul#privacy li span.finished {
   background-image: url("/images/sitesprite1.png");
   background-position: -10px -782px;
   background-repeat: no-repeat;
   color: #666666;
 }
-/* line 4170, ../../../app/stylesheets/main.sass */
+/* line 4171, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li#selected, #form_progress_indicator .default_container .info_listing ul#privacy li#selected, .default_container .info_listing #form_progress_indicator ul#privacy li#selected {
   color: #ff3333;
 }
 
-/* line 4173, ../../../app/stylesheets/main.sass */
+/* line 4174, ../../../app/stylesheets/main.sass */
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
 .upload_document_container, .default_container {
@@ -5579,136 +5580,136 @@ table#line_items_receipt td {
   width: 70%;
   padding: 0px;
 }
-/* line 4180, ../../../app/stylesheets/main.sass */
+/* line 4181, ../../../app/stylesheets/main.sass */
 .reseller_registration_select_tier p, .reseller_registration_profile p,
 .user_session_format p, .reseller_tier_pricing_popup p, .order_container p,
 .upload_document_container p, .default_container p {
   font-size: 1.4em;
 }
 
-/* line 4183, ../../../app/stylesheets/main.sass */
+/* line 4184, ../../../app/stylesheets/main.sass */
 .default_container {
   padding-bottom: 1em;
 }
-/* line 4186, ../../../app/stylesheets/main.sass */
+/* line 4187, ../../../app/stylesheets/main.sass */
 .default_container .info_listing {
   font-size: 1.4em;
 }
-/* line 4188, ../../../app/stylesheets/main.sass */
+/* line 4189, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul, .default_container .info_listing ul#privacy {
   list-style-type: none;
 }
-/* line 4194, ../../../app/stylesheets/main.sass */
+/* line 4195, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul#privacy li, .default_container .info_listing ul#privacy li {
   margin: 0.8em 0;
 }
-/* line 4197, ../../../app/stylesheets/main.sass */
+/* line 4198, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:last-child, .default_container .info_listing ul#privacy li:last-child {
   margin: 0;
 }
-/* line 4200, ../../../app/stylesheets/main.sass */
+/* line 4201, ../../../app/stylesheets/main.sass */
 .default_container .info_listing dd {
   margin-bottom: 0.6em;
 }
-/* line 4203, ../../../app/stylesheets/main.sass */
+/* line 4204, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types {
   width: 100%;
   border-collapse: collapse;
 }
-/* line 4207, ../../../app/stylesheets/main.sass */
+/* line 4208, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td {
   font-size: 1.4em;
 }
-/* line 4210, ../../../app/stylesheets/main.sass */
+/* line 4211, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td .center {
   margin: 0 auto 4px;
 }
-/* line 4213, ../../../app/stylesheets/main.sass */
+/* line 4214, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink {
   background-color: pink;
 }
-/* line 4216, ../../../app/stylesheets/main.sass */
+/* line 4217, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink.seal {
   border-top: 2px red solid;
 }
-/* line 4219, ../../../app/stylesheets/main.sass */
+/* line 4220, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink.seal .center {
   margin: 4px 0 0 0;
 }
-/* line 4222, ../../../app/stylesheets/main.sass */
+/* line 4223, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue {
   background-color: lightblue;
 }
-/* line 4225, ../../../app/stylesheets/main.sass */
+/* line 4226, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue.seal {
   border-top: 2px blue solid;
 }
-/* line 4228, ../../../app/stylesheets/main.sass */
+/* line 4229, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue.seal .center {
   margin-top: 4px;
 }
-/* line 4231, ../../../app/stylesheets/main.sass */
+/* line 4232, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green {
   background-color: lightgreen;
 }
-/* line 4234, ../../../app/stylesheets/main.sass */
+/* line 4235, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green.seal {
   border-top: 2px green solid;
 }
-/* line 4237, ../../../app/stylesheets/main.sass */
+/* line 4238, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green.seal .center {
   margin-top: 4px;
 }
 
-/* line 4241, ../../../app/stylesheets/main.sass */
+/* line 4242, ../../../app/stylesheets/main.sass */
 .reseller_tier_pricing_popup {
   width: 100%;
 }
 
-/* line 4244, ../../../app/stylesheets/main.sass */
+/* line 4245, ../../../app/stylesheets/main.sass */
 .upload_document_container {
   width: 80%;
 }
 
-/* line 4247, ../../../app/stylesheets/main.sass */
+/* line 4248, ../../../app/stylesheets/main.sass */
 #button_container {
   width: 100%;
 }
-/* line 4250, ../../../app/stylesheets/main.sass */
+/* line 4251, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit {
   overflow: hidden;
 }
-/* line 4253, ../../../app/stylesheets/main.sass */
+/* line 4254, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit input {
   float: right;
 }
-/* line 4256, ../../../app/stylesheets/main.sass */
+/* line 4257, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit, #button_container #next_submit, #button_container #click_to_load, #button_container #shop_more_checkout,
 #button_container #add_items, #button_container #skip_button {
   margin: 2.5em auto 3em;
   width: 340px;
 }
-/* line 4261, ../../../app/stylesheets/main.sass */
+/* line 4262, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit input, #button_container #prev_next_submit img, #button_container #next_submit input, #button_container #next_submit img, #button_container #click_to_load input, #button_container #click_to_load img, #button_container #shop_more_checkout input, #button_container #shop_more_checkout img,
 #button_container #add_items input,
 #button_container #add_items img, #button_container #skip_button input, #button_container #skip_button img {
   margin: 0 2em;
 }
-/* line 4264, ../../../app/stylesheets/main.sass */
+/* line 4265, ../../../app/stylesheets/main.sass */
 #button_container #next_submit, #button_container #add_items {
   width: 160px;
 }
-/* line 4267, ../../../app/stylesheets/main.sass */
+/* line 4268, ../../../app/stylesheets/main.sass */
 #button_container #skip_button {
   width: 130px;
 }
-/* line 4270, ../../../app/stylesheets/main.sass */
+/* line 4271, ../../../app/stylesheets/main.sass */
 #button_container #click_to_load {
   width: 238px;
 }
 
 /* ----------- What is security code----------- */
-/* line 4275, ../../../app/stylesheets/main.sass */
+/* line 4276, ../../../app/stylesheets/main.sass */
 #what_is_security_code_link {
   font-size: 1.2em;
   padding: 0.4em;
@@ -5716,7 +5717,7 @@ table#line_items_receipt td {
   float: left;
 }
 
-/* line 4281, ../../../app/stylesheets/main.sass */
+/* line 4282, ../../../app/stylesheets/main.sass */
 #what_is_security_code {
   display: none;
   position: absolute;
@@ -5731,36 +5732,36 @@ table#line_items_receipt td {
   padding: 15px;
 }
 
-/* line 4294, ../../../app/stylesheets/main.sass */
+/* line 4295, ../../../app/stylesheets/main.sass */
 #what_is_security_code_table, #what_is_number_licenses_explain {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 1.2em;
 }
 
-/* line 4298, ../../../app/stylesheets/main.sass */
+/* line 4299, ../../../app/stylesheets/main.sass */
 #what_is_number_licenses_explain {
   font-size: 1.4em;
 }
 
-/* line 4301, ../../../app/stylesheets/main.sass */
+/* line 4302, ../../../app/stylesheets/main.sass */
 #what_are_expiration_notices_link {
   vertical-align: bottom;
 }
 
-/* line 4304, ../../../app/stylesheets/main.sass */
+/* line 4305, ../../../app/stylesheets/main.sass */
 .security_code_row {
   position: relative;
   float: left;
   width: 235px;
 }
 
-/* line 4309, ../../../app/stylesheets/main.sass */
+/* line 4310, ../../../app/stylesheets/main.sass */
 #what_is_number_licenses_link, #what_are_domains_link {
   float: right;
   padding-left: 2px;
 }
 
-/* line 4313, ../../../app/stylesheets/main.sass */
+/* line 4314, ../../../app/stylesheets/main.sass */
 #current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
 #calculated_price, .displayed_csr_field {
   margin: 0pt 0.6em;
@@ -5770,7 +5771,7 @@ table#line_items_receipt td {
   margin: 2px 0.6em 20px;
 }
 
-/* line 4321, ../../../app/stylesheets/main.sass */
+/* line 4322, ../../../app/stylesheets/main.sass */
 #confirmed_validation {
   font-size: 1.3em;
   width: 30em;
@@ -5779,14 +5780,14 @@ table#line_items_receipt td {
   color: #222222;
 }
 
-/* line 4328, ../../../app/stylesheets/main.sass */
+/* line 4329, ../../../app/stylesheets/main.sass */
 #existing_credit_cards {
   width: 100%;
   margin: 0px auto;
   text-align: center;
 }
 
-/* line 4333, ../../../app/stylesheets/main.sass */
+/* line 4334, ../../../app/stylesheets/main.sass */
 #existing_credit_cards table {
   font-size: 1.4em;
   width: 80%;
@@ -5795,12 +5796,12 @@ table#line_items_receipt td {
   margin-bottom: 2em;
 }
 
-/* line 4340, ../../../app/stylesheets/main.sass */
+/* line 4341, ../../../app/stylesheets/main.sass */
 #existing_credit_cards_header {
   color: #777777;
 }
 
-/* line 4343, ../../../app/stylesheets/main.sass */
+/* line 4344, ../../../app/stylesheets/main.sass */
 .product_summary {
   margin: 20px 10px 20px;
   width: 288px;
@@ -5808,13 +5809,13 @@ table#line_items_receipt td {
   float: left;
 }
 
-/* line 4349, ../../../app/stylesheets/main.sass */
+/* line 4350, ../../../app/stylesheets/main.sass */
 .product_detail {
   width: 32%;
   float: right;
 }
 
-/* line 4354, ../../../app/stylesheets/main.sass */
+/* line 4355, ../../../app/stylesheets/main.sass */
 .product_summary .title, .product_detail .title {
   padding: 0.3em 0pt;
   font-weight: bold;
@@ -5823,76 +5824,76 @@ table#line_items_receipt td {
   background-color: #ccccff;
   color: black;
 }
-/* line 4362, ../../../app/stylesheets/main.sass */
+/* line 4363, ../../../app/stylesheets/main.sass */
 .product_summary .p_ev, .product_detail .p_ev {
   background: url(/images/get_green_bar.png) no-repeat;
 }
-/* line 4365, ../../../app/stylesheets/main.sass */
+/* line 4366, ../../../app/stylesheets/main.sass */
 .product_summary .p_body, .product_detail .p_body {
   padding: 10px 20px 20px;
 }
-/* line 4368, ../../../app/stylesheets/main.sass */
+/* line 4369, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container, .product_detail .p_body .p_image_container {
   margin: 10px auto 0pt;
   width: 128px;
 }
-/* line 4372, ../../../app/stylesheets/main.sass */
+/* line 4373, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container .p_ev_image, .product_detail .p_body .p_image_container .p_ev_image {
   height: 128px;
 }
-/* line 4374, ../../../app/stylesheets/main.sass */
+/* line 4375, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container .p_ev_image img, .product_detail .p_body .p_image_container .p_ev_image img {
   border: 1px solid lime;
   margin-top: 4px;
 }
-/* line 4378, ../../../app/stylesheets/main.sass */
+/* line 4379, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_description, .product_detail .p_body .p_description {
   padding: 0pt 0.5em 1em;
   font-size: 1.3em;
   color: #333333;
 }
-/* line 4383, ../../../app/stylesheets/main.sass */
+/* line 4384, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container, .product_detail .p_body .p_points_container {
   border: 1px solid #ff9900;
   margin: 0pt auto;
   background-color: #fbfbf2;
 }
-/* line 4388, ../../../app/stylesheets/main.sass */
+/* line 4389, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points, .product_detail .p_body .p_points_container .p_points {
   padding: 1em;
   font-size: 1.2em;
 }
-/* line 4392, ../../../app/stylesheets/main.sass */
+/* line 4393, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points .check, .product_summary .p_body .p_points_container .p_points .p_point, .product_detail .p_body .p_points_container .p_points .check, .product_detail .p_body .p_points_container .p_points .p_point {
   margin: 1px 0;
   padding-left: 20px;
   height: 22px;
 }
-/* line 4397, ../../../app/stylesheets/main.sass */
+/* line 4398, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points .check, .product_detail .p_body .p_points_container .p_points .check {
   background: url(/images/check_bl.png) no-repeat scroll 0 0;
 }
-/* line 4400, ../../../app/stylesheets/main.sass */
+/* line 4401, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_starting_at, .product_summary .p_body .reseller_p_starting_at, .product_detail .p_body .p_starting_at, .product_detail .p_body .reseller_p_starting_at {
   font-size: 1.7em;
 }
-/* line 4403, ../../../app/stylesheets/main.sass */
+/* line 4404, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .reseller_p_starting_at, .product_detail .p_body .reseller_p_starting_at {
   text-align: center;
 }
 
-/* line 4406, ../../../app/stylesheets/main.sass */
+/* line 4407, ../../../app/stylesheets/main.sass */
 .p_buy_certificate, .product_description_buy_certificate {
   width: 126px;
   margin: 0 auto 1.4em;
 }
 
-/* line 4410, ../../../app/stylesheets/main.sass */
+/* line 4411, ../../../app/stylesheets/main.sass */
 .product_description_buy_certificate {
   margin: 0 auto 0.8em;
 }
 
-/* line 4413, ../../../app/stylesheets/main.sass */
+/* line 4414, ../../../app/stylesheets/main.sass */
 .price_starting_at, .get_free_ssl, .reseller_price_starting_at {
   color: #333333;
   font-size: 2.2em;
@@ -5900,21 +5901,21 @@ table#line_items_receipt td {
   width: 190px;
 }
 
-/* line 4419, ../../../app/stylesheets/main.sass */
+/* line 4420, ../../../app/stylesheets/main.sass */
 .reseller_price_starting_at {
   width: 270px;
 }
 
-/* line 4422, ../../../app/stylesheets/main.sass */
+/* line 4423, ../../../app/stylesheets/main.sass */
 .get_free_ssl {
   width: 60px;
 }
 
-/* line 4425, ../../../app/stylesheets/main.sass */
+/* line 4426, ../../../app/stylesheets/main.sass */
 h3#p_standard_or_wildcard {
   margin: 15px 0pt 0pt 10px;
 }
-/* line 4428, ../../../app/stylesheets/main.sass */
+/* line 4429, ../../../app/stylesheets/main.sass */
 .p_footer h3#p_standard_or_wildcard {
   width: 100%;
   clear: both;
@@ -5922,30 +5923,30 @@ h3#p_standard_or_wildcard {
   margin-bottom: 15px;
 }
 
-/* line 4434, ../../../app/stylesheets/main.sass */
+/* line 4435, ../../../app/stylesheets/main.sass */
 h3#certificate_crumbs {
   margin: 15px 0pt 5px 10px;
 }
 
-/* line 4437, ../../../app/stylesheets/main.sass */
+/* line 4438, ../../../app/stylesheets/main.sass */
 .see_other_certificates {
   float: right;
   font-size: 1.4em;
   width: 32%;
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
 }
-/* line 4443, ../../../app/stylesheets/main.sass */
+/* line 4444, ../../../app/stylesheets/main.sass */
 .see_other_certificates ul, .see_other_certificates .default_container .info_listing ul#privacy, .default_container .info_listing .see_other_certificates ul#privacy {
   list-style: none;
 }
-/* line 4446, ../../../app/stylesheets/main.sass */
+/* line 4447, ../../../app/stylesheets/main.sass */
 .see_other_certificates li.heading {
   color: #666666;
   font-style: italic;
 }
 
 /* Product Page */
-/* line 4451, ../../../app/stylesheets/main.sass */
+/* line 4452, ../../../app/stylesheets/main.sass */
 .right_product_desc {
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
   float: right;
@@ -5954,62 +5955,62 @@ h3#certificate_crumbs {
   width: 440px;
 }
 
-/* line 4458, ../../../app/stylesheets/main.sass */
+/* line 4459, ../../../app/stylesheets/main.sass */
 .bottom_product_desc {
   padding: 1em 0;
   width: 65%;
   float: left;
   line-height: 2.2em;
 }
-/* line 4464, ../../../app/stylesheets/main.sass */
+/* line 4465, ../../../app/stylesheets/main.sass */
 .bottom_product_desc p {
   margin: 0 0 12px;
   font-size: 1.5em;
   color: black;
 }
 
-/* line 4469, ../../../app/stylesheets/main.sass */
+/* line 4470, ../../../app/stylesheets/main.sass */
 #upward_trend {
   float: right;
   margin: 10px 0 10px 10px;
   border: 2px solid #cccccc;
 }
 
-/* line 4474, ../../../app/stylesheets/main.sass */
+/* line 4475, ../../../app/stylesheets/main.sass */
 #shop_securely_with_ssl {
   float: left;
   margin: 10px 10px 0 0;
   border: 2px solid #cccccc;
 }
 
-/* line 4479, ../../../app/stylesheets/main.sass */
+/* line 4480, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot {
   margin: 0pt auto;
   width: 540px;
 }
-/* line 4483, ../../../app/stylesheets/main.sass */
+/* line 4484, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot img {
   border: 2px solid #cccccc;
   margin: 10px auto;
 }
 
-/* line 4487, ../../../app/stylesheets/main.sass */
+/* line 4488, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today {
   margin: 15px;
   text-align: center;
 }
-/* line 4490, ../../../app/stylesheets/main.sass */
+/* line 4491, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today h3 {
   color: #222222;
 }
 
-/* line 4493, ../../../app/stylesheets/main.sass */
+/* line 4494, ../../../app/stylesheets/main.sass */
 ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   margin: 0 1.5em 2em;
   font-size: 1.3em;
 }
 
-/* line 4497, ../../../app/stylesheets/main.sass */
+/* line 4498, ../../../app/stylesheets/main.sass */
 #documents_entry {
   border-bottom: 2px dotted #cccccc;
   border-top: 2px dotted #cccccc;
@@ -6017,25 +6018,25 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   padding: 0 20px;
 }
 
-/* line 4503, ../../../app/stylesheets/main.sass */
+/* line 4504, ../../../app/stylesheets/main.sass */
 #documents_list {
   float: left;
   font-size: 1.4em;
   width: 100%;
 }
-/* line 4508, ../../../app/stylesheets/main.sass */
+/* line 4509, ../../../app/stylesheets/main.sass */
 #documents_list dl {
   float: left;
   display: inline;
 }
-/* line 4512, ../../../app/stylesheets/main.sass */
+/* line 4513, ../../../app/stylesheets/main.sass */
 #documents_list dd {
   margin: 0 0 0 98px;
   padding: 0;
   line-height: 1.5em;
   color: #666666;
 }
-/* line 4518, ../../../app/stylesheets/main.sass */
+/* line 4519, ../../../app/stylesheets/main.sass */
 #documents_list dd.title {
   margin: 0;
   padding: 0;
@@ -6043,11 +6044,11 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   letter-spacing: 1px;
   color: #627081;
 }
-/* line 4525, ../../../app/stylesheets/main.sass */
+/* line 4526, ../../../app/stylesheets/main.sass */
 #documents_list dl dd.img {
   margin: 0;
 }
-/* line 4528, ../../../app/stylesheets/main.sass */
+/* line 4529, ../../../app/stylesheets/main.sass */
 #documents_list dd.img .img_preview img {
   float: left;
   margin: 0 8px 0 0;
@@ -6057,32 +6058,32 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   border-right-color: #c8cdd2;
   background: white;
 }
-/* line 4537, ../../../app/stylesheets/main.sass */
+/* line 4538, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview {
   font-size: 80%;
   margin: 0 0 0 22px;
   clear: both;
   width: 7em;
 }
-/* line 4543, ../../../app/stylesheets/main.sass */
+/* line 4544, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview a {
   padding: 2px 0;
 }
 
-/* line 4546, ../../../app/stylesheets/main.sass */
+/* line 4547, ../../../app/stylesheets/main.sass */
 img.blue_icon {
   vertical-align: middle;
   margin-right: 0.2em;
 }
 
-/* line 4550, ../../../app/stylesheets/main.sass */
+/* line 4551, ../../../app/stylesheets/main.sass */
 .documents_list_notes {
   color: #333333;
   padding: 14px 0;
   float: left;
 }
 
-/* line 4555, ../../../app/stylesheets/main.sass */
+/* line 4556, ../../../app/stylesheets/main.sass */
 #search_bar {
   padding: 0.5em;
   background: #eeeeff;
@@ -6094,157 +6095,157 @@ img.blue_icon {
   border: 1px solid #ccccff;
 }
 
-/* line 4566, ../../../app/stylesheets/main.sass */
+/* line 4567, ../../../app/stylesheets/main.sass */
 #validation_requirements_box ul, #validation_requirements_box .default_container .info_listing ul#privacy, .default_container .info_listing #validation_requirements_box ul#privacy {
   padding-left: 1.2em;
 }
 
-/* line 4569, ../../../app/stylesheets/main.sass */
+/* line 4570, ../../../app/stylesheets/main.sass */
 #site_seal_instructions, #site_seal_documents {
   text-align: left;
 }
 
-/* line 4574, ../../../app/stylesheets/main.sass */
+/* line 4575, ../../../app/stylesheets/main.sass */
 .subject_column.show_validation, .subject_column.center_subject {
   margin: 0pt auto;
   width: 90%;
 }
-/* line 4578, ../../../app/stylesheets/main.sass */
+/* line 4579, ../../../app/stylesheets/main.sass */
 .subject_column a {
   float: left;
 }
 
-/* line 4581, ../../../app/stylesheets/main.sass */
+/* line 4582, ../../../app/stylesheets/main.sass */
 .bordered_prod {
   border: 1px grey solid;
   padding: 1px;
 }
 
-/* line 4585, ../../../app/stylesheets/main.sass */
+/* line 4586, ../../../app/stylesheets/main.sass */
 .has_csr_container, .has_account_container, .clickable_choice {
   cursor: pointer;
 }
 
-/* line 4588, ../../../app/stylesheets/main.sass */
+/* line 4589, ../../../app/stylesheets/main.sass */
 .document_access_type {
   margin-left: 1em;
 }
 
-/* line 4591, ../../../app/stylesheets/main.sass */
+/* line 4592, ../../../app/stylesheets/main.sass */
 .doc_attribute {
   text-align: left;
   padding-left: 0.2em;
 }
 
-/* line 4595, ../../../app/stylesheets/main.sass */
+/* line 4596, ../../../app/stylesheets/main.sass */
 .public_settings {
   float: right;
   padding: 14px 0;
   color: #333333;
 }
 
-/* line 4600, ../../../app/stylesheets/main.sass */
+/* line 4601, ../../../app/stylesheets/main.sass */
 .preview_link {
   margin-right: 1em;
 }
 
-/* line 4603, ../../../app/stylesheets/main.sass */
+/* line 4604, ../../../app/stylesheets/main.sass */
 .site_seal_notes {
   margin: 0.6em 0 0 1em;
   clear: both;
 }
 
-/* line 4607, ../../../app/stylesheets/main.sass */
+/* line 4608, ../../../app/stylesheets/main.sass */
 .approved_validation_document {
   background: url(/images/bg-list.gif) no-repeat left top;
 }
-/* line 4610, ../../../app/stylesheets/main.sass */
+/* line 4611, ../../../app/stylesheets/main.sass */
 .approved_validation_document.crossout span {
   text-decoration: line-through;
 }
 
-/* line 4614, ../../../app/stylesheets/main.sass */
+/* line 4615, ../../../app/stylesheets/main.sass */
 ul.applicable_documents li, .default_container .info_listing ul.applicable_documents#privacy li, ul.applied_docs li, .default_container .info_listing ul.applied_docs#privacy li {
   padding-left: 16px;
   line-height: 1.4em;
 }
 
-/* line 4618, ../../../app/stylesheets/main.sass */
+/* line 4619, ../../../app/stylesheets/main.sass */
 .validation_admin_controls {
   margin-bottom: 2em;
 }
 
-/* line 4621, ../../../app/stylesheets/main.sass */
+/* line 4622, ../../../app/stylesheets/main.sass */
 .tree-connect {
   padding-left: 1.2em;
   background: url(/images/tree-connect.gif) no-repeat left center;
 }
 
-/* line 4625, ../../../app/stylesheets/main.sass */
+/* line 4626, ../../../app/stylesheets/main.sass */
 span.rule_name {
   background: lightyellow;
   font-weight: bold;
   text-decoration: underline;
 }
 
-/* line 4630, ../../../app/stylesheets/main.sass */
+/* line 4631, ../../../app/stylesheets/main.sass */
 .rules_methods_block, .small_section {
   padding-bottom: 1em;
 }
-/* line 4633, ../../../app/stylesheets/main.sass */
+/* line 4634, ../../../app/stylesheets/main.sass */
 .rules_methods_block li.email_customer, .small_section li.email_customer {
   padding: 0.5em;
 }
 
-/* line 4636, ../../../app/stylesheets/main.sass */
+/* line 4637, ../../../app/stylesheets/main.sass */
 ul[class^=status_history] > li, .default_container .info_listing ul[class^=status_history]#privacy > li {
   border: 1px solid #cffff9;
   background: none repeat scroll 0 0 #eefafc;
   margin: 0.2em auto;
 }
 
-/* line 4641, ../../../app/stylesheets/main.sass */
+/* line 4642, ../../../app/stylesheets/main.sass */
 #cart_items a {
   color: orange;
 }
 
-/* line 4644, ../../../app/stylesheets/main.sass */
+/* line 4645, ../../../app/stylesheets/main.sass */
 .interested_in_reselling {
   color: maroon;
 }
 
-/* line 4647, ../../../app/stylesheets/main.sass */
+/* line 4648, ../../../app/stylesheets/main.sass */
 .orig {
   text-decoration: line-through;
   color: red;
 }
 
-/* line 4651, ../../../app/stylesheets/main.sass */
+/* line 4652, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal {
   margin: 0 auto;
   text-align: center;
   float: right;
   width: 300px;
 }
-/* line 4657, ../../../app/stylesheets/main.sass */
+/* line 4658, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #container {
   font-size: 1.3em;
   padding: 0em 3em 1em;
   color: #666666;
 }
-/* line 4662, ../../../app/stylesheets/main.sass */
+/* line 4663, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #description {
   text-align: left;
 }
 
-/* line 4665, ../../../app/stylesheets/main.sass */
+/* line 4666, ../../../app/stylesheets/main.sass */
 #global_footer {
   margin: 0 auto;
   padding-top: 24px;
   text-align: center;
   width: 970px;
 }
-/* line 4671, ../../../app/stylesheets/main.sass */
+/* line 4672, ../../../app/stylesheets/main.sass */
 #global_footer ul, #global_footer .default_container .info_listing ul#privacy, .default_container .info_listing #global_footer ul#privacy {
   color: white;
   float: left;
@@ -6252,7 +6253,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   margin-left: 5em;
   padding-left: 0em;
 }
-/* line 4678, ../../../app/stylesheets/main.sass */
+/* line 4679, ../../../app/stylesheets/main.sass */
 #global_footer ul li, #global_footer .default_container .info_listing ul#privacy li, .default_container .info_listing #global_footer ul#privacy li {
   color: #fda58a;
   font-family: Arial, Helvetica, sans-serif;
@@ -6262,7 +6263,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   padding-top: 8px;
   text-align: left;
 }
-/* line 4687, ../../../app/stylesheets/main.sass */
+/* line 4688, ../../../app/stylesheets/main.sass */
 #global_footer h4, #global_footer h4 a, #global_footer h4 a:visited, #global_footer h4 a:hover {
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -6273,12 +6274,12 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   text-align: left;
 }
 
-/* line 4697, ../../../app/stylesheets/main.sass */
+/* line 4698, ../../../app/stylesheets/main.sass */
 #section_box {
   padding-top: 0.35em;
 }
 
-/* line 4700, ../../../app/stylesheets/main.sass */
+/* line 4701, ../../../app/stylesheets/main.sass */
 #copyright_statement {
   clear: both;
   color: #999999;
@@ -6289,13 +6290,13 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   width: 970px;
 }
 
-/* line 4709, ../../../app/stylesheets/main.sass */
+/* line 4710, ../../../app/stylesheets/main.sass */
 a.footer_link {
   color: #ffc2af;
   padding-left: 1em;
 }
 
-/* line 4713, ../../../app/stylesheets/main.sass */
+/* line 4714, ../../../app/stylesheets/main.sass */
 #logo_box {
   background-image: url("/images/footer_logo.png");
   background-position: left top;
@@ -6307,183 +6308,183 @@ a.footer_link {
   width: 100px;
 }
 
-/* line 4723, ../../../app/stylesheets/main.sass */
+/* line 4724, ../../../app/stylesheets/main.sass */
 #ssl_site_seal_sample {
   float: right;
   padding: 10px 0 10px 10px;
 }
 
-/* line 4727, ../../../app/stylesheets/main.sass */
+/* line 4728, ../../../app/stylesheets/main.sass */
 #sample_site_report, #sample_artifacts {
   margin-right: 10px 10px 0 0;
   float: left;
   width: 300px;
 }
-/* line 4732, ../../../app/stylesheets/main.sass */
+/* line 4733, ../../../app/stylesheets/main.sass */
 #sample_site_report img, #sample_artifacts img {
   border: 2px solid #cccccc;
 }
 
-/* line 4735, ../../../app/stylesheets/main.sass */
+/* line 4736, ../../../app/stylesheets/main.sass */
 #sample_artifacts {
   margin-left: 10px;
   float: right;
 }
 
-/* line 4739, ../../../app/stylesheets/main.sass */
+/* line 4740, ../../../app/stylesheets/main.sass */
 .contact_us_container {
   width: 330px;
   margin-top: 2.2em;
   padding-bottom: 0.4em;
 }
-/* line 4744, ../../../app/stylesheets/main.sass */
+/* line 4745, ../../../app/stylesheets/main.sass */
 .contact_us_container.no_top_margin {
   margin-top: 0;
 }
-/* line 4747, ../../../app/stylesheets/main.sass */
+/* line 4748, ../../../app/stylesheets/main.sass */
 .contact_us_container p.contact_us_header {
   color: #333333;
 }
-/* line 4750, ../../../app/stylesheets/main.sass */
+/* line 4751, ../../../app/stylesheets/main.sass */
 .contact_us_container p.description, .contact_us_container p.sub_description, .contact_us_container p.main_description {
   margin: 1em 1em 2em;
 }
-/* line 4753, ../../../app/stylesheets/main.sass */
+/* line 4754, ../../../app/stylesheets/main.sass */
 .contact_us_container p.sub_description {
   font-size: 1.3em;
   color: #222222;
 }
-/* line 4757, ../../../app/stylesheets/main.sass */
+/* line 4758, ../../../app/stylesheets/main.sass */
 .contact_us_container p.main_description {
   width: 630px;
   margin-bottom: 1em;
 }
-/* line 4761, ../../../app/stylesheets/main.sass */
+/* line 4762, ../../../app/stylesheets/main.sass */
 .contact_us_container ul, .contact_us_container .default_container .info_listing ul#privacy, .default_container .info_listing .contact_us_container ul#privacy {
   font-size: 1.4em;
 }
-/* line 4764, ../../../app/stylesheets/main.sass */
+/* line 4765, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.phone_numbers, .contact_us_container .default_container .info_listing ul.phone_numbers#privacy, .default_container .info_listing .contact_us_container ul.phone_numbers#privacy {
   list-style-type: none;
 }
-/* line 4767, ../../../app/stylesheets/main.sass */
+/* line 4768, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.benefits, .contact_us_container .default_container .info_listing ul.benefits#privacy, .default_container .info_listing .contact_us_container ul.benefits#privacy {
   list-style-type: circle;
 }
 
-/* line 4770, ../../../app/stylesheets/main.sass */
+/* line 4771, ../../../app/stylesheets/main.sass */
 .contact_us_support {
   float: right;
   width: 330px;
   background: white url(/images/bg.gif) repeat-x;
 }
-/* line 4775, ../../../app/stylesheets/main.sass */
+/* line 4776, ../../../app/stylesheets/main.sass */
 .contact_us_support .support_panel {
   margin: 10px;
 }
-/* line 4778, ../../../app/stylesheets/main.sass */
+/* line 4779, ../../../app/stylesheets/main.sass */
 .contact_us_support .contact_us_container {
   width: inherit;
 }
 
-/* line 4781, ../../../app/stylesheets/main.sass */
+/* line 4782, ../../../app/stylesheets/main.sass */
 img.industry_reseller {
   border: 2px solid #cccccc;
   float: right;
   margin: 0 0 5px 10px;
 }
 
-/* line 4786, ../../../app/stylesheets/main.sass */
+/* line 4787, ../../../app/stylesheets/main.sass */
 img.industry {
   width: 75px;
   float: right;
 }
 
-/* line 4790, ../../../app/stylesheets/main.sass */
+/* line 4791, ../../../app/stylesheets/main.sass */
 .center {
   text-align: center;
   margin: 0 auto;
   float: none;
 }
 
-/* line 4794, ../../../app/stylesheets/main.sass */
+/* line 4795, ../../../app/stylesheets/main.sass */
 #other_services {
   clear: both;
   padding-top: 2em;
 }
-/* line 4798, ../../../app/stylesheets/main.sass */
+/* line 4799, ../../../app/stylesheets/main.sass */
 #other_services h2#main_description {
   font-size: 2em;
 }
-/* line 4801, ../../../app/stylesheets/main.sass */
+/* line 4802, ../../../app/stylesheets/main.sass */
 #other_services h2#sub_description {
   font-size: 1.6em;
   color: black;
 }
 
-/* line 4805, ../../../app/stylesheets/main.sass */
+/* line 4806, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 4808, ../../../app/stylesheets/main.sass */
+/* line 4809, ../../../app/stylesheets/main.sass */
 .previous_requests {
   float: left;
   font-weight: bold;
 }
 
-/* line 4812, ../../../app/stylesheets/main.sass */
+/* line 4813, ../../../app/stylesheets/main.sass */
 #sales_number_in_header img {
   margin: 2px 12px 0 0;
   float: left;
 }
 
-/* line 4816, ../../../app/stylesheets/main.sass */
+/* line 4817, ../../../app/stylesheets/main.sass */
 dl.listing {
   font-size: 1.4em;
 }
-/* line 4819, ../../../app/stylesheets/main.sass */
+/* line 4820, ../../../app/stylesheets/main.sass */
 dl.listing dl.last_list {
   margin-bottom: 1em;
 }
-/* line 4822, ../../../app/stylesheets/main.sass */
+/* line 4823, ../../../app/stylesheets/main.sass */
 dl.listing dt.validation_type {
   font-weight: bold;
 }
-/* line 4825, ../../../app/stylesheets/main.sass */
+/* line 4826, ../../../app/stylesheets/main.sass */
 dl.listing dt.ev_instructions {
   color: #028005;
 }
-/* line 4828, ../../../app/stylesheets/main.sass */
+/* line 4829, ../../../app/stylesheets/main.sass */
 dl.listing .green {
   color: green;
 }
 
-/* line 4831, ../../../app/stylesheets/main.sass */
+/* line 4832, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value, .api_key_or_value {
   color: black;
 }
 
-/* line 4834, ../../../app/stylesheets/main.sass */
+/* line 4835, ../../../app/stylesheets/main.sass */
 .api_key_or_value {
   font-weight: bold;
 }
 
-/* line 4837, ../../../app/stylesheets/main.sass */
+/* line 4838, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value {
   font-style: italic;
 }
 
-/* line 4840, ../../../app/stylesheets/main.sass */
+/* line 4841, ../../../app/stylesheets/main.sass */
 .api_csr_params_table {
   padding: 1em;
 }
 
-/* line 4843, ../../../app/stylesheets/main.sass */
+/* line 4844, ../../../app/stylesheets/main.sass */
 .api_csr_params {
   font-size: 0.8em;
 }
-/* line 4845, ../../../app/stylesheets/main.sass */
+/* line 4846, ../../../app/stylesheets/main.sass */
 .api_csr_params table {
   border: 1px solid black;
 }
@@ -6566,7 +6567,7 @@ dl.listing .green {
   background-color: #eeeeee;
 }
 
-/* line 4852, ../../../app/stylesheets/main.sass */
+/* line 4853, ../../../app/stylesheets/main.sass */
 ul.csr_fields, .default_container .info_listing ul.csr_fields#privacy {
   list-style: none;
   padding: 1em 0 0 0;
@@ -6578,7 +6579,7 @@ ul.csr_fields li, .default_container .info_listing ul.csr_fields#privacy li {
   margin-left: 0px;
 }
 
-/* line 4856, ../../../app/stylesheets/main.sass */
+/* line 4857, ../../../app/stylesheets/main.sass */
 ul#send_to_ca_box {
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
@@ -6595,28 +6596,28 @@ ul#send_to_ca_box {
   padding-bottom: 1em;
 }
 
-/* line 4863, ../../../app/stylesheets/main.sass */
+/* line 4864, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results {
   font-size: 0.8em;
 }
-/* line 4866, ../../../app/stylesheets/main.sass */
+/* line 4867, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results dd {
   text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6);
 }
 
-/* line 4869, ../../../app/stylesheets/main.sass */
+/* line 4870, ../../../app/stylesheets/main.sass */
 #processing_ca {
   text-align: center;
   margin: 10px auto;
   display: none;
 }
 
-/* line 4874, ../../../app/stylesheets/main.sass */
+/* line 4875, ../../../app/stylesheets/main.sass */
 #dcv_box {
   margin-bottom: 2em;
 }
 
-/* line 4877, ../../../app/stylesheets/main.sass */
+/* line 4878, ../../../app/stylesheets/main.sass */
 .shiny_silver_button {
   color: #050505;
   padding: 10px 20px;
@@ -6641,7 +6642,7 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px white;
 }
 
-/* line 4887, ../../../app/stylesheets/main.sass */
+/* line 4888, ../../../app/stylesheets/main.sass */
 .shiny_blue_button, #stylized input#upload_files, #surl_stylized input#upload_files {
   color: white;
   padding: 10px 20px;
@@ -6666,60 +6667,60 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.4), 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* line 4897, ../../../app/stylesheets/main.sass */
+/* line 4898, ../../../app/stylesheets/main.sass */
 #busy_sending {
   display: none;
 }
 
-/* line 4900, ../../../app/stylesheets/main.sass */
+/* line 4901, ../../../app/stylesheets/main.sass */
 #dcv_sent_to_address {
   font-weight: bold;
 }
 
-/* line 4903, ../../../app/stylesheets/main.sass */
+/* line 4904, ../../../app/stylesheets/main.sass */
 .category_border {
   margin-bottom: 1em;
 }
 
-/* line 4906, ../../../app/stylesheets/main.sass */
+/* line 4907, ../../../app/stylesheets/main.sass */
 #subscriber_agreement textarea {
   width: 100%;
 }
 
-/* line 4909, ../../../app/stylesheets/main.sass */
+/* line 4910, ../../../app/stylesheets/main.sass */
 textarea[id^=certificate_order] {
   width: 300px;
 }
 
-/* line 4912, ../../../app/stylesheets/main.sass */
+/* line 4913, ../../../app/stylesheets/main.sass */
 #agreement {
   font-size: 1.3em;
 }
 
-/* line 4915, ../../../app/stylesheets/main.sass */
+/* line 4916, ../../../app/stylesheets/main.sass */
 .waiting_bar {
   text-align: center;
 }
 
-/* line 4918, ../../../app/stylesheets/main.sass */
+/* line 4919, ../../../app/stylesheets/main.sass */
 .close_flash_message {
   color: #6b9029;
   font-size: 0.9em;
   float: right;
   margin-right: 1em;
 }
-/* line 4924, ../../../app/stylesheets/main.sass */
+/* line 4925, ../../../app/stylesheets/main.sass */
 .close_flash_message span {
   border: 1px solid;
   padding: 0pt 0.2em;
 }
 
-/* line 4929, ../../../app/stylesheets/main.sass */
+/* line 4930, ../../../app/stylesheets/main.sass */
 #new_user_session input[type=password], #new_user_session input[type=text] {
   width: 196px;
 }
 
-/* line 4932, ../../../app/stylesheets/main.sass */
+/* line 4933, ../../../app/stylesheets/main.sass */
 .dcv_not_satisfied {
   background: #fff7f8;
   border-left: 1px solid #feb6b6;
@@ -6727,7 +6728,7 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4938, ../../../app/stylesheets/main.sass */
+/* line 4939, ../../../app/stylesheets/main.sass */
 .dcv_satisfied {
   background: #f8fff7;
   border-left: 1px solid #d8feb6;
@@ -6735,66 +6736,66 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4944, ../../../app/stylesheets/main.sass */
+/* line 4945, ../../../app/stylesheets/main.sass */
 .validation_section {
   padding-bottom: 1em;
 }
 
-/* line 4947, ../../../app/stylesheets/main.sass */
+/* line 4948, ../../../app/stylesheets/main.sass */
 span#no_emails_accessible {
   font-size: 0.9em;
   color: #ff2626;
 }
 
-/* line 4951, ../../../app/stylesheets/main.sass */
+/* line 4952, ../../../app/stylesheets/main.sass */
 #social_share {
   float: left;
   margin: 0px 4px 0px 2px;
   padding: 0;
   width: 110px;
 }
-/* line 4957, ../../../app/stylesheets/main.sass */
+/* line 4958, ../../../app/stylesheets/main.sass */
 #sales_number_in_header #social_share {
   margin: -4px 4px 0px 2px;
 }
 
-/* line 4960, ../../../app/stylesheets/main.sass */
+/* line 4961, ../../../app/stylesheets/main.sass */
 #logo_share {
   float: left;
   width: 180px;
 }
 
-/* line 4964, ../../../app/stylesheets/main.sass */
+/* line 4965, ../../../app/stylesheets/main.sass */
 #twitter {
   float: left;
   height: 5px;
 }
 
-/* line 4968, ../../../app/stylesheets/main.sass */
+/* line 4969, ../../../app/stylesheets/main.sass */
 #facebook {
   float: right;
   width: 50px;
 }
 
-/* line 4972, ../../../app/stylesheets/main.sass */
+/* line 4973, ../../../app/stylesheets/main.sass */
 #logo_share #social_share {
   float: left;
 }
 
-/* line 4975, ../../../app/stylesheets/main.sass */
+/* line 4976, ../../../app/stylesheets/main.sass */
 .site_seal_footer {
   float: left;
   margin-top: 30px;
 }
 
-/* line 4980, ../../../app/stylesheets/main.sass */
+/* line 4981, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl, #surl_stylized .edit_surl {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
-/* line 4985, ../../../app/stylesheets/main.sass */
+/* line 4986, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl label, #surl_stylized .edit_surl label {
   font-size: 1.4em;
   display: block;
@@ -6803,17 +6804,17 @@ span#no_emails_accessible {
   width: 100%;
   text-align: left;
 }
-/* line 4993, ../../../app/stylesheets/main.sass */
+/* line 4994, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 4997, ../../../app/stylesheets/main.sass */
+/* line 4998, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 300px;
 }
-/* line 5000, ../../../app/stylesheets/main.sass */
+/* line 5001, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   width: 100%;
   float: left;
@@ -6830,75 +6831,75 @@ span#no_emails_accessible {
   -khtml-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 5011, ../../../app/stylesheets/main.sass */
+/* line 5012, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
-/* line 5016, ../../../app/stylesheets/main.sass */
+/* line 5017, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   float: none;
   width: 60%;
 }
-/* line 5021, ../../../app/stylesheets/main.sass */
+/* line 5022, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p {
   text-align: left;
 }
-/* line 5024, ../../../app/stylesheets/main.sass */
+/* line 5025, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
   width: 65%;
 }
-/* line 5027, ../../../app/stylesheets/main.sass */
+/* line 5028, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label {
   width: 6em;
 }
-/* line 5030, ../../../app/stylesheets/main.sass */
+/* line 5031, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url] {
   width: 300px;
 }
-/* line 5033, ../../../app/stylesheets/main.sass */
+/* line 5034, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
   width: 50%;
   float: none;
 }
-/* line 5038, ../../../app/stylesheets/main.sass */
+/* line 5039, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 750px;
 }
 
-/* line 5042, ../../../app/stylesheets/main.sass */
+/* line 5043, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 5045, ../../../app/stylesheets/main.sass */
+/* line 5046, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 5048, ../../../app/stylesheets/main.sass */
+/* line 5049, ../../../app/stylesheets/main.sass */
 #surl_link, #surl_link_error {
   font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5053, ../../../app/stylesheets/main.sass */
+/* line 5054, ../../../app/stylesheets/main.sass */
 #surl_link input, #surl_link_error input {
   width: 360px;
 }
 
-/* line 5056, ../../../app/stylesheets/main.sass */
+/* line 5057, ../../../app/stylesheets/main.sass */
 #surl_link_error {
   font-size: 1.5em;
   margin: 1em auto;
 }
-/* line 5060, ../../../app/stylesheets/main.sass */
+/* line 5061, ../../../app/stylesheets/main.sass */
 #surl_link_error ul, #surl_link_error .default_container .info_listing ul#privacy, .default_container .info_listing #surl_link_error ul#privacy {
   list-style-type: none;
   margin: 0;
 }
 
-/* line 5064, ../../../app/stylesheets/main.sass */
+/* line 5065, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
@@ -6907,7 +6908,7 @@ span#no_emails_accessible {
   display: none;
 }
 
-/* line 5071, ../../../app/stylesheets/main.sass */
+/* line 5072, ../../../app/stylesheets/main.sass */
 .old_link {
   color: black;
   font-style: italic;
@@ -6915,12 +6916,12 @@ span#no_emails_accessible {
   margin: 0.4em auto;
 }
 
-/* line 5077, ../../../app/stylesheets/main.sass */
+/* line 5078, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field {
   display: none;
   margin-left: 30px;
 }
-/* line 5081, ../../../app/stylesheets/main.sass */
+/* line 5082, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field label {
   font-size: 1em;
   font-weight: normal;
@@ -6929,13 +6930,13 @@ span#no_emails_accessible {
   width: 38%;
   color: #333333;
 }
-/* line 5089, ../../../app/stylesheets/main.sass */
+/* line 5090, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
 }
 
-/* line 5093, ../../../app/stylesheets/main.sass */
+/* line 5094, ../../../app/stylesheets/main.sass */
 #manage_current_links {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
@@ -6955,29 +6956,29 @@ span#no_emails_accessible {
   width: 100%;
   display: none;
 }
-/* line 5102, ../../../app/stylesheets/main.sass */
+/* line 5103, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th {
   text-align: left;
   vertical-align: top;
   padding: 0.2em 0.5em;
 }
-/* line 5107, ../../../app/stylesheets/main.sass */
+/* line 5108, ../../../app/stylesheets/main.sass */
 #manage_current_links td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5110, ../../../app/stylesheets/main.sass */
+/* line 5111, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5113, ../../../app/stylesheets/main.sass */
+/* line 5114, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5117, ../../../app/stylesheets/main.sass */
+/* line 5118, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -6985,19 +6986,19 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5123, ../../../app/stylesheets/main.sass */
+/* line 5124, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5127, ../../../app/stylesheets/main.sass */
+/* line 5128, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5132, ../../../app/stylesheets/main.sass */
+/* line 5133, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;

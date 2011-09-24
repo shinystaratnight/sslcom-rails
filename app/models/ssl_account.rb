@@ -37,10 +37,8 @@ class SslAccount < ActiveRecord::Base
         !co.certificate_content.signing_request.blank?}
     end
 
-    def credits(options={})
-      all(options).find_all{|co|
-        ['paid'].include?(co.workflow_state) &&
-          co.certificate_content.try(:new?)}
+    def credits
+      includes(:certificate_contents).where(:workflow_state=>'paid', :certificate_contents=>{workflow_state: "new"})
     end
 
     def unused_credits(options={})

@@ -211,8 +211,7 @@ class CertificateOrdersController < ApplicationController
   def credits
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.all.find_all{|co|['paid'].include?(
-        co.workflow_state && co.certificate_content.new?)} :
+      CertificateOrder.where(:workflow_state=>'paid', :certificate_contents=>{workflow_state: "new"}) :
         current_user.ssl_account.certificate_orders.credits).paginate(p)
 
     respond_to do |format|

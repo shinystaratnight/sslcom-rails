@@ -733,7 +733,8 @@ module OldSite
 
     def self.sync_attributes_with_v2
       count=0
-      select([:CustomerID, :UserName, :Email, :Password, :CreatedOn, :LastUpdated]).find_in_batches do |customers|
+      select([:CustomerID, :UserName, :Email, :Password,
+              :CreatedOn, :LastUpdated]).find_in_batches do |customers|
         l, e, p, c, u = 0,0,0,0,0
         V2MigrationProgress.includes(:migratable).
             where({:source_table_name=>"Customer"} & :source_id + customers.map(&:CustomerID)).each do |v|
@@ -778,10 +779,6 @@ module OldSite
           #{l} logins, #{e} emails, #{p} passwords, #{c} created_at, and #{u} updated_at synced"
       end
     end
-
-    def designate_primary_account
-
-    end
   end
 
   class Certificate < OldSite::Base
@@ -819,7 +816,7 @@ module OldSite
           end
           cc.save
         else
-          logger.error "Error! could not find csr for #{self.CertificateID}"
+          logger.error "Error! could not find csr for #{self.model_and_id}"
         end
       end
     end
@@ -836,6 +833,99 @@ module OldSite
         end
       end
       #36 certificates with unsignedcerts have no merchant
+    end
+
+    # these signed certificates have not been migrated to v2
+    def self.unmigrated_signed_certificates
+      ncm=::SignedCertificate.select(:common_name).map(&:common_name).uniq
+      ocm=select(:CommonName).map(&:CommonName).uniq
+      diff=ocm-ncm
+      where(:CommonName + diff.compact.reject{|b|b==""})
+    end
+
+    def self.signed_certs_to_be_created
+      um=OldSite::Certificate.unmigrated_signed_certificates
+      umm=um.map{|u|V2MigrationProgress.find_by_source(u)}
+      nc=umm.map(&:migratable)
+      csrs=nc.map(&:csr)
+      csr_ids=csrs.compact.map(&:id)
+      bsc=SignedCertificate.where(:csr_id + csr_ids)
+      existing=bsc.map(&:csr_id)
+      csrs_without_signed_cert=csr_ids-existing
+      ap bsc.map(&:common_name)
+    end
+
+    def self.sync_csrs_and_signed_certificates
+      count=0
+      select([:CertificateID, :SubmitDate, :UnsignedCert, :CommonName,
+              :SignedCert, :ReadyNoticeSentToCustomer]).find_in_batches do |certs|
+        t_cc, t_cs, t_rc, t_csc, t_rsc = 0,0,0,0,0
+        V2MigrationProgress.includes(:migratable).
+            where({:source_table_name=>"Certificate"} & :source_id + certs.map(&:CertificateID)).each do |v|
+          cc, cs, rc, csc, rsc = 0,0,0,0,0
+          o=certs.find{|c|c.CertificateID==v.source_id}
+          n=v.migratable
+          # verify a corresponding csr
+          if n.blank?
+            p "need to create a certificate_content for #{o.model_and_id}"
+            cc+=1
+          else
+            if !o.UnsignedCert.blank?
+              if n.csr.blank?
+                # need to create a csr
+                p "need to create a csr for #{o.model_and_id}"
+                cs+=1
+              elsif n.csr.common_name!=o.CommonName
+                p "need to recreate #{n.csr.model_and_id} for #{o.model_and_id}"
+                rc+=1
+              end
+            end
+            if !o.SignedCert.blank?
+              if n.csr.blank? || n.csr.signed_certificates.empty?
+                # need to create a signed_certificate
+                p "need to create a signed_certificate for #{o.model_and_id}"
+                csc+=1
+              elsif n.csr.signed_certificates.last.common_name!=o.CommonName
+                p "need to recreate #{n.csr.signed_certificates.last.model_and_id} for #{o.model_and_id}"
+                rsc+=1
+              end
+            end
+          end
+          #  unless o.UnSignedCert == n.csr.body
+          #    unless (o.SignedCert.blank? || n.csr.blank?)
+          #      cc.csr.update_attribute(:created_at, self.SubmitDate)
+          #      cc.csr.signed_certificate_by_text=self.SignedCert
+          #      if cc.csr.signed_certificate
+          #        cc.csr.signed_certificate.update_attribute(:created_at,
+          #          self.ReadyNoticeSentToCustomer)
+          #        cc.workflow_state='issued'
+          #      else
+          #        cc.workflow_state='csr_submitted'
+          #        logger.error "Error: Could not import signed certificate
+          #          from Old::Certificate#{self.CertificateID}"
+          #      end
+          #    else
+          #      cc.workflow_state='csr_submitted'
+          #    end
+          #    cc.save
+          #  end
+          #
+          #end
+          ## then verify a corresponding signed certificate
+          #if n.login != o.UserName
+          #  p "changing username from #{n.login} to #{o.UserName}"
+          #  n.update_attribute(:login, o.UserName)
+          #  l+=1
+          #end
+        end
+        count+=1
+        t_cc, t_cs, t_rc, t_p, t_c = t_cc+cc, t_cs+cs, t_rc+rc, t_p+p, t_c+c
+        p "processed batch #{count} of 1000 records: \n
+          #{cc} certificate_contents created, #{cs} csrs created, #{rc} csrs recreated, #{csc} signed_certificates created,
+          #{rsc} signed_certificates recreated"
+      end
+      p "total: #{t_cc} certificate_contents created, #{t_cs} csrs created, #{t_rc} csrs recreated,
+        #{t_csc} signed_certificates created, #{t_rsc} signed_certificates recreated"
     end
   end
 

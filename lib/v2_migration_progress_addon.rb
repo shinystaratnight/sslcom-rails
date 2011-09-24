@@ -28,6 +28,6 @@ module V2MigrationProgressAddon
 
   def v2_migration_sources
     vmp=v2_migration_progresses
-    vmp.is_a?(Array) ? vmp.map(&:source_obj) : vmp.source_obj
+    vmp.map(&:source_obj) unless vmp.blank?
   end
 end

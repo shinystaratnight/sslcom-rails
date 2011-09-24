@@ -42,7 +42,7 @@ class CertificateOrder < ActiveRecord::Base
   #  where(:certificate_contents=>{:id.ne=>nil}).
   #  order(:created_at.desc).readonly(false)
 
-  default_scope includes(:certificate_contents).
+  default_scope joins(:certificate_contents).includes(:certificate_contents).
     order(:created_at.desc).readonly(false)
 
   scope :search, lambda {|term, options|
@@ -50,6 +50,8 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
+    includes(certificate_contents: {csr: :signed_certificates}).
+        where
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
       merge(options)

@@ -19,13 +19,18 @@ class Csr < ActiveRecord::Base
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
-  default_scope order(:created_at.desc)
+  #default_scope order(:created_at.desc) #theres about 17 records without proper bodies we should clean up later
+  default_scope where(:common_name.ne=>nil).order(:created_at.desc)
 
   scope :search, lambda {|term|
     {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}
   }
 
+  BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----\n"
+  END_TAG="-----END CERTIFICATE REQUEST-----\n"
+
   def body=(csr)
+    csr=enclose_with_tags(csr)
     unless Settings.csr_parser=="remote"
       self[:body] = csr
       begin
@@ -81,6 +86,11 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def enclose_with_tags(csr)
+    csr = BEGIN_TAG << csr unless csr =~ Regexp.new(BEGIN_TAG)
+    csr = csr << END_TAG unless csr =~ Regexp.new(END_TAG)
+  end
+
   def is_ip_address?
     common_name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if common_name
   end
@@ -118,6 +128,8 @@ class Csr < ActiveRecord::Base
     return if text.blank?
     sc = SignedCertificate.create(:body=>text)
     unless sc.errors.empty?
+      logger.error "error #{self.model_and_id} signed_certificate_by_text="
+      logger.error sc.errors.map(&:to_s)
       self.signed_certificate.destroy unless self.signed_certificate.blank?
       self.signed_certificate = sc
     end
