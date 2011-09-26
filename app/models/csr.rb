@@ -32,7 +32,7 @@ class Csr < ActiveRecord::Base
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
   def body=(csr)
-    csr=enclose_with_tags(csr)
+    csr=enclose_with_tags(csr.strip)
     unless Settings.csr_parser=="remote"
       self[:body] = csr
       begin
@@ -41,7 +41,6 @@ class Csr < ActiveRecord::Base
         location = "CertificateContent.id=#{certificate_content.id}=>" if
           certificate_content
         location +="Csr.id=#{id}=>" unless id.blank?
-          certificate_content
         logger.error "could not parse #{location || 'unknown'} for #{csr}"
         errors.add :base, 'error: could not parse csr'
       else
@@ -89,10 +88,10 @@ class Csr < ActiveRecord::Base
   end
 
   def enclose_with_tags(csr)
-    unless csr =~ Regexp.new(BEGIN_TAG) || csr =~ Regexp.new(BEGIN_NEW_TAG)
+    unless (csr =~ Regexp.new(BEGIN_TAG) || csr =~ Regexp.new(BEGIN_NEW_TAG))
       csr = BEGIN_TAG + "\n" + csr
     end
-    unless csr =~ Regexp.new(END_TAG) || csr =~ Regexp.new(END_NEW_TAG)
+    unless (csr =~ Regexp.new(END_TAG) || csr =~ Regexp.new(END_NEW_TAG))
       csr = csr + "\n" unless csr=~/\n\Z$/
       csr = csr + END_TAG + "\n"
     end
@@ -134,9 +133,7 @@ class Csr < ActiveRecord::Base
 
   def signed_certificate_by_text=(text)
     return if text.blank?
-    sc = SignedCertificate.new(:csr=>self)
-    sc.body=text
-    sc.save
+    sc = SignedCertificate.create(body: text, csr: self)
     unless sc.errors.empty?
       logger.error "error #{self.model_and_id} signed_certificate_by_text="
       logger.error sc.errors.to_a.join(": ").to_s

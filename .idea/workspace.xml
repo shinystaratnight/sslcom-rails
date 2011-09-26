@@ -11,14 +11,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_content.rb" afterPath="$PROJECT_DIR$/app/models/certificate_content.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/old_site.rb" afterPath="$PROJECT_DIR$/app/models/old_site.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/v2_migration_progress.rb" afterPath="$PROJECT_DIR$/app/models/v2_migration_progress.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/development.rb" afterPath="$PROJECT_DIR$/config/environments/development.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,16 +39,16 @@
       <file leaf-file-name="certificate_content.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="114" column="61" selection-start="3691" selection-end="3691" vertical-scroll-proportion="0.0">
+            <state line="112" column="97" selection-start="3574" selection-end="3574" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="csr.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="csr.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="96" column="0" selection-start="4049" selection-end="4092" vertical-scroll-proportion="0.0">
+            <state line="34" column="35" selection-start="1406" selection-end="1406" vertical-scroll-proportion="0.04347826">
               <folding />
             </state>
           </provider>
@@ -62,7 +57,7 @@
       <file leaf-file-name="old_site.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/old_site.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="929" column="70" selection-start="35049" selection-end="35049" vertical-scroll-proportion="0.0">
+            <state line="880" column="36" selection-start="32571" selection-end="32571" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -86,10 +81,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="signed_certificate.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="signed_certificate.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="170" column="63" selection-start="5690" selection-end="5690" vertical-scroll-proportion="0.36881188">
+            <state line="19" column="31" selection-start="690" selection-end="690" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -185,11 +180,11 @@
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
         <option value="$PROJECT_DIR$/lib/v2_migration_progress_addon.rb" />
         <option value="$PROJECT_DIR$/app/models/v2_migration_progress.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
         <option value="$PROJECT_DIR$/config/environments/development.rb" />
         <option value="$PROJECT_DIR$/app/models/old_site.rb" />
-        <option value="$PROJECT_DIR$/app/models/csr.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
         <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
+        <option value="$PROJECT_DIR$/app/models/csr.rb" />
       </list>
     </option>
   </component>
@@ -1569,20 +1564,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="114" column="61" selection-start="3691" selection-end="3691" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/old_site.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="929" column="70" selection-start="35049" selection-end="35049" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="37" column="44" selection-start="1351" selection-end="1351" vertical-scroll-proportion="0.0">
@@ -1590,16 +1571,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/old_site.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="0" selection-start="4049" selection-end="4092" vertical-scroll-proportion="0.0">
+        <state line="880" column="36" selection-start="32571" selection-end="32571" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="97" selection-start="3574" selection-end="3574" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="170" column="63" selection-start="5690" selection-end="5690" vertical-scroll-proportion="0.36881188">
+        <state line="19" column="31" selection-start="690" selection-end="690" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="34" column="35" selection-start="1406" selection-end="1406" vertical-scroll-proportion="0.04347826">
           <folding />
         </state>
       </provider>

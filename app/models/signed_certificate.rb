@@ -17,7 +17,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def body=(certificate)
     return if certificate.blank?
-    self[:body] = enclose_with_tags(certificate)
+    self[:body] = certificate= enclose_with_tags(certificate.strip)
     unless Settings.csr_parser=="remote"
       begin
         parsed = OpenSSL::X509::Certificate.new certificate
@@ -172,8 +172,10 @@ class SignedCertificate < ActiveRecord::Base
   
   def enclose_with_tags(cert)
     cert = BEGIN_TAG + "\n" + cert unless cert =~ Regexp.new(BEGIN_TAG)
-    cert = cert + "\n" unless cert=~/\n\Z$/
-    cert = cert + END_TAG + "\n" unless cert =~ Regexp.new(END_TAG)
+    unless cert =~ Regexp.new(END_TAG)
+      cert = cert + "\n" unless cert=~/\n\Z$/
+      cert = cert + END_TAG + "\n"
+    end
     cert
   end  
 end

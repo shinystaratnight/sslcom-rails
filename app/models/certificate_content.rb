@@ -111,13 +111,10 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def signing_request=(signing_request)
-    write_attribute(:signing_request, signing_request)
     return unless (signing_request=~SIGNING_REQUEST_REGEX)==0
-    self.build_csr(:body=>signing_request)
-    unless self.csr.common_name.blank?
-      unless self.csr.save
-        logger.error "error #{self.model_and_id}#signing_request saving #{signing_request}"
-      end
+    write_attribute(:signing_request, signing_request)
+    unless self.create_csr(:body=>signing_request)
+      logger.error "error #{self.model_and_id}#signing_request saving #{signing_request}"
     end
   end
 
