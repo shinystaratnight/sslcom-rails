@@ -84,6 +84,10 @@ class V2MigrationProgress < ActiveRecord::Base
     klass.select(klass.primary_key.to_sym).map(&("#{klass.primary_key}".to_sym))
   end
 
+  def self.migratable_types
+    all.map(&:migratable_type).uniq
+  end
+
   def source_obj
     o=OldSite::Base.descendants.find{|c|
       c.table_name==source_table_name}

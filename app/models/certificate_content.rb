@@ -1,4 +1,5 @@
 class CertificateContent < ActiveRecord::Base
+  include V2MigrationProgressAddon
   belongs_to  :certificate_order
   belongs_to  :server_software
   has_one     :csr
@@ -112,7 +113,6 @@ class CertificateContent < ActiveRecord::Base
   def signing_request=(signing_request)
     write_attribute(:signing_request, signing_request)
     return unless (signing_request=~SIGNING_REQUEST_REGEX)==0
-    self.csr
     self.build_csr(:body=>signing_request)
     unless self.csr.common_name.blank?
       unless self.csr.save

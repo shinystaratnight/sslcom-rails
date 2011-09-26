@@ -792,6 +792,10 @@ module OldSite
     has_one     :product, :through=>:certificate_product
     alias_attribute :unsigned_cert, :UnsignedCert
 
+    HAS_SIGNED_BUT_NO_CSR=[13778, 17295]
+
+    default_scope where(:CertificateID - HAS_SIGNED_BUT_NO_CSR)
+
     def migrate(co)
       co.certificate_contents.create.tap do |cc|
         cc.created_at=self.SubmitDate
@@ -857,75 +861,91 @@ module OldSite
 
     def self.sync_csrs_and_signed_certificates
       count=0
+      t_cc, t_cs, t_rc, t_csc, t_rsc = 0,[],[],[],[]
+      failed_cs, failed_rc, failed_csc, failed_rsc=[],[],[],[]
       select([:CertificateID, :SubmitDate, :UnsignedCert, :CommonName,
               :SignedCert, :ReadyNoticeSentToCustomer]).find_in_batches do |certs|
-        t_cc, t_cs, t_rc, t_csc, t_rsc = 0,0,0,0,0
+        cc, cs, rc, csc, rsc = 0,[],[],[],[]
         V2MigrationProgress.includes(:migratable).
             where({:source_table_name=>"Certificate"} & :source_id + certs.map(&:CertificateID)).each do |v|
-          cc, cs, rc, csc, rsc = 0,0,0,0,0
           o=certs.find{|c|c.CertificateID==v.source_id}
           n=v.migratable
           # verify a corresponding csr
           if n.blank?
+            #need to refer to Order, maybe call OldSite::Order.migrate
             p "need to create a certificate_content for #{o.model_and_id}"
             cc+=1
           else
             if !o.UnsignedCert.blank?
+              process_csr=lambda do |n, o, counter, failed|
+                n.reload.signing_request=o.UnsignedCert
+                unless n.csr.blank? || n.csr.new_record?
+                  p "successfully created #{n.csr.model_and_id} (#{n.csr.common_name})"
+                  n.csr.update_attribute(:created_at, o.SubmitDate)
+                  n.workflow_state='csr_submitted'
+                  counter<<n.csr.id
+                  if !o.SignedCert.blank?
+                    process_signed_cert=lambda do |n, o, counter, failed|
+                      n.csr(true).signed_certificate_by_text=o.SignedCert
+                      sc=n.csr.signed_certificates(true).last
+                      unless sc.is_a?(String) || sc.blank? || sc.new_record?
+                        p "successfully created #{sc.model_and_id} (#{sc.common_name})"
+                        sc.update_attribute(:created_at, o.ReadyNoticeSentToCustomer)
+                        n.workflow_state='issued'
+                        counter<<sc.id
+                      else
+                        p "failed creating signed_certificate for #{n.csr.model_and_id} (#{n.csr.common_name})"
+                        failed << n.csr.id
+                      end
+                    end
+                    if n.csr.blank? || n.csr.signed_certificates.empty?
+                      # need to create a signed_certificate
+                      p "creating a signed_certificate for #{o.model_and_id}"
+                      process_signed_cert.(n,o,csc,failed_csc)
+                    elsif n.csr.signed_certificates.last.common_name!=o.CommonName
+                      p "recreating #{n.csr.signed_certificates.last.model_and_id} for #{o.model_and_id}"
+                      n.csr.signed_certificates.destroy_all
+                      process_signed_cert.(n,o,rsc,failed_rsc)
+                    end
+                  end
+                else
+                  p "failed creating csr for #{n.model_and_id}"
+                  failed << n.id
+                end
+                n.save
+              end
               if n.csr.blank?
                 # need to create a csr
-                p "need to create a csr for #{o.model_and_id}"
-                cs+=1
+                p "creating a csr for #{n.model_and_id}"
+                process_csr.(n,o,cs,failed_cs)
               elsif n.csr.common_name!=o.CommonName
-                p "need to recreate #{n.csr.model_and_id} for #{o.model_and_id}"
-                rc+=1
-              end
-            end
-            if !o.SignedCert.blank?
-              if n.csr.blank? || n.csr.signed_certificates.empty?
-                # need to create a signed_certificate
-                p "need to create a signed_certificate for #{o.model_and_id}"
-                csc+=1
-              elsif n.csr.signed_certificates.last.common_name!=o.CommonName
-                p "need to recreate #{n.csr.signed_certificates.last.model_and_id} for #{o.model_and_id}"
-                rsc+=1
+                p "recreating #{n.csr.model_and_id} for #{o.model_and_id}"
+                n.csr.destroy
+                process_csr.(n,o,rc,failed_rc)
               end
             end
           end
-          #  unless o.UnSignedCert == n.csr.body
-          #    unless (o.SignedCert.blank? || n.csr.blank?)
-          #      cc.csr.update_attribute(:created_at, self.SubmitDate)
-          #      cc.csr.signed_certificate_by_text=self.SignedCert
-          #      if cc.csr.signed_certificate
-          #        cc.csr.signed_certificate.update_attribute(:created_at,
-          #          self.ReadyNoticeSentToCustomer)
-          #        cc.workflow_state='issued'
-          #      else
-          #        cc.workflow_state='csr_submitted'
-          #        logger.error "Error: Could not import signed certificate
-          #          from Old::Certificate#{self.CertificateID}"
-          #      end
-          #    else
-          #      cc.workflow_state='csr_submitted'
-          #    end
-          #    cc.save
-          #  end
-          #
-          #end
-          ## then verify a corresponding signed certificate
-          #if n.login != o.UserName
-          #  p "changing username from #{n.login} to #{o.UserName}"
-          #  n.update_attribute(:login, o.UserName)
-          #  l+=1
-          #end
         end
         count+=1
-        t_cc, t_cs, t_rc, t_p, t_c = t_cc+cc, t_cs+cs, t_rc+rc, t_p+p, t_c+c
+        t_cc, t_cs, t_rc, t_csc, t_rsc = t_cc+cc, t_cs+cs, t_rc+rc, t_csc+csc, t_rsc+rsc
         p "processed batch #{count} of 1000 records: \n
-          #{cc} certificate_contents created, #{cs} csrs created, #{rc} csrs recreated, #{csc} signed_certificates created,
-          #{rsc} signed_certificates recreated"
+          #{cc} certificate_contents created, #{cs.count} csrs created, #{rc.count} csrs recreated, #{csc.count} signed_certificates created,
+          #{rsc.count} signed_certificates recreated"
+        p "created csrs: #{cs.to_s}"
+        p "recreated csrs: #{rc.to_s}"
+        p "created signed_certificates: #{csc.to_s}"
+        p "recreated signed_certificates: #{rsc.to_s}"
+        p "failed creating csr for certificate_contents: #{failed_cs.to_s}"
+        p "failed recreating csr for certificate_contents: #{failed_rc.to_s}"
+        p "failed creating signed_certificates for csrs: #{failed_csc.to_s}"
+        p "failed recreating signed_certificates for csrs: #{failed_rsc.to_s}"
       end
-      p "total: #{t_cc} certificate_contents created, #{t_cs} csrs created, #{t_rc} csrs recreated,
-        #{t_csc} signed_certificates created, #{t_rsc} signed_certificates recreated"
+      p "total: #{t_cc} certificate_contents created, #{t_cs.count} csrs created, #{t_rc.count} csrs recreated,
+        #{t_csc.count} signed_certificates created, #{t_rsc.count} signed_certificates recreated"
+      p "failed creating csr for certificate_contents: #{failed_cs.to_s}"
+      p "failed recreating csr for certificate_contents: #{failed_rc.to_s}"
+      p "failed creating signed_certificates for csrs: #{failed_csc.to_s}"
+      p "failed recreating signed_certificates for csrs: #{failed_rsc.to_s}"
     end
   end
 

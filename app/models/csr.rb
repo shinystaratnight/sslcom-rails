@@ -26,8 +26,10 @@ class Csr < ActiveRecord::Base
     {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}
   }
 
-  BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----\n"
-  END_TAG="-----END CERTIFICATE REQUEST-----\n"
+  BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----"
+  END_TAG="-----END CERTIFICATE REQUEST-----"
+  BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
+  END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
   def body=(csr)
     csr=enclose_with_tags(csr)
@@ -41,7 +43,7 @@ class Csr < ActiveRecord::Base
         location +="Csr.id=#{id}=>" unless id.blank?
           certificate_content
         logger.error "could not parse #{location || 'unknown'} for #{csr}"
-        errors.add_to_base 'error: could not parse csr'
+        errors.add :base, 'error: could not parse csr'
       else
         self[:common_name] = parsed.subject.common_name
         self[:organization] = parsed.subject.organization
@@ -87,8 +89,14 @@ class Csr < ActiveRecord::Base
   end
 
   def enclose_with_tags(csr)
-    csr = BEGIN_TAG << csr unless csr =~ Regexp.new(BEGIN_TAG)
-    csr = csr << END_TAG unless csr =~ Regexp.new(END_TAG)
+    unless csr =~ Regexp.new(BEGIN_TAG) || csr =~ Regexp.new(BEGIN_NEW_TAG)
+      csr = BEGIN_TAG + "\n" + csr
+    end
+    unless csr =~ Regexp.new(END_TAG) || csr =~ Regexp.new(END_NEW_TAG)
+      csr = csr + "\n" unless csr=~/\n\Z$/
+      csr = csr + END_TAG + "\n"
+    end
+    csr
   end
 
   def is_ip_address?
@@ -126,12 +134,13 @@ class Csr < ActiveRecord::Base
 
   def signed_certificate_by_text=(text)
     return if text.blank?
-    sc = SignedCertificate.create(:body=>text)
+    sc = SignedCertificate.new(:csr=>self)
+    sc.body=text
+    sc.save
     unless sc.errors.empty?
       logger.error "error #{self.model_and_id} signed_certificate_by_text="
-      logger.error sc.errors.map(&:to_s)
-      self.signed_certificate.destroy unless self.signed_certificate.blank?
-      self.signed_certificate = sc
+      logger.error sc.errors.to_a.join(": ").to_s
+      logger.error text
     end
   end
 

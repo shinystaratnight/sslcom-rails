@@ -5,15 +5,15 @@ class SignedCertificate < ActiveRecord::Base
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
-  validates_presence_of :csr, :on=>:save
+  validates :csr_id, :presence=>true, :on=>:save
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
 
-  BEGIN_TAG="-----BEGIN CERTIFICATE-----\n"
-  END_TAG="-----END CERTIFICATE-----\n"
+  BEGIN_TAG="-----BEGIN CERTIFICATE-----"
+  END_TAG="-----END CERTIFICATE-----"
 
   def body=(certificate)
     return if certificate.blank?
@@ -23,7 +23,7 @@ class SignedCertificate < ActiveRecord::Base
         parsed = OpenSSL::X509::Certificate.new certificate
       rescue Exception => ex
         logger.error ex
-        errors.add_to_base 'error: could not parse certificate'
+        errors.add :base, 'error: could not parse certificate'
       else
         self[:parent_cert] = false
         self[:common_name] = parsed.subject.common_name
@@ -162,7 +162,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def same_as_previously_signed_certificate?
     if csr.signed_certificate && csr.signed_certificate.body == body
-#      errors.add_to_base "signed certificate is the same as previously saved one"
+      errors.add :base, "signed certificate is the same as previously saved one"
     end
   end
 
@@ -171,8 +171,10 @@ class SignedCertificate < ActiveRecord::Base
   end
   
   def enclose_with_tags(cert)
-    cert = BEGIN_TAG << cert unless cert =~ Regexp.new(BEGIN_TAG)
-    cert = cert << END_TAG unless cert =~ Regexp.new(END_TAG)
+    cert = BEGIN_TAG + "\n" + cert unless cert =~ Regexp.new(BEGIN_TAG)
+    cert = cert + "\n" unless cert=~/\n\Z$/
+    cert = cert + END_TAG + "\n" unless cert =~ Regexp.new(END_TAG)
+    cert
   end  
 end
 

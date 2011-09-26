@@ -35,7 +35,7 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
-  #config.log_level = Logger::INFO
+  config.log_level = Logger::ERROR #Logger::INFO
 
   GATEWAY_TEST_CODE=1.0
   # END ActiveMerchant configuration
