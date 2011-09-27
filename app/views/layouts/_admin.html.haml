@@ -1,20 +1,19 @@
 #header
   .inner
     %table#at_a_glance_header
-      -cache 'admin_header_certs_status' do
-        %tbody
-          %tr
-            %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
-            %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
-            -unless current_user.ssl_account.funded_account.blank?
-              %th AVAILABLE FOR USE
-            %th= link_to 'Logout', logout_url
-          %tr#info
-            %td.validations=link_to CertificateOrder.find_unvalidated.count, incomplete_certificate_orders_path
-            %td.certificate_status=link_to CertificateOrder.find_pending.count, pending_certificate_orders_path
-            -unless current_user.ssl_account.funded_account.blank?
-              %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
-            %td
+      %tbody
+        %tr
+          %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
+          %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
+          -unless current_user.ssl_account.funded_account.blank?
+            %th AVAILABLE FOR USE
+          %th= link_to 'Logout', logout_url
+        %tr#info
+          %td.validations=link_to CertificateOrder.unvalidated.count, incomplete_certificate_orders_path
+          %td.certificate_status=link_to CertificateOrder.pending.count, pending_certificate_orders_path
+          -unless current_user.ssl_account.funded_account.blank?
+            %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
+          %td
     %span.logo=link_to "SSL", root_url
 #content
   .containerp

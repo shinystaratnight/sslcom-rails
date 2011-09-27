@@ -7,6 +7,7 @@ class SiteSealsController < ApplicationController
 
   def search
     index
+    render action: :index
   end
 
   # GET /site_seals

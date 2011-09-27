@@ -5,49 +5,6 @@ class SslAccount < ActiveRecord::Base
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
   has_many  :certificate_orders, :include => [:orders] do
-    def unvalidated
-      where({:certificate_content=>{:workflow=>'pending_validation'}}|
-          {:certificate_content=>{:workflow=>'contacts_provided'}})
-      #all(options).find_all{|co|
-      #  ['pending_validation', 'contacts_provided'].
-      #  include?(co.certificate_content.workflow_state) &&
-      #  !co.validation_rules_satisfied? && !co.expired?}
-    end
-
-    def incomplete(options={})
-      all(options).find_all{|co|
-        ['csr_submitted', 'info_provided', 'contacts_provided'].
-        include?(co.certificate_content.workflow_state) &&
-        !co.validation_rules_satisfied? && !co.expired?}
-    end
-
-    def pending(options={})
-      all(options).find_all{|co|
-        ['pending_validation'].
-        include?(co.certificate_content.workflow_state) &&
-        !co.validation_rules_satisfied?}
-    end
-
-    #new certificate orders are the ones still in the shopping cart
-    def not_new(options={})
-      self.where(:workflow_state.matches % 'paid')
-    end
-
-    def has_csr(options={})
-      all(options).find_all{|co|
-        ['paid'].include?(co.workflow_state) &&
-        !co.certificate_content.signing_request.blank?}
-    end
-
-    def credits
-      includes(:certificate_contents).where(:workflow_state=>'paid', :certificate_contents=>{workflow_state: "new"})
-    end
-
-    def unused_credits(options={})
-      all(options).find_all{|co|
-        co.is_unused_credit?}
-    end
-
     def current
       first(:conditions=>{:workflow_state=>['new']})
     end

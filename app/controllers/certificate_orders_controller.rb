@@ -225,7 +225,7 @@ class CertificateOrdersController < ApplicationController
   def pending
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.find_pending :
+      CertificateOrder.pending :
         current_user.ssl_account.certificate_orders.pending).paginate(p)
 
     respond_to do |format|
@@ -239,11 +239,7 @@ class CertificateOrdersController < ApplicationController
   def incomplete
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.all(:include=>:certificate_contents).find_all{|co|
-        next false unless co.certificate_content
-        ['csr_submitted', 'info_provided', 'contacts_provided'].
-        include?(co.certificate_content.workflow_state) &&
-        !co.validation_rules_satisfied? && !co.expired?} :
+      CertificateOrder.incomplete :
       current_user.ssl_account.certificate_orders.incomplete).paginate(p)
 
     respond_to do |format|

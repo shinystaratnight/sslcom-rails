@@ -36,12 +36,6 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  # the below script was used to ease migration but caused
-  # tests to fail
-  #default_scope includes(:certificate_contents).
-  #  where(:certificate_contents=>{:id.ne=>nil}).
-  #  order(:created_at.desc).readonly(false)
-
   default_scope joins(:certificate_contents).includes(:certificate_contents).
     order(:created_at.desc).readonly(false)
 
@@ -50,10 +44,40 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
+    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
       merge(options)
   }
+
+  scope :unvalidated, where({is_expired: false} & (
+    {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']}))
+
+  scope :incomplete, where({is_expired: false} & (
+    {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']}))
+
+  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation']})
+
+  scope :has_csr, where({:workflow_state=>'paid'} &
+    {:certificate_contents=>{:signing_request.ne=>""}})
+
+  scope :credits, where({:workflow_state=>'paid'} &
+    {:certificate_contents=>{workflow_state: "new"}})
+
+  #new certificate orders are the ones still in the shopping cart
+  scope :not_new, lambda {|options=nil|
+    nn=where(:workflow_state.matches % 'paid')
+    nn.includes(options[:include]) if options && options.has_key?(:include)
+  }
+
+  scope :unused_credits, where({:workflow_state=>'paid'} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+
+  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+
+  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+
   FULL = 'full'
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
@@ -247,18 +271,6 @@ class CertificateOrder < ActiveRecord::Base
     nil
   end
 
-  def self.find_unvalidated
-    self.all(:include=>:certificate_contents).find_all{|co|
-      if (co.certificate_content && !co.expired?)
-        (['pending_validation', 'contacts_provided'].
-        include?(co.certificate_content.workflow_state) &&
-          !co.validation_rules_satisfied?)
-      else
-        next false
-      end
-}
-  end
-
   def apply_for_certificate
     ComodoApi.apply_for_certificate(self)
   end
@@ -268,13 +280,6 @@ class CertificateOrder < ActiveRecord::Base
       includes=method(:includes).call(options[:includes])
     end
     (includes || self).where(:workflow_state.matches % 'paid')
-  end
-
-  def self.find_pending
-    self.all(:include=>:certificate_contents).find_all{|co|
-      (['pending_validation'].
-      include?(co.certificate_content.workflow_state) &&
-      !co.validation_rules_satisfied?) if co.certificate_content}
   end
 
   def to_param

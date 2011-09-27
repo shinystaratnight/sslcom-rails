@@ -83,6 +83,9 @@ module OldSite
     Customer.sync_attributes_with_v2
     ::DuplicateV2User.make_latest_login_primary
     Certificate.sync_certs
+    #verify all LineItems have a sellable or else delete them
+    #LineItem.all.each{|l|l.destroy if l.sellable.blank?}
+
     #self.adjust_site_seals_workflow
     #self.adjust_certificate_order_prepaid
     #self.adjust_certificate_content_workflow
@@ -960,6 +963,14 @@ module OldSite
       p "failed recreating signed_certificates for csrs: #{failed_rsc.to_s}"
     end
 
+    #somehow a few purchased credits appeared that do not belong a corresponding v2_migration_source
+    #we need to remove these to avoid paying for non existing credit on the old system
+    def self.orphaned_credits
+      CertificateOrder.unused_purchased_credits.
+        select{|co|co.certificate_content.v2_migration_sources.blank?}.
+        select{|b|b.ssl_account.users.last.v2_migration_sources}
+    end
+
     def self.unmigrated_old_certificates
       ids=V2MigrationProgress.includes(:migratable).
           where({:source_table_name=>"Certificate"}).select do |v|
@@ -1098,6 +1109,12 @@ module OldSite
         ap "#{i} #{table_name} records remaining for migration"
       end
       V2MigrationProgress.status(self)
+    end
+
+    def self.extra_unpaid_certificate_orders
+      ::Order.with_too_many_line_items.map(&:line_items).
+          flatten.uniq.map(&:sellable).uniq.map(&:certificate_contents).
+          flatten.uniq.select{|cc|cc.v2_migration_sources.blank?}
     end
   end
 

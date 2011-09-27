@@ -247,11 +247,9 @@ class ApplicationController < ActionController::Base
   def find_certificate_orders_with_site_seals
     if @search = params[:search]
       (current_user.is_admin? ?
-        (CertificateOrder.search(params[:search])+
-          Csr.search(params[:search]).map(&:certificate_orders).flatten) :
+        (CertificateOrder.search_with_csr(params[:search])) :
         current_user.ssl_account.certificate_orders.
-          search_with_csr(params[:search])).select{|co|
-        ['paid'].include? co.workflow_state}
+          search_with_csr(params[:search])).has_csr
     else
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(:include=>:site_seal) :

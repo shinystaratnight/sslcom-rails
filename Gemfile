@@ -38,6 +38,7 @@ gem 'uuidtools'
 gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
 gem 'sauce'
+gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 
 # Deploy with Capistrano

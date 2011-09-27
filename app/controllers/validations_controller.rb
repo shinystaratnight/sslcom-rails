@@ -26,12 +26,12 @@ class ValidationsController < ApplicationController
     @certificate_orders =
       if @search = params[:search]
        current_user.is_admin? ?
-        CertificateOrder.search(params[:search]).find_unvalidated :
+        CertificateOrder.search(params[:search]).unvalidated :
         current_user.ssl_account.certificate_orders.
-          search(params[:search]).find_unvalidated
+          search(params[:search]).unvalidated
       else
         current_user.is_admin? ?
-          CertificateOrder.find_unvalidated :
+          CertificateOrder.unvalidated :
             current_user.ssl_account.certificate_orders.unvalidated
       end.paginate(p)
     respond_to do |format|

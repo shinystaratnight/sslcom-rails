@@ -32,7 +32,9 @@ class Order < ActiveRecord::Base
     where(:reference_number =~ '%'+term+'%')
   }
 
-  preference  :migrated_from_v2, :default=>false
+  scope :is_not_new, joins(:certificate_content).on("line_items.sellable_id = certificate_orders.id").where(:certificate_orders=>{:workflow_state.ne=>'paid'}).to_sql
+
+  preference :migrated_from_v2, :default=>false
   
   def authorize(credit_card, options = {})
     response = gateway.authorize(self.amount, credit_card, options_for_payment(options))
@@ -188,7 +190,7 @@ class Order < ActiveRecord::Base
   end
 
   def is_free?
-    @is_free.try(:eql, true) || (preferred_migrated_from_v2==true || cents==0)
+    @is_free.try(:eql, true) || (cents==0)
   end
 
   def mark_paid!
@@ -232,6 +234,18 @@ class Order < ActiveRecord::Base
     v.map(&:source_obj) if v
   end
 
+  #the next 2 functions are for migration prurposes
+  #this function shows order that have order total amount that do not match their child
+  #line_item totals
+  def self.totals_mismatched
+    includes(:line_items).all.select{|o|o.cents!=o.line_items.sum(:cents)}
+  end
+
+  #this function shows order that have order total amount are less then child
+  #line_item totals and may result in in line_items that should not exist
+  def self.with_too_many_line_items
+    includes(:line_items).all.select{|o|o.cents<o.line_items.sum(:cents)}
+  end
 
   private
 
