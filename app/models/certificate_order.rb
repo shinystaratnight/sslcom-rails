@@ -50,13 +50,10 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
-    includes(certificate_contents: {csr: :signed_certificates}).
-        where
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}}.
+    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR ref #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
       merge(options)
   }
-
   FULL = 'full'
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'

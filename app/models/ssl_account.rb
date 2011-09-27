@@ -5,11 +5,13 @@ class SslAccount < ActiveRecord::Base
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
   has_many  :certificate_orders, :include => [:orders] do
-    def unvalidated(options={})
-      all(options).find_all{|co|
-        ['pending_validation', 'contacts_provided'].
-        include?(co.certificate_content.workflow_state) &&
-        !co.validation_rules_satisfied? && !co.expired?}
+    def unvalidated
+      where({:certificate_content=>{:workflow=>'pending_validation'}}|
+          {:certificate_content=>{:workflow=>'contacts_provided'}})
+      #all(options).find_all{|co|
+      #  ['pending_validation', 'contacts_provided'].
+      #  include?(co.certificate_content.workflow_state) &&
+      #  !co.validation_rules_satisfied? && !co.expired?}
     end
 
     def incomplete(options={})

@@ -133,12 +133,13 @@ class Csr < ActiveRecord::Base
 
   def signed_certificate_by_text=(text)
     return if text.blank?
-    sc = SignedCertificate.create(body: text, csr: self)
+    sc = SignedCertificate.create(body: text, csr_id: self.id)
     unless sc.errors.empty?
       logger.error "error #{self.model_and_id} signed_certificate_by_text="
       logger.error sc.errors.to_a.join(": ").to_s
       logger.error text
     end
+    sc
   end
 
   def signed_certificate_by_text

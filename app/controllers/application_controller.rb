@@ -222,8 +222,7 @@ class ApplicationController < ActionController::Base
       (current_user.is_admin? ?
         (CertificateOrder.search_with_csr(params[:search], options)) :
         current_user.ssl_account.certificate_orders.
-          search_with_csr(params[:search], options)).select{|co|
-        ['paid'].include? co.workflow_state}
+          search_with_csr(params[:search], options)).where(workflow_state: "paid")
     else
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(options) :
