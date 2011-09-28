@@ -14,22 +14,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :affiliate, :dependent => :destroy
   has_one   :contact, :as => :contactable
   has_one   :funded_account, :dependent => :destroy
-  has_many  :orders, :as=>:billable, :after_add=>:build_line_items do
-    def not_new(options=nil)
-      includes(:line_items).all(options || {}).
-        find_all do |o|
-          co=o.line_items.map(&:sellable).flatten.uniq.last
-          if co
-            if co.class == CertificateOrder && co.workflow_state!='paid' &&
-              ['new'].include?(co.certificate_content.workflow_state)
-              false
-            else
-              true
-            end
-          end
-      end
-    end
-  end
+  has_many  :orders, :as=>:billable, :after_add=>:build_line_items
   
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items

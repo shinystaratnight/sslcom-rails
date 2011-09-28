@@ -28,11 +28,14 @@ class Order < ActiveRecord::Base
   #need to delete some test accounts
   default_scope includes(:line_items).where(:state ^ 'payment_declined').order(:created_at.desc)
 
+  scope :not_new, select("distinct orders.*").merge(
+    LineItem.joins(:sellable.type(CertificateOrder)=>:certificate_contents).
+    where(:sellable.type(CertificateOrder)=>{:workflow_state=>'paid'} &
+    {:sellable.type(CertificateOrder)=>{:certificate_contents=>{:workflow_state.ne=>"new"}}}))
+
   scope :search, lambda {|term|
     where(:reference_number =~ '%'+term+'%')
   }
-
-  scope :is_not_new, joins(:certificate_content).on("line_items.sellable_id = certificate_orders.id").where(:certificate_orders=>{:workflow_state.ne=>'paid'}).to_sql
 
   preference :migrated_from_v2, :default=>false
   
