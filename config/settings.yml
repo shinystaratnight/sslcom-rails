@@ -1,5 +1,5 @@
 site: 'remote'
-root_subdomain: "staging1"
+root_subdomain: "www"
 actionmailer_host: "www.ssl.com"
 community_name: "SSL.com"
 community_tagline: "copyright 2011"

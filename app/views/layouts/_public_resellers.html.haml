@@ -2,9 +2,10 @@
   .inner
     %ul.nav
       %li#cart_items=link_to "Cart (<span id='cart_items_qty'>#{pluralize(cart_items_count, 'item')}</span>)".html_safe, show_cart_orders_url
-      %li
-        %a{ :href => "/blog/" }
-          Blog
+      -#
+        %li
+          %a{ :href => "/blog/" }
+            Blog
       %li=link_to "About Us", about_url
       %li
         %a{ :href => "http://support.ssl.com/" }

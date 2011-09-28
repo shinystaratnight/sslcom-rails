@@ -18,7 +18,7 @@ class Reseller < ActiveRecord::Base
   BUSINESS = "business"
   INDIVIDUAL = "individual"
 
-  SUBDOMAIN = 'reseller1'
+  SUBDOMAIN = 'reseller'
 
   TARGETED = %w(host_providers registrars merchants enterprises government
       education medical) - %w(enterprises government

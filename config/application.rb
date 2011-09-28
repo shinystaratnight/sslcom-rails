@@ -49,6 +49,8 @@ module SslCom
     config.generators do |g|
       g.fixture_replacement :machinist
     end
+
+    config.middleware.use "ForceSSL"
   end
 end
 
@@ -60,6 +62,7 @@ require "#{Rails.root}/lib/range.rb"
 require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
+require "#{Rails.root}/lib/force_ssl.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3
@@ -81,8 +84,8 @@ SubdomainFu.configure do |config|
   config.tld_sizes = {:development => 1,
    :test => 1,
    :production => 1} # set all at once (also the defaults)
-  config.mirrors = %w(staging1)
-  config.preferred_mirror = "staging1"
+  config.mirrors = %w(www)
+  config.preferred_mirror = "www"
 end
 
 #uncomment to track down bugs on heroku production

@@ -27,9 +27,9 @@ class Surl < ActiveRecord::Base
   REMOVE="remove"
 
   if Rails.env=='development'
-    URL = 'staging1.ssl.com:3000'
+    URL = 'www.ssl.com:3000'
   else
-    URL = 'staging1.ssl.com'
+    URL = 'www.ssl.com'
   end
 
 #  before_create
