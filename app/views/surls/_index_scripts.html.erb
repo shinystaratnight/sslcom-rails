@@ -101,7 +101,8 @@ jQuery(function($) {
             var surl = $("<span id='surl_link'></span>");
             surl.hide();
             $('#surl_container').html(surl);
-            var new_link = "http://<%=Surl::URL%>/"+data.surl.identifier;
+            var protocol=(data.surl.require_ssl)? "http://" : "https://";
+            var new_link = protocol+"<%=Surl::URL%>/"+data.surl.identifier;
             surl.append("&raquo;<input readonly='readonly' name='generated_surl' value='"+new_link+"' />");
             $('#surl_instructions .old_link').html(data.surl.original);
             $('#surl_instructions .click_to_visit').html('<a target="_blank" href="'+new_link+

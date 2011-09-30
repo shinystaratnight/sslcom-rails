@@ -84,11 +84,10 @@ module OldSite
     ::DuplicateV2User.make_latest_login_primary
     Certificate.sync_certs
     #verify all LineItems have a sellable or else delete them
-    #LineItem.all.each{|l|l.destroy if l.sellable.blank?}
-
-    #self.adjust_site_seals_workflow
-    #self.adjust_certificate_order_prepaid
-    #self.adjust_certificate_content_workflow
+    LineItem.all.each{|l|l.destroy if l.sellable.blank?}
+    self.adjust_site_seals_workflow
+    self.adjust_certificate_order_prepaid
+    self.adjust_certificate_content_workflow
   end
 
   def self.certs_and_line_items_mismatch

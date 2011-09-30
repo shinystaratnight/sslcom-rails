@@ -20,6 +20,7 @@
 # Learn more: http://github.com/javan/whenever
 every 1.day, at: "12am" do
   runner "ApplicationControllerController.flag_expired_certificate_orders"
+  runner "Malware.update"
 end
 
 every 1.day, at: "12pm" do

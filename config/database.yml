@@ -29,10 +29,11 @@ development:
   database: ssl_com_production
 <%else%>
   adapter: mysql
-  database: ssl_com_development
   #use when remote db source
 #  host: 75.101.161.230
 #  database: ssl_com_production
+#  else
+  database: ssl_com_development
 <%end%>
 
 # Warning: The database defined as "test" will be erased and

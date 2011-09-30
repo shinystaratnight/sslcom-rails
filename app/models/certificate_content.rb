@@ -51,6 +51,7 @@ class CertificateContent < ActiveRecord::Base
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
       event :cancel, :transitions_to => :canceled
+      event :issue, :transitions_to => :issued
     end
 
     state :csr_submitted do
@@ -60,11 +61,13 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
     end
 
     state :contacts_provided do
+      event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do
         certificate_order.apply_for_certificate if csr.ca_certificate_requests.blank?
       end
@@ -72,6 +75,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :pending_validation do
+      event :issue, :transitions_to => :issued
       event :validate, :transitions_to => :validated do
         self.preferred_reprocessing = false if self.preferred_reprocessing?
       end
@@ -88,6 +92,7 @@ class CertificateContent < ActiveRecord::Base
       event :reprocess, :transitions_to => :csr_submitted
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
+      event :issue, :transitions_to => :issued
     end
 
     state :canceled

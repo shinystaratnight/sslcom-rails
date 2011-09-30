@@ -6,7 +6,7 @@ class DuplicateV2User < ActiveRecord::Base
 
   def source_obj
     m = V2MigrationProgress.find_by_migratable(self)
-    m.source_obj unless m.blank?
+    m.last.source_obj unless m.blank?
   end
 
   def v2_migration_progress
@@ -66,7 +66,7 @@ class DuplicateV2User < ActiveRecord::Base
       recent_dup=user.duplicate_v2_users.sort{|a,b|a.updated_at<=>b.updated_at}.last
       if recent_dup.updated_at.to_date > user.updated_at.to_date
         swap << user
-        p "#{user.model_and_id} (#{user.login}) being swapped"
+        p "#{user.model_and_id} (#{user.login}) being swapped with #{recent_dup.login}"
         recent_dup.swap_with(user)
       end
     end
@@ -88,6 +88,17 @@ class DuplicateV2User < ActiveRecord::Base
     else
       #swap user<->dup attrs
       l,p,c,u=user.login, user.crypted_password, user.created_at, user.updated_at
+      so=self.source_obj
+      user.update_attributes(login: self.login,
+                              crypted_password: self.password,
+                              first_name: so.FirstName,
+                              last_name: so.LastName,
+                              created_at: self.created_at,
+                              updated_at: self.updated_at)
+      self.update_attributes(login: l,
+                              password: p,
+                              created_at: c,
+                              updated_at: u)
       #swap v2_migration_progress
       dup=user.v2_migration_progresses.last
       p "swapping v2_migration_progresses for #{user.model_and_id} and #{dup.model_and_id}"

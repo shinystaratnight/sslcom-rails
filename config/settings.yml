@@ -43,7 +43,7 @@ csr_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'i0Ye2gE4'
+comodo_api_password: 'Jimi3Kimi3'
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local

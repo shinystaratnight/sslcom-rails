@@ -654,9 +654,9 @@ ov_5_years_tier_<%=i%>:
 dv_1_year_tier_<%=i%>:
  id: <%=id+=1%>
  product_variant_group_id: <%=(prod_group_id+=1)%>
- title: 1 Year
- description: 1 year
- text_only_description: 1 year
+ title: 90 Days
+ description: 90 days
+ text_only_description: 90 days
  status: live
  display_order: 1
  amount: 0

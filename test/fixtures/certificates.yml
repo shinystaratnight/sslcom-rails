@@ -73,7 +73,7 @@ dv:
   main: silver_lock_lg.gif
  description:
   summary: |
-   minimal trust assurance
+   base level assurance
   abbr: Free SSL
   certificate_type: Free
   validation_level: Class 1 DoD
@@ -274,9 +274,9 @@ dv_tier_<%=i%>:
   main: silver_lock_lg.gif
  description:
   summary: |
-   minimal trust assurance
+   base level assurance
   abbr: Free SSL
-  certificate_type: Wildcard
+  certificate_type: Free
   points: |
     <div class='check'>great for testing or development</div>
     <div class='check'>is free with no cost to you</div>

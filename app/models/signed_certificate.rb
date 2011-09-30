@@ -8,12 +8,16 @@ class SignedCertificate < ActiveRecord::Base
   validates :csr_id, :presence=>true, :on=>:save
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
-  validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
+  #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
 
   BEGIN_TAG="-----BEGIN CERTIFICATE-----"
   END_TAG="-----END CERTIFICATE-----"
+
+  after_create do |s|
+    s.csr.certificate_content.issue!
+  end
 
   def body=(certificate)
     return if certificate.blank?

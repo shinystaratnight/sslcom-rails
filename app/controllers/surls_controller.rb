@@ -45,6 +45,9 @@ class SurlsController < ApplicationController
     if !@surl.is_http? || !@surl.share
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
+    elsif @surl.require_ssl && !request.ssl?
+      @render_result=Surl::REDIRECTED
+      redirect_to @surl.full_link
     else
       if Malware.is_blacklisted?(@surl.original)
         @render_result=Surl::BLACKLISTED
@@ -106,7 +109,7 @@ class SurlsController < ApplicationController
   def create
     @surl = Surl.new(params[:surl])
     @surl.user=current_user unless current_user.blank?
-    @surl.save
+    @surl.save!
     if @surl.errors.blank?
       add_link_to_cookie(@surl.guid)
       @surl_row = render_to_string("_surl_row.html.haml", layout: false, locals: {surl: @surl})

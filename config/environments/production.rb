@@ -61,13 +61,13 @@ SslCom::Application.configure do
   config.to_prepare do
     OrderTransaction.gateway =
       ActiveMerchant::Billing::AuthorizeNetGateway.new(
-        :login    => '9jFL5k9E',
-        :password => '8b3zEL5H69sN4Pth'
+        :login    => '6Y6ckBFU6nYc',
+        :password => '67DV52cZWu4mGv9L'
       )
     BillingProfile.password = "kama1jama1"
   end
 
-  #config.log_level = Logger::INFO
+  config.log_level = :info
 
   GATEWAY_TEST_CODE=1.0
   # END ActiveMerchant configuration

@@ -9,7 +9,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
     :renew, :reprocess, :require=>[:create, :update, :delete]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  cache_sweeper :certificate_order_sweeper
+  #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 

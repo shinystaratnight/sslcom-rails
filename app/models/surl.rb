@@ -27,9 +27,9 @@ class Surl < ActiveRecord::Base
   REMOVE="remove"
 
   if Rails.env=='development'
-    URL = 'www.ssl.com:3000'
+    URL = 'ssl.com:3000'
   else
-    URL = 'www.ssl.com'
+    URL = 'ssl.com'
   end
 
 #  before_create
@@ -39,7 +39,7 @@ class Surl < ActiveRecord::Base
     s.update_attributes identifier: s.id.encode62
   end
 
-  default_scope where(:status ^ DISABLED_STATUS).order(:created_at.desc)
+  default_scope where(:status.ne=~DISABLED_STATUS.to_s).order(:created_at.desc)
 
   def access_granted(surl)
     username==surl.username && valid_password?(surl.password)
