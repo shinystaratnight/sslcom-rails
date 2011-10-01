@@ -399,7 +399,6 @@ class CertificateOrder < ActiveRecord::Base
           'test' => Rails.env =~ /production/i ? "N" : 'Y',
           'product' => certificate.comodo_product_id.to_s,
           'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
-          'days' => certificate_content.duration.to_s,
           'csr' => CGI::escape(csr.body),
           'prioritiseCSRValues' => 'N',
           'isCustomerValidated' => 'Y',
@@ -408,6 +407,9 @@ class CertificateOrder < ActiveRecord::Base
           'foreignOrderNumber' => ref
         )
         last_sent = csr.domain_control_validations.last_sent
+        unless certificate.comodo_product_id==43 #trial cert
+          options.merge!('days' => certificate_content.duration.to_s)
+        end
         if last_sent.try "is_eligible_to_send?"
           options.merge!('dcvEmailAddress' => last_sent.email_address)
           last_sent.send!
