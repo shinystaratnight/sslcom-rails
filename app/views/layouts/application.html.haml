@@ -17,7 +17,7 @@
   %body
     #answers(style="text-align: center;width: 100%; background-color: orange; padding: 2px; font-family: sans-serif; font-size: 1.2em; font-weight: bold;")
       Have a question or solution?
-      =link_to "Post it at the SSL.com IT Security Q&A community site", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
+      =link_to "Post it at the SSL.com IT Security Q&A community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
       All visitors welcome and it's FREE!
     #wrapper
       -if (current_user.blank?) || yield(:header)=='public'
