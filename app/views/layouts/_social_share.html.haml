@@ -2,7 +2,7 @@
   -if Rails.env=='production'
     #twitter
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
-      %script{:src => "http://platform.twitter.com/widgets.js", :type => "text/javascript"}
+      %script{:src => "https://platform.twitter.com/widgets.js", :type => "text/javascript"}
     #facebook
-      %script{:src => "http://connect.facebook.net/en_US/all.js#xfbml=1"}
+      %script{:src => "https://connect.facebook.net/en_US/all.js#xfbml=1"}
       %fb:like{:layout => "button_count", :show_faces => "false"}
