@@ -114,6 +114,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   before_create do |co|
+    co.is_expired=false
     co.ref='co-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     v     =co.create_validation
     co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
