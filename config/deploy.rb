@@ -172,4 +172,5 @@ end
 after 'deploy:update', 'deploy:symlink_shared'
 
 #whenever
+set :whenever_command, "bundle exec whenever"
 require "whenever/capistrano"

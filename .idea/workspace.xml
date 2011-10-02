@@ -89,19 +89,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="schedule.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="schedule.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/config/schedule.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="55" selection-start="551" selection-end="583" vertical-scroll-proportion="0.0">
+            <state line="21" column="55" selection-start="551" selection-end="583" vertical-scroll-proportion="0.24315068">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deploy.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="deploy.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="172" column="94" selection-start="5065" selection-end="5065" vertical-scroll-proportion="0.6953405">
+            <state line="174" column="45" selection-start="5121" selection-end="5121" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1617,13 +1617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/schedule.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="55" selection-start="551" selection-end="583" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="127" column="28" selection-start="5175" selection-end="5175" vertical-scroll-proportion="0.0">
@@ -1633,7 +1626,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="172" column="94" selection-start="5065" selection-end="5065" vertical-scroll-proportion="0.6953405">
+        <state line="174" column="45" selection-start="5121" selection-end="5121" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/schedule.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="55" selection-start="551" selection-end="583" vertical-scroll-proportion="0.24315068">
           <folding />
         </state>
       </provider>
