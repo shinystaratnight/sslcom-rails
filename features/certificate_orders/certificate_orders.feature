@@ -2,9 +2,9 @@
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb (env.rb if using spork)
 #also all comments must appear before tags with no comments in-between tags
 #email tests do not work with remote selenium
-#@selenium @remote
+#@webkit @remote
+@selenium @remote #doesn't work with spork
 @firebug
-@webkit @remote
 @javascript
 
 Feature: Manage SSL Certificates
@@ -125,7 +125,7 @@ Feature: Manage SSL Certificates
     Then the certificate content fields should remain the same as "@lobby_sb_betsoftgaming_com_signed_cert" fields
 
   @anonymous_buying @setup_certificates
-  Scenario: An anonymous user should be able to buy and create an account simultaneously
+  Scenario: An anonymous user should be able to get a free ssl cert and create an account simultaneously
     Given I am not logged in
     And my cart is empty
 
@@ -138,21 +138,21 @@ Feature: Manage SSL Certificates
     Then I should be directed to route path "new_order_path"
       And the order amount displayed should be the same as the cart amount
 
-    When I click the "radio" with "has_account_false" "id"
-      And I enter my new user information
-      |login|email  |password|confirm|
-      |b001b|b@b.com|123456  |123456 |
-
-      And I enter my profile information
-      |first_name|last_name|address1|address2|city    |state|country           |postal_code|phone       |
-      |Joe       |Smith    |123 Rd  |Ste 11  |New York|NY   |United States     |77777      |123-123-1234|
-
-      And I enter my credit card payment information
-      |card_type|card_number     |exp_mo|exp_yr|security_code |result_code|
-      |Visa     |4111111111111111|8     |2012  |1234          |01         |
-
-      And I click the submit image button
-    Then I should be directed to the order page
+#    When I click the "radio" with "has_account_false" "id"
+#      And I enter my new user information
+#      |login|email  |password|confirm|
+#      |b001b|b@b.com|123456  |123456 |
+#
+#      And I enter my profile information
+#      |first_name|last_name|address1|address2|city    |state|country           |postal_code|phone       |
+#      |Joe       |Smith    |123 Rd  |Ste 11  |New York|NY   |United States     |77777      |123-123-1234|
+#
+#      And I enter my credit card payment information
+#      |card_type|card_number     |exp_mo|exp_yr|security_code |result_code|
+#      |Visa     |4111111111111111|8     |2012  |1234          |01         |
+#
+#      And I click the submit image button
+#    Then I should be directed to the order page
 
   @expiring_certificates @no-txn @setup_certificates
   Scenario Outline: An expiring or expired certificate should show colored indicators
