@@ -1,9 +1,9 @@
 #use driver @rack_test for inline and @selenium for remote
 #when changing drivers, be sure to change DatabaseCleaner.strategy in db_cleaner.rb (env.rb if using spork)
 #also all comments must appear before tags with no comments in-between tags
-#email tests do not work with remote selenium
+#email tests nor spork work with remote selenium
 #@webkit @remote
-@selenium @remote #doesn't work with spork
+@selenium @remote
 @firebug
 @javascript
 
