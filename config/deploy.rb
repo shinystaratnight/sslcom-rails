@@ -170,3 +170,6 @@ namespace :deploy do
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'
+
+#whenever
+require "whenever/capistrano"
