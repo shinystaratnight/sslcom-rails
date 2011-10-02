@@ -12,7 +12,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/main.sass" afterPath="$PROJECT_DIR$/app/stylesheets/main.sass" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -47,7 +47,7 @@
       <file leaf-file-name="main.sass" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4958" column="21" selection-start="93526" selection-end="93526" vertical-scroll-proportion="0.8645418">
+            <state line="5002" column="13" selection-start="94178" selection-end="94178" vertical-scroll-proportion="0.7968128">
               <folding />
             </state>
           </provider>
@@ -1633,7 +1633,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4958" column="21" selection-start="93526" selection-end="93526" vertical-scroll-proportion="0.8645418">
+        <state line="5002" column="13" selection-start="94178" selection-end="94178" vertical-scroll-proportion="0.7968128">
           <folding />
         </state>
       </provider>
