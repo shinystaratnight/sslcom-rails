@@ -13,25 +13,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/contacts_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/contacts_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate.rb" afterPath="$PROJECT_DIR$/app/models/certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/surl.rb" afterPath="$PROJECT_DIR$/app/models/surl.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/main.sass" afterPath="$PROJECT_DIR$/app/stylesheets/main.sass" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/contacts/index.html.haml" afterPath="$PROJECT_DIR$/app/views/contacts/index.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/authorization_rules.rb" afterPath="$PROJECT_DIR$/config/authorization_rules.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/production.rb" afterPath="$PROJECT_DIR$/config/environments/production.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" afterPath="$PROJECT_DIR$/features/certificate_orders/certificate_orders.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/certificate_orders/interface.feature" afterPath="$PROJECT_DIR$/features/certificate_orders/interface.feature" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/certificate_orders_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/general_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/general_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/step_definitions/navigation_steps.rb" afterPath="$PROJECT_DIR$/features/step_definitions/navigation_steps.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/capybara_firewatir.rb" afterPath="$PROJECT_DIR$/features/support/capybara_firewatir.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/features/support/env.rb" afterPath="$PROJECT_DIR$/features/support/env.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/agreements/free_ssl_subscriber_agreement.txt" afterPath="$PROJECT_DIR$/public/agreements/free_ssl_subscriber_agreement.txt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/script/rails" afterPath="$PROJECT_DIR$/script/rails" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -64,10 +45,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rails" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="rails" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/script/rails">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="0" selection-start="0" selection-end="1207" vertical-scroll-proportion="0.0">
+            <state line="5" column="21" selection-start="228" selection-end="228" vertical-scroll-proportion="0.28619528">
               <folding />
             </state>
           </provider>
@@ -91,10 +72,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.sass" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="100" column="39" selection-start="2288" selection-end="2288" vertical-scroll-proportion="0.5204461">
+            <state line="97" column="89" selection-start="2233" selection-end="2233" vertical-scroll-proportion="-3.1785715">
               <folding />
             </state>
           </provider>
@@ -200,10 +181,10 @@
         <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
         <option value="$PROJECT_DIR$/app/helpers/contacts_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/contacts/index.html.haml" />
-        <option value="$PROJECT_DIR$/script/rails" />
         <option value="$PROJECT_DIR$/config/application.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
+        <option value="$PROJECT_DIR$/script/rails" />
       </list>
     </option>
   </component>
@@ -1585,13 +1566,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/script/rails">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="0" selection-start="0" selection-end="1207" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/application.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="53" column="0" selection-start="2349" selection-end="2349" vertical-scroll-proportion="0.0">
@@ -1608,7 +1582,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="100" column="39" selection-start="2288" selection-end="2288" vertical-scroll-proportion="0.5204461">
+        <state line="97" column="89" selection-start="2233" selection-end="2233" vertical-scroll-proportion="-3.1785715">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/script/rails">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="21" selection-start="228" selection-end="228" vertical-scroll-proportion="0.28619528">
           <folding />
         </state>
       </provider>
