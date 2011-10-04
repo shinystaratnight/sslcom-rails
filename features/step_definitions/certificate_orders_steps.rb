@@ -1,8 +1,8 @@
-Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] ['"]([^'"]*)['"] year certificate using csr ['"]([^'"]*)['"]$/ do |type, duration, csr|
+Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] (?:duration\s)?['"]([^'"]*)['"] (?:year\s)?certificate using csr ['"]([^'"]*)['"]$/ do |type, duration, csr|
   csr = eval("@#{csr}").gsub(/\r\n/,"\n")
   When "he goes to the '#{type}' certificate buy page"
     And "he fills the 'text_field' having attribute 'id' == 'signing_request' with", csr
-    And "he selects '1' as 'server_software'"
+    And "he selects 'OTHER' as 'certificate_order_certificate_contents_attributes_0_server_software_id'"
     And "he clicks the 'radio' with '#{duration}' 'value'"
     And "he clicks the next image button"
 end
@@ -57,14 +57,14 @@ Given /^(?:his|her|my) reseller account has ['"]([^'"]*)['"] available$/ do |amo
   end
 end
 
-When /^(?:he|she|I) add(?:s)? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate to the cart$/ do |duration, type|
+When /^(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate to the cart$/ do |duration, type|
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
     And "he clicks the 'radio' with '#{duration}' 'value'"
     And "he clicks the next image button"
 end
 
-When /^(?:he|she|I) add(?:s)? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate with domains ['"]([^'"]*)['"] to the cart$/ do |duration, type, domains|
+When /^(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate with domains ['"]([^'"]*)['"] to the cart$/ do |duration, type, domains|
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
     And "he fills the 'text_field' having attribute 'name' == 'additional_domains' with", domains
@@ -156,6 +156,17 @@ When /^(?:he|she|I) enters? (?:his|her|my) new user information$/ do |table|
   profiles.each do |profile|
     {"user_login"=>profile["login"],"user_email"=>profile["email"],
     "user_password"=>profile["password"],"user_password_confirmation"=>profile["confirm"]}.each do |k,v|
+      fill_text(k,v)
+    end
+  end
+end
+
+When /^(?:he|she|I) enters? (?:his|her|my|the) registrant information$/ do |table|
+  profiles = (defined? table.hashes) ? table.hashes : [table]
+  profiles.each do |profile|
+    {"certificate_order_certificate_contents_attributes_0_registrant_attributes_address1"=>profile["address1"],
+    "certificate_order_certificate_contents_attributes_0_registrant_attributes_postal_code"=>profile["postal_code"],}.
+        each do |k,v|
       fill_text(k,v)
     end
   end
@@ -343,4 +354,8 @@ end
 
 Then /^domain control validation request should be created$/ do
   DomainControlValidation.last.email_address.should == find("#domain_control_validation_email").value
+end
+
+When /^I get a (\S+) ssl certificate$/ do |product|
+  visit buy_certificate_url()
 end

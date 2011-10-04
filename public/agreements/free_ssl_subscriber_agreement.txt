@@ -6,15 +6,15 @@
 
 2.1. In this Agreement, unless the context requires otherwise, the following terms and expressions shall have the following meanings:
 
-"Business Day" means Monday to Friday inclusive excluding any days on which the banks in London are closed for business (other than for trading in Euros);
+"Business Day" means Monday to Friday inclusive excluding any days on which the banks in New York are closed for business (other than for trading in currency);
 "Certificate Period" means the time period during which a Digital Certificate remains valid and may be used as set out in the Schedule;
 "Charges" means the charges for the Subscriber Services as set out in Schedule 1 of this Agreement;
 "Commencement Date" means the date when SSL receives the Subscriber's request for Subscriber Services set out in the Enrolment Form and sent to SSL via the online registration process;
 "SSL CPS" means the SSL Certificate Practice Statement, a document setting out the working practices that SSL employs for the Subscriber Services and which defines the underlying certificate processes and Repository operations, as may be amended from time to time;
-"SSL Group Company" means an SSL subsidiary or holding company, or a subsidiary of that holding company, all as defined by section 736 of the Companies Act 1985 as amended by the Companies Act 1989;
+"SSL Group Company" means an SSL subsidiary or holding company, or a subsidiary of that holding company;
 "Confidential Information" means all information obtained as a result of the parties entering into this agreement which relates to the provisions and subject matter of this Agreement (including but not limited to all Private Keys, personal identification numbers and passwords) and the business, systems or affairs of the other party and which is marked or designated in writing by the other party as being confidential.
 "CRL" means a certificate revocation list that contains details of Digital Signatures that have been revoked by SSL;
-"Digital Certificate" means a digitally signed electronic data file (conforming to the X509 version 3 ITU standard) issued by SSL in order to identify a person or entity seeking to conduct business over a communications network using a Digital Signature and which contains the identity of the person authorised to use the Digital Signature and a copy of their Public Key, a serial number, a time period during which the Digital Certificate may be used and a Digital Signature issued by SSL;
+"Digital Certificate" means a digitally signed electronic data file (conforming to the X509 version 3 ITU standard) issued by SSL in order to identify a person or entity seeking to conduct business over a communications network using a Digital Signature and which contains the identity of the person authorized to use the Digital Signature and a copy of their Public Key, a serial number, a time period during which the Digital Certificate may be used and a Digital Signature issued by SSL;
 "Digital Signature" means an encrypted electronic data file which is attached to or logically associated with other electronic data and which identifies and is uniquely linked to the signatory of the electronic data, is created using the signatory's Private Key and is linked in a way so as to make any subsequent changes to the electronic data detectable;
 "Domain Name" means a name registered with an Internet registration authority for use as part of a Subscriber's URL;
 "Enrolment Form" means an electronic form on SSL's website completed by the Subscriber by providing the Subscriber Data and which identifies the requirements for the Subscription Service;
@@ -54,8 +54,8 @@
 
 (i) Use or access the Subscription Service only in conjunction with the Software or other software that may be provided by SSL from time to time or specified by SSL to be appropriate for use in conjunction with the Subscription Service.
 (ii) be responsible, at its own expense, for access to the Internet and all other communications networks (if any) required in order to use the Subscription Service and for the provision of all computer and telecommunications equipment and software required to use the Subscription Service save where the same is not expressly provided under the terms of this Agreement;
-(iii) obtain and keep in force any authorisation, permission or licence necessary for the Subscriber to use the Subscription Service save where SSL expressly agrees to obtain the same under the terms of this Agreement;
-(iv) remain responsible for the generation of any Subscriber's Private Key and shall take all reasonable precautions to prevent any violation of, loss of control over, or unauthorised disclosure of confidential information relating to the Subscription Service; and
+(iii) obtain and keep in force any authorization, permission or licence necessary for the Subscriber to use the Subscription Service save where SSL expressly agrees to obtain the same under the terms of this Agreement;
+(iv) remain responsible for the generation of any Subscriber's Private Key and shall take all reasonable precautions to prevent any violation of, loss of control over, or unauthorized disclosure of confidential information relating to the Subscription Service; and
 (v) shall be solely responsible for any transactions of any kind entered into between the Subscriber and any third party using or acting in reliance on the Subscription Service and acknowledges that SSL shall not be a party to, or be responsible in any way for, any such transaction.
 
 4.3. The Subscriber shall not use the Subscription Service to transmit (either by sending by email or uploading using any format of communications protocol), receive (either by soliciting an e-mail or downloading using any format of communications protocol), view or in any other way use any information which may be illegal, offensive, abusive, contrary to public morality, indecent, defamatory, obscene or menacing, or which is in breach of confidence, copyright or other intellectual property rights of any third party, cause distress, annoyance, denial of any service, disruption or inconvenience, send or provide advertising or promotional material or other form of unsolicited bulk correspondence or create a Private key which is identical or substantially similar to any Public Key.
@@ -64,7 +64,7 @@
 
 5.1. SSL grants the Subscriber a revocable, non-exclusive, non-transferrable personal licence to use any Digital Certificates provided in accordance with the Subscription Service, any Digital Signature generated using the Subscriber's Public Key and Private Key and any manuals or other documents relating to the above insofar as is necessary for the Subscriber to utilise the Subscription Services.
 
-5.2. The Subscriber shall not copy or decompile (except where such decompilation is permitted by section 50B of the Copyright, Designs and Patent Act 1988) enhance, adapt or modify or attempt to do the same to the Digital Certificates, Public Keys and Private Keys, or any Digital Signature generated using any Public Key or Private Key; or any documents or manuals relating to the same without SSL's prior written consent.
+5.2. The Subscriber shall not copy or decompile enhance, adapt or modify or attempt to do the same to the Digital Certificates, Public Keys and Private Keys, or any Digital Signature generated using any Public Key or Private Key; or any documents or manuals relating to the same without SSL's prior written consent.
 
 6. Charges and Payment Terms
 
@@ -74,18 +74,18 @@
 
 7. Security
 
-7.1. The Subscriber shall take all reasonable measures to ensure the security and proper use of all personal identification numbers, Private Keys and passwords used in connection with the Subscription Service. The Subscriber shall also immediately inform SSL if there is any reason to believe that a personal identification number, Private Key or password has or is likely to become known to someone not authorised to use it, or is being, or is likely to be used in an unauthorised way, or if any of the Subscriber Data provided by the Subscriber using the on-line registration process or subsequently notified to SSL ceases to remain valid or correct or otherwise changes.
+7.1. The Subscriber shall take all reasonable measures to ensure the security and proper use of all personal identification numbers, Private Keys and passwords used in connection with the Subscription Service. The Subscriber shall also immediately inform SSL if there is any reason to believe that a personal identification number, Private Key or password has or is likely to become known to someone not authorized to use it, or is being, or is likely to be used in an unauthorized way, or if any of the Subscriber Data provided by the Subscriber using the on-line registration process or subsequently notified to SSL ceases to remain valid or correct or otherwise changes.
 
 7.2. The Subscriber shall have sole responsibility for all statements, acts and omissions which are made under any password provided by it to SSL.
 
 7.3. SSL reserves the right to revoke a Subscriber's Digital Certificate in the event that SSL has reasonable grounds to believe that:
 
-(i) a personal identification number, Private Key or password has, or is likely to become known to someone not authorised to use it, or is being or is likely to be used in an unauthorised way;
+(i) a personal identification number, Private Key or password has, or is likely to become known to someone not authorized to use it, or is being or is likely to be used in an unauthorized way;
 (ii) a Subscriber's Digital Certificate has not been issued in accordance with the policies set out in the SSL CPS;
 (iii) the Subscriber has requested that its Digital Certificate be revoked;
-(iv) there has been, there is, or there is likely to be a violation of, loss of control over, or unauthorised disclosure of Confidential Information relating to the Subscription Service; or
+(iv) there has been, there is, or there is likely to be a violation of, loss of control over, or unauthorized disclosure of Confidential Information relating to the Subscription Service; or
 (v) the Subscriber Data is no longer correct or accurate, save that SSL has no obligation to monitor or investigate the accuracy of information in a Digital Certificate after the Issue Date of that Digital Certificate; or
-(vi) the Subscriber has used the Subscription Service with third party software not authorised by SSL for use with the Subscription Service. and SSL may, in its absolute discretion after revocation of a Digital Certificate, reissue a Digital Certificate to the Subscriber or terminate this Agreement in accordance with the provisions of Clause 15.
+(vi) the Subscriber has used the Subscription Service with third party software not authorized by SSL for use with the Subscription Service. and SSL may, in its absolute discretion after revocation of a Digital Certificate, reissue a Digital Certificate to the Subscriber or terminate this Agreement in accordance with the provisions of Clause 15.
 
 7.4. The Subscriber agrees to discontinue all use of the Subscriber's Digital Certificate if the Subscriber's Digital Certificate is revoked in accordance with this Agreement, the Certificate Period expires, this Agreement is terminated, or any of the information constituting the Subscriber Data ceases to remain valid or correct or otherwise changes.
 
@@ -103,9 +103,9 @@
 
 9.1. The Subscriber acknowledges that in order to provide the Subscription Service the Selected Subscriber Data shall be embedded in the Subscriber's Digital Certificates and the Subscriber hereby consents to the disclosure to third parties of such Selected Subscriber Data held therein.
 
-9.2. The Subscriber hereby grants SSL permission to examine, evaluate, process and in some circumstances transmit to third parties located outside the European Union the Subscriber Data insofar as is reasonably necessary for SSL to provide the Subscription Service.
+9.2. The Subscriber hereby grants SSL permission to examine, evaluate, process and in some circumstances transmit to third parties located outside the United States the Subscriber Data insofar as is reasonably necessary for SSL to provide the Subscription Service.
 
-9.3. SSL shall in performing its obligations under this Agreement, comply with the Data Protection Act 1998 and any legislation or guidelines which amends or replaces such legislation and shall take appropriate technical and organisational measures against the unauthorised or unlawful processing of personal data and against actual loss or destruction of or damage to such data.
+9.3. SSL shall in performing its obligations under this Agreement, comply with the Data Protection Act 1998 and any legislation or guidelines which amends or replaces such legislation and shall take appropriate technical and organisational measures against the unauthorized or unlawful processing of personal data and against actual loss or destruction of or damage to such data.
 
 10. Intellectual Property Rights
 
@@ -198,11 +198,11 @@ Neither party may assign or transfer or purport to assign or transfer a right or
 
 23. Governing Law and Jurisdiction
 
-This Agreement and all matters arising from or connected with it, are governed by and shall be construed in accordance with English law and the parties hereby submit to the non-exclusive jurisdiction of the English courts.
+This Agreement and all matters arising from or connected with it, are governed by and shall be construed in accordance with US law and the parties hereby submit to the non-exclusive jurisdiction of Texas courts.
 
 24. Rights of Third Parties
 
-For the avoidance of doubt no third party shall be entitled (for the purposes of the Contracts (Rights of Third Parties) Act 1999) to any rights under this Agreement which it may enter against SSL.
+For the avoidance of doubt no third party shall be entitled to any rights under this Agreement which it may enter against SSL.
 
 Secure Server Certificate Schedule: Free SSL Product Type
 

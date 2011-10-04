@@ -44,11 +44,23 @@ Then /^(?:he|she|I) should be (?:directed to|at) route path "([^\"]*)"$/ do |tex
   url_should_include(eval(text))
 end
 
-Then /^(?:he|she|I) should be directed to the login path$/ do
+Then /^(?:he|she|I) should be (?:directed to|at) the login path$/ do
   url_should_include(login_path)
 end
 
-Then /^(?:he|she|I) should be directed to the order page$/ do
+Then /^(?:he|she|I) should be (?:directed to|at) the order page$/ do
   @order = Order.first
   url_should_include(order_path(@order))
+end
+
+Then /^(?:he|she|I) should be (?:directed to|at) the certificate order page$/ do
+  url_should_include(certificate_order_path(CertificateOrder.first))
+end
+
+Then /^(?:he|she|I) should be (?:directed to|at) the edit certificate order page$/ do
+  url_should_include(edit_certificate_order_path(CertificateOrder.first))
+end
+
+Then /^(?:he|she|I) should be (?:directed to|at) the edit contacts page$/ do
+  url_should_include(certificate_content_contacts(CertificateContent.last))
 end

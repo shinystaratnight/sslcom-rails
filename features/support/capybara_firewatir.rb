@@ -6,7 +6,7 @@ def get_element(element, attribute, attribute_val)
         page.first(:xpath, "//#{element}[@#{attribute}='#{attribute_val}']")
       when /text_field/
         %w(input textarea).map do |text_elem|
-          page.first(:xpath, "//#{text_elem}[@#{attribute}='#{attribute_val}']")
+          page.first(:xpath, "//#{text_elem}[contains(@#{attribute}, \'#{attribute_val}\')]")
         end.compact.last
     end
   else

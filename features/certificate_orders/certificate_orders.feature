@@ -125,23 +125,14 @@ Feature: Manage SSL Certificates
     Then the certificate content fields should remain the same as "@lobby_sb_betsoftgaming_com_signed_cert" fields
 
   @anonymous_buying @setup_certificates
-  Scenario: An anonymous user should be able to get a free ssl cert and create an account simultaneously
+  Scenario Outline: An anonymous user should be able to get a free ssl cert and create an account simultaneously
     Given I am not logged in
-    And my cart is empty
+    And I buy a "<certificate_type>" duration "1" certificate using csr "<csr>"
 
-    #add stuff to cart
-    When I add an ssl certificate to the cart
-      |product       |years|domains                   |price |
-      |free          |1    |                          |69.00 |
-
-      And I checkout
-    Then I should be directed to route path "new_order_path"
-      And the order amount displayed should be the same as the cart amount
-
-#    When I click the "radio" with "has_account_false" "id"
-#      And I enter my new user information
-#      |login|email  |password|confirm|
-#      |b001b|b@b.com|123456  |123456 |
+    When I click the "radio" with "has_account_false" "id"
+     And I enter my new user information
+      |login|email  |password|confirm|
+      |b001b|b@b.com|123456  |123456 |
 #
 #      And I enter my profile information
 #      |first_name|last_name|address1|address2|city    |state|country           |postal_code|phone       |
@@ -151,8 +142,19 @@ Feature: Manage SSL Certificates
 #      |card_type|card_number     |exp_mo|exp_yr|security_code |result_code|
 #      |Visa     |4111111111111111|8     |2012  |1234          |01         |
 #
-#      And I click the submit image button
-#    Then I should be directed to the order page
+     And I click the submit image button
+    Then I should be at the edit certificate order page
+
+    When I enter the registrant information
+      |address1          |postal_code  |
+      |123 somewhere st  |123456       |
+     And I click the submit image button
+    Then I should be directed to the contacts page
+
+    Examples:
+      |certificate_type|days  |domains                   |price|csr                         |
+      |free            |90    |                          |0.00 |ssl_danskkabeltv_dk_2048_csr|
+
 
   @expiring_certificates @no-txn @setup_certificates
   Scenario Outline: An expiring or expired certificate should show colored indicators

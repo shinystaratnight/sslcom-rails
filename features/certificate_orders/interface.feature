@@ -18,6 +18,7 @@ Feature: Ordering SSL.com Certificates intuitively
     Given I am not logged in
      When I buy a "<certificate_type>" "1" year certificate using csr "<csr>"
      Then I should see <num_of_steps> steps to complete my ssl.com certificate order
+      And I should not see any errors
   Examples:
     |certificate_type|num_of_steps|csr                                |
     |free            |6           |ssl_danskkabeltv_dk_2048_csr       |

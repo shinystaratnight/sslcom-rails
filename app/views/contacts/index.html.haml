@@ -12,17 +12,14 @@
   -form_for setup_certificate_contacts(@certificate_content) do |f|
     #stylized.default_form
       -i = 0
-      -roles = CertificateContent::CONTACT_ROLES
       -contacts = @certificate_content.certificate_contacts.order("roles").to_a
-      -contacts = [].tap{|c_tmp|4.times{c_tmp << @certificate_content.certificate_contacts.build(country: 'US')}} if contacts.empty?
+      -contacts = [].tap{|c_tmp|CertificateContent::CONTACT_ROLES.each {|r| c_tmp << CertificateContact.new(contactable: @certificate_content, country: @certificate_content.registrant.country, roles: [r])}} if contacts.empty?
       -#-contacts = [].tap{|c_tmp|4.times{c_tmp << CertificateContact.new(country: 'US')}} if contacts.empty?
       =f.fields_for :certificate_contacts, contacts do |c|
+        -role=c.object.roles.last
         -i+=1
-        -roles.each do |role|
-          -roles.delete(role)
-          =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}
-          %div(id="certificate_content_#{role}_form")
-            =render_contact_fields(c, role)
-          -break
+        =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}
+        %div(id="certificate_content_#{role}_form")
+          =render_contact_fields(c, role)
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif"

@@ -79,7 +79,7 @@ end
 
 When /^(?:he|she|I) selects? ['"]([^'"]*)['"] as ['"]([^'"]*)['"]$/ do |value, id|
   if is_capybara?
-    find("select[id*='#{id}']").set(value)
+    select(value, from: id)
   else
     @browser.select_list(:id, Regexp.new(id)).value = value
   end
@@ -101,6 +101,11 @@ Then /^(?:he|she|I) should see an error$/ do
     response.should have_flash
     response.flash.keys == [:error]
   end
+end
+
+Then /^(?:he|she|I) should not see any? errors?$/ do
+  page.should_not have_css('.flash_message.error')
+  page.should_not have_css('.errorExplanation')
 end
 
 Then /^(?:he|she|I) should see a flash error message ['"]([^'"]*)['"]$/ do |msg|

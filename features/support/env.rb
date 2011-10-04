@@ -311,7 +311,7 @@ EOS
 
   Selenium::WebDriver::Firefox::Profile.firebug_version = '1.8.1'
 
-  Capybara.app_host = "https://www.ssl.com:3000"
+  Capybara.app_host = "http://www.ssl.com:2000"
 
   def driver_selection
     if @driver[:name]==:firewatir

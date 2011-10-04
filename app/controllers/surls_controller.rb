@@ -45,9 +45,9 @@ class SurlsController < ApplicationController
     if !@surl.is_http? || !@surl.share
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
-    elsif @surl.require_ssl && !request.ssl?
-      @render_result=Surl::REDIRECTED
-      redirect_to @surl.full_link
+    #elsif @surl.require_ssl && !request.ssl?
+    #  @render_result=Surl::REDIRECTED
+    #  redirect_to @surl.full_link
     else
       if Malware.is_blacklisted?(@surl.original)
         @render_result=Surl::BLACKLISTED
@@ -56,6 +56,10 @@ class SurlsController < ApplicationController
         #retries = Surl::RETRIES
         begin
           timeout(Surl::TIMEOUT_DURATION) do
+            #don't have time to finish this but should'
+            #inner_html = render_to_string(partial: "banner", layout: false)
+            #render inline: open(@surl.original).read.sub(/(\<[^\/]*body[^\/]*?\>)/i, "\1#{inner_html}") #doc.to_html
+            ###################
             doc = Nokogiri::HTML(open(@surl.original))
             doc.encoding = 'UTF-8' if doc.encoding.blank?
             head = doc.at_css "head"

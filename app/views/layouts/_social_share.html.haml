@@ -3,6 +3,16 @@
     #twitter
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
       %script{:src => "https://platform.twitter.com/widgets.js", :type => "text/javascript"}
+    #google
+      /Place this tag where you want the +1 button to render
+      %g:plusone(size="medium")
+      /Place this render call where appropriate
+      :javascript
+        (function() {
+          var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+          po.src = 'https://apis.google.com/js/plusone.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
     #facebook
       %script{:src => "https://connect.facebook.net/en_US/all.js#xfbml=1"}
       %fb:like{:layout => "button_count", :show_faces => "false"}

@@ -13,10 +13,6 @@ module ContactsHelper
   end
 
   def render_contact_fields(c, role)
-    if c.object.new_record?
-      c.object.clear_roles
-      c.object.add_role(role)
-    end
     render '/contacts/certificate_contact', :f => c,
       :contact_role=>role
   end

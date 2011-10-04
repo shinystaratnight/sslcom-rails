@@ -53,7 +53,7 @@ class Certificate < ActiveRecord::Base
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
 
   COMODO_PRODUCT_MAPPINGS =
-      {"free"=> 43, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
+      {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
 
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
