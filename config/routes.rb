@@ -140,7 +140,7 @@ SslCom::Application.routes.draw do
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders',
     :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
-  #match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
+  match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
   match 'reseller' => 'site#reseller', :as => :reseller,
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}
   match 'browser_compatibility' => 'site#compatibility', as: :browsers

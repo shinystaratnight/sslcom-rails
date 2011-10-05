@@ -126,7 +126,7 @@ a:hover {
 
 /* line 98, ../../../app/stylesheets/main.sass */
 #header.show_sales_number {
-  padding-bottom: 8px;
+  padding-bottom: 5px;
 }
 
 /* line 101, ../../../app/stylesheets/main.sass */
@@ -6751,7 +6751,7 @@ span#no_emails_accessible {
 #social_share {
   float: left;
   margin: 0px 4px 0px 2px;
-  padding: 0;
+  padding-top: 2px;
 }
 /* line 4958, ../../../app/stylesheets/main.sass */
 #sales_number_in_header #social_share {

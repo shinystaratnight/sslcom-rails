@@ -7,11 +7,17 @@ class SiteController < ApplicationController
   end
 
   def sitemap
-    headers['Content-Type'] = 'application/xml'
-    @items = Certificate.sitemap # sitemap is a named scope
-    last_item = @items.last
-    if stale?(:etag => last_item, :last_modified => last_item.updated_at.utc)
-      render action: 'sitemap.xml'
+    # we use online generators now so the dynamic code is kept for legacy purposes
+    #headers['Content-Type'] = 'application/xml'
+    #@items = Certificate.sitemap # sitemap is a named scope
+    #last_item = @items.last
+    #if stale?(:etag => last_item, :last_modified => last_item.updated_at.utc)
+    #  render action: 'sitemap.xml'
+    #end
+    if current_subdomain==Reseller::SUBDOMAIN
+      render action: 'reseller_sitemap.xml', content_type: 'application/xml', layout: false
+    else
+      render action: 'sitemap.xml', content_type: 'application/xml', layout: false
     end
   end
 end
