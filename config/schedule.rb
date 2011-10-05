@@ -18,6 +18,7 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
+
 job_type :bundle_exec,  "cd :path && bundle exec script/rails runner -e :environment ':task' :output"
 
 every 1.day, at: "12am" do

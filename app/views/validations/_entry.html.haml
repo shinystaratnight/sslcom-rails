@@ -104,8 +104,7 @@
                                           -name = vh.document_file_name.shorten(20, false)
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
-                          -else
-                            =render partial: 'validations/dcv', locals: {co: co}
+                          =render partial: 'validations/dcv', locals: {co: co}
               .certificate_details_box
                 %ul
                   %li

@@ -30,7 +30,7 @@ development:
 <%else%>
   adapter: mysql
   #use when remote db source
-#  host: 75.101.161.230
+#  host: 174.129.27.189
 #  database: ssl_com_production
 #  else
   database: ssl_com_development
