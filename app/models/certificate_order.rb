@@ -396,10 +396,9 @@ class CertificateOrder < ActiveRecord::Base
   def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
-        if csr.certificate_content.preferred_reprocessing? ||
-            !csr.ca_certificate_requests.select{|cr|cr.response=~/^errorCode=0/}.empty?
+        if csr.certificate_content.preferred_reprocessing? || csr.sent_success
           options.merge!(
-            'orderNumber' => last_sent.email_address,
+            'orderNumber' => external_order_number,
             'test' => Rails.env =~ /production/i ? "N" : 'Y',
             'csr' => CGI::escape(csr.body),
             'prioritiseCSRValues' => 'N',
@@ -456,6 +455,11 @@ class CertificateOrder < ActiveRecord::Base
 
   def csr_ca_api_requests
     certificate_contents.map(&:csr).flatten.map(&:ca_certificate_requests)
+  end
+
+
+  def external_order_number
+    csr.sent_success.order_number if csr && csr.sent_success
   end
 
   private

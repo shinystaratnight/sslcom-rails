@@ -161,5 +161,7 @@ class Csr < ActiveRecord::Base
     end
   end
 
-
+  def sent_success
+    ca_certificate_requests.all.find{|cr|cr.response=~/^errorCode=0/}
+  end
 end

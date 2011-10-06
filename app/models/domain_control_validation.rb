@@ -33,6 +33,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   def send_to(address)
     update_attributes email_address: address, sent_at: DateTime.now
+    ComodoApi.resend_dcv(self) if csr.sent_success
   end
 
   def is_eligible_to_send?

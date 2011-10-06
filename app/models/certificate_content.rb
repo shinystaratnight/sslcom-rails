@@ -69,7 +69,7 @@ class CertificateContent < ActiveRecord::Base
     state :contacts_provided do
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do
-        certificate_order.apply_for_certificate if csr.ca_certificate_requests.blank?
+        certificate_order.apply_for_certificate unless csr.sent_success
       end
       event :cancel, :transitions_to => :canceled
     end
