@@ -408,12 +408,13 @@ class CertificateOrder < ActiveRecord::Base
           'foreignOrderNumber' => ref
         )
         last_sent = csr.domain_control_validations.last_sent
-        unless certificate.comodo_product_id==43 #trial cert
+        #43 is the old comodo 30 day trial
+        unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
           options.merge!('days' => certificate_content.duration.to_s)
         end
         if last_sent.try "is_eligible_to_send?"
           options.merge!('dcvEmailAddress' => last_sent.email_address)
-          last_sent.send!
+          last_sent.send_dcv!
         end
         fill_csr_fields options, certificate_content.registrant
         unless csr.csr_override.blank?

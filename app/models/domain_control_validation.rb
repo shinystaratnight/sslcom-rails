@@ -10,11 +10,11 @@ class DomainControlValidation < ActiveRecord::Base
   include Workflow
   workflow do
     state :new do
-      event :send, :transitions_to => :sent
+      event :send_dcv, :transitions_to => :sent_dcv
       event :satisfy, :transitions_to => :satisfied
     end
 
-    state :sent do
+    state :sent_dcv do
       event :satisfy, :transitions_to => :satisfied
 
       on_entry do

@@ -7,12 +7,12 @@
         Build Customer Trust With SSL.com Certificates
       %h2
         Get started with a
-        =link_to "Free SSL.com certificate and Smart SeaL", certificate_url('free')
+        =link_to "Free SSL.com certificate and Smart SeaL", certificate_url('free', subdomain: false)
         today!
         -#Gain the competitive edge by displaying your SSL Smart SeaL
       .leftcolb
         .go_green_with_ev_image_container
-          =link_to image_tag("go_green_with_ev_ssl.jpg"), certificate_url('ev')
+          =link_to image_tag("go_green_with_ev_ssl.jpg"), certificate_url('ev', subdomain: false)
         .sample_site_seal_container
           %p
             Secured seal powered with Smart SeaL Artifacts technology
@@ -25,7 +25,7 @@
             report
           %li
             Enables the
-            =link_to "green address bar with ev ssl", certificate_url(:id=>'ev')
+            =link_to "green address bar with ev ssl", certificate_url(:id=>'ev', subdomain: false)
           %li
             Around-the-clock customer support
           %li
