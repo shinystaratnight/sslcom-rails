@@ -64,10 +64,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.sass" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="0" selection-start="2059" selection-end="2059" vertical-scroll-proportion="0.6232877">
+            <state line="78" column="72" selection-start="1874" selection-end="1874" vertical-scroll-proportion="-1.0357143">
               <folding />
             </state>
           </provider>
@@ -100,10 +100,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_social_share.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_social_share.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_social_share.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="12" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0">
+            <state line="1" column="6" selection-start="20" selection-end="20" vertical-scroll-proportion="0.05105105">
               <folding />
             </state>
           </provider>
@@ -193,8 +193,8 @@
         <option value="$PROJECT_DIR$/config/environments/development.rb" />
         <option value="$PROJECT_DIR$/config/environments/test.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/pki.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_social_share.html.haml" />
       </list>
     </option>
   </component>
@@ -1526,16 +1526,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_social_share.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="12" selection-start="26" selection-end="26" vertical-scroll-proportion="0.0">
+        <state line="78" column="72" selection-start="1874" selection-end="1874" vertical-scroll-proportion="-1.0357143">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_social_share.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="0" selection-start="2059" selection-end="2059" vertical-scroll-proportion="0.6232877">
+        <state line="1" column="6" selection-start="20" selection-end="20" vertical-scroll-proportion="0.05105105">
           <folding />
         </state>
       </provider>
