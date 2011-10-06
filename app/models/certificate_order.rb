@@ -396,7 +396,8 @@ class CertificateOrder < ActiveRecord::Base
   def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
-        if csr.certificate_content.preferred_reprocessing?
+        if csr.certificate_content.preferred_reprocessing? ||
+            !csr.ca_certificate_requests.select{|cr|cr.response=~/^errorCode=0/}.empty?
           options.merge!(
             'orderNumber' => last_sent.email_address,
             'test' => Rails.env =~ /production/i ? "N" : 'Y',

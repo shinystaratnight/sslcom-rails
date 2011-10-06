@@ -9,6 +9,7 @@ class ComodoApi
 
   REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
+  RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
 
   def self.apply_for_certificate(certificate_order)
     options = certificate_order.options_for_ca.

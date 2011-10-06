@@ -75,7 +75,6 @@ HTML_TEXT_FIELD_SIZE = 20
 AMOUNT_FIELD_SIZE = 10
 ADDRESS_FIELD_SIZE = 30
 SERVER_SIDE_CART = false
-MIGRATING_FROM_LEGACY = true
 SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
   downcase=='postgresql' ? 'ilike' : 'like'
 
