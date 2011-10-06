@@ -7,10 +7,13 @@ class ComodoApi
       'loginName' => Settings.comodo_api_username,
       'loginPassword' => Settings.comodo_api_password}
 
+  REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
+  APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
+
   def self.apply_for_certificate(certificate_order)
     options = certificate_order.options_for_ca.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    host = "https://secure.comodo.net/products/!AutoApplySSL"
+    host = APPLY_SSL_URL
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER

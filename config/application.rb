@@ -50,7 +50,7 @@ module SslCom
       g.fixture_replacement :machinist
     end
 
-    #config.middleware.use "ForceSSL"
+    config.middleware.use "ForceSSL"
   end
 end
 
