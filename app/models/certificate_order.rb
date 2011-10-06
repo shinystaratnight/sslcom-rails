@@ -396,45 +396,58 @@ class CertificateOrder < ActiveRecord::Base
   def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
-        options.merge!(
-          'test' => Rails.env =~ /production/i ? "N" : 'Y',
-          'product' => certificate.comodo_product_id.to_s,
-          'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
-          'csr' => CGI::escape(csr.body),
-          'prioritiseCSRValues' => 'N',
-          'isCustomerValidated' => 'Y',
-          'responseFormat' => 1,
-          'showCertificateID' => 'N',
-          'foreignOrderNumber' => ref
-        )
-        last_sent = csr.domain_control_validations.last_sent
-        #43 is the old comodo 30 day trial
-        unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
-          options.merge!('days' => certificate_content.duration.to_s)
-        end
-        if last_sent.try "is_eligible_to_send?"
-          options.merge!('dcvEmailAddress' => last_sent.email_address)
-          last_sent.send_dcv!
-        end
-        fill_csr_fields options, certificate_content.registrant
-        unless csr.csr_override.blank?
-          fill_csr_fields options, csr.csr_override
-        end
-        if certificate.is_wildcard?
-          options.merge!('servers' => server_licenses.to_s || '1')
-        end
-        if certificate.is_ev?
-          certificate_content.tap do |cc|
-            options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
-            options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
-            options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
-          end
-        end
-        if certificate.is_ucc?
+        if csr.certificate_content.preferred_reprocessing?
           options.merge!(
-            'domainNames'=>certificate_content.domains.join(","),
-            'primaryDomainName'=>certificate_content.domains.join(",")
+            'orderNumber' => last_sent.email_address,
+            'test' => Rails.env =~ /production/i ? "N" : 'Y',
+            'csr' => CGI::escape(csr.body),
+            'prioritiseCSRValues' => 'N',
+            'isCustomerValidated' => 'Y',
+            'responseFormat' => 1,
+            'showCertificateID' => 'N',
+            'foreignOrderNumber' => ref
           )
+        else
+          options.merge!(
+            'test' => Rails.env =~ /production/i ? "N" : 'Y',
+            'product' => certificate.comodo_product_id.to_s,
+            'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
+            'csr' => CGI::escape(csr.body),
+            'prioritiseCSRValues' => 'N',
+            'isCustomerValidated' => 'Y',
+            'responseFormat' => 1,
+            'showCertificateID' => 'N',
+            'foreignOrderNumber' => ref
+          )
+          last_sent = csr.domain_control_validations.last_sent
+          #43 is the old comodo 30 day trial
+          unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
+            options.merge!('days' => certificate_content.duration.to_s)
+          end
+          if last_sent.try "is_eligible_to_send?"
+            options.merge!('dcvEmailAddress' => last_sent.email_address)
+            last_sent.send_dcv!
+          end
+          fill_csr_fields options, certificate_content.registrant
+          unless csr.csr_override.blank?
+            fill_csr_fields options, csr.csr_override
+          end
+          if certificate.is_wildcard?
+            options.merge!('servers' => server_licenses.to_s || '1')
+          end
+          if certificate.is_ev?
+            certificate_content.tap do |cc|
+              options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
+              options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
+              options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
+            end
+          end
+          if certificate.is_ucc?
+            options.merge!(
+              'domainNames'=>certificate_content.domains.join(","),
+              'primaryDomainName'=>certificate_content.domains.join(",")
+            )
+          end
         end
       end
     end

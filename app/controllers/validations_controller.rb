@@ -218,12 +218,7 @@ class ValidationsController < ApplicationController
   end
 
   def send_to_ca
-    co = CertificateOrder.find_by_ref(params[:certificate_order_id])
-    if co.preferred_reprocessing? || xc
-      result = CertificateOrder.find_by_ref(params[:certificate_order_id]).reapply_for_certificate
-    else
-      result = CertificateOrder.find_by_ref(params[:certificate_order_id]).apply_for_certificate
-    end
+    result = CertificateOrder.find_by_ref(params[:certificate_order_id]).apply_for_certificate
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}
