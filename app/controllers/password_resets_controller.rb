@@ -50,7 +50,7 @@ class PasswordResetsController < ApplicationController
 
   private
   def load_user_using_perishable_token
-    @user = User.find_using_perishable_token(params[:id])
+    @user = User.find_by_perishable_token(params[:id])
     unless @user
       flash[:notice] = <<-EOS
         We're sorry, but we could not locate your account.

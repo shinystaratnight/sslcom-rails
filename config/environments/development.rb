@@ -25,6 +25,7 @@ SslCom::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
 
   config.to_prepare do
     OrderTransaction.gateway =
@@ -35,7 +36,7 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
-  config.log_level = :info
+  #config.log_level = :info
 
   GATEWAY_TEST_CODE=1.0
   # END ActiveMerchant configuration
