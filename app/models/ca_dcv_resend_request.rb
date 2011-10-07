@@ -1,0 +1,3 @@
+class CaDcvResendRequest < CaApiRequest
+
+end
