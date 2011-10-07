@@ -17,7 +17,7 @@
             %td.certificate_status=link_to current_user.ssl_account.certificate_orders.unused_credits.count, credits_certificate_orders_path
           %td.certificate_status#cart_items_qty=link_to cart_items_count, show_cart_orders_url
           %td
-    %span.logo=link_to "SSL", root_url
+    %span.logo=link_to "", root_url
 #content
   .containerp
     =render :partial=>"layouts/standard_menu"

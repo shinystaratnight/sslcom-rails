@@ -1,3 +1,6 @@
+require 'zip/zip'
+#require 'zip/zipfilesystem'
+
 class SignedCertificate < ActiveRecord::Base
 #  using_access_control
   serialize :organization_unit
@@ -99,27 +102,23 @@ class SignedCertificate < ActiveRecord::Base
 
   def create_signed_cert_zip_bundle
     co=csr.certificate_content.certificate_order
-    t = Tempfile.new(friendly_common_name+'.zip')
-    # Give the path of the temp file to the zip outputstream, it won't try to open it as an archive.
-    Zip::ZipOutputStream.open(t.path) do |zos|
+    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       co.certificate_chain_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
-        # Create a new entry with some arbitrary name
-        zos.put_next_entry(file_name)
-        # Add the contents of the file, don't read the stuff linewise if its binary, instead use direct IO
-        zos.print IO.read(file.path)
+        zos.get_output_stream(file_name.strip) {|f|f.puts file.readlines}
       end
-      zos.put_next_entry(friendly_common_name+'.crt')
-      zos.print body
+      zos.get_output_stream(friendly_common_name+'.crt'){|f|f.puts body}
     end
-    t
+    path
   end
 
   def send_processed_certificate
-    file = create_signed_cert_zip_bundle
+    zip_path = create_signed_cert_zip_bundle
     co=csr.certificate_content.certificate_order
+    co.site_seal.fully_activate! unless co.site_seal.fully_activated?
     co.processed_recipients.each do |c|
-      OrderNotifier.processed_certificate_order(c, co, file).deliver
+      OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
       OrderNotifier.site_seal_approve(c, co).deliver
     end
   end
@@ -177,7 +176,7 @@ class SignedCertificate < ActiveRecord::Base
   def enclose_with_tags(cert)
     unless cert =~ Regexp.new(BEGIN_TAG)
       cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
-      cert = BEGIN_TAG + "\n" + cert
+      cert = BEGIN_TAG + "\n" + cert.strip
     end
     unless cert =~ Regexp.new(END_TAG)
       cert.gsub!(/-+END CERTIFICATE-+/,"")

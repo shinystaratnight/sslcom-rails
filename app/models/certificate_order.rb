@@ -364,6 +364,10 @@ class CertificateOrder < ActiveRecord::Base
 #    end
 #  end
 
+  def certificate_chain_names_by_server
+
+  end
+
   def certificate_chain_names
     parse_certificate_chain.transpose[0]
   end

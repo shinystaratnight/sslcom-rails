@@ -28,7 +28,7 @@ class SignedCertificatesController < ApplicationController
     @signed_certificate.csr = Csr.find(params[:csr_id])
     respond_to do |format|
       if @signed_certificate.save
-        @signed_certificate.send_processed_certificate unless params[:notify_customer]
+        @signed_certificate.send_processed_certificate if params[:email_customer]
         co=@signed_certificate.csr.certificate_content.certificate_order
         format.html {
           flash[:notice] = 'Signed certificate was successfully created.'

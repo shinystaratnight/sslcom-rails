@@ -14,7 +14,7 @@
           -unless current_user.ssl_account.funded_account.blank?
             %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
           %td
-    %span.logo=link_to "SSL", root_url
+    %span.logo=link_to "", root_url
 #content
   .containerp
     #prog_nav_container
