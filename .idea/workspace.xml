@@ -12,12 +12,10 @@
     <bookmark url="file://$PROJECT_DIR$/app/models/csr.rb" line="163" mnemonic="9" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="402" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="71" mnemonic="6" />
-    <bookmark url="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" line="9" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -41,19 +39,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="signed_certificate.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="signed_certificate.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="32" column="55" selection-start="1111" selection-end="1111" vertical-scroll-proportion="0.5457876">
+            <state line="32" column="55" selection-start="1111" selection-end="1111" vertical-scroll-proportion="-5.321429">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="241" column="21" selection-start="10764" selection-end="10764" vertical-scroll-proportion="0.0">
+            <state line="155" column="0" selection-start="5412" selection-end="5412" vertical-scroll-proportion="0.60465115">
               <folding />
             </state>
           </provider>
@@ -62,7 +60,7 @@
       <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="105" selection-start="445" selection-end="445" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="349" selection-end="349" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -116,7 +114,7 @@
       <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="370" column="98" selection-start="11489" selection-end="11489" vertical-scroll-proportion="0.0">
+            <state line="168" column="86" selection-start="6294" selection-end="6294" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -187,9 +185,9 @@
         <option value="$PROJECT_DIR$/public/cert_bundles/ca_bundle.txt" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
         <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
       </list>
     </option>
   </component>
@@ -1515,13 +1513,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="370" column="98" selection-start="11489" selection-end="11489" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/plugins/preferences/README.rdoc">
       <provider selected="true" editor-type-id="text-editor">
         <state line="146" column="108" selection-start="4562" selection-end="4562" vertical-scroll-proportion="0.0">
@@ -1536,23 +1527,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="55" selection-start="1111" selection-end="1111" vertical-scroll-proportion="-5.321429">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="168" column="86" selection-start="6294" selection-end="6294" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="105" selection-start="445" selection-end="445" vertical-scroll-proportion="0.0">
+        <state line="9" column="0" selection-start="349" selection-end="349" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="241" column="21" selection-start="10764" selection-end="10764" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="32" column="55" selection-start="1111" selection-end="1111" vertical-scroll-proportion="0.5457876">
+        <state line="155" column="0" selection-start="5412" selection-end="5412" vertical-scroll-proportion="0.60465115">
           <folding />
         </state>
       </provider>
