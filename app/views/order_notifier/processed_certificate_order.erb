@@ -8,10 +8,10 @@ We strongly recommend that you follow the installation instructions at http://ww
 
 Attached to this email you should find a .zip file containing:
 
-<%@certificate_order.parse_certificate_chain.each do |cc|%>
+<%@certificate_order.bundled_cert_names.each do |cc|%>
     * <%=cc[1]%> - <%=cc[0]%>
 <%end%>
-    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
+    * Your Certificate (<%@certificate_order.file_type%>) - <%=@signed_certificate.friendly_common_name%><%@certificate_order.file_extension%>
 
 You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> for <%=@certificate_order.subject%> in text format at the bottom of this email.
 

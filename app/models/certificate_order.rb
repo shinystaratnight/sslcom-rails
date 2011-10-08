@@ -310,6 +310,45 @@ class CertificateOrder < ActiveRecord::Base
     preferred_payment_order=='prepaid'
   end
 
+  def server_software
+    certificate_content.server_software
+  end
+  alias :software :server_software
+
+  def is_open_ssl?
+    [3, 4].include? software.id
+  end
+
+  def is_iis?
+    [18, 19, 20].include? software.id
+  end
+
+  def file_extension
+    is_iis? ? '.cer' : '.crt'
+  end
+
+  def file_type
+    is_iis? ? 'PKCS#7' : 'X.509'
+  end
+
+  # depending on the server software type we will bundle different root and intermediate certs
+  # override is a target server software other than the default one for this order
+  def bundled_cert_names(override=nil)
+    if is_open_ssl?
+      #attach bundle
+      parse_certificate_chain.select do |c|
+        c[1]==(certificate.is_free? ? "Free SSL CA Bundle" : "High Assurance SSL CA Bundle")
+      end.map{|p|p[0]}
+    elsif is_iis?
+      #pkcs, so no need for bundle
+      []
+    else
+      parse_certificate_chain.select do |c|
+        ["Root CA Certificate", "Intermediate CA Certificate"].include? c[1]
+      end.map{|p|p[0]}
+    end
+  end
+
   def description_with_tier
     return description if certificate.reseller_tier.blank?
     description + " (Tier #{certificate.reseller_tier.label} Reseller)"
@@ -363,10 +402,6 @@ class CertificateOrder < ActiveRecord::Base
 #      addys.uniq!
 #    end
 #  end
-
-  def certificate_chain_names_by_server
-
-  end
 
   def certificate_chain_names
     parse_certificate_chain.transpose[0]

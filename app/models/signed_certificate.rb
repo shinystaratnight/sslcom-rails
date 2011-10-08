@@ -31,9 +31,9 @@ class SignedCertificate < ActiveRecord::Base
     unless Settings.csr_parser=="remote"
       begin
         parsed =  if certificate=~ /PKCS7/
-                    pkcs7=OpenSSL::PKCS7.new(self[:body]).certificates.first
+                    pkcs7=OpenSSL::PKCS7.new(self[:body])
                     self[:body]=pkcs7.to_s
-                    pkcs7
+                    pkcs7.certificates.first
                   else
                     OpenSSL::X509::Certificate.new(self[:body])
                   end
@@ -113,11 +113,11 @@ class SignedCertificate < ActiveRecord::Base
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      co.certificate_chain_names.each do |file_name|
+      co.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
         zos.get_output_stream(file_name.strip) {|f|f.puts file.readlines}
       end
-      zos.get_output_stream(friendly_common_name+'.crt'){|f|f.puts body}
+      zos.get_output_stream(friendly_common_name+co.file_extension){|f|f.puts body}
     end
     path
   end
