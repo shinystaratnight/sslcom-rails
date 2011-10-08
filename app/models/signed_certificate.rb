@@ -17,6 +17,8 @@ class SignedCertificate < ActiveRecord::Base
 
   BEGIN_TAG="-----BEGIN CERTIFICATE-----"
   END_TAG="-----END CERTIFICATE-----"
+  BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
+  END_PKCS7_TAG="-----END PKCS7-----"
 
   after_create do |s|
     s.csr.certificate_content.issue!
@@ -24,10 +26,11 @@ class SignedCertificate < ActiveRecord::Base
 
   def body=(certificate)
     return if certificate.blank?
-    self[:body] = certificate = enclose_with_tags(certificate.strip)
+    self[:body] = enclose_with_tags(certificate.strip)
     unless Settings.csr_parser=="remote"
       begin
-        parsed = OpenSSL::X509::Certificate.new certificate
+        parsed = certificate=~ /PKCS7/ ? OpenSSL::PKCS7.new(certificate).certificates.first :
+            OpenSSL::X509::Certificate.new(certificate)
       rescue Exception => ex
         logger.error ex
         errors.add :base, 'error: could not parse certificate'
@@ -174,14 +177,27 @@ class SignedCertificate < ActiveRecord::Base
   end
   
   def enclose_with_tags(cert)
-    unless cert =~ Regexp.new(BEGIN_TAG)
-      cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
-      cert = BEGIN_TAG + "\n" + cert.strip
-    end
-    unless cert =~ Regexp.new(END_TAG)
-      cert.gsub!(/-+END CERTIFICATE-+/,"")
-      cert = cert + "\n" unless cert=~/\n\Z$/
-      cert = cert + END_TAG + "\n"
+    if cert =~ /PKCS7/
+      # it's PKCS7
+      unless cert =~ Regexp.new(BEGIN_PKCS7_TAG)
+        cert.gsub!(/-+BEGIN PKCS7-+/,"")
+        cert = BEGIN_PKCS7_TAG + "\n" + cert.strip
+      end
+      unless cert =~ Regexp.new(END_PKCS7_TAG)
+        cert.gsub!(/-+END PKCS7-+/,"")
+        cert = cert + "\n" unless cert=~/\n\Z$/
+        cert = cert + END_PKCS7_TAG + "\n"
+      end
+    else
+      unless cert =~ Regexp.new(BEGIN_TAG)
+        cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
+        cert = BEGIN_TAG + "\n" + cert.strip
+      end
+      unless cert =~ Regexp.new(END_TAG)
+        cert.gsub!(/-+END CERTIFICATE-+/,"")
+        cert = cert + "\n" unless cert=~/\n\Z$/
+        cert = cert + END_TAG + "\n"
+      end
     end
     cert
   end  

@@ -7,6 +7,7 @@
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
 =order_progress_indicator(i, co.certificate) unless i.blank?
+=test
 =render :partial=>'quick_links'
 #certificate_orders
   %table(cellspacing="0")
