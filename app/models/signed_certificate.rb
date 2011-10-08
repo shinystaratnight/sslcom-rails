@@ -1,4 +1,5 @@
 require 'zip/zip'
+require 'openssl'
 #require 'zip/zipfilesystem'
 
 class SignedCertificate < ActiveRecord::Base
@@ -29,8 +30,13 @@ class SignedCertificate < ActiveRecord::Base
     self[:body] = enclose_with_tags(certificate.strip)
     unless Settings.csr_parser=="remote"
       begin
-        parsed = certificate=~ /PKCS7/ ? OpenSSL::PKCS7.new(certificate).certificates.first :
-            OpenSSL::X509::Certificate.new(certificate)
+        parsed =  if certificate=~ /PKCS7/
+                    pkcs7=OpenSSL::PKCS7.new(self[:body]).certificates.first
+                    self[:body]=pkcs7.to_s
+                    pkcs7
+                  else
+                    OpenSSL::X509::Certificate.new(self[:body])
+                  end
       rescue Exception => ex
         logger.error ex
         errors.add :base, 'error: could not parse certificate'
@@ -175,19 +181,16 @@ class SignedCertificate < ActiveRecord::Base
   def subject_to_array(subject)
     subject.split(/\/(?=\w+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
-  
+
+  #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
   def enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7
-      unless cert =~ Regexp.new(BEGIN_PKCS7_TAG)
-        cert.gsub!(/-+BEGIN PKCS7-+/,"")
-        cert = BEGIN_PKCS7_TAG + "\n" + cert.strip
-      end
-      unless cert =~ Regexp.new(END_PKCS7_TAG)
-        cert.gsub!(/-+END PKCS7-+/,"")
-        cert = cert + "\n" unless cert=~/\n\Z$/
-        cert = cert + END_PKCS7_TAG + "\n"
-      end
+      cert.gsub!(/-+BEGIN PKCS7-+/,"")
+      cert = BEGIN_TAG + "\n" + cert.strip
+      cert.gsub!(/-+END PKCS7-+/,"")
+      cert = cert + "\n" unless cert=~/\n\Z$/
+      cert = cert + END_TAG + "\n"
     else
       unless cert =~ Regexp.new(BEGIN_TAG)
         cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
