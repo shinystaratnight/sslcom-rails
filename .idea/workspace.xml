@@ -17,7 +17,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/surl.rb" afterPath="$PROJECT_DIR$/app/models/surl.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -76,19 +75,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surls_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="115" column="14" selection-start="3728" selection-end="3728" vertical-scroll-proportion="0.0">
+            <state line="13" column="49" selection-start="451" selection-end="451" vertical-scroll-proportion="0.5529412">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surl.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="543" column="24" selection-start="19852" selection-end="19852" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="surl.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="49" selection-start="136" selection-end="136" vertical-scroll-proportion="-4.28739">
+            <state line="7" column="49" selection-start="136" selection-end="136" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -116,15 +124,6 @@
         <entry file="file://$PROJECT_DIR$/public/cert_bundles/free_ssl_ca_bundle.txt">
           <provider selected="true" editor-type-id="text-editor">
             <state line="54" column="0" selection-start="3310" selection-end="3310" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="server_software.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/server_software.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="95" selection-start="142" selection-end="142" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -187,8 +186,8 @@
         <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
         <option value="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.erb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/surl.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
       </list>
     </option>
   </component>
@@ -1354,15 +1353,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="23" y="0" width="1258" height="776" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32561728" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33950618" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19658814" sideWeight="0.22067901" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33950618" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19658814" sideWeight="0.2191358" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19658814" sideWeight="0.42901236" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33796296" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19658814" sideWeight="0.42901236" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33796296" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.46450618" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29475307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1436,21 +1435,10 @@
           <url>file://$PROJECT_DIR$/app/controllers/contacts_controller.rb</url>
           <line>17</line>
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/surls_controller.rb</url>
-          <line>91</line>
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="0" selection-start="349" selection-end="349" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="153" column="97" selection-start="5405" selection-end="5405" vertical-scroll-proportion="0.0">
@@ -1542,16 +1530,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="115" column="14" selection-start="3728" selection-end="3728" vertical-scroll-proportion="0.0">
+        <state line="7" column="49" selection-start="136" selection-end="136" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="49" selection-start="136" selection-end="136" vertical-scroll-proportion="-4.28739">
+        <state line="543" column="24" selection-start="19852" selection-end="19852" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="49" selection-start="451" selection-end="451" vertical-scroll-proportion="0.5529412">
           <folding />
         </state>
       </provider>

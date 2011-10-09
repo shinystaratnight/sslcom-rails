@@ -13,7 +13,11 @@ class SurlsController < ApplicationController
   # GET /surls
   # GET /surls.xml
   def index
-    @surls=get_valid_surls
+    if current_user && current_user.is_admin?
+      @surls=Surl.all
+    else
+      @surls=get_valid_surls
+    end
     @surl=Surl.new
   end
 
