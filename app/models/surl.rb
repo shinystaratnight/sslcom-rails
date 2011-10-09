@@ -8,8 +8,8 @@ class Surl < ActiveRecord::Base
 
   validate  :url_format
   validates :guid, uniqueness: true, on: :create
-  validates :username, length: {within: 6..16}, presence: true, :if => :perform_username_validation?
-  validates :password, length: {within: 6..16}, presence: true, :if => :perform_password_validation?
+  validates :username, length: {within: 6..50}, presence: true, :if => :perform_username_validation?
+  validates :password, length: {within: 6..20}, presence: true, :if => :perform_password_validation?
 
   attr_accessor :password
   attr_accessor_with_default :set_access_restrictions, "0"

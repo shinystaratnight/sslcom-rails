@@ -113,7 +113,7 @@ class SurlsController < ApplicationController
   def create
     @surl = Surl.new(params[:surl])
     @surl.user=current_user unless current_user.blank?
-    @surl.save!
+    @surl.save
     if @surl.errors.blank?
       add_link_to_cookie(@surl.guid)
       @surl_row = render_to_string("_surl_row.html.haml", layout: false, locals: {surl: @surl})
