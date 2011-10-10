@@ -325,7 +325,7 @@ class CertificateOrder < ActiveRecord::Base
   alias :software :server_software
 
   def is_open_ssl?
-    [3, 4].include? software.id
+    [3, 4, 35].include? software.id
   end
 
   def is_iis?
@@ -345,26 +345,26 @@ class CertificateOrder < ActiveRecord::Base
   def bundled_cert_names(override=nil)
     if is_open_ssl?
       #attach bundle
-      COMODO_BUNDLES.select do |c|
+      Certificate::COMODO_BUNDLES.select do |k,v|
         if certificate.comodo_product_id==342
-          c[0]=="free_ssl_ca_bundle.txt"
+          k=="free_ssl_ca_bundle.txt"
         elsif certificate.comodo_product_id==43
-          c[0]=="trial_ssl_ca_bundle.txt"
+          k=="trial_ssl_ca_bundle.txt"
         else
-          c[0]=="ssl_ca_bundle.txt"
+          k=="ssl_ca_bundle.txt"
         end
-      end.map{|p|p[0]}
+      end.map{|k,v|k}
     elsif is_iis?
       #pkcs, so no need for bundle
       []
     else
-      COMODO_BUNDLES.select do |c|
+      Certificate::COMODO_BUNDLES.select do |k,v|
         if certificate.comodo_product_id==342
-          %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? c[0]
+          %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
         else
-          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? c[0]
-        end.map{|p|p[0]}
-      end
+          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+        end
+      end.map{|k,v|k}
     end
   end
 

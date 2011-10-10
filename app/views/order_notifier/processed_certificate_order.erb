@@ -9,7 +9,7 @@ We strongly recommend that you follow the installation instructions at http://ww
 Attached to this email you should find a .zip file containing:
 
 <%@certificate_order.bundled_cert_names.each do |cc|%>
-    * <%=cc%> - <%=COMODO_BUNDLES[cc]%>
+    * <%=cc%> - <%=Certificate::COMODO_BUNDLES[cc]%>
 <%end%>
     * Your Certificate (<%@certificate_order.file_type%>) - <%=@signed_certificate.friendly_common_name%><%@certificate_order.file_extension%>
 
