@@ -24,6 +24,7 @@ class SurlsController < ApplicationController
   def admin_index
     p = {:page => params[:page]}
     @surls=Surl.all.paginate(p)
+    render action: index
   end
 
   #POST /surl_login

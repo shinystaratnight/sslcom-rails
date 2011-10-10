@@ -7,12 +7,12 @@
         Build Customer Trust With SSL.com Certificates
       %h2
         Get started with a
-        =link_to "Free SSL.com certificate and Smart SeaL", certificate_url('free', subdomain: false)
+        =link_to "Free SSL.com certificate and Smart SeaL", certificate_path('free'), alt: "get a free ssl certificate", title: "click here for free ssl certificates"
         today!
         -#Gain the competitive edge by displaying your SSL Smart SeaL
       .leftcolb
         .go_green_with_ev_image_container
-          =link_to image_tag("go_green_with_ev_ssl.jpg"), certificate_url('ev', subdomain: false)
+          =link_to image_tag("go_green_with_ev_ssl.jpg", alt: "ev certificates for websites and Exchange server", title: "EV UCC and digital x.509 and pkcs#7 certificates"), certificate_path('ev'), title: "ssl.com provides trusted high strength ev certificates", alt: "go with ssl.com ev ssl"
         .sample_site_seal_container
           %p
             Secured seal powered with Smart SeaL Artifacts technology
@@ -21,32 +21,33 @@
         %ul.listd
           %li
             Comes with
-            =link_to "Smart SeaL Artifacts", details_site_seals_url
+            =link_to "Smart SeaL Artifacts", details_site_seals_url, title: "secure site seal and report"
             report
           %li
             Enables the
-            =link_to "green address bar with ev ssl", certificate_url(:id=>'ev', subdomain: false)
+            =link_to "green address bar with ev ssl", certificate_path(:id=>'ev'), alt: "green bar with extended validation ev ssl"
           %li
             Around-the-clock customer support
           %li
-            2048-bit ssl for super secure encryption
+            2048-bit strength for strongest encryption
           %li
-            Higher assurance means increased sales
-        =link_to image_tag("display_more_button.gif"), certificates_url
+            =link_to "Wildcard certificates",certificates_path(id: "wildcard"), alt: "wildcard certificates for sub domains", title: "wildcard certificates secure multiple subdomains"
+            for many subdomains
+        =link_to image_tag("display_more_button.gif", :alt => "view trusted free, ev, and wildcard digital certificates"), certificates_url
         %p
           No contracts to sign. No setup fees. No commitments.
         %div(style='text-align: center;')
-          =image_tag "compatible.gif"
+          =image_tag "compatible.gif", :alt => "no commitments to buy digital certificates"
 .holder
   .inner
     .sidebarhome
       %div(style='width: 287px')
         %h2.right_panel
           who uses ssl.com certificates?
-        =image_tag "customers.jpg"
+        =image_tag "customers.jpg", :alt => "ssl.com certificates are globally trusted"
     %ul.boxes
       %li
-        =image_tag "b_icon_t.gif", :alt => ""
+        =image_tag "b_icon_t.gif", :alt => "ssl pki for single domain and wildcard digital certificates"
         .text
           %h3
             Better tools mean better results.
@@ -55,28 +56,29 @@
             Leverage our complimentary suite of promotional tools to help
             drive sales and increase your bottomline.
       %li
-        =image_tag "b_icon_m.gif", :alt => ""
+        =image_tag "b_icon_m.gif", :alt => "ssl certificate reseller program"
         .text
           %h3
             Save money, increase profits.
           %p
             The
-            =link_to "SSL Reseller Program", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
+            =link_to "SSL Reseller Program", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN), :title => "restful api for ssl pki"
             allows you to start selling SSL
             certificates immediately with no contracts or commitments.
             Simply choose from multiple prepayment levels to achieve higher
             discounting.
       %li
-        =image_tag "b_icon_i.gif", :alt => ""
+        =image_tag "b_icon_i.gif", :alt => "wildcard ssl, ev ssl, and ucc ssl certificates"
         .text
           %h3
-            Seamless integration.
+            Trusted wildcard ssl certificates.
           %p
-            Our #{link_to "RESTful API", restful_api_url}
-            makes integration with your site seamless. Offer SSL certificates
-            and products as part of an integated offering through your own site.
+            Looking to secure multiple subdomains? Go with
+            =link_to "wildcard digital certificates", certificate_path(id: "wildcard"), alt: "ssl wildcard certificates", title: "ssl wildcard certificates secure multiple sub-domains with strong security"
+            for complete
+            coverage from the trusted name in certificate authorities - ssl.com
       %li
-        =image_tag "b_icon_d.gif", :alt => ""
+        =image_tag "b_icon_d.gif", :alt => "X509 and PKCS ssl certificate management"
         .text
           %h3
             Detailed reporting.
@@ -85,16 +87,16 @@
             With this tool, you can view details about your certificates,
             account balance, deposits, and much more.
       %li
-        =image_tag "b_icon_r.gif", :alt => ""
+        =image_tag "b_icon_r.gif", :alt => "increase trust with extended validation certificates"
         .text
           %h3
-            Retain customers longer.
+            Globally trusted EV SSL.
           %p
-            Take charge of the renewal process by controlling when and to whom
-            renewal notices are sent. You can even customize the renewal
-            notices to better suit your needs.
+            Increase customer trust and retention with globally ubiquitous extended validation certificates.
+            Ev ssl certificates have the most stringent validation requirements, and result in the highest
+            level of trust from your customers.
       %li
-        =image_tag "b_icon_s.gif", :alt => ""
+        =image_tag "b_icon_s.gif", :alt => "excellent customer support"
         .text
           %h3
             24-hour worldclass support.
