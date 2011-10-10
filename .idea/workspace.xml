@@ -16,10 +16,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_free.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_free.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/index.html.haml" afterPath="$PROJECT_DIR$/app/views/site/index.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/user_notifier/username_reminder.html.haml" afterPath="$PROJECT_DIR$/app/views/user_notifier/username_reminder.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -54,7 +51,7 @@
       <file leaf-file-name="index.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="76" column="176" selection-start="3647" selection-end="3647" vertical-scroll-proportion="0.30990416">
+            <state line="96" column="75" selection-start="4672" selection-end="4672" vertical-scroll-proportion="0.7827476">
               <folding />
             </state>
           </provider>
@@ -1603,7 +1600,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="76" column="176" selection-start="3647" selection-end="3647" vertical-scroll-proportion="0.30990416">
+        <state line="96" column="75" selection-start="4672" selection-end="4672" vertical-scroll-proportion="0.7827476">
           <folding />
         </state>
       </provider>
