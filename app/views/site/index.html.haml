@@ -7,7 +7,7 @@
         Build Customer Trust With SSL.com Certificates
       %h2
         Get started with a
-        =link_to "Free SSL.com certificate and Smart SeaL", certificate_path('free'), alt: "get a free ssl certificate", title: "click here for free ssl certificates"
+        =link_to "Free SSL.com certificate and Smart SeaL", certificate_path(id: 'free'), alt: "get a free ssl certificate", title: "click here for free ssl certificates"
         today!
         -#Gain the competitive edge by displaying your SSL Smart SeaL
       .leftcolb
@@ -31,7 +31,7 @@
           %li
             2048-bit strength for strongest encryption
           %li
-            =link_to "Wildcard certificates",certificates_path(id: "wildcard"), alt: "wildcard certificates for sub domains", title: "wildcard certificates secure multiple subdomains"
+            =link_to "Wildcard certificates", certificate_path(id: "wildcard"), alt: "wildcard certificates for sub domains", title: "wildcard certificates secure multiple subdomains"
             for many subdomains
         =link_to image_tag("display_more_button.gif", :alt => "view trusted free, ev, and wildcard digital certificates"), certificates_url
         %p
