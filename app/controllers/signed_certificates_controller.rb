@@ -30,6 +30,7 @@ class SignedCertificatesController < ApplicationController
       if @signed_certificate.save
         @signed_certificate.send_processed_certificate if params[:email_customer]
         co=@signed_certificate.csr.certificate_content.certificate_order
+        co.validation.approved! unless(co.validation.approved? || co.validation.approved_through_override?)
         format.html {
           flash[:notice] = 'Signed certificate was successfully created.'
           redirect_to(@signed_certificate.certificate_order) }

@@ -53,10 +53,24 @@ class ValidationRuling < ActiveRecord::Base
       event :validation_submitted, :transitions_to => :pending
       event :require_more, :transitions_to => :more_required
       event :pend, :transitions_to => :pending
+
+      on_entry do
+        vr=self.validation_rulable
+        if vr.is_a?(Validation) && !vr.approved? && vr.validation_rulings.all{|v|v.approved?}
+          vr.approve!
+        end
+      end
     end
 
     state :approved_through_override do
       event :unapprove, :transitions_to => :unapproved
+
+      on_entry do
+        vr=self.validation_rulable
+        if vr.is_a?(Validation) && !vr.approved? && vr.validation_rulings.all{|v|v.approved?}
+          vr.approve!
+        end
+      end
     end
 
     state :more_required do

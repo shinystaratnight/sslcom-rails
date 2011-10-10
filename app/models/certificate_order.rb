@@ -52,9 +52,9 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
-    #joins("INNER JOIN `certificate_contents` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` INNER JOIN `csrs` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` LEFT JOIN `signed_certificates` ON `signed_certificates`.`csr_id` = `csrs`.`id`")
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
+    cids=SignedCertificate.select(:csr_id).where(:common_name=~"%#{term}%").map(&:csr_id)
+    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR csrs.id IN (#{cids.join(",")}) OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}}.
       merge(options)
   }
 
@@ -325,7 +325,7 @@ class CertificateOrder < ActiveRecord::Base
   alias :software :server_software
 
   def is_open_ssl?
-    [3, 4, 35].include? software.id
+    [3, 4, 25, 35].include? software.id
   end
 
   def is_iis?
