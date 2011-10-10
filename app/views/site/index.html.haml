@@ -21,19 +21,19 @@
         %ul.listd
           %li
             Comes with
-            =link_to "Smart SeaL Artifacts", details_site_seals_url, title: "secure site seal and report"
+            =link_to "Smart SeaL Artifacts", details_site_seals_path, title: "secure site seal and report"
             report
           %li
             Enables the
-            =link_to "green address bar with ev ssl", certificate_path(:id=>'ev'), alt: "green bar with extended validation ev ssl"
+            =link_to "green address bar with ev ssl", certificate_path(:id=>'ev'), alt: "green bar with extended validation ev ssl", title: "get the green bar with extended validation certificates"
           %li
             Around-the-clock customer support
           %li
-            2048-bit strength for strongest encryption
+            Strongest encryption; 2048-bit strength
           %li
             =link_to "Wildcard certificates", certificate_path(id: "wildcard"), alt: "wildcard certificates for sub domains", title: "wildcard certificates secure multiple subdomains"
-            for many subdomains
-        =link_to image_tag("display_more_button.gif", :alt => "view trusted free, ev, and wildcard digital certificates"), certificates_url
+            for subdomains
+        =link_to image_tag("display_more_button.gif", :alt => "view trusted free, ev, and wildcard digital certificates"), certificates_path
         %p
           No contracts to sign. No setup fees. No commitments.
         %div(style='text-align: center;')

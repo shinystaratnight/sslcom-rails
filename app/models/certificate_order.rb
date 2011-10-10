@@ -44,8 +44,12 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
+    #joins({:certificate_contents=>{:csr=>:signed_certificates}}).
+    #    where({:csrs=>[:common_name.matches % "%#{term}%"]})
+    #{:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+    #  '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
+    {:conditions => ["csrs.id IN (select csr_id from signed_certificates where signed_certificates.common_name #{SQL_LIKE} ?) OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}}.
       merge(options)
   }
 
@@ -55,7 +59,7 @@ class CertificateOrder < ActiveRecord::Base
   scope :incomplete, where({is_expired: false} & (
     {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']}))
 
-  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation']})
+  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']})
 
   scope :has_csr, where({:workflow_state=>'paid'} &
     {:certificate_contents=>{:signing_request.ne=>""}})
@@ -333,6 +337,8 @@ class CertificateOrder < ActiveRecord::Base
 
   # depending on the server software type we will bundle different root and intermediate certs
   # override is a target server software other than the default one for this order
+
+  # use certificate.comodo_product_id == 342 #free
   def bundled_cert_names(override=nil)
     if is_open_ssl?
       #attach bundle

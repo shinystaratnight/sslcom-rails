@@ -55,6 +55,13 @@ class Certificate < ActiveRecord::Base
   COMODO_PRODUCT_MAPPINGS =
       {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
 
+  # file_name => description (as displayed in emails)
+  COMODO_BUNDLES = {"AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                    "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                    "ssl_ca_bundle.txt"=>"High Assurance SSL CA Bundle",
+                    "free_ssl_ca_bundle.txt"=>"Free SSL CA Bundle",
+                    "trial_ssl_ca_bundle.txt"=>"Trial SSL CA Bundle"}
+
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
   def self.map_to_legacy(description, mapping=nil)

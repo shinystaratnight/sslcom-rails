@@ -47,7 +47,8 @@ class SurlsController < ApplicationController
       @tmp_surl.errors[:base]<< "permission denied: invalid username and/or password" unless @tmp_surl.blank?
       render action: "restricted", layout: "only_scripts_and_css" and return
     end
-    if !@surl.is_http? || !@surl.share
+    if !@surl.is_http? || !@surl.share ||
+        (@surl.original=~Regexp.new("\\.(#{Surl::REDIRECT_FILES.join("|")})$", "i"))
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
     #elsif @surl.require_ssl && !request.ssl?
