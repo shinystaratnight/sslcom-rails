@@ -43,13 +43,18 @@ class CertificateOrder < ActiveRecord::Base
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
 
+  scope :search_signed_certificates, lambda {|term|
+    joins({:certificate_contents=>{:csr=>:signed_certificates}}).where({:certificate_contents=>{:csr=>{:signed_certificates=>[:common_name =~ "%#{term}%"]}}})
+  }
+
+  scope :search_csr, lambda {|term|
+    joins({:certificate_contents=>:csr}).where({:certificate_contents=>{:csr=>[:common_name =~ "%#{term}%"]}})
+  }
+
   scope :search_with_csr, lambda {|term, options|
-    #joins({:certificate_contents=>{:csr=>:signed_certificates}}).
-    #    where({:csrs=>[:common_name.matches % "%#{term}%"]})
-    #{:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-    #  '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
-    {:conditions => ["csrs.id IN (select csr_id from signed_certificates where signed_certificates.common_name #{SQL_LIKE} ?) OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}}.
+    #joins("INNER JOIN `certificate_contents` ON `certificate_contents`.`certificate_order_id` = `certificate_orders`.`id` INNER JOIN `csrs` ON `csrs`.`certificate_content_id` = `certificate_contents`.`id` LEFT JOIN `signed_certificates` ON `signed_certificates`.`csr_id` = `csrs`.`id`")
+    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR signed_certificates.common_name #{SQL_LIKE} ? OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>{:csr=>:signed_certificates}}}.
       merge(options)
   }
 
@@ -337,21 +342,29 @@ class CertificateOrder < ActiveRecord::Base
 
   # depending on the server software type we will bundle different root and intermediate certs
   # override is a target server software other than the default one for this order
-
-  # use certificate.comodo_product_id == 342 #free
   def bundled_cert_names(override=nil)
     if is_open_ssl?
       #attach bundle
-      parse_certificate_chain.select do |c|
-        c[1]==(certificate.is_free? ? "Free SSL CA Bundle" : "High Assurance SSL CA Bundle")
+      COMODO_BUNDLES.select do |c|
+        if certificate.comodo_product_id==342
+          c[0]=="free_ssl_ca_bundle.txt"
+        elsif certificate.comodo_product_id==43
+          c[0]=="trial_ssl_ca_bundle.txt"
+        else
+          c[0]=="ssl_ca_bundle.txt"
+        end
       end.map{|p|p[0]}
     elsif is_iis?
       #pkcs, so no need for bundle
       []
     else
-      parse_certificate_chain.select do |c|
-        ["Root CA Certificate", "Intermediate CA Certificate"].include? c[1]
-      end.map{|p|p[0]}
+      COMODO_BUNDLES.select do |c|
+        if certificate.comodo_product_id==342
+          %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? c[0]
+        else
+          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? c[0]
+        end.map{|p|p[0]}
+      end
     end
   end
 
