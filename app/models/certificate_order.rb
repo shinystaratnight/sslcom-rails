@@ -53,7 +53,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :search_with_csr, lambda {|term, options|
     cids=SignedCertificate.select(:csr_id).where(:common_name=~"%#{term}%").map(&:csr_id)
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? OR csrs.id IN (#{cids.join(",")}) OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+    {:conditions => ["csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}}.
       merge(options)
   }
