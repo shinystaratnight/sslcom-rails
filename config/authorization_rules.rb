@@ -81,7 +81,7 @@ authorization do
       [:create, :update]
     has_permission_on :surls, :to => [:create, :read]
     has_permission_on :certificates, :to => :read
-    has_permission_on :funded_accounts, :to => [:create, :create_free_ssl,
+    has_permission_on :funded_accounts, :to => [:create, :create_free_ssl, :create_multi_free_ssl,
                                                 :allocate_funds_for_order]
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
