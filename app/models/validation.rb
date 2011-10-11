@@ -16,6 +16,7 @@ class Validation < ActiveRecord::Base
       event :validation_submitted, :transitions_to => :pending
       event :approve_through_override, :transitions_to =>
         :approved_through_override
+      event :approve, transitions_to: :approved
     end
 
     state :pending do
