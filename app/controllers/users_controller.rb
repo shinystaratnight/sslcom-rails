@@ -142,12 +142,22 @@ class UsersController < ApplicationController
   def resend_activation
     if params[:login]
       @user = User.find_by_login params[:login]
-      if @user && !@user.active?
-        @user.deliver_activation_instructions!
-        flash[:notice] = "Please check your e-mail for your account activation
-          instructions!"
-        redirect_to root_path
+      if @user
+        if !@user.active?
+          @user.deliver_activation_instructions!
+          flash[:notice] = "Account activation instructions are on it's way - please check your e-mail for further instructions"
+        else
+          flash[:notice] = "Looks like user #{params[:login]} has already been activated"
+        end
+      else
+        if DuplicateV2User.find_by_login params[:login]
+          flash[:notice] = "Ooops, looks like user #{params[:login]} has been consolidated with another account.
+            Please contact support@ssl.com for more details"
+        else
+          flash[:notice] = "Ooops, looks like user #{params[:login]} doesn't exist in our system"
+        end
       end
+      redirect_to root_path
     end
   end
 
