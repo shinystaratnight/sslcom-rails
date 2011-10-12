@@ -156,10 +156,13 @@ class ValidationsController < ApplicationController
           flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}
             successfully saved."
         end
-        @certificate_order.certificate_content.pend_validation! if
-          @certificate_order.certificate_content.contacts_provided?
+        checkout={}
+        if @certificate_order.certificate_content.contacts_provided?
+          @certificate_order.certificate_content.pend_validation!
+          checkout={checkout: "true"}
+        end
         @validation_histories = @certificate_order.validation_histories
-        format.html { redirect_to certificate_order_path(@certificate_order, checkout: "true")}
+        format.html { redirect_to certificate_order_path(@certificate_order, checkout)}
         format.xml { render :xml => @release,
           :status => :created,
           :location => @release }

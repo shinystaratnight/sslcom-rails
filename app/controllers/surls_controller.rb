@@ -48,7 +48,7 @@ class SurlsController < ApplicationController
       render action: "restricted", layout: "only_scripts_and_css" and return
     end
     if !@surl.is_http? || !@surl.share ||
-        (@surl.original=~Regexp.new("\\.(#{Surl::REDIRECT_FILES.join("|")})$", "i"))
+        (@surl.original=~Regexp.new("\\.(#{Surl::REDIRECT_FILES.join("|")})$", "i")) || Settings.disable_links_banner
       @render_result=Surl::REDIRECTED
       redirect_to @surl.original
     #elsif @surl.require_ssl && !request.ssl?
