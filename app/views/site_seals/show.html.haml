@@ -24,3 +24,6 @@
       %td.validation_status_message(class="#{cs_class}")=cs
       %td.validation_status_message(class="#{ss_class}" colspan="3")=ss
     =render :partial=>"entry", :locals=>{:co=>co, :i=>1}
+.site_seal_docs_container
+  #stylized.default_form.clearfix
+    =render partial: "/validations/manage_docs", locals: {co: co}

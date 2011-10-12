@@ -1,0 +1,64 @@
+-vhs = co.validation.validation_histories
+-unless hide_documents?
+  #documents_upload_section
+    .subheading Documents #{"(optional)" if co.certificate.is_dv?}
+  -unless vhs.blank?
+    %p
+      =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', new_certificate_order_validation_url(co)
+    -unless other_party_request(co)
+      %p
+        The following validation documents have been uploaded for certificate
+        =link_to co.subject.downcase, certificate_orders_url
+      %p
+        Validation status for this order can be viewed by
+        =link_to 'clicking this link.', validations_url
+      #documents_list
+        -vhs.each do |vh|
+          #documents_entry.clearfix
+            %dl
+              %dd.img
+                =link_to image_tag(vh.document_url(:thumb)), vh.document_url(:preview), :class=>'img_preview', :rel=>'prettyPhoto'
+            .documents_list_notes
+              %div
+                .doc_attribute
+                  #{vh.document_file_name.shorten(25, false)}
+                .doc_attribute
+                  file size: #{number_to_human_size vh.document_file_size}
+                .doc_attribute
+                  created on:
+                  #{vh.created_at.strftime("%b %d, %Y")}
+                .doc_attribute
+                  modified on:
+                  #{vh.updated_at.strftime("%b %d, %Y")}
+                =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
+                =link_to image_tag('download.png', :class=>'blue_icon')+'download', vh.document_url
+            .public_settings
+              -form_for vh do |f|
+                .publish_to_smart_seal_box
+                  =f.check_box :publish_to_site_seal
+                  make publicly available through SSL Smart SeaL Report
+                .site_seal_radio_choices
+                  .radio_w_desc.clearfix
+                    =f.radio_button :preferred_viewing_method, "thumbnail"
+                    allow only first page preview
+                  .radio_w_desc.clearfix
+                    =f.radio_button :preferred_viewing_method, "download"
+                    allow full document download
+                -if current_user.is_admin?
+                  =f.check_box :publish_to_site_seal_approval
+                  %span(style="color: red")
+                    %em admin only:
+                    approve for publishing?
+              .site_seal_notes
+                %em
+                  notes to admin:
+                  -unless vh.notes.blank?
+                    (click below to edit)
+                %br
+                =#in_place_editor_field vh, :notes, {}, {:field_type => 'textarea', :textarea_rows => 8}
+  -else
+    %p
+      There are currently no documents uploaded.
+      =link_to 'Click here', new_certificate_order_validation_url(co)
+      to upload documents for validating this certificate order of
+      #{co.subject}.
