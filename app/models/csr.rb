@@ -112,6 +112,14 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def is_intranet?
+    CertificateContent.is_intranet?(common_name)
+  end
+
+  def is_tld?
+    CertificateContent.is_tld?(common_name)
+  end
+
   def top_level_domain
     if is_fqdn?
       common_name=~(/(?:.*?\.)(.+)/)

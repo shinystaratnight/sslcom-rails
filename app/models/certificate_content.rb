@@ -46,8 +46,6 @@ class CertificateContent < ActiveRecord::Base
     XN--S9BRJ9C XN--WGBH1C XN--WGBL6A XN--XKC2AL3HYE2A XN--XKC2DL3A5EE0H XN--YFRO4I67O XN--YGBI2AMMX
     XN--ZCKZAH XXX YE YT ZA ZM ZW)
 
-  #INTRANET_IP_REGEX = /^(127|192)\.\d{,3}\.\d{,3}\.\d{,3}$/
-
   INTRANET_IP_REGEX = /^(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})$/
 
   TLD_REGEX = Regexp.new("\\.(#{ICANN_TLDS.join("|")})$", "i")
@@ -175,11 +173,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    name=~TLD_REGEX
+    !!(name=~TLD_REGEX)
   end
 
   def self.is_intranet?(name)
-    name=~/\d{,3}\.\d{,3}\.\d{,3}\.\d{,3}/ ? name=~INTRANET_IP_REGEX : !is_tld?(name)
+    name=~/\d{,3}\.\d{,3}\.\d{,3}\.\d{,3}/ ? !!(name=~INTRANET_IP_REGEX) : !is_tld?(name)
   end
 
   private
