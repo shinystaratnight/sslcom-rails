@@ -69,7 +69,7 @@ module CertificateOrdersHelper
         when "pending_validation", "validated"
           'please wait'
         when "issued"
-          if certificate_content.expired?
+          if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
               link_to 'see renewal', certificate_order_path(certificate_order)
             else

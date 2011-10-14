@@ -162,6 +162,14 @@ class CertificateContent < ActiveRecord::Base
     csr.signed_certificate.expired? if csr.try(:signed_certificate)
   end
 
+
+  def expiring?
+    if csr.try(:signed_certificate)
+      ed=csr.signed_certificate.expiration_date
+      ed < Settings.expiring_threshold.days.from_now
+    end
+  end
+
   def comodo_server_software_id
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
   end

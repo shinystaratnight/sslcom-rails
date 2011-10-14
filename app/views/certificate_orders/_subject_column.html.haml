@@ -16,6 +16,9 @@
       =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
       \::
       =link_to "site seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
+      -unless co.certificate_content.expired?
+        \::
+        =link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
       -u=co.ssl_account.users.last
       -unless u.blank?
         -if permitted_to? :admin_manage, u
