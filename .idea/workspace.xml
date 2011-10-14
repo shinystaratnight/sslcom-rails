@@ -18,10 +18,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_content.rb" afterPath="$PROJECT_DIR$/app/models/certificate_content.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,10 +40,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="92" selection-start="2787" selection-end="2787" vertical-scroll-proportion="-6.678571">
+            <state line="266" column="6" selection-start="8791" selection-end="8791" vertical-scroll-proportion="0.331307">
               <folding />
             </state>
           </provider>
@@ -65,16 +61,16 @@
       <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="23" selection-start="262" selection-end="262" vertical-scroll-proportion="0.0">
+            <state line="42" column="23" selection-start="1436" selection-end="1436" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_subject_column.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_subject_column.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="13" selection-start="796" selection-end="796" vertical-scroll-proportion="0.42857143">
+            <state line="18" column="13" selection-start="796" selection-end="796" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -187,12 +183,12 @@
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/models/csr.rb" />
         <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
         <option value="$PROJECT_DIR$/config/settings.yml" />
         <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
       </list>
     </option>
   </component>
@@ -1599,20 +1595,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="92" selection-start="2787" selection-end="2787" vertical-scroll-proportion="-6.678571">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="23" selection-start="262" selection-end="262" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/settings.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="18" selection-start="959" selection-end="959" vertical-scroll-proportion="0.0">
@@ -1643,7 +1625,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="13" selection-start="796" selection-end="796" vertical-scroll-proportion="0.42857143">
+        <state line="18" column="13" selection-start="796" selection-end="796" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="42" column="23" selection-start="1436" selection-end="1436" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="266" column="6" selection-start="8791" selection-end="8791" vertical-scroll-proportion="0.331307">
           <folding />
         </state>
       </provider>
