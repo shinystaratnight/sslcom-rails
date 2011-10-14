@@ -1,13 +1,15 @@
 -single ||= false
 -co = certificate_order
 -cn = co.is_unused_credit? ? 'credit - '+co.certificate.description["certificate_type"]+' certificate' : co.certificate_content.csr.common_name
+-cn = "expired certificate" if co.is_expired_credit?
 .subject_column
   %a.common_name(title=cn)
     =cn.downcase.shorten(35, false)
   %span.expand_or_view_order
     -unless single
-      %a.expand expand
-      \::
+      -unless co.is_expired_credit?
+        %a.expand expand
+        \::
     -unless co.is_unused_credit?
       =link_to "certificate", certificate_order_url(co), :title=>"view order for "+cn
       \::
@@ -20,4 +22,5 @@
           \::
           =link_to "user", admin_show_user_path(u), :title=>"view user #{u.login}"
     -else
-      =link_to "finish processing", edit_certificate_order_url(co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'
+      -unless co.is_expired_credit?
+        =link_to "finish processing", edit_certificate_order_url(co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'

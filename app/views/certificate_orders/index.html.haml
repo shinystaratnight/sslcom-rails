@@ -28,7 +28,9 @@
       -next if !co.is_unused_credit? && cc.csr.blank?
       -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
       %tr
-        %td.dropdown=image_tag 'expand.png'
+        %td.dropdown
+          -unless co.is_expired_credit?
+            =image_tag 'expand.png'
         %td.name
           =render :partial=>'subject_column', :locals=>{:certificate_order=>co}
         %td.status_message(class="#{status_class(cc)}")

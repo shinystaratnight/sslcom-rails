@@ -164,6 +164,14 @@ class SignedCertificate < ActiveRecord::Base
     end.map{|f|f[1]}
   end
 
+  def is_intranet?
+    CertificateContent.is_intranet?(common_name)
+  end
+
+  def is_tld?
+    CertificateContent.is_tld?(common_name)
+  end
+
   private
 
   def proper_certificate?

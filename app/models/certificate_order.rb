@@ -69,7 +69,7 @@ class CertificateOrder < ActiveRecord::Base
   scope :has_csr, where({:workflow_state=>'paid'} &
     {:certificate_contents=>{:signing_request.ne=>""}})
 
-  scope :credits, where({:workflow_state=>'paid'} &
+  scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})
 
   #new certificate orders are the ones still in the shopping cart
@@ -264,6 +264,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.csr.signed_certificate.expiration_date
   end
 
+  def is_expired_credit?
+    is_expired? && certificate_content.new? && created_at < 6.months.ago
+  end
+
   def subject
     return unless certificate_content.try(:csr)
     csr = certificate_content.csr
@@ -317,6 +321,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def is_prepaid?
     preferred_payment_order=='prepaid'
+  end
+
+  def is_intranet?
+    certificate_content.csr.is_intranet? if certificate_content.try(:csr)
   end
 
   def server_software

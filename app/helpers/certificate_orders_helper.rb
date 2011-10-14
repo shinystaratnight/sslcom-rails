@@ -27,8 +27,8 @@ module CertificateOrdersHelper
       end
     end
     unless certificate_order.migrated_from_v2?
-      items << "SSL Secured Seal"
-      items << "SSL daily site monitoring"
+      items << "SSL.com Secured Seal"
+      items << "SSL.com daily site monitoring"
     end
     items
   end
@@ -48,7 +48,8 @@ module CertificateOrdersHelper
   def action(certificate_order)
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
-      link_to('submit csr', edit_certificate_order_path(certificate_order))
+      certificate_order.expired? ? "n/a" :
+          link_to('submit csr', edit_certificate_order_path(certificate_order))
     elsif certificate_order.expired?
       'n/a'
     else
@@ -88,8 +89,9 @@ module CertificateOrdersHelper
 
   def certificate_order_status(certificate_content=nil)
     return if certificate_content.blank?
+    co=certificate_content.certificate_order
     if certificate_content.new?
-      'waiting for csr'
+      co.is_expired? ? 'expired' : 'waiting for csr'
     elsif certificate_content.expired? ||
         certificate_content.certificate_order.expired?
       'expired'
