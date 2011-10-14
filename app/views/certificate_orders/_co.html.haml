@@ -14,5 +14,9 @@
       %td= co.certificate_duration
       %td= co.certificate.description["validation_level"]
       %td= co.ref
-      %td= (cn.blank? || cc.csr.signed_certificate.blank?)? 'pending' : cc.csr.signed_certificate.created_at.strftime("%b %d, %Y")
+      %td
+        -unless co.is_expired_credit?
+          =(cn.blank? || cc.csr.signed_certificate.blank?)? 'pending' : cc.csr.signed_certificate.created_at.strftime("%b %d, %Y")
+        -else
+          n/a
       %td= (cn.blank?)? 'n/a' : cc.csr.created_at.strftime("%b %d, %Y")
