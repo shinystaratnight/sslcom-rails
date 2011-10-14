@@ -78,13 +78,13 @@ class CertificateOrder < ActiveRecord::Base
     nn.includes(options[:include]) if options && options.has_key?(:include)
   }
 
-  scope :unused_credits, where({:workflow_state=>'paid'} &
+  scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
-  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} &
+  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
-  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} &
+  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
   FULL = 'full'
