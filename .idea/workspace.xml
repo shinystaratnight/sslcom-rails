@@ -17,9 +17,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/surl.rb" afterPath="$PROJECT_DIR$/app/models/surl.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -82,7 +79,7 @@
       <file leaf-file-name="surl.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="102" column="97" selection-start="3211" selection-end="3211" vertical-scroll-proportion="-0.7586207">
+            <state line="104" column="78" selection-start="3234" selection-end="3234" vertical-scroll-proportion="0.46708465">
               <folding />
             </state>
           </provider>
@@ -1626,7 +1623,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="97" selection-start="3211" selection-end="3211" vertical-scroll-proportion="-0.7586207">
+        <state line="104" column="78" selection-start="3234" selection-end="3234" vertical-scroll-proportion="0.46708465">
           <folding />
         </state>
       </provider>
