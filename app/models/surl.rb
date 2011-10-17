@@ -100,7 +100,7 @@ class Surl < ActiveRecord::Base
     unless [URI::HTTP, URI::HTTPS, URI::FTP].find {|url_type| URI.parse(original).kind_of?(url_type)}
       errors.add :original, "is an invalid url. Please be sure it begins with http://, https://, or ftp://"
     else
-      errors.add(:original, Surl::LOOP_ERROR) if URI.parse(original).host.downcase =~ /ssl.com/
+      errors.add(:original, Surl::LOOP_ERROR) if URI.parse(original).host.downcase =~ /^ssl.com\//
     end
   rescue Exception=>e
     logger.error("Error in Surl#url_format: #{e.message}")

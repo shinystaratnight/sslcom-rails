@@ -176,6 +176,8 @@ class CertificateOrder < ActiveRecord::Base
   def renewal_certificate
     if migrated_from_v2?
       Certificate.map_to_legacy(preferred_v2_product_description, 'renew')
+    elsif certificate.is_free?
+      Certificate.find_by_product "high_assurance"
     else
       certificate
     end
