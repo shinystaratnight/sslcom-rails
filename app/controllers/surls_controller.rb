@@ -174,7 +174,7 @@ class SurlsController < ApplicationController
   end
 
   def find_surl_by_identifier
-    @surl = Surl.find_by_identifier(params[:id])
+    @surl = Surl.first(:conditions => ['BINARY identifier = ?', params[:id]])
   end
 
 end
