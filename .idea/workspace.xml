@@ -17,10 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/surls/show.erb" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/surls/show.html.haml" afterPath="$PROJECT_DIR$/app/views/surls/show.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -61,10 +58,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surls_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="172" column="0" selection-start="5555" selection-end="5555" vertical-scroll-proportion="0.0">
+            <state line="103" column="26" selection-start="3724" selection-end="3724" vertical-scroll-proportion="0.36551723">
               <folding />
             </state>
           </provider>
@@ -97,10 +94,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="show.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/surls/show.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="12" selection-start="1264" selection-end="1264" vertical-scroll-proportion="0.35496184">
+            <state line="22" column="12" selection-start="1264" selection-end="1264" vertical-scroll-proportion="-3.3214285">
               <folding />
             </state>
           </provider>
@@ -181,8 +178,8 @@
         <option value="$PROJECT_DIR$/config/settings.yml" />
         <option value="$PROJECT_DIR$/app/views/surls/show.erb" />
         <option value="$PROJECT_DIR$/app/views/surls/_banner.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/surls/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
       </list>
     </option>
   </component>
@@ -1552,10 +1549,6 @@
           <url>file://$PROJECT_DIR$/app/controllers/contacts_controller.rb</url>
           <line>17</line>
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/surls_controller.rb</url>
-          <line>115</line>
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
@@ -1645,16 +1638,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/surls/show.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="172" column="0" selection-start="5555" selection-end="5555" vertical-scroll-proportion="0.0">
+        <state line="22" column="12" selection-start="1264" selection-end="1264" vertical-scroll-proportion="-3.3214285">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/surls/show.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="12" selection-start="1264" selection-end="1264" vertical-scroll-proportion="0.35496184">
+        <state line="103" column="26" selection-start="3724" selection-end="3724" vertical-scroll-proportion="0.36551723">
           <folding />
         </state>
       </provider>

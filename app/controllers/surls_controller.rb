@@ -9,7 +9,6 @@ class SurlsController < ApplicationController
   after_filter  :record_surl_visit, only: [:show]
   filter_access_to  :edit, :destroy, :update, attribute_check: true
   filter_access_to  :admin_index
-  layout false, only: [:show]
 
   # GET /surls
   # GET /surls.xml
@@ -102,6 +101,7 @@ class SurlsController < ApplicationController
       #    redirect_to @surl.original
       #  end
       #end
+      render action: "show", layout: false
     end
   end
 
