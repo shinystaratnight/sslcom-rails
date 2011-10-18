@@ -70,7 +70,7 @@ allow_reseller_validation: true
 sync_aid_li_and_cart: false
 browser_acceptance: "99.3%"
 notify_address: "support@ssl.com"
-disable_links_banner: true
+disable_links_banner: false
 
 from_email:
   orders: 'orders@ssl.com'

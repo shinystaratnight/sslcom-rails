@@ -9,6 +9,7 @@ class SurlsController < ApplicationController
   after_filter  :record_surl_visit, only: [:show]
   filter_access_to  :edit, :destroy, :update, attribute_check: true
   filter_access_to  :admin_index
+  layout false, only: [:show]
 
   # GET /surls
   # GET /surls.xml
@@ -58,48 +59,49 @@ class SurlsController < ApplicationController
       if Malware.is_blacklisted?(@surl.original)
         @render_result=Surl::BLACKLISTED
         render action: "blacklisted", layout: false
-      else
-        #retries = Surl::RETRIES
-        begin
-          timeout(Surl::TIMEOUT_DURATION) do
-            #don't have time to finish this but should'
-            #inner_html = render_to_string(partial: "banner", layout: false)
-            #render inline: open(@surl.original).read.sub(/(\<[^\/]*body[^\/]*?\>)/i, "\1#{inner_html}") #doc.to_html
-            ###################
-            doc = Nokogiri::HTML(open(@surl.original))
-            doc.encoding = 'UTF-8' if doc.encoding.blank?
-            head = doc.at_css "head"
-            base = Nokogiri::XML::Node.new "base", doc
-            base["href"]=@surl.original
-            body = doc.at_css "body"
-            div_position = Nokogiri::XML::Node.new('div', doc)
-            div_position["style"] = "position: relative;"
-            body.children.each do |child|
-              child.parent = div_position
-            end
-            body.add_child(div_position)
-            div = Nokogiri::XML::Node.new "div", doc
-            div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
-            div.inner_html = render_to_string(partial: "banner", layout: false)
-            body.children.first.before(div)
-            head.children.first.before(base)
-            render inline: doc.to_html
-          end
-        #rescue OpenURI::HTTPError
-        #  render status: 408
-        #rescue Timeout::Error
-        #  retries-=1
-        #  if retries < Surl::RETRIES
-        #    render status: 408
-        #  else
-        #    retry
-        #  end
-        rescue Exception=>e
-          logger.error("Error in SurlsController#show: #{e.message}")
-          @render_result=Surl::REDIRECTED
-          redirect_to @surl.original
-        end
       end
+      #else
+      #  #retries = Surl::RETRIES
+      #  begin
+      #    timeout(Surl::TIMEOUT_DURATION) do
+      #      #don't have time to finish this but should'
+      #      #inner_html = render_to_string(partial: "banner", layout: false)
+      #      #render inline: open(@surl.original).read.sub(/(\<[^\/]*body[^\/]*?\>)/i, "\1#{inner_html}") #doc.to_html
+      #      ###################
+      #      doc = Nokogiri::HTML(open(@surl.original))
+      #      doc.encoding = 'UTF-8' if doc.encoding.blank?
+      #      head = doc.at_css "head"
+      #      base = Nokogiri::XML::Node.new "base", doc
+      #      base["href"]=@surl.original
+      #      body = doc.at_css "body"
+      #      div_position = Nokogiri::XML::Node.new('div', doc)
+      #      div_position["style"] = "position: relative;"
+      #      body.children.each do |child|
+      #        child.parent = div_position
+      #      end
+      #      body.add_child(div_position)
+      #      div = Nokogiri::XML::Node.new "div", doc
+      #      div["style"] = "background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;"
+      #      div.inner_html = render_to_string(partial: "banner", layout: false)
+      #      body.children.first.before(div)
+      #      head.children.first.before(base)
+      #      render inline: doc.to_html
+      #    end
+      #  #rescue OpenURI::HTTPError
+      #  #  render status: 408
+      #  #rescue Timeout::Error
+      #  #  retries-=1
+      #  #  if retries < Surl::RETRIES
+      #  #    render status: 408
+      #  #  else
+      #  #    retry
+      #  #  end
+      #  rescue Exception=>e
+      #    logger.error("Error in SurlsController#show: #{e.message}")
+      #    @render_result=Surl::REDIRECTED
+      #    redirect_to @surl.original
+      #  end
+      #end
     end
   end
 
@@ -153,7 +155,7 @@ class SurlsController < ApplicationController
   # DELETE /surls/1.xml
   def destroy
     @surl.destroy
-    flash[:notice] = "Link #{@surl.full_link} has been deleted."
+    flash[:notice] = "Link #{@surl.full_link} has been deleted." if request.xhr?
 
     respond_to do |format|
       format.js   { render text: @surl.to_json }

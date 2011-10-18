@@ -2,6 +2,7 @@ authorization do
   role :sysadmin do
     includes :vetter
     has_permission_on :users, :to => :admin_manage
+    has_permission_on :surls, :to => :manage
   end
 
   role :vetter do
