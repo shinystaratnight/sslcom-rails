@@ -4,6 +4,6 @@ class CaApiRequest < ActiveRecord::Base
   default_scope order(:created_at.desc)
 
   def success?
-    not response=~/^errorCode=0/.blank?
+    !!(response=~/^errorCode=0/)
   end
 end
