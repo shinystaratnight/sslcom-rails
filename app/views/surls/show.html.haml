@@ -13,27 +13,26 @@
     %div(style="background:#BAD6B8;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:6px;padding:4px;text-align:left")
       %div(style="float: left;margin-right: 4px;")
         =link_to image_tag("sslscan.png"), "http://links.ssl.com"
-      %div(style="float: right; margin-left: 4px;")
-        %a(style="cursor:pointer;margin-bottom: 3px;font-size: 9px;text-decoration:underline;color:#00c;text-align: right;display: block" onclick="this.parentNode.parentNode.style.display = 'none';")
+      %div(style="float: right; margin-left: 4px;width:240px")
+        %a(style="cursor:pointer;margin-bottom: 12px;font-size: 9px;text-decoration:underline;color:#00c;text-align: right;display: block" onclick="this.parentNode.parentNode.style.display = 'none';")
           close x
         -if @surl.share
-          #twitter
+          #google(style="float:left")
+            /Place this tag where you want the +1 button to render
+            %g:plusone(size="medium")
+            /Place this render call where appropriate
+            :javascript
+              (function() {
+                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                po.src = 'https://apis.google.com/js/plusone.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+              })();
+          #facebook(style="float:left")
+            %script{:src => "https://connect.facebook.net/en_US/all.js#xfbml=1"}
+            %fb:like{:layout => "button_count", :show_faces => "false"}
+          #twitter(style="float:left")
             %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
             %script{:src => "https://platform.twitter.com/widgets.js", :type => "text/javascript"}
-          -#
-            #google
-              /Place this tag where you want the +1 button to render
-              %g:plusone(size="medium")
-              /Place this render call where appropriate
-              :javascript
-                (function() {
-                  var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-                  po.src = 'https://apis.google.com/js/plusone.js';
-                  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-                })();
-            #facebook
-              %script{:src => "https://connect.facebook.net/en_US/all.js#xfbml=1"}
-              %fb:like{:layout => "button_count", :show_faces => "false"}
       This shortened secure link (ssl) points to
       #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"} which
       was scanned for safe viewing on #{DateTime.now.strftime("%B %d, %Y")} by ssl.com security services.

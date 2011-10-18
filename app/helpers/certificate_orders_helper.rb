@@ -12,13 +12,12 @@ module CertificateOrdersHelper
               product_variant_item.is_domain?}
           quantity = soid.sum(&:quantity)
           unless certificate_order.certificate_contents.empty?
+            d=certificate_order.certificate_content.domains
+            domains = d.blank? ? "" : certificate_order.
+              certificate_content.domains.join(", ")
             if email_template
-              domains = certificate_order.
-                certificate_content.domains.join(", ")
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
             else
-              domains = certificate_order.
-                certificate_content.domains.join(", ")
               items << content_tag(:dt,pluralize(quantity, "domain")) +
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
