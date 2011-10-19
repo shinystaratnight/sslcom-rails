@@ -91,8 +91,9 @@ class CertificateOrder < ActiveRecord::Base
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
-  FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%w(Submit\ CSR Payment
-    Registrant Contacts Provide\ Verification Complete)}
+  VERIFICATION_STEP = 'Provide Verification'
+  FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%W(Submit\ CSR Payment
+    Registrant Contacts #{VERIFICATION_STEP} Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
   PREPAID_FULL_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
@@ -168,8 +169,15 @@ class CertificateOrder < ActiveRecord::Base
       preferred_v2_line_items.split('|').detect{|item|
         item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
     else
-      sub_order_items.map(&:product_variant_item).detect{|item|
-        item.is_duration?}.try(:description)
+      unless certificate.is_ucc?
+        sub_order_items.map(&:product_variant_item).detect{|item|item.is_duration?}.try(:description)
+      else
+        d=sub_order_items.map(&:product_variant_item).detect{|item|item.is_domain?}.try(:description)
+        unless d.blank?
+          d=~/(\d years?)/i
+          $1
+        end
+      end
     end
   end
 
@@ -223,6 +231,10 @@ class CertificateOrder < ActiveRecord::Base
     else
       prepaid_signup_process(cert)
     end
+  end
+
+  def skip_verification?
+    certificate.is_ucc? || (csr.is_intranet? if csr)
   end
 
   def prepaid_signup_process(cert=certificate)
@@ -492,7 +504,7 @@ class CertificateOrder < ActiveRecord::Base
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
             options.merge!('days' => certificate_content.duration.to_s)
           end
-          if last_sent.try "is_eligible_to_send?"
+          if !skip_verification? && last_sent.try("is_eligible_to_send?")
             options.merge!('dcvEmailAddress' => last_sent.email_address)
             last_sent.send_dcv!
           end
@@ -511,9 +523,10 @@ class CertificateOrder < ActiveRecord::Base
             end
           end
           if certificate.is_ucc?
+            domains=certificate_content.domains
             options.merge!(
-              'domainNames'=>certificate_content.domains.join(","),
-              'primaryDomainName'=>certificate_content.domains.join(",")
+              'domainNames'=>domains.blank? ? common_name : domains.join(",")#,
+              #'primaryDomainName'=>certificate_content.domains.join(",")
             )
           end
         end

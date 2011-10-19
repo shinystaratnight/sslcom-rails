@@ -35,10 +35,11 @@ class CertificateContentsController < ApplicationController
           @certificate_content.provide_contacts!
           format.html { redirect_to new_certificate_order_validation_url(
               @certificate_content.certificate_order) }
+        else
+          flash[:notice] = 'Contacts were successfully updated.'
+          format.html { redirect_to(@certificate_content.certificate_order) }
+          format.xml  { head :ok }
         end
-        flash[:notice] = 'Contacts were successfully updated.'
-        format.html { redirect_to(@certificate_content.certificate_order) }
-        format.xml  { head :ok }
       else
         format.html { render :file => "/contacts/index", :layout=> 'application'}
         format.xml  { render :xml =>
