@@ -481,9 +481,9 @@ class CertificateOrder < ActiveRecord::Base
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
         if csr.certificate_content.preferred_reprocessing? || csr.sent_success
+          #assume reprocess, will need to look at ucc more carefully
           options.merge!(
             'orderNumber' => external_order_number,
-            'test' => Rails.env =~ /production/i ? "N" : 'Y',
             'csr' => CGI::escape(csr.body),
             'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'Y',

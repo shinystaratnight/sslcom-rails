@@ -11,6 +11,7 @@
 #ValidationsController#upload
 #
 #order is sent to api in the pend_validation workflow transition in certificate_content
+#OrderNotifier views contain all the email sent to customer during order
 
 class CertificateOrdersController < ApplicationController
   layout 'application'
