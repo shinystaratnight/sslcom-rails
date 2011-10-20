@@ -1,14 +1,16 @@
-# ordering a certificate can be convoluted process because we wanted to maximize seo in the url and not
-# necessarily follow proper REST. the flow is as follows:
-# CertificatesController#buy
-# OrdersController#new
-# (or CertificateOrdersController#update_csr if unused credit)
-# OrdersController#create_multi_free_ssl or OrdersController#create_free_ssl
-# CertificateOrdersController#edit (goes to application info prompt) or OrdersController#edit or OrdersController#new
-# CertificateOrdersController#update (goes to provide contacts prompt)
-# CertificateContentsController#update if not express
-# ValidationsController#new (asks for validation dcv and docs)
-# ValidationsController#upload
+#ordering a certificate can be convoluted process because we wanted to maximize seo in the url and not
+#necessarily follow proper REST. the flow is as follows:
+#CertificatesController#buy
+#OrdersController#new
+#(or CertificateOrdersController#update_csr if unused credit)
+#OrdersController#create_multi_free_ssl or OrdersController#create_free_ssl
+#CertificateOrdersController#edit (goes to application info prompt) or OrdersController#edit or OrdersController#new
+#CertificateOrdersController#update (goes to provide contacts prompt)
+#CertificateContentsController#update if not express
+#ValidationsController#new (asks for validation dcv and docs if not intranet/ucc, otherwise completes order)
+#ValidationsController#upload
+#
+#order is sent to api in the pend_validation workflow transition in certificate_content
 
 class CertificateOrdersController < ApplicationController
   layout 'application'

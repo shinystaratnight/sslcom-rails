@@ -24,10 +24,8 @@ class ComodoApi
     res = con.start do |http|
       http.request_post(url.path, options)
     end
-    response=certificate_order.certificate_content.csr.ca_certificate_requests.create(request_url: host,
+    certificate_order.certificate_content.csr.ca_certificate_requests.create(request_url: host,
       parameters: options, method: "post", response: res.body, ca: "comodo")
-    certificate_order.certificate_content.pend_validation! if response.order_number
-    response
   end
 
   def self.domain_control_email_choices(csr_or_domain)

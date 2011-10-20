@@ -88,8 +88,10 @@ class CertificateContent < ActiveRecord::Base
 
     state :contacts_provided do
       event :issue, :transitions_to => :issued
-      event :pend_validation, :transitions_to => :pending_validation do
-        certificate_order.apply_for_certificate unless csr.sent_success
+      event :pend_validation, :transitions_to => :pending_validation do |send_to_ca=true|
+        if send_to_ca
+          certificate_order.apply_for_certificate unless csr.sent_success #do not send if already sent successfully
+        end
       end
       event :cancel, :transitions_to => :canceled
     end
@@ -220,6 +222,9 @@ class CertificateContent < ActiveRecord::Base
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength != MIN_KEY_SIZE
+      errors.add(:signing_request,
+        "Ooops, '#{csr.country}' is not a valid 2 lettered ISO-3166 country code") unless
+          Country.accepted_countries.include?(csr.country)
     end
   end
 
