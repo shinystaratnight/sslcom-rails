@@ -543,8 +543,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
 
+  #get the most recent order_number as the one
   def external_order_number
-    csr.sent_success.order_number if csr && csr.sent_success
+    certificate_contents.map(&:csr).map(&:sent_success).flatten.uniq.first.order_number if
+        certificate_contents.map(&:csr) && certificate_contents.map(&:csr).map(&:sent_success)
+    #csr.sent_success.order_number if csr && csr.sent_success
   end
 
   private
