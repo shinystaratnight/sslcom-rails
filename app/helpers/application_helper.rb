@@ -255,19 +255,20 @@ module ApplicationHelper
 
   def order_progress_indicator(page, certificate)
     co=@certificate_order
-    added_padding=1.65
+    sv=CertificateOrder.skip_verification? certificate
+    added_padding=1.54
     process = skip_payment? ?
       co.prepaid_signup_process(certificate) :
       co.signup_process(certificate)
     padding = case process
     when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
-      "padding: 0 #{1.95 + (co.skip_verification? ? added_padding : 0.0)}em"
+      "padding: 0 #{1.95 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::FULL_SIGNUP_PROCESS
-      "padding: 0 #{0.9 + (co.skip_verification? ? added_padding : 0.0)}em"
+      "padding: 0 #{0.9 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
-      "padding: 0 #{3.45 + (co.skip_verification? ? added_padding : 0.0)}em"
+      "padding: 0 #{3.45 + (sv ? added_padding : 0.0)}em"
     end
-    pages = co.skip_verification? ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
+    pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
     render(:partial => '/shared/form_progress_indicator',
       :locals => {:pages=>[pages, page],
         :options=>{:li_style=>padding}, certificate: certificate})

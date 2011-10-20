@@ -233,6 +233,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def self.skip_verification?(certificate)
+    certificate.is_ucc?
+  end
+
   def skip_verification?
     certificate.is_ucc? || (csr.is_intranet? if csr)
   end
