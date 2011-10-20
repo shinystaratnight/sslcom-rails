@@ -491,6 +491,11 @@ class CertificateOrder < ActiveRecord::Base
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref
           )
+          last_sent = csr.domain_control_validations.last_sent
+          if !skip_verification? && last_sent.try("is_eligible_to_send?")
+            options.merge!('dcvEmailAddress' => last_sent.email_address)
+            last_sent.send_dcv!
+          end
         else
           options.merge!(
             'test' => Rails.env =~ /production/i ? "N" : 'Y',
