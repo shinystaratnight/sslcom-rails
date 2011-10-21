@@ -99,6 +99,10 @@
                                 =link_to 'create/edit contacts', certificate_content_contacts_url(cc)
                       .certificate_details_box
                         %ul
+                          -unless co.is_unused_credit? || co.skip_verification?
+                            %li
+                              %strong validation of domain control
+                            =render partial: 'validations/dcv', locals: {co: co}
                           %li
                             %strong validation documentation
                           -if co.description['validation_level'] == 'Class 1'

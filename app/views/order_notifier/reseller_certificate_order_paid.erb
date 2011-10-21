@@ -15,5 +15,9 @@ Description:
 Order Amount: <%=@certificate_order.price.format%>
 
 Your SSL account has been debited <%=@certificate_order.price.format%>.
+<%if @certificate_order.certificate.is_ev?-%>
+
+<%=render(:partial=>"ev_reqs")%>
+<%end-%>
 
 <%=render(:partial=>"support_contact")%>
