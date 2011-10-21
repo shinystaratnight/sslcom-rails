@@ -124,7 +124,7 @@
                         %li
                           =link_to image_tag('preview.png', :class=>'blue_icon'), h.document_url(:preview), :rel=>'prettyPhoto'
                           =link_to image_tag('download.png', :class=>'blue_icon'), h.document_url
-                          %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20), edit_certificate_order_validation_url(co)
+                          %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20,false), edit_certificate_order_validation_url(co)
                           -unless current_user.is_admin? || h.satisfies_validation_methods.blank?
                             -methods=h.satisfies_validation_methods.split(", ")
                             %dl
