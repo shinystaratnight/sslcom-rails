@@ -15,6 +15,8 @@ class Certificate < ActiveRecord::Base
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200
 
+  FREE_CERTS_CART_LIMIT=5
+
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
     "SSL128TRIAL30 Trial SSL Certificate",

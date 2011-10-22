@@ -91,7 +91,9 @@
                                   \#{role}:
                                   -ct = cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
                                   -unless ct.blank?
-                                    =ct.first_name+" "+ct.last_name
+                                    %ul
+                                      %li #{ct.first_name} #{ct.last_name}
+                                      %li #{ct.email}
                                   -else
                                     none
                             -unless  cc.blank?

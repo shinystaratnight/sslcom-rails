@@ -114,10 +114,12 @@ class ApplicationController < ActionController::Base
     return @certificate_orders if certs.blank?
     certs.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
+      qty=c[ShoppingCart::QUANTITY].to_i > Certificate::FREE_CERTS_CART_LIMIT ?
+          Certificate::FREE_CERTS_CART_LIMIT : c[ShoppingCart::QUANTITY].to_i
       certificate_order = CertificateOrder.new(
         :server_licenses=>c[ShoppingCart::LICENSES],
         :duration=>c[ShoppingCart::DURATION],
-        :quantity=>c[ShoppingCart::QUANTITY].to_i)
+        :quantity=>qty)
       certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
       certificate_order.certificate_contents.build :domains=>
         c[ShoppingCart::DOMAINS]

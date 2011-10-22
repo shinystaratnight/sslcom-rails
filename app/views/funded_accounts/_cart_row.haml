@@ -14,7 +14,7 @@
       %span(id="qty_#{indx}")=cert_quantity
   -else
     %td.quantity(style='width: 9.5em;')
-      =select_tag "qty_#{indx}", options_for_select((1..100).to_a, cert.quantity)
+      =select_tag "qty_#{indx}", options_for_select((1..(cert.certificate.is_free? ? Certificate::FREE_CERTS_CART_LIMIT : 100)).to_a, cert.quantity)
       %span.remove_from_cart(id="remove_#{indx}") remove
   %td.center_align(id="price_#{indx}")= cert.price.format
   -cert_quantity ||= 1

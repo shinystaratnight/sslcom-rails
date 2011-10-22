@@ -18,6 +18,10 @@ Your SSL account has been debited <%=@certificate_order.price.format%>.
 <%if @certificate_order.certificate.is_ev?-%>
 
 <%=render(:partial=>"ev_reqs")%>
+<%elsif !@certificate_order.skip_verification?-%>
+
+The Domain Control Validation email for your SSL certificate has been sent to <%=@certificate_order.csr.domain_control_validations.last_sent%>.
+Please follow the intructions enclosed within the email to complete the Domain Control Validation phase of this ssl certificate order.
 <%end-%>
 
 <%=render(:partial=>"support_contact")%>
