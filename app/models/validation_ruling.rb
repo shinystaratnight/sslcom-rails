@@ -22,13 +22,15 @@ class ValidationRuling < ActiveRecord::Base
   WAITING_CLASS='validation_waiting'
   ATTENTION_CLASS='validation_attention'
 
-  NEW_STATUS = "validation documents have not been uploaded but may be required"
-  NEW_EV_STATUS = "validation documents have not been uploaded but are required"
-  MORE_REQUIRED_STATUS = "the current documentation is insufficient, please upload relevant documents"
-  PENDING_STATUS = "performing validations, you will be notified when completed"
-  PENDING_EXPRESS_STATUS = "reviewing organization validation, you will be notified when completed"
+  NEW_STATUS = "waiting on documents"
+  NEW_EV_STATUS = "validation documents required"
+  MORE_REQUIRED_STATUS = "additional documentation needed"
+  PENDING_STATUS = "performing validations"
+  PENDING_EXPRESS_STATUS = "reviewing organization validation"
   APPROVED_STATUS = "validation has been satisfied"
   UNAPPROVED_STATUS = "validation documents have been uploaded but did not meet minimum requirements"
+
+  DCV_WAIT_STATUS = "waiting on domain control response"
 
   EXPAND=". click for details"
 
@@ -46,6 +48,13 @@ class ValidationRuling < ActiveRecord::Base
       event :approve, :transitions_to => :approved
       event :unapprove, :transitions_to => :unapproved
       event :require_more, :transitions_to => :more_required
+
+      on_entry do
+        vr=self.validation_rulable
+        if vr.is_a?(Validation) && vr.approved?
+          vr.pend!
+        end
+      end
     end
 
     state :approved do

@@ -27,6 +27,7 @@ class Validation < ActiveRecord::Base
     state :approved do
       event :unapprove, :transitions_to => :unapproved
       event :validation_submitted, :transitions_to => :pending
+      event :pend, :transitions_to => :pending
 
       on_entry do
         self.validation_rulings.each {|v|v.approve! unless v.approved?}

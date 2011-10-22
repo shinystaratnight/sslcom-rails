@@ -1,21 +1,23 @@
 module ValidationsHelper
   def overall_status(validation_rulings)
     unless validation_rulings.empty?
+      dcv_wait=(!@cert_order.csr.blank? && @cert_order.csr.domain_control_validations.last_sent.try("satisfied?")) ? "" :
+          ", waiting for response to domain control validation email"
       if validation_rulings.detect(&:new?)
         unless @cert_order.is_express_signup?
-          [(@cert_order.certificate.is_ev? ? ValidationRuling::NEW_EV_STATUS : ValidationRuling::NEW_STATUS),
+          [(@cert_order.certificate.is_ev? ? ValidationRuling::NEW_EV_STATUS : ValidationRuling::NEW_STATUS)+dcv_wait,
            ValidationRuling::ATTENTION_CLASS]
         else
-          [ValidationRuling::PENDING_EXPRESS_STATUS, ValidationRuling::WAITING_CLASS]
+          [ValidationRuling::PENDING_EXPRESS_STATUS+dcv_wait, ValidationRuling::WAITING_CLASS]
         end
       elsif validation_rulings.detect(&:more_required?)
-        [ValidationRuling::MORE_REQUIRED_STATUS, ValidationRuling::ATTENTION_CLASS]
+        [ValidationRuling::MORE_REQUIRED_STATUS+dcv_wait, ValidationRuling::ATTENTION_CLASS]
       elsif validation_rulings.detect(&:pending?)
-        [ValidationRuling::PENDING_STATUS, ValidationRuling::WAITING_CLASS]
+        [ValidationRuling::PENDING_STATUS+dcv_wait, ValidationRuling::WAITING_CLASS]
       elsif validation_rulings.detect(&:unapproved?)
-        [ValidationRuling::UNAPPROVED_STATUS, ValidationRuling::ATTENTION_CLASS]
+        [ValidationRuling::UNAPPROVED_STATUS+dcv_wait, ValidationRuling::ATTENTION_CLASS]
       elsif validation_rulings.all?(&:approved?)
-        [ValidationRuling::APPROVED_STATUS, ValidationRuling::APPROVED_CLASS]
+        [ValidationRuling::APPROVED_STATUS+dcv_wait, ValidationRuling::APPROVED_CLASS]
       else
         ['','']
       end

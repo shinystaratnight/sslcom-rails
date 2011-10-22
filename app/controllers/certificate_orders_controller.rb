@@ -106,6 +106,12 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
       @certificate_content = @certificate_order.certificate_contents.build
+      #reset dcv validation
+      @certificate_order.validation.validation_rules.each do |vr|
+        if vr.description=~/^domain/
+          @certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}.pend!
+        end
+      end
       return render '/certificates/buy', :layout=>'application'
     else
       not_found
