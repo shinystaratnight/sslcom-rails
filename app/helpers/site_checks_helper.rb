@@ -1,0 +1,2 @@
+module SiteChecksHelper
+end

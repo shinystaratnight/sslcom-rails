@@ -13,10 +13,11 @@ class SurlsController < ApplicationController
   # GET /surls
   # GET /surls.xml
   def index
+    p = {:page => params[:page]}
     if current_user && current_user.is_admin?
-      @surls=Surl.all
+      @surls=Surl.paginate(p)
     else
-      @surls=get_valid_surls
+      @surls=get_valid_surls(p)
     end
     @surl=Surl.new
   end
@@ -176,5 +177,4 @@ class SurlsController < ApplicationController
   def find_surl_by_identifier
     @surl = Surl.first(:conditions => ['BINARY identifier = ?', params[:id]])
   end
-
 end

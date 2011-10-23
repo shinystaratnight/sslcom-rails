@@ -355,8 +355,10 @@ class ApplicationController < ActionController::Base
   #Saves a cookie using a hash
   # <tt>options</tt> - Contains keys name, value (a hash), path, and expires
   def save_cookie(options)
-    cookies[options[:name]] = {:value=>JSON.generate(options[:value]), :path => options[:path],
+    c={:value=>JSON.generate(options[:value]), :path => options[:path],
       :expires => options[:expires]}
+    c.merge!(:domain=>options[:domain]) if options[:domain]
+    cookies[options[:name]] = c
   end
 
   def get_cookie(name)
@@ -514,7 +516,7 @@ class ApplicationController < ActionController::Base
   def add_link_to_cookie(guid)
     guids=get_guids
     guids << guid.to_s
-    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+    save_links_cookie({guid: guids.compact.join(","), v: Surl::COOKIE_VERSION})
   end
 
   def remove_link_from_cookie(guid)
@@ -522,29 +524,43 @@ class ApplicationController < ActionController::Base
     unless guids.blank? || guids.include?(guid)
       guids.delete guid
     end
-    save_cookie name: :links, value: {guid: guids.compact.join(",")}, path: "/", expires: 2.years.from_now
+    save_links_cookie({guid: guids.compact.join(","), v: Surl::COOKIE_VERSION})
   end
 
-  def get_valid_surls
-    guids=get_guids
-    unless guids.blank?
-      guids.map do |g|
-        surl=Surl.find_by_guid(g)
-        if surl.blank? || surl.status==Surl::REMOVE
-          remove_link_from_cookie(g)
-          nil
-        else
-          surl
-        end
-      end.compact
-    else
-      guids
+  def get_valid_surls(page=nil)
+    requested=get_guids
+    guids=page.blank? ? Surl.where(:guid + requested) :
+        Surl.where(:guid + requested).paginate(page)
+    unless guids.empty?
+      (requested - guids.map(&:guid)).map do |g|
+        remove_link_from_cookie(g)
+      end
+      guids.select{|surl|surl.status==Surl::REMOVE}.each do |g|
+        remove_link_from_cookie(g)
+      end
     end
+    guids
   end
 
   def get_guids
-    links=get_cookie("links")
+    upgrade_cookie
+    links=get_cookie("links2")
     guids=links.blank? ? [] : links["guid"].split(",")
+  end
+
+  #renaming cookie from links to links2
+  def upgrade_cookie
+    links=get_cookie(:links)
+    unless links.blank?
+      guids = links['guid']
+      cookies.delete(:links)# if request.subdomains.last=="links"
+      save_links_cookie({guid: guids, v: Surl::COOKIE_VERSION})
+    end
+  end
+
+  def save_links_cookie(value)
+    save_cookie name: Surl::COOKIE_NAME, value: value, path: "/",
+                expires: 2.years.from_now, domain: ".ssl.com"
   end
 
   def record_surl_visit
@@ -559,7 +575,9 @@ class ApplicationController < ActionController::Base
 
   def assign_ssl_links(user)
     get_valid_surls.each do |surl|
-      user.surls<<surl if surl.user.blank?
+      if surl.user.blank?
+        user.surls<<surl
+      end
     end
   end
 

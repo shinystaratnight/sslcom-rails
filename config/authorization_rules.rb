@@ -63,7 +63,7 @@ authorization do
       if_attribute :id => is {user.id}
     end
     has_permission_on :surls, :to => [:update, :delete] do
-      if_attribute :id => is {user.id}
+      if_attribute :user => is {user}
     end
     has_permission_on :other_party_validation_requests, :to => [:create, :show]
     has_permission_on :surls, :to => [:create, :read]

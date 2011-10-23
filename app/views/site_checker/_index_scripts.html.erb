@@ -108,7 +108,7 @@ jQuery(function($) {
             $('#surl_instructions .click_to_visit').html('<a target="_blank" href="'+new_link+
               '">click here to visit '+new_link+'</a>');
             $('#surl_original').val('').attr('placeholder', 'url to be shortened');
-            $('#manage_current_links tbody tr:first-child').after(data.row);
+            $('#manage_current_links tr:first-child').after(data.row);
             $('.listd').hide();
             $('#surl_link_error').remove();
             surl.fadeIn();

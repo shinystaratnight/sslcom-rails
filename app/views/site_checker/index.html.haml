@@ -40,14 +40,10 @@
           %span.old_link.clearfix
           %span.click_to_visit
       %table#manage_current_links(cellspacing=0)
-        %tfoot
-          %tr
-            %td(colspan="#{current_user ? 6 : 5}")=will_paginate @surls
         %tr
           %th ssl link
           %th original link
           %th visits
-          %th uniques
           -if current_user
             %th owner
           %th(style="width: 160px") actions

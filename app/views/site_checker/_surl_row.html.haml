@@ -3,7 +3,6 @@
   %td=link_to link, link, target: '_blank'
   %td=link_to surl.original, surl.original, target: '_blank'
   %td=surl.surl_visits.count
-  %td=surl.surl_visits.map(&:referer_address).uniq.count
   -if current_user
     %td=current_user.login
   %td

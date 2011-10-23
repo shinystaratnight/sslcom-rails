@@ -203,8 +203,6 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def csr_validation
-    Rails.logger.info "validation csr:"
-    Rails.logger.info csr
     is_wildcard = certificate_order.certificate.is_wildcard?
     invalid_chars_msg = "has invalid characters. Only the following characters
       are allowed [A-Za-z0-9.-#{'*' if is_wildcard}]"
