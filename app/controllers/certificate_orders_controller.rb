@@ -3,6 +3,7 @@
 #CertificatesController#buy
 #OrdersController#new
 #(or CertificateOrdersController#update_csr if unused credit)
+#FundedAccount#allocate_funds or #confirm_funds if from funded_account (ie reseller)
 #OrdersController#create_multi_free_ssl or OrdersController#create_free_ssl
 #CertificateOrdersController#edit (goes to application info prompt) or OrdersController#edit or OrdersController#new
 #CertificateOrdersController#update (goes to provide contacts prompt)
