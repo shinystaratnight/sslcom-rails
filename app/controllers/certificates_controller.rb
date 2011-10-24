@@ -89,7 +89,7 @@ class CertificatesController < ApplicationController
           (params[:id]=='free') ? 1 : 2)
       @certificate_order.ssl_account=
         current_user.ssl_account unless current_user.blank?
-      @certificate_order.has_csr=true
+      @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
       @certificate_content = CertificateContent.new()
       respond_to do |format|
           format.html # buy.html.haml
