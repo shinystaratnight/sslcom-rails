@@ -1,15 +1,15 @@
 -last_sent = co.csr.domain_control_validations.last_sent
--if last_sent && last_sent.is_eligible_to_resend?
-  %li
-    %em automatic verification email sent:
-    %ul
-      %li(class="#{satisfied(last_sent)}") on: #{last_sent.sent_at.strftime("%b %d, %Y %R")}
-      %li(class="#{satisfied(last_sent)}") to: #{last_sent.email_address}
-  %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
--elsif last_sent.satisfied?
-  %li
-    %em satisfied on #{(last_sent.responded_at || last_sent.updated_at).strftime("%b %d, %Y %R")}
-  %li.category_border=link_to 'send verification email', new_certificate_order_validation_path(co)
+-if last_sent
+  -if last_sent.satisfied?
+    %li
+      %em satisfied on #{(last_sent.responded_at || last_sent.updated_at).strftime("%b %d, %Y %R")}
+  -elsif last_sent.is_eligible_to_resend?
+    %li
+      %em automatic verification email sent:
+      %ul
+        %li(class="#{satisfied(last_sent)}") on: #{last_sent.sent_at.strftime("%b %d, %Y %R")}
+        %li(class="#{satisfied(last_sent)}") to: #{last_sent.email_address}
+    %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
 -else
   %li
     %em no verification email has been sent

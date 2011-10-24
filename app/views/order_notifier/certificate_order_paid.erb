@@ -1,3 +1,4 @@
+<%last_sent=@certificate_order.certificate_content.csr.domain_control_validations.last_sent%>
 <%if @contact.is_a? Contact -%>
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
@@ -15,6 +16,10 @@ Description:
 Order Amount: <%=@certificate_order.price.format%>
 
 Your SSL account has been debited <%=@certificate_order.price.format%>.
+<%if last_sent && !last_sent.satisfied?-%>
+
+Please respond the email validation request sent to: <%=last_sent.email_address%>
+<%end-%>
 <%if @certificate_order.certificate.is_ev?-%>
 
 <%=render(:partial=>"ev_reqs")%>
