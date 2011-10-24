@@ -6,7 +6,7 @@
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/general_steps.rb" line="32" />
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" line="48" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/domain_control_validation.rb" line="35" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/domain_control_validation.rb" line="38" mnemonic="0" />
     <bookmark url="file://$PROJECT_DIR$/app/models/csr.rb" line="171" mnemonic="9" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="482" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/application_helper.rb" line="263" mnemonic="3" />
@@ -18,15 +18,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/certificate_lookup.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/db/migrate/20111022194008_create_certificate_lookups.rb" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/db/migrate/20111022194008_create_site_checkers.rb" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/site_check.rb" afterPath="$PROJECT_DIR$/app/models/site_check.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/domain_control_validation.rb" afterPath="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_dcv.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_dcv.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -49,10 +42,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="_dcv.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_dcv.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="29" selection-start="163" selection-end="163" vertical-scroll-proportion="0.0">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -61,7 +54,7 @@
       <file leaf-file-name="domain_control_validation.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="21" selection-start="1163" selection-end="1163" vertical-scroll-proportion="0.0">
+            <state line="27" column="104" selection-start="745" selection-end="745" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -76,10 +69,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="surls_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="58" column="47" selection-start="1856" selection-end="1856" vertical-scroll-proportion="0.5105105">
+            <state line="55" column="103" selection-start="1764" selection-end="1764" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -182,7 +175,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/controllers/user_sessions_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/surls/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/config/authorization_rules.rb" />
         <option value="$PROJECT_DIR$/app/models/surl.rb" />
@@ -194,10 +186,11 @@
         <option value="$PROJECT_DIR$/app/models/certificate_lookup.rb" />
         <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
         <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/validations/_dcv.html.haml" />
         <option value="$PROJECT_DIR$/db/migrate/20111022194008_create_certificate_lookups.rb" />
         <option value="$PROJECT_DIR$/db/migrate/20111024004450_create_site_checks.rb" />
         <option value="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/_dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
       </list>
     </option>
   </component>
@@ -1390,9 +1383,9 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28896105" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19902518" sideWeight="0.30032468" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.71915585" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.375" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28084415" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.625" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.375" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28084415" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29475307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1463,9 +1456,6 @@
           <line>270</line>
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/views/validations/_dcv.html.haml</url>
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/views/validations/_entry.html.haml</url>
           <line>106</line>
         </line-breakpoint>
@@ -1531,20 +1521,6 @@
         <state line="2" column="0" selection-start="69" selection-end="69" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="29" selection-start="163" selection-end="163" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="21" selection-start="1163" selection-end="1163" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="494" column="51" selection-start="15273" selection-end="15273" vertical-scroll-proportion="0.0">
@@ -1568,7 +1544,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="47" selection-start="1856" selection-end="1856" vertical-scroll-proportion="0.5105105">
+        <state line="55" column="103" selection-start="1764" selection-end="1764" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="104" selection-start="745" selection-end="745" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>

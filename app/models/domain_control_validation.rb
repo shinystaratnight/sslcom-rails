@@ -23,6 +23,9 @@ class DomainControlValidation < ActiveRecord::Base
     end
 
     state :satisfied do
+      on_entry do
+        self.update_attribute :responded_at, DateTime.now
+      end
     end
   end
 
