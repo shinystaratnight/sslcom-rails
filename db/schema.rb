@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111006185028) do
+ActiveRecord::Schema.define(:version => 20111024004450) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -159,6 +159,15 @@ ActiveRecord::Schema.define(:version => 20111006185028) do
     t.boolean  "billing_checkbox"
     t.boolean  "validation_checkbox"
     t.boolean  "technical_checkbox"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "certificate_lookups", :force => true do |t|
+    t.text     "certificate"
+    t.string   "serial"
+    t.string   "common_name"
+    t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -645,6 +654,13 @@ ActiveRecord::Schema.define(:version => 20111006185028) do
     t.datetime "updated_at"
     t.text     "subject_alternative_names"
     t.integer  "strength"
+  end
+
+  create_table "site_checks", :force => true do |t|
+    t.text     "url"
+    t.integer  "certificate_lookup_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "site_seals", :force => true do |t|

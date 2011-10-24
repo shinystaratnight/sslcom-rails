@@ -56,7 +56,8 @@ class SurlsController < ApplicationController
     #  @render_result=Surl::REDIRECTED
     #  redirect_to @surl.full_link
     else
-      if Malware.is_blacklisted?(@surl.original)
+      #disable until we can improve performance
+      if false #Malware.is_blacklisted?(@surl.original)
         @render_result=Surl::BLACKLISTED
         render action: "blacklisted", layout: false
       end

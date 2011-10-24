@@ -1,10 +1,8 @@
 class CreateSiteChecks < ActiveRecord::Migration
   def self.up
-    create_table :site_checks do |t|
-      t.text :url
-      t.text :ssl_certificate
-      t.datetime :expires_at
-
+    create_table :site_checks, force: true do |t|
+      t.text        :url
+      t.references  :certificate_lookup
       t.timestamps
     end
   end

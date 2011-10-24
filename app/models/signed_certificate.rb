@@ -5,6 +5,7 @@ require 'openssl'
 class SignedCertificate < ActiveRecord::Base
 #  using_access_control
   serialize :organization_unit
+  serialize :subject_alternative_names
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
@@ -164,12 +165,35 @@ class SignedCertificate < ActiveRecord::Base
     end.map{|f|f[1]}
   end
 
+  def find_or_create_installed(cn=nil,port=443)
+    return nil if is_intranet?
+    context = OpenSSL::SSL::SSLContext.new
+    cn=([self.common_name]+(self.subject_alternative_names||[])).find{|n|
+      CertificateContent.is_tld?(n)} unless cn
+    begin
+      timeout(10) do
+        tcp_client = TCPSocket.new cn, port
+        ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
+        ssl_client.connect
+        cert=ssl_client.peer_cert
+        CertificateLookup.create(
+          certificate: cert.to_s,
+          serial: cert.serial,
+          expires_at: cert.not_after,
+          common_name: cn) unless CertificateLookup.find_by_serial(cert.serial)
+        cert
+      end
+    rescue Exception=>e
+      nil
+    end
+  end
+
   def is_intranet?
-    CertificateContent.is_intranet?(common_name)
+    ([self.common_name]+(self.subject_alternative_names||[])).uniq.all? {|n|CertificateContent.is_intranet?(n)}
   end
 
   def is_tld?
-    CertificateContent.is_tld?(common_name)
+    ([self.common_name]+(self.subject_alternative_names||[])).uniq.any? {|n|CertificateContent.is_tld?(n)}
   end
 
   private
