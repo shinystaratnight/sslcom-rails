@@ -249,11 +249,7 @@ class CertificateOrder < ActiveRecord::Base
         PREPAID_FULL_SIGNUP_PROCESS
       end
     else
-      if cert.is_dv?
-        PREPAID_EXPRESS_SIGNUP_PROCESS
-      else
-        PREPAID_FULL_SIGNUP_PROCESS
-      end
+      PREPAID_FULL_SIGNUP_PROCESS
     end
   end
 
