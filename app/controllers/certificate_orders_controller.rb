@@ -137,7 +137,7 @@ class CertificateOrdersController < ApplicationController
           format.html {redirect_to confirm_funds_path(:id=>'certificate_order')}
         end
       else
-        format.html { render(:template => "/certificates/buy", :layout=>"application")}
+        format.html { render(:template => "certificates/buy")}
       end
     end
   end

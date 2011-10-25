@@ -119,6 +119,11 @@ module ApplicationHelper
     @tree<<"</ul>"
   end
 
+
+  def closed_csr_prompt?
+    current_page?(controller: "certificates", action: "buy") && !@certificate_order.try(:has_csr)
+  end
+
   def ordered_list_for_tree(channel)
     returning "" do |tree|
       unless channel.root?
