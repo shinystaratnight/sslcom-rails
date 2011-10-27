@@ -1,12 +1,14 @@
 -link=surl.full_link
 %tr
   %td=link_to link, link, target: '_blank'
-  %td=link_to surl.original, surl.original, target: '_blank'
+  %td
+    .original_link=link_to surl.original, surl.original, target: '_blank'
   %td=surl.surl_visits.count
   %td=surl.surl_visits.map(&:referer_address).uniq.count
   -if current_user
     %td=current_user.login
   %td
-    =link_to 'delete', surl, :confirm=>"Are you sure you want to delete ssl link '#{link}'? This action cannot be undone.", :method=>:delete, :remote=>current_user.blank? ? false : true, :class=>'delete_link'
-    |
-    =link_to 'configure', edit_surl_path(surl)
+    .actions
+      =link_to 'delete', surl, :confirm=>"Are you sure you want to delete ssl link '#{link}'? This action cannot be undone.", :method=>:delete, :remote=>current_user.blank? ? false : true, :class=>'delete_link'
+      |
+      =link_to 'configure', edit_surl_path(surl)

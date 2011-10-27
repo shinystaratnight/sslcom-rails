@@ -33,7 +33,7 @@
       -if checkout_in_progress
         =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
         =render partial: 'proof_of_dcv', locals: {co: co}
-        -unless co.certificate.is_dv?
+        -unless (co.certificate.is_dv? && checkout_in_progress)
           #documents_upload_heading
             .subheading Documentation
             .clearfix
@@ -47,7 +47,7 @@
                 .radio_w_desc.clearfix
                   =radio_button_tag :has_documents, false
                   %span.has_csr_container I want to upload documents later
-      -unless co.certificate.is_dv?
+      -unless (co.certificate.is_dv? && checkout_in_progress)
         #documents_upload_section
           #documents_upload_instructions
             %p

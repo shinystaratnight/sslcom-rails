@@ -115,6 +115,8 @@
                     .certificate_details_box
                       %ul
                         -unless @cc.csr.blank?
+                          %li
+                            %strong domain validation
                           =render partial: 'validations/dcv', locals: {co: @certificate_order}
                         %li
                           %strong validation documentation

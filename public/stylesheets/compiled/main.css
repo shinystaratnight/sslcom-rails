@@ -6971,33 +6971,47 @@ span#no_emails_accessible {
   -khtml-border-radius: 15px;
   border-radius: 15px;
   font-size: 1.5em;
+  display: none;
+  border-collapse: collapse;
   float: left;
   width: 100%;
-  display: none;
 }
-/* line 5118, ../../../app/stylesheets/main.sass */
+/* line 5119, ../../../app/stylesheets/main.sass */
+#manage_current_links th {
+  border: 1px solid #efc960;
+  border-top: none;
+}
+/* line 5123, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th {
   text-align: left;
   vertical-align: top;
-  padding: 0.2em 0.5em;
 }
-/* line 5123, ../../../app/stylesheets/main.sass */
+/* line 5127, ../../../app/stylesheets/main.sass */
+#manage_current_links td .original_link, #manage_current_links th .original_link {
+  width: 70%;
+}
+/* line 5130, ../../../app/stylesheets/main.sass */
+#manage_current_links td .actions, #manage_current_links th .actions {
+  display: block;
+  width: 160px;
+}
+/* line 5134, ../../../app/stylesheets/main.sass */
 #manage_current_links td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5126, ../../../app/stylesheets/main.sass */
+/* line 5137, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5129, ../../../app/stylesheets/main.sass */
+/* line 5140, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5133, ../../../app/stylesheets/main.sass */
+/* line 5144, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -7005,19 +7019,19 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5139, ../../../app/stylesheets/main.sass */
+/* line 5150, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5143, ../../../app/stylesheets/main.sass */
+/* line 5154, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5148, ../../../app/stylesheets/main.sass */
+/* line 5159, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;

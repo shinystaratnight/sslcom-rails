@@ -5111,14 +5111,25 @@ span#no_emails_accessible
   @include background(linear-gradient(top, #FFFFF5 0%, #FDFFB8))
   @include border-radius(15px)
   font-size: 1.5em
+  display: none
+  border-collapse: collapse
   float: left
   width: 100%
-  display: none
+
+  th
+    border: 1px solid #EFC960
+    border-top: none
 
   td, th
     text-align: left
     vertical-align: top
-    padding: .2em .5em
+
+    .original_link
+      width: 70%
+
+    .actions
+      display: block
+      width: 160px
 
   td
     border-top: 1px solid #EFC960
