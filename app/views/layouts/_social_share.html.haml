@@ -1,5 +1,5 @@
 #social_share
-  -if true #Rails.env=='production'
+  -if Rails.env=='production'
     #twitter
       %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
       %script{:src => "https://platform.twitter.com/widgets.js", :type => "text/javascript"}
@@ -14,4 +14,4 @@
           var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
         })();
     #facebook
-      =render partial: "layouts/facebook"
+      .fb-like(data-send="false" data-layout="button_count" data-width="450" data-show-faces="false")
