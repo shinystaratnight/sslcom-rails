@@ -76,7 +76,8 @@ authorization do
   end
 
   role :guest do
-    has_permission_on :orders, :to => [:show_cart, :create_free_ssl]
+    has_permission_on :orders, :to => [:show_cart, :create_free_ssl, :create_multi_free_ssl,
+                                       :allocate_funds_for_order]
     has_permission_on :csrs, :certificate_orders, :orders, :to => :create
     has_permission_on :users, :ssl_accounts, :resellers, :to =>
       [:create, :update]
