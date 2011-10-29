@@ -210,8 +210,15 @@ class OrdersController < ApplicationController
 
   def create_multi_free_ssl
     parse_certificate_orders
+    unless current_user
+      @user = User.new(params[:user])
+    end
     respond_to do |format|
-      if @order.cents == 0 and @order.line_items.size > 0
+      if @user and !@user.valid?
+        format.html { render action: "new" }
+      elsif @order.cents == 0 and @order.line_items.size > 0 and (@user || current_user)
+        save_user unless current_user
+        current_user.ssl_account.orders << @order
         @order.save
         @order.give_away!
         if @certificate_order
