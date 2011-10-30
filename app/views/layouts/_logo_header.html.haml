@@ -3,6 +3,6 @@
   =link_to "", root_url
 #sales_number_in_header
   =image_tag 'trust_in.png', title: 'trust in everything we do', alt: 'trust in everything we do'
-  =render partial: 'layouts/social_share' unless is_iphone?
+  =#render partial: 'layouts/social_share' unless is_iphone?
   =Settings.header_phone_numbers
 
