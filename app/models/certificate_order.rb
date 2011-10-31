@@ -238,7 +238,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def skip_verification?
-    certificate.is_ucc? || (csr.is_intranet? if csr)
+    certificate.is_ucc? || ((csr.is_intranet? || csr.is_ip_address?) if csr)
   end
 
   def prepaid_signup_process(cert=certificate)

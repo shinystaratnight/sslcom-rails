@@ -260,7 +260,7 @@ module ApplicationHelper
 
   def order_progress_indicator(page, certificate)
     co=@certificate_order
-    sv=CertificateOrder.skip_verification? certificate
+    sv=co.certificate ? co.skip_verification? : CertificateOrder.skip_verification?(certificate)
     added_padding=1.54
     process = skip_payment? ?
       co.prepaid_signup_process(certificate) :
