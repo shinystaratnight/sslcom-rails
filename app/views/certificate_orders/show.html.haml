@@ -1,5 +1,6 @@
 -title = "SSL Certificate For #{@certificate_order.subject}"
 -co = @certificate_order
+-cn = co.subject
 -@cc = co.certificate_content
 =render 'index_scripts'
 =render 'show_scripts'
@@ -13,7 +14,7 @@
     %caption
       SSL Certificate For
       %span.common_name
-        #{@certificate_order.subject}
+        #{cn}
       -unless current_user.is_admin?
         #buy_certificate=link_to image_tag('buy_certificate_btn.gif'), certificates_url
     %tr.heading_row
@@ -71,9 +72,6 @@
                             country:
                             %span.country
                               \#{fields.country}
-                        -if current_user.is_admin?
-                          -u = @certificate_order.ssl_account.users.last
-                          %li=remote_login_link(u)
                         %li=link_to "view order transaction", @certificate_order.order
                     .certificate_details_box
                       %ul
@@ -132,14 +130,23 @@
                           -else
                             %li
                               %em none submitted
-                          -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
-                            %li
+                          %li.category_border
+                            -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
                               -unless co.validation_rules_satisfied? || co.certificate_content.expired?
                                 -u=link_to 'upload', new_certificate_order_validation_url(co)
                               -unless co.validation.validation_histories.blank?
                                 -m=link_to 'manage', edit_certificate_order_validation_url(co)
                               -s=link_to 'status', certificate_order_validation_url(co)
                               =link_cluster([u,m,s])
+                            -else
+                        -if current_user.is_admin?
+                          %li
+                            %strong admin functions
+                          -if cn
+                            %li=link_to "visit http://#{cn}", "http://#{cn}", target: "_blank"
+                            %li=link_to "visit https://#{cn}", "https://#{cn}", target: "_blank"
+                          -u = co.ssl_account.users.last
+                          %li=remote_login_link(u)
             %table(cellspacing="0")
               %tbody
                 %tr
@@ -186,6 +193,7 @@
             %table(cellspacing="0")
               %tbody
                 -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                  -current = c==@certificate_order.certificate_content
                   -csr = c.csr
                   -sc = c.csr.try(:signed_certificate)
                   -if current_user.is_admin?
@@ -193,7 +201,7 @@
                       %td(colspan="5")
                         -if c!=@certificate_order.certificate_content
                           %span.previous_requests previous requests
-                  -if c==@certificate_order.certificate_content || current_user.is_admin?
+                  -if current || current_user.is_admin?
                     %tr
                       %td(colspan="5")
                         .certificate_details_box
@@ -206,7 +214,7 @@
                             no certificate signing request found
                         .certificate_details_box
                           %strong signed certificate
-                          -unless permitted_to? :create, SignedCertificate.new
+                          -unless permitted_to?(:create, SignedCertificate.new) && current
                             -unless sc.try(:body).blank?
                               %div
                                 submitted on #{sc.created_at.strftime("%b %d, %Y")}
@@ -236,7 +244,7 @@
                               %strong server software
                             %li
                               #{c.server_software.title}
-                        -if sc
+                        -if sc && current
                           .certificate_details_box
                             %ul
                               %li

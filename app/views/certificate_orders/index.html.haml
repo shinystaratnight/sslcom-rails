@@ -60,22 +60,11 @@
                                 %li
                                   %em waiting for csr
                               -else
-                                %li organization: #{cc.csr.organization}
-                                %li department: #{cc.csr.organization_unit}
-                                %li city: #{cc.csr.locality}
-                                %li state: #{cc.csr.state}
-                                %li country: #{cc.csr.country}
+                                =render partial: "certificate_orders/registrant_fields", object: cc.csr
                             -else
-                              %li organization: #{cc.signed_certificate.organization}
-                              %li department: #{cc.signed_certificate.organization_unit}
-                              %li city: #{cc.signed_certificate.locality}
-                              %li state: #{cc.signed_certificate.state}
-                              %li country: #{cc.signed_certificate}
+                              =render partial: "certificate_orders/registrant_fields", object: cc.signed_certificate
                           -unless co.is_unused_credit?
                             %li=link_to "view certificate details", co
-                          -if current_user.is_admin?
-                            -u = co.ssl_account.users.last
-                            %li=remote_login_link(u)
                           %li=link_to "view order transaction", co.order
                       .certificate_details_box
                         %ul
@@ -119,14 +108,23 @@
                             -else
                               %li
                                 %em none submitted
-                            -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
-                              %li
+                            %li.category_border
+                              -unless cc.blank? || cc.new? || cc.csr_submitted? || cc.info_provided? || co.expired?
                                 -unless co.validation_rules_satisfied? || co.certificate_content.expired?
                                   -ul=link_to 'upload', new_certificate_order_validation_url(co)
                                 -unless co.validation.validation_histories.blank?
                                   -m=link_to 'manage', edit_certificate_order_validation_url(co)
                                 -s=link_to 'status', certificate_order_validation_url(co)
                                 =link_cluster([ul,m,s])
+                              -else
+                          -if current_user.is_admin?
+                            %li
+                              %strong admin functions
+                            -if cn
+                              %li=link_to "visit http://#{cn}", "http://#{cn}", target: "_blank"
+                              %li=link_to "visit https://#{cn}", "https://#{cn}", target: "_blank"
+                            -u = co.ssl_account.users.last
+                            %li=remote_login_link(u)
                       -if cc.csr && cc.csr.signed_certificate
                         .certificate_details_box
                           %ul

@@ -46,6 +46,7 @@
                 %a#expand_register_card{:href=>"javascript:void(0);"}
                   =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'
       #register_card_form{initial_display?}
+        =#if tier 1, then opt to skip
         =fields_for :billing_profile, @billing_profile do |form|
           = render :partial => "billing_profiles/form", :locals => { :form => form }
       .subheading Amount and Balance
