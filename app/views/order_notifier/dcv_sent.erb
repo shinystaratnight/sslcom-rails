@@ -1,0 +1,12 @@
+<%if @contact.is_a? Contact -%>
+Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
+<%else-%>
+Dear Customer,
+<%end -%>
+
+An SSL.com certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
+
+Please respond the email validation request sent to: <%=@last_sent.email_address%>.
+If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
+
+<%=render(:partial=>"support_contact")%>

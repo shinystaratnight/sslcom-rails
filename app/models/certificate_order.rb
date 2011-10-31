@@ -54,23 +54,26 @@ class CertificateOrder < ActiveRecord::Base
   scope :search_with_csr, lambda {|term, options|
     cids=SignedCertificate.select(:csr_id).where(:common_name=~"%#{term}%").map(&:csr_id)
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}}.
+      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
       merge(options)
   }
 
   scope :unvalidated, where({is_expired: false} & (
-    {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']}))
+    {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']})).
+      select("distinct certificate_orders.*")
 
   scope :incomplete, where({is_expired: false} & (
-    {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']}))
+    {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']})).
+      select("distinct certificate_orders.*")
 
-  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']})
+  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']}).
+      select("distinct certificate_orders.*")
 
   scope :has_csr, where({:workflow_state=>'paid'} &
-    {:certificate_contents=>{:signing_request.ne=>""}})
+    {:certificate_contents=>{:signing_request.ne=>""}}).select("distinct certificate_orders.*")
 
   scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}})
+    {:certificate_contents=>{workflow_state: "new"}}).select("distinct certificate_orders.*")
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|
@@ -307,7 +310,7 @@ class CertificateOrder < ActiveRecord::Base
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).where(:workflow_state.matches % 'paid')
+    (includes || self).select("distinct certificate_orders.*").where(:workflow_state.matches % 'paid')
   end
 
   def to_param

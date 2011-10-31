@@ -29,6 +29,14 @@ class OrderNotifier < ActionMailer::Base
     body          :contact=>contact, :certificate_order=>certificate_order
   end
 
+  def dcv_sent(contact, certificate_order, last_sent)
+    subject       "SSL.com Validation Request for #{certificate_order.subject} (Order ##{certificate_order.ref})"
+    from          Settings.from_email.orders
+    recipients    contact
+    sent_on       Time.now
+    body          :contact=>contact, :certificate_order=>certificate_order, last_sent: last_sent
+  end
+
   def processed_certificate_order(contact, certificate_order, file_path)
     attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)
     @contact=contact

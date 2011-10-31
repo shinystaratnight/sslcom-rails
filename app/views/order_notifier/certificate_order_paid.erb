@@ -1,8 +1,10 @@
 <%last_sent=@certificate_order.certificate_content.csr.domain_control_validations.last_sent%>
 <%if @contact.is_a? Contact -%>
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
-
+<%else-%>
+Dear Customer,
 <%end -%>
+
 The following SSL certificate order has been placed:
 
 Date: <%=@certificate_order.order.created_at.strftime("%B %d, %Y %T")%>
@@ -18,7 +20,8 @@ Order Amount: <%=@certificate_order.price.format%>
 Your SSL account has been debited <%=@certificate_order.price.format%>.
 <%if last_sent && !last_sent.satisfied?-%>
 
-Please respond the email validation request sent to: <%=last_sent.email_address%>
+Please respond the email validation request sent to: <%=last_sent.email_address%>.
+If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
 <%end-%>
 <%if @certificate_order.certificate.is_ev?-%>
 
