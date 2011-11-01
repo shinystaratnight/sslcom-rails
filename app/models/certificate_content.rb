@@ -94,7 +94,7 @@ class CertificateContent < ActiveRecord::Base
             certificate_order.apply_for_certificate
             last_sent=csr.domain_control_validations.last_sent
             if last_sent
-              certificate_order.receipt_recipients.each do |c|
+              certificate_order.receipt_recipients.uniq.each do |c|
                 OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
               end
             end

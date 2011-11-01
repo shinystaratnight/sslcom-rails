@@ -39,7 +39,7 @@ class DomainControlValidation < ActiveRecord::Base
     if csr.sent_success
       ComodoApi.resend_dcv(self)
       co=csr.certificate_content.certificate_order
-      co.receipt_recipients.each do |c|
+      co.receipt_recipients.uniq.each do |c|
         OrderNotifier.dcv_sent(c, co, self).deliver!
       end
     end

@@ -51,12 +51,23 @@
                             %li=link_to 'edit email address', edit_email_user_url(u)
                             %li=link_to 'change password', edit_password_user_url(u)
                         .half_width_box
-                          %ul
-                            %li
-                              %strong adjust status
-                            %li
-                              =f.radio_button :status, 'enabled'
-                              enabled
-                            %li
-                              =f.radio_button :status, 'disabled'
-                              disabled
+                          .adjust_status
+                            %ul
+                              %li
+                                %strong adjust status
+                              %li
+                                =f.radio_button :status, 'enabled'
+                                enabled
+                              %li
+                                =f.radio_button :status, 'disabled'
+                                disabled
+                          .account_type
+                            %ul
+                              %li
+                                %strong account type
+                              %li
+                                =f.radio_button :status, 'enabled'
+                                customer
+                              %li
+                                =f.radio_button :status, 'disabled'
+                                reseller tier 1

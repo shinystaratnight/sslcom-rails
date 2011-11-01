@@ -7036,3 +7036,13 @@ span#no_emails_accessible {
   float: inherit;
   width: 20%;
 }
+
+/* line 5163, ../../../app/stylesheets/main.sass */
+.account_type {
+  float: right;
+}
+
+/* line 5166, ../../../app/stylesheets/main.sass */
+.adjust_status {
+  float: left;
+}

@@ -223,7 +223,7 @@ class SslAccount < ActiveRecord::Base
       OrderNotifier.deliver_certificate_order_prepaid self, order
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
-        cert.sellable.pay! true
+        cert.sellable.pay!(true) unless cert.sellable.paid?
       end
     end
   end
