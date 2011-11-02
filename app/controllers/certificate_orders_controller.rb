@@ -110,7 +110,8 @@ class CertificateOrdersController < ApplicationController
       #reset dcv validation
       @certificate_order.validation.validation_rules.each do |vr|
         if vr.description=~/^domain/
-          @certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}.pend!
+          ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
+          ruling.pend! unless ruling.pending?
         end
       end
       return render '/certificates/buy', :layout=>'application'
