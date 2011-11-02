@@ -57,7 +57,7 @@ class CertificateContent < ActiveRecord::Base
       :if => :certificate_order_has_csr
     validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
       :message=> 'contains invalid characters.',
-      :if => :certificate_order_has_csr
+      :if => :certificate_order_has_csr_and_signing_request
     validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
     validate :csr_validation, :if=>"csr"
   end
@@ -146,10 +146,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def signing_request=(signing_request)
-    return unless (signing_request=~SIGNING_REQUEST_REGEX)==0
     write_attribute(:signing_request, signing_request)
-    unless self.create_csr(:body=>signing_request)
-      logger.error "error #{self.model_and_id}#signing_request saving #{signing_request}"
+    if (signing_request=~SIGNING_REQUEST_REGEX)==0
+      unless self.create_csr(:body=>signing_request)
+        logger.error "error #{self.model_and_id}#signing_request saving #{signing_request}"
+      end
     end
   end
 
@@ -247,6 +248,10 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_order_has_csr
     certificate_order.has_csr=='true' || certificate_order.has_csr==true
+  end
+
+  def certificate_order_has_csr_and_signing_request
+    certificate_order_has_csr && !signing_request.blank?
   end
 
   def delete_duplicate_contacts

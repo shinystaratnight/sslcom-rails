@@ -345,7 +345,7 @@ jQuery(function($) {
         $('#documents_upload_heading').hide();
         $('#documents_upload_section').hide();
         });
-    $(':radio[name*=has_documents][value=true]').click();
+    $(':radio[name*=has_documents][value=false]').click();
     $('#send_to_ca').livequery(
       'ajax:beforeSend', function(){
         $('#processing_ca').show();

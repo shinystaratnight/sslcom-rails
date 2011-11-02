@@ -195,6 +195,7 @@ class CertificateOrdersController < ApplicationController
   def update_csr
     @certificate_content=CertificateContent.new(
       params[:certificate_order][:certificate_contents_attributes]['0'.to_sym])
+    @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
 
