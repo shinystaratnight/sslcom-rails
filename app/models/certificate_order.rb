@@ -350,7 +350,7 @@ class CertificateOrder < ActiveRecord::Base
   alias :software :server_software
 
   def is_open_ssl?
-    [3, 4, 25, 35].include? software.id
+    [3, 4, 35].include? software.id
   end
 
   def is_iis?
