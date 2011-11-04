@@ -70,7 +70,7 @@ module CertificateOrdersHelper
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
-              link_to 'see renewal', certificate_order_path(certificate_order)
+              link_to 'see renewal', certificate_order_path(certificate_order.renewal)
             else
               link_to 'renew', renew_certificate_order_path(certificate_order)
             end

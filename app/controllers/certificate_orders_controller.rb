@@ -164,7 +164,8 @@ class CertificateOrdersController < ApplicationController
                 c.send((field+'=').to_sym, r.send(field.to_sym))
               end
               c.company_name = r.organization
-              c.country = Country.find_by_name_caps(r.country.upcase).iso1_code
+              c.country = Country.find_by_name_caps(r.country.upcase).iso1_code if
+                  Country.find_by_name_caps(r.country.upcase)
               c.clear_roles
               c.add_role! role
               cc.certificate_contacts << c

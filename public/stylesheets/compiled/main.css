@@ -6309,7 +6309,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
 }
 
 /* line 4723, ../../../app/stylesheets/main.sass */
-a.footer_link {
+span.footer_link {
   color: #ffc2af;
   padding-left: 1em;
 }

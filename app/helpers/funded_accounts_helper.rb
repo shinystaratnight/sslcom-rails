@@ -1,5 +1,6 @@
 module FundedAccountsHelper
 
+  # do we show the billing info prompt?
   def initial_display?
     return {} unless current_user
     current_user.ssl_account.billing_profiles(true).blank? ||

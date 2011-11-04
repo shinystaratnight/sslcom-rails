@@ -30,7 +30,7 @@ class OrderNotifier < ActionMailer::Base
   end
 
   def dcv_sent(contact, certificate_order, last_sent)
-    subject       "SSL.com Validation Request for #{certificate_order.subject} (Order ##{certificate_order.ref})"
+    subject       "SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})"
     from          Settings.from_email.orders
     recipients    contact
     sent_on       Time.now
