@@ -18,7 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/surls_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/surls_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/force_ssl.rb" afterPath="$PROJECT_DIR$/lib/force_ssl.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -78,19 +78,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="surls_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="surls_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="50" selection-start="3360" selection-end="3360" vertical-scroll-proportion="0.0">
+            <state line="87" column="50" selection-start="3360" selection-end="3360" vertical-scroll-proportion="0.6581197">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="force_ssl.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="force_ssl.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/force_ssl.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="73" selection-start="148" selection-end="148" vertical-scroll-proportion="0.2802198">
+            <state line="5" column="52" selection-start="74" selection-end="74" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1580,16 +1580,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
+    <entry file="file://$PROJECT_DIR$/lib/force_ssl.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="50" selection-start="3360" selection-end="3360" vertical-scroll-proportion="0.0">
+        <state line="5" column="52" selection-start="74" selection-end="74" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/force_ssl.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/surls_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="73" selection-start="148" selection-end="148" vertical-scroll-proportion="0.2802198">
+        <state line="87" column="50" selection-start="3360" selection-end="3360" vertical-scroll-proportion="0.6581197">
           <folding />
         </state>
       </provider>
