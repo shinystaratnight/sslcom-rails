@@ -4,7 +4,7 @@ Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 <%end -%>
 Thank you for placing your order. The necessary background checks have been successfully completed and we are pleased to announce that your SSL.com <%=@certificate_order.certificate.description["certificate_type"]%> Certificate for <%=@certificate_order.subject%> has been issued.
 
-We strongly recommend that you follow the installation instructions at http://www.ssl.com/support to ensure that your certificate and webserver are correctly configured.
+We strongly recommend that you follow the installation instructions at <%=Settings.installation_support_pages%> to ensure that your certificate and webserver are correctly configured.
 
 Attached to this email you should find a .zip file containing:
 
