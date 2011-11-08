@@ -68,7 +68,9 @@ class Certificate < ActiveRecord::Base
                     "ssl_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
                     "SSLcomHighAssuranceCA.crt"=>"High Assurance SSL.com CA Bundle",
                     "free_ssl_ca_bundle.txt"=>"Free SSL.com CA Bundle",
-                    "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle"}
+                    "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
+                    "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                    "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate"}
 
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
