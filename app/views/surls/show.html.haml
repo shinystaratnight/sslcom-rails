@@ -47,7 +47,4 @@
   %table
     %tr
       %td.content
-        -if URI.parse(@surl.original).host =~ /www\.youtube\.com/
-          %iframe.youtube-player(type="text/html" width="640" height="385" src="#{@surl.original}" frameBorder="0")
-        -else
-          %iframe(src="#{@surl.original}" frameBorder="0")
+        %iframe(src="#{@surl.original}" frameBorder="0")
