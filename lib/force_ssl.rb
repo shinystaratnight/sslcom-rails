@@ -14,6 +14,6 @@ class ForceSSL
 
   def other_exception(env)
     #need to be able to allow link.ssl.com and ssl.com without ssl
-    env["REQUEST_URI"]=~/^(http:\/\/)?ssl\.com/
+    !!(env["HTTP_HOST"] =~ /^ssl.com(:\d+)?/ && env["PATH_INFO"]=~/\/.+/)
   end
 end

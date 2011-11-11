@@ -6,7 +6,7 @@ Dear Customer,
 
 An SSL.com certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
 
-Please respond the email validation request sent to: <%=@last_sent.email_address%>.
+Please respond to the email validation request sent to: <%=@last_sent.email_address%>. DO NOT REPLY TO THIS EMAIL. Another email is being sent so please be on lookout for that email.
 If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
 
 <%=render(:partial=>"support_contact")%>
