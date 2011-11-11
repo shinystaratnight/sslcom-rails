@@ -20,8 +20,9 @@
     %p
       In order to submit a Certificate Signing Request (CSR), you must first
       generate it on the web server that will be utilizing the SSL server
-      certificate. If you need instructions on generating a CSR, click here to go
-      to the support pages. Once the CSR is ready, you may copy and paste it
+      certificate. If you need instructions on generating a CSR,
+      =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
+      Once the CSR is ready, you may copy and paste it
       into the text box below. Your CSR should appear similar
       (although not identical) to:
     %dl.cert_example
@@ -44,7 +45,8 @@
         -unless @certificate.allow_wildcard_ucc?
           %li It cannot represent a wildcard domain name (i.e. *.domain.com)
         %li It must represent your fully-qualified domain name (i.e. submit.domain.com)
-        %li Or, it must represent the name of your server (i.e. localhost or bizserver)
+        -unless @certificate.is_free?
+          %li Or, it must represent the name of your server (i.e. localhost or bizserver)
         %li Or, it must represent an IP address (i.e. 208.113.41.231)
       -else
         %li It must represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
