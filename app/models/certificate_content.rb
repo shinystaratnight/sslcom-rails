@@ -213,8 +213,6 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def csr_validation
-    errors.add(:signing_request,
-      "Ooops, '#{csr.country}' #{NOT_VALID_ISO_CODE}")
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_free = certificate_order.certificate.is_free?
     invalid_chars_msg = "has invalid characters. Only the following characters
