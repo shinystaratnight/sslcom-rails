@@ -17,6 +17,7 @@
   #buy_certificate_heading
     %h1=c[:title]
     %h2 Please fill out the required fields below to begin your certificate order.
+  -add_link=@certificate_order.certificate_content.errors if @certificate_order.try(:certificate_content).try(:errors)
   =error_messages_for :certificate_order, :certificate_content
   -form_for(*form_params) do |f|
     =hidden_field :certificate, :product

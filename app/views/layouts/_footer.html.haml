@@ -15,6 +15,7 @@
     %li=link_to "RESTful API", restful_api_url
     -Reseller::TARGETED.each do |t|
       %li=send :link_to, t.titleize, eval("#{t}_url")
+    %li=link_to "Api Documents", restful_apidocs_apply_url
   %ul.section_box
     %h4 Support
     %li=link_to "Resources", "http://support.ssl.com/"
@@ -24,7 +25,7 @@
     %li=link_to "SSL Tools", "http://www.ssltools.com"
     %li=link_to "Browser Compatibility", browsers_url
     %li=link_to "Validation Requirements", requirements_validations_url
-    %li=link_to "Api Documents", restful_apidocs_apply_url
+    %li=link_to "Country Codes", country_codes_csrs_url
     -#%li=link_to "Vpn Compatibility", "http://info.ssl.com/article.aspx?id=10241"
     -#%li Chat
   -#%ul.section_box

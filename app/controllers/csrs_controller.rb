@@ -1,5 +1,7 @@
 class CsrsController < ApplicationController
   filter_access_to :all, :attribute_check=>true
+  filter_access_to :country_codes, :require=>[:create] #anyone can create read creates csrs, thus read this
+
   # PUT /csrs/1
   # PUT /csrs/1.xml
   def update
@@ -16,4 +18,5 @@ class CsrsController < ApplicationController
       end
     end
   end
+
 end

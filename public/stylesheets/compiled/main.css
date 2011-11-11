@@ -6956,7 +6956,7 @@ span#no_emails_accessible {
 }
 
 /* line 5109, ../../../app/stylesheets/main.sass */
-#manage_current_links {
+#manage_current_links, #accepted_country_codes, #restricted_country_codes {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
   background: -webkit-linear-gradient(top, #fffff5 0%, #fdffb8);
@@ -6971,47 +6971,56 @@ span#no_emails_accessible {
   -khtml-border-radius: 15px;
   border-radius: 15px;
   font-size: 1.5em;
-  display: none;
   border-collapse: collapse;
   float: left;
   width: 100%;
 }
-/* line 5119, ../../../app/stylesheets/main.sass */
-#manage_current_links th {
+/* line 5118, ../../../app/stylesheets/main.sass */
+#manage_current_links th, #accepted_country_codes th, #restricted_country_codes th {
   border: 1px solid #efc960;
   border-top: none;
 }
-/* line 5123, ../../../app/stylesheets/main.sass */
-#manage_current_links td, #manage_current_links th {
+/* line 5122, ../../../app/stylesheets/main.sass */
+#manage_current_links td, #manage_current_links th, #accepted_country_codes td, #accepted_country_codes th, #restricted_country_codes td, #restricted_country_codes th {
   text-align: left;
   vertical-align: top;
 }
-/* line 5127, ../../../app/stylesheets/main.sass */
-#manage_current_links td .original_link, #manage_current_links th .original_link {
+/* line 5126, ../../../app/stylesheets/main.sass */
+#manage_current_links td .original_link, #manage_current_links th .original_link, #accepted_country_codes td .original_link, #accepted_country_codes th .original_link, #restricted_country_codes td .original_link, #restricted_country_codes th .original_link {
   width: 70%;
 }
-/* line 5130, ../../../app/stylesheets/main.sass */
-#manage_current_links td .actions, #manage_current_links th .actions {
+/* line 5129, ../../../app/stylesheets/main.sass */
+#manage_current_links td .actions, #manage_current_links th .actions, #accepted_country_codes td .actions, #accepted_country_codes th .actions, #restricted_country_codes td .actions, #restricted_country_codes th .actions {
   display: block;
   width: 160px;
 }
-/* line 5134, ../../../app/stylesheets/main.sass */
-#manage_current_links td {
+/* line 5133, ../../../app/stylesheets/main.sass */
+#manage_current_links td, #accepted_country_codes td, #restricted_country_codes td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5137, ../../../app/stylesheets/main.sass */
+/* line 5136, ../../../app/stylesheets/main.sass */
+#manage_current_links {
+  display: none;
+}
+
+/* line 5139, ../../../app/stylesheets/main.sass */
+#accepted_country_codes {
+  margin-bottom: 1em;
+}
+
+/* line 5142, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5140, ../../../app/stylesheets/main.sass */
+/* line 5145, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5144, ../../../app/stylesheets/main.sass */
+/* line 5149, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -7019,30 +7028,30 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5150, ../../../app/stylesheets/main.sass */
+/* line 5155, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5154, ../../../app/stylesheets/main.sass */
+/* line 5159, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5159, ../../../app/stylesheets/main.sass */
+/* line 5164, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;
 }
 
-/* line 5163, ../../../app/stylesheets/main.sass */
+/* line 5168, ../../../app/stylesheets/main.sass */
 .account_type {
   float: right;
 }
 
-/* line 5166, ../../../app/stylesheets/main.sass */
+/* line 5171, ../../../app/stylesheets/main.sass */
 .adjust_status {
   float: left;
 }

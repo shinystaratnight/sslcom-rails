@@ -34,8 +34,9 @@
           #twitter(style="float:left")
             %a.twitter-share-button{"data-count" => "none", :href => "http://twitter.com/share"} Tweet
             %script{:src => "https://platform.twitter.com/widgets.js", :type => "text/javascript"}
-      This shortened secure link (ssl) points to
-      #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"} which
+      This shortened secure link (ssl)
+      -unless @surl.username || @surl.password_hash
+        points to #{link_to @surl.original, @surl.original, style: "text-decoration:underline;color:#00c"} which
       was scanned for safe viewing on #{DateTime.now.strftime("%B %d, %Y")} by ssl.com security services.
       Securely shorten links with free ssl.com links. Visit
       #{link_to "http://links.ssl.com", "http://links.ssl.com", style: "text-decoration:underline;color:#00c"}

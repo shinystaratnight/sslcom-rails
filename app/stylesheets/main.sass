@@ -5106,12 +5106,11 @@ span#no_emails_accessible
     width: 150px
     font-size: .7em
 
-#manage_current_links
+#manage_current_links, #accepted_country_codes, #restricted_country_codes
   background: #fcf0c4
   @include background(linear-gradient(top, #FFFFF5 0%, #FDFFB8))
   @include border-radius(15px)
   font-size: 1.5em
-  display: none
   border-collapse: collapse
   float: left
   width: 100%
@@ -5133,6 +5132,12 @@ span#no_emails_accessible
 
   td
     border-top: 1px solid #EFC960
+
+#manage_current_links
+  display: none
+
+#accepted_country_codes
+  margin-bottom: 1em
 
 .deleting
   text-decoration: line-through

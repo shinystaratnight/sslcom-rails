@@ -139,12 +139,11 @@
                               -s=link_to 'status', certificate_order_validation_url(co)
                               =link_cluster([u,m,s])
                             -else
+                        -if cn
+                          =render partial: 'certificate_orders/visit', locals: {cn: cn}
                         -if current_user.is_admin?
                           %li
                             %strong admin functions
-                          -if cn
-                            %li=link_to "visit http://#{cn}", "http://#{cn}", target: "_blank"
-                            %li=link_to "visit https://#{cn}", "https://#{cn}", target: "_blank"
                           -u = co.ssl_account.users.last
                           %li=remote_login_link(u)
             %table(cellspacing="0")

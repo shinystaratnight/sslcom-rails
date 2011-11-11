@@ -43,7 +43,10 @@
         %table#manage_current_links(cellspacing=0)
           %tfoot
             %tr
-              %td(colspan="#{current_user ? 6 : 5}")=will_paginate @surls
+              %td(colspan="#{current_user ? 6 : 5}")
+                -#the following space is needed else this row collapses if too few rows exist
+                &nbsp
+                =will_paginate @surls
           %tr
             %th ssl link
             %th original link

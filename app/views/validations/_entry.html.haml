@@ -156,6 +156,8 @@
                         =link_to 'upload', new_certificate_order_validation_url(co)
               .certificate_details_box
                 %ul
+                  -if cn
+                    =render partial: 'certificate_orders/visit', locals: {cn: cn}
                   -if current_user.is_admin?
                     %li
                       %strong login

@@ -101,6 +101,8 @@ jQuery(function($) {
     $('#certificate_order_server_licenses').click(function(){
       $.update_order_pricing();
     });
+    $("li:contains('<%=CertificateContent::NOT_VALID_ISO_CODE%>')")
+      .append(" <a href='<%=country_codes_csrs_path%>'>Please visit this link</a> for accepted country codes.");
     var profile_id = "";
     $('#expand_register_card').toggle(
       function(event){

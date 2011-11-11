@@ -15,6 +15,7 @@ class CertificateContent < ActiveRecord::Base
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2048
+  NOT_VALID_ISO_CODE="is not a valid 2 lettered ISO-3166 country code."
 
   ADMINISTRATIVE_ROLE = 'administrative'
   CONTACT_ROLES = %w(administrative billing technical validation)
@@ -212,7 +213,10 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def csr_validation
+    errors.add(:signing_request,
+      "Ooops, '#{csr.country}' #{NOT_VALID_ISO_CODE}")
     is_wildcard = certificate_order.certificate.is_wildcard?
+    is_free = certificate_order.certificate.is_free?
     invalid_chars_msg = "has invalid characters. Only the following characters
       are allowed [A-Za-z0-9.-#{'*' if is_wildcard}]"
     if csr.common_name.blank?
@@ -225,6 +229,9 @@ class CertificateContent < ActiveRecord::Base
       elsif !is_wildcard && asterisk_found
         errors.add(:signing_request,
           "cannot begin with *. since it is not a wildcard")
+      elsif is_free && csr.is_intranet?
+        errors.add(:signing_request,
+          "was determined to be for an intranet or internal site. Sorry, but we cannot issue free ssl certs for intranet sites.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
         domain_validation_regex(is_wildcard, csr.common_name)
@@ -232,7 +239,7 @@ class CertificateContent < ActiveRecord::Base
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength != MIN_KEY_SIZE
       errors.add(:signing_request,
-        "Ooops, '#{csr.country}' is not a valid 2 lettered ISO-3166 country code") unless
+        "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
           Country.accepted_countries.include?(csr.country)
     end
   end

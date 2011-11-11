@@ -81,6 +81,9 @@ SslCom::Application.routes.draw do
 
   resources :csrs do
     resources :signed_certificates
+    collection do
+      get :country_codes
+    end
   end
 
   resources :other_party_validation_requests, only: [:create, :show]
