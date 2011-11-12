@@ -1,6 +1,7 @@
 require 'zip/zip'
 require 'zip/zipfilesystem'
 require 'openssl-extensions/all'
+require 'digest'
 
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups
@@ -171,5 +172,22 @@ class Csr < ActiveRecord::Base
 
   def sent_success
     ca_certificate_requests.all.find{|cr|cr.success?}
+  end
+
+  #TODO need to convert to dem - see http://support.citrix.com/article/CTX106631
+  def md5_hash
+    Digest::MD5.hexdigest(to_der) unless body.blank?
+  end
+
+  def sha1_hash
+    Digest::SHA1.hexdigest(to_der) unless body.blank?
+  end
+
+  def to_der
+    to_openssl.to_der
+  end
+
+  def to_openssl
+    OpenSSL::X509::Request.new body
   end
 end
