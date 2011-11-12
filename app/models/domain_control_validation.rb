@@ -11,6 +11,11 @@ class DomainControlValidation < ActiveRecord::Base
   workflow do
     state :new do
       event :send_dcv, :transitions_to => :sent_dcv
+      event :hashing, :transitions_to => :hashed
+      event :satisfy, :transitions_to => :satisfied
+    end
+
+    state :hashed do
       event :satisfy, :transitions_to => :satisfied
     end
 

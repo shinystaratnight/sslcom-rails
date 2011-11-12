@@ -39,6 +39,7 @@ class SslAccount < ActiveRecord::Base
   preference  :confirmation_recipients, :string, :default=>"0"
   preference  :confirmation_include_cert_admin, :string, :default=>true
   preference  :confirmation_include_cert_bill, :string, :default=>true
+  preference  :po_capable, default: false
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
