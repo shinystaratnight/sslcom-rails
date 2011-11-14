@@ -7055,3 +7055,11 @@ span#no_emails_accessible {
 .adjust_status {
   float: left;
 }
+
+/* line 5174, ../../../app/stylesheets/main.sass */
+#http_dcv_url {
+  font-style: italic;
+  background-color: #eeeeee;
+  text-align: center;
+  font-size: 1.2em;
+}

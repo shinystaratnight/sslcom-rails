@@ -99,6 +99,24 @@ jQuery(function($) {
       $('#documents_upload_heading').show();
       if(<%=!checkout_in_progress%>)
         $("#upload_validations").show();
+      if($(':radio[name=method]:checked').val()=="http"){
+        $('#http_dcv').show();
+        $('#email_dcv').hide();
+      }
+      else{
+        $('#http_dcv').hide();
+        $('#email_dcv').show();
+      }
+      $(':radio[name=method]').bind('click', function(){
+        if($(this).val()=="http"){
+          $('#http_dcv').show();
+          $('#email_dcv').hide();
+        }
+        else{
+          $('#http_dcv').hide();
+          $('#email_dcv').show();
+        }
+      });
     }
     else{
       $('#request_validation_from_others').show();

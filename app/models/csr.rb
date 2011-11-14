@@ -89,10 +89,14 @@ class Csr < ActiveRecord::Base
   end
 
   def enclose_with_tags(csr)
-    unless (csr =~ Regexp.new(BEGIN_TAG) || csr =~ Regexp.new(BEGIN_NEW_TAG))
-      csr = BEGIN_TAG + "\n" + csr
+    csr.gsub!(/-+BEGIN NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+BEGIN NEW CERTIFICATE REQUEST-+/
+    csr.gsub!(/-+END NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+END NEW CERTIFICATE REQUEST-+/
+    unless (csr =~ Regexp.new(BEGIN_TAG))
+      csr.gsub!(/-+BEGIN CERTIFICATE REQUEST-+/,"")
+      csr = BEGIN_TAG + "\n" + csr.strip
     end
-    unless (csr =~ Regexp.new(END_TAG) || csr =~ Regexp.new(END_NEW_TAG))
+    unless (csr =~ Regexp.new(END_TAG))
+      csr.gsub!(/-+END CERTIFICATE REQUEST-+/,"")
       csr = csr + "\n" unless csr=~/\n\Z$/
       csr = csr + END_TAG + "\n"
     end
@@ -176,11 +180,11 @@ class Csr < ActiveRecord::Base
 
   #TODO need to convert to dem - see http://support.citrix.com/article/CTX106631
   def md5_hash
-    Digest::MD5.hexdigest(to_der) unless body.blank?
+    Digest::MD5.hexdigest(to_der).upcase unless body.blank?
   end
 
   def sha1_hash
-    Digest::SHA1.hexdigest(to_der) unless body.blank?
+    Digest::SHA1.hexdigest(to_der).upcase unless body.blank?
   end
 
   def to_der

@@ -84,6 +84,10 @@ SslCom::Application.routes.draw do
     collection do
       get :country_codes
     end
+
+    member do
+      get :http_dcv_file
+    end
   end
 
   resources :other_party_validation_requests, only: [:create, :show]

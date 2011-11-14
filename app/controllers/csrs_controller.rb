@@ -1,6 +1,6 @@
 class CsrsController < ApplicationController
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :country_codes, :require=>[:create] #anyone can create read creates csrs, thus read this
+  filter_access_to :country_codes, :http_dcv_file, :require=>[:create] #anyone can create read creates csrs, thus read this
 
   # PUT /csrs/1
   # PUT /csrs/1.xml
@@ -19,4 +19,15 @@ class CsrsController < ApplicationController
     end
   end
 
+  def http_dcv_file
+    @csr=Csr.find(params[:id])
+    tmp_file="#{Rails.root}/tmp/#{@csr.md5_hash}.txt"
+    File.open(tmp_file, 'wb') do |f|
+      f.write @csr.sha1_hash
+      f.write "\n"
+      f.write @csr.common_name
+    end
+    send_file tmp_file, :type => 'text', :disposition => 'attachment',
+      :filename =>@csr.md5_hash+".txt"
+  end
 end

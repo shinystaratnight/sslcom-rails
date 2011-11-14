@@ -1,0 +1,10 @@
+.clearfix
+  %label
+    *validation methods:
+  .dcv_choices
+    .choice_w_desc.clearfix
+      =radio_button_tag :method, "http", true
+      %span.clickable_choice I will let ssl.com scan a page on my site
+    .choice_w_desc.clearfix
+      =radio_button_tag :method, "email"
+      %span.clickable_choice I will respond to an email sent by ssl.com
