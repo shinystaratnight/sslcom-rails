@@ -132,6 +132,14 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def dcv_url
+    "http://#{common_name}/#{md5_hash}.txt"
+  end
+
+  def dcv_verified?
+    Open(dcv_url)
+  end
+
   def whois_lookup
     if whois_lookups.empty?
       whois_lookups.create

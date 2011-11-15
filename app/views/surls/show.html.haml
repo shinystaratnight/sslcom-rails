@@ -9,6 +9,15 @@
     iframe {height:100%;width:100%}
     .header {border-bottom:1px solid #000}
     .content {height:100%}
+  :javascript
+    var prevent_bust = 0
+    window.onbeforeunload = function() { prevent_bust++ }
+    setInterval(function() {
+      if (prevent_bust > 0) {
+        prevent_bust -= 2
+        window.top.location = 'http://ssl.com#{Rails.env=~/development/i ? ":3000" : ""}#{surls_status_204_path}'
+      }
+    }, 1)
 %body
   %div(style="background:#fff;border:1px solid #999;margin:-1px -1px 0;padding:0;")
     %div(style="background:#BAD6B8;border:1px solid #999;color:#000;font:13px arial,sans-serif;font-weight:normal;margin:6px;padding:4px;text-align:left")

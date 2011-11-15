@@ -74,6 +74,7 @@ class ValidationsController < ApplicationController
     end
   end
 
+  #user can select to upload documents or do dcv (email or http) or do both
   def upload
     i=0
     error=[]
@@ -93,10 +94,16 @@ class ValidationsController < ApplicationController
         flash[:email_addresses]=params[:email_addresses]
     end
     unless hide_both?
-      if hide_documents? || (params[:domain_control_validation_email] && params[:domain_control_validation_id])
-        @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
-        @dcv.send_to params[:domain_control_validation_email]
-        error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
+      if hide_documents?
+        if (params[:domain_control_validation_email] && params[:domain_control_validation_id])
+          @dcv = DomainControlValidation.find(params[:domain_control_validation_id])
+          @dcv.send_to params[:domain_control_validation_email]
+          error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
+        else #assume http dcv
+          #verify http dcv
+          error<<"Please be sure #{@certificate_order.csr.dcv_url} is publicly available" unless
+              @certificate_order.csr.dcv_verified?
+        end
       elsif hide_dcv? || @files.blank?
         error<<'Please select one or more files to upload.'
       end

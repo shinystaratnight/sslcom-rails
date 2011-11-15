@@ -152,6 +152,10 @@ class SurlsController < ApplicationController
     end
   end
 
+  def status_204
+    render inline: "", status: 204
+  end
+
   # DELETE /surls/1
   # DELETE /surls/1.xml
   def destroy
