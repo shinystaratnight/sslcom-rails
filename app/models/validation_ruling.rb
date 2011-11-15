@@ -22,7 +22,7 @@ class ValidationRuling < ActiveRecord::Base
   WAITING_CLASS='validation_waiting'
   ATTENTION_CLASS='validation_attention'
 
-  NEW_STATUS = "waiting on documents"
+  NEW_STATUS = "processing"
   NEW_EV_STATUS = "validation documents required"
   MORE_REQUIRED_STATUS = "additional documentation needed"
   PENDING_STATUS = "performing validations"

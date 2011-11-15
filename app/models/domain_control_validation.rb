@@ -40,7 +40,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def send_to(address)
-    update_attributes email_address: address, sent_at: DateTime.now
+    update_attributes email_address: address, sent_at: DateTime.now, dcv_method: "email"
     if csr.sent_success
       ComodoApi.resend_dcv(self)
       co=csr.certificate_content.certificate_order
@@ -48,6 +48,11 @@ class DomainControlValidation < ActiveRecord::Base
         OrderNotifier.dcv_sent(c, co, self).deliver!
       end
     end
+  end
+
+  def hash_satisfied
+    satisfy!
+    update_attributes sent_at: DateTime.now, dcv_method: "http"
   end
 
   def is_eligible_to_send?

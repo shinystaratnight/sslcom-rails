@@ -23,9 +23,7 @@ class CsrsController < ApplicationController
     @csr=Csr.find(params[:id])
     tmp_file="#{Rails.root}/tmp/#{@csr.md5_hash}.txt"
     File.open(tmp_file, 'wb') do |f|
-      f.write @csr.sha1_hash
-      f.write "\n"
-      f.write @csr.common_name
+      f.write @csr.dcv_contents
     end
     send_file tmp_file, :type => 'text', :disposition => 'attachment',
       :filename =>@csr.md5_hash+".txt"

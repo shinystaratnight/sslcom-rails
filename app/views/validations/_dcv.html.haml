@@ -1,4 +1,5 @@
--last_sent = co.csr.domain_control_validations.last_sent
+-dcvs=co.csr.domain_control_validations
+-last_sent = (dcvs.last.try(:dcv_method)=="http") ? dcvs.last : dcvs.last_sent
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
 -if last_sent
   -if last_sent.satisfied?
@@ -13,5 +14,5 @@
     %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
 -else
   %li
-    %em no verification email has been sent
-  %li.category_border=link_to 'send verification email', checkout_in_progress ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+    %em no domain verification performed
+  %li.category_border=link_to 'perform domain verification', checkout_in_progress ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)

@@ -334,7 +334,7 @@ ActiveRecord::Schema.define(:version => 20111114194244) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "workflow_state"
-    t.string   "method"
+    t.string   "dcv_method"
   end
 
   create_table "duplicate_v2_users", :force => true do |t|

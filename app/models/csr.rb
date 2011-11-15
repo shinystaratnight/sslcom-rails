@@ -136,8 +136,19 @@ class Csr < ActiveRecord::Base
     "http://#{common_name}/#{md5_hash}.txt"
   end
 
+  def dcv_contents
+    "#{sha1_hash}\ncomodoca.com"
+  end
+
   def dcv_verified?
-    Open(dcv_url)
+    begin
+      timeout(Surl::TIMEOUT_DURATION) do
+        r=open(dcv_url).read
+        !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+      end
+    rescue Exception=>e
+      return false
+    end
   end
 
   def whois_lookup

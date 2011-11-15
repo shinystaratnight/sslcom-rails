@@ -509,14 +509,19 @@ class CertificateOrder < ActiveRecord::Base
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref
           )
-          last_sent = csr.domain_control_validations.last_sent
+          last_sent = csr.domain_control_validations.last.try(:dcv_method)=="http" ?
+              csr.domain_control_validations.last : csr.domain_control_validations.last_sent
           #43 is the old comodo 30 day trial
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
             options.merge!('days' => certificate_content.duration.to_s)
           end
-          if !skip_verification? && last_sent.try("is_eligible_to_send?")
-            options.merge!('dcvEmailAddress' => last_sent.email_address)
-            last_sent.send_dcv!
+          if !skip_verification?
+            if last_sent.dcv_method=="http"
+              options.merge!('dcvMethod' => "HTTP_CSR_HASH")
+            elsif last_sent.try("is_eligible_to_send?")
+              options.merge!('dcvEmailAddress' => last_sent.email_address)
+              last_sent.send_dcv!
+            end
           end
           fill_csr_fields options, certificate_content.registrant
           unless csr.csr_override.blank?

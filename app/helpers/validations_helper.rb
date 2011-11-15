@@ -1,7 +1,9 @@
 module ValidationsHelper
   def overall_status(validation_rulings)
     unless validation_rulings.empty?
-      dcv_wait=(!@cert_order.csr.blank? && @cert_order.csr.domain_control_validations.last_sent.try("satisfied?")) ? "" :
+      dcvs=@cert_order.csr.domain_control_validations
+      last_sent=dcvs.last.try(:dcv_method)=="http" ? dcvs.last : dcvs.last_sent
+      dcv_wait=(!@cert_order.csr.blank? && last_sent.try("satisfied?")) ? "" :
           ", waiting for response to domain control validation email"
       if validation_rulings.detect(&:new?)
         unless @cert_order.is_express_signup?
