@@ -49,30 +49,30 @@ class SurlsController < ApplicationController
       render action: "restricted", layout: "only_scripts_and_css" and return
     end
     if !@surl.is_http? || !@surl.share ||
-        (@surl.original=~Regexp.new("\\.(#{Surl::REDIRECT_FILES.join("|")})$", "i")) || Settings.disable_links_banner
+        (@surl.uri=~Regexp.new("\\.(#{Surl::REDIRECT_FILES.join("|")})$", "i")) || Settings.disable_links_banner
       @render_result=Surl::REDIRECTED
-      redirect_to @surl.original
+      redirect_to @surl.uri
     #elsif @surl.require_ssl && !request.ssl?
     #  @render_result=Surl::REDIRECTED
     #  redirect_to @surl.full_link
     else
       #disable until we can improve performance
-      if false #Malware.is_blacklisted?(@surl.original)
+      if false #Malware.is_blacklisted?(@surl.uri)
         @render_result=Surl::BLACKLISTED
         render action: "blacklisted", layout: false
-      elsif URI.parse(@surl.original).host =~ /www\.youtube\.com/
+      elsif %w(\.youtube\. \.paypal\. \.google\.).detect{|h|URI.parse(@surl.uri).host =~ Regexp.new(h, "i")}
         #retries = Surl::RETRIES
         begin
           timeout(Surl::TIMEOUT_DURATION) do
             #don't have time to finish this but should'
             #inner_html = render_to_string(partial: "banner", layout: false)
-            #render inline: open(@surl.original).read.sub(/(\<[^\/]*body[^\/]*?\>)/i, "\1#{inner_html}") #doc.to_html
+            #render inline: open(@surl.uri).read.sub(/(\<[^\/]*body[^\/]*?\>)/i, "\1#{inner_html}") #doc.to_html
             ###################
-            doc = Nokogiri::HTML(open(@surl.original))
+            doc = Nokogiri::HTML(open(@surl.uri))
             doc.encoding = 'UTF-8' if doc.encoding.blank?
             head = doc.at_css "head"
             base = Nokogiri::XML::Node.new "base", doc
-            base["href"]=@surl.original
+            base["href"]=@surl.uri
             body = doc.at_css "body"
             div_position = Nokogiri::XML::Node.new('div', doc)
             div_position["style"] = "position: relative;"
@@ -99,10 +99,11 @@ class SurlsController < ApplicationController
         rescue Exception=>e
           logger.error("Error in SurlsController#show: #{e.message}")
           @render_result=Surl::REDIRECTED
-          redirect_to @surl.original
+          redirect_to @surl.uri and return
         end
       end
-      render action: "show", layout: false
+      response.headers['X-Frame-Options'] = "SAMEORIGIN"
+      render(action: "show", layout: false) and return
     end
   end
 

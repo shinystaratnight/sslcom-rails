@@ -71,6 +71,10 @@ class Surl < ActiveRecord::Base
     "http#{'s' if require_ssl}://ssl.com/#{identifier}"
   end
 
+  def uri
+    original.gsub(" ", "")
+  end
+
   private
   def default_values
     if new_record?

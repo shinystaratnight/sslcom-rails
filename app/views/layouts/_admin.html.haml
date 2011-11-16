@@ -5,6 +5,7 @@
         %tr
           %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
           %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
+          %th.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
           -unless current_user.ssl_account.funded_account.blank?
             %th AVAILABLE FOR USE
           %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
@@ -12,6 +13,7 @@
         %tr#info
           %td.validations=link_to CertificateOrder.unvalidated.count, incomplete_certificate_orders_path
           %td.certificate_status=link_to CertificateOrder.pending.count, pending_certificate_orders_path
+          %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
           -unless current_user.ssl_account.funded_account.blank?
             %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
           %td(colspan="2")
@@ -26,6 +28,8 @@
           =link_to "Users", users_url
         %li(id="#{'t-intro' if current_page?(validations_url)}")
           =link_to "Validations", validations_url
+        %li(id="#{'t-intro' if current_page?(validations_url)}")
+          =link_to "Documents", validations_url
         %li(id="#{'t-intro' if current_page?(site_seals_url)}")
           =link_to "Smart SeaLs", site_seals_url
         %li(id="#{'t-intro' if current_page?(certificate_orders_url)}")

@@ -59,4 +59,9 @@ module ValidationsHelper
   def satisfied(last_sent)
     last_sent.satisfied? ? "dcv_satisfied" : "dcv_not_satisfied"
   end
+
+  def last_sent(co)
+    dcvs=co.csr.domain_control_validations
+    (dcvs.last.try(:dcv_method)=="http") ? dcvs.last : dcvs.last_sent
+  end
 end

@@ -58,19 +58,26 @@ class CertificateOrder < ActiveRecord::Base
       merge(options)
   }
 
+  scope :reprocessing, lambda {
+    cids=Preference.select("owner_id").joins(:owner.type(CertificateContent)).
+        where(:name.matches=>"reprocessing"  && {value: 1}).map(&:owner_id)
+    where({:certificate_contents=>:id + cids}).order(:certificate_contents=>:updated_at)
+  }
+
   scope :unvalidated, where({is_expired: false} & (
     {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']})).
-      select("distinct certificate_orders.*")
+      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
 
   scope :incomplete, where({is_expired: false} & (
     {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']})).
-      select("distinct certificate_orders.*")
+      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
 
   scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']}).
-      select("distinct certificate_orders.*")
+      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
 
   scope :has_csr, where({:workflow_state=>'paid'} &
-    {:certificate_contents=>{:signing_request.ne=>""}}).select("distinct certificate_orders.*")
+    {:certificate_contents=>{:signing_request.ne=>""}}).select("distinct certificate_orders.*").
+      order(:certificate_contents=>:updated_at)
 
   scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}}).select("distinct certificate_orders.*")

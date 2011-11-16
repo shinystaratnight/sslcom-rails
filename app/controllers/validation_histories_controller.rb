@@ -34,6 +34,10 @@ class ValidationHistoriesController < ApplicationController
       end
     end
   end
+
+  def index
+
+  end
     
   def documents
     vh = ValidationHistory.find(params[:id])
