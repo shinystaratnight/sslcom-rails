@@ -146,6 +146,8 @@
                             %strong admin functions
                           -u = co.ssl_account.users.last
                           %li=remote_login_link(u)
+                          -if @csr
+                            %li=link_to "view dcv file", @csr.dcv_url, target: "_blank"
             %table(cellspacing="0")
               %tbody
                 %tr

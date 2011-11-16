@@ -1,0 +1,23 @@
+-content_for :title, "Document for Validation"
+=render :partial => 'index_scripts'
+#validations
+  %table(cellspacing="0")
+    %caption
+      Validation Documents for SSL Certificates
+    %tr.heading_row
+      %td
+      %th.name(scope="col")Subject
+      %th(scope="col" colspan="4") Validation Status
+    -@validation_histories.each_with_index do |vh, i|
+      -@cert_order = co
+      -cc = co.certificate_content
+      -next if !co.is_unused_credit? && cc.csr.blank?
+      -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
+      -v = co.validation
+      %tr
+        %td.dropdown=image_tag 'expand.png'
+        %td.name
+          =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>co}
+        -os, os_class=overall_status(v.validation_rulings)
+        %td.validation_status_message(class="#{os_class} vs_message_#{i}" colspan="4")=os
+      =render :partial=>"entry", :locals=>{:co=>co, :i=>i}

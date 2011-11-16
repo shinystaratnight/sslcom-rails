@@ -84,8 +84,10 @@ class CertificateOrder < ActiveRecord::Base
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|
-    nn=where(:workflow_state.matches % 'paid')
-    nn.includes(options[:include]) if options && options.has_key?(:include)
+    if options && options.has_key?(:includes)
+      includes=method(:includes).call(options[:includes])
+    end
+    (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
   }
 
   scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &

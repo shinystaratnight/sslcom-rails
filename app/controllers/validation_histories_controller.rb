@@ -36,7 +36,10 @@ class ValidationHistoriesController < ApplicationController
   end
 
   def index
-
+    @validation_histories=ValidationHistory.all
+    respond_to do |format|
+      format.html { render :action => :index }
+    end
   end
     
   def documents
