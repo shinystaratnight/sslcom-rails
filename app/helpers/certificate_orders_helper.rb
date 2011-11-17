@@ -66,7 +66,19 @@ module CertificateOrdersHelper
           link_to 'provide validation',
             new_certificate_order_validation_path(certificate_order)
         when "pending_validation", "validated"
-          'please wait'
+          last_sent=certificate_order.csr.last_dcv
+          if last_sent.try(:dcv_method)=="http"
+            'please wait'
+          else
+            instructions="A verification request has been emailed to #{last_sent.email_address}.
+              Please open and follow the instructions in the email to complete this verification process. If you
+              did not receive the email sent to #{last_sent.email_address}, or you need assistance, please contact support
+              at support@ssl.com"
+            link_to("response needed #{image_tag('question_mark.png', alt:
+                "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
+                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
+            content_tag(:div, content_tag(:p, instructions, style: "font-size:1.8em;"), id: "pp-#{certificate_order.ref}", style: "display:none;")
+          end
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?

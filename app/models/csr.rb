@@ -132,6 +132,12 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def last_dcv
+    (domain_control_validations.last.try(:dcv_method)=="http") ?
+        domain_control_validations.last :
+        domain_control_validations.last_sent
+  end
+
   def dcv_url
     "http://#{common_name}/#{md5_hash}.txt"
   end
