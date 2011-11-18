@@ -193,6 +193,22 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+
+  def certificate_duration_in_days
+    case certificate_duration.gsub(/^(\d+).+/,$1).to_i
+      when 1
+        365
+      when 2
+        720
+      when 3
+        1095
+      when 4
+        1460
+      when 5
+        1825
+    end
+  end
+
   def renewal_certificate
     if migrated_from_v2?
       Certificate.map_to_legacy(preferred_v2_product_description, 'renew')
@@ -509,7 +525,7 @@ class CertificateOrder < ActiveRecord::Base
         else
           options.merge!(
             'test' => Rails.env =~ /production/i ? "N" : 'Y',
-            'product' => certificate.comodo_product_id.to_s,
+            'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),
             'prioritiseCSRValues' => 'N',
@@ -521,8 +537,12 @@ class CertificateOrder < ActiveRecord::Base
           last_sent = csr.domain_control_validations.last.try(:dcv_method)=="http" ?
               csr.domain_control_validations.last : csr.domain_control_validations.last_sent
           #43 is the old comodo 30 day trial
-          unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(certificate.comodo_product_id) #trial cert
-            options.merge!('days' => certificate_content.duration.to_s)
+          unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
+              mapped_certificate.comodo_product_id) #trial cert
+            #look at certificate_duration for more guidance, i don't think the following is ucc safe
+            days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration_in_days :
+                certificate_content.duration
+            options.merge!('days' => days.to_s)
           end
           if !skip_verification?
             if last_sent.dcv_method=="http"
