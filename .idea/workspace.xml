@@ -18,8 +18,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate.rb" afterPath="$PROJECT_DIR$/app/models/certificate.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/main.sass" afterPath="$PROJECT_DIR$/app/stylesheets/main.sass" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
@@ -64,19 +62,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="549" column="69" selection-start="18053" selection-end="18053" vertical-scroll-proportion="-6.714286">
+            <state line="197" column="0" selection-start="7815" selection-end="7815" vertical-scroll-proportion="0.33559322">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="domain_control_validation.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="domain_control_validation.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="65" column="52" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.7083333">
+            <state line="47" column="72" selection-start="1364" selection-end="1364" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_subject_column.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="9" column="52" selection-start="401" selection-end="401" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3574" column="25" selection-start="68629" selection-end="68629" vertical-scroll-proportion="-7.785714">
               <folding />
             </state>
           </provider>
@@ -104,24 +120,6 @@
         <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="140" column="0" selection-start="5298" selection-end="5298" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="certificates_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="6" selection-start="2372" selection-end="2372" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="buy.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="43" selection-start="1232" selection-end="1232" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -190,10 +188,10 @@
         <option value="$PROJECT_DIR$/app/views/validations/_refer_to_others.html.haml" />
         <option value="$PROJECT_DIR$/app/views/billing_profiles/_form.html.haml" />
         <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
-        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
       </list>
     </option>
@@ -1564,28 +1562,10 @@
           <url>file://$PROJECT_DIR$/app/controllers/surls_controller.rb</url>
           <line>53</line>
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>197</line>
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/validations/show.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="25" selection-start="816" selection-end="816" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="0" selection-start="3034" selection-end="3034" vertical-scroll-proportion="-31.357143">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/db/schema.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="150" column="71" selection-start="4649" selection-end="4649" vertical-scroll-proportion="0.0">
@@ -1670,16 +1650,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="549" column="69" selection-start="18053" selection-end="18053" vertical-scroll-proportion="-6.714286">
+        <state line="47" column="72" selection-start="1364" selection-end="1364" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="52" selection-start="1679" selection-end="1679" vertical-scroll-proportion="0.7083333">
+        <state line="9" column="52" selection-start="401" selection-end="401" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3574" column="25" selection-start="68629" selection-end="68629" vertical-scroll-proportion="-7.785714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="197" column="0" selection-start="7815" selection-end="7815" vertical-scroll-proportion="0.33559322">
           <folding />
         </state>
       </provider>

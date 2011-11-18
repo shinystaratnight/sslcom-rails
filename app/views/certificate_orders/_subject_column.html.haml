@@ -8,17 +8,17 @@
   %span.expand_or_view_order
     -unless single
       -unless co.is_expired_credit?
-        %a.expand expand
+        %a.expand [expand]
     -unless co.is_unused_credit?
-      =link_to "certificate", certificate_order_url(co), :title=>"view order for "+cn
-      =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
-      =link_to "site seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
+      =link_to "[certificate]", certificate_order_url(co), :title=>"view order for "+cn
+      =link_to "[validation]", certificate_order_validation_url(co), :title=>"view validation status for "+cn
+      =link_to "[site seal]", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
       -if co.certificate_content.issued? && !co.certificate_content.expired?
-        =link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
+        =link_to '[reprocess]', reprocess_certificate_order_path(certificate_order)
       -u=co.ssl_account.users.last
       -unless u.blank?
         -if permitted_to? :admin_manage, u
-          =link_to "user", admin_show_user_path(u), :title=>"view user #{u.login}"
+          =link_to "[user]", admin_show_user_path(u), :title=>"view user #{u.login}"
     -else
       -unless co.is_expired_credit?
-        =link_to "finish processing", edit_certificate_order_url(co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'
+        =link_to "[finish processing]", edit_certificate_order_url(co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'

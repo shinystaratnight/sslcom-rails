@@ -195,7 +195,7 @@ class CertificateOrder < ActiveRecord::Base
 
 
   def certificate_duration_in_days
-    case certificate_duration.gsub(/^(\d+).+/,$1).to_i
+    case certificate_duration.gsub(/[^\d]+/,"").to_i
       when 1
         365
       when 2
