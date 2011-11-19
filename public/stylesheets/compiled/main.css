@@ -4726,7 +4726,7 @@ label.error {
 #report table span.expand_or_view_order a, #reseller_tiers table span.expand_or_view_order a, #domain_pricing_popup table span.expand_or_view_order a, #certificate_listing table span.expand_or_view_order a,
 #dashboard table span.expand_or_view_order a, #certificate_orders table span.expand_or_view_order a, #validations table span.expand_or_view_order a {
   font-weight: bold;
-  padding-right: 0.5em;
+  padding-right: 0.1em;
 }
 
 /* line 3577, ../../../app/stylesheets/main.sass */

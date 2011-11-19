@@ -1115,6 +1115,26 @@ module OldSite
           flatten.uniq.map(&:sellable).uniq.map(&:certificate_contents).
           flatten.uniq.select{|cc|cc.v2_migration_sources.blank?}
     end
+
+    #the only PaymentMethods are "Purchase Order", "Credit Card", "Request Quote", "", and "Check"
+    #cc_num only applies to "Credit Card"
+    def cc_num
+      plain_key="8773732869"
+      message = Base64.decode64 self.CardNumber
+      sha = Digest::SHA1.digest plain_key
+      key = sha[0..7]
+      iv = sha[8..15]
+
+      cipher = OpenSSL::Cipher::DES.new
+      cipher.decrypt # Call this before setting key or iv
+      cipher.key = key
+      cipher.iv = iv
+      ciphertext = cipher.update(message)
+      ciphertext << cipher.final
+
+      length=ciphertext[0..4].to_i
+      cc_number=ciphertext[5,length]
+    end
   end
 
   class OrdersShoppingCart < Base
