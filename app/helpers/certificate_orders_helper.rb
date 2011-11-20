@@ -67,7 +67,9 @@ module CertificateOrdersHelper
             new_certificate_order_validation_path(certificate_order)
         when "pending_validation", "validated"
           last_sent=certificate_order.csr.last_dcv
-          if last_sent.try(:dcv_method)=="http"
+          if last_sent.blank?
+            'please wait' #assume intranet
+          elsif last_sent.try(:dcv_method)=="http"
             'please wait'
           else
             instructions="A verification request has been emailed to #{last_sent.email_address}.
