@@ -78,7 +78,7 @@ class Surl < ActiveRecord::Base
   private
   def default_values
     if new_record?
-      self.share = true
+      self.share = false
       self.require_ssl = false
       self.guid=UUIDTools::UUID.random_create.to_s
     end
