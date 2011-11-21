@@ -9,7 +9,8 @@
     -else
       Provide Validation for #{link_to(co.subject.downcase, co)} SSL Order #{"(#"+@certificate_order.ref+")" if @other_party_validation_request.try :preferred_show_order_number}
   #stylized.default_form.clearfix
-    =render partial: '/validations/refer_to_others', locals: {co: co}
+    -unless co.certificate.is_dv?
+      =render partial: '/validations/refer_to_others', locals: {co: co}
     -unless hide_dcv?
       =render partial: '/validations/proof_of_dcv', locals: {co: co}
     =render partial: "/validations/manage_docs", locals: {co: co}

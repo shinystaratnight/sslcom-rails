@@ -4728,7 +4728,7 @@ label.error {
 #dashboard table span.expand_or_view_order span, #certificate_orders table span.expand_or_view_order a, #certificate_orders table span.expand_or_view_order span, #validations table span.expand_or_view_order a, #validations table span.expand_or_view_order span {
   float: left;
   font-weight: bold;
-  padding-right: 0.1em;
+  padding-right: 0.3em;
 }
 
 /* line 3578, ../../../app/stylesheets/main.sass */

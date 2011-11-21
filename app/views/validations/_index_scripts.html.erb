@@ -91,6 +91,26 @@ jQuery(function($) {
       $('.method_'+i+' ul li').remove();
     }
   }
+  $.method_type=function(){
+    if($(':radio[name=method]:checked').val()=="http"){
+      $('#http_dcv').show();
+      $('#email_dcv').hide();
+    }
+    else{
+      $('#http_dcv').hide();
+      $('#email_dcv').show();
+    }
+    $(':radio[name=method]').bind('click', function(){
+      if($(this).val()=="http"){
+        $('#http_dcv').show();
+        $('#email_dcv').hide();
+      }
+      else{
+        $('#http_dcv').hide();
+        $('#email_dcv').show();
+      }
+    });
+  }
   jQuery.fn.refer_to_others_toggle=function(){
     if($(this).val()=="false"){
       $('#request_validation_from_others').hide();
@@ -99,24 +119,7 @@ jQuery(function($) {
       $('#documents_upload_heading').show();
       if(<%=!checkout_in_progress%>)
         $("#upload_validations").show();
-      if($(':radio[name=method]:checked').val()=="http"){
-        $('#http_dcv').show();
-        $('#email_dcv').hide();
-      }
-      else{
-        $('#http_dcv').hide();
-        $('#email_dcv').show();
-      }
-      $(':radio[name=method]').bind('click', function(){
-        if($(this).val()=="http"){
-          $('#http_dcv').show();
-          $('#email_dcv').hide();
-        }
-        else{
-          $('#http_dcv').hide();
-          $('#email_dcv').show();
-        }
-      });
+      $.method_type();
     }
     else{
       $('#request_validation_from_others').show();
@@ -130,6 +133,7 @@ jQuery(function($) {
   }
   $(document).ready(function() {
     var status_bar=null;
+    $.method_type();
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');

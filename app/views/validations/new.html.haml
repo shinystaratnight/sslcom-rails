@@ -31,7 +31,8 @@
   #stylized.default_form
     =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
       -if checkout_in_progress
-        =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
+        -unless co.certificate.is_dv?
+          =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
         =render partial: 'proof_of_dcv', locals: {co: co}
         -unless (co.certificate.is_dv? && checkout_in_progress)
           #documents_upload_heading

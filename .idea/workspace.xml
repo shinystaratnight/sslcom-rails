@@ -18,8 +18,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/main.sass" afterPath="$PROJECT_DIR$/app/stylesheets/main.sass" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/edit.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/edit.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/new.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/new.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/main.css" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
@@ -43,55 +47,55 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/validations/show.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="10" column="63" selection-start="321" selection-end="345" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="edit.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/validations/edit.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="9" column="49" selection-start="371" selection-end="371" vertical-scroll-proportion="0.0">
+            <state line="1" column="41" selection-start="94" selection-end="94" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dcv_sent.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/order_notifier/dcv_sent.erb">
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="54" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0">
+            <state line="135" column="20" selection-start="3867" selection-end="3867" vertical-scroll-proportion="-1.2037038">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="78" column="61" selection-start="3322" selection-end="3322" vertical-scroll-proportion="0.0">
+            <state line="35" column="34" selection-start="1382" selection-end="1382" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_subject_column.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+      <file leaf-file-name="_proof_of_dcv.html.haml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="41" selection-start="254" selection-end="254" vertical-scroll-proportion="-1.1724138">
+            <state line="44" column="26" selection-start="2341" selection-end="2341" vertical-scroll-proportion="0.35568514">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.sass" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_dcv_options.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3575" column="25" selection-start="68655" selection-end="68655" vertical-scroll-proportion="0.6296296">
+            <state line="3575" column="25" selection-start="68655" selection-end="68655" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -176,15 +180,11 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/csr.rb" />
         <option value="$PROJECT_DIR$/app/views/validations/_refer_to_others.html.haml" />
         <option value="$PROJECT_DIR$/app/views/billing_profiles/_form.html.haml" />
         <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/views/validations/edit.html.haml" />
         <option value="$PROJECT_DIR$/config/environments/development.rb" />
         <option value="$PROJECT_DIR$/app/models/old_site.rb" />
         <option value="$PROJECT_DIR$/lib/legacy_ssl_sha1.rb" />
@@ -192,6 +192,10 @@
         <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
+        <option value="$PROJECT_DIR$/app/views/validations/edit.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/validations/new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
       </list>
     </option>
   </component>
@@ -250,6 +254,66 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="RailsProjectView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Views" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.UnclassifiedViewsFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Models" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ModelsFolderNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Models" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ModelsFolderNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SurlVisit" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ActiveRecordModelClassNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="Scope">
         <subPane />
         <subPane subId="Problems" />
@@ -688,81 +752,21 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="RailsProjectView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Views" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.UnclassifiedViewsFolderNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Models" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ModelsFolderNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Models" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.folders.ModelsFolderNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SurlVisit" />
-              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.ActiveRecordModelClassNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="72" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="90" />
     <property name="options.splitter.main.proportions" value="0.3" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="71" />
-    <property name="recentsLimit" value="5" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="recentsLimit" value="5" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="71" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
     <property name="last_opened_file_path" value="/opt/nginx/conf" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="95" />
     <property name="RakeTaksPopup.undocumentedIncluded" value="true" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="932" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="95" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="933" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="932" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="95" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="90" />
     <property name="GoToClass.includeJavaFiles" value="false" />
@@ -776,8 +780,8 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
     <property name="options.lastSelected" value="org.jetbrains.plugins.ruby.settings.RubyIdeSdkConfigurable" />
-    <property name="Ruby.ViewRefParam.DefaultExtension" value="html.haml" />
     <property name="options.searchVisible" value="true" />
+    <property name="Ruby.ViewRefParam.DefaultExtension" value="html.haml" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -1039,6 +1043,13 @@
       <RUBY_REMOTE_DEBUG_CONFIG NAME="LOCAL_ROOT" VALUE="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
+      <JSRemoteDebuggerConfigurationSettings>
+        <option name="engineId" value="embedded" />
+        <option name="fileUrl" />
+      </JSRemoteDebuggerConfigurationSettings>
+      <method />
+    </configuration>
     <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
       <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
       <module name="" />
@@ -1072,18 +1083,17 @@
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugSession" factoryName="Remote">
-      <JSRemoteDebuggerConfigurationSettings>
-        <option name="engineId" value="embedded" />
-        <option name="fileUrl" />
-      </JSRemoteDebuggerConfigurationSettings>
-      <method />
-    </configuration>
     <configuration default="true" type="JavascriptDebugSession" factoryName="Local">
       <JSDebuggerConfigurationSettings>
         <option name="engineId" value="embedded" />
         <option name="fileUrl" />
       </JSDebuggerConfigurationSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
+      <option name="VM_PARAMETERS" value="" />
+      <option name="USER_CFG_CLASS" />
+      <option name="CONTEXT_PROVIDER" />
       <method />
     </configuration>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda">
@@ -1109,12 +1119,6 @@
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="INHERITANCE_CHECK_DISABLED" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="com.intellij.persistence.run.ConsoleRunConfigurationType" factoryName="Query Language Console">
-      <option name="VM_PARAMETERS" value="" />
-      <option name="USER_CFG_CLASS" />
-      <option name="CONTEXT_PROVIDER" />
       <method />
     </configuration>
     <configuration default="false" name="Status messages need to reflect the stage the certificate order is in" type="CucumberRunConfigurationType" factoryName="Cucumber">
@@ -1465,22 +1469,22 @@
       <method />
     </configuration>
     <list size="17">
-      <item index="0" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
-      <item index="1" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
-      <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
-      <item index="3" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
-      <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="5" class="java.lang.String" itemvalue="Cucumber.Anonymous user buying ssl certificates with no csr" />
-      <item index="6" class="java.lang.String" itemvalue="Cucumber.Anonymous user buying ssl certificates should see the steps needed to buy ssl.com certificates" />
-      <item index="7" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="8" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="9" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="11" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="12" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.routes" />
-      <item index="14" class="java.lang.String" itemvalue="Rake.db:migrate" />
-      <item index="15" class="java.lang.String" itemvalue="Ruby.Cucumber: Spork DRb server" />
+      <item index="0" class="java.lang.String" itemvalue="Cucumber.Anonymous user buying ssl certificates with no csr" />
+      <item index="1" class="java.lang.String" itemvalue="Cucumber.Anonymous user buying ssl certificates should see the steps needed to buy ssl.com certificates" />
+      <item index="2" class="java.lang.String" itemvalue="Rake.routes" />
+      <item index="3" class="java.lang.String" itemvalue="Rake.db:migrate" />
+      <item index="4" class="java.lang.String" itemvalue="Ruby.Cucumber: Spork DRb server" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="6" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="7" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="8" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="9" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="10" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="11" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="12" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="15" class="java.lang.String" itemvalue="Rake.spec" />
       <item index="16" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
     </list>
   </component>
@@ -1549,10 +1553,10 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32467532" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3271605" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.3392857" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.46915585" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.31655845" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33116883" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19902518" sideWeight="0.21753247" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30032468" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41720778" sideWeight="0.0" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29475307" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1637,26 +1641,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="71" selection-start="490" selection-end="490" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/fixtures/product_variant_items.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="36" selection-start="1680" selection-end="1680" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="47" column="72" selection-start="1364" selection-end="1364" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="197" column="0" selection-start="7815" selection-end="7815" vertical-scroll-proportion="-3.5357144" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="250" column="35" selection-start="10245" selection-end="10245" vertical-scroll-proportion="0.0" />
@@ -1672,9 +1656,33 @@
         <state line="10" column="63" selection-start="321" selection-end="345" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/edit.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/dcv_sent.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="49" selection-start="371" selection-end="371" vertical-scroll-proportion="0.0" />
+        <state line="11" column="54" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="78" column="61" selection-start="3322" selection-end="3322" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4" column="41" selection-start="254" selection-end="254" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3575" column="25" selection-start="68655" selection-end="68655" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/old_site.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1134" column="55" selection-start="42860" selection-end="42860" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
@@ -1692,37 +1700,37 @@
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/old_site.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/edit.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1134" column="55" selection-start="42860" selection-end="42860" vertical-scroll-proportion="0.0">
+        <state line="1" column="41" selection-start="94" selection-end="94" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/dcv_sent.erb">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="54" selection-start="627" selection-end="627" vertical-scroll-proportion="0.0">
+        <state line="135" column="20" selection-start="3867" selection-end="3867" vertical-scroll-proportion="-1.2037038">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="78" column="61" selection-start="3322" selection-end="3322" vertical-scroll-proportion="0.0">
+        <state line="35" column="34" selection-start="1382" selection-end="1382" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="41" selection-start="254" selection-end="254" vertical-scroll-proportion="-1.1724138">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3575" column="25" selection-start="68655" selection-end="68655" vertical-scroll-proportion="0.6296296">
+        <state line="44" column="26" selection-start="2341" selection-end="2341" vertical-scroll-proportion="0.35568514">
           <folding />
         </state>
       </provider>
