@@ -12,10 +12,14 @@
     .surl_choices
       .choice_w_desc.clearfix
         =f.check_box :share
-        %span.clickable_choice display trust seal and share buttons
+        %span.clickable_choice
+          -what_is="Click this option to place the ssl.com trust logo #{image_tag("sslscan.png")} at the top of your link accompanied with a daily scan status message. In addition, various social share clickable buttons from Facebook, Twitter, Google, etc. will also appear next to the trust logo.".html_safe
+          =link_to("display trust and share logos #{image_tag('question_mark.png', alt: "what are trust and share logos?", class: "what_is_this")}".html_safe, "#seal_and_share", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "seal_and_share", style: "display:none;")
       .choice_w_desc.clearfix
         =f.check_box :set_access_restrictions
-        %span.clickable_choice set access restrictions
+        %span.clickable_choice
+          -what_is="If you want your link to require a username and password before it is displayed or redirected, click option box to the left."
+          =link_to("set access restrictions #{image_tag('question_mark.png', alt: "what are access restrictions?", class: "what_is_this")}".html_safe, "#access_restrictions", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "access_restrictions", style: "display:none;")
       -if !@surl.new_record? && @surl.username && @surl.password_hash #editing
         .choice_w_desc.clearfix
           .clearfix#restriction_field
@@ -34,4 +38,6 @@
             =f.password_field :password
       .choice_w_desc.clearfix
         =f.check_box :require_ssl
-        %span.clickable_choice require ssl encryption (https://)
+        %span.clickable_choice
+          -what_is="Click this option to require your link to be in an ssl session (the link will begin with https://, for instance https://ssl.com/l). Please note that if you also select the 'display trust and share logos' option, elements within the page must also be using https otherwise dialog popups will appear warning the user that the page has unsecure elements."
+          =link_to("require ssl encryption (https://) #{image_tag('question_mark.png', alt: "what is require ssl encryption?", class: "what_is_this")}".html_safe, "#require_ssl", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "require_ssl", style: "display:none;")
