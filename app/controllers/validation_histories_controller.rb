@@ -49,7 +49,7 @@ class ValidationHistoriesController < ApplicationController
       # Comment out the redirecto_to
 #      send_file vh.document.path(params['style'].to_sym),
 #        :type => vh.document.content_type, :disposition => 'attachment'
-      if (params['style']+'.'+params['extension'])==vh.document_file_name
+      if vh.document_file_name.force_encoding('UTF-8').include? (params['style']+'.'+params['extension']) #files with multiple .'s present a problem'
         style = vh.document.default_style
       else
         style = params['style'].to_sym

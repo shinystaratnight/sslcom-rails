@@ -18,7 +18,7 @@
       .choice_w_desc.clearfix
         =f.check_box :set_access_restrictions
         %span.clickable_choice
-          -what_is="If you want your link to require a username and password before it is displayed or redirected, click option box to the left."
+          -what_is="If you want your link to require a username and password before it is displayed or redirected, click the option box to the left."
           =link_to("set access restrictions #{image_tag('question_mark.png', alt: "what are access restrictions?", class: "what_is_this")}".html_safe, "#access_restrictions", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "access_restrictions", style: "display:none;")
       -if !@surl.new_record? && @surl.username && @surl.password_hash #editing
         .choice_w_desc.clearfix

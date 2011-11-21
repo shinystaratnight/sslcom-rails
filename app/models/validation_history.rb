@@ -41,10 +41,10 @@ class ValidationHistory < ActiveRecord::Base
     end
   end
 
-  def authenticated_s3_get_url(options={})
-    options.reverse_merge! :expires_in => 10.minutes, :use_ssl => false
-    AWS::S3::S3Object.url_for document.path(options[:style]), document.options[:bucket], options
-  end
+  #def authenticated_s3_get_url(options={})
+  #  options.reverse_merge! :expires_in => 10.minutes, :use_ssl => false
+  #  AWS::S3::S3Object.url_for document.path(options[:style]), document.options[:bucket], options
+  #end
 
   def self.multi_upload_types
     ValidationHistory::CONTENT_TYPES.transpose[1].map{|ct|ct.split(',')}.
