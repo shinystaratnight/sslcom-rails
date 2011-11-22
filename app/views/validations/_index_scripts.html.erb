@@ -134,6 +134,7 @@ jQuery(function($) {
   $(document).ready(function() {
     var status_bar=null;
     $.method_type();
+    $("select#domain_control_validation_email option[value='none']").remove();
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');

@@ -18,12 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/site_seals_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/site_seals_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/site_seal.rb" afterPath="$PROJECT_DIR$/app/models/site_seal.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site_seals/_entry.html.haml" afterPath="$PROJECT_DIR$/app/views/site_seals/_entry.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site_seals/site_report.html.haml" afterPath="$PROJECT_DIR$/app/views/site_seals/site_report.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,24 +41,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="101" column="68" selection-start="4405" selection-end="4405" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="site_seals_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="98" column="0" selection-start="3163" selection-end="3163" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="site_report.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site_seals/site_report.html.haml">
           <provider selected="true" editor-type-id="text-editor">
@@ -82,15 +59,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="0" selection-start="2075" selection-end="2186" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site_seals/show.html.haml">
           <provider selected="true" editor-type-id="text-editor">
@@ -100,10 +68,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_entry.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_entry.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site_seals/_entry.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="42" column="78" selection-start="2370" selection-end="2370" vertical-scroll-proportion="0.3704918">
+            <state line="48" column="78" selection-start="2858" selection-end="2858" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="33" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_proof_of_dcv.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="28" column="82" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_index_scripts.html.erb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="136" column="78" selection-start="3946" selection-end="3946" vertical-scroll-proportion="0.7109634">
               <folding />
             </state>
           </provider>
@@ -179,7 +174,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/validations/_refer_to_others.html.haml" />
         <option value="$PROJECT_DIR$/app/views/validations/new.html.haml" />
         <option value="$PROJECT_DIR$/app/models/surl.rb" />
@@ -195,6 +189,7 @@
         <option value="$PROJECT_DIR$/app/models/site_seal.rb" />
         <option value="$PROJECT_DIR$/app/helpers/site_seals_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/site_seals/_entry.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
       </list>
     </option>
   </component>
@@ -1578,13 +1573,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/s3.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="61" selection-start="224" selection-end="224" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/validation_history.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="53" column="45" selection-start="2466" selection-end="2466" vertical-scroll-proportion="0.0">
@@ -1602,20 +1590,6 @@
     <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="145" column="59" selection-start="5277" selection-end="5277" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="35" column="36" selection-start="1384" selection-end="1384" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="46" selection-start="2293" selection-end="2293" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1685,7 +1659,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site_seals/_entry.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="42" column="78" selection-start="2370" selection-end="2370" vertical-scroll-proportion="0.3704918">
+        <state line="48" column="78" selection-start="2858" selection-end="2858" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="35" column="33" selection-start="1381" selection-end="1381" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="28" column="82" selection-start="1425" selection-end="1425" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="136" column="78" selection-start="3946" selection-end="3946" vertical-scroll-proportion="0.7109634">
           <folding />
         </state>
       </provider>
