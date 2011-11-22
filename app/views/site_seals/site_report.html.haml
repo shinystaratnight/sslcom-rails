@@ -1,7 +1,7 @@
 -title = "SSL Secured Site Report"
 -content_for :title, title
 -ss = @site_seal
--co = ss.certificate_order
+-co = ss.latest_certificate_order
 -r = co.certificate_content.registrant
 #wrapper
   =render 'report_header'

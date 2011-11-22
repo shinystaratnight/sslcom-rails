@@ -40,11 +40,11 @@
                   %li
                     %strong site seal report
                     %li.small_section
-                      =link_to 'preview site seal report', site_report_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]
+                      =link_to 'preview site seal report', "javascript:void(0)", popup_code(co)
                       =#link_to 'preview company documents', artifacts_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]
               .certificate_details_box
                 %strong embeddable code
-                -ec = (co.site_seal.preferred_seal_image?) ? link_to(image_tag(image_url(co.site_seal.preferred_seal_image, false)), site_report_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]) : ""
+                -ec = (co.site_seal.preferred_seal_image?) ? image_tag(image_url(co.site_seal.preferred_seal_image, false), popup_code(co)) : ""
                 =text_area_tag :csr, ec, :size=>"30x10"
               .certificate_details_box
                 %strong instructions

@@ -103,7 +103,7 @@
                               -co.validation.validation_histories.each do |vh|
                                 %li
                                   =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
-                                  =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                  =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url, target: "_blank"
                                   =vh.document_file_name.shorten(20, false)
                             -else
                               %li

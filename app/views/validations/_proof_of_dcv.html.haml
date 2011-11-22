@@ -26,6 +26,17 @@
         -else
           A verification email will be sent to the address selected below. Please follow and reply to the
           verification email to complete this validation step.
+      .clearfix
+        %label
+          *Send Verification To
+          %span.label_desc whois and authority email addresses
+        .dcv_email_choices
+          .clearfix
+            -if co.validation_stage_checkout_in_progress?
+              =render partial: "validations/dcv_options", locals:{co: co}
+            -else
+              =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true do
+                =render partial: "validations/dcv_options", locals:{co: co}
       %p
         %span#no_emails_accessible
           Note: If none of the listed email addresses are accessible, you will be required to submit an authorization form filled out
@@ -38,14 +49,3 @@
             form at the bottom of this page
           -else
             validation tab once you've finished placing this order.
-      .clearfix
-        %label
-          *Send Verification To
-          %span.label_desc whois and authority email addresses
-        .dcv_email_choices
-          .clearfix
-            -if co.validation_stage_checkout_in_progress?
-              =render partial: "validations/dcv_options", locals:{co: co}
-            -else
-              =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true do
-                =render partial: "validations/dcv_options", locals:{co: co}

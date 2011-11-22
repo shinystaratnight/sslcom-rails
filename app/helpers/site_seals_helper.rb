@@ -57,4 +57,10 @@ module SiteSealsHelper
       ["pending issuance", pending]
     end
   end
+
+  def popup_code(co)
+    {onclick:
+         "window.open('#{site_report_site_seal_url(co.site_seal)}', 'site_report','#{SiteSeal::REPORT_DIMENSIONS}')",
+    onmouseover: "this.style.cursor='pointer'"}
+  end
 end
