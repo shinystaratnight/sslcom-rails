@@ -1,3 +1,4 @@
+-ec = (co.site_seal.preferred_seal_image?) ? image_tag(image_url(co.site_seal.preferred_seal_image, false), popup_code(co)) : ""
 %tr.expanded(class="#{'hidden' if current_page?(:site_seals)}")
   %td(colspan="6")
     .certificate_details
@@ -36,7 +37,7 @@
                   -if co.site_seal.preferred_seal_image?
                     %li
                       %strong site seal image
-                      %li.small_section=image_tag co.site_seal.preferred_seal_image
+                      %li.small_section=ec
                   %li
                     %strong site seal report
                     %li.small_section
@@ -44,7 +45,6 @@
                       =#link_to 'preview company documents', artifacts_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]
               .certificate_details_box
                 %strong embeddable code
-                -ec = (co.site_seal.preferred_seal_image?) ? image_tag(image_url(co.site_seal.preferred_seal_image, false), popup_code(co)) : ""
                 =text_area_tag :csr, ec, :size=>"30x10"
               .certificate_details_box
                 %strong instructions

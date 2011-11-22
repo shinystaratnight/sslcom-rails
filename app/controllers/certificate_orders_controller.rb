@@ -203,6 +203,8 @@ class CertificateOrdersController < ApplicationController
 
     respond_to do |format|
       if @certificate_content.valid?
+        @certificate_order.site_seal.conditionally_activate! unless
+            @certificate_order.site_seal.conditionally_activated?
         cc = @certificate_order.certificate_content
         if @certificate_content.preferred_reprocessing?
           @certificate_order.certificate_contents << @certificate_content

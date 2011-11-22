@@ -21,11 +21,12 @@
       %dd
         -cos, coc = certificate_status(co)
         %span(class=coc)=cos
-  %div
-    %dl
-      %dt.section_header company/organization
-      %dd=r.company_name
-      %dd=[r.city, r.state, r.country].join(", ")
+  -if r
+    %div
+      %dl
+        %dt.section_header company/organization
+        %dd=r.company_name
+        %dd=[r.city, r.state, r.country].join(", ")
   %div
     %dl
       %dt.section_header site owner
@@ -33,10 +34,11 @@
         This Web site can secure your private information using an SSL.com issued SSL
         Certificate. Information exchanged with any address beginning with https is
         encrypted using SSL before transmission.
-  %div
-    %dl
-      %dt.section_header identity verified
-      %dd
-        \#{r.company_name.upcase} has been verified as the owner or operator of the Web site
-        located at #{co.subject}. Official records confirm #{r.company_name.upcase} as a
-        valid business.
+  -if r && co.certificate_content.validated?
+    %div
+      %dl
+        %dt.section_header identity verified
+        %dd
+          \#{r.company_name.upcase} has been verified as the owner or operator of the Web site
+          located at #{co.subject}. Official records confirm #{r.company_name.upcase} as a
+          valid business.

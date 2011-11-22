@@ -20,7 +20,7 @@ class SiteSeal < ActiveRecord::Base
   ACTIVATE = "activate"
   
   NEW_STATUS = 
-    "site seal has not been activated yet, waiting for order payment"
+    "site seal has not been activated yet"
   FULLY_ACTIVATED_STATUS =
     "site seal has been fully activated with all features"
   CONDITIONALLY_ACTIVATED_STATUS =
