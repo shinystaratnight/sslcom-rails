@@ -10,7 +10,7 @@
           =link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr)
         %p
           Upload the above file to your site root so that:
-        %p#http_dcv_url=co.csr.dcv_url
+        %p#http_dcv_url=current_user.is_admin? ? link_to(co.csr.dcv_url, co.csr.dcv_url, target: "_blank") : co.csr.dcv_url
         %p
           is publicly accessible. Once this has been done, click the 'Submit' button below to complete this order.
     #email_dcv
