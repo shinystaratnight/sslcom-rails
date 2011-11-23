@@ -56,6 +56,7 @@ SslCom::Application.routes.draw do
     collection do
       get :credits
       get :pending
+      get :order_by_csr
       get :incomplete
       get :reprocessing
       get :search

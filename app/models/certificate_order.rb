@@ -64,6 +64,10 @@ class CertificateOrder < ActiveRecord::Base
     where({:certificate_contents=>:id + cids}).order(:certificate_contents=>:updated_at)
   }
 
+  scope :order_by_csr, lambda {
+    joins({:certificate_contents=>:csr}).order({:certificate_contents=>{:csr=>:updated_at.desc}})
+  }
+
   scope :unvalidated, where({is_expired: false} & (
     {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']})).
       select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)

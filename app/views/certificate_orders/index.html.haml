@@ -124,7 +124,7 @@
                               %strong admin functions
                             -u = co.ssl_account.users.last
                             %li=remote_login_link(u)
-                            -if cc.csr
+                            -if cc.csr.try(:body)
                               %li=link_to "view dcv file", cc.csr.dcv_url, target: "_blank"
                       -if cc.csr && cc.csr.signed_certificate
                         .certificate_details_box

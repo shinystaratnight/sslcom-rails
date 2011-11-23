@@ -214,9 +214,13 @@ class Csr < ActiveRecord::Base
 
   def to_der
     to_openssl.to_der
+  rescue
+    ""
   end
 
   def to_openssl
     OpenSSL::X509::Request.new body
+  rescue
+    ""
   end
 end

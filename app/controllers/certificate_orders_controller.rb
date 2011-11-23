@@ -21,7 +21,7 @@ class CertificateOrdersController < ApplicationController
                 only: [:show, :update, :edit, :download, :destroy, :update_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
-  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :require=>:read
+  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
     :renew, :reprocess, :require=>[:create, :update, :delete]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
@@ -247,13 +247,24 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  # GET /certificate_orders/credits
-  # GET /certificate_orders/credits.xml
   def pending
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
         current_user.ssl_account.certificate_orders.pending).paginate(p)
+
+    respond_to do |format|
+      format.html { render :action=>:index}
+      format.xml  { render :xml => @certificate_orders }
+    end
+  end
+
+  def order_by_csr
+    p = {:page => params[:page]}
+    @certificate_orders = (current_user.is_admin? ?
+      CertificateOrder.unscoped{CertificateOrder.order_by_csr} :
+        current_user.ssl_account.certificate_orders.unscoped{
+          current_user.ssl_account.certificate_orders.order_by_csr}).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

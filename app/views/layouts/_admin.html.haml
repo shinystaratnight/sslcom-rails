@@ -6,6 +6,7 @@
           %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
           %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
           %th.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
+          %th.certificate_status=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
           -unless current_user.ssl_account.funded_account.blank?
             %th AVAILABLE FOR USE
           %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
@@ -14,6 +15,7 @@
           %td.validations=link_to CertificateOrder.unvalidated.count, incomplete_certificate_orders_path
           %td.certificate_status=link_to CertificateOrder.pending.count, pending_certificate_orders_path
           %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
+          %td
           -unless current_user.ssl_account.funded_account.blank?
             %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
           %td(colspan="2")
