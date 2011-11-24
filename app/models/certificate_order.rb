@@ -241,6 +241,29 @@ class CertificateOrder < ActiveRecord::Base
         "#{year.value.to_i/365} Year") + " #{certificate.title}"
   end
 
+  #find the desired Certificate, choose among it’s product_variant_groups, and finally choose among it’s product_variant_items
+  #
+  #change certificate_order.sub_order_item[0] to the appropriate ProductVariantItem item
+  #certificate_content.duration needs to change if not free cert
+  #
+  #take product_variant_item
+  def change_certificate(pvi)
+    amount = pvi.amount
+    update_attribute :amount, amount #also can update domains, server licenses, etc
+    sub_order_items[0].product_variant_item=pvi
+    sub_order_items[0].amount=amount
+    sub_order_items[0].save
+    certificate_content.duration = pvi.duration #for free certs, set to nil
+
+    #change order amount
+    line_items[0].update_attribute :cents, amount
+    Order.connection.update(
+        "UPDATE `orders` SET cents = #{line_items.map(&:cents).sum} WHERE id = #{order.id}") #override readonly
+
+    #Adjust funded account
+    ssl_account.funded_account.update_attribute :cents, amount
+  end
+
   def migrated_from_v2?
     order.try(:preferred_migrated_from_v2)
   end
@@ -542,7 +565,7 @@ class CertificateOrder < ActiveRecord::Base
               csr.domain_control_validations.last : csr.domain_control_validations.last_sent
           #43 is the old comodo 30 day trial
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
-              mapped_certificate.comodo_product_id) #trial cert
+              mapped_certificate.comodo_product_id) #trial cert does not specify duration
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
             days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration_in_days :
                 certificate_content.duration

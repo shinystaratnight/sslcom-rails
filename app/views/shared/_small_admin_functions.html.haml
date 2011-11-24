@@ -1,0 +1,8 @@
+-csr=co.csr
+-if current_user.is_admin?
+  %li
+    %strong admin functions
+  -u = co.ssl_account.users.last
+  %li=remote_login_link(u)
+  -if csr.try(:body)
+    %li=link_to "view dcv file", csr.dcv_url, target: "_blank"

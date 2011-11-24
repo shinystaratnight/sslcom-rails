@@ -119,13 +119,7 @@
                               -else
                           -if cn
                             =render partial: 'visit', locals: {cn: cn}
-                          -if current_user.is_admin?
-                            %li
-                              %strong admin functions
-                            -u = co.ssl_account.users.last
-                            %li=remote_login_link(u)
-                            -if cc.csr.try(:body)
-                              %li=link_to "view dcv file", cc.csr.dcv_url, target: "_blank"
+                          =render partial: 'shared/small_admin_functions', locals: {co: co}
                       -if cc.csr && cc.csr.signed_certificate
                         .certificate_details_box
                           %ul

@@ -1116,6 +1116,67 @@ module OldSite
           flatten.uniq.select{|cc|cc.v2_migration_sources.blank?}
     end
 
+    def map_card_type
+      case self.CardType
+        when "", nil
+          ""
+        when "MasterCard"
+          "Master Card"
+        when "AMEX"
+          "American Express"
+        when "DISCOVER"
+          "Discover"
+        when "VISA"
+          "Visa"
+      end
+    end
+
+    def self.migrate_billing_profiles
+      ::BillingProfile.password = "kama1jama1"
+      #find migrated orders that do not have a billing profile
+      oids=V2MigrationProgress.select("migratable_id").
+          where(:source_table_name >> "Orders", :migratable_type >> "Order").map(&:migratable_id)
+      queue = ::Order.select("id").where(:id + oids, :billing_profile_id >> nil,
+                                       :quote_number >> nil, :po_number >> nil)
+      queue_ids = queue.map(&:id)
+      v2=V2MigrationProgress.select("source_id, migratable_id").where(:source_table_name >> "Orders",
+        :migratable_type >> "Order", :migratable_id + queue_ids)
+      old_ids=v2.map(&:source_id)
+      select("OrderNumber, BillingLastName, BillingFirstName, BillingCompany, BillingAddress1, BillingAddress2,
+              BillingSuite, BillingCity, BillingState, BillingZip, BillingCountry, BillingPhone,
+              CardType,CardName,CardNumber,CardExtraCode,CardExpirationMonth,CardExpirationYear").
+          where(:OrderNumber + old_ids, :CardExpirationYear !~ "").order("OrderDate desc").each do |o|
+        cc_num=o.cc_num
+        newer=::Order.find_by_id(v2.find_by_source_id(o.OrderNumber).migratable_id)
+        unless cc_num.blank? || newer.billable.blank?
+          attrs={
+          :ssl_account_id => newer.billable_id,
+              :description => o.CardName,
+               :first_name => o.BillingFirstName,
+                :last_name => o.BillingLastName,
+                :address_1 => [o.BillingAddress1,o.BillingSuite].join(", "),
+                :address_2 => o.BillingAddress2,
+                  :country => o.BillingCountry,
+                     :city => o.BillingCity,
+                    :state => o.BillingState,
+              :postal_code => o.BillingZip,
+                    :phone => o.BillingPhone,
+                  :company => o.BillingCompany,
+              :credit_card => o.map_card_type,
+              :card_number => cc_num,
+          :expiration_month => o.CardExpirationMonth,
+          :expiration_year => o.CardExpirationYear,
+            :security_code => o.CardExtraCode
+          }
+          p "migrating old Order billing profile #{o.OrderNumber}"
+          bp = BillingProfile.find_by_card_number_and_expiration_year(cc_num, o.CardExpirationYear.to_i) ||
+              BillingProfile.create(attrs)
+          newer.billing_profile=bp
+          newer.save
+        end
+      end
+    end
+
     #the only PaymentMethods are "Purchase Order", "Credit Card", "Request Quote", "", and "Check"
     #cc_num only applies to "Credit Card"
     def cc_num
@@ -1134,6 +1195,8 @@ module OldSite
 
       length=ciphertext[0..4].to_i
       cc_number=ciphertext[5,length]
+    rescue
+      ""
     end
   end
 

@@ -158,12 +158,7 @@
                 %ul
                   -if cn
                     =render partial: 'certificate_orders/visit', locals: {cn: cn}
-                  -if current_user.is_admin?
-                    %li
-                      %strong login
-                    -u = co.ssl_account.users.last
-                    -unless u.blank?
-                      %li.category_border=remote_login_link(u)
+                  =render partial: 'shared/small_admin_functions', locals: {co: co}
                   %li
                     %strong notes
                   %li.category_border

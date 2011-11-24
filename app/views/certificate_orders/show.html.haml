@@ -141,13 +141,7 @@
                             -else
                         -if cn
                           =render partial: 'certificate_orders/visit', locals: {cn: cn}
-                        -if current_user.is_admin?
-                          %li
-                            %strong admin functions
-                          -u = co.ssl_account.users.last
-                          %li=remote_login_link(u)
-                          -if @csr
-                            %li=link_to "view dcv file", @csr.dcv_url, target: "_blank"
+                        =render partial: 'shared/small_admin_functions', locals: {co: co}
             %table(cellspacing="0")
               %tbody
                 %tr
