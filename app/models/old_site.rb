@@ -1146,9 +1146,15 @@ module OldSite
               BillingSuite, BillingCity, BillingState, BillingZip, BillingCountry, BillingPhone,
               CardType,CardName,CardNumber,CardExtraCode,CardExpirationMonth,CardExpirationYear").
           where(:OrderNumber + old_ids, :CardExpirationYear !~ "").order("OrderDate desc").each do |o|
+        #OldSite.detect_abort
         cc_num=o.cc_num
         newer=::Order.find_by_id(v2.find_by_source_id(o.OrderNumber).migratable_id)
-        unless cc_num.blank? || newer.billable.blank?
+        unless cc_num.blank? || newer.billable.blank? || !newer.billing_profile.blank?
+          p "new==#{newer.id}, older==#{o.id}"
+          cvv=o.CardExtraCode.blank? ?
+              (ot=select("TransactionCommand").where(:OrderNumber >> o.OrderNumber).last
+              cvv_t=ot.cvv_code
+              cvv_t.blank? ? "na" : cvv_t) : o.CardExtraCode
           attrs={
           :ssl_account_id => newer.billable_id,
               :description => o.CardName,
@@ -1159,20 +1165,29 @@ module OldSite
                   :country => o.BillingCountry,
                      :city => o.BillingCity,
                     :state => o.BillingState,
-              :postal_code => o.BillingZip,
+              :postal_code => o.BillingZip.blank? ? "n/a" : o.BillingZip,
                     :phone => o.BillingPhone,
                   :company => o.BillingCompany,
               :credit_card => o.map_card_type,
               :card_number => cc_num,
           :expiration_month => o.CardExpirationMonth,
           :expiration_year => o.CardExpirationYear,
-            :security_code => o.CardExtraCode
+            :security_code => cvv
           }
-          p "migrating old Order billing profile #{o.OrderNumber}"
-          bp = BillingProfile.find_by_card_number_and_expiration_year(cc_num, o.CardExpirationYear.to_i) ||
-              BillingProfile.create(attrs)
-          newer.billing_profile=bp
-          newer.save
+          Order.transaction do
+            p "migrating old Order billing profile #{o.OrderNumber}"
+            bp = BillingProfile.find_by_card_number_and_expiration_year(cc_num, o.CardExpirationYear.to_i) ||
+                BillingProfile.create(attrs)
+            if bp.valid?
+              p "billing_profile.id == "+bp.id.to_s
+              newer.billing_profile=bp
+              newer.save
+            else
+              p bp.errors
+            end
+          end
+        else
+          p "skipping old Order billing profile #{o.OrderNumber}"
         end
       end
     end
@@ -1198,6 +1213,12 @@ module OldSite
     rescue
       ""
     end
+
+    def cvv_code
+      self.TransactionCommand=~/x_card_code=(.+?)&/
+      $1
+    end
+
   end
 
   class OrdersShoppingCart < Base

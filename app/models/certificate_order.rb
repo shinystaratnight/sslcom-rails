@@ -61,7 +61,7 @@ class CertificateOrder < ActiveRecord::Base
   scope :reprocessing, lambda {
     cids=Preference.select("owner_id").joins(:owner.type(CertificateContent)).
         where(:name.matches=>"reprocessing"  && {value: 1}).map(&:owner_id)
-    where({:certificate_contents=>:id + cids}).order(:certificate_contents=>:updated_at)
+    joins({:certificate_contents=>:csr}).where({:certificate_contents=>:id + cids}).order(:certificate_contents=>{:csr=>:updated_at.desc})
   }
 
   scope :order_by_csr, lambda {
