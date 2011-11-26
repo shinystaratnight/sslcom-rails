@@ -237,7 +237,7 @@ class Order < ActiveRecord::Base
     v.map(&:source_obj) if v
   end
 
-  #the next 2 functions are for migration prurposes
+  #the next 2 functions are for migration purposes
   #this function shows order that have order total amount that do not match their child
   #line_item totals
   def self.totals_mismatched
@@ -248,6 +248,49 @@ class Order < ActiveRecord::Base
   #line_item totals and may result in in line_items that should not exist
   def self.with_too_many_line_items
     includes(:line_items).all.select{|o|o.cents<o.line_items.sum(:cents)}
+  end
+
+
+  # We'll raise this exception in the case of an unsettled credit.
+  class UnsettledCreditError < RuntimeError
+    UNSETTLED_CREDIT_RESPONSE_REASON_CODE = '54'
+
+    def self.match?( response )
+      response.params['response_reason_code'] == UNSETTLED_CREDIT_RESPONSE_REASON_CODE
+    end
+  end
+
+  def initialize( transaction_id, amount_charged, cc_last_four )
+    self.transaction_id = transaction_id
+    self.amount_charged = amount_charged
+    self.cc_last_four   = cc_last_four
+  end
+
+  def refund( refund_amount )
+    if refund_amount != self.amount
+      # Different amounts: only a CREDIT will do
+      response = SampleGateway.credit(
+        refund_amount,
+        self.transaction.reference,
+        :card_number => self.cc_last_four
+      )
+      if UnsettledCreditError.match?( response )
+        raise UnsettledCreditError
+      end
+    else
+      # Same amount: try a VOID first, falling back to CREDIT if that fails
+      response = SampleGateway.void( self.transaction.reference )
+
+      if !response.success?
+        response = SampleGateway.credit(
+          refund_amount,
+          self.transaction.reference,
+          :card_number => self.cc_last_four
+        )
+      end
+    end
+
+    response
   end
 
   private
