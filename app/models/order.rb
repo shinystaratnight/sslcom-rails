@@ -79,6 +79,7 @@ class Order < ActiveRecord::Base
   state :pending
   state :authorized
   state :paid
+  state :fully_refunded
   state :payment_declined
   state :payment_not_required
 
@@ -112,6 +113,11 @@ class Order < ActiveRecord::Base
 
     transitions :from => :authorized,
                 :to   => :authorized
+  end
+
+  event :full_refund do
+    transitions :from => :paid,
+                :to   => :fully_refunded
   end
   # END acts_as_state_machine
 
@@ -150,7 +156,7 @@ class Order < ActiveRecord::Base
         payment_captured!
       else
         transaction_declined!
-        errors.add_to_base(capture.message)
+        errors[:base] << capture.message
       end
 
       capture
@@ -170,7 +176,7 @@ class Order < ActiveRecord::Base
         payment_authorized!
       else
         transaction_declined!
-        errors.add_to_base(authorization.message)
+        errors[:base] << authorization.message
       end
 
       authorization
@@ -260,37 +266,31 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def initialize( transaction_id, amount_charged, cc_last_four )
-    self.transaction_id = transaction_id
-    self.amount_charged = amount_charged
-    self.cc_last_four   = cc_last_four
-  end
+  def refund(refund_amount=self.amount)
+    card_num = billing_profile.card_number
+    transaction do
+      if refund_amount != self.amount
+        # Different amounts: only a CREDIT will do
+        response = OrderTransaction.credit(
+                  refund_amount,
+                  self.transactions.last.reference,
+                  :card_number => card_num)
+        if UnsettledCreditError.match?( response )
+          raise UnsettledCreditError
+        end
+      else
+        # Same amount: try a VOID first, falling back to CREDIT if that fails
+        response = gateway.void( self.transactions.last.reference )
 
-  def refund( refund_amount )
-    if refund_amount != self.amount
-      # Different amounts: only a CREDIT will do
-      response = SampleGateway.credit(
-        refund_amount,
-        self.transaction.reference,
-        :card_number => self.cc_last_four
-      )
-      if UnsettledCreditError.match?( response )
-        raise UnsettledCreditError
+        unless response.success?
+          response = OrderTransaction.credit(
+            refund_amount, self.transactions.last.reference, :card_number => card_num)
+        end
       end
-    else
-      # Same amount: try a VOID first, falling back to CREDIT if that fails
-      response = SampleGateway.void( self.transaction.reference )
-
-      if !response.success?
-        response = SampleGateway.credit(
-          refund_amount,
-          self.transaction.reference,
-          :card_number => self.cc_last_four
-        )
-      end
+      transactions.push(response)
+      full_refund!
+      response
     end
-
-    response
   end
 
   private
@@ -298,8 +298,8 @@ class Order < ActiveRecord::Base
   def gateway
     #ActiveMerchant::Billing::Base.default_gateway
     ActiveMerchant::Billing::AuthorizeNetGateway.new(
-      :login    => '9jFL5k9E',
-      :password => '8b3zEL5H69sN4Pth'
+      :login    => Rails.env=~/production/i ? Settings.p_authorize_net_key : Settings.authorize_net_key,
+      :password => Rails.env=~/production/i ? Settings.p_authorize_net_transaction_id : Settings.authorize_net_transaction_id
     )
   end
 

@@ -47,6 +47,10 @@ installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNode
 
 comodo_api_username: 'likx2m7j'
 comodo_api_password: 'Jimi3Kimi3'
+authorize_net_key: '9jFL5k9E'
+authorize_net_transaction_id: '8b3zEL5H69sN4Pth'
+p_authorize_net_key: '6Y6ckBFU6nYc'
+p_authorize_net_transaction_id: '67DV52cZWu4mGv9L'
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local

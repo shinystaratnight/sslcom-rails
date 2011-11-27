@@ -29,14 +29,10 @@ SslCom::Application.configure do
   config.action_mailer.perform_deliveries = true
 
   config.to_prepare do
-    OrderTransaction.gateway =
-      ActiveMerchant::Billing::AuthorizeNetGateway.new(
-        :login    => '9jFL5k9E',
-        :password => '8b3zEL5H69sN4Pth'
-      )
     BillingProfile.password = "kama1jama1"
   end
 
+  ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info
 
   GATEWAY_TEST_CODE=1.0

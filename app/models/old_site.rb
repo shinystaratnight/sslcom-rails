@@ -1131,6 +1131,7 @@ module OldSite
       end
     end
 
+    #resuming migration that has been tested
     def self.migrate_billing_profiles
       ::BillingProfile.password = "kama1jama1"
       #find migrated orders that do not have a billing profile

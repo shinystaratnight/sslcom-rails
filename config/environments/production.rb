@@ -57,11 +57,6 @@ SslCom::Application.configure do
   }
 
   config.to_prepare do
-    OrderTransaction.gateway =
-      ActiveMerchant::Billing::AuthorizeNetGateway.new(
-        :login    => '6Y6ckBFU6nYc',
-        :password => '67DV52cZWu4mGv9L'
-      )
     BillingProfile.password = "kama1jama1"
   end
 

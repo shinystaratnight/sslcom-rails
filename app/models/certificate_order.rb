@@ -555,7 +555,7 @@ class CertificateOrder < ActiveRecord::Base
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),
-            'prioritiseCSRValues' => 'N',
+            'prioritiseCSRValues' => 'Y',
             'isCustomerValidated' => 'Y',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
