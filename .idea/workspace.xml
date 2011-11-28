@@ -18,11 +18,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order_transaction.rb" afterPath="$PROJECT_DIR$/app/models/order_transaction.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/funded_accounts/_cart_row.haml" afterPath="$PROJECT_DIR$/app/views/funded_accounts/_cart_row.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/users/index.html.haml" afterPath="$PROJECT_DIR$/app/views/users/index.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" afterPath="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,60 +51,83 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="order.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <file leaf-file-name="edit.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/edit.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="297" column="6" selection-start="8353" selection-end="8353" vertical-scroll-proportion="0.0">
+            <state line="1" column="17" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_dcv_options.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_proof_of_dcv.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="14" selection-start="776" selection-end="776" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="validation_rule.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/validation_rule.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="14" selection-start="536" selection-end="536" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="114" column="71" selection-start="4738" selection-end="4759" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_subject_column.html.haml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="0" selection-start="724" selection-end="839" vertical-scroll-proportion="0.8097015">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/users/index.html.haml">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="64" column="42" selection-start="2516" selection-end="2516" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="certificate.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="15" selection-start="588" selection-end="588" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="129" column="9" selection-start="5174" selection-end="5174" vertical-scroll-proportion="-13.741936">
+            <state line="92" column="54" selection-start="3894" selection-end="3919" vertical-scroll-proportion="10.967742">
               <folding>
-                <marker date="1322502928000" expanded="true" signature="4702:22956" placeholder=" ... end" />
-                <marker date="1322502928000" expanded="true" signature="4841:5998" placeholder="do ... end" />
-                <marker date="1322502928000" expanded="true" signature="4995:5968" placeholder="if ... end" />
+                <marker date="1322515110000" expanded="true" signature="3866:4088" placeholder="-unless co.is_unused_credit? || co.skip_verification?" />
+                <marker date="1322515110000" expanded="true" signature="4213:5946" placeholder="if ... end" />
+                <marker date="1322515110000" expanded="true" signature="4367:5032" placeholder="unless ... end" />
+                <marker date="1322515110000" expanded="true" signature="4489:4879" placeholder="do ... end" />
+                <marker date="1322515110000" expanded="true" signature="5087:5750" placeholder="unless ... end" />
+                <marker date="1322515110000" expanded="true" signature="5207:5712" placeholder="unless ... end" />
+                <marker date="1322515110000" expanded="true" signature="5414:5712" placeholder="unless ... end" />
+                <marker date="1322515110000" expanded="true" signature="5777:5946" placeholder="if ... end" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_cart_row.haml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_cart_row.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="17" column="26" selection-start="569" selection-end="569" vertical-scroll-proportion="0.46896553">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="162" column="6" selection-start="6252" selection-end="6252" vertical-scroll-proportion="0.0">
-              <folding />
             </state>
           </provider>
         </entry>
@@ -112,34 +135,16 @@
       <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="106" column="48" selection-start="4976" selection-end="4976" vertical-scroll-proportion="0.0">
+            <state line="295" column="0" selection-start="10527" selection-end="10527" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <file leaf-file-name="certificate_content.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="50" selection-start="2345" selection-end="2345" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="order_transaction.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/order_transaction.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="0" selection-start="1668" selection-end="2081" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="development.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="33" column="61" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.0">
+            <state line="194" column="27" selection-start="7109" selection-end="7109" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -188,11 +193,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
-        <option value="$PROJECT_DIR$/app/models/old_site.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/models/surl.rb" />
         <option value="$PROJECT_DIR$/config/database.yml" />
@@ -204,6 +204,11 @@
         <option value="$PROJECT_DIR$/app/views/users/index.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/funded_accounts/_cart_row.haml" />
+        <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
       </list>
     </option>
   </component>
@@ -1472,7 +1477,7 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32467532" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33901194" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3407155" sideWeight="0.9983753" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24129353" sideWeight="0.64224875" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.44444445" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.35775128" sideWeight="0.99025184" order="3" side_tool="false" content_ui="tabs" />
@@ -1563,91 +1568,9 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_billable/lib/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="65" selection-start="599" selection-end="599" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/database.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="74" selection-start="947" selection-end="947" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/schema.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="427" column="4" selection-start="12603" selection-end="12603" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="0" selection-start="2577" selection-end="2577" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="0" selection-start="3966" selection-end="4061" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="63" column="34" selection-start="2116" selection-end="2116" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/settings.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="50" selection-start="2345" selection-end="2345" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="61" selection-start="1218" selection-end="1218" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order_transaction.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="0" selection-start="1668" selection-end="2081" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="297" column="6" selection-start="8353" selection-end="8353" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/users/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="42" selection-start="2516" selection-end="2516" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="15" selection-start="588" selection-end="588" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="106" column="48" selection-start="4976" selection-end="4976" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1656,9 +1579,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="129" column="9" selection-start="5174" selection-end="5174" vertical-scroll-proportion="-13.741936">
           <folding>
-            <marker date="1322502928000" expanded="true" signature="4702:22956" placeholder=" ... end" />
-            <marker date="1322502928000" expanded="true" signature="4841:5998" placeholder="do ... end" />
-            <marker date="1322502928000" expanded="true" signature="4995:5968" placeholder="if ... end" />
+            <marker date="1322502928000" expanded="true" signature="-1:-1" placeholder=" ... end" />
+            <marker date="1322502928000" expanded="true" signature="-1:-1" placeholder="do ... end" />
+            <marker date="1322502928000" expanded="true" signature="-1:-1" placeholder="if ... end" />
           </folding>
         </state>
       </provider>
@@ -1672,7 +1595,100 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_cart_row.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="17" column="26" selection-start="569" selection-end="569" vertical-scroll-proportion="0.46896553">
+        <state line="17" column="26" selection-start="569" selection-end="569" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="36" selection-start="253" selection-end="253" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/edit.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="17" selection-start="70" selection-end="70" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="14" selection-start="776" selection-end="776" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/validation_rule.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="14" selection-start="536" selection-end="536" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="194" column="27" selection-start="7109" selection-end="7109" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="295" column="0" selection-start="10527" selection-end="10527" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="92" column="54" selection-start="3894" selection-end="3919" vertical-scroll-proportion="10.967742">
+          <folding>
+            <marker date="1322515110000" expanded="true" signature="3866:4088" placeholder="-unless co.is_unused_credit? || co.skip_verification?" />
+            <marker date="1322515110000" expanded="true" signature="4213:5946" placeholder="if ... end" />
+            <marker date="1322515110000" expanded="true" signature="4367:5032" placeholder="unless ... end" />
+            <marker date="1322515110000" expanded="true" signature="4489:4879" placeholder="do ... end" />
+            <marker date="1322515110000" expanded="true" signature="5087:5750" placeholder="unless ... end" />
+            <marker date="1322515110000" expanded="true" signature="5207:5712" placeholder="unless ... end" />
+            <marker date="1322515110000" expanded="true" signature="5414:5712" placeholder="unless ... end" />
+            <marker date="1322515110000" expanded="true" signature="5777:5946" placeholder="if ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="114" column="71" selection-start="4738" selection-end="4759" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="0" selection-start="724" selection-end="839" vertical-scroll-proportion="0.8097015">
           <folding />
         </state>
       </provider>

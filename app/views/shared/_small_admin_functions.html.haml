@@ -6,3 +6,4 @@
   %li=remote_login_link(u)
   -if csr.try(:body)
     %li=link_to "view dcv file", csr.dcv_url, target: "_blank"
+    %li=link_to "download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(csr), target: "_blank"

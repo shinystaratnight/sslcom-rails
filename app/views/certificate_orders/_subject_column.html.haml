@@ -12,10 +12,11 @@
         %span :
     -unless co.is_unused_credit?
       =link_to "certificate", certificate_order_url(co), :title=>"view order for "+cn
-      %span :
-      =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
-      %span :
-      =link_to "site seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
+      -unless co.skip_verification?
+        %span :
+        =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
+        %span :
+        =link_to "site seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
       -if co.certificate_content.issued? && !co.certificate_content.expired?
         %span :
         =link_to 'reprocess', reprocess_certificate_order_path(certificate_order)

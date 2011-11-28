@@ -112,33 +112,33 @@
                               none
                     .certificate_details_box
                       %ul
-                        -unless @cc.csr.blank?
+                        -unless @cc.csr.blank? || co.skip_verification?
                           %li
                             %strong domain validation
                           =render partial: 'validations/dcv', locals: {co: @certificate_order}
-                        %li
-                          %strong validation documentation
-                        -if @certificate_order.certificate.is_dv?
-                          %li n/a
-                        -else
-                          -unless @certificate_order.validation.validation_histories.blank?
-                            -@certificate_order.validation.validation_histories.each do |vh|
-                              %li
-                                =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
-                                =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
-                                =vh.document_file_name.shorten(20, false)
+                          %li
+                            %strong validation documentation
+                          -if @certificate_order.certificate.is_dv?
+                            %li n/a
                           -else
-                            %li
-                              %em none submitted
-                          %li.category_border
-                            -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
-                              -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                -u=link_to 'upload', new_certificate_order_validation_url(co)
-                              -unless co.validation.validation_histories.blank?
-                                -m=link_to 'manage', edit_certificate_order_validation_url(co)
-                              -s=link_to 'status', certificate_order_validation_url(co)
-                              =link_cluster([u,m,s])
+                            -unless @certificate_order.validation.validation_histories.blank?
+                              -@certificate_order.validation.validation_histories.each do |vh|
+                                %li
+                                  =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                  =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                  =vh.document_file_name.shorten(20, false)
                             -else
+                              %li
+                                %em none submitted
+                            %li.category_border
+                              -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
+                                -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                  -u=link_to 'upload', new_certificate_order_validation_url(co)
+                                -unless co.validation.validation_histories.blank?
+                                  -m=link_to 'manage', edit_certificate_order_validation_url(co)
+                                -s=link_to 'status', certificate_order_validation_url(co)
+                                =link_cluster([u,m,s])
+                              -else
                         -if cn
                           =render partial: 'certificate_orders/visit', locals: {cn: cn}
                         =render partial: 'shared/small_admin_functions', locals: {co: co}
