@@ -60,10 +60,16 @@ class OrderTransaction < ActiveRecord::Base
 
     def gateway
       #ActiveMerchant::Billing::Base.default_gateway
-      ActiveMerchant::Billing::AuthorizeNetGateway.new(
-        :login    => Rails.env=~/production/i ? Settings.p_authorize_net_key : Settings.authorize_net_key,
-        :password => Rails.env=~/production/i ? Settings.p_authorize_net_transaction_id : Settings.authorize_net_transaction_id
-      )
+      creds =
+          case Rails.env
+            when /production/i
+              {:login    => Settings.p_authorize_net_key,
+              :password => Settings.p_authorize_net_transaction_id}
+            else
+              {:login    => Settings.authorize_net_key,
+              :password => Settings.authorize_net_transaction_id}
+            end
+      ActiveMerchant::Billing::AuthorizeNetGateway.new(creds)
     end
   end
 end

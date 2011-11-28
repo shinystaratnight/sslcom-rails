@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user_session, :current_user, :is_reseller, :cookies,
-    :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?",
+    :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -107,15 +107,27 @@ class ApplicationController < ActionController::Base
     certificate_order
   end
 
+  def free_qty_limit
+    qty=current_user ?
+        Certificate::FREE_CERTS_CART_LIMIT - current_user.ssl_account.certificate_orders.unused_free_credits.count :
+        Certificate::FREE_CERTS_CART_LIMIT
+    (qty <= 0) ? 0 : qty
+  end
+
   #see old_certificates_from_cookie for previous version
   def certificates_from_cookie
     certs=cart_contents
     @certificate_orders=[]
     return @certificate_orders if certs.blank?
+    limit=free_qty_limit
     certs.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
-      qty=c[ShoppingCart::QUANTITY].to_i > Certificate::FREE_CERTS_CART_LIMIT ?
-          Certificate::FREE_CERTS_CART_LIMIT : c[ShoppingCart::QUANTITY].to_i
+      certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
+      if certificate.is_free?
+        qty=c[ShoppingCart::QUANTITY].to_i > limit ? limit : c[ShoppingCart::QUANTITY].to_i
+      else
+        qty=c[ShoppingCart::QUANTITY].to_i
+      end
       certificate_order = CertificateOrder.new(
         :server_licenses=>c[ShoppingCart::LICENSES],
         :duration=>c[ShoppingCart::DURATION],
@@ -123,7 +135,6 @@ class ApplicationController < ActionController::Base
       certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
       certificate_order.certificate_contents.build :domains=>
         c[ShoppingCart::DOMAINS]
-      certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
       unless current_user.blank?
         current_user.ssl_account.clear_new_certificate_orders
         certificate_order.ssl_account=current_user.ssl_account

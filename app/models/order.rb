@@ -296,11 +296,7 @@ class Order < ActiveRecord::Base
   private
 
   def gateway
-    #ActiveMerchant::Billing::Base.default_gateway
-    ActiveMerchant::Billing::AuthorizeNetGateway.new(
-      :login    => Rails.env=~/production/i ? Settings.p_authorize_net_key : Settings.authorize_net_key,
-      :password => Rails.env=~/production/i ? Settings.p_authorize_net_transaction_id : Settings.authorize_net_transaction_id
-    )
+    OrderTransaction.gateway
   end
 
   def payment_failed(response)

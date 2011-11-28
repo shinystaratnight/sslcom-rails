@@ -61,13 +61,14 @@
                               %li
                                 =f.radio_button :status, 'disabled'
                                 disabled
-                          .account_type
-                            %ul
-                              %li
-                                %strong account type
-                              %li
-                                =f.radio_button :status, 'enabled'
-                                customer
-                              %li
-                                =f.radio_button :status, 'disabled'
-                                reseller tier 1
+                          -#
+                            .account_type
+                              %ul
+                                %li
+                                  %strong account type
+                                %li
+                                  =f.radio_button :status, 'enabled'
+                                  customer
+                                %li
+                                  =f.radio_button :status, 'disabled'
+                                  reseller tier 1
