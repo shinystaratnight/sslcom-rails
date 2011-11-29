@@ -3,6 +3,7 @@
   %tbody
     %tr.order_menu
       %td=link_to "certificate details", certificate_order_url(co), :title=>"view order for "+cn
-      %td=link_to "validation status", certificate_order_validation_url(co), :title=>"view validation status for "+cn
+      -unless co.skip_verification? || !co.certificate_content.show_validation_view?
+        %td=link_to "validation status", certificate_order_validation_url(co), :title=>"view validation status for "+cn
       %td=link_to "smart seal", certificate_order_site_seal_url(co), :title=>"get smart seal for "+cn
       %td=link_to "transaction receipt", order_url(co.order), :title=>"get smart seal for "+cn

@@ -160,6 +160,13 @@ class CertificateContent < ActiveRecord::Base
     v.map(&:source_obj) if v
   end
 
+  def show_validation_view?
+    if new? || csr_submitted? || info_provided?
+      return false
+    end
+    true
+  end
+
   CONTACT_ROLES.each do |role|
     define_method("#{role}_contacts") do
       certificate_contacts(true).select{|c|c.has_role? role}
