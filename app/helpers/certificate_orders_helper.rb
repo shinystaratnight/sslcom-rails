@@ -70,7 +70,8 @@ module CertificateOrdersHelper
           if last_sent.blank?
             'please wait' #assume intranet
           elsif last_sent.try(:dcv_method)=="http"
-            'please wait'
+            "please allow up to 24 hours #{certificate_content.preferred_reprocessing? ?
+                'and leave the file on the server' : ''}"
           else
             instructions="A verification request has been emailed to #{last_sent.email_address}.
               Please open and follow the instructions in the email to complete this verification process. If you

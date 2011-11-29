@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
   helper_method :current_user_session, :current_user, :is_reseller, :cookies,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
-    "hide_documents?", "hide_both?"
+    "hide_documents?", "hide_both?", "hide_validation?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
   before_filter :identify_visitor, :record_visit, :except=>[:refer]
@@ -353,6 +353,11 @@ class ApplicationController < ActionController::Base
 
   def shopping_cart_amount
     certificates_from_cookie.sum(&:amount)
+  end
+
+  #co - certificate order
+  def hide_validation?(co)
+    (co.skip_verification? || !co.certificate_content.show_validation_view?) && !current_user.is_admin?
   end
 
 =begin

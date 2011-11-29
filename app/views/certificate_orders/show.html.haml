@@ -112,7 +112,7 @@
                               none
                     .certificate_details_box
                       %ul
-                        -unless @cc.csr.blank? || co.skip_verification? || !co.certificate_content.show_validation_view?
+                        -unless @cc.csr.blank? || hide_validation?(co)
                           %li
                             %strong domain validation
                           =render partial: 'validations/dcv', locals: {co: @certificate_order}

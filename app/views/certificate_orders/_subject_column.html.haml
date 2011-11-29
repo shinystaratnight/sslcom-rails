@@ -12,7 +12,7 @@
         %span :
     -unless co.is_unused_credit?
       =link_to "certificate", certificate_order_url(co), :title=>"view order for "+cn
-      -unless co.skip_verification? || !co.certificate_content.show_validation_view? #&& !current_user.is_admin?
+      -unless hide_validation?(co)
         %span :
         =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
       %span :
