@@ -313,7 +313,7 @@ class CertificateOrdersController < ApplicationController
 
   def download
     t=File.new(@certificate_order.certificate_content.csr.signed_certificate.
-      create_signed_cert_zip_bundle, "r")
+      create_signed_cert_zip_bundle(is_client_windows?), "r")
     # End of the block  automatically closes the file.
     # Send it using the right mime type, with a download window and some nice file name.
     send_file t.path, :type => 'application/zip', :disposition => 'attachment',

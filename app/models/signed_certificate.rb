@@ -110,15 +110,17 @@ class SignedCertificate < ActiveRecord::Base
     expiration_date < (Time.new)
   end
 
-  def create_signed_cert_zip_bundle
+  def create_signed_cert_zip_bundle(is_windows=false)
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       co.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
-        zos.get_output_stream(file_name.strip) {|f|f.puts file.readlines}
+        zos.get_output_stream(file_name.strip) {|f|f.puts (is_windows ?
+            file.readlines.gsub(/\n/, "\r\n") : file.readlines)}
       end
-      zos.get_output_stream(friendly_common_name+co.file_extension){|f|f.puts body}
+      zos.get_output_stream(friendly_common_name+co.file_extension){|f|f.puts
+        (is_windows ? body.gsub(/\n/, "\r\n") : body)}
     end
     path
   end

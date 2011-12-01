@@ -603,6 +603,10 @@ class ApplicationController < ActionController::Base
     ua =~ /iphone|itouch|ipod/
   end
 
+  def is_client_windows?
+    (request.env['HTTP_USER_AGENT'] =~ /windows/i)
+  end
+
   %W(email login).each do |u|
     define_method("find_dup_#{u}") do
       is_new_session = params[:user_session]

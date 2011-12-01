@@ -57,13 +57,16 @@ class SignedCertificatesController < ApplicationController
     @signed_certificate = SignedCertificate.find(params[:id])
     tmp_file="#{Rails.root}/tmp/sc_int_#{@signed_certificate.id}.txt"
     File.open(tmp_file, 'wb') do |f|
+      tmp=""
       if @signed_certificate.certificate_order.is_nginx?
-        f.write @signed_certificate.body+"\n"
+        tmp << @signed_certificate.body+"\n"
       end
       @signed_certificate.certificate_order.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
-        f.write file.readlines.join("")
+        tmp << file.readlines.join("")
       end
+      tmp.gsub!(/\n/, "\r\n") if is_client_windows?
+      f.write tmp
     end
     send_file tmp_file, :type => 'text', :disposition => 'attachment',
       :filename =>"ca_bundle.txt"
