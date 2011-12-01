@@ -70,12 +70,19 @@ module CertificateOrdersHelper
           if last_sent.blank?
             'please wait' #assume intranet
           elsif last_sent.try(:dcv_method)=="http"
-            "allow up to 24 hours#{certificate_content.preferred_reprocessing? ?
-                ' (keep .txt file online)' : ''}"
+            instructions="Please wait while we perform final validations.
+            Normal process times should be less than several hours, but can take up to 24 hours. "
+            instructions << "Also, be sure to leave #{certificate_order.certificate_content.csr.dcv_url}
+            on the server until the certificate is issued." if certificate_content.preferred_reprocessing?
+            link_to("please wait #{image_tag('question_mark.png', alt:
+                "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
+                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
+            content_tag(:div, content_tag(:p, instructions, style: "font-size:1.8em;"), id: "pp-#{certificate_order.ref}", style: "display:none;")
           else
             instructions="A verification request has been emailed to #{last_sent.email_address}.
-              Please open and follow the instructions in the email to complete this verification process. If you
-              did not receive the email sent to #{last_sent.email_address}, or you need assistance, please contact support
+              Please open and follow the instructions in the email to complete this verification process. Once
+              this has been done, the certificate will normally be issued within several hours, but can take up to 24 hours.
+              If you did not receive the email sent to #{last_sent.email_address}, or you need assistance, please contact support
               at support@ssl.com"
             link_to("response needed #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,

@@ -180,13 +180,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.root_products
-    Certificate.find(:all).sort{|a,b|
+    Certificate.all.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.reject{|c|
       c.product=~/\dtr/}
   end
 
   def self.tiered_products(tier)
-    Certificate.find(:all).sort{|a,b|
+    Certificate.all.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.find_all{|c|
         c.product=~Regexp.new(tier)}
   end
