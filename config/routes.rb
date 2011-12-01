@@ -82,7 +82,11 @@ SslCom::Application.routes.draw do
   end
 
   resources :csrs do
-    resources :signed_certificates
+    resources :signed_certificates do
+      member do
+        get :server_bundle
+      end
+    end
     collection do
       get :country_codes
     end

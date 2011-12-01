@@ -1,6 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
+  filter_access_to :server_bundle, :require=>:read
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml
@@ -50,6 +51,22 @@ class SignedCertificatesController < ApplicationController
         format.js   { render :json=>@signed_certificate.errors.to_json}
       end
     end
+  end
+
+  def server_bundle
+    @signed_certificate = SignedCertificate.find(params[:id])
+    tmp_file="#{Rails.root}/tmp/sc_int_#{@signed_certificate.id}.txt"
+    File.open(tmp_file, 'wb') do |f|
+      if @signed_certificate.certificate_order.is_nginx?
+        f.write @signed_certificate.body+"\n"
+      end
+      @signed_certificate.certificate_order.bundled_cert_names.each do |file_name|
+        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        f.write file.readlines.join("")
+      end
+    end
+    send_file tmp_file, :type => 'text', :disposition => 'attachment',
+      :filename =>"ca_bundle.txt"
   end
 
   protected

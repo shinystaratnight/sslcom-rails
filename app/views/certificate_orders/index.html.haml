@@ -119,12 +119,19 @@
                                 -else
                           -if cn
                             =render partial: 'visit', locals: {cn: cn}
-                          =render partial: 'shared/small_admin_functions', locals: {co: co}
-                      -if cc.csr && cc.csr.signed_certificate
-                        .certificate_details_box
-                          %ul
+                          -if cc.server_software
                             %li
-                              %strong certificate bundle
+                              %strong server software
+                            %li.category_border
+                              #{cc.server_software.title}
+                          -if cc.csr && cc.csr.signed_certificate
                             %li
+                              %strong certificate (#{cc.server_software.title})
+                            %li(class="#{co.is_apache? ? '': 'category_border'}")
                               =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co)
                               =link_to "click here to download certificate", download_certificate_order_path(co)
+                            -if co.is_apache? || co.is_nginx?
+                              %li.category_border
+                                =link_to image_tag('download.png', :class=>'blue_icon'), server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+                                =link_to "#{co.is_apache? ? 'apache bundle (SSLCACertificateFile)' : 'nginx bundle'}", server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+                          =render partial: 'shared/small_admin_functions', locals: {co: co}

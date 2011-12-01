@@ -405,8 +405,16 @@ class CertificateOrder < ActiveRecord::Base
     [3, 4, 35].include? software.id
   end
 
+  def is_apache?
+    [3, 4].include? software.id
+  end
+
   def is_iis?
     [18, 19, 20].include? software.id
+  end
+
+  def is_nginx?
+    [37].include? software.id
   end
 
   def file_extension
