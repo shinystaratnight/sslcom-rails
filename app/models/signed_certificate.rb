@@ -117,7 +117,7 @@ class SignedCertificate < ActiveRecord::Base
       co.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
         zos.get_output_stream(file_name.strip) {|f|f.puts (is_windows ?
-            file.readlines.gsub(/\n/, "\r\n") : file.readlines)}
+            file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       end
       zos.get_output_stream(friendly_common_name+co.file_extension){|f|f.puts
         (is_windows ? body.gsub(/\n/, "\r\n") : body)}
