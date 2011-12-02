@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111114194244) do
+ActiveRecord::Schema.define(:version => 20111202162405) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -750,6 +750,15 @@ ActiveRecord::Schema.define(:version => 20111114194244) do
     t.integer  "tracked_url_id"
     t.integer  "visitor_token_id"
     t.integer  "referer_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "unsubscribes", :force => true do |t|
+    t.string   "specs"
+    t.text     "domain"
+    t.text     "email"
+    t.text     "ref"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

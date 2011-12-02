@@ -2,6 +2,8 @@ require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
 
+  resources :unsubscribes
+
   resources :SiteChecksController
 
   match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'

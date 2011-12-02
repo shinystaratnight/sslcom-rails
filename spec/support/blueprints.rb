@@ -11,3 +11,7 @@ require 'machinist/active_record'
 SiteChecker.blueprint do
   # Attributes here
 end
+
+Unsubscribe.blueprint do
+  # Attributes here
+end

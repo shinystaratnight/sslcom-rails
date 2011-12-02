@@ -34,7 +34,7 @@ class SignedCertificatesController < ApplicationController
         co=cc.certificate_order
         co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
         last_sent=@signed_certificate.csr.domain_control_validations.last_sent
-        last_sent.satisfy! if last_sent
+        last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
         if cc.preferred_reprocessing?
           cc.preferred_reprocessing=false
           cc.save

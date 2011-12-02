@@ -1,0 +1,16 @@
+#shorten_prompt.clearfix
+  =email_field_tag :email, nil, placeholder: "verify email address", size: 30
+  =submit_tag "confirm", class: 'shiny_silver_button'
+  %span#busy_sending
+    processing...
+    =image_tag 'waiting_dots.gif'
+#advanced_options_container
+  #advanced_options.clearfix
+    %label
+      advanced options:
+    .surl_choices
+      .choice_w_desc.clearfix
+        =check_box_tag :share
+        %span.clickable_choice
+          -what_is="Click this option to place the ssl.com trust logo #{image_tag("sslscan.png")} at the top of your link accompanied with a daily scan status message. In addition, various social share clickable buttons from Facebook, Twitter, Google, etc. will also appear next to the trust logo.".html_safe
+          =link_to("show trust and share logos #{image_tag('question_mark.png', alt: "what are trust and share logos?", class: "what_is_this")}".html_safe, "#seal_and_share", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "seal_and_share", style: "display:none;")

@@ -1,0 +1,36 @@
+-c={}
+-c[:header]='public_wo_container'
+-c[:description]="Unsubscribe from ssl.com reminders and email list"
+-c[:keywords]="unsubscribe reminder email listing"
+-c[:title] = "Turning off ssl.com reminder"
+-c.each do |k, v|
+  -content_for k, c[k]
+=render :partial => '/surls/index_scripts'
+.container
+  .innercontainere
+    .inner
+      =render :partial => "shared/messages"
+      %h1=c[:title]
+      %h2
+        frequency can also be adjusted through your account settings
+      .leftcolb
+        %section.search_container#surl_stylized
+          =form_for @unsubscribe, html: {class: "single_prompt"} , remote: true do |f|
+            =render partial: "form", locals: {f: f}
+      .rightcolc
+        %ul.listd.ssl_links
+          %li
+            reminders prevent certificates expiring
+          %li
+            never be off-guard with an expired cert
+          %li
+            can adjust for more or less frequency
+          %li
+            ssl.com reminders are opt-in only
+          %li
+            they're FREE
+        #surl_container
+        #surl_instructions
+          copy the ssl link above and paste it anywhere to substitute for:
+          %span.old_link.clearfix
+          %span.click_to_visit

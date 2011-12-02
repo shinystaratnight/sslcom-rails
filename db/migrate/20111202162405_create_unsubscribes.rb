@@ -1,0 +1,13 @@
+class CreateUnsubscribes < ActiveRecord::Migration
+  def self.up
+    create_table :unsubscribes do |t|
+      t.string :specs
+      t.text :domain, :email, :ref
+      t.timestamps
+    end
+  end
+
+  def self.down
+    drop_table :unsubscribes
+  end
+end

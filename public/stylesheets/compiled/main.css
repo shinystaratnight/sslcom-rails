@@ -6817,14 +6817,14 @@ span#no_emails_accessible {
 }
 
 /* line 5003, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl, #surl_stylized .edit_surl {
+#surl_stylized #new_surl, #surl_stylized .edit_surl, #surl_stylized .single_prompt {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
 /* line 5008, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl label, #surl_stylized .edit_surl label {
+#surl_stylized #new_surl label, #surl_stylized .edit_surl label, #surl_stylized .single_prompt label {
   font-size: 1.4em;
   display: block;
   color: #222222;
@@ -6833,17 +6833,17 @@ span#no_emails_accessible {
   text-align: left;
 }
 /* line 5016, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt {
+#surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt, #surl_stylized .single_prompt #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
 /* line 5020, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
+#surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url], #surl_stylized .single_prompt #shorten_prompt input[type=password], #surl_stylized .single_prompt #shorten_prompt input[type=text], #surl_stylized .single_prompt #shorten_prompt input[type=url] {
   width: 300px;
 }
 /* line 5023, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
+#surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .single_prompt #advanced_options_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   width: 100%;
   float: left;
   margin: 0 auto 1em;
@@ -6860,34 +6860,34 @@ span#no_emails_accessible {
   border-radius: 10px;
 }
 /* line 5034, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
+#surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #advanced_options_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
 /* line 5039, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
+#surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   float: none;
   width: 60%;
 }
 /* line 5044, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p {
+#surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p, #surl_stylized .single_prompt #access_restriction_container p {
   text-align: left;
 }
 /* line 5047, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options {
+#surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   width: 65%;
 }
 /* line 5050, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label {
+#surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label, #surl_stylized .single_prompt #access_restriction_container #advanced_options label {
   width: 6em;
 }
 /* line 5053, ../../../app/stylesheets/main.sass */
-#surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url] {
+#surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url], #surl_stylized .single_prompt #access_restriction_container input[type=password], #surl_stylized .single_prompt #access_restriction_container input[type=text], #surl_stylized .single_prompt #access_restriction_container input[type=url] {
   width: 300px;
 }
 /* line 5056, ../../../app/stylesheets/main.sass */
-#surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container {
+#surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container {
   width: 50%;
   float: none;
 }

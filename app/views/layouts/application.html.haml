@@ -21,7 +21,7 @@
       Have a question or solution?
       =link_to "Be sure to visit the SSL.com IT Security Q&A free community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
     #wrapper
-      -if (current_user.blank?) || yield(:header)=='public'
+      -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless current_subdomain==Reseller::SUBDOMAIN
           =render :partial => '/layouts/public'
         -else
