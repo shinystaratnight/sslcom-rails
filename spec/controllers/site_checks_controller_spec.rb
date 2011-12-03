@@ -39,14 +39,14 @@ describe SiteChecksController do
     it "assigns the requested site_checker as @site_checker" do
       site_checker = SiteChecker.create! valid_attributes
       get :show, :id => site_checker.id.to_s
-      assigns(:site_checker).should eq(site_checker)
+      assigns(:site_checks).should eq(site_checker)
     end
   end
 
   describe "GET new" do
     it "assigns a new site_checker as @site_checker" do
       get :new
-      assigns(:site_checker).should be_a_new(SiteChecker)
+      assigns(:site_checks).should be_a_new(SiteChecker)
     end
   end
 
@@ -54,7 +54,7 @@ describe SiteChecksController do
     it "assigns the requested site_checker as @site_checker" do
       site_checker = SiteChecker.create! valid_attributes
       get :edit, :id => site_checker.id.to_s
-      assigns(:site_checker).should eq(site_checker)
+      assigns(:site_checks).should eq(site_checker)
     end
   end
 
@@ -62,18 +62,18 @@ describe SiteChecksController do
     describe "with valid params" do
       it "creates a new SiteChecker" do
         expect {
-          post :create, :site_checker => valid_attributes
+          post :create, :site_checks => valid_attributes
         }.to change(SiteChecker, :count).by(1)
       end
 
       it "assigns a newly created site_checker as @site_checker" do
-        post :create, :site_checker => valid_attributes
-        assigns(:site_checker).should be_a(SiteChecker)
-        assigns(:site_checker).should be_persisted
+        post :create, :site_checks => valid_attributes
+        assigns(:site_checks).should be_a(SiteChecker)
+        assigns(:site_checks).should be_persisted
       end
 
       it "redirects to the created site_checker" do
-        post :create, :site_checker => valid_attributes
+        post :create, :site_checks => valid_attributes
         response.should redirect_to(SiteChecker.last)
       end
     end
@@ -82,14 +82,14 @@ describe SiteChecksController do
       it "assigns a newly created but unsaved site_checker as @site_checker" do
         # Trigger the behavior that occurs when invalid params are submitted
         SiteChecker.any_instance.stub(:save).and_return(false)
-        post :create, :site_checker => {}
-        assigns(:site_checker).should be_a_new(SiteChecker)
+        post :create, :site_checks => {}
+        assigns(:site_checks).should be_a_new(SiteChecker)
       end
 
       it "re-renders the 'new' template" do
         # Trigger the behavior that occurs when invalid params are submitted
         SiteChecker.any_instance.stub(:save).and_return(false)
-        post :create, :site_checker => {}
+        post :create, :site_checks => {}
         response.should render_template("new")
       end
     end
@@ -104,18 +104,18 @@ describe SiteChecksController do
         # receives the :update_attributes message with whatever params are
         # submitted in the request.
         SiteChecker.any_instance.should_receive(:update_attributes).with({'these' => 'params'})
-        put :update, :id => site_checker.id, :site_checker => {'these' => 'params'}
+        put :update, :id => site_checker.id, :site_checks => {'these' => 'params'}
       end
 
       it "assigns the requested site_checker as @site_checker" do
         site_checker = SiteChecker.create! valid_attributes
-        put :update, :id => site_checker.id, :site_checker => valid_attributes
-        assigns(:site_checker).should eq(site_checker)
+        put :update, :id => site_checker.id, :site_checks => valid_attributes
+        assigns(:site_checks).should eq(site_checker)
       end
 
       it "redirects to the site_checker" do
         site_checker = SiteChecker.create! valid_attributes
-        put :update, :id => site_checker.id, :site_checker => valid_attributes
+        put :update, :id => site_checker.id, :site_checks => valid_attributes
         response.should redirect_to(site_checker)
       end
     end
@@ -125,15 +125,15 @@ describe SiteChecksController do
         site_checker = SiteChecker.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
         SiteChecker.any_instance.stub(:save).and_return(false)
-        put :update, :id => site_checker.id.to_s, :site_checker => {}
-        assigns(:site_checker).should eq(site_checker)
+        put :update, :id => site_checker.id.to_s, :site_checks => {}
+        assigns(:site_checks).should eq(site_checker)
       end
 
       it "re-renders the 'edit' template" do
         site_checker = SiteChecker.create! valid_attributes
         # Trigger the behavior that occurs when invalid params are submitted
         SiteChecker.any_instance.stub(:save).and_return(false)
-        put :update, :id => site_checker.id.to_s, :site_checker => {}
+        put :update, :id => site_checker.id.to_s, :site_checks => {}
         response.should render_template("edit")
       end
     end

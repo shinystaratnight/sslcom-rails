@@ -3,6 +3,7 @@ class CreateUnsubscribes < ActiveRecord::Migration
     create_table :unsubscribes do |t|
       t.string :specs
       t.text :domain, :email, :ref
+      t.boolean :enforce
       t.timestamps
     end
   end

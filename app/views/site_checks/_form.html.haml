@@ -1,5 +1,5 @@
 #shorten_prompt.clearfix
-  =email_field_tag :email, nil, placeholder: "verify email address", size: 30
+  =f.url_field :url, placeholder: "url of site", size: 30
   =submit_tag "confirm", class: 'shiny_silver_button'
   %span#busy_sending
     processing...

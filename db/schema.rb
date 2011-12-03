@@ -759,6 +759,7 @@ ActiveRecord::Schema.define(:version => 20111202162405) do
     t.text     "domain"
     t.text     "email"
     t.text     "ref"
+    t.boolean  "enforce"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

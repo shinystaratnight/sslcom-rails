@@ -2,7 +2,7 @@ class SiteChecksController < ApplicationController
   # GET /site_checks
   # GET /site_checks.xml
   def index
-    @site_checks = SiteChecker.all
+    @site_checks = SiteCheck.all
 
     respond_to do |format|
       format.html # index.html.erb
@@ -13,42 +13,42 @@ class SiteChecksController < ApplicationController
   # GET /site_checks/1
   # GET /site_checks/1.xml
   def show
-    @site_checker = SiteChecker.find(params[:id])
+    @site_check = SiteCheck.find(params[:id])
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @site_checker }
+      format.xml  { render :xml => @site_check }
     end
   end
 
   # GET /site_checks/new
   # GET /site_checks/new.xml
   def new
-    @site_checker = SiteChecker.new
+    @site_check = SiteCheck.new
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @site_checker }
+      format.xml  { render :xml => @site_check }
     end
   end
 
   # GET /site_checks/1/edit
   def edit
-    @site_checker = SiteChecker.find(params[:id])
+    @site_check = SiteCheck.find(params[:id])
   end
 
   # POST /site_checks
   # POST /site_checks.xml
   def create
-    @site_checker = SiteChecker.new(params[:site_checker])
+    @site_check = SiteCheck.new(params[:site_checks])
 
     respond_to do |format|
-      if @site_checker.save
-        format.html { redirect_to(@site_checker, :notice => 'Site checker was successfully created.') }
-        format.xml  { render :xml => @site_checker, :status => :created, :location => @site_checker }
+      if @site_check.save
+        format.html { redirect_to(@site_check, :notice => 'Site check was successfully created.') }
+        format.xml  { render :xml => @site_check, :status => :created, :location => @site_check }
       else
         format.html { render :action => "new" }
-        format.xml  { render :xml => @site_checker.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @site_check.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -56,15 +56,15 @@ class SiteChecksController < ApplicationController
   # PUT /site_checks/1
   # PUT /site_checks/1.xml
   def update
-    @site_checker = SiteChecker.find(params[:id])
+    @site_check = SiteCheck.find(params[:id])
 
     respond_to do |format|
-      if @site_checker.update_attributes(params[:site_checker])
-        format.html { redirect_to(@site_checker, :notice => 'Site checker was successfully updated.') }
+      if @site_check.update_attributes(params[:site_checks])
+        format.html { redirect_to(@site_check, :notice => 'Site check was successfully updated.') }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
-        format.xml  { render :xml => @site_checker.errors, :status => :unprocessable_entity }
+        format.xml  { render :xml => @site_check.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -72,8 +72,8 @@ class SiteChecksController < ApplicationController
   # DELETE /site_checks/1
   # DELETE /site_checks/1.xml
   def destroy
-    @site_checker = SiteChecker.find(params[:id])
-    @site_checker.destroy
+    @site_check = SiteCheck.find(params[:id])
+    @site_check.destroy
 
     respond_to do |format|
       format.html { redirect_to(site_checks_url) }

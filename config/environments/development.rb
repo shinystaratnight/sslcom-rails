@@ -1,6 +1,6 @@
 SslCom::Application.configure do
   APP_URL = "http://dev-station:3000"
-  MIGRATING_FROM_LEGACY = true
+  MIGRATING_FROM_LEGACY = false
   # Settings specified here will take precedence over those in config/environment.rb
 
   # In the development environment your application's code is reloaded on

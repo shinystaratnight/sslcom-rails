@@ -72,6 +72,9 @@ class Certificate < ActiveRecord::Base
                     "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                     "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate"}
 
+  unless MIGRATING_FROM_LEGACY
+    default_scope where(:product ^ 'mssl')
+  end
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
   def self.map_to_legacy(description, mapping=nil)

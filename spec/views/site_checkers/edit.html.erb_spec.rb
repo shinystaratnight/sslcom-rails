@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "site_checks/edit.html.erb" do
   before(:each) do
-    @site_checker = assign(:site_checker, stub_model(SiteChecker))
+    @site_checker = assign(:site_checks, stub_model(SiteChecker))
   end
 
   it "renders the edit site_checker form" do

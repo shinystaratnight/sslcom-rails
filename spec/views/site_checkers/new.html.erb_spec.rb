@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "site_checks/new.html.erb" do
   before(:each) do
-    assign(:site_checker, stub_model(SiteChecker).as_new_record)
+    assign(:site_checks, stub_model(SiteChecker).as_new_record)
   end
 
   it "renders new site_checker form" do

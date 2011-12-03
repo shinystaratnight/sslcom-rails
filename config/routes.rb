@@ -1,16 +1,15 @@
 require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
-
-  resources :unsubscribes
-
-  resources :SiteChecksController
-
   match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
   match '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
+  resources :unsubscribes
+  resources :site_checks
+  match 'site_check' => 'site_checks#new', :as => :site_checks
+
   resource :account, :controller=>:users do
     resource :reseller
   end

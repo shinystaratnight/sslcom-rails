@@ -1,8 +1,8 @@
 -c={}
 -c[:header]='public_wo_container'
--c[:description]="Unsubscribe from ssl.com reminders and email list"
--c[:keywords]="unsubscribe reminder email listing"
--c[:title] = "Turning off ssl.com certificate reminder assurance"
+-c[:description]="SSL.com Site Check for ssl certificate support and installation"
+-c[:keywords]="ssl certificate site check checker x509 wildcard ev certificates troubleshoot"
+-c[:title] = "Site Check, Troubleshooter, and General Information"
 -c.each do |k, v|
   -content_for k, c[k]
 =render :partial => 'index_scripts'
@@ -12,10 +12,10 @@
       =render :partial => "shared/messages"
       %h1=c[:title]
       %h2
-        adjust frequency or reactivate through your account settings
+        ssl, dns, and other site information
       .leftcolb
         %section.search_container#surl_stylized
-          =form_for @unsubscribe, html: {class: "single_prompt"} , remote: true do |f|
+          =form_for @site_check, html: {class: "single_prompt"} , remote: true do |f|
             =render partial: "form", locals: {f: f}
       .rightcolc
         %ul.listd.ssl_links

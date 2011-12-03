@@ -14,6 +14,8 @@
   font-weight: normal
   font-style: normal
 
+$height_buf: 290px
+
 /*---global common definitions---*/
 *
   font-size: 100.01%
@@ -59,7 +61,7 @@ a:hover
   min-height: 100%
   height: auto !important
   height: 100%
-  margin: 0 auto -260px
+  margin: 0 auto ($height_buf * -1)
 
 
 /* header */
@@ -2005,7 +2007,7 @@ a:hover
   background-image: url('/images/chargify_identity.gif')
 
 #footer, .push
-  height: 260px
+  height: $height_buf
 
 #footer
   font-size: 8px
@@ -3885,7 +3887,7 @@ label.error
     @extend .shiny_blue_button
 
   //the following should be able to exist outside stylized
-  input[type=text], input[type=url], input[type=password], select, textarea
+  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
     font-size: 1.5em
     @include text-shadow(0px 1px 0px #fff)
     outline: none
@@ -5017,7 +5019,7 @@ span#no_emails_accessible
       +center
       width: 95%
 
-      input[type=password], input[type=text], input[type=url]
+      input[type=password], input[type=text], input[type=url], input[type=email]
         width: 300px
 
     #advanced_options_container
