@@ -12,7 +12,7 @@
       =render :partial => "shared/messages"
       %h1=c[:title]
       %h2
-        adjust frequency or reactivate through your account settings
+        reactivate reminder ##{@unsubscribe.ref} through your account settings
       .leftcolb
         %section.search_container#surl_stylized
           =form_for @unsubscribe, html: {class: "single_prompt"} , remote: true do |f|
@@ -34,3 +34,25 @@
           copy the ssl link above and paste it anywhere to substitute for:
           %span.old_link.clearfix
           %span.click_to_visit
+#pp_no_match.pop_container
+  .pop_content
+    %p(style="color:red;")
+      Sorry, but the email address you submitted does not match the unsubscribe reference number #{@unsubscribe.ref}.
+      Unsubscribe was not processed.
+#success.pop_container
+  .pop_content
+    %p
+      Email address
+      %span#unsubscribed_email
+      has been removed from any future ssl.com certificate expiration reminders
+      %span#all
+        for all domains.
+      %span#only
+        for domain
+        %span#unsubscribed_domain
+        \.
+#error.pop_container
+  .pop_content
+    %p
+      Errors were detected:
+      %span#error_messages

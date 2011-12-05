@@ -21,7 +21,7 @@
     $('div.flash_message a').click(function(event){
       event.stopPropagation();
     });
-    $("a[rel^='prettyPhoto']").prettyPhoto({allowresize:false, theme:'facebook', showTitle:false});
+    $("a[rel^='prettyPhoto']").prettyPhoto({social_tools: false, allowresize:false, theme:'pp_default', showTitle:false});
     $('.striped_div > div:nth-child(odd)').css("background-color","#eeeeee");
     $('.striped_tr tr:nth-child(odd)').css("background-color","#eeeeee");
     $('#close_window').live('click', function(){

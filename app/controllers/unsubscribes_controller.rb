@@ -35,6 +35,7 @@ class UnsubscribesController < ApplicationController
   # GET /unsubscribes/1/edit
   def edit
     @unsubscribe = Unsubscribe.find_by_ref(params[:id])
+    @unsubscribe.enforce=true
   end
 
   # POST /unsubscribes
@@ -57,15 +58,15 @@ class UnsubscribesController < ApplicationController
   # PUT /unsubscribes/1.xml
   def update
     @unsubscribe = Unsubscribe.find(params[:id])
+    if params[:email]==@unsubscribe.email
+      @unsubscribe.update_attributes(params[:unsubscribe])
+    else
+      @unsubscribe.errors[:base] << "test"
+    end
 
     respond_to do |format|
-      if @unsubscribe.update_attributes(params[:unsubscribe])
-        format.html { redirect_to(@unsubscribe, :notice => 'Unsubscribe was successfully updated.') }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @unsubscribe.errors, :status => :unprocessable_entity }
-      end
+      format.js {render(text: (@unsubscribe.errors.blank? && !@unsubscribe.new_record?) ?
+        @unsubscribe.to_json : @unsubscribe.errors.to_json)}
     end
   end
 

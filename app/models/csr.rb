@@ -157,6 +157,17 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def fetch_public_site
+    begin
+      timeout(Surl::TIMEOUT_DURATION) do
+        r=open("https://"+common_name).read unless is_intranet?
+        !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+      end
+    rescue Exception=>e
+      return false
+    end
+  end
+
   def whois_lookup
     if whois_lookups.empty?
       whois_lookups.create

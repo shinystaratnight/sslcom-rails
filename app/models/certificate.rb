@@ -72,9 +72,7 @@ class Certificate < ActiveRecord::Base
                     "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                     "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  unless MIGRATING_FROM_LEGACY
-    default_scope where(:product ^ 'mssl')
-  end
+  scope :public, where(:product ^ 'mssl')
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
 
   def self.map_to_legacy(description, mapping=nil)
@@ -183,13 +181,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.root_products
-    Certificate.all.sort{|a,b|
+    Certificate.public.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.reject{|c|
       c.product=~/\dtr/}
   end
 
   def self.tiered_products(tier)
-    Certificate.all.sort{|a,b|
+    Certificate.public.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.find_all{|c|
         c.product=~Regexp.new(tier)}
   end

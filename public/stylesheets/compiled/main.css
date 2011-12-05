@@ -82,7 +82,7 @@ a:hover {
   min-height: 100%;
   height: auto !important;
   height: 100%;
-  margin: 0 auto -290px;
+  margin: 0 auto -270px;
 }
 
 /* header */
@@ -2621,7 +2621,7 @@ a:hover {
 
 /* line 2009, ../../../app/stylesheets/main.sass */
 #footer, .push {
-  height: 290px;
+  height: 270px;
 }
 
 /* line 2012, ../../../app/stylesheets/main.sass */
@@ -7071,4 +7071,14 @@ span#no_emails_accessible {
   background-color: #eeeeee;
   text-align: center;
   font-size: 1.2em;
+}
+
+/* line 5189, ../../../app/stylesheets/main.sass */
+.pop_container {
+  display: none;
+}
+
+/* line 5192, ../../../app/stylesheets/main.sass */
+.pop_content {
+  font-size: 1.8em;
 }

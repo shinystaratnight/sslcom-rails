@@ -189,6 +189,28 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  #finds or creates a certificate lookup
+  def self.public_cert(cn,port=443)
+    return nil if is_intranet?
+    context = OpenSSL::SSL::SSLContext.new
+    begin
+      timeout(10) do
+        tcp_client = TCPSocket.new cn, port
+        ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
+        ssl_client.connect
+        cert=ssl_client.peer_cert
+        CertificateLookup.create(
+          certificate: cert.to_s,
+          serial: cert.serial,
+          expires_at: cert.not_after,
+          common_name: cn) unless CertificateLookup.find_by_serial(cert.serial)
+        cert
+      end
+    rescue Exception=>e
+      nil
+    end
+  end
+
   def comodo_server_software_id
     COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
   end

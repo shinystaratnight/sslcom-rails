@@ -6,7 +6,7 @@ SslCom::Application.routes.draw do
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
-  resources :unsubscribes
+  resources :unsubscribes, only: [:edit, :update]
   resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_checks
 

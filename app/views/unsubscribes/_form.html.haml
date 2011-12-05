@@ -1,4 +1,5 @@
 #shorten_prompt.clearfix
+  =f.hidden_field :enforce
   =email_field_tag :email, nil, placeholder: "verify email address", size: 30
   =submit_tag "confirm", class: 'shiny_silver_button'
   %span#busy_sending
@@ -10,7 +11,7 @@
       options:
     .surl_choices
       .choice_w_desc.clearfix
-        =check_box_tag :share
+        =f.check_box :specs, {}, Unsubscribe::ALL, Unsubscribe::ONLY
         %span.clickable_choice
           -what_is="Click this option to deactivate reminders for all of your ssl.com certificates. You can also reactivate ssl.com reminders through your ssl.com account at a later time if you change your mind.".html_safe
-          =link_to("deactivate all of my reminders #{image_tag('question_mark.png', alt: "deactivate all reminders", class: "what_is_this")}".html_safe, "#deactivate_all", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "deactivate_all", style: "display:none;")
+          =link_to("deactivate for all certificates #{image_tag('question_mark.png', alt: "deactivate all reminders", class: "what_is_this")}".html_safe, "#deactivate_all", :rel => 'prettyPhoto').html_safe+content_tag(:div, content_tag(:p, what_is, style: "font-size:1.8em;"), id: "deactivate_all", style: "display:none;")

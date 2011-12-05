@@ -77,17 +77,12 @@ module CertificateOrdersHelper
             link_to("please wait #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
                     "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
-            content_tag(:div, content_tag(:p, instructions, style: "font-size:1.8em;"), id: "pp-#{certificate_order.ref}", style: "display:none;")
+            content_tag(:div, content_tag(:p, instructions), :class=>"pop_content", id: "pp-#{certificate_order.ref}", class: "pp_container")
           else
-            instructions="A verification request has been emailed to #{last_sent.email_address}.
-              Please open and follow the instructions in the email to complete this verification process. Once
-              this has been done, the certificate will normally be issued within several hours, but can take up to 24 hours.
-              If you did not receive the email sent to #{last_sent.email_address}, or you need assistance, please contact support
-              at support@ssl.com"
             link_to("response needed #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
                     "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
-            content_tag(:div, content_tag(:p, instructions, style: "font-size:1.8em;"), id: "pp-#{certificate_order.ref}", style: "display:none;")
+            content_tag(:div, render(partial: "certificate_orders/validation_pop", locals: {last_sent: last_sent}), id: "pp-#{certificate_order.ref}", class: "pop_container")
           end
         when "issued"
           if certificate_content.expiring?

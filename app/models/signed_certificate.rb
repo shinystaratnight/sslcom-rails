@@ -167,27 +167,10 @@ class SignedCertificate < ActiveRecord::Base
     end.map{|f|f[1]}
   end
 
-  def find_or_create_installed(cn=nil,port=443)
-    return nil if is_intranet?
-    context = OpenSSL::SSL::SSLContext.new
+  def public_cert(cn=nil,port=443)
     cn=([self.common_name]+(self.subject_alternative_names||[])).find{|n|
       CertificateContent.is_tld?(n)} unless cn
-    begin
-      timeout(10) do
-        tcp_client = TCPSocket.new cn, port
-        ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
-        ssl_client.connect
-        cert=ssl_client.peer_cert
-        CertificateLookup.create(
-          certificate: cert.to_s,
-          serial: cert.serial,
-          expires_at: cert.not_after,
-          common_name: cn) unless CertificateLookup.find_by_serial(cert.serial)
-        cert
-      end
-    rescue Exception=>e
-      nil
-    end
+    CertificateContent.find_or_create_installed(cn)
   end
 
   def is_intranet?

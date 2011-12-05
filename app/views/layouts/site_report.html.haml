@@ -16,7 +16,7 @@
     = include_javascripts :shared
     :javascript
       jQuery(function($){
-        $("a[rel^='prettyPhoto']").prettyPhoto({allowresize:false, theme:'facebook', showTitle:false});
+        $("a[rel^='prettyPhoto']").prettyPhoto({social_tools: false, allowresize:false, theme:'pp_default', showTitle:false});
       });
   %body
     =yield
