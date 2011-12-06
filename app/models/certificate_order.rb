@@ -378,11 +378,11 @@ class CertificateOrder < ActiveRecord::Base
 =begin
   Renews certificate orders and also handles the billing aspects
 =end
-  def auto_renew
-    unless cert_credit_exists? self #does a credit already exists for this cert order
-      purchase_renewal self
-    end
-  end
+  #def auto_renew
+  #  unless cert_credit_exists? self #does a credit already exists for this cert order
+  #    purchase_renewal self
+  #  end
+  #end
 
   def validation_methods
     validation.validation_rules.map(&:applicable_validation_methods).
