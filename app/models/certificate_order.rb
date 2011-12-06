@@ -377,12 +377,20 @@ class CertificateOrder < ActiveRecord::Base
 
 =begin
   Renews certificate orders and also handles the billing aspects
+  Use the order's credit card, then the most recent successfully card card
+  Renew for the same number of years as original order
+  If order is over a certain amount, notify customer first and let them know they do not need to
+  do anything
 =end
-  #def auto_renew
-  #  unless cert_credit_exists? self #does a credit already exists for this cert order
-  #    purchase_renewal self
-  #  end
-  #end
+  def auto_renew
+    unless cert_credit_exists? self #does a credit already exists for this cert order
+      purchase_renewal self
+    end
+  end
+
+  def refund
+
+  end
 
   def validation_methods
     validation.validation_rules.map(&:applicable_validation_methods).
@@ -673,5 +681,16 @@ class CertificateOrder < ActiveRecord::Base
       purchase_using bp
       break if success
     end
+  end
+
+  def purchase_using(profile)
+    credit_card = ActiveMerchant::Billing::CreditCard.new({
+      :first_name => profile.first_name,
+      :last_name  => profile.last_name,
+      :number     => profile.card_number,
+      :month      => profile.expiration_month,
+      :year       => profile.expiration_year
+    })
+    credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
   end
 end

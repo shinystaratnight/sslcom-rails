@@ -226,6 +226,45 @@ class Order < ActiveRecord::Base
 #    end
 #  end
 
+  def purchase_successful?(description=Order::SSL_CERTIFICATE, profile=self.billing_profile,
+      cvv=true)
+    credit_card = ActiveMerchant::Billing::CreditCard.new({
+      :first_name => profile.first_name,
+      :last_name  => profile.last_name,
+      :number     => profile.card_number,
+      :month      => profile.expiration_month,
+      :year       => profile.expiration_year
+    })
+    credit_card.merge(:verification_value => profile.security_code) if cvv
+    credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+    return false unless ActiveMerchant::Billing::Base.mode == :test ?
+        true : credit_card.valid?
+    self.amount= ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
+    self.description = description
+    options = {
+      :billing_address => Address.new({
+        :name     => profile.full_name,
+        :street1 => profile.address_1,
+        :street2 => profile.address_2,
+        :locality     => profile.city,
+        :region    => profile.state,
+        :country  => profile.country,
+        :postal_code     => profile.postal_code,
+        :phone    => profile.phone
+      }),
+      :description => description
+    }
+    gateway_response = self.purchase(credit_card, options)
+    (gateway_response.success?).tap do |success|
+      if success
+        self.mark_paid!
+      else
+        self.transaction_declined!
+      end
+      gateway_response.message
+    end
+  end
+
   def to_param
     reference_number
   end
