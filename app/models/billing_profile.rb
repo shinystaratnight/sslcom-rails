@@ -22,6 +22,10 @@ class BillingProfile < ActiveRecord::Base
 
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
+  scope :success, lambda{
+    joins({:orders=>:order_transactions}).where({:orders=>{:order_transactions=>[:success => true]}})
+  }
+
   def verification_value?() false end
   
   def to_xml(options = {})
@@ -67,7 +71,7 @@ class BillingProfile < ActiveRecord::Base
     errors.add(:expiration_month, "is invalid" ) unless valid_month?(expiration_month)
     errors.add(:card_number, "is invalid" ) unless self.class.valid_number?(card_number)
     if password.blank?
-      errors.add_to_base("Unable to encrypt or decrypt data without password" )
+      errors[:base] << "Unable to encrypt or decrypt data without password"
     end
   end
 end

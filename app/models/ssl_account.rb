@@ -15,7 +15,8 @@ class SslAccount < ActiveRecord::Base
   has_one   :contact, :as => :contactable
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
-  
+  has_many  :transactions, through: :orders
+
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
     attr_readonly :acct_number
@@ -174,7 +175,17 @@ class SslAccount < ActiveRecord::Base
     self.preferred_confirmation_include_cert_bill=false
     self.save
   end
-  
+
+  #def order_transactions
+  #  oids=Order.select("orders.id").joins(:billable.type(SslAccount)).
+  #      where(:billable_id=>id).map(&:id)
+  #  OrderTransaction.where(:order_id + oids)
+  #end
+  #
+  #def successful_order_transactions
+  #  order_transactions.where :success=>true
+  #end
+
   private
 
   SETTINGS_SECTIONS.each do |item|

@@ -40,6 +40,7 @@ gem 'radix62'
 gem 'sauce'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
+gem 'jquery-rails', '>= 1.0.12'
 
 # Deploy with Capistrano
 # gem 'capistrano'

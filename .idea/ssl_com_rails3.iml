@@ -304,6 +304,7 @@
     <orderEntry type="library" scope="PROVIDED" name="hoe (v2.12.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.5.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jammit (v0.6.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v1.0.19, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v1.5.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json_pure (v1.5.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="launchy (v2.0.5, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />

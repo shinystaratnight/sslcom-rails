@@ -375,6 +375,15 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+=begin
+  Renews certificate orders and also handles the billing aspects
+=end
+  def auto_renew
+    unless cert_credit_exists? self #does a credit already exists for this cert order
+      purchase_renewal self
+    end
+  end
+
   def validation_methods
     validation.validation_rules.map(&:applicable_validation_methods).
       flatten.uniq
@@ -651,5 +660,18 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     site_seal.conditionally_activate!
+  end
+
+  #will cycle through billing profile to purchase certificate order
+  #use the billing profile associated with this order
+  #otherwise, find most recent successfully purchased order and use it's billing profile,
+  #cannot rely on order transactions, since the data was not migrated
+  def purchase_renewal
+    success=false
+    bp=order.billing_profile
+    [bp, (ssl_account.orders.map(&:billing_profiles)-bp).first].each do |bp|
+      purchase_using bp
+      break if success
+    end
   end
 end

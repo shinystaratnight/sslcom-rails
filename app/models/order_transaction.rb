@@ -4,7 +4,15 @@ class OrderTransaction < ActiveRecord::Base
   serialize :avs
   serialize :cvv
   cattr_accessor :gateway
+
+  scope :paid_successfully, lambda{
+    where({:success=> true} & {:amount.gt => 0})
+  }
  
+  scope :not_free, lambda{
+    where({:amount.gt => 0})
+  }
+
   class << self
     def authorize(amount, credit_card, options = {})
       process('authorization', amount) do |gw|

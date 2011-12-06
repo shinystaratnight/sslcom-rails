@@ -138,6 +138,9 @@ GEM
     i18n (0.5.0)
     jammit (0.6.3)
       yui-compressor (>= 0.9.3)
+    jquery-rails (1.0.19)
+      railties (~> 3.0)
+      thor (~> 0.14)
     json (1.5.3)
     json_pure (1.5.3)
     launchy (2.0.5)
@@ -301,6 +304,7 @@ DEPENDENCIES
   firewatir
   haml (>= 3.1.alpha.50)
   jammit
+  jquery-rails (>= 1.0.12)
   json
   launchy
   machinist (>= 2.0.0.beta2)

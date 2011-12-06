@@ -2,7 +2,7 @@ embed_assets: datauri
 
 javascripts:
   common:
-    - public/javascripts/rails.js
+    - public/javascripts/jquery_ujs.js
     - public/javascripts/application.js
     - public/javascripts/jquery.livequery.js
     - public/javascripts/multifile/jquery.MetaData.js
