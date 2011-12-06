@@ -52,7 +52,25 @@ class BillingProfile < ActiveRecord::Base
   def american?
     country == AMERICAN
   end
-  
+
+  def expired?
+    Date.new(expiration_year,expiration_month).end_of_month < Date.today
+  end
+
+  #if credit card is expired, provide two theoretical dates - incremented by 2 and 3 respectively
+  def cycled_years
+    unless expired?
+      [expiration_year]
+    else
+      diff=((DateTime.now.to_i - DateTime.new(expiration_year, expiration_month).to_i)/1.year)
+      [2,3].map do |i|
+        v=diff/i
+        #any reminders?
+        expiration_year+((v.to_i + (v.is_a?(Integer) ? o : 1))*i)
+      end
+    end
+  end
+
   private
   
   before_create :store_last_digits, :generate_salt, :encrypt_number

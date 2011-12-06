@@ -37,6 +37,10 @@ class Order < ActiveRecord::Base
     where(:reference_number =~ '%'+term+'%')
   }
 
+  scope :not_free, lambda{
+    not_new.where :cents.gt=>0
+  }
+
   preference :migrated_from_v2, :default=>false
   
   def authorize(credit_card, options = {})
@@ -226,8 +230,8 @@ class Order < ActiveRecord::Base
 #    end
 #  end
 
-  def purchase_successful?(description=Order::SSL_CERTIFICATE, profile=self.billing_profile,
-      cvv=true)
+  def full_purchase(description=Order::SSL_CERTIFICATE, profile=self.billing_profile,
+      cvv=true, cycle=true)
     credit_card = ActiveMerchant::Billing::CreditCard.new({
       :first_name => profile.first_name,
       :last_name  => profile.last_name,
