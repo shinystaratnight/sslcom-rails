@@ -18,12 +18,13 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :update_csr]
+                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
     :renew, :reprocess, :require=>[:create, :update, :delete]
+  filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
   #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
@@ -55,6 +56,18 @@ class CertificateOrdersController < ApplicationController
       format.xml  { render :xml => @certificate_order }
     end
   end
+
+  def auto_renew
+    action = CertificateOrder::RENEWING
+    iv = recert(action)
+    unless iv.blank?
+      redirect_to buy_certificate_url(iv.renewal_certificate,
+        {action.to_sym=>params[:id]})
+    else
+      not_found
+    end
+  end
+
 
   def renew
     action = CertificateOrder::RENEWING

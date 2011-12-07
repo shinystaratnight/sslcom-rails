@@ -68,6 +68,7 @@ SslCom::Application.routes.draw do
       get :download
       get :renew
       get :reprocess
+      get :auto_renew
     end
 
     resource :validation do

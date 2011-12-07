@@ -383,8 +383,8 @@ class CertificateOrder < ActiveRecord::Base
   do anything
 =end
   def auto_renew
-    unless cert_credit_exists? self #does a credit already exists for this cert order
-      purchase_renewal self
+    if renewal.blank? #does a credit already exists for this cert order
+      purchase_renewal
     end
   end
 
@@ -675,22 +675,52 @@ class CertificateOrder < ActiveRecord::Base
   #otherwise, find most recent successfully purchased order and use it's billing profile,
   #cannot rely on order transactions, since the data was not migrated
   def purchase_renewal
-    success=false
     bp=order.billing_profile
-    [bp, (ssl_account.orders.map(&:billing_profiles)-bp).first].each do |bp|
-      purchase_using bp
-      break if success
+    response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
+      p "purchase using billiing_profile_id==#{bp.id}"
+      options={profile: bp, cvv: false}
+      reorder=ssl_account.purchase self
+      reorder.amount = order.amount
+      #reorder.cents = cart_items.inject(0){|result, element| result +
+      #    element.attributes_before_type_cast["amount"].to_f}
+      #reorder = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
+      build_certificate_contents([self], reorder)
+      reorder.rebill options
+    end
+    if response.success?
+      "success"
+      reorder.line_items.last.sellable.renewal=self
     end
   end
 
-  def purchase_using(profile)
-    credit_card = ActiveMerchant::Billing::CreditCard.new({
-      :first_name => profile.first_name,
-      :last_name  => profile.last_name,
-      :number     => profile.card_number,
-      :month      => profile.expiration_month,
-      :year       => profile.expiration_year
-    })
-    credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+  #def purchase_using(profile)
+  #  credit_card = ActiveMerchant::Billing::CreditCard.new({
+  #    :first_name => profile.first_name,
+  #    :last_name  => profile.last_name,
+  #    :number     => profile.card_number,
+  #    :month      => profile.expiration_month,
+  #    :year       => profile.expiration_year
+  #  })
+  #  credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+  #end
+
+  def build_certificate_contents(certificate_orders, order)
+    certificate_orders.each do |cert|
+      cert.quantity.times do |i|
+        new_cert = CertificateOrder.new(cert.attributes)
+        cert.sub_order_items.each {|soi|
+          new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
+        }
+        cert.certificate_contents.each {|cc|
+          cc_tmp = CertificateContent.new(cc.attributes)
+          cc_tmp.certificate_order = new_cert
+          new_cert.certificate_contents << cc_tmp
+        }
+        new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
+        new_cert.preferred_payment_order = 'prepaid'
+        order.line_items.build :sellable=>new_cert
+      end
+    end
   end
+
 end

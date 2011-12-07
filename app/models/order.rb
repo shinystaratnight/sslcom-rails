@@ -230,42 +230,50 @@ class Order < ActiveRecord::Base
 #    end
 #  end
 
-  def full_purchase(description=Order::SSL_CERTIFICATE, profile=self.billing_profile,
-      cvv=true, cycle=true)
-    credit_card = ActiveMerchant::Billing::CreditCard.new({
-      :first_name => profile.first_name,
-      :last_name  => profile.last_name,
-      :number     => profile.card_number,
-      :month      => profile.expiration_month,
-      :year       => profile.expiration_year
-    })
-    credit_card.merge(:verification_value => profile.security_code) if cvv
-    credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
-    return false unless ActiveMerchant::Billing::Base.mode == :test ?
-        true : credit_card.valid?
-    self.amount= ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
-    self.description = description
-    options = {
-      :billing_address => Address.new({
-        :name     => profile.full_name,
-        :street1 => profile.address_1,
-        :street2 => profile.address_2,
-        :locality     => profile.city,
-        :region    => profile.state,
-        :country  => profile.country,
-        :postal_code     => profile.postal_code,
-        :phone    => profile.phone
-      }),
-      :description => description
-    }
-    gateway_response = self.purchase(credit_card, options)
-    (gateway_response.success?).tap do |success|
-      if success
-        self.mark_paid!
-      else
-        self.transaction_declined!
+  # creates a new order based on this order, but still needs to be assigned to a purchased object
+  # the following are valid options:
+  # :description, :profile, :cvv, :amount
+  def rebill(options)
+    options.reverse_merge!({description: Order::SSL_CERTIFICATE,
+        profile: self.billing_profile, cvv: true})
+    options[:profile].cycled_years.each do |exp_year|
+      profile=options[:profile]
+      credit_card = ActiveMerchant::Billing::CreditCard.new({
+        :first_name => profile.first_name,
+        :last_name  => profile.last_name,
+        :number     => profile.card_number,
+        :month      => profile.expiration_month,
+        :year       => exp_year
+      })
+      credit_card.merge(:verification_value => profile.security_code) if options[:cvv]
+      credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+      return false unless ActiveMerchant::Billing::Base.mode == :test ?
+          true : credit_card.valid?
+      self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
+      self.description = options[:description]
+      info = {
+        :billing_address => Address.new({
+          :name     => profile.full_name,
+          :street1 => profile.address_1,
+          :street2 => profile.address_2,
+          :locality     => profile.city,
+          :region    => profile.state,
+          :country  => profile.country,
+          :postal_code     => profile.postal_code,
+          :phone    => profile.phone
+        }),
+        :description => options[:description]
+      }
+      gateway_response = self.purchase(credit_card, info)
+      result=(gateway_response.success?).tap do |success|
+        if success
+          self.mark_paid!
+          break gateway_response
+        else
+          self.transaction_declined!
+        end
       end
-      gateway_response.message
+      gateway_response
     end
   end
 

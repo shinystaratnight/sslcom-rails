@@ -71,7 +71,7 @@ class CertificatesController < ApplicationController
   end
 
   def get_certificates_list
-    @certificates = Certificate.find(:all)
+    @certificates = Certificate.all
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_single?}

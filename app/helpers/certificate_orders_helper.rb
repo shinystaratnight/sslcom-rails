@@ -77,7 +77,7 @@ module CertificateOrdersHelper
             link_to("please wait #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
                     "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
-            content_tag(:div, content_tag(:p, instructions), :class=>"pop_content", id: "pp-#{certificate_order.ref}", class: "pp_container")
+            content_tag(:div, content_tag(:div, content_tag(:p, instructions), :class=>"pop_content"), id: "pp-#{certificate_order.ref}", class: "pop_container")
           else
             link_to("response needed #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
