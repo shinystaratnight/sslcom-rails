@@ -2,6 +2,7 @@ class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy],
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
+  before_filter :find_certificate, only: [:show, :buy]
 
   def index
     @certificates = @tier.blank? ? Certificate.root_products :
@@ -9,7 +10,7 @@ class CertificatesController < ApplicationController
   end
 
   def single_domain
-    @certificates = Certificate.find(:all)
+    @certificates = Certificate.public
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_single?}
@@ -21,7 +22,7 @@ class CertificatesController < ApplicationController
   end
 
   def wildcard_or_ucc
-    @certificates = Certificate.find(:all)
+    @certificates = Certificate.public
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_multi?}
@@ -35,8 +36,7 @@ class CertificatesController < ApplicationController
   # GET /certificate/wildcard
   # GET /certificate/wildcard.xml
   def show
-    @certificate = Certificate.find_by_product(params[:id]+@tier)
-    @certificates = Certificate.find(:all)
+    @certificates = Certificate.public
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier)}
@@ -57,7 +57,6 @@ class CertificatesController < ApplicationController
   # GET /certificate/buy/wildcard
   # GET /certificate/buy/wildcard.xml
   def buy
-    @certificate = Certificate.find_by_product(params[:id]+@tier)
     prep_purchase
   end
 
@@ -71,7 +70,7 @@ class CertificatesController < ApplicationController
   end
 
   def get_certificates_list
-    @certificates = Certificate.all
+    @certificates = Certificate.public
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_single?}
@@ -98,5 +97,10 @@ class CertificatesController < ApplicationController
     else
       not_found
     end
+  end
+
+  def find_certificate
+    prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
+    @certificate = Certificate.find_by_product(prod+@tier)
   end
 end
