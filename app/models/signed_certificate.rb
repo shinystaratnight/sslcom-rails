@@ -196,7 +196,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def subject_to_array(subject)
-    subject.split(/\/(?=\w+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
+    subject.split(/\/(?=[\w\d\.]+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
   end
 
   #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
