@@ -55,11 +55,14 @@ class DomainControlValidation < ActiveRecord::Base
     update_attributes sent_at: DateTime.now, dcv_method: "http"
   end
 
-  def is_eligible_to_send?
-    !email_address.blank? && updated_at < 24.hours.ago && !satisfied?
-  end
+  # the 24 hour limit no longer applies, but will keep this in case we need it again
+  #def is_eligible_to_send?
+  #  !email_address.blank? && updated_at > 24.hours.ago && !satisfied?
+  #end
 
   def is_eligible_to_resend?
     !email_address.blank? && !satisfied?
   end
+  alias :is_eligible_to_send? :is_eligible_to_resend?
+
 end

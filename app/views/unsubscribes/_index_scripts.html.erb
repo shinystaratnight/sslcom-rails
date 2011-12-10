@@ -60,7 +60,6 @@ jQuery(function($) {
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
-          data=$.parseJSON(data);
           if(typeof data.unsubscribe!="undefined"){
               $('#unsubscribed_email').html(data.unsubscribe.email);
               $('#unsubscribed_domain').html(data.unsubscribe.domain);

@@ -66,7 +66,7 @@ class ComodoApi
       http.request_post(url.path, options)
     end
     attr = {request_url: host,
-      parameters: options, method: "post", response: res.body, ca: "comodo"}
+      parameters: options, method: "post", response: res.body, ca: "comodo", api_requestable: dcv.csr}
     CaDcvResendRequest.create(attr)
   end
 

@@ -130,7 +130,7 @@ class SurlsController < ApplicationController
     end
     respond_to do |format|
       surl_js = @surl.errors.blank? ?  @surl.to_json.chop+", \"row\": #{@surl_row.to_json}}" : @surl.errors.to_json
-      format.js {render(text: surl_js)}
+      format.js {render(json: surl_js)}
     end
   end
 

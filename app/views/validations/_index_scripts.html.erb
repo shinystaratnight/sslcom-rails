@@ -375,7 +375,6 @@ jQuery(function($) {
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
-          data=$.parseJSON(data);
           $('dl#sent_to_ca_results').prepend(data.result);
         }
       }).livequery(
@@ -392,7 +391,6 @@ jQuery(function($) {
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
-          data=$.parseJSON(data);
           if(typeof data.email_address=="undefined"){
             status_bar.addClass('notice').append("<span>Validation email sent to "+
                     data.domain_control_validation.email_address+".</span>");
@@ -433,7 +431,6 @@ jQuery(function($) {
           }
         }
       }).livequery('ajax:error', function(event, xhr, status, error) {
-          data=$.parseJSON(xhr.responseText);
           if(typeof(data.base)!=='undefined')
             status_bar.addClass('error').append("<span>"+data.base+"</span>");
           else{

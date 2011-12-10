@@ -42,7 +42,7 @@
         =check_box_tag :preferred_show_order_number
         %span.clickable_choice allow the order number to be shown in the request
     -else
-      =form_for co.other_party_validation_requests.build(other_party_requestable: co), id: 'request_from_others', remote: true do |f|
+      =form_for co.other_party_validation_requests.build(other_party_requestable: co), id: 'request_from_others', remote: true, "data-type"=>"json"  do |f|
         =f.hidden_field :other_party_requestable_type
         =f.hidden_field :other_party_requestable_id
         .choice_w_desc.clearfix

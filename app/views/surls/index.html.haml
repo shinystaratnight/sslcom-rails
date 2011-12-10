@@ -16,7 +16,7 @@
         Share, track, protect, scan and analyze your links
       .leftcolb
         %section.search_container#surl_stylized
-          =form_for @surl, id: "surl_form" , remote: true do |f|
+          =form_for @surl, id: "surl_form" , remote: true, "data-type"=>"json" do |f|
             =render partial: "form", locals: {f: f}
       .rightcolc
         %ul.listd.ssl_links

@@ -38,7 +38,7 @@
             -if co.validation_stage_checkout_in_progress?
               =render partial: "validations/dcv_options", locals:{co: co}
             -else
-              =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true do
+              =form_tag send_dcv_email_certificate_order_validation_url(co), id: 'send_dcv_email', remote: true, "data-type"=>"json" do
                 =render partial: "validations/dcv_options", locals:{co: co}
       %p
         %span#no_emails_accessible

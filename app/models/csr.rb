@@ -8,6 +8,7 @@ class Csr < ActiveRecord::Base
   has_many    :signed_certificates
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
+  has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
   has_many    :domain_control_validations do
     def last_sent
       where(:email_address !~ 'null').last

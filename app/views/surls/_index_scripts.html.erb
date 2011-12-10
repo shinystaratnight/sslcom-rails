@@ -96,7 +96,6 @@ jQuery(function($) {
       }).livequery(
       'ajax:success', function(event, data, status, xhr){
         if(data!="null"){
-          data=$.parseJSON(data);
           if(typeof data.surl!="undefined"){
             var surl = $("<span id='surl_link'></span>");
             surl.hide();
@@ -133,8 +132,8 @@ jQuery(function($) {
             $('.container .inner').prepend(surl);
           }
         }
-      }).livequery('ajax:failure', function(xhr, status, error) {alert("failure!");}).livequery(
-      'ajax:complete', function(data, status, xhr){
+      }).livequery('ajax:failure', function(event, data, status, xhr) {alert("failure!");}).livequery(
+      'ajax:complete', function(event, data, status, xhr){
         $('#busy_sending').hide();
         $(':submit').show();
         $.prettyLoader.hide();

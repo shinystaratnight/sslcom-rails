@@ -70,7 +70,7 @@ class ValidationsController < ApplicationController
       @dcv.send_to params[:domain_control_validation_email]
     end
     respond_to do |format|
-      format.js {render json: (@dcv.errors.blank? ? @dcv : @dcv.errors).to_json}
+      format.js {render json: (@dcv.errors.blank? ? @dcv : @dcv.errors).to_json, status: :ok}
     end
   end
 
