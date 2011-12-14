@@ -442,8 +442,12 @@ class CertificateOrder < ActiveRecord::Base
     [29].include? software.id
   end
 
+  def is_plesk?
+    [25].include? software.id
+  end
+
   def has_bundle?
-    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat?)
+    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk?)
   end
 
   def bundle_name
@@ -452,7 +456,7 @@ class CertificateOrder < ActiveRecord::Base
         'Apache bundle (SSLCACertificateFile)'
       elsif is_nginx?
         'Nginx bundle'
-      elsif is_cpanel? || is_red_hat?
+      elsif is_cpanel? || is_red_hat? || is_plesk?
         'ca bundle (Apache SSLCACertificateFile)'
       end
     else

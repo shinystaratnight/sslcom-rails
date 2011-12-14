@@ -1,4 +1,5 @@
-=select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices)
+-le=co.csr.domain_control_validations.last_emailed
+=select_tag :domain_control_validation_email, options_for_select(ComodoApi.domain_control_email_choices(co.csr).email_address_choices, le.blank? ? nil : le.email_address)
 =hidden_field_tag :domain_control_validation_id, co.csr.domain_control_validations.last.id
 -unless co.validation_stage_checkout_in_progress?
   #send_verification_box=submit_tag "send verification", class: 'shiny_blue_button', disable_with: 'sending...', id: "send_verification"

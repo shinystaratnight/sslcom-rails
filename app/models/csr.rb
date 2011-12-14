@@ -13,6 +13,10 @@ class Csr < ActiveRecord::Base
     def last_sent
       where(:email_address !~ 'null').last
     end
+
+    def last_emailed
+      where(:email_address !~ 'null', :dcv_method + [nil,'email']).last
+    end
   end
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
