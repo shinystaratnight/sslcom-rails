@@ -7,7 +7,7 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
   has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
-    :dependent=>:destroy
+    :dependent=>:destroy #represents a child renewal
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
@@ -714,13 +714,13 @@ class CertificateOrder < ActiveRecord::Base
       #reorder.cents = cart_items.inject(0){|result, element| result +
       #    element.attributes_before_type_cast["amount"].to_f}
       #reorder = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
-      build_certificate_contents([self], reorder)
       gateway_response=reorder.rebill(options)
-      break gateway_response if gateway_response.success?
-    end
-    if !response.is_a?(Array) && response.success?
-      "success"
-      reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
+      if gateway_response.success?
+        clone_for_renew([self], reorder)
+        reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
+        reorder.save
+        break gateway_response
+      end
     end
   end
 
@@ -735,20 +735,20 @@ class CertificateOrder < ActiveRecord::Base
   #  credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
   #end
 
-  def build_certificate_contents(certificate_orders, order)
+  def clone_for_renew(certificate_orders, order)
     certificate_orders.each do |cert|
       cert.quantity.times do |i|
         new_cert = CertificateOrder.new(cert.attributes)
         cert.sub_order_items.each {|soi|
           new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
         }
-        cert.certificate_contents.each {|cc|
-          cc_tmp = CertificateContent.new(cc.attributes)
-          cc_tmp.certificate_order = new_cert
-          new_cert.certificate_contents << cc_tmp
-        }
         new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
         new_cert.preferred_payment_order = 'prepaid'
+        new_cert.save
+        p new_cert.id
+        cc = CertificateContent.new
+        cc.certificate_order=new_cert
+        cc.save
         order.line_items.build :sellable=>new_cert
       end
     end
