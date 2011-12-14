@@ -434,6 +434,28 @@ class CertificateOrder < ActiveRecord::Base
     [37].include? software.id
   end
 
+  def is_cpanel?
+    [35].include? software.id
+  end
+
+  def has_bundle?
+    !!(is_apache? || is_nginx? || is_cpanel?)
+  end
+
+  def bundle_name
+    if has_bundle?
+      if is_apache?
+        'Apache bundle (SSLCACertificateFile)'
+      elsif is_nginx?
+        'Nginx bundle'
+      elsif is_cpanel?
+        'ca bundle (also Apache SSLCACertificateFile)'
+      end
+    else
+      ""
+    end
+  end
+
   def file_extension
     is_iis? ? '.cer' : '.crt'
   end

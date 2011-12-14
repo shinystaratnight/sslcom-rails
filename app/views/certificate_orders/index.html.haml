@@ -130,8 +130,8 @@
                             %li(class="#{co.is_apache? ? '': 'category_border'}")
                               =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co), target: "_blank"
                               =link_to "click here to download certificate", download_certificate_order_path(co), target: "_blank"
-                            -if co.is_apache? || co.is_nginx?
+                            -if co.has_bundle?
                               %li.category_border
                                 =link_to image_tag('download.png', :class=>'blue_icon'), server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate), target: "_blank"
-                                =link_to "#{co.is_apache? ? 'apache bundle (SSLCACertificateFile)' : 'nginx bundle'}", server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate), target: "_blank"
+                                =link_to co.bundle_name, server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate), target: "_blank"
                           =render partial: 'shared/small_admin_functions', locals: {co: co}
