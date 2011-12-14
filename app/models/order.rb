@@ -236,7 +236,7 @@ class Order < ActiveRecord::Base
   def rebill(options)
     options.reverse_merge!({description: Order::SSL_CERTIFICATE,
         profile: self.billing_profile, cvv: true})
-    options[:profile].cycled_years.each do |exp_year|
+    options[:profile].cycled_years.map do |exp_year|
       profile=options[:profile]
       credit_card = ActiveMerchant::Billing::CreditCard.new({
         :first_name => profile.first_name,
@@ -247,7 +247,7 @@ class Order < ActiveRecord::Base
       })
       credit_card.merge(:verification_value => profile.security_code) if options[:cvv]
       credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
-      return false unless ActiveMerchant::Billing::Base.mode == :test ?
+      next unless ActiveMerchant::Billing::Base.mode == :test ?
           true : credit_card.valid?
       self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
       self.description = options[:description]
@@ -269,12 +269,13 @@ class Order < ActiveRecord::Base
         if success
           self.mark_paid!
           break gateway_response
+          #do we want to save the billing profile? if so do it here
         else
           self.transaction_declined!
         end
       end
       gateway_response
-    end
+    end.last
   end
 
   def to_param

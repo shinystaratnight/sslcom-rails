@@ -1,20 +1,25 @@
-%li
-  organization:
-  %ul
-    %li #{registrant_fields.organization}
-%li
-  department:
-  %ul
-    %li #{registrant_fields.organization_unit}
-%li
-  city:
-  %ul
-    %li #{registrant_fields.locality}
-%li
-  state:
-  %ul
-    %li #{registrant_fields.state}
-%li
-  country:
-  %ul
-    %li #{registrant_fields.country}
+-unless registrant_fields.organization.blank?
+  %li
+    organization:
+    %ul
+      %li #{registrant_fields.organization}
+-unless registrant_fields.organization_unit.blank?
+  %li
+    department:
+    %ul
+      %li #{registrant_fields.organization_unit}
+-unless registrant_fields.locality.blank?
+  %li
+    city:
+    %ul
+      %li #{registrant_fields.locality}
+-unless registrant_fields.state.blank?
+  %li
+    state:
+    %ul
+      %li #{registrant_fields.state}
+-unless registrant_fields.country.blank?
+  %li
+    country:
+    %ul
+      %li #{registrant_fields.country}

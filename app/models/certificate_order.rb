@@ -707,7 +707,7 @@ class CertificateOrder < ActiveRecord::Base
   def purchase_renewal
     bp=order.billing_profile
     response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
-      p "purchase using billiing_profile_id==#{bp.id}"
+      p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       reorder=ssl_account.purchase self
       reorder.amount = order.amount
@@ -715,11 +715,12 @@ class CertificateOrder < ActiveRecord::Base
       #    element.attributes_before_type_cast["amount"].to_f}
       #reorder = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
       build_certificate_contents([self], reorder)
-      reorder.rebill options
+      gateway_response=reorder.rebill(options)
+      break gateway_response if gateway_response.success?
     end
-    if response.success?
+    if !response.is_a?(Array) && response.success?
       "success"
-      reorder.line_items.last.sellable.renewal=self
+      reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
     end
   end
 
