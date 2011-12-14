@@ -127,7 +127,7 @@
                           -if cc.csr && cc.csr.signed_certificate
                             %li
                               %strong certificate (#{cc.server_software.title})
-                            %li(class="#{co.is_apache? ? '': 'category_border'}")
+                            %li(class="#{co.has_bundle? ? '': 'category_border'}")
                               =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co), target: "_blank"
                               =link_to "click here to download certificate", download_certificate_order_path(co), target: "_blank"
                             -if co.has_bundle?
