@@ -1,3 +1,4 @@
+<%cc=@certificate_order.certificate_content%>
 <%if @contact.is_a? Contact -%>
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
@@ -11,7 +12,11 @@ Attached to this email you should find a .zip file containing:
 <%@certificate_order.bundled_cert_names.each do |cc|%>
     * <%=cc%> - <%=Certificate::COMODO_BUNDLES[cc]%>
 <%end%>
-    * Your Certificate (<%@certificate_order.file_type%>) - <%=@signed_certificate.friendly_common_name%><%@certificate_order.file_extension%>
+    * Your Certificate (<%=@certificate_order.file_type%>) - <%=@signed_certificate.friendly_common_name%><%@certificate_order.file_extension%>
+
+<%if @certificate_order.is_apache? || @certificate_order.is_nginx?-%>
+Your <%="#{@certificate_order.is_apache? ? 'Apache bundle (SSLCACertificateFile)' : 'Nginx bundle'} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}"%>
+<%end-%>
 
 You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> for <%=@certificate_order.subject%> in text format at the bottom of this email.
 
