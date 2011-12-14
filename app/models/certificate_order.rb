@@ -449,7 +449,7 @@ class CertificateOrder < ActiveRecord::Base
       elsif is_nginx?
         'Nginx bundle'
       elsif is_cpanel?
-        'ca bundle (also Apache SSLCACertificateFile)'
+        'ca bundle (Apache SSLCACertificateFile)'
       end
     else
       ""
