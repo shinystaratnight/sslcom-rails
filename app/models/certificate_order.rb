@@ -602,7 +602,7 @@ class CertificateOrder < ActiveRecord::Base
           last_sent = csr.domain_control_validations.last_sent
           if !skip_verification? && last_sent.try("is_eligible_to_send?")
             options.merge!('dcvEmailAddress' => last_sent.email_address)
-            last_sent.send_dcv!
+            last_sent.send_dcv! unless last_sent.sent_dcv?
           end
         else
           options.merge!(
