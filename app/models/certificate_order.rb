@@ -631,7 +631,7 @@ class CertificateOrder < ActiveRecord::Base
               options.merge!('dcvMethod' => "HTTP_CSR_HASH")
             elsif last_sent.try("is_eligible_to_send?")
               options.merge!('dcvEmailAddress' => last_sent.email_address)
-              last_sent.send_dcv!
+              last_sent.send_dcv! unless last_sent.sent_dcv?
             end
           end
           fill_csr_fields options, certificate_content.registrant
