@@ -14,7 +14,8 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
-  MIN_KEY_SIZE = 2048
+  MIN_KEY_SIZE = 2047 #thought would be 2048, be see
+    #http://groups.google.com/group/mozilla.dev.security.policy/browse_thread/thread/7ceb6dd787e20da3# for details
   NOT_VALID_ISO_CODE="is not a valid 2 lettered ISO-3166 country code."
 
   ADMINISTRATIVE_ROLE = 'administrative'
@@ -264,7 +265,7 @@ class CertificateContent < ActiveRecord::Base
         domain_validation_regex(is_wildcard, csr.common_name)
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength != MIN_KEY_SIZE
+          csr.strength < MIN_KEY_SIZE
       errors.add(:signing_request,
         "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
           Country.accepted_countries.include?(csr.country)
