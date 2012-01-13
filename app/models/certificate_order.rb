@@ -94,6 +94,14 @@ class CertificateOrder < ActiveRecord::Base
     (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
   }
 
+  scope :unrenewed, not_new.where(:renewal_id=>nil)
+
+  scope :renewed, not_new.where(:renewal_id ^ nil)
+
+  scope :nonfree, not_new.where(:amount.gt => 0)
+
+  scope :free, not_new.where(:amount => 0)
+
   scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
@@ -710,7 +718,7 @@ class CertificateOrder < ActiveRecord::Base
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       reorder=ssl_account.purchase self
-      reorder.amount = order.amount
+      reorder.amount = amount
       #reorder.cents = cart_items.inject(0){|result, element| result +
       #    element.attributes_before_type_cast["amount"].to_f}
       #reorder = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
@@ -738,14 +746,14 @@ class CertificateOrder < ActiveRecord::Base
   def clone_for_renew(certificate_orders, order)
     certificate_orders.each do |cert|
       cert.quantity.times do |i|
-        new_cert = CertificateOrder.new(cert.attributes)
+        #could use cert.dup after >=3.1, but we are currently on 3.0.10 so we'll do this manually
+        new_cert = CertificateOrder.new(cert.attributes.merge(id: nil, ref: nil, created_at: nil, updated_at: nil))
         cert.sub_order_items.each {|soi|
-          new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
+          new_cert.sub_order_items << SubOrderItem.new(soi.attributes.merge(id: nil, created_at: nil, updated_at: nil))
         }
         new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
         new_cert.preferred_payment_order = 'prepaid'
         new_cert.save
-        p new_cert.id
         cc = CertificateContent.new
         cc.certificate_order=new_cert
         cc.save
