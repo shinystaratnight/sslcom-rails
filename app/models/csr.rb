@@ -143,8 +143,12 @@ class Csr < ActiveRecord::Base
         domain_control_validations.last_sent
   end
 
+  def non_wildcard_name
+    common_name.gsub(/^\*\./, "")
+  end
+
   def dcv_url
-    "http://#{common_name}/#{md5_hash}.txt"
+    "http://#{non_wildcard_name}/#{md5_hash}.txt"
   end
 
   def dcv_contents
@@ -165,7 +169,7 @@ class Csr < ActiveRecord::Base
   def fetch_public_site
     begin
       timeout(Surl::TIMEOUT_DURATION) do
-        r=open("https://"+common_name).read unless is_intranet?
+        r=open("https://"+non_wildcard_name).read unless is_intranet?
         !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
