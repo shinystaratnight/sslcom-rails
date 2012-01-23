@@ -683,17 +683,18 @@ class CertificateOrder < ActiveRecord::Base
   private
 
   def fill_csr_fields(options, obj)
+    f= {'organizationName' => obj.company_name,
+          'organizationalUnitName' => obj.department,
+          'postOfficeBox' => obj.po_box,
+          'streetAddress1' => obj.address1,
+          'streetAddress2' => obj.address2,
+          'streetAddress3' => obj.address3,
+          'localityName' => obj.city,
+          'stateOrProvinceName' => obj.state,
+          'postalCode' => obj.postal_code,
+          'countryName' => obj.country}
     options.merge!(
-      'organizationName' => obj.company_name,
-      'organizationalUnitName' => obj.department,
-      'postOfficeBox' => obj.po_box,
-      'streetAddress1' => obj.address1,
-      'streetAddress2' => obj.address2,
-      'streetAddress3' => obj.address3,
-      'localityName' => obj.city,
-      'stateOrProvinceName' => obj.state,
-      'postalCode' => obj.postal_code,
-      'countryName' => obj.country)
+      f.each{|k,v|f[k]=CGI.escape(v)})
   end
 
   def post_process_csr

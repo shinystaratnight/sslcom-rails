@@ -144,7 +144,7 @@ class Csr < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    common_name.gsub(/^\*\./, "")
+    common_name.gsub(/^\*\./, "").downcase
   end
 
   def dcv_url
