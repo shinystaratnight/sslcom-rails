@@ -1,0 +1,547 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Generating 
+                            a Key Pair and CSR for a <br>
+                            Microsoft IIS 2.0</b> <br>
+                            <br>
+                            <b>This document introduces generating a Key Pair 
+                            and CSR, and answers questions you might have.</b> 
+                            <br>
+                            </font> 
+                            <ul>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#steps" class="hyperlink">Steps 
+                                to follow before requesting a VeriSign Server 
+                                ID</a> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#keygen" class="hyperlink">How 
+                                to use KEYGEN.EXE and SETKEY instead of Key Manager</a> 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#genServer" class="hyperlink">Generating 
+                                a Key Pair and CSR for a Microsoft Server</a> 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#genRemote" class="hyperlink">Generating 
+                                a Key Pair and CSR for a Remote Server</a> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#information" class="hyperlink">Additional 
+                                Information</a></font></li>
+                            </ul>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a name="steps"></a> 
+                            <b>Steps to follow before requesting a VeriSign Server 
+                            ID</b><br>
+                            Due to numerous variations within Microsoft's IIS 
+                            software platform and its service packs, a number 
+                            of customers have been encountering the error "Invalid 
+                            Password" when trying to install their Server ID. 
+                            This error is caused by a slight misconfiguration 
+                            in the IIS Key Manager software. This error can be 
+                            prevented by carefully following the steps outlined 
+                            below.<br>
+                            <b>IF YOU DO NOT FOLLOW THESE STEPS, THERE IS A HIGH 
+                            PROBABLILITY THAT YOUR CERTIFICATE WILL NOT WORK PROPERLY, 
+                            AND YOUR INSTALLATION WILL BE DELAYED.</b> </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                you are located in the United States or Canada, 
+                                it is recommended that you apply Service Pack 
+                                3 for Windows NT, 128 bit version. This is available 
+                                from Microsoft on CD ROM, or if you have a registered 
+                                IP address, you may download the file from Microsoft's 
+                                World Wide Web site. You can obtain the 128 bit 
+                                version of <a href="http://mssecure.www.conxion.com/cgi-bin/ntitar.pl">Service 
+                                Pack 3 online.</a> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Create 
+                                a test Certificate Signing Request in Key Manager 
+                                and <a href="http://digitalid.verisign.com/server/trial/index.html"> 
+                                register for a test Certificate</a> with Verisign. 
+                                Make sure you use a password that is 7 characters 
+                                in length or less!. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">You 
+                                will receive a certificate in email that looks 
+                                something like the following: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+      -----BEGIN CERTIFICATE-----
+      MIIBqDCCARECAQAwaTELMAkGA1UEBhMCVVMxDjAMBgNVBAgTBVRleGFzMRMwEQYD
+      VQQHEwpMYXNDb2xpbmFzMRIwEAYDVQQKEwlNaWNyb3NvZnQxDjAMBgNVBAsTBUl0
+      ZWFtMREwDwYDVQQDFAhOVFZPT0RPTzCBnjANBgkqhkiG9w0BAQEFAAOBjAAwgYgC
+      gYBxmmAWKbLJHg5TuVyjgzWW0JsY5Shaqd7BDWtqhzy4HfRTW22f31rlm8NeSXHn
+      EhLiwsGgNzWHJ8no1QIYzAgpDR79oqxvgrY4WS3PXT7OLwIDAQABoAAwDQYJKoZI
+      hvcNAQEEBQADgYEAVcyI4jtnnV6kMiByiq4Xg99yL0U7bIpEwAf3MIZHS7wuNqfY
+      acfhbRj6VFHT8ObprKGPmqXJvwrBmPrEuCs4Ik6PidAAeEfoaa3naIbM73tTvKN+
+      WD30lAfGBr8SZixLep4pMIN/wO0eu6f30cBuoPtDnDulNT8AuQHjkJIc8Qc= 
+      -----END CERTIFICATE-----
+</font></pre>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Copy 
+                                this section, including the "--Begin Certificate--"and 
+                                "--End Certificate" lines into a plain-text editor 
+                                such as Notepad and save it to your hard drive. 
+                                Do NOT use Word or other word processing program 
+                                for this task. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Ensure 
+                                that there are no leading or trailing spaces on 
+                                EACH line in the Certificate. Many mail systems 
+                                change the formatting of the document. This step 
+                                is essential to circumventing formatting errors. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Install 
+                                this new file as the Certificate in Key Manager 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                the test certificate successfully installs, congratulations! 
+                                You may use the same Certificate Signing Request 
+                                (CSR) to apply for a real certificate. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                the test certificate will not install, ensure 
+                                the following: </font> 
+                                <ul>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">You 
+                                    are creating and installing the Certificate 
+                                    from the local server, not remotely through 
+                                    Key Manager </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">You 
+                                    are logged onto the machine with an Administrator 
+                                    level account </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                    a or b above doesn't work, you can try creating 
+                                    a test request using Keygen.exe and install 
+                                    the Certificate using Setkey.exe. Here are 
+                                    the instructions:</font></li>
+                                </ul>
+                              </li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">&nbsp;&nbsp;<a href="#top">return 
+                            to the top</a> <br>
+                            <br>
+                            <a name="keygen"> </a> <b>How to use KEYGEN.EXE and 
+                            SETKEY instead of Key Manager</b> <b>NOTE: If you 
+                            are unable to use the following utilities, please 
+                            contact Microsoft Technical Support at 1-800-936-3500.</b> 
+                            </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Open 
+                                a command prompt </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                directories to the \system32\inetsrv directory 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the following: </font> 
+                                <blockquote><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                  keygen -bits &lt;512 or 1024&gt; "C=, O=, OU=, 
+                                  S=, L=, CN=" <b>Example:</b> <br>
+                                  keygen -bits 512 secret privkey.txt certreq.req 
+                                  "C=US, O=my company, OU=my unit,S=Washington, 
+                                  L=Seattle, CN=www.walleye.com " <br>
+                                  <br>
+                                  <b>NOTE:</b> "512 " can ONLY be "1024" if you 
+                                  are using 128 bit encryption "secret" is the 
+                                  password (should be 7 characters or less) "privkey.txt" 
+                                  is a name you give to the Private Key (can be 
+                                  anything, don't use spaces) "certreq.req" is 
+                                  a name you give to the request file (can be 
+                                  anything, don't use spaces) </font></blockquote>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">You 
+                                should see something like the following if it 
+                                works: "SSL Key generation utility, Version 1.0 
+                                Copyright (c) 1995 Microsoft Corporation Generating 
+                                key pair of length 512 bits... Completed. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                you are successful, cut and paste the request 
+                                file certreq.req in the VeriSign enrollment form 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                you get the Certificate back from Verisign, do 
+                                the following: </font> 
+                                <ul>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Open 
+                                    a command prompt </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                    directories to the \system32\inetsrv directory 
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                    the following: </font> 
+                                    <blockquote><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                      setkey secret privkey.txt newcert.cer www.x.com 
+                                      <br>
+                                      <br>
+                                      <b>Note:</b> <br>
+                                      "secret" is the password from the KEYGEN 
+                                      process <br>
+                                      "privkey.txt" is the Private Key from the 
+                                      KEYGEN process <br>
+                                      "newcert.cer " is the Certificate from Verisign. 
+                                      <br>
+                                      "www.x.com " is the Common Name from the 
+                                      KEYGEN process <br>
+                                      You should see the following if the process 
+                                      works: <br>
+                                      "SSL Key set utility, Version 1.0 <br>
+                                      Copyright (c) 1995 Microsoft Corporation 
+                                      <br>
+                                      Successfully set the SSL keys for www.x.com 
+                                      in the registry! " </font></blockquote>
+                                  </li>
+                                </ul>
+                              </li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                            using Keygen and Setkey result in an error, the errors 
+                            are due to system configuration issues Please contact 
+                            Microsoft Techinical Support at 1-800-936-5900. Be 
+                            advised that this is paid support. <br>
+                            <br>
+                            &nbsp;&nbsp;<a href="#top">return to the top</a> <br>
+                            <br>
+                            <a name="genServer"> </a> <b>Generating a Key Pair 
+                            and CSR for a Microsoft Server</b> <b>IMPORTANT NOTICE:</b> 
+                            If you are using a Microsoft Internet Information 
+                            Server, you must use a password that contains eight 
+                            characters or less when generating your CSR. To generate 
+                            a public and private key pair and CSR for a Microsoft 
+                            Internet Information Server 2.0: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Launch 
+                                the Microsoft Internet Service Manager. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;<em>Key 
+                                Manager</em> from the Microsoft Internet Server 
+                                submenu. (Or click on the key manager icon in 
+                                the toolbar.) </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;Create 
+                                New Key from the Key menu. The Create New Key 
+                                and Certificate Request dialog box displays.Do 
+                                not enter commas in any of these fields. Commas 
+                                are interpreted as the end of the field and an 
+                                invalid CSR will be generated. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Key Name</i> field, specify a name 
+                                for the key you are creating. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Password</i> field, specify a password 
+                                to protect your private key. This password should 
+                                be no more than eight characters long and contain 
+                                at least one nonalphabetical character, such as 
+                                a number or punctuation mark. Remember, the security 
+                                of your server is only as good as the security 
+                                of the key-pair file and its password. You will 
+                                need this password to install your Secure Server 
+                                ID. If you lose your private key or forget the 
+                                password, you will not be able to install the 
+                                ID and will need to request and purchase a new 
+                                ID from VeriSign. encrypt the private key. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">By 
+                                default, Key Manager generates a key pair 1024 
+                                bits long. In international servers, the size 
+                                of the key you create is 512 bits long. For our 
+                                international customers who are interested in 
+                                obtaining a key with greater encryption strength, 
+                                go to <a href="http://www.verisign.com/globalserver/index.html"> 
+                                http://www.verisign.com/globalserver.html</a>. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Organization</i> field, enter the 
+                                name of your organization. This is the organization 
+                                name you wrote down in Enrollment Step 1. <b>The 
+                                name you enter must be identical to the name listed 
+                                as the owner of the domain name</b>. VeriSign 
+                                can only issue a Secure Server ID to the organization 
+                                that owns the specified domain name. If you are 
+                                unsure of the correct organization name to enter, 
+                                go back to Step 1: Confirm Domain Name to look 
+                                up the domain name registration. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Organizational Unit</i> field, enter 
+                                the name of the department or unit that will be 
+                                using the ID. For example, enter the name of your 
+                                department or business unit. This field is not 
+                                required. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Common Name</i> field, enter your 
+                                web site's fully-qualified name. For example, 
+                                www.company.com. Do not include the protocol, 
+                                such as HTTP:// or FTP://. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Country</i> field, enter the two-letter 
+                                code for your country. You must use the correct 
+                                ISO country code, other abbreviations will not 
+                                be recognized. For example, the correct code for 
+                                the United Kingdom is GB, not UK. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>State/Province</i> field, enter the 
+                                full name of your state or province. Do not abbreviate. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Locality</i> field, enter the name 
+                                of your city, town, or other locality. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the&nbsp;<i>Request File</i> field, enter a name 
+                                for the CSR file. The CSR will look something 
+                                like this: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+-----BEGIN NEW CERTIFICATE  REQUEST-----
+MIIByDCCATECAQAwgYgxCzAJBgNVBAYTAlVTMREwDwYDVQQIEwhWaXJnaW5pYTEQ
+MA4GA1UEBxMHUm9hbm9rZTEmMCQGA1UEChMdTmV3IENlbnR1cnkgVGVjaG5vbG9n
+aWVzIEluYy4xDzANBgNVBAsTBk5DVGluYzEbMBkGA1UEAxQSd3d3Lm5ld2NlbnRl
+Y2guY29tMIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgFHdQ2up+9Z06F8pVfC9
+R0oj0A8fX6mLdc66JhUv6QGleJ37lLciLpgvDwvg+Tyi5uThrua+B2zmgMnpr0Ak
+pN2nqIe0inHTR29vcbjUNiMSkaxZHN/NQlSSKwQbCB9d6TJBUeRzGGfULpSF8dhl
+TfcI4krbEE9TY/r1/kCGmnSBAgMBAAGgADANBgkqhkiG9w0BAQQFAAOBgQAgOn0a
+t410ohHnKEzVgElu0a1w10AL37qxgJIBflnLD+7C0h8UKOUFPyrC2DBwP3kJkzGR
+FDLJiwshV3yPuGMOaqYcTLB8/DK553TyuLR2FIftr4oxKZ6wT8D8v38a1s1D+1ow
+U20CbzA7Ur0YBqrnQdD2PnTv/XpHtAAr+M4oez==
+-----END  NEW CERTIFICATE REQUEST-----
+</font></pre>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                OK to generate the key pair and CSR. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                prompted, enter the password you entered in Step 
+                                5: Complete Application, and click OK. An icon 
+                                is displayed while the key is being generated. 
+                                Once the key is created, an information window 
+                                is displayed, providing information about new 
+                                keys and how to get a certificate (Secure Server 
+                                ID). </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                OK to dismiss the information window. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;<em>Commit 
+                                Changes Now</em> from the Servers menu to save 
+                                your new key. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                asked if you want to commit all changes now, click 
+                                OK. Your key will be listed in the Key Manager 
+                                window under the name of the computer for which 
+                                you created the key. By default, the key is generated 
+                                on the local computer. The CSR is saved in the 
+                                file that specified as the Request File. If you 
+                                do not commit the changes, you will not be able 
+                                to install your Secure Server ID. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Back 
+                                up your private key file (<code>*.key</code> ) 
+                                and CSR file (<code>key.req</code> on a floppy 
+                                disk and store the disk in a secure location. 
+                                If you lose your private key or forget the password, 
+                                you will not be able to install your Secure Server 
+                                ID and will need to request and purchase a new 
+                                one from VeriSign. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Go 
+                                back to the enrollment pages and follow the instructions 
+                                in Enrollment Step 4: Submit CSR to submit your 
+                                CSR.</font></li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">&nbsp;&nbsp;<a href="#top">return 
+                            to the top</a> 
+                            <!--END TABLE ONE-->
+                            <!--BEGIN TABLE TWO-->
+                            <a name="genRemote"> </a> <b>Generating a Key Pair 
+                            and CSR For a Remote Server</b> The Key Manager tool 
+                            (keyring.exe) with IIS 2.0 enables you to generate 
+                            a key pair and install a Secure Server ID on a remote 
+                            server. <b>WARNING:</b> Transferring a key pair (*.key 
+                            file) from one computer to another over a network 
+                            can expose it to snooping because the key pairs are 
+                            not encrypted when sent across the network. If a private 
+                            key is compromised, it can compromise the site's SSL 
+                            identification (as stated in the site certificate). 
+                            The compromise of a private key means that all subsequent 
+                            SSL communications to and from that computer are potentially 
+                            subject to interception and decryption. To protect 
+                            your private key, which is paramount to SSL security, 
+                            you should either: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Generate 
+                                the key locally on the computer where it is to 
+                                be installed. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Transfer 
+                                the key from the remote machine by saving it to 
+                                a floppy disk and hand-carrying it to the target 
+                                machine and installing it from the floppy. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Transfer 
+                                the private key across the network only if you 
+                                are in a secure environment and it is a trusted 
+                                network.</font></li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            &nbsp;&nbsp;<a href="#top">return to the top</a> 
+                            <!--END TABLE TWO-->
+                            <br>
+                            <br>
+                            <!--BEGIN TABLE THREE-->
+                            <a name="information"> </a> <b>Additional Information</b> 
+                            For more information, refer to your server documentation 
+                            or visit <a href="http://support.microsoft.com/support/" class="hyperlink">Microsoft 
+                            Support Online</a>. <br>
+                            <br>
+                            &nbsp;&nbsp;<a href="#top">return to the top</a><br>
+                            </font></td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

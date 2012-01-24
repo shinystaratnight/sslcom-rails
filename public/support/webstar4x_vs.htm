@@ -1,0 +1,361 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> 
+                            <p><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><b>Generating 
+                              a Key Pair and CSR for a 4D Inc. Webstar 3.x Server 
+                              </b> </font></p>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>This 
+                            document introduces generating a Key Pair and CSR, 
+                            and answers questions you might have.</b> <br>
+                            <br>
+                            <br>
+                            <br>
+                            <strong>Generate a Key</strong> <br>
+                            <br>
+                            Use the Key Generator application in the SSL Tools 
+                            folder to generate a file containing a private key 
+                            for use with your secure server. Follow these steps: 
+                            </font> 
+                            <ol>
+                              <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                              <br>
+                              </font> 
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Launch 
+                                the Key Generator application (in the Tools &amp; 
+                                Examples folder, SSL Tools folder). <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                a password to protect your key. You'll need it 
+                                later to authorize WebSTAR SSL to use your public/private 
+                                key pair. Do not forget this password! If you 
+                                do, the private key cannot be recovered: there 
+                                is no "back door" to this security.&nbsp;Make 
+                                sure that the password is at least 8 characters 
+                                long, includes letters, numbers and punctuation, 
+                                and is not a name or a word. <br>
+                                <br>
+                                <br>
+                                <br>
+                                Write the password down and store it in a secure 
+                                place, such as a safety deposit box. If you lose 
+                                the password, you will have to purchase a new 
+                                certificate.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                the Create Key button to generate your private 
+                                key file.<br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Name 
+                                the file something like "Private Key File" (the 
+                                default), and save it in the root folder for the 
+                                SSL host (the WebSTAR folder or the host folder 
+                                if you have a secondary IP host). <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                the key file is created, the Key Generator will 
+                                beep and allow you to click OK , then it will 
+                                quit. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Make 
+                                sure that the key file is in your WebSTAR folder: 
+                                if it's not there, move it into that folder now. 
+                                <strong><br>
+                                <br>
+                                Create the Certificate Signing Request</strong> 
+                                <br>
+                                <br>
+                                The Certificate Signing Request process requires 
+                                that you supply an email address and certain identifying 
+                                information, as described below.: <br>
+                                <br>
+                                Your Certificate Signing Request may be rejected 
+                                if the information is not properly formatted. 
+                                Be sure to closely follow the conventions outlined 
+                                in the instructions. If any of the information 
+                                is improperly formatted,The Certificate Authority 
+                                will ask you to correct it and send the request 
+                                again. <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Launch 
+                                the CSR Utility application (in the Tools &amp; 
+                                Examples folder, SSL Tools folder).&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                                <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the host name of your Web site in the "Common 
+                                Name" field, for example: <br>
+                                <br>
+                                <a 
+            href="http://www.domain.com">www.domain.com</a> <br>
+                                <br>
+                                Make sure that the Common Name you specify will 
+                                be the actual host name of your SSL server--it 
+                                will be encoded into the signed Certificate and 
+                                cannot be changed later without purchasing a new 
+                                Certificate.&nbsp;Furthermore, this host name 
+                                should be the main "A name" entry for your machine 
+                                on your DNS server. Your Certificate may have 
+                                problems if you use<br>
+                                an IP address or if the host name is a "CNAME" 
+                                entry (DNS alias), for example. Contact your network 
+                                administrator for guidance if necessary.&nbsp; 
+                                &nbsp; <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the name of your organization in the "Organization" 
+                                field, for example: Widgets Corporation. <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the name of the department or other organization 
+                                unit in the "Org Unit" field, for example: Support 
+                                <br>
+                                <br>
+                                You must enter something in the Org. Unit field. 
+                                <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the name of the city or town in which your organization 
+                                is located in the "Locality" field, for example: 
+                                Berkeley <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the name of the state or province in which the 
+                                organization is located in the "State/Province" 
+                                field, for example: California<br>
+                                <br>
+                                Do not abbreviate the state or province name: 
+                                spell it out as shown above. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                a two-letter code for the country in which you 
+                                are located in the "Country Code" field, for example:US 
+                                <br>
+                                <br>
+                                Do not spell out the country name: use a 2-letter 
+                                code. The code for the United States is US. For 
+                                Canada, the code is CA. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the email address of the site's Webmaster or administrator 
+                                in the "Email Address" field, for example: webmaster@domain.com <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">In 
+                                the "Phone Number" field, type a phone number 
+                                where the Certificate Authority can reach you, 
+                                and type your fax number in the "FAX Number" field. 
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                The Email Address, Phone Number, and FAX Number 
+                                fields are not part of the Certificate. The Certificate 
+                                Authority may use these fields to contact you 
+                                if it finds a problem with the Certificate request. 
+                                <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                Choose and select the Private Key file you created.&nbsp;Once 
+                                you select a private key file, the key file and 
+                                the Certificate you will receive will be a signed 
+                                Certificate pair, and cannot be separated. <br>
+                                <br>
+                                <br>
+                                <br>
+                                If you lose the Private Key file and generate 
+                                a new one, your Certificate will no longer match. 
+                                You will have to send a request to the Certificate 
+                                Authority for a new Certificate, which you may 
+                                be charged for. For this reason, be sure to keep 
+                                backup copies of your file in a secure location. 
+                                <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the password required to access your public/private 
+                                key pair (the password you entered when generating 
+                                the key pair, as described in Generate a Key). 
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                the Create button to generate your encrypted Certificate 
+                                request form. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">The 
+                                application creates a file named Certificate Request 
+                                by default. You can use that name or rename it. 
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Quit 
+                                the CSR Utility program. <br>
+                                <br>
+                                </font></li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            Take the CSR that was generated and submit at the 
+                            VeriSign Online Enrollment form.<br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <b>Contacting 4D, Inc.</b> <br>
+                            <br>
+                            4D, Inc. <br>
+                            3031 Tisch Way, Suite 900 <br>
+                            San Jose, California 95128 <br>
+                            <br>
+                            Email: <br>
+                            info@4d.com <br>
+                            sales@4d.com <br>
+                            support@4d.com <br>
+                            <br>
+                            Web: <br>
+                            <a target="_BLANK" href="http://www.webstar.com/" class="hyperlink">www.webstar.com</a> 
+                            <br>
+                            <br>
+                            Phone: <br>
+                            Main: (510) 649-4949 <br>
+                            Sales: (800) 525-2580 or (510) 649-4949 <br>
+                            Support: (510) 704-1272 <br>
+                            <br>
+                            Fax: <br>
+                            (510) 548-5959 </font></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td>
+                            <p><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><b>Generating 
+                              a Key Pair and CSR for a 4D Inc. Webstar 3.x Server 
+                              </b> </font></p>
+                            <p><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                              <b><font color="ff0000">Technical Note: Webstar 
+                              Version 3.x and earlier used certificates that were 
+                              create using the PEM format. The current certificates 
+                              issued by Verisign use PKCS (the most common standard). 
+                              To use the PKCS certificates, you will need to update 
+                              to Webstar 4.x.</font></b> </font> <font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                              <br>
+                              <br>
+                              Use the 4D Inc. Key Generator application to generate 
+                              a key file containing a public/private key pair 
+                              for use with your secure server. Follow these steps: 
+                              </font> </p>
+                            <ol>
+                              <font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                              </font> 
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Open 
+                                the SSL Tools folder and locate the Key Generator. 
+                                <br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Launch 
+                                the Key Generator application by double clicking 
+                                its icon.<br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Enter 
+                                a password to protect the use of your key pair. 
+                                WebSTAR/SSL will ask for this password when you 
+                                initially launch the server, so it can use this 
+                                key pair. <br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Click 
+                                "Create Key Pair" to generate your public/private 
+                                key pair. Generating a key can take a few minutes. 
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">The 
+                                Public/Private Key pair is stored in an encrypted 
+                                file named Public/Private Key. <br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Move 
+                                this file into the same folder as the WebSTAR/SSL 
+                                server. It must be in the server folder to work. 
+                                <br>
+                                <br>
+                                </font></li>
+                            </ol>
+                            <font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                            <br>
+                            Do not forget this password! You'll need it later 
+                            to authorize WebSTAR/SSL to use your public/private 
+                            key pair. We recommend that you write it down and 
+                            store it in a safe place. If you lose the password, 
+                            you will have to purchase a new Digital ID. <br>
+                            <br>
+                            <strong>Generate a Digital ID Request</strong> <br>
+                            <br>
+                            Use the Digital ID Request application (in the SSL 
+                            Tools folder) to create a request for a Digital ID 
+                            which you will send to VeriSign. <br>
+                            <br>
+                            The application requires identifying information such 
+                            as the name of your organization, department within 
+                            the organization, and where the organization is located. 
+                            It also requires the Public/Private Key for your site 
+                            <br>
+                            <br>
+                            Your Digital ID Request may be rejected if the information 
+                            is not properly formatted. Be sure to closely follow 
+                            the conventions outlined in the instructions. If any 
+                            of the information is improperly formatted, VeriSign 
+                            will ask you to correct it and send the request again. 
+                            <br>
+                            <br>
+                            Follow these steps: </font> 
+                            <ol>
+                              <font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                              <br>
+                              </font> 
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Locate 
+                                the Digital ID Request application in the SSL 
+                                Tools folder and launch it by double clicking 
+                                its icon. </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the name of your Web site in the "Distinguished 
+                                Name" field, for example:<br>
+                                <a href="http://www.domain.com">www.domain.com</a> 
+                                <br>
+                                Make sure that the Distinguished Name you specify 
+                                will be the actual host name of your WebSTAR/SSL 
+                                server--it will be encoded into the Digital ID 
+                                as part of your Distinguished Name and cannot 
+                                be changed later without purchasing a new Digital 
+                                ID. <br>
+                                Furthermore, this host name should be the main 
+                                "A name" entry for your machine on your DNS server. 
+                                Your Digital ID may have problems if you use an 
+                                IP address or if the host name is a "CNAME" entry 
+                                (DNS alias), for example. Contact your network 
+                                administrator for guidance if necessary. </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the name of your organization in the "Organization" 
+                                field, for example: Widgets Corporation </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the name of the department or other organization 
+                                unit in the "Org Unit" field, for example:Support 
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the name of the city or town in which your organization 
+                                is located in the "Locality" field, for example: 
+                                Berkeley </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the name of the state or province in which the 
+                                organization is located in the "State/Province" 
+                                field, for example: California Do not abbreviate 
+                                the state or province name: spell it out as shown 
+                                above. </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                a two-letter code for the country in which you 
+                                are located in the "Country Code" field, for example: 
+                                US Do not spell out the country name: use a 2-letter 
+                                code. The code for the United States is US. For 
+                                Canada, the code is CA. </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Type 
+                                the email address of the site's Webmaster in the 
+                                "Email Address" field, for example: <a 
+            href="mailto:webmaster@domain.com">webmaster@domain.com</a> <br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">In 
+                                the "Phone Number" field, type a phone number 
+                                where VeriSign can reach you, and type your fax 
+                                number in the "FAX Number" field. <br>
+                                <br>
+                                The Email Address, Phone Number, and FAX Number 
+                                fields are not part of the Digital ID. VeriSign 
+                                uses these fields to contact you if it finds a 
+                                problem with the Digital ID request. </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Click 
+                                "Select Key File" and select the Public/Private 
+                                Key file you created. This must be the original 
+                                Public/Private Key file. Once you have selected 
+                                a Public/Private Key file, the key file and the 
+                                Digital ID you will receive are a digital ID pair 
+                                , and cannot be separated. <br>
+                                <br>
+                                If you lose the Public/Private Key file and generate 
+                                a new one, your Digital ID will no longer match. 
+                                You will have to send a request to VeriSign for 
+                                a new Digital ID, which you may be charged for. 
+                                For this reason, be sure to keep backup copies 
+                                of your files.<br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Enter 
+                                the password required to access your public/private 
+                                key pair (the password you entered when generating 
+                                the key pair, as described in Generate a Public/Private 
+                                Key ). <br>
+                                </font>
+                              <li><font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff">Click 
+                                the "Create" button to generate your encrypted 
+                                Digital ID request form. </font>
+                            </ol>
+                            <font size="1" face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff"><br>
+                            <br>
+                            The application creates a file named Digital ID Request 
+                            and then quits. Submit this file at the VeriSign Online 
+                            Enrollment form.<br>
+                            <br>
+                            <br>
+                            <br>
+                            <br>
+                            <b>Contacting 4D, Inc.</b> <br>
+                            <br>
+                            4D, Inc. <br>
+                            3031 Tisch Way, Suite 900 <br>
+                            San Jose, California 95128 <br>
+                            <br>
+                            Email: <br>
+                            info@4d.com <br>
+                            sales@4d.com <br>
+                            support@4d.com <br>
+                            <br>
+                            Web: <br>
+                            <a target="_BLANK" href="http://www.webstar.com/">www.webstar.com</a> 
+                            <br>
+                            <br>
+                            Phone: <br>
+                            Main: (510) 649-4949 <br>
+                            Sales: (800) 525-2580 or (510) 649-4949 <br>
+                            Support: (510) 704-1272 <br>
+                            <br>
+                            Fax: <br>
+                            (510) 548-5959 </font></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> 
+                            <ul>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><a href="#CSRgen" class="hyperlink">Generating 
+                                a Certificate Signing Request Using Netscape Adminstration 
+                                Server</a></font></li>
+                            </ul>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                            <!--END TABLE OF CONTENTS-->
+                            <a name="CSRgen"></a>Use the Certificate Setup Wizard 
+                            each time you need to request, renew, or install a 
+                            certificate from a <i>Certificate Authority (CA)</i>. 
+                            The first time you use the Certificate Setup Wizard, 
+                            it creates and installs a <i>key-pair</i> and <i>certificate 
+                            database</i> for you. <b>Generating a Server Certificate 
+                            Request</b> <br>
+                            <b><br>
+                            Note.&nbsp;</b>After you've requested a certificate 
+                            from a CA, it could take anywhere from two days to 
+                            a number of weeks for the CA to send you a response 
+                            and certificate.To generate a certificate request 
+                            and send it to a CA: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                In Netscape Console, in the navigation tree, select 
+                                the server you want to use SSL encryption with. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Click Open Server to open the server's console. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                In Tasks, click Certificate Setup Wizard. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                When prompted, provide information to request 
+                                a certificate. Depending on certificates or tokens 
+                                that may already be installed on the host system, 
+                                you may see some or all of the following fields&nbsp;&nbsp; 
+                                <br>
+                                &nbsp;&nbsp;&nbsp; <img src="../images/support/nsAdminServer1.gif" width="427" height="427" > 
+                                <b>Select a token (Cryptographic Device).&nbsp;</b>If 
+                                your key will be stored in the local key database, 
+                                choose internal (software). If your key will be 
+                                stored in a SmartCard or other external device, 
+                                choose the name of the external token. <b>Is the 
+                                server certificate already requested and ready 
+                                to install?.&nbsp;</b> <br>
+                                If you've never submitted a request for this certificate, 
+                                choose No. If your request has been processed 
+                                and you already have a key for the certificate, 
+                                or if you're installing a Trusted CA Certificate 
+                                or certificate chain (which don't require a request), 
+                                choose Yes. <br>
+                                <br>
+                                Choose the third option if you're using FORTEZZA. 
+                                (If you're using FORTEZZA, your certificte is 
+                                already stored in an external device. Although 
+                                you don't need to install a certificate, you do 
+                                need to run the New Trust Database Setup program 
+                                once.)&nbsp; If a Trust Database doesn't already 
+                                exist for this host, one is generated for you 
+                                now. A Trust Database is a key-pair and certificate 
+                                database installed on the local host. When you 
+                                use an internal token, the Trust Database is the 
+                                database into which you install the key and certificate. 
+                                When you use an external token and the external 
+                                device has insufficient storage capacity, the 
+                                Trust Database stores your Certificate Revocation 
+                                Lists (CRLs) and certificate chains.&nbsp; </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Once a Trust Database is created, this message 
+                                appears: "A Trust Database has successfully been 
+                                created." Click Next. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Enter and confirm a password, then click Next. 
+                                <br>
+                                <b>New Password.&nbsp;</b>The password must contain 
+                                at least eight characters, at least one of them 
+                                numeric. This password helps secure access to 
+                                the new key database you're creating. <br>
+                                <b>Confirm Password.&nbsp;</b>Enter the same password 
+                                again for verification. <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Continue providing information as prompted, and 
+                                click Next to go on. <br>
+                                <b>Is this a request for a new server certificate 
+                                or to renew an existing server certificate?.&nbsp;</b>If 
+                                you want to create a new certificate or replace 
+                                an old one, choose New Certificate. If you already 
+                                have an existing certificate, the Certificate 
+                                Renewal option will take less time. If you have 
+                                an existing certificate and want to replace or 
+                                renew it, choose Certificate Renewal.&nbsp; <br>
+                                <b>CA Email Address.&nbsp;</b>Enter the CA administrator's 
+                                email address to which your certificate request 
+                                should be sent.&nbsp;VeriSign requires that that 
+                                the CSR be submitted at an online enrollment form 
+                                rather than emailing the CSR to the CA.<br>
+                                <br>
+                                <b>Show CA.&nbsp;</b>Opens a browser and displays 
+                                the Certificate Authorities available to you. 
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                When prompted, enter the following information, 
+                                and then click Next: <br>
+                                <b>Your name.&nbsp;</b>Enter your full name.&nbsp; 
+                                <b>Telephone.&nbsp;</b>Enter a telephone number 
+                                where the CA can reach you if necessary. <b>Server 
+                                Host Name.&nbsp;</b>Enter the fully qualified 
+                                host name used in DNS lookups. Example: &lt;hostname&gt;.&lt;domain&gt; 
+                                <b>Email Address.&nbsp;</b>Enter your business 
+                                email address. This is used for correspondence 
+                                between you and the CA. <b>Organization.&nbsp;</b>Enter 
+                                the legal name of your company or institution. 
+                                Most CAs require that you verify this information 
+                                with legal documents such as a copy of a business 
+                                license. <b>Organizational Unit.&nbsp;</b>(Optional) 
+                                Enter a descriptive name for your organization 
+                                within your company.&nbsp; <b>Locality.&nbsp;</b>(Optional) 
+                                Enter your company's city name. <b>State or Province.&nbsp;</b>Enter 
+                                the full name of your company's state or province 
+                                (no abbreviations). <b>Country.&nbsp;</b>Enter 
+                                the two-character abbreviation for your country's 
+                                name (ISO format). The country code for the United 
+                                States is US.&nbsp; </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Enter the password for the token you selected 
+                                earlier, and then click Next. <br>
+                                <b>Selected Token.&nbsp;</b>Displays the token 
+                                you'll be installing a certificate in. <b>Trust 
+                                Database Password.&nbsp;</b>Enter the password 
+                                you used when you set up the trust database.</font></li>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">The 
+                            Certificate Setup Wizard generates a certificate request 
+                            for your server. When you see this screen, you can 
+                            use the certificate request to obtain a Digital ID 
+                            from a CA. <img src="../images/support/nsAdminServer2.gif" width="427" height="427">&nbsp; 
+                            <br>
+                            <br>
+                            <br>
+                            </font></td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

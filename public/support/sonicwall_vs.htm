@@ -1,0 +1,186 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">OpenSSL 
+                            is installed on your workstation during the configuration 
+                            manager installation procedure. For Windows NT and 
+                            Windows 2000, double-click the OpenSSL icon on the 
+                            desktop to open a command window. The icon was copied 
+                            to the desktop during installation. For Linux, enter 
+                            openssl at a command prompt. When you have completed 
+                            configuring the SSL-IA or SSL-R, enter exit. <br>
+                            <br>
+                            <i>Note:</i> Key and certificate file names cannot 
+                            contain spaces and must be compatible with your workstation’s 
+                            operating system. When prompted to either name a key 
+                            or certificate file or check the name of a key or 
+                            certificate file, please ensure the names follow these 
+                            conventions. <br>
+                            <br>
+                            <b>Generating Certificates</b> <br>
+                            You can generate certificate signing requests and 
+                            self-signed root certificates to use for testing. 
+                            <br>
+                            <br>
+                            Note: The openssl_config.txt file must be in the current 
+                            working directory. If it is not, you must specify 
+                            the path to the file. For Windows NT and Windows 2000, 
+                            the current default working directory is Program Files 
+                            \SonicWALL Corporation \SonicWALL Configuration Manager, 
+                            and openssl_config.txt is located there by default. 
+                            For Linux, the current working directory is the directory 
+                            from which you executed OpenSSL. However, the openssl_config.txt 
+                            file is located in the /etc directory of the root. 
+                            When you see the openssl_config.txt file name in a 
+                            listing, you must add “/etc/” before entering it. 
+                            <br>
+                            <br>
+                            To create an unencrypted private key and generate 
+                            a certificate request from it, enter the following 
+                            command lines at the prompt: <br>
+                            <br>
+                            </font> 
+                            <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">genrsa -out key.pem 1024
+req -new -key key.pem -out req.pem -config openssl_config.txt
+</font></pre>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                            (The second command must be entered on one line.) 
+                            To create a self-signed root certificate valid for 
+                            30 days, enter the following commands: <br>
+                            <br>
+                            </font> 
+                            <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">genrsa -out key.pem 1024
+req -new -x509 -out cert.pem -key key.pem -config openssl_config.txt
+</font></pre>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                            (The second command must be entered on one line.) 
+                            You will be prompted for additional information with 
+                            each of these commands. </font></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

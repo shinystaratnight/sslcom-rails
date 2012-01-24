@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><span class="head3"><b>Radware</b></span><br>
+                            <br>
+                            <a name="csr"></a> <u><b>Generating a certificate 
+                            request </b></u> <br>
+                            To generate a certificate signing request (CSR), use 
+                            the following command: <br>
+                            <br>
+                            <b>Certificate Req</b> <br>
+                            This command creates the CSR for a specific key, to 
+                            be sent to VeriSign. <br>
+                            <br>
+                            <b>Syntax:</b> <br>
+                            certificate req &ltkeyID&gt <br>
+                            <br>
+                            </font> 
+                            <table border="1" cellpadding="5" cellspacing="0" width="300">
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Variable</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Description</font></td>
+                              </tr>
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">keyID</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">The 
+                                  unique identification of the key.</font></td>
+                              </tr>
+                            </table>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            <b>CSR Example: </b> </font> 
+                            <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+-----BEGIN NEW CERTIFICATE REQUEST----
+MIICrjCCAlgCAQAwgZ0xGTAXBgNVBAMTEFZlcmlTaWduVGVzdC5jb20xETAPBgN
+BAsTCFZlcmlTaWduMREwDwYDVQQKEwhWZXJpU2lnbjERMA8GA1UEBxMITXQuIHZ
+aXcxEzARBgNVBAgTCmNhbGlmb3JuaWExCzAJBgNVBAYTAnVzMSUwIwYJKoZIhvc
+NAQkBFhZhZ29uemFsZXpAdmVyaXNNpZ24uY29tMFwwDQYJKoZIhvcNAQEBBQADS
+wAwSAJBANML/D7xcqqkn0HSu2OF56CPZrHg/4hpMiizQBEDYdhFMhDomLTpHa6M
+QXX1TK2qHygOo9G+H/ZPAJj8ENGmyVcCAwEAAaCCAVMwGgYKKwYBBAGCNw0CAzE
+MFgLjAuMjE5NS4yMEEGCisGAQQBgjcCAQ4xMzAxMA4GA1UdDwEB/wQEAwIE8Daf
+BgNVHSUEGDAWBgorBgEEAYI3AAgEVBggrBgEFBQcDAzCB8QYKKwYBBAGCNw0CAj
+GB4jB3wIBAR5OAE0AaQBjAHIAbwBzAG8AZgB0ACAAUwB0AHIAbwBuAGcAIABDAH
+IAeQBwAHQAbwBnAHIAYQBwAGgAaQBjACAAUAByAG8AdgBpAGQAZQByA4GJAGKa0
+jzBn8fkxScrWsdnU2eUJOMUK5Ms87Q+fjP1/pWN3PJnH7x8MBc5isFCjww6YnIj
+D8c3OfYfjkmWc048ZuGoH7ZZoD6YNfv/SfAvQmr90eGmKOFFiTD+hl1hM08gu2o
+xFU7mCvfTQ/2IbXP7KYFGEqaJ6wn0Z5yLOByPqblQZAAAAAAAAAAAwDQYJKoZIh
+vcNAQEQADQQAVGVmTLJWHIkgIjN+NRXWZIeMsB/cyfcQNEiVaL0kOCBqEXGd9sw
+s3A+h5xHRbsQ0myCMxMWPDNpp0e1d16+fI
+-----END NEW CERTIFICATE REQUEST-----
+</font></pre>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                            A certificate request for the key with an ID of 7 
+                            is created. <br>
+                            <br>
+                            To export the certificate request, use the following 
+                            command: <br>
+                            <br>
+                            <b>Certificate Export</b> <br>
+                            This command exports a certificate with a specific 
+                            keyID. <b>Syntax:</b> <br>
+                            <br>
+                            certificate export &ltkeyID&gt <br>
+                            <br>
+                            </font> 
+                            <table border="1" cellpadding="5" cellspacing="0" width="300">
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Variable</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Description</font></td>
+                              </tr>
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">keyID</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">The 
+                                  unique identification of the key.</font></td>
+                              </tr>
+                            </table>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            <b>Example: </b> <br>
+                            certificate export 4 <br>
+                            <br>
+                            This exports the certificate associated with keyID 
+                            4. You will be prompted to choose between two export 
+                            protocols: <br>
+                            <br>
+                            1. Zmodem: Sent to the terminal. <br>
+                            2. ASCII: Printed to screen for cut and paste. <br>
+                            <br>
+                            <a name="install"></a> <b><u>Installing a Certificate</u></b> 
+                            <br>
+                            After receiving the certificate from VeriSign, install 
+                            it via the following command: <br>
+                            <br>
+                            <b>Certificate Import</b> <br>
+                            This command imports a certificate and associates 
+                            it with a keyID. <br>
+                            <br>
+                            <b>Syntax:</b> <br>
+                            certificate import &ltkeyID&gt <br>
+                            <br>
+                            </font> 
+                            <table border="1" cellpadding="5" cellspacing="0" width="300">
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Variable</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Description</font></td>
+                              </tr>
+                              <tr> 
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">keyID</font></td>
+                                <td><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">The 
+                                  unique identification of the key.</font></td>
+                              </tr>
+                            </table>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            <b>Example:</b> <br>
+                            certificate import 4 <br>
+                            <br>
+                            This imports a certificate and associates it with 
+                            keyID 4. You will be prompted to choose between two 
+                            import protocols: <br>
+                            <br>
+                            1. Zmodem: From the terminal. <br>
+                            2. ASCII (Cut & Paste): Cut and then paste into the 
+                            HyperTerminal Application. <br>
+                            <br>
+                            <b>Note: </b> <br>
+                            In ASCII, the certificate is pasted into the appropriate 
+                            field when prompted. </font></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

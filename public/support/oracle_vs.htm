@@ -1,0 +1,393 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><span class="head3">CSR 
+                            and Certificate Installation instructions for Oracle 
+                            Web Application Server</span> </font> <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            <a href="#install" class="hyperlink"><b>Installating 
+                            a Certificate on an Oracle Web Server</b></a> <br>
+                            <br>
+                            <br>
+                            <b>Generating a CSR (Certificate Signing Request)</b> 
+                            <br>
+                            In this first step you generate a request for VeriSign 
+                            to issue a certificate. It involves generating a public/private 
+                            key-pair and identifying the server, the organization 
+                            using it, and its webmaster. The private key is encrypted 
+                            and should never leave your server, except for backup 
+                            purposes. The public key will become part of the certificate 
+                            and is therefore sent to VeriSign, together with the 
+                            rest of the information identifying your organization 
+                            and your server. <br>
+                            <br>
+                            To generate a certificate request, you will run the 
+                            interactive utility genreq and enter the information 
+                            for which it prompts you. <br>
+                            <br>
+                            When the prompt specifies a default value, you can 
+                            just press return to enter that value, or enter a 
+                            different value if you prefer. <br>
+                            <br>
+                            For an example of how to use genreq, see the following 
+                            sample genreq session. Before you start, create a 
+                            directory to store all SSL related files in, for example 
+                            $ORACLE_HOME/ows2/ssl. To avoid typing long path names 
+                            or moving files later, you can start genreq from this 
+                            directory. To run genreq, do the following: <br>
+                            <br>
+                            - Start genreq, located in $ORACLE_HOME\OWS20\BIN 
+                            on NT (typically c:\orant\ows20\bin) and $ORACLE_HOME/ows2/bin 
+                            on UNIX: <br>
+                            - Type G to begin creating a certificate request: 
+                            <br>
+                            <br>
+                            - When prompted, type a password (minimum of 8 characters), 
+                            used in encrypting your private key. Remember this 
+                            password. <br>
+                            <br>
+                            - Retype the password for confirmation. If the password 
+                            do not match, genreq will not warn you, it will just 
+                            repeat step 3. <br>
+                            <br>
+                            - Choose the public exponent you want to use one in 
+                            generating the key pair. The only two recognized exponents 
+                            are 3 and 65537, commonly called Fermat 4 or F4. <br>
+                            <br>
+                            - Enter the size in bits of the modulus you want to 
+                            use in generating the key pair. For the version of 
+                            genreq sold in the United States of America, the size 
+                            may be from 1 to 1024. The default size is 768 bits 
+                            and the maximum is 1024 bits. A modulus size of 1024 
+                            is recommended for most browsers and also by Verisign. 
+                            For versions of genreq sold outside the USA, the maximum 
+                            (and default) modulus size is 512 bits. (NOTE: 1024 
+                            bits would be equal to a 128 bit encryption) <br>
+                            <br>
+                            - Choose one of three methods for generating a random 
+                            seed to use in generating the key pair: <br>
+                            <br>
+                            - Random file: genreq prompts you to enter the full 
+                            pathname of a file in your local file system. This 
+                            can be any file that is at least 256 bytes in size, 
+                            does not contain any secret information, and has contents 
+                            that cannot easily be guessed (on UNIX, you can use 
+                            /var/adm/messages, on NT you can use \WINNT\System32\config\AppEvent.Evt) 
+                            <br>
+                            <br>
+                            - Random key sequences: genreq prompts you to enter 
+                            random keystrokes. genreq uses the variation in time 
+                            between keystrokes to generate the seed. Don't use 
+                            the keyboard's autorepeat capability, and don't wait 
+                            longer than two seconds between keystrokes. genreq 
+                            prompts you when you have typed enough keystrokes. 
+                            You must delete any unused characters typed after 
+                            this prompt. <br>
+                            <br>
+                            - Both: genreq prompts you to enter both a file name 
+                            and random keystrokes. This option is recommended. 
+                            <br>
+                            <br>
+                            The next three steps will tell genreq where it should 
+                            write certain files. If you've created an ssl directory 
+                            and have started genreq from this directory, you can 
+                            accept the defaults. Otherwise, you may want to include 
+                            full pathnames, or plan to move the files that genreq 
+                            created later. <br>
+                            <br>
+                            - Enter the name of a file in which to store your 
+                            WebServer's distinguished name. You can choose the 
+                            default, or enter any filename with a .der extension. 
+                            genreq creates this file in the current directory, 
+                            though you may later move it to any convenient location. 
+                            <br>
+                            <br>
+                            - Enter the name of a file in which to store your 
+                            WebServer's private key. You can choose the default, 
+                            or enter any filename with a .der extension. genreq 
+                            creates this file in the current directory, though 
+                            you may later move it to any convenient location. 
+                            <br>
+                            <br>
+                            - Enter the name of a file in which to store the certificate 
+                            request. You can choose the default, or enter any 
+                            filename with a .pkc extension. <br>
+                            <br>
+                            - Enter the requested identification information for 
+                            your organization: <br>
+                            <br>
+                            Common Name - The fully qualified host name of your 
+                            organization's Internet point of presence as defined 
+                            by the Domain Name Service (DNS). <br>
+                            Example: govt.us.oracle.com <br>
+                            <br>
+                            Organizational Unit (optional) - The name of the group, 
+                            division, or other unit of your organization responsible 
+                            for your Internet presence, or an informal or shortened 
+                            name for your organization. <br>
+                            Example: Oracle Government <br>
+                            <br>
+                            Organization - The official, legal name of your company 
+                            or organization. Most CAs require you to verify this 
+                            name by providing official documents, such as a business 
+                            license. <br>
+                            Example: Oracle Corporation <br>
+                            <br>
+                            Locality - (optional) The city, principality, or country 
+                            where your organization is located. <br>
+                            Example: Bethesda <br>
+                            <br>
+                            State or Province - The full name of the state or 
+                            province where your organization is located. VeriSign 
+                            does not accept abbreviations. <br>
+                            Example: Maryland <br>
+                            <br>
+                            Country - The two-character ISO-format abbreviation 
+                            for the country where your organization is located. 
+                            The country code for the <br>
+                            Example: United States is US. <br>
+                            <br>
+                            WebMaster's Name - The name of the Web Master responsible 
+                            for the site. This person will serve as a technical 
+                            contact. <br>
+                            Example: Sergio Leunissen <br>
+                            <br>
+                            WebMaster's Email Address - The email address where 
+                            VeriSign can contact the Web Master. <br>
+                            Example: sleuniss@us.oracle.com <br>
+                            <br>
+                            Server Software Version - The name and version number 
+                            of the application for which you are getting the certificate 
+                            (you should accept the default value). <br>
+                            <br>
+                            </font> 
+                            <hr width="80%" size="1" noshade>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br><a name="install"> </a>
+                            <b>Installing a Certificate on an Oracle Web Application 
+                            Server</b> <br>
+                            <br>
+                            1. Delete ALL text from this file that appears before 
+                            -----BEGIN CERTIFICATE. Your document should contain 
+                            only certificate information within this e-mail. After 
+                            you delete extra text, save this file inside your 
+                            temporary directory as TEXT and filename "mycert.der". 
+                            <br>
+                            <br>
+                            2. To configure OAS 4.0.8 listener with your SSL files, 
+                            go to OAS 4.0.8 Node Manager page (Usually on port 
+                            8888). Click on "OAS Manager". <br>
+                            <br>
+                            3. Wait for the Java Applet menu to load and expand 
+                            -> Website40 Site -> HTTP listener - WWW -> Security 
+                            -> SSL. <br>
+                            <br>
+                            4. Type in first ROW of data </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                a. Cert Label - mycert </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                b. Cert File - Enter path and name of your certificate 
+                                received. For example: C:\SSL\mycert.der </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                c. Dist Name File - Enter path and name for servname.der. 
+                                For example: C:\SSL\servname.der </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                d. Private Key File - Enter path and name for 
+                                privkey.der. For example: C:\SSL\privkey.der </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                e. CA Dir - Enter a temporary path. This is not 
+                                used, but you must supply a valid path. For example: 
+                                C:\tmp. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                f. CRL Dir - Enter a temporary path. This is not 
+                                used but you must supply a valid path. For example: 
+                                C:\tmp. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Click "Apply" to save changes. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            5. To configure the Network section for WWW listener, 
+                            go to HTTP listener -> WWW -> Network. <br>
+                            Add a new ROW of information: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                a. Address - Use same information as DEFAULT ROW. 
+                                For example: ANY. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                b. Port - Type port 443 here. SSL port 443 by 
+                                DEFAULT. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                c. Security - Pick SSL from pull-down menu. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                d. Host Name - Use same information as DEFAULT 
+                                ROW. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                e. Base Directory - Use same information as DEFAULT 
+                                ROW. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                f. Log Info Directory - Use same information as 
+                                DEFAULT ROW. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                g. Authentication - Use same information as DEFAULT 
+                                ROW. (NONE) </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                h. Certificate Label - Type "mycert". This is 
+                                the same name used on Step #17 above. This entry 
+                                maps Step #17 with Step# 18. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                                Click "Apply" to save changes. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            6. Now, you are ready to recycle OAS for changed to 
+                            take place. Go to Website40 Site or First Icon on 
+                            Your Java Applet menu. Click on "Select All" radio 
+                            button. Click on the (Reload) button in toolbar. This 
+                            will properly shut down and restart all OAS processes 
+                            in the right order. <br>
+                            If everything starts successfully, then try to access 
+                            your secure page. SSL runs on HTTPS protocol, URL 
+                            format may look like: <br>
+                            <br>
+                            https://myhost.us.domain.com <br>
+                            <br>
+                            Try to access that page in your browser. You should 
+                            get a browser warning stating that you are entering 
+                            a SECURE site. Just click OK. Secure page should come 
+                            up. <br>
+                            <br>
+                            If you get errors while trying to start WWW listener 
+                            after making these changes, then check your NT Event 
+                            Log or svwww.err file. Both logs will point out what 
+                            is going wrong. Some common mistakes for SSL configuration 
+                            include incorrect filename spellings and directory 
+                            structures, problems with certificate file because 
+                            of copy/pasting, etc. Log files tend to give very 
+                            specific information in that case for debugging. </font></td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

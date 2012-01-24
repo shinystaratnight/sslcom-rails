@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> 
+                            <p><span class="small"> <b><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Brokat 
+                              Server </font></b></span></p>
+                            <p><span class="small"><b><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">This 
+                              document introduces generating a Key Pair and CSR, 
+                              and answers questions you might have.</font></b> 
+                              <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                              <br>
+                              <b>CSR Generation</b> <br>
+                              The Graphical PSE Tool enables creating PKCS#10 
+                              requests for certificates and storing them in a 
+                              file. The requests can be used to order certificates, 
+                              which then can be imported into PSE files. Moreover 
+                              certificates can be exported from PSE files into 
+                              separate files. The file exchange function e.g.can 
+                              be used to request a certificate for the XsPRESSO 
+                              Gateway server PSE. <br>
+                              <br>
+                              Here you can generate a PKCS#10 request for a new 
+                              certificate and save it in a file. After clicking 
+                              <i>Certificate - File Exchange - Request </i>a dialogue 
+                              box appears. Type in all requested information. 
+                              Fill out the following fields: <b>Subject</b> <br>
+                              The name subject for the certificate that will be 
+                              created. <br>
+                              <br>
+                              <b>Locality</b> <br>
+                              e. g. the town <br>
+                              <br>
+                              <b>State or Province </b> <br>
+                              Write it completely (e. g. Florida) <br>
+                              <br>
+                              <b>Organization Organizational Unit</b> <br>
+                              <br>
+                              <b>Country</b> <br>
+                              The two letter code for your Country in uppercase 
+                              (e.g. DE for Germany). <br>
+                              <br>
+                              <b>Key length</b> <br>
+                              You can select between 512, 1024 and 2048 bit key 
+                              length for the key pair, that will be generated. 
+                              <br>
+                              <br>
+                              <b>Private Key Password</b> <br>
+                              The password for the certificate that will be created; 
+                              this password will be required when the new certificate 
+                              is used.If there is already a private key within 
+                              the PSE file, specify the password of this key.Confirm 
+                              Private Key Password <br>
+                              Write the password again. If there is already a 
+                              private key within the PSE file, this field will 
+                              be disabled. <br>
+                              <br>
+                              <br>
+                              <b>Challenge Password</b> <br>
+                              The challenge password may be required if you want 
+                              to revoke your certificate.<br>
+                              Confirm Challenge Password <br>
+                              <br>
+                              Save PKCS#10 Request as<br>
+                              <br>
+                              Here you can specify the file name of the file where 
+                              the PKCS#10. Request should be saved. <br>
+                              <br>
+                              Finally press the <i>Send </i>button. <br>
+                              The PSE file remembers the pending request. You 
+                              will see it in the PSE tree area. <br>
+                              You can save this PSE file including the pending 
+                              request, if you can not obtain the certificate immediately. 
+                              <br>
+                              <br>
+                              Besides remembering the request in the PSE file, 
+                              the PSE Tool creates a request file (in our example 
+                              E:\home\psetool\myVeriSignTest.req). It is up to 
+                              you, to get a certificate for this request and import 
+                              it into the PSE file. <br>
+                              <br>
+                              This is one possible way: Open the file with a common 
+                              text editor and copy the contents into the VeriSign 
+                              enrollment page.VeriSign will create a Digital Certificate. 
+                              Copy this certificate into a text fileand use <i>Certificate 
+                              - File Exchange - Import </i>to get the certificate 
+                              into the PSE file. </font> </span> </p>
+                          </td>
+        </tr>
+        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

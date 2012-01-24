@@ -1,0 +1,376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>This 
+                            document introduces generating a Key Pair and CSR, 
+                            and answers questions you might have.</b> <br>
+                            <br>
+                            <b>Generating a Key Pair and CSR for an OpenMarket 
+                            Server</b> You use the OpenMarket <code>keyadmin</code> 
+                            utility to generate key pairs and add or delete certificates 
+                            from the server key database. This utility is located 
+                            in the server <code>bin</code> <br>
+                            <br>
+                            To generate a key pair and CSR for your server: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Launch 
+                                keyadmin to generate the key pair. Enter the command 
+                                on a single line. For example: <br>
+                                <br>
+                                <code>$ bin/keyadmin -keydb <i>keydb</i> -mkpair 
+                                -dn 'DN'(-length key_len)</code> <br>
+                                <br>
+                                Where: </font> 
+                                <ul>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><code>Keydb</code> 
+                                    is the name of the key database that where 
+                                    the public and private key will be stored. 
+                                    If the database you specify is nonexistent, 
+                                    the server creates the database for you and 
+                                    displays an informational message, notifying 
+                                    you that the new database was created. <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><code>mkpair</code> 
+                                    instructs the server to generate a random 
+                                    public key pair with a default length of 512 
+                                    bits. <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><code>-dn 
+                                    'DN'</code> is the full distinguished name 
+                                    for the new key pair. Enclose this distinguished 
+                                    name in single quotes to protect it from being 
+                                    interpreted by the shell. Do NOT use any of 
+                                    the following characters in the distinguished 
+                                    name field: ! # $ % ^ &amp; * + = &lt; &gt; 
+                                    ? </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><code>-length 
+                                    <i>key_len</i></code> specifies the length 
+                                    of the key in bits. This option allows you 
+                                    to control the size of the encryption key. 
+                                    The minimum key size is 512 bits. The maximum 
+                                    key size is 1024 bits, for domestic servers 
+                                    only. </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                    prompted, type random keystrokes. These random 
+                                    keystrokes are used to generate a unique public/private 
+                                    key pair. </font>
+                                </ul>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                prompted, enter a password to protect the key 
+                                pair. This password should be at least eight characters 
+                                long and contain at least one nonalphabetical 
+                                character, such as a number or punctuation mark. 
+                                Remember, the security of your server is only 
+                                as good as the security of the key-pair file and 
+                                its password. You must enter this password when 
+                                installing your Secure Server ID. After you enter 
+                                the key database password, <i>keyadmin</i> creates 
+                                the private and public parts of a new key pair 
+                                and stores them in the key database. <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Run 
+                                <code>keyadmin -mkreq</code> to generate a CSR: 
+                                <br>
+                                <code>bin/keyadmin -mkreq filename -dn 'DN' (-life 
+                                days) (-webmaster <i>webmaster</i>-name) (-phone 
+                                <i>webmaster-phone-number)</i> (-software <i>software</i>) 
+                                (-regreq)</code> <br>
+                                <br>
+                                Where: </font> 
+                                <ul>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">-mkreq 
+                                    <i>filename</i> generates a CSR and writes 
+                                    it to the specified file. A key pair must 
+                                    already reside in the database. </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">-life 
+                                    <i>days</i >specifies the length of time that 
+                                    the certificate will be valid. The default 
+                                    is 365 days. The span requested is inserted 
+                                    in the CSR. Note that the CA can adjust this 
+                                    life span when issuing the ID. </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">-webmaster,-phone,-software 
+                                    add the specified plain text fields to the 
+                                    CSR. </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">-<i>regreq</i> 
+                                    stores a self-signed message that contains 
+                                    the certificate in PEM format in the specified 
+                                    file. This is used for registration with OM-Transact 
+                                    or OM-Access, and should not be sent to Verisign. 
+                                    </font>
+                                </ul>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                                <br>
+                                Keyadmin writes the public key and distinguished 
+                                name to the specified CSR file. The information 
+                                in this filename is encoded in PKCS #10 message 
+                                format. <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Organization 
+                                Name. Enter the name of your organization. This 
+                                is the organization name you wrote down in Enrollment 
+                                Step 1: Confirm Domain Name. The name you enter 
+                                must be identical to the name listed as the owner 
+                                of the domain name. VeriSign can only issue a 
+                                Secure Server ID to the organization that owns 
+                                the specified domain name. If you are unsure of 
+                                the correct organization name to enter, go back 
+                                to Enrollment Step 1: Confirm Domain Name to look 
+                                up the domain name registration. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Organizational 
+                                Unit. If necessary, enter the name of your unit 
+                                within the specified organization. This is usually 
+                                the group using the Secure Server ID. For example, 
+                                enter the name of your department or business 
+                                unit. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Common 
+                                Name. Enter your web site's fully-qualified name. 
+                                For example, www.company.com. This is known as 
+                                your site's <i>common name.</i> Do not include 
+                                the protocol, such as HTTP:// or FTP://. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Country. 
+                                Enter the two-letter country code for your country. 
+                                You must use the correct ISO country code, other 
+                                abbreviations will not be recognized. For example, 
+                                the correct code for the United Kingdom is GB, 
+                                not UK. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">State/Province. 
+                                Enter the full name of your state or province. 
+                                Do not abbreviate. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Locality. 
+                                Enter the name of your city, town, or other locality. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Request 
+                                File. Enter the name of the CSR file to create. 
+                                This file will contain the CSR. (This is your 
+                                public key file and does NOT contain your private 
+                                key.) The CSR looks something like this: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+
+-----BEGIN PRIVACY-ENHANCED MESSAGE-----
+
+Proc-Type:4,MIC-ONLY
+
+Content-Domain:RFC822
+
+Originator-Certificate:
+
+ MIIBzjCCAXgCAQAwDQYJKoZIhvcNAQECBQAwcjELMAkGA1UEBhMCVVMxEzARBgNV
+
+ BAgTCkNhbGlmb3JuaWExFTATBgNVBAcTDFNhbiBDbGVtZW50ZTEYMBYGA1UEChMP
+
+ UFBQIFByb2R1Y3Rpb25zMR0wGwYDVQQDExR3d3cuamFkZXNwYW50aWVzLmNvbTAe
+
+ Fw05NzA5MDMwNTU1NDFaFw05ODA5MDIwNTU3MjFaMHIxCzAJBgNVBAYTAlVTMRMw
+
+ EQYDVQQIEwpDYWxpZm9ybmlhMRUwEwYDVQQHEwxTYW4gQ2xlbWVudGUxGDAWBgNV
+
+ BAoTD1BQUCBQcm9kdWN0aW9uczEdMBsGA1UEAxMUd3d3LmphZGVzcGFudGllcy5j
+
+ b20wXDANBgkqhkiG9w0BAQEFAANLADBIAkEAwQ0p7UctHrJtZ0JBEKp/3KNde4wO
+
+ xvzTcDv2G9FMVqz/rB3V55HBKUefnQjR3KrsS1IS9U0xwuvmToDLBnZaEwIDAQAB
+
+ MA0GCSqGSIb3DQEBAgUAA0EAe3nFqfs0auAvG9tVAgqL0Bk7hbFoREfiNc3JiOWm
+
+ kcqb/oFHog3j69lwSm4U69LUR893vrCNMANMirZFcg6sTg==
+
+MIC-Info: RSA-MD5,RSA,
+
+ wQegeYZOyBT03x3xkIiN+PalNILGoKUVCb9/oafHBejCTZ556+mLe0zY2NbhXkH7
+
+ euTIJN81VfXoE0A3HQXOrw==
+
+
+
+V2ViU2l0ZSBQcm8NCg==
+
+-----END PRIVACY-ENHANCED MESSAGE-----
+
+</font></pre>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Note:</b> 
+                                If you are using Secure Webserver 2.1, your CSR 
+                                will look like this: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+
+-----BEGIN CERTIFICATE REQUEST-----
+
+MIIBtzCCASACAQAwdzELMAkGA1UEBhMCVVMxETAPBgNVBAgTCEFueVN0YXRlMRAw
+
+DgYDVQQHEwdBbnlDaXR5MRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFzAVBgNVBAsT
+
+DllvdXIgRGVwYXJ0bWVuMRMwEQYDVQQDEwp5b3VyZG9tYWluMIGfMA0GCSqGSIb3
+
+DQEBAQUAA4GNADCBiQKBgQDLvFcMfxO2EltbdA/IFNX+s8gt/pVduzUtCwDHZIHc
+
+s4/R6dmO8sJs3tiQ9Vd37Uf3qxKGwTBd2HUU2NU6bHz+HZTDQRQVfZ7DcmkRI74h
+
+VS4LCyNjoqhx+osyq4lfUhMZy21YNvNsqujd9ZVG4hz02tLRE2L+kkU8WHOqx8L9
+
+jQIDAQABoAAwDQYJKoZIhvcNAQEEBQADgYEAOwSh9UE3imNShbiq6WkweCNQ9qj4
+
+nRLd/Ihz4F66H+sIIxH4EccB1qLjbcHuDjOhJETZiMqAOK5IcGRWqxbdYuup2JMB
+
+qY0aLglS4pj6bF/mOC7PllmTUeCN5HyUAzhUcE165d5Jdcl49uce8kOsJ/kJM891
+
+SGeaO+wwg+ZQ0ms=
+
+-----END CERTIFICATE REQUEST----- 
+
+</font></pre>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Back 
+                                up your key file and CSR on a floppy disk and 
+                                store the disk in a secure location. If you lose 
+                                your private key or forget the password, you will 
+                                not be able to install your Secure Server ID and 
+                                will need to request and purchase a new one from 
+                                VeriSign. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Go 
+                                back to the enrollment pages and follow the instructions 
+                                in Enrollment Step 4: Submit CSR to submit your 
+                                CSR. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <br>
+                            <br>
+                            <br>
+                            <b>Additional Information</b> <br>
+                            For additional information, refer to your server documentation, 
+                            visit the <a href="http://www.openmarket.com/service/" class="hyperlink">OpenMarket 
+                            service web site</a>, or send email to <a href="mailto:support@openmarket.com" class="hyperlink">support@openmarket.com</a>. 
+                            </font></td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=20 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

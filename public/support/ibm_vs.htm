@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> 
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>IBM 
+                              Internet Connection Secure Server</b></font></p>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>This 
+                              document introduces generating a Key Pair and CSR, 
+                              and answers questions you might have.</b> <b>Generating 
+                              a Key Pair and CSR for an IBM Internet Connection 
+                              Secure Server</b> <br>
+                              To generate a public and private key pair and CSR 
+                              for an IBM Internet Connection Secure Server: </font> 
+                            </p>
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Open 
+                                the <i>create key and request certificate</i> 
+                                form. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                a name for the new key pair. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                a name for the key ring. This is the name of the 
+                                file where the key pair will be written. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the number of bits you want to use in the key. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select 
+                                VeriSign as your CA (certificate authority). </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the name of your organization. This is the organization 
+                                name you wrote down in Enrollment Step 1:Confirm 
+                                Domain. The name you enter must be identical to 
+                                the name listed as the owner of the domain name. 
+                                VeriSign can only issue a Secure Server ID to 
+                                the organization that owns the specified domain 
+                                name. If you are unsure of the correct organization 
+                                name to enter, go back to Enrollment Step 1: Confirm 
+                                Domain Name to look up the domain name registration. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                prompted, save the CSR to a file. The default 
+                                file name is <code>certreq.txt</code>. <b>Note:</b> 
+                                Do not use the export keys and request certificate 
+                                radio buttons when creating new keys. You should 
+                                the CSR request manually. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                a password to protect the key file. This password 
+                                should be at least eight characters long and contain 
+                                at least one nonalphabetical character, such as 
+                                a number or punctuation mark. Remember, the security 
+                                of your server is only as good as the security 
+                                of the key-pair file and its password. You will 
+                                need this password to install your Secure Server 
+                                ID. If you lose your private key or forget the 
+                                password, you will not be able to install the 
+                                ID and will need to request and purchase a new 
+                                ID from VeriSign. <b>Note:</b> If you do not select&nbsp;<em>automatic 
+                                logon</em>, you must enter this password whenever 
+                                you restart the server. Selecting automatic logon 
+                                is recommended. Click Apply to generate the CSR. 
+                                The CSR will look something like this: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+
+
+
+-----BEGIN PRIVACY-ENHANCED MESSAGE-----
+
+Proc-Type: 4,MIC-ONLY
+
+Content-Domain: RFC822
+
+Originator-Certificate:
+
+ M0oZIhvcNAQECBQAwdTELMAkGA1UEBhMCdXMxETAPBgNVBAgTC
+
+ FZpcmdQQDFbROYmWwfHYv8fNhcsxjDycapbmlhMREwDwYDVQNo
+
+ bW9uZDEUMBIGA1UEChMLU2lnbmV0IEJhbmsxGjAYBgNVBAMTEW
+
+ 9ubGluZS5zaWduZXQuY29tMQ4wDAYDVQQREwUyMzA2MDAaFwsI
+
+ IB0zCCAX5NjA2MjcxNDM2WhcLOTcwNjI3MTQzNlowdTELMAkGA
+
+ 1UEBhMCdXMxETAPBgNVBAgTCFZpcmdpbmlhHAgMBAAEwDQYJKo
+
+ MREwDwYDVQQHEwhSaWNobW9uZDEUMBIGA1UEChMLU2lnbmV0IE
+
+ JhbmsxGjAYBCBDHSnF0wDQYJKgNVBAMTEW9ubGluZS5zaWduZX
+
+ QuY29tMQ4wDAYDVQQREwUyMzA2MDBcMA0GCSqGSIb3DQEBAQQH
+
+ EwhSaWUAA0sAMEgC0Bpk32282UcNv+WNsREiAzg78b5qSEbuRJ
+
+ i/Zz7YzloFMcSKKzMgJKx1KX0JZIhvcNAQECBQADQQAjF267qV
+
+ Wg62SFOMLxNJtzEMJkKUHLMUetTpGDIuIDmZojSp6fiYjHdZMG
+
+ sMZtNKgW3dQRpM4MFbvtT3niM+Bc
+
+MIC-Info: RSA-MD5,RSA,
+
+ fhrG5dHAvJtRrArO07lsfBZiqg4hyiBPr6NL7zl3+4Yar0ozKq
+
+ F6EaQtpdSw2BTC744A1bw==
+
+
+
+VGhpcyBpcyBhbiBSRkMtMTQyNCBDU1IuCg==
+
+-----END PRIVACY-ENHANCED MESSAGE-----
+
+
+
+</font></pre>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                asked whether or not to automatically log in and 
+                                send the CSR, decline. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Back 
+                                up your key file and CSR on a floppy disk and 
+                                store the disk in a secure location. If you lose 
+                                your private key or forget the password, you will 
+                                not be able to install your Secure Server ID and 
+                                will need to request and purchase a new one from 
+                                VeriSign. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Go 
+                                back to the enrollment pages and follow the instructions 
+                                in Enrollment Step 4: Submit CSR to submit your 
+                                CSR. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Renewing 
+                            Your Secure Server ID</b> <br>
+                            You must renew your Secure Server ID annually. 30 
+                            days before your Secure Server ID's expiration date, 
+                            VeriSign sends a notification to your technical and 
+                            organizational contacts. Secure Server IDs can only 
+                            be renewed during the 30 days prior to expiration. 
+                            During this time, both your new and old certificates 
+                            are active; allowing a smooth transition to the new 
+                            certificate without any interruption in service. When 
+                            you renew your Secure Server ID, the old default key 
+                            in your keyring is replaced with a new key. The keyring 
+                            does not change; only the default key does. To renew 
+                            your Secure Server ID: </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Open 
+                                the server configuration &amp; administration 
+                                forms. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;<em>Security.</em> 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;<em>Create 
+                                Keys.</em> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Select&nbsp;<em>Secure 
+                                Server Certificate.</em> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                a name for the new key, such as <code>1997key</code> 
+                                . Do not change the key ring name: <code>C:\WWW\BIN\keyfile.kyr</code> 
+                                should be your current key ring. If you change 
+                                the name of the key ring, a new keyring is created 
+                                along with the new key and VeriSign cannot accept 
+                                that key for renewal. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the key ring password. (There is no key password, 
+                                only the password for the existing key ring.) 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Enter 
+                                the requested company information. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Under&nbsp;<em>Save 
+                                certificate request to file</em>, specify the 
+                                file where you want to save the CSR, such as <code>c:\1997request.txt</code>. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Click 
+                                on Apply. This will generate a new CSR. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Submit 
+                                the new CSR to VeriSign and complete the renewal 
+                                process. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">When 
+                                you receive your new Secure Server ID, extract 
+                                and install it according to your server's instructions. 
+                                </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Note:</b> 
+                            Keyrings from 4.1 can be used on 4.2; however, you 
+                            will not be able to renew your VeriSign Secure Server 
+                            ID. <br>
+                            <br>
+                            <b>Additional Information</b> <br>
+                            For more information, refer to your server documentation 
+                            or contact an IBM representative. </font></td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

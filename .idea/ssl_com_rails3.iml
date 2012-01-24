@@ -260,6 +260,7 @@
     <orderEntry type="library" scope="PROVIDED" name="abstract (v1.0.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="actionmailer (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="actionpack (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="active_reload (v0.6.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activemerchant (v1.10.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activemodel (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="activerecord (v3.0.10, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />

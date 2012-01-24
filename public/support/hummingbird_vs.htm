@@ -1,0 +1,409 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Hummingbird</b></font></p>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Obtaining 
+                              a Site Certificate for SSL from VeriSign</b> <br>
+                              <br>
+                              <b>Introduction</b> <br>
+                              To obtain a site certificate from VeriSign, you 
+                              must carefully follow all of the instructions at 
+                              VeriSign's website. Allow plenty of time to complete 
+                              this procedure and be sure all information you provide 
+                              is accurate. During the enrollment process, you 
+                              will be asked to provide a Certificate Signing Request 
+                              (CSR). These instructions will help you generate 
+                              the CSR for Vorlon, and then later install the certificate. 
+                              <br>
+                              To prepare, first create the directories needed 
+                              for SSL support in Vorlon: <br>
+                              <br>
+                              </font> </p>
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Create 
+                                the following subdirectories in the vorlon install 
+                                directory. Assuming Vorlon was installed in c:\vorlon, 
+                                create these directories: <br>
+                                </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+	C:\vorlon\ssl\private
+	C:\vorlon\ssl\certs
+	</font></pre>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Add 
+                                c:\vorlon to the PATH, so that you will be able 
+                                to execute the openssl program from any directory. 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Obtain 
+                                or create the configuration file openssl.cnf in 
+                                the ssl directory. <br>
+                                <i>NOTE: If this file is missing from your Vorlon 
+                                distribution you should obtain it from Hummingbird 
+                                technical support.</i> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Define 
+                                an environment variable named HOME and set it 
+                                to the ssl directory, c:\vorlon\ssl. On Windows 
+                                NT, you would type: <br>
+                                </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">set HOME=c:\vorlon\ssl</font></pre>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <b>Choosing the Common Name for the Certificate</b> 
+                            <br>
+                            One of the important pieces of information required 
+                            to obtain the site certificate is the common name 
+                            you will use for your server. This should be the exact 
+                            Fully Qualified Domain Name of the server (FQDN). 
+                            For example, if users will type https://www.mycompany.com 
+                            in their browser to reach your server, then your common 
+                            name is www.mycompany.com. Wherever you see the text 
+                            "common_name" in these instructions, substitute the 
+                            actual name you have chosen. <br>
+                            <br>
+                            <i>Note: The certificate is tied to the common name 
+                            you have chosen. If you choose the wrong common name, 
+                            or if you use the resulting certificate on a different 
+                            server, the browser will display a warning to the 
+                            user. If the user accepts the warning, the certificate 
+                            can still be used. Verisign will have additional help 
+                            and instructions for choosing the common name.</i> 
+                            <br>
+                            <br>
+                            <b>Creating a private key</b> <br>
+                            You will first need to generate a private key. You 
+                            will need this key for several steps later. <br>
+                            </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Start 
+                                by finding a large, random file on your hard disk 
+                                to use as a random seed enhancer. If possible, 
+                                concatenate several such files together, and store 
+                                the result in a file named randomfile in the c:\vorlon\ssl\private 
+                                directory. </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                to the c:\vorlon\ss\private directory and run 
+                                the following command: <br>
+                                </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">openssl genrsa -out common_name.key 
+	-des3 -rand randomfile 1024</font></pre>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><i>Note: 
+                                You will be prompted for a passphrase. Choose 
+                                something that you will remember but that would 
+                                be difficult for others to guess. Do not forget 
+                                the passphrase!</i> </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Your 
+                                private key is now stored in the file common_name.key. 
+                                You must protect this file. Make a backup copy 
+                                to ensure that you will not lose it, and that 
+                                other users cannot access it. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <b>Creating the Certificate Signing Request (CSR)</b> 
+                            <br>
+                            You will next create a file containing all the information 
+                            needed by VeriSign to generate a certificate for your 
+                            site. This same file may also be used to generate 
+                            a temporary self-signed certificate while you wait 
+                            for VeriSign to process your enrollment request. (see 
+                            instructions below). <br>
+                            </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                to the c:\vorlon\ssl\certs directory and run the 
+                                following command: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">openssl req -out common_name.csr 
+-config ..\openssl.cnf -new -key 
+..\private\common_name.key</font></pre>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <i>Note: You will be prompted to answer several question 
+                            about the site you want to create a certificate for. 
+                            When asked for the common name, type in your chosen 
+                            common name (i.e. what you are using for common_name).</i> 
+                            <br>
+                            <br>
+                            Your Certificate Signing Request (CSR) is now stored 
+                            in the file common_name.csr. You will use this file 
+                            later. You should also make a backup copy of the CSR. 
+                            <br>
+                            <br>
+                            When prompted during the enrollment process, you will 
+                            paste the entire contents of the CSR into your browser 
+                            to send it to VeriSign. When VeriSign sends you your 
+                            certificate, continue with the directions below for 
+                            installing it in Vorlon. <br>
+                            <br>
+                            <b>Installing Your Certificate</b> <br>
+                            When you receive your certificate in email, you must 
+                            first extract the certificate to a text file name 
+                            common_name.crt in the c:\vorlon\ssl\certs directory. 
+                            Be sure to include the BEGIN CERTIFICATE and END CERTIFICATE 
+                            lines. Now convert the certificate to the format used 
+                            by Vorlon using the following commands: <br>
+                            </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                to the c:\vorlon\ssl\certs directory </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Run 
+                                the following command: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">
+openssl pkcs12 -export -in common_name.crt -inkey
+ ..\private\common_name.key -out file.p12 -name friendly_name
+</font></pre>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                                where friendly_name is any friendly name that 
+                                should be use for your certificate. The friendly 
+                                name will be seen by users if they choose to install 
+                                your certificate in their browser. If this command 
+                                generates error messages, see the section "Certificates 
+                                in Other Formats." </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Now 
+                                generate the server.pem file used by Vorlon: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">openssl pkcs12 -in file.p12 -nodes -out server.pem</font></pre>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Save 
+                                and protect your certificate file, common_name.crt! 
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">If 
+                                you ever need to reintsall Vorlon, you can restore 
+                                your private key and certificate and then follow 
+                                these last instructions again to recreate the 
+                                server.pem file. </font>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <i>NOTE: It is vitally important that your private 
+                            key file, CSR, and certificate be backed up and protected 
+                            from theft. You must also not forget your private 
+                            key passphrase, or allow it to be stolen. Also protect 
+                            the server.pem file from theft Failing to follow this 
+                            advice could cost you additional money.</i> <br>
+                            <br>
+                            <b>Creating a Self-Signed Certificate</b> <br>
+                            If you want to create your own self-signed certificate, 
+                            you may do so using the same CSR you submitted to 
+                            VeriSign. You can use the self-signed certificate 
+                            it as a temporary site certificate while you are waiting 
+                            for VeriSign to process your enrollment. <br>
+                            </font> 
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Change 
+                                the current directory to c:\vorlon\ssl\certs and 
+                                run the following command to generate a certificate 
+                                from the CSR you created previously: </font> 
+                                <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">openssl req -out common_name.crt -x509 -key 
+..\private\common_name.key -in common_name.csr -config ..\openssl.cnf</font></pre>
+                            </ol>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            Your certificate is now stored in the file common_name.crt. 
+                            Follow the certificate installation instructions for 
+                            installing the certificate. <br>
+                            <br>
+                            <b>Configuring HTTPS Support in Vorlon</b> <br>
+                            All that remains is to turn the HTTPS support in Vorlon. 
+                            In all 1.x versions of Vorlon, you edit the server.ini 
+                            and add the line: server.startHTTPS = true <br>
+                            <br>
+                            In all version 2.x or above, edit the server.xml file 
+                            in the config directory and add or edit the https 
+                            tag within the server tag: </font> 
+                            <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">&lt;https enabled="true" port="443"&gt;</font></pre>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <b>Certificates In Other Formats</b> <br>
+                            It is possible that a mistake has been made and the 
+                            CA has sent your certificate in an unexpected format. 
+                            This may be the case if you had requested a Stronghold 
+                            certificate from CIBC in Canada. If the pkcs12 command 
+                            generates errors for your certificate, try running 
+                            this command first: <br>
+                            </font> 
+                            <pre><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">openssl pkcs7 -in common_name.crt -print_certs</font></pre>
+                            <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            This will print out the certificates. Cut and paste 
+                            the one for your server and then run the pkcs12 command.<br>
+                            <br>
+                            <b>Users Requesting Certificates From an Intermediate 
+                            CA</b> <br>
+                            If your company resides outside the US, you may be 
+                            required to process your VeriSign certificate enrollment 
+                            through an intermediate certificate authority (CA) 
+                            such as CIBC in Canada. In this case, some versions 
+                            of Netscape will require that your obtain the intermediate 
+                            certificate from the CA so that the browser can verify 
+                            the certificate chain. Vorlon includes support for 
+                            an intermediate certificate, simply by naming the 
+                            intermediate certificate intermediate-server.pem and 
+                            place in the same directory with the server.pem. </font></td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

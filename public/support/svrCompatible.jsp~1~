@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/resourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=80% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/compatibility.gif" width="91" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td> 
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff" size="1"><b>Supported 
+                              Server Platforms (Hardware and Software)</b></font></p>
+                            <p><b><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">This 
+                              list includes the most popular SSL supported platforms. 
+                              It is not all inclusive and your server software 
+                              may still support SSL even if it is not included 
+                              in this list. Please see your software documentation 
+                              for details.</font></b></p>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff" size="1">Advanced 
+                              Businesslink <br>
+                              AliBaba (WarpGroup) <br>
+                              AOL/Navisoft <br>
+                              Apache + ApacheSSL<br>
+                              Apache + MODSSL<br>
+                              Apache + Raven <br>
+                              Apache + SSLeay<br>
+                              Apache 2<br>
+                              Aventail <br>
+                              Backweb <br>
+                              BEA<br>
+                              Beyond Software <br>
+                              Brokat <br>
+                              C2Net Stronghold <br>
+                              Cobalt RaQ3/RaQ4/XTR<br>
+                              Compuserve/Spry <br>
+                              Connect - OneServer <br>
+                              Consensus <br>
+                              Covalent <br>
+                              Dascom <br>
+                              Compaq <br>
+                              Connect Server <br>
+                              Covalent<br>
+                              </font><font face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff" size="1">Ensim<br>
+                              F5 <br>
+                              FTP Software <br>
+                              Hewlett Packard<br>
+                              Hummingbird<br>
+                              GLACI <br>
+                              Gradient <br>
+                              IBM <br>
+                              I/NET <br>
+                              Intel<br>
+                              Internet Factory <br>
+                              iPlanet<br>
+                              Iserver <br>
+                              Jakart-Tomcat<br>
+                              JavaSoft <br>
+                              Lotus <br>
+                              Linux Red Hat<br>
+                              Lotus</font><font face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff" size="1"><br>
+                              Luckman <br>
+                              Marimba <br>
+                              Microsoft <br>
+                              Netscape<br>
+                              Netscape Merchant <br>
+                              Netscreen <br>
+                              Novell <br>
+                              OpenConnect Systems <br>
+                              Open Market <br>
+                              Oracle <br>
+                              O'Reilly &amp; Associates <br>
+                              Plesk<br>
+                              Preview Software <br>
+                              Process Software <br>
+                              Purveyor <br>
+                              Quarterdeck/StarNine <br>
+                              r3 <br>
+                              Radnet <br>
+                              Radware <br>
+                              Roxen <br>
+                              s2 <br>
+                              SilverStream Software <br>
+                              Sirius Software <br>
+                              Sterling Software <br>
+                              Sun Microsystems <br>
+                              SonicWALL SSL Offloaders<br>
+                              Stronghold <br>
+                              Tandem <br>
+                              Tektonic <br>
+                              Tempest Software <br>
+                              Tenon (WebTen) <br>
+                              Transarc <br>
+                              Unify <br>
+                              Unisys <br>
+                              Unwired Planet <br>
+                              Velocity <br>
+                              Wall Data <br>
+                              Webmethods <br>
+                              Zeus</font><font face="Verdana, Arial, Helvetica, sans-serif" color="c5e1ff" size="1"><br>
+                              4D Inc. <br>
+                              </font></p>
+                            <p>&nbsp;</p>
+                            </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr> 
+                    <td><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td><img height=1 alt="" 
+      src="../images/shim.gif" width=40 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=7><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=7 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=7> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+    <p class="hyperlink">&nbsp;</p>
+  </center>
+</div>
+</body>
+</html>

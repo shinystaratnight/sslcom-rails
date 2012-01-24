@@ -1,0 +1,325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<title>How To Generate a Csertificate Signing Request(CSR)</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link 
+href="../styles/global_style.css" type=text/css rel=stylesheet>
+<meta content="MSHTML 6.00.2800.1106" name=GENERATOR>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e 
+topmargin=0>
+<div align=center> 
+  <center>
+    <table cellspacing=0 cellpadding=0 width=700 align=center bgcolor=#012f8b 
+border=0>
+      <tbody> 
+      <tr> 
+        <td colspan=4><img height=25 alt="" src="../images/shim.gif" 
+      width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=12 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=12 border=0></td>
+        <td width=181><img 
+      alt=SSL hspace=0 src="../images/sslLogo.gif"
+      border=0 width="120" height="67"></td>
+        <td valign=top align=right width=494>&nbsp;</td>
+        <td width=13 rowspan=2><img height=1 alt="" 
+      src="../images/shim.gif" width=13 border=0></td>
+      </tr>
+      <tr> 
+        <td colspan="2" align="center"><img src="../images/topnavi.gif" width="544" height="14"></td>
+      </tr>
+      </tbody> 
+    </table>
+    <table class=nameBar cellspacing=0 cellpadding=0 width=700 align=center 
+border=0>
+      <tbody> 
+      <tr> 
+        <td valign=bottom align=middle><img alt="keep it secure with SSL" src="../images/sslLockSign.gif" border=0 
+      vspace=2 hspace=5 align="absmiddle" width="31" height="32"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1">factoid: 
+          SSL certificates not only encrypt data but also authenticate identity</font></td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/homepage/topnav.jsp end -->
+    <!-- /components/footernav.jsp begin -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody> 
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td width=13><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td width=60% valign=top> 
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr> 
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr> 
+              <td align="center"> 
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr> 
+                    <td><img src="../images/howToGenCSR.gif" width="158" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr> 
+                          <td>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"> 
+                              <b>Intel NetStructure 7110 e-Commerce Accelerator</b></font></p>
+                            <p><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Use 
+                              the <b>create key</b> command to create your key 
+                              and the <b>create sign</b> command to create a signing 
+                              request to be sent to VeriSign or other certificate 
+                              authority for authentication. The certificate authority 
+                              will return it in approximately one to five days. 
+                              After you have received the certificate, use the 
+                              <b>import cert</b> command to import it into the 
+                              7110. <br>
+                              <br>
+                              The fields input to create a signing request are 
+                              called collectively a Distinguished Name (DN). For 
+                              optimal security, one or more fields must be modified 
+                              to make the DN unique. <br>
+                              <br>
+                              <b>Procedure</b> <br>
+                              <br>
+                              Create a key:<br>
+                              </font> </p>
+                            <ol>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Type 
+                                the <b>create key</b> command at the prompt:<br>
+                                Intel 7110&gt; <b>create key</b><br>
+                                Key strength (512/1024) [512]:<br>
+                                New keyID [001]: <b>002</b><br>
+                                Keypair was created for keyID: 002 <br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Create 
+                                a Certificate Signing Request:<br>
+                                Intel 7110&gt; <b>create sign 002</b><br>
+                                You are about to be asked to enter information<br>
+                                that will be incorporated into your<br>
+                                certificate request. The "common name" must be<br>
+                                unique. For other fields, you could use<br>
+                                default values. <br>
+                                <br>
+                                Certifying authorities have specific guidelines 
+                                on how to answer each of the questions. These 
+                                guidelines may vary by certifying authority. Please 
+                                refer to the guidelines of the certifying authority 
+                                to whom you submit your Certificate Signing Request 
+                                (CSR). Please keep the following in mind when 
+                                entering the information that will be incorporated 
+                                into your certificate request: <br>
+                                <br>
+                                </font> 
+                                <ul>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Country 
+                                    code</b>: This is the two-letter ISO abbreviation 
+                                    for your country (for example, US for the 
+                                    United States).<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>State 
+                                    or Province</b>: This is the name of the state 
+                                    or province where your organization's head 
+                                    office is located. Please enter the full name 
+                                    of the state or province. Do not abbreviate.<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Locality</b>: 
+                                    This is usually the name of the city where 
+                                    your organization’s head office is located.<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Organization</b>: 
+                                    This should be the organization that owns 
+                                    the domain name. The organization name (corporation, 
+                                    limited partnership, university, or government 
+                                    agency) must be registered with some authority 
+                                    at the national, state, or city level. Use 
+                                    the legal name under which your organization 
+                                    is registered. Please do not abbreviate your 
+                                    organization’s name and do not use any of 
+                                    the following characters: &lt; &gt; ~ ! @ 
+                                    # $ % ^ * / \ ( ) ?.<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Organizational 
+                                    unit</b>: This is normally the name of the 
+                                    department or group that will use the certificate.<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>Common 
+                                    name</b>: The common name is the "fully qualified 
+                                    domain name," (or FQDN) used for DNS lookups 
+                                    of your server (for example, www.mysite.com). 
+                                    Browsers use this information to identify 
+                                    your Web site. Some browsers will refuse to 
+                                    establish a secure connection with your site 
+                                    if the server name does not match the common 
+                                    name in the certificate. Please do not include 
+                                    the protocol specifier "http://" or any port 
+                                    numbers or pathnames in the common name. Do 
+                                    not use wildcard characters such as * or ?, 
+                                    and do not use an IP address.<br>
+                                    <br>
+                                    </font>
+                                  <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><b>E-mail 
+                                    address</b>: This should be the e-mail address 
+                                    of the administrator responsible for the certificate. 
+                                    </font>
+                                </ul>
+                                <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                                <br>
+                                </font>
+                              <li><font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff">Export 
+                                the Certificate Signing Request (CSR). <br>
+                                <br>
+                                In this example, xmodem is used to send the CSR 
+                                to a PC connected to the console port.<br>
+                                <br>
+                                Intel 7110&gt; export sign mywebserver<br>
+                                Export protocol: (xmodem, uuencode<br>
+                                [ascii]:&lt;Enter&gt;<br>
+                                Use Ctrl-x to kill transmission<br>
+                                Beginning export...<br>
+                                Export successful!<br>
+                                Intel 7110&gt; <br>
+                                <br>
+                                To submit the CSR to a certifying authority, paste 
+                                it into the field provided in the authority’s 
+                                online request form. Remember to include the "-----BEGIN&nbsp;CERTIFICATE&nbsp;REQUEST-----" 
+                                and "-----END&nbsp;CERTIFICATE&nbsp;REQUEST-----" 
+                                lines. Typically, the CSR will look something 
+                                like this: <br>
+                                <br>
+                                -----BEGIN&nbsp;CERTIFICATE&nbsp;REQUEST-----<br>
+                                MIIBnDCCAQUACQAwXjELMAkGA1UEBhMCQ0ExEDOABgNVBAgT<br>
+                                B09udGFayW8xEDAOBgNVBAcTB01vbnRyYWwxDDAKBgNVBAoT<br>
+                                A0tGQzEdMBsGA1UEAxMUd3d3Lmlsb3ZlY2hpY2tlbi5jb20w<br>
+                                gZ0wDQYJKoZIhvcNAQEBBQADgYsAMIGHAoGBALmJA2FLSGJ9<br>
+                                iCF8uwfPW2AKkyyKoe9aHnnwLLw8WWjhl[ww9pLietwX3bp6<br>
+                                Do87mwV3jrgQ1OIwarj9iKMLT6cSdeZ0OTNn7vvJaNv1iCBW<br>
+                                GNypQv3kVMMzzjEtOl2uGl8VOyeE7jImYj4HlMa+R168AmXT<br>
+                                82ubDR2ivqQwl7AgEDoAAwDQYJKoZIhvcNAQEEBQADgYEAn8<br>
+                                BTcPg4OwohGIMU2m39FVvh0M86ZBkANQCEHxMzzrnydXnvRM<br>
+                                KPSE208x3Bgh5cGBC47YghGZzdvxYJAT1vbkfCSBVR9GBxef<br>
+                                6ytkuJ9YnK84Q8x+pS2bEBDnw0D2MwdOSF1sBb1bcFfkmbpj<br>
+                                N2N+hqrrvA0mcNpAgk8nU=<br>
+                                -----END&nbsp;CERTIFICATE&nbsp;REQUEST----- </font>
+                            </ol>
+                          </td>
+                        </tr>
+                        <tr> 
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class=footerLine width=1><img height=109 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif" 
+      width=18 border=0></td>
+        <td valign=top> 
+          <table border="0" >
+            <tr> 
+              <td align="center"> <img src="../images/getSSL.gif" width="124" height="96" vspace="15"><br>
+            </tr>
+            <tr> 
+              <td> 
+                <p><b><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"> 
+                  &#149; 128-bit high grade encryption</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; validation assured</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; competitive pricing</font><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  <br>
+                  &#149; backed by $10,000 warranty<br>
+                  <br>
+                  &#149; compatible with 99% of browsers<br>
+                  <br>
+                  &#149; quick issuance<br>
+                  <br>
+                  &#149; telephone, email, and web support</font></b></p>
+                <p align="center"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">&#151;<br>
+                  </font></b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff"><br>
+                  </font></p>
+            </tr>
+            <tr> 
+              <td align="left"><b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">1 
+                YEAR - $249.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">2 
+                YEARS - $449.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">3 
+                YEARS - $619.00</font></b><br>
+                <br>
+                <b><font face="Verdana,Geneva,Helvetica,Arial" size="1" color="#c5e1ff">BULK 
+                BUY - $reduced</font></b><br>
+                <br>
+                <img src="../images/clickToBuy.gif" width="126" height="19"> </td>
+            </tr>
+          </table>
+        </td>
+        <td width=27><img height=1 alt="" src="../images/shim.gif" 
+      width=27 border=0></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class=footerDark align=middle colspan=10><img height=11 
+      alt="universally accepted | telephone, email, and web customer support | best discounted pricing" 
+      hspace=0 src="../images/footerBar.gif" width=596 vspace=12 
+      border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10><img src="../images/partnering.gif" width="334" height="11"><img src="../images/info.gif" width="52" height="18" align="absmiddle" hspace="2" vspace="4"></td>
+      </tr>
+      <tr> 
+        <td class=footerLine colspan=10 height=1><img height=1 alt="" 
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr> 
+        <td align=middle colspan=10> 
+          <div class=footerSm 
+      style="PADDING-RIGHT: 15px; PADDING-LEFT: 15px; PADDING-BOTTOM: 15px; PADDING-TOP: 15px">Copyright 
+            &copy; 2002 SSL. All rights reserved.</div>
+          <div style="PADDING-BOTTOM: 50px; PADDING-TOP: 5px"><img  
+      alt=SSL hspace=0 src="../images/sslLockSign.gif"  
+      border=0 width="31" height="32"></div>
+        </td>
+      </tr>
+      </tbody> 
+    </table>
+    <!-- /components/footernav.jsp end -->
+  </center>
+</div>
+</body>
+</html>

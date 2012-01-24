@@ -65,6 +65,7 @@ gem 'nokogiri'
     gem 'ruby-odbc'
     gem 'launchy'
     gem 'spork', '~> 0.9.0.rc'
+    gem 'active_reload'
   end
 
   group :test do

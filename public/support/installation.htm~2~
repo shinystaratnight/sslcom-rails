@@ -1,0 +1,106 @@
+<%@page language="java" %>
+<html>
+<head>
+<title>SSL Support - SSL is trusted by 99% of all Internet users</title>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<link href="/styles/global_style.css" type=text/css rel=stylesheet>
+</head>
+<body text=black vlink=#003366 alink=#333333 link=#012f8b bgcolor=#0b439e
+topmargin=0>
+  <div align=center>
+    <!-- /scripts/header.jsp begin -->
+    <jsp:include page="/scripts/header.jsp" flush="true"/>
+    <!-- /scripts/header.jsp end -->
+    <!-- /scripts/infoBar.jsp begin -->
+    <jsp:include page="/scripts/infoBar.jsp" flush="true"/>
+    <!-- /scripts/infoBar.jsp end -->
+    <table class=footerBg cellspacing=0 cellpadding=0 width=700 border=0>
+      <tbody>
+      <tr>
+        <td align=middle colspan=7>&nbsp;</td>
+      </tr>
+      <tr>
+        <td class=footerLine colspan=7 height=1><img height=1 alt=""
+      src="../images/shim.gif" width=1 border=0></td>
+      </tr>
+      <tr>
+        <td width=13><img height=1 alt="" src="../images/shim.gif"
+      width=27 border=0></td>
+        <td width=19% valign="top"> <img src="../images/ResourcesH2.gif" width="76" height="11" vspace="22"><font face="Verdana,Geneva,Helvetica,Arial" color="#c5e1ff" size="1"><b><br>
+          &nbsp;&raquo; CSR Gen &laquo;<br>
+          <br>
+          &nbsp;&raquo; Required docs<br>
+          <br>
+          &nbsp;<br>
+          </b></font> </td>
+        <td class=footerLine width=1><img height=109 alt=""
+      src="../images/shim.gif" width=1 border=0></td>
+        <td width=18><img height=8 alt="" src="../images/shim.gif"
+      width=18 border=0></td>
+        <td width=80% valign=top>
+          <table bgcolor=#012f8b width="100%" border="0">
+            <tr>
+              <td width="100%"><img src="../images/supportH1.gif" width="110" height="26" vspace="11"></td>
+            </tr>
+            <tr>
+              <td align="center">
+                <table width="95%" border="0" cellpadding="0" align="right">
+                  <tr>
+                    <td><img src="../images/installProc.gif" width="174" height="11" vspace="4"><br>
+                      <table width="95%" border="0" cellpadding="4" align="center">
+                        <tr>
+                          <td> <font face="Verdana, Arial, Helvetica, sans-serif" size="1" color="c5e1ff"><br>
+                            <b>1.</b> The first step of installing a Secure Site
+                            Certificate is to generate a CSR (Certificate Signing
+                            Request) on the web server for which you will be installing
+                            the certifcate. For CSR generation instructions categorized
+                            by brand of web server, click the link below.
+                            <!--
+The new virtual walk-thru videos are online demonstrations that can assist you through the certificate enrollment process on your server. -->
+                            <br>
+                            <br>
+                            <a href="../../csr/index.html">CSR Generation Instructions</a>
+                            <br>
+                            <br>
+                            <!--
+<IMG SRC="/images/support/video.gif" border="0" align="middle" alt=""> &nbsp;<A HREF="/support/site/video.html">VeriSign Virtual Walk-thru: Server ID Enrollment & Installation</A>
+<br>
+<br>
+-->
+                            <b>2.</b> Next, enroll for your Secure Site Services
+                            certificate. You may choose either the standard Secure
+                            Site<sup>TM</sup> certificate or the Secure Site Pro<sup>TM</sup>
+                            by clicking on the link immediately following this
+                            paragraph. You can review the product features on
+                            the initial page at the link below. Note: during the
+                            enrollment process, you will be prompted to enter
+                            the CSR you previously generated in step one on this
+                            page. Click the link below now to begin the enrollment
+                            wizard. <br>
+                            <br>
+                            <a target="_blank" href="/products/site/secure/index.html"><img src="/images/ui/007/btn_buyNow.gif" border=0></a>
+                            <br>
+                            <br>
+                            <b>3.</b> Lastly, upon receiving your Secure Site
+                            Services certificate from VeriSign, you will need
+                            to install your certificate on the web server on which
+                            you generated the CSR noted in step 1. VeriSign has
+                            a list of certificate installation documents displayed
+                            according to web server vendor. To access these instructions,
+                            click on the link below. <br>
+                            <br>
+                            <a href="../../install/index.html">Server ID Installation
+                            Instructions</a> <br>
+                            </font></td>
+                        </tr>
+                      </table>
+    </table>
+    <!-- /scripts/footerBar.jsp begin -->
+    <jsp:include page="/scripts/footerBar.jsp" flush="true"/>
+    <!-- /scripts/footerBar.jsp end -->
+    <!-- /scripts/footer.jsp begin -->
+    <jsp:include page="/scripts/footer.jsp" flush="true"/>
+    <!-- /scripts/footer.jsp end -->
+</div>
+</body>
+</html>
