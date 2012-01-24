@@ -1,0 +1,60 @@
+BODY {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial
+}
+TABLE {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial
+}
+P {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial
+}
+A:link {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000066; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A:visited {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000066; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A:active {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #000066; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A:hover {
+	FONT-WEIGHT: bold; FONT-SIZE: 8pt; COLOR: #003399; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A.fp:link {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A.fp:visited {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A.fp:active {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+A.fp:hover {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #666666; FONT-FAMILY: Arial; TEXT-DECORATION: underline
+}
+.p1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 15pt; COLOR: #005e99; FONT-FAMILY: Arial
+}
+.p2 {
+	FONT-WEIGHT: normal; FONT-SIZE: 13pt; COLOR: #005e99; FONT-FAMILY: Arial
+}
+.p3 {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial
+}
+.p4 {
+	FONT-WEIGHT: normal; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial
+}
+.list {
+	LIST-STYLE-TYPE: square
+}
+.input2 {
+	FONT-WEIGHT: normal; FONT-SIZE: 8pt; COLOR: #333333; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND-COLOR: #ffffff
+}
+.button {
+	FONT-WEIGHT: bold; FONT-SIZE: 9pt; FONT-FAMILY: Arial, Helvetica, sans-serif; BACKGROUND-COLOR: #bbe9ff
+}
+.p5 {
+	FONT-WEIGHT: bold; FONT-SIZE: 18px; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.list2 {
+	LIST-STYLE-POSITION: inside; LEFT: 1px; LIST-STYLE-TYPE: square; POSITION: absolute
+}
