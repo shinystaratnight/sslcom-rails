@@ -1,6 +1,6 @@
 class CreateUnsubscribes < ActiveRecord::Migration
   def self.up
-    create_table :unsubscribes do |t|
+    create_table :unsubscribes, force: true do |t|
       t.string :specs
       t.text :domain, :email, :ref
       t.boolean :enforce

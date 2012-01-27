@@ -260,6 +260,9 @@ class CertificateContent < ActiveRecord::Base
       elsif is_free && csr.is_intranet?
         errors.add(:signing_request,
           "was determined to be for an intranet or internal site. Sorry, but we cannot issue free ssl certs for intranet sites.")
+      elsif is_free && csr.is_ip_address?
+        errors.add(:signing_request,
+          "was determined to be for an ip address. SSL certs for IP addresses can only be issued for High Assurance or EV certs.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
         domain_validation_regex(is_wildcard, csr.common_name)

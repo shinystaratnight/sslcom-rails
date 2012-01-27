@@ -10,6 +10,7 @@ meta_keywords: "certificate authority ssl certificates ssl.com EV Wildcard Digit
 meta_title: "SSL Certificates Digital EV SSL Certificate Authority"
 show_advertising: false
 closed_beta_mode: false
+track_visitors: false
 enable_exception_notifier: true
 minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3

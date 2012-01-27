@@ -14,7 +14,8 @@ class ApplicationController < ActionController::Base
     "hide_documents?", "hide_both?", "hide_validation?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
-  before_filter :identify_visitor, :record_visit, :except=>[:refer]
+  before_filter :identify_visitor, :record_visit, :except=>[:refer],
+                if: "Settings.track_visitors"
 
 #  hide_action :paginated_scope
 
