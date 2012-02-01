@@ -72,6 +72,10 @@ ActiveRecord::Schema.define(:version => 20120127025217) do
     t.integer  "user_id"
     t.string   "provider"
     t.string   "uid"
+    t.string   "email"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "nick_name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -754,6 +758,8 @@ ActiveRecord::Schema.define(:version => 20120127025217) do
     t.datetime "updated_at"
   end
 
+  add_index "tracked_urls", ["md5", "url"], :name => "index_tracked_urls_on_md5_and_url", :length => {"md5"=>"100", "url"=>"100"}
+
   create_table "trackings", :force => true do |t|
     t.integer  "tracked_url_id"
     t.integer  "visitor_token_id"
@@ -908,6 +914,8 @@ ActiveRecord::Schema.define(:version => 20120127025217) do
     t.integer "affiliate_id"
     t.string  "guid"
   end
+
+  add_index "visitor_tokens", ["guid", "affiliate_id"], :name => "index_visitor_tokens_on_guid_and_affiliate_id"
 
   create_table "whois_lookups", :force => true do |t|
     t.integer  "csr_id"

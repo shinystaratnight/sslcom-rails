@@ -4,6 +4,10 @@ class CreateAuthentications < ActiveRecord::Migration
               t.integer :user_id
               t.string :provider
               t.string :uid
+              t.string :email
+              t.string :first_name
+              t.string :last_name
+              t.string :nick_name
               t.timestamps
           end
       end

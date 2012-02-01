@@ -494,9 +494,6 @@ class CertificateOrder < ActiveRecord::Base
           k=="ssl_ca_bundle.txt"
         end
       end.map{|k,v|k}
-    elsif is_iis?
-      #pkcs, so no need for bundle
-      []
     else
       Certificate::COMODO_BUNDLES.select do |k,v|
         if certificate.comodo_product_id==342
