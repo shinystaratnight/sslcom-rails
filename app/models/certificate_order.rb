@@ -656,8 +656,8 @@ class CertificateOrder < ActiveRecord::Base
           if certificate.is_ucc?
             domains=certificate_content.domains
             options.merge!(
-              'domainNames'=>domains.blank? ? common_name : domains.join(",")#,
-              #'primaryDomainName'=>certificate_content.domains.join(",")
+              'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
+              'primaryDomainName'=>csr.common_name
             )
           end
         end
