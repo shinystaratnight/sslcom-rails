@@ -53,10 +53,11 @@ class Certificate < ActiveRecord::Base
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
 
+  WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
   #43 was the old trial cert
-  #35 was old wildcard - is now Essential Wildcard
   COMODO_PRODUCT_MAPPINGS =
-      {"free"=> 342, "high_assurance"=>24, "wildcard"=>343, "ev"=>337, "ucc"=>361, "evucc"=>410}
+      {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "essential_wildcard"=>343, "ev"=>337,
+       "ucc"=>361, "evucc"=>410}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)

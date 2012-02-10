@@ -18,12 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="notify admin when dup username or email is being used to login or reset credentials">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/cert_bundles/EntrustSecureServerCA.crt" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/public/cert_bundles/USERTrustLegacySecureServerCA.crt" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate.rb" afterPath="$PROJECT_DIR$/app/models/certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -91,19 +86,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="55" column="3" selection-start="2780" selection-end="2780" vertical-scroll-proportion="0.0">
+            <state line="57" column="0" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.49103943">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="498" column="20" selection-start="15120" selection-end="15120" vertical-scroll-proportion="0.65037596">
+            <state line="495" column="24" selection-start="15040" selection-end="15040" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -203,8 +198,8 @@
         <option value="$PROJECT_DIR$/public/cert_bundles/UTNAddTrustSGCCA.crt" />
         <option value="$PROJECT_DIR$/public/cert_bundles/UTNAddTrustServerCA.crt" />
         <option value="$PROJECT_DIR$/public/cert_bundles/EntrustSecureServerCA.crt" />
-        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
       </list>
     </option>
   </component>
@@ -1181,14 +1176,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="24" y="0" width="1256" height="743" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32890365" sideWeight="0.7708674" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32242227" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27491695" sideWeight="0.3453355" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.27491695" sideWeight="0.22585924" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41734862" sideWeight="0.87375414" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.13122924" sideWeight="0.5826514" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.27491695" sideWeight="0.22585924" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41734862" sideWeight="0.87375414" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36006546" sideWeight="0.45681062" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45826513" sideWeight="0.58305645" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1329,13 +1324,6 @@
         <state line="16" column="84" selection-start="511" selection-end="511" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="57" column="80" selection-start="1975" selection-end="1975" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/cert_bundles/USERTrustLegacySecureServerCA.crt">
       <provider selected="true" editor-type-id="text-editor">
         <state line="21" column="32" selection-start="1360" selection-end="1360" vertical-scroll-proportion="0.0">
@@ -1371,16 +1359,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="55" column="3" selection-start="2780" selection-end="2780" vertical-scroll-proportion="0.0">
+        <state line="57" column="80" selection-start="1975" selection-end="1975" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="498" column="20" selection-start="15120" selection-end="15120" vertical-scroll-proportion="0.65037596">
+        <state line="495" column="24" selection-start="15040" selection-end="15040" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="57" column="0" selection-start="2870" selection-end="2870" vertical-scroll-proportion="0.49103943">
           <folding />
         </state>
       </provider>
