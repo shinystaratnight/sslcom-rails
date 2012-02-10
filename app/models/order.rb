@@ -1,4 +1,5 @@
 require 'monitor'
+require 'bigdecimal'
 
 class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
@@ -41,8 +42,28 @@ class Order < ActiveRecord::Base
     not_new.where :cents.gt=>0
   }
 
+  scope :range, lambda{|start, finish|
+    if start.is_a? String
+      s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      start = Date.strptime start, s
+      finish = Date.strptime finish, f
+    end
+    where(:created_at + (start..finish))} do
+
+    def amount
+      self.not_free.sum(:cents)*0.01
+    end
+  end
+
   preference :migrated_from_v2, :default=>false
-  
+
+  def self.range_amount(start, finish)
+    amount = BigDecimal.new(range(start, finish).amount.to_s)
+    rounded = (amount * 100).round / 100
+    '%.02f' % rounded
+  end
+
   def authorize(credit_card, options = {})
     response = gateway.authorize(self.amount, credit_card, options_for_payment(options))
     if response.success?

@@ -53,9 +53,10 @@ class Certificate < ActiveRecord::Base
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
 
-  # 43 was the old trial cert
+  #43 was the old trial cert
+  #35 was old wildcard - is now Essential Wildcard
   COMODO_PRODUCT_MAPPINGS =
-      {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337, "ucc"=>361, "evucc"=>410}
+      {"free"=> 342, "high_assurance"=>24, "wildcard"=>343, "ev"=>337, "ucc"=>361, "evucc"=>410}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)
@@ -69,7 +70,9 @@ class Certificate < ActiveRecord::Base
                     "free_ssl_ca_bundle.txt"=>"Free SSL.com CA Bundle",
                     "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
                     "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
-                    "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate"}
+                    "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate",
+                    "EntrustSecureServerCA.crt"=>"Root CA Certificate",
+                    "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
   scope :public, where(:product ^ 'mssl')
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))

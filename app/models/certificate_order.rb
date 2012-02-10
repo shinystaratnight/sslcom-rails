@@ -496,10 +496,12 @@ class CertificateOrder < ActiveRecord::Base
       end.map{|k,v|k}
     else
       Certificate::COMODO_BUNDLES.select do |k,v|
-        if certificate.comodo_product_id==342
+        if [342, 343].include? certificate.comodo_product_id
           %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
         elsif certificate.comodo_product_id==337 #also maybe 410 (evucc) we'll get there when we place that order
           %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+        elsif certificate.comodo_product_id==361
+          %w(EntrustSecureServerCA.crt USERTrustLegacySecureServerCA.crt).include? k
         else
           %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
         end
