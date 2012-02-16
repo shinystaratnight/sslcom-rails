@@ -54,6 +54,7 @@ production:
   encoding: utf8
   reconnect: false
   database: ssl_com_production
+  host: 174.129.27.189
   pool: 5
   username: ssl_db
   password: kama2jama2

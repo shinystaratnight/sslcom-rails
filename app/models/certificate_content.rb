@@ -250,7 +250,7 @@ class CertificateContent < ActiveRecord::Base
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     else
-      errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
+      #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
       asterisk_found = (csr.common_name=~/^\*\./)==0
       if is_wildcard && !asterisk_found
         errors.add(:signing_request, "is wildcard certificate order,
@@ -260,10 +260,10 @@ class CertificateContent < ActiveRecord::Base
           "cannot begin with *. since it is not a wildcard")
       elsif is_free && csr.is_intranet?
         errors.add(:signing_request,
-          "was determined to be for an intranet or internal site. Sorry, but we cannot issue free ssl certs for intranet sites.")
+          "was determined to be for an intranet or internal site. These can only be issued as High Assurance or EV certs..")
       elsif is_free && csr.is_ip_address?
         errors.add(:signing_request,
-          "was determined to be for an ip address. SSL certs for IP addresses can only be issued for High Assurance or EV certs.")
+          "was determined to be for an ip address. These can only be issued as High Assurance or EV certs.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
         domain_validation_regex(is_wildcard, csr.common_name)

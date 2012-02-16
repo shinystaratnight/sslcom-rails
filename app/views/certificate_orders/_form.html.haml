@@ -1,6 +1,5 @@
 =f.fields_for :certificate_contents, @certificate_content do |cc|
   =cc.fields_for :registrant, @registrant do |rf|
-    =rf.hidden_field :company_name
     %p
       Please provide information about the applicant of this certificate.
     .clearfix
@@ -12,7 +11,7 @@
       %label{:for=>"company"}
         *Company:
         %span.label_desc organization
-      .displayed_csr_field=@certificate_content.csr.organization
+      =rf.text_field :company_name
     .clearfix
       %label{:for=>"department"}
         Department:
