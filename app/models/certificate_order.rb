@@ -633,6 +633,17 @@ class CertificateOrder < ActiveRecord::Base
                 certificate_content.duration
             options.merge!('days' => days.to_s)
           end
+          #ssl.com Sub CA certs
+          if certificate.serial=~/256sslcom/
+            prod_code = if certificate.is_ev?
+                          403
+                        elsif certificate_is_free?
+                          401
+                        else
+                          402
+                        end
+            options.merge!('caCertificateID' => prod_code.to_s)
+          end
           if !skip_verification?
             if last_sent.dcv_method=="http"
               options.merge!('dcvMethod' => "HTTP_CSR_HASH")

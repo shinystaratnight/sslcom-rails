@@ -102,7 +102,7 @@ class ValidationsController < ApplicationController
         elsif params[:method]=="http"
           #verify http dcv
           unless @certificate_order.csr.dcv_verified?
-            error<<"Please be sure #{@certificate_order.csr.dcv_url} is publicly available"
+            error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
           else
             @dcv.hash_satisfied
             @certificate_order.validation.approve! unless

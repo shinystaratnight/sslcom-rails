@@ -254,7 +254,7 @@ class Certificate < ActiveRecord::Base
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each do |pvi|
         new_pvi=pvi.clone
-        new_pvi.attributes = {created_at: now, updated_at: now}
+        new_pvi.attributes = {created_at: now, updated_at: now, serial: "sslcom"+pvi.serial}
         new_pvg.product_variant_items << new_pvi
         unless pvi.sub_order_item.blank?
           new_pvi.sub_order_item=pvi.sub_order_item.clone

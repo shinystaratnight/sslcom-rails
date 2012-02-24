@@ -2,6 +2,8 @@ require 'zip/zip'
 require 'zip/zipfilesystem'
 require 'openssl-extensions/all'
 require 'digest'
+require 'net/https'
+require 'uri'
 
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups
@@ -147,8 +149,8 @@ class Csr < ActiveRecord::Base
     common_name.gsub(/^\*\./, "").downcase
   end
 
-  def dcv_url
-    "http://#{non_wildcard_name}/#{md5_hash}.txt"
+  def dcv_url(secure=false)
+    "http#{'s' if secure}://#{non_wildcard_name}/#{md5_hash}.txt"
   end
 
   def dcv_contents
@@ -156,10 +158,27 @@ class Csr < ActiveRecord::Base
   end
 
   def dcv_verified?
+    retries=2
     begin
       timeout(Surl::TIMEOUT_DURATION) do
-        r=open(dcv_url).read
+        if retries<2
+          uri = URI.parse(dcv_url(true))
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          request = Net::HTTP::Get.new(uri.request_uri)
+          r = http.request(request).body
+        else
+          r=open(dcv_url).read
+        end
         !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+      end
+    rescue Timeout::Error
+      retries-=1
+      if retries==0
+        return false
+      else
+        retry
       end
     rescue Exception=>e
       return false
