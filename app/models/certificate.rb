@@ -75,8 +75,9 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  scope :public, where(:product ^ 'mssl')
+  scope :public, where((:product ^ 'mssl') & (:serial =~ "%sslcom%"))
   scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
+  scope :for_sale, where(:serial =~ "%sslcom%")
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
@@ -175,6 +176,10 @@ class Certificate < ActiveRecord::Base
     product.gsub(/\dtr$/,"")
   end
 
+  def serial_root
+    serial.gsub(/\dtr$/,"")
+  end
+
   def untiered
     if reseller_tier.blank?
       self
@@ -234,5 +239,41 @@ class Certificate < ActiveRecord::Base
 
   def comodo_product_id
     COMODO_PRODUCT_MAPPINGS[product_root]
+  end
+
+  #deep level copying function, copies own attributes and then duplicates the sub groups and items
+  def duplicate(new_serial)
+    now=DateTime.now
+    new_cert = self.clone
+    new_cert.attributes = {created_at: now, updated_at: now,
+                           serial: self.serial.gsub(/.+?(\dtr)?$/, new_serial+'\1')}
+    new_cert.save
+    self.product_variant_groups.each do |pvg|
+      new_pvg = pvg.clone
+      new_pvg.attributes = {created_at: now, updated_at: now}
+      new_cert.product_variant_groups << new_pvg
+      pvg.product_variant_items.each do |pvi|
+        new_pvi=pvi.clone
+        new_pvi.attributes = {created_at: now, updated_at: now}
+        new_pvg.product_variant_items << new_pvi
+        unless pvi.sub_order_item.blank?
+          new_pvi.sub_order_item=pvi.sub_order_item.clone
+          new_pvi.sub_order_item.attributes = {created_at: now, updated_at: now}
+          new_pvi.sub_order_item.save
+        end
+      end
+    end
+    new_cert
+  end
+
+  def duplicate_tiers(new_serial)
+    Certificate.where(:serial =~ "#{serial_root}%").map {|c|c.duplicate(new_serial)}
+  end
+
+  # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
+  def self.create_sslcom_products
+    %w(evucc ucc ev ov dv wc).each do |serial|
+      Certificate.where(:serial =~ serial+"%").first.duplicate_tiers serial+"256sslcom"
+    end
   end
 end

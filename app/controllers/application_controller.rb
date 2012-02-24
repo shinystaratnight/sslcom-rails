@@ -123,7 +123,7 @@ class ApplicationController < ActionController::Base
     limit=free_qty_limit
     certs.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
-      certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
+      certificate = Certificate.public.find_by_product(c[ShoppingCart::PRODUCT_CODE])
       if certificate.is_free?
         qty=c[ShoppingCart::QUANTITY].to_i > limit ? limit : c[ShoppingCart::QUANTITY].to_i
       else

@@ -31,8 +31,8 @@ class Order < ActiveRecord::Base
 
   scope :not_new, select("distinct orders.*").merge(
     LineItem.joins(:sellable.type(CertificateOrder)=>:certificate_contents).
-    where(:sellable.type(CertificateOrder)=>{:workflow_state=>'paid'} &
-    {:sellable.type(CertificateOrder)=>{:certificate_contents=>{:workflow_state.ne=>"new"}}}))
+    where(:sellable.type(CertificateOrder)=>{:workflow_state=>'paid'} )) #&
+    #{:sellable.type(CertificateOrder)=>{:certificate_contents=>{:workflow_state.ne=>"new"}}}))
 
   scope :search, lambda {|term|
     where(:reference_number =~ '%'+term+'%')
