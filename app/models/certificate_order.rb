@@ -486,10 +486,10 @@ class CertificateOrder < ActiveRecord::Base
     if is_open_ssl?
       #attach bundle
       Certificate::COMODO_BUNDLES.select do |k,v|
-        if certificate.serial=~/256sslcom/
-          k=="ssl_ca_bundle.txt"
-        elsif certificate.comodo_product_id==342
+        if certificate.comodo_product_id==342
           k=="free_ssl_ca_bundle.txt"
+        elsif certificate.serial=~/256sslcom/
+          k=="ssl_ca_bundle.txt"
         elsif certificate.comodo_product_id==43
           k=="trial_ssl_ca_bundle.txt"
         else
@@ -498,10 +498,10 @@ class CertificateOrder < ActiveRecord::Base
       end.map{|k,v|k}
     else
       Certificate::COMODO_BUNDLES.select do |k,v|
-        if certificate.serial=~/256sslcom/
-          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
-        elsif [342, 343].include? certificate.comodo_product_id
+        if [342, 343].include? certificate.comodo_product_id
           %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
+        elsif certificate.serial=~/256sslcom/
+          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
         elsif certificate.comodo_product_id==337 #also maybe 410 (evucc) we'll get there when we place that order
           %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
         elsif certificate.comodo_product_id==361
@@ -641,7 +641,7 @@ class CertificateOrder < ActiveRecord::Base
           if certificate.serial=~/256sslcom/
             prod_code = if certificate.is_ev?
                           403
-                        elsif certificate_is_free?
+                        elsif certificate.is_free?
                           401
                         else
                           402
