@@ -97,7 +97,7 @@ module OrdersHelper
     unless current_user.blank?
       current_user.ssl_account.clear_new_certificate_orders
       unless current_user.ssl_account.can_buy?(certificate)
-        flash[:error].now = "Certificate belongs to a pricing tier which differs
+        flash.now[:error] = "Certificate belongs to a pricing tier which differs
           from your reseller tier level"
         return render(:template => "/certificates/buy", :layout=>"application")
       else
