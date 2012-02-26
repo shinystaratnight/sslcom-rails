@@ -1,0 +1,16 @@
+-c={}
+-c[:description]="Document listings for SSL.com certification practices statement and subscriber agreements"
+-c[:keywords]="ssl ssl.com cps certification practices statement subscriber agreement"
+-c[:title] = "Practices Statement and Document Repository"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 Published documents outlining SSL.com policies and procedures
+.default_container
+  %h3 Certification Practices Statement
+  %p
+    =link_to image_tag("pdf_icon.gif", {align: "top"})+"click to download statement", "repository/ssl_v1_cps.pdf"
+  %h3 SSL.com Subscriber Agreement
+  %p
+    =link_to image_tag("pdf_icon.gif", {align: "top"})+"click to download agreement", "repository/ssl_com_subscriber_agreement.pdf"

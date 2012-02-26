@@ -43,15 +43,15 @@ class Certificate < ActiveRecord::Base
     free: {title: "Free SSL Subscriber Agreement",
           location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
     ev:   {title: "EV SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+          location: "/public/agreements/ssl_subscriber_agreement.txt"},
     high_assurance:  {title: "High Assurance SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+          location: "/public/agreements/ssl_subscriber_agreement.txt"},
     ucc:  {title: "UCC SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+          location: "/public/agreements/ssl_subscriber_agreement.txt"},
     evucc:   {title: "EV SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+          location: "/public/agreements/ssl_subscriber_agreement.txt"},
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"}}
+          location: "/public/agreements/ssl_subscriber_agreement.txt"}}
 
   WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
   #43 was the old trial cert
@@ -71,6 +71,7 @@ class Certificate < ActiveRecord::Base
                     "free_ssl_ca_bundle.txt"=>"Free SSL.com CA Bundle",
                     "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
                     "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                    "SSLcomPremiumEVCA.crt"=>"Intermediate CA Certificate",
                     "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate",
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}

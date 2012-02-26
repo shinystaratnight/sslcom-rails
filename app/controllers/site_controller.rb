@@ -1,7 +1,7 @@
 class SiteController < ApplicationController
   respond_to :xml, :html, only: :sitemap
 
-  STANDARD_PAGES = %w(restful_api terms_of_use privacy_policy copyright about contact_us news)
+  STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news)
 
   def index
   end
