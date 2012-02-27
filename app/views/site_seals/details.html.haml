@@ -26,15 +26,15 @@
       %tr
         %td.pink
           .center
-            -c = Certificate.find_by_product "free"
+            -c = Certificate.public.find_by_product "free"
             =link_to c.title, certificate_url(:id=>c.product_root)
         %td.light_blue
           .center
-            -c = Certificate.find_by_product "high_assurance"
+            -c = Certificate.public.find_by_product "high_assurance"
             =link_to c.title, certificate_url(:id=>c.product_root)
         %td.light_green
           .center
-            -c = Certificate.find_by_product "ev"
+            -c = Certificate.public.find_by_product "ev"
             =link_to c.title, certificate_url(:id=>c.product_root)
   %p
     The SSL.com Smart SeaL is a complementary service that

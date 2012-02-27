@@ -154,7 +154,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def find_tier(tier)
-    Certificate.find_by_product(product_root+tier+'tr')
+    Certificate.public.find_by_product(product_root+tier+'tr')
   end
 
   def is_single?
@@ -185,7 +185,7 @@ class Certificate < ActiveRecord::Base
     if reseller_tier.blank?
       self
     else
-      Certificate.find_by_product product_root
+      Certificate.public.find_by_product product_root
     end
   end
 

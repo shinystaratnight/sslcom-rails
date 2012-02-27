@@ -279,7 +279,7 @@ class ApplicationController < ActionController::Base
 
   def prep_certificate_orders_instances
     if params[:certificate_order]
-      @certificate = Certificate.find_by_product(params[:certificate][:product])
+      @certificate = Certificate.public.find_by_product(params[:certificate][:product])
       co_valid = certificate_order_steps
       if params["prev.x".intern] || !co_valid
         @certificate_order.has_csr=true
