@@ -181,3 +181,20 @@ dd.preview a {
   padding: 0 0 0.3em 0.7em;
   margin-top: -0.5em;
 }
+
+/* line 142, ../../../app/stylesheets/site_report.sass */
+.clearfix:after {
+  content: ".";
+  height: 0;
+  visibility: hidden;
+  display: block;
+  clear: both;
+}
+/* line 134, ../../../app/stylesheets/site_report.sass */
+* html .clearfix {
+  height: 1%;
+}
+/* line 138, ../../../app/stylesheets/site_report.sass */
+*:first-child_html .clearfix {
+  min-height: 1px;
+}

@@ -129,3 +129,24 @@ dd.preview
 #report_title
   padding: 0 0 .3em .7em
   margin-top: -.5em
+
+=clearfixIE5_and_6
+  * html &
+    height: 1%
+
+=clearfixIE7
+  *:first-child_html &
+    min-height: 1px
+
+=clearfix
+  &:after
+    content: '.'
+    height: 0
+    visibility: hidden
+    display: block
+    clear: both
+  +clearfixIE5_and_6
+  +clearfixIE7
+
+.clearfix
+  +clearfix
