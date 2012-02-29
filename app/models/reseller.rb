@@ -18,6 +18,22 @@ class Reseller < ActiveRecord::Base
   BUSINESS = "business"
   INDIVIDUAL = "individual"
 
+  TEMP_FIELDS = {
+      first_name: "first name",
+      last_name: "last name",
+      email: "changeto@email.com",
+      phone: "123-456-7890",
+      type_organization: "business",
+      organization: "Some organization name",
+      website: "change.to.website",
+      address1: "Some Address",
+      postal_code: "Some postal code",
+      city: "Some city",
+      state: "Some state",
+      tax_number: "Some tax number",
+      country: "US"
+  }
+
   SUBDOMAIN = 'reseller'
 
   TARGETED = %w(host_providers registrars merchants enterprises government

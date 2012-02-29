@@ -69,6 +69,7 @@ class SslAccount < ActiveRecord::Base
 
   default_scope :order => 'created_at DESC'
 
+  #before create function
   def b_create
     self.acct_number='a'+ActiveSupport::SecureRandom.hex(1)+
         '-'+Time.now.to_i.to_s(32)
@@ -185,6 +186,28 @@ class SslAccount < ActiveRecord::Base
   #def successful_order_transactions
   #  order_transactions.where :success=>true
   #end
+
+  #this upgrades ot downgrades the account into a reseller tier
+  def adjust_reseller_tier(tier, reseller_fields=Reseller::TEMP_FIELDS)
+    #if account is not reseller, do it now else just change the tier number
+    if reseller.blank?
+      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find(tier).id))
+      roles << "reseller"
+      set_reseller_default_prefs
+      users.each do |u|
+        u.roles.delete Role.find_by_name(Role::CUSTOMER)
+        u.roles << Role.find_by_name(Role::RESELLER)
+      end
+      reseller.update_attribute :workflow_state, "complete"
+    else
+      reseller.reseller_tier=ResellerTier.find(tier)
+      reseller.save
+    end
+  end
+
+  def adjust_funds(cents)
+    funded_account.update_attribute :cents, funded_account.cents+=cents
+  end
 
   private
 
