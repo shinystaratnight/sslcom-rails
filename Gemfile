@@ -7,6 +7,7 @@ gem 'rails', '3.0.10'
 gem "rake", "0.8.7" #the latest version 0.9.2 causes conflicts
 gem 'mysql'
 gem 'workflow'
+gem "rabl"
 #gem 'preferences'
 gem 'wirble'
 gem 'awesome_print'

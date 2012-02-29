@@ -1,4 +1,6 @@
 class ApisController < ApplicationController
+  respond_to :xml, :json
+
   # GET /apis
   # GET /apis.xml
   def index
@@ -37,20 +39,10 @@ class ApisController < ApplicationController
     @api = Api.find(params[:id])
   end
 
-  # POST /apis
-  # POST /apis.xml
-  def create
-    @api = Api.new(params[:api])
-
-    respond_to do |format|
-      if @api.save
-        format.html { redirect_to(@api, :notice => 'Api was successfully created.') }
-        format.xml  { render :xml => @api, :status => :created, :location => @api }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @api.errors, :status => :unprocessable_entity }
-      end
-    end
+  # POST /certificates/create
+  # POST /certificates/create.xml
+  def create_certificate
+    @co = CertificateOrder.last
   end
 
   # PUT /apis/1

@@ -317,6 +317,7 @@
     <orderEntry type="library" scope="PROVIDED" name="meta_where (v1.0.4, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="mime-types (v1.16, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="money (v2.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="multi_json (v1.0.4, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="mysql (v2.8.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-ssh (v2.2.1, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="net-ssh-gateway (v1.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
@@ -325,6 +326,7 @@
     <orderEntry type="library" scope="PROVIDED" name="openssl-extensions (v1.1.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="paperclip (v2.3.16, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="polyglot (v0.3.2, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rabl (v0.6.0, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack (v1.2.3, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-mount (v0.6.14, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-test (v0.5.7, Ruby SDK 1.9.2-p136 [global]) [gem]" level="application" />
