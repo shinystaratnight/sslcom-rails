@@ -89,6 +89,10 @@ module OrdersHelper
         ssl_account.reseller.select_tier?)
   end
 
+  def reseller_tier_is_free?
+    ssl_account.reseller.reseller_tier.try(:amount) <=0
+  end
+
   def is_receipt?
     (@deposit && @deposit.receipt) || (@order && @order.receipt)
   end

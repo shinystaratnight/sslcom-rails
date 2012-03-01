@@ -74,14 +74,14 @@ private
     elsif @reseller.select_tier?
       if params[:reseller_tier].blank? || params[:reseller_tier][:id].blank?
         @reseller_tier = ResellerTier.new
-        @reseller_tier.errors.add_to_base("is not a viable tier selection")
+        @reseller_tier.errors[:base] << "is not a viable tier selection"
       else
         @reseller_tier = ResellerTier.find(params[:reseller_tier][:id])
         @reseller.reseller_tier = @reseller_tier
       end
       if @reseller_tier.errors.empty? && @reseller.save
         @reseller.tier_selected!
-        redirect_to allocate_funds_url
+        redirect_to @reseller_tier.is_free? ? complete : allocate_funds_url
       else
         render :action => :select_tier
       end

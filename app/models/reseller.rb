@@ -41,6 +41,7 @@ class Reseller < ActiveRecord::Base
       education medical)
 
   SIGNUP_PAGES = %w(Reseller\ Profile Select\ Tier Billing\ Information Registration\ Complete)
+  SIGNUP_PAGES_FREE = %w(Reseller\ Profile Select\ Tier Registration\ Complete)
 
   validates_presence_of *((REQUIRED_COLUMNS-%w(email organization state)).map(&:intern))
   validates_presence_of :organization, :if => Proc.new{|reseller| reseller.type_organization == BUSINESS }

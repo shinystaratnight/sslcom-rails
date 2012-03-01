@@ -14,6 +14,10 @@ class ResellerTier < ActiveRecord::Base
     self.amount = amount.gsub(/\./,"").to_i
   end
 
+  def is_free?
+    amount <= 0
+  end
+
   def product_variant_items
     certificates.all.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten
   end

@@ -1,6 +1,6 @@
 -content_for :title, "Select Reseller Pricing Tier"
 =render :partial => 'index_scripts'
-=render(:partial => 'shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 2]})
+=render(:partial => 'shared/form_progress_indicator', :locals => {options:{li_style: "margin: 0px 40px"}, :pages=>[Reseller::SIGNUP_PAGES_FREE, 2]})
 .reseller_registration_select_tier
   =error_messages_for :reseller_tier
   %h3 Select Pricing Tier

@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   include OrdersHelper
   resource_controller
   helper_method :cart_items_from_model_and_id
-  before_filter :finish_reseller_signup, :only => [:new]
+  before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
   before_filter :find_order, :only => [:show]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
