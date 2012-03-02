@@ -1,6 +1,7 @@
 -content_for :title, "SSL Reseller Dashboard"
 -user ||= current_user
 -r = user.ssl_account.reseller
+=render(:partial => 'shared/form_progress_indicator', :locals => {options:{li_style: "margin: 0px 40px"}, :pages=>[Reseller::SIGNUP_PAGES_FREE, 3]}) if flash[:notice]==Reseller::WELCOME
 .reseller_registration_select_tier
   %h3 SSL Reseller Dashboard
   %p

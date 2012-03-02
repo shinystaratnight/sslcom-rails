@@ -136,10 +136,7 @@ class FundedAccountsController < ApplicationController
         dep.save
         @deposit.save
         if initial_reseller_deposit?
-          account.reseller.completed!
-          account.reseller.reseller_tier = immutable_cart_item
-          account.remove_role! 'new_reseller'
-          account.add_role! 'reseller'
+          account.reseller.finish_signup immutable_cart_item
         end
         OrderNotifier.deliver_deposit_completed account, @deposit
         if @certificate_order

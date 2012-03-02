@@ -82,7 +82,12 @@ private
       if @reseller_tier.errors.empty? && @reseller.save
         @reseller.tier_selected!
         #TODO complete this
-        redirect_to @reseller_tier.is_free? ? create_free_ssl_path : allocate_funds_url
+        if @reseller_tier.is_free?
+          @reseller.finish_signup @reseller_tier
+        end
+        @reseller_tier.is_free? ?
+          redirect_to(account_url, {:notice => Reseller::WELCOME}) :
+          redirect_to(allocate_funds_url)
       else
         render :action => :select_tier
       end

@@ -18,6 +18,8 @@ class Reseller < ActiveRecord::Base
   BUSINESS = "business"
   INDIVIDUAL = "individual"
 
+  WELCOME="Welcome to the SSL.com Reseller Program!"
+
   TEMP_FIELDS = {
       first_name: "first name",
       last_name: "last name",
@@ -76,6 +78,14 @@ class Reseller < ActiveRecord::Base
 
   def type_organization
     read_attribute("type_organization") || BUSINESS
+  end
+
+  # the final stage of reseller signup
+  def finish_signup(tier)
+    self.reseller_tier = tier
+    self.completed!
+    ssl_account.remove_role! 'new_reseller'
+    ssl_account.add_role! 'reseller'
   end
 
 end
