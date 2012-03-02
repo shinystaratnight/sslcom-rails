@@ -81,7 +81,8 @@ private
       end
       if @reseller_tier.errors.empty? && @reseller.save
         @reseller.tier_selected!
-        redirect_to @reseller_tier.is_free? ? complete : allocate_funds_url
+        #TODO complete this
+        redirect_to @reseller_tier.is_free? ? create_free_ssl_path : allocate_funds_url
       else
         render :action => :select_tier
       end

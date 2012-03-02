@@ -487,7 +487,13 @@ class CertificateOrder < ActiveRecord::Base
       #attach bundle
       Certificate::COMODO_BUNDLES.select do |k,v|
         if certificate.serial=~/256sslcom/
-          k=="ssl_ca_bundle.txt"
+          if certificate.is_ev?
+            k=="sslcom_ev_ca_bundle.txt"
+          elsif certificate.is_free?
+            k=="sslcom_free_ca_bundle.txt"
+          else
+            k=="sslcom_high_assurance_ca_bundle.txt"
+          end
         elsif certificate.comodo_product_id==342
           k=="free_ssl_ca_bundle.txt"
         elsif certificate.comodo_product_id==43
@@ -501,6 +507,8 @@ class CertificateOrder < ActiveRecord::Base
         if certificate.serial=~/256sslcom/
           if certificate.is_ev?
             %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+          elsif certificate.is_free?
+            %w(SSLcomFreeSSLCA.crt AddTrustExternalCARoot.crt).include? k
           else
             %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
           end
@@ -614,6 +622,7 @@ class CertificateOrder < ActiveRecord::Base
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref
           )
+          ssl_com_order(options)
           last_sent = csr.domain_control_validations.last_sent
           if !skip_verification? && last_sent.try("is_eligible_to_send?")
             options.merge!('dcvEmailAddress' => last_sent.email_address)
@@ -642,16 +651,7 @@ class CertificateOrder < ActiveRecord::Base
             options.merge!('days' => days.to_s)
           end
           #ssl.com Sub CA certs
-          if certificate.serial=~/256sslcom/
-            prod_code = if certificate.is_ev?
-                          403
-                        elsif certificate.is_free?
-                          401
-                        else
-                          402
-                        end
-            options.merge!('caCertificateID' => prod_code.to_s)
-          end
+          ssl_com_order(options)
           if !skip_verification?
             if last_sent.dcv_method=="http"
               options.merge!('dcvMethod' => "HTTP_CSR_HASH")
@@ -781,4 +781,16 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def ssl_com_order(options)
+    if certificate.serial=~/256sslcom/
+      prod_code = if certificate.is_ev?
+                    403
+                  elsif certificate.is_free?
+                    401
+                  else
+                    402
+                  end
+      options.merge!('caCertificateID' => prod_code.to_s)
+    end
+  end
 end
