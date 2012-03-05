@@ -787,7 +787,7 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.serial=~/256sslcom/
       prod_code = if certificate.is_ev?
                     403
-                  elsif certificate.is_free?
+                  elsif certificate.is_essential_ssl?
                     401
                   else
                     402
