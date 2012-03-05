@@ -489,8 +489,10 @@ class CertificateOrder < ActiveRecord::Base
         if certificate.serial=~/256sslcom/
           if certificate.is_ev?
             k=="sslcom_ev_ca_bundle.txt"
-          elsif certificate.is_free?
-            k=="sslcom_free_ca_bundle.txt"
+          #elsif certificate.is_free?
+          #  k=="sslcom_free_ca_bundle.txt"
+          elsif certificate.is_essential_ssl?
+            k=="sslcom_addtrust_ca_bundle.txt"
           else
             k=="sslcom_high_assurance_ca_bundle.txt"
           end
@@ -507,8 +509,8 @@ class CertificateOrder < ActiveRecord::Base
         if certificate.serial=~/256sslcom/
           if certificate.is_ev?
             %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
-          elsif certificate.is_free?
-            %w(SSLcomFreeSSLCA.crt AddTrustExternalCARoot.crt).include? k
+          elsif certificate.is_essential_ssl?
+            %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
           else
             %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
           end

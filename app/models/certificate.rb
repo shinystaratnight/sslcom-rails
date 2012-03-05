@@ -54,10 +54,19 @@ class Certificate < ActiveRecord::Base
           location: "/public/agreements/ssl_subscriber_agreement.txt"}}
 
   WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
+  #Comodo prods:
+  #Essential Free SSL = 342
+  #Essential SSL = 301
+  #Essential SSL Wildcard = 343
+  #Positive SSL MDC = 279
+  #InstantSSL Wildcard = 35
   #43 was the old trial cert
   COMODO_PRODUCT_MAPPINGS =
-      {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "essential_wildcard"=>343, "ev"=>337,
+      {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337,
        "ucc"=>361, "evucc"=>410}
+  COMODO_PRODUCT_MAPPINGS_SSL_COM =
+      {"free"=> 342, "high_assurance"=>301, "wildcard"=>343, "ev"=>337,
+       "ucc"=>279, "evucc"=>410}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)
@@ -67,6 +76,7 @@ class Certificate < ActiveRecord::Base
                     "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
                     "ComodoUTNSGCCA.crt"=>"Intermediate CA Certificate",
                     "ssl_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                    "sslcom_addtrust_ca_bundle.txt"=>"SSL.com CA Bundle",
                     "sslcom_free_ca_bundle.txt"=>"Free SSL.com CA Bundle",
                     "sslcom_high_assurance_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
                     "sslcom_ev_ca_bundle.txt"=>"EV SSL.com CA Bundle",
@@ -75,6 +85,7 @@ class Certificate < ActiveRecord::Base
                     "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
                     "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
                     "SSLcomPremiumEVCA.crt"=>"Intermediate CA Certificate",
+                    "SSLcomAddTrustSSLCA.crt"=>"Intermediate CA Certificate",
                     "SSLcomFreeSSLCA.crt"=>"Intermediate CA Certificate",
                     "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate",
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
@@ -155,6 +166,15 @@ class Certificate < ActiveRecord::Base
 
   def is_multi?
     is_ucc? || is_wildcard?
+  end
+
+  # use the essential ssl chain certs for these products
+  # Essential Free SSL = 342
+  # Essential SSL = 301
+  # Essential SSL Wildcard = 343
+  # Positive SSL MDC = 279
+  def is_essential_ssl?
+    [342,301,343,279].include? comodo_product_id
   end
 
   def find_tier(tier)
@@ -243,7 +263,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def comodo_product_id
-    COMODO_PRODUCT_MAPPINGS[product_root]
+    if self.serial=~/256sslcom/
+      COMODO_PRODUCT_MAPPINGS_SSL_COM[product_root]
+    else
+      COMODO_PRODUCT_MAPPINGS[product_root]
+    end
   end
 
   #deep level copying function, copies own attributes and then duplicates the sub groups and items
