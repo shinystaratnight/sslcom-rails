@@ -7,7 +7,7 @@ require "rvm/capistrano"
 set :rails_env, ENV['rails_env'] || ENV['RAILS_ENV'] || 'production'
 
 # Set it to the ruby + gemset of your app, e.g 'jruby-1.5.2':
-set :rvm_ruby_string, 'ruby-1.9.2-p136@rails3010'
+set :rvm_ruby_string, 'default'
 set :rvm_type, :user
 
 #tell git to clone only the latest revision and not the whole repository
@@ -16,6 +16,7 @@ set :git_shallow_clone, 1
 set :keep_releases, 3
 
 # Bundler
+require "bundler/capistrano"
 set :bundle_flags, "--deployment"
 set :bundle_cmd, 'ruby -S bundle'
 
@@ -24,8 +25,8 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-set :domain, 'staging2.ssl.com' #development
-#set :domain, '184.73.226.63' #production
+#set :domain, 'staging2.ssl.com' #development
+set :domain, '184.73.226.63' #production
 #set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"
