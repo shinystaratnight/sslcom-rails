@@ -7,7 +7,7 @@ require "rvm/capistrano"
 set :rails_env, ENV['rails_env'] || ENV['RAILS_ENV'] || 'production'
 
 # Set it to the ruby + gemset of your app, e.g 'jruby-1.5.2':
-set :rvm_ruby_string, 'default'
+set :rvm_ruby_string, 'ruby-1.9.2-p136@rails3010'
 set :rvm_type, :user
 
 #tell git to clone only the latest revision and not the whole repository
