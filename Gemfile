@@ -45,7 +45,7 @@ gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+#gem 'capistrano'
 
 # Bundle the extra gems:
 # gem 'bj'

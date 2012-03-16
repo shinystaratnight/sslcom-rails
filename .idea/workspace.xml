@@ -18,98 +18,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/CHANGELOG" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/COPYING" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/INSTALL" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/README" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/README.erb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/Rakefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/TODO" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/bin/s3sh" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/bin/setup.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/acl.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/authentication.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/base.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/bittorrent.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/bucket.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/connection.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/error.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/exceptions.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/extensions.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/logging.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/object.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/owner.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/parsing.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/response.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/service.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/lib/aws/s3/version.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/site/index.erb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/site/public/images/box-and-gem.gif" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/site/public/images/favicon.ico" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/site/public/ruby.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/site/public/screen.css" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/COPYING" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/README" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/Rakefile" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/lib/faster_xml_simple.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-1.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-1.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-1.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-2.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-2.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-2.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-3.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-3.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-3.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-4.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-4.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-4.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-5.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-5.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-5.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-6.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-6.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-6.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-7.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-7.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-7.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-8.rails.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-8.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/fixtures/test-8.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/regression_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/test_helper.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/faster-xml-simple/test/xml_simple_comparison_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/support/rdoc/code_info.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/acl_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/authentication_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/base_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/bucket_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/connection_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/error_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/extensions_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/buckets.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/errors.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/headers.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/logging.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/loglines.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/logs.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/fixtures/policies.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/logging_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/mocks/fake_response.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/object_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/parsing_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/acl_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/bittorrent_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/bucket_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/logging_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/object_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/test_file.data" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/remote/test_helper.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/response_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/service_test.rb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/aws-s3/test/test_helper.rb" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -205,19 +116,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.yml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="settings.yml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/settings.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="61" selection-start="2167" selection-end="2167" vertical-scroll-proportion="0.5503597">
+            <state line="48" column="61" selection-start="2167" selection-end="2167" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_reseller.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_reseller.html.haml">
+      <file leaf-file-name="deploy.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="35" selection-start="1622" selection-end="1622" vertical-scroll-proportion="0.0">
+            <state line="26" column="0" selection-start="671" selection-end="671" vertical-scroll-proportion="0.48920864">
               <folding />
             </state>
           </provider>
@@ -278,7 +189,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/resellers_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate.rb" />
@@ -294,6 +204,7 @@
         <option value="$PROJECT_DIR$/app/models/validation_history.rb" />
         <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
         <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
       </list>
     </option>
   </component>
@@ -1291,14 +1202,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="24" y="0" width="1256" height="743" extended-state="0" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32242227" sideWeight="0.68521595" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32890365" sideWeight="0.7708674" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5171849" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2101329" sideWeight="0.2782324" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2101329" sideWeight="0.60229135" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2101329" sideWeight="0.60229135" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39770868" sideWeight="0.8513289" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39770868" sideWeight="0.14285715" order="9" side_tool="true" content_ui="tabs" />
@@ -1398,15 +1309,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Gemfile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="88" selection-start="28" selection-end="169" vertical-scroll-proportion="0.0">
-          <folding>
-            <marker date="1331920463000" expanded="true" signature="-1:-1" placeholder="do ... end" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/environment.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="6" column="23" selection-start="174" selection-end="174" vertical-scroll-proportion="0.0" />
@@ -1497,7 +1399,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/settings.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="61" selection-start="2167" selection-end="2167" vertical-scroll-proportion="0.5503597">
+        <state line="48" column="61" selection-start="2167" selection-end="2167" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="671" selection-end="671" vertical-scroll-proportion="0.48920864">
           <folding />
         </state>
       </provider>

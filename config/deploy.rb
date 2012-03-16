@@ -16,7 +16,6 @@ set :git_shallow_clone, 1
 set :keep_releases, 3
 
 # Bundler
-require 'bundler/capistrano'
 set :bundle_flags, "--deployment"
 set :bundle_cmd, 'ruby -S bundle'
 
@@ -25,8 +24,8 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-#set :domain, 'staging2.ssl.com' #development
-set :domain, '184.73.226.63' #production
+set :domain, 'staging2.ssl.com' #development
+#set :domain, '184.73.226.63' #production
 #set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"
