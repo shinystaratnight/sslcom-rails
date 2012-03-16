@@ -39,6 +39,10 @@ class Csr < ActiveRecord::Base
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
+  def common_name
+    SimpleIDN.to_unicode read_attribute(:common_name)
+  end
+
   def body=(csr)
     csr=enclose_with_tags(csr.strip)
     unless Settings.csr_parser=="remote"

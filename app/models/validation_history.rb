@@ -18,7 +18,7 @@ class ValidationHistory < ActiveRecord::Base
     :s3_permissions => :private,
     :s3_protocol => 'http',
     :bucket => 'ssl-validation-docs',
-    :path => lambda { |attachment| ":id_partition/#{attachment.instance.random_secret}/:style.:extension" }
+    :path => ":id_partition/:random_secret/:style.:extension"
 
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
@@ -32,6 +32,11 @@ class ValidationHistory < ActiveRecord::Base
 #    ValidationHistory::CONTENT_TYPES.transpose[0]
 
   preference  :viewing_method, :string, :default=>"download" #or thumbnail
+
+  # interpolate in paperclip
+  Paperclip.interpolates :random_secret  do |attachment, style|
+    attachment.instance.random_secret
+  end
 
   def document_url(style=nil)
     if style.blank?

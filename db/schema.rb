@@ -811,7 +811,6 @@ ActiveRecord::Schema.define(:version => 20120127025217) do
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.string   "notes"
     t.boolean  "is_auth_token"
   end
 

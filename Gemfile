@@ -4,8 +4,8 @@ gem 'rails', '3.0.10'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-gem "rake", "0.8.7" #the latest version 0.9.2 causes conflicts
-gem 'mysql'
+gem "rake" #, "0.8.7" #the latest version 0.9.2 causes conflicts
+gem 'mysql2', '< 0.3'
 gem 'workflow'
 gem "rabl"
 #gem 'preferences'
@@ -23,10 +23,10 @@ gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", "0.7.9"
-gem 'rubyzip'
+gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
 gem 'compass'
 gem 'rb-inotify'
-#gem 'aws-s3'
+gem 'aws-sdk'
 gem 'xml-simple'
 gem 'json'
 gem 'easy_roles'
@@ -42,6 +42,7 @@ gem 'sauce'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'jquery-rails', '>= 1.0.12'
+gem 'simpleidn'
 
 # Deploy with Capistrano
 # gem 'capistrano'
@@ -58,7 +59,7 @@ gem 'nokogiri'
   group :development, :test do
     gem "builder"
     gem 'ruby_parser'
-    gem 'ruby-debug-base19'
+    #gem 'ruby-debug-base19'
     #gem 'ruby-debug-ide19'
     gem 'ruby-debug19'
     gem "rspec-rails"
@@ -80,10 +81,10 @@ gem 'nokogiri'
     gem 'email_spec'
     gem 'firewatir'
     gem 'rspec'
-    gem 'factory_girl_rails', require: false
     gem 'mainline'
     gem 'rack-test'
     gem 'machinist', '>= 2.0.0.beta2'
+    gem 'factory_girl_rails'
   end
 
 

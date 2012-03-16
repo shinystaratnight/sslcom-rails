@@ -26,6 +26,10 @@ class SignedCertificate < ActiveRecord::Base
     s.csr.certificate_content.issue!
   end
 
+  def common_name
+    SimpleIDN.to_unicode read_attribute(:common_name)
+  end
+
   def body=(certificate)
     return if certificate.blank?
     self[:body] = enclose_with_tags(certificate.strip)
@@ -113,14 +117,14 @@ class SignedCertificate < ActiveRecord::Base
   def create_signed_cert_zip_bundle(is_windows=false)
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
-    Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
+    ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       co.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
         zos.get_output_stream(file_name.strip) {|f|f.puts (is_windows ?
             file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       end
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(friendly_common_name+co.file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name+co.file_extension){|f| f.puts cert}
     end
     path
   end
@@ -137,6 +141,10 @@ class SignedCertificate < ActiveRecord::Base
 
   def friendly_common_name
     common_name.gsub('*', 'STAR').gsub('.', '_')
+  end
+
+  def nonidn_friendly_common_name
+    SimpleIDN.to_ascii(read_attribute(:common_name)).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def certificate_order
