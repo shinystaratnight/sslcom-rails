@@ -62,7 +62,7 @@ require "#{Rails.root}/lib/range.rb"
 require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
-require "#{Rails.root}/lib/force_ssl.rb"
+#require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/subdomain-fu.rb"
 require "will_paginate"
 

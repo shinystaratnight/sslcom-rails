@@ -758,7 +758,7 @@ ActiveRecord::Schema.define(:version => 20120127025217) do
     t.datetime "updated_at"
   end
 
-  add_index "tracked_urls", ["md5", "url"], :name => "index_tracked_urls_on_md5_and_url", :length => {"md5"=>"100", "url"=>"100"}
+  add_index "tracked_urls", ["md5", "url"], :name => "index_tracked_urls_on_md5_and_url", :length => {"md5"=>100, "url"=>100}
 
   create_table "trackings", :force => true do |t|
     t.integer  "tracked_url_id"
