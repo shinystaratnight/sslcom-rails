@@ -5,7 +5,7 @@ gem 'rails', '3.0.10'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem "rake" #, "0.8.7" #the latest version 0.9.2 causes conflicts
-gem 'mysql2', '< 0.3'
+gem 'mysql2', '~> 0.2.7'
 gem 'workflow'
 gem "rabl"
 #gem 'preferences'
@@ -26,6 +26,7 @@ gem "savon", "0.7.9"
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
 gem 'compass'
 gem 'rb-inotify'
+gem 'aws-s3'
 gem 'aws-sdk'
 gem 'xml-simple'
 gem 'json'

@@ -271,6 +271,7 @@
     <orderEntry type="library" scope="PROVIDED" name="arel (v2.0.10, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="authlogic (v3.1.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="awesome_print (v1.0.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="aws-s3 (v0.6.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.3.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="braintree (v2.14.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v2.1.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
