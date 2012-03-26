@@ -76,8 +76,6 @@ class ValidationHistory < ActiveRecord::Base
     expires_in=10.minutes
     options.reverse_merge! :expires_in => expires_in, :use_ssl => true
     document.s3_object(options[:style]).url_for(:read, :secure => true, :expires => expires_in).to_s
-    #AWS::S3::S3Object.url_for document.path(options[:style]),
-    #  document.options[:bucket], options
   end
 
   private

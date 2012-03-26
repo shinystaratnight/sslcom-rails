@@ -1,4 +1,5 @@
 require File.expand_path('../boot', __FILE__)
+require 'oauth/rack/oauth_filter'
 require 'rails/all'
 
 Bundler.setup
@@ -51,6 +52,7 @@ module SslCom
     end
 
     config.middleware.use "ForceSSL"
+    config.middleware.use OAuth::Rack::OAuthFilter
   end
 end
 

@@ -282,7 +282,6 @@
     <orderEntry type="library" scope="PROVIDED" name="childprocess (v0.3.1, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chronic (v0.6.7, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chunky_png (v1.2.5, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="cmdparse (v2.0.3, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cocaine (v0.2.1, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="columnize (v0.3.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="commonwatir (v2.0.4, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
@@ -298,12 +297,12 @@
     <orderEntry type="library" scope="PROVIDED" name="erubis (v2.6.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_girl (v2.6.3, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="factory_girl_rails (v1.7.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="faraday (v0.7.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ffi (v1.0.11, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="firewatir (v1.9.4, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="fssm (v0.2.8.1, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="gherkin (v2.9.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="haml (v3.2.0.alpha.10, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="highline (v1.6.11, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="hoe (v2.16.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="httparty (v0.8.1, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.5.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
@@ -321,10 +320,12 @@
     <orderEntry type="library" scope="PROVIDED" name="money (v2.1.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="multi_json (v1.1.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="multi_xml (v0.4.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="multipart-post (v1.1.5, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="mysql2 (v0.2.18, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="net-ssh (v2.3.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="net-ssh-gateway (v1.1.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="nokogiri (v1.5.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="oauth (v0.4.5, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="oauth-plugin (v0.4.0.rc2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="oauth2 (v0.5.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="open4 (v1.3.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="openssl-extensions (v1.2.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="paperclip (v2.7.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
@@ -341,7 +342,6 @@
     <orderEntry type="library" scope="PROVIDED" name="rb-inotify (v0.8.8, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rdoc (v3.12, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="resource_controller (v0.6.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rest-client (v1.6.7, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec (v2.8.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-core (v2.8.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v2.8.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
@@ -355,13 +355,13 @@
     <orderEntry type="library" scope="PROVIDED" name="rubyzip (v0.9.6.1, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="s4t-utils (v1.0.4, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.1.15, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="sauce (v1.0.2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="savon (v0.7.9, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="selenium-webdriver (v2.20.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sexp_processor (v3.1.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="simpleidn (v0.0.3, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sinatra (v1.2.8, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="spork (v0.9.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="spork (v1.0.0rc2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="spork-rails (v3.2.0, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="subdomain-fu (v1.0.0.beta2, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="term-ansicolor (v1.0.7, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thor (v0.14.6, RVM: ruby-1.9.2-p136 [rails3010]) [gem]" level="application" />
@@ -382,6 +382,7 @@
   <component name="RModuleSettingsStorage">
     <LOAD_PATH number="0" />
     <I18N_FOLDERS number="1" string0="$MODULE_DIR$/config/locales" />
+    <OPTIONS NAME="SPORK_SERVER_LAST_USED_TEST_FR_OPTION" VALUE=":rspec " />
   </component>
 </module>
 

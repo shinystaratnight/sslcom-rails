@@ -13,6 +13,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
+  has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration
@@ -110,6 +111,20 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
+
+  scope :range, lambda{|start, finish|
+    if start.is_a? String
+      s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      start = Date.strptime start, s
+      finish = Date.strptime finish, f
+    end
+    where(:created_at + (start..finish))} do
+
+    def amount
+      self.nonfree.sum(:amount)*0.01
+    end
+  end
 
   FULL = 'full'
   EXPRESS = 'express'
@@ -364,6 +379,18 @@ class CertificateOrder < ActiveRecord::Base
 
   def apply_for_certificate
     ComodoApi.apply_for_certificate(self)
+  end
+
+  def retrieve_ca_cert(email_customer=false)
+    return nil unless external_order_number
+    retrieve=ComodoApi.collect_ssl(self)
+    csr.signed_certificates.create(body: retrieve.certificate,
+                                   email_customer: email_customer) if retrieve.response_code==2
+  end
+
+  def self.retrieve_ca_certs(start, finish)
+    cos=range(start, finish).pending
+    cos.each{|co|co.retrieve_ca_cert}
   end
 
   def self.find_not_new(options=nil)

@@ -39,11 +39,12 @@ gem 'sinatra'
 gem 'uuidtools'
 gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
-gem 'sauce'
+#gem 'sauce'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
+gem "oauth-plugin", ">= 0.4.0.pre1"
 
 # Deploy with Capistrano
 #gem 'capistrano'
@@ -67,12 +68,13 @@ gem 'nokogiri'
     gem 'activerecord-sqlserver-adapter'
     gem 'ruby-odbc'
     gem 'launchy'
-    gem 'spork', '~> 0.9.0.rc'
+    gem 'spork-rails'
+    #gem 'spork'
     gem 'active_reload'
   end
 
   group :test do
-    gem 'cucumber-rails'
+    gem 'cucumber-rails', require: false
     gem 'capybara'
     gem 'capybara-webkit'
     gem 'capybara-firebug', git: 'git://github.com/jfirebaugh/capybara-firebug.git'

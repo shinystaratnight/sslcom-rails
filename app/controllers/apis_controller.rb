@@ -1,6 +1,8 @@
 class ApisController < ApplicationController
   respond_to :xml, :json
 
+  SUBDOMAIN = "sws"
+
   # GET /apis
   # GET /apis.xml
   def index
@@ -71,5 +73,9 @@ class ApisController < ApplicationController
       format.html { redirect_to(apis_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def create_certificate_order
+    @co = CertificateOrder.new
   end
 end

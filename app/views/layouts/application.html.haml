@@ -1,5 +1,5 @@
 !!!
-%html(xmlns:fb="facebook.com/2008/fbml")
+%html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
     %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
@@ -12,6 +12,15 @@
     %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
+    -#the following metas are for google+ custom message
+    %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
+    %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
+    -#the following metas are for facebook custom message
+    %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
+    %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
+    %meta(property="og:type" content="product")
+    %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
+    %meta(property="og:fb:app_id" content="175898732515690")
     =csrf_meta_tag
     =render :partial => "shared/scripts_and_styles"
   %body

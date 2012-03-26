@@ -3,6 +3,7 @@ require 'spec_helper'
 describe CertificateOrder, "as a ssl.com certificate order using FactoryGirl" do
   it "should be able to create a new order with a domain validated certificate" do
     expect { @co=Factory(:new_dv_certificate_order) }.to change(CertificateOrder, :count).by(1)
+    @co=Factory(:new_dv_certificate_order)
     @co.should be_new
     @co.sub_order_items.count.should == 1
     @co.sub_order_items.should_not be_blank

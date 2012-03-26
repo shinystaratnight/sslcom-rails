@@ -7,6 +7,8 @@ class User < ActiveRecord::Base
   has_many  :legacy_v2_user_mappings, :as=>:user_mappable
   has_many  :duplicate_v2_users
   has_many  :other_party_requests
+  has_many  :client_applications
+  has_many  :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
   belongs_to :ssl_account
   attr_accessor :changing_password, :admin_update
   attr_accessible :login, :email, :password, :password_confirmation,

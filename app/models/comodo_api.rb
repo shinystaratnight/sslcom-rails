@@ -10,6 +10,7 @@ class ComodoApi
   REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
+  COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
 
   def self.apply_for_certificate(certificate_order)
     options = certificate_order.options_for_ca.
@@ -68,6 +69,24 @@ class ComodoApi
     attr = {request_url: host,
       parameters: options, method: "post", response: res.body, ca: "comodo", api_requestable: dcv.csr}
     CaDcvResendRequest.create(attr)
+  end
+
+  def self.collect_ssl(certificate_order)
+    options = {'queryType' => 2, "showExtStatus"=>"Y",
+               'orderNumber'=> certificate_order.external_order_number}.
+        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    host = COLLECT_SSL_URL
+    url = URI.parse(host)
+    con = Net::HTTP.new(url.host, 443)
+    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
+    con.use_ssl = true
+    res = con.start do |http|
+      http.request_post(url.path, options)
+    end
+    attr = {request_url: host,
+      parameters: options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    CaRetrieveCertificate.create(attr)
   end
 
 #  def self.test

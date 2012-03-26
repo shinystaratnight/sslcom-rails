@@ -1,14 +1,33 @@
 require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
+  resources :oauth_clients
+
+  match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request
+
+  match '/oauth/token',         :to => 'oauth#token',         :as => :token
+
+  match '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token
+
+  match '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token
+
+  match '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize
+
+  match '/oauth',               :to => 'oauth#index',         :as => :oauth
+
   match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
   match '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
   match '/' => 'site#index', :as => :root
   match 'login' => 'user_sessions#new', :as => :login
   match 'logout' => 'user_sessions#destroy', :as => :logout
+
   resources :unsubscribes, only: [:edit, :update]
   resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_checks
+
+  #api
+  match '/certificates/1.0/create' => 'apis#create_certificate_order',
+        :as => :api_create_certificate_order, :constraints => {:subdomain=>ApisController::SUBDOMAIN}
 
   resource :account, :controller=>:users do
     resource :reseller

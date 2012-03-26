@@ -16,6 +16,7 @@ class SignedCertificate < ActiveRecord::Base
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
+  attr_accessor_with_default :email_customer, false
 
   BEGIN_TAG="-----BEGIN CERTIFICATE-----"
   END_TAG="-----END CERTIFICATE-----"
@@ -24,6 +25,19 @@ class SignedCertificate < ActiveRecord::Base
 
   after_create do |s|
     s.csr.certificate_content.issue!
+  end
+
+  after_save do |s|
+    s.send_processed_certificate if s.email_customer
+    cc=s.csr.certificate_content
+    co=cc.certificate_order
+    co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
+    last_sent=s.csr.domain_control_validations.last_sent
+    last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
+    if cc.preferred_reprocessing?
+      cc.preferred_reprocessing=false
+      cc.save
+    end
   end
 
   def common_name
