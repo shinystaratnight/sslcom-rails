@@ -174,4 +174,4 @@ after 'deploy:update', 'deploy:symlink_shared'
 #whenever
 set :whenever_command, "bundle exec whenever"
 # disable this on production web
-#require "whenever/capistrano"
+require "whenever/capistrano"
