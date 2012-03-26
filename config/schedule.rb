@@ -31,21 +31,21 @@ every 1.day, at: "12pm" do
 end
 
 every 20.minutes do
-  bundle_exec "CertificateOrders.retrieve_ca_certs(12.hours.ago, DateTime.now)"
+  bundle_exec "CertificateOrder.retrieve_ca_certs(12.hours.ago, DateTime.now)"
 end
 
-every 1.hour do
-  bundle_exec "CertificateOrders.retrieve_ca_certs(3.days.ago, 12.hours.ago)"
+every 1.hour, at: "12:10pm" do
+  bundle_exec "CertificateOrder.retrieve_ca_certs(3.days.ago, 12.hours.ago)"
 end
 
-every 6.hours do
-  bundle_exec "CertificateOrders.retrieve_ca_certs(8.days.ago, 3.days.ago)"
+every 6.hours, at: "12:15pm" do
+  bundle_exec "CertificateOrder.retrieve_ca_certs(8.days.ago, 3.days.ago)"
 end
 
-every 12.hours do
-  bundle_exec "CertificateOrders.retrieve_ca_certs(15.days.ago, 8.days.ago)"
+every 12.hours, at: "12:45pm" do
+  bundle_exec "CertificateOrder.retrieve_ca_certs(15.days.ago, 8.days.ago)"
 end
 
-every 1.day do
-  bundle_exec "CertificateOrders.retrieve_ca_certs(30.days.ago, 15.days.ago)"
+every 1.day, at: "12:30pm" do
+  bundle_exec "CertificateOrder.retrieve_ca_certs(30.days.ago, 15.days.ago)"
 end
