@@ -247,8 +247,8 @@ class ApplicationController < ActionController::Base
   #this function should be cronned and moved to a more appropriate location
   def self.flag_expired_certificate_orders
     Authorization.ignore_access_control(true)
-    CertificateOrder.all(:include=>{:certificate_contents=>
-          {:csr=>:signed_certificates}}).each {|co|
+    CertificateOrder.includes({:certificate_contents=>
+          {:csr=>:signed_certificates}}).find_each(batch_size: 500) {|co|
       expired =
         ['paid'].include?(co.workflow_state) &&
         co.created_at < Settings.cert_expiration_threshold_days.to_i.days.ago &&

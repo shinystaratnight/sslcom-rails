@@ -34,6 +34,19 @@ class Csr < ActiveRecord::Base
     {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}
   }
 
+  scope :pending, joins(:certificate_content).where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']}).
+      select("distinct csrs.*").order(:certificate_contents=>:updated_at)
+
+  scope :range, lambda{|start, finish|
+    if start.is_a? String
+      s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+      start = Date.strptime start, s
+      finish = Date.strptime finish, f
+    end
+    where(:created_at + (start..finish))} do
+  end
+
   BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----"
   END_TAG="-----END CERTIFICATE REQUEST-----"
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"

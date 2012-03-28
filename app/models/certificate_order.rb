@@ -389,7 +389,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.retrieve_ca_certs(start, finish)
-    cos=range(start, finish).pending
+    #cos=range(start, finish).pending
+    cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     cos.each{|co|co.retrieve_ca_cert}
   end
 

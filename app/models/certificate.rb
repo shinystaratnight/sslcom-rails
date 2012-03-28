@@ -21,7 +21,7 @@ class Certificate < ActiveRecord::Base
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
     "SSL128TRIAL30 Trial SSL Certificate",
     "RapidSSL Trial (FreeSSL) SSL Certificate"], "high_assurance", "free"]
-  MAP_TO_OV=[["XRamp Premium Wildcard Certificate", "Comodo Elite SSL Certificate",
+  MAP_TO_OV=[["Comodo Elite SSL Certificate",
     "Comodo Premium SSL Certificate", "Comodo InstantSSL SSL Certificate",
     "SSL128SCG2.5 SSL Certificate", "Comodo Pro SSL Certificate",
     "ssl certificate", "RapidSSL SSL Certificate", "XRamp Enterprise SSL Certificate"],
@@ -33,7 +33,7 @@ class Certificate < ActiveRecord::Base
     "SSL123 thawte Certificate", "Comodo Platinum SSL Certificate",
     "Verisign Secure Site Pro SSL Certificate",
     "Comodo Gold SSL Certificate"], "ev", "ev"]
-  MAP_TO_WILDCARD=[["Comodo Premium Wildcard Certificate",
+  MAP_TO_WILDCARD=[["XRamp Premium Wildcard Certificate", "Comodo Premium Wildcard Certificate",
     "RapidSSL Wildcard Certificate", "Comodo Platinum Wildcard Certificate",
     "XRamp Enterprise Wildcard Certificate",
     "SSL128WCG10 Wildcard SSL Certificate"], "wildcard", "wildcard"]
