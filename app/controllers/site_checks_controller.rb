@@ -1,4 +1,6 @@
 class SiteChecksController < ApplicationController
+  respond_to :xml, :json
+
   # GET /site_checks
   # GET /site_checks.xml
   def index
@@ -40,16 +42,9 @@ class SiteChecksController < ApplicationController
   # POST /site_checks
   # POST /site_checks.xml
   def create
-    @site_check = SiteCheck.new(params[:site_checks])
-
-    respond_to do |format|
-      if @site_check.save
-        format.html { redirect_to(@site_check, :notice => 'Site check was successfully created.') }
-        format.xml  { render :xml => @site_check, :status => :created, :location => @site_check }
-      else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @site_check.errors, :status => :unprocessable_entity }
-      end
+    @site_checks=[]
+    params[:urls].gsub(/\s+/, "").split(/[,\n]/).each do |url|
+      @site_checks << SiteCheck.create(url: url)
     end
   end
 

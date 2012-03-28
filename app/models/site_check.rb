@@ -28,4 +28,21 @@ class SiteCheck < ActiveRecord::Base
     end
   end
 
+  def url=(o_url)
+    is_uri = o_url =~ /\:\/\//
+    write_attribute :url, is_uri ? URI.parse(o_url).host : o_url
+  end
+
+  def ou_array(subject)
+    s=subject_to_array(subject)
+    s.select do |o|
+      h=Hash[*o]
+      true unless (h["OU"]).blank?
+    end.map{|ou|ou[1]}
+  end
+
+  def subject_to_array(subject)
+    subject.split(/\/(?=[\w\d\.]+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
+  end
+
 end
