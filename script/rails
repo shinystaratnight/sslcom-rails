@@ -17,7 +17,7 @@ module Rails
                 :pid => File.expand_path("tmp/pids/server.pid"),
                 :config => File.expand_path("config.ru"),
                 :SSLEnable => true,
-                :SSLVerifyClient => OpenSSL::SSL::VERIFY_NONE,
+                :SSLVerifyClient => OpenSSL::SSL::VERIFY_PEER,
                 :SSLPrivateKey => OpenSSL::PKey::RSA.new(
                        File.open(File.expand_path('../../config/ssl/www_ssl_com.key', __FILE__)).read),
                 :SSLCertificate => OpenSSL::X509::Certificate.new(
