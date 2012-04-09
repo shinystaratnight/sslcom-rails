@@ -12,8 +12,11 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
-  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest", as: :other_party_requestable, dependent: :destroy
+  has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
+              as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
+  has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
+              as: :api_requestable, dependent: :destroy
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration

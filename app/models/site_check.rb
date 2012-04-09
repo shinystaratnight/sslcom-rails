@@ -6,11 +6,9 @@ require 'timeout'
 class SiteCheck < ActiveRecord::Base
   belongs_to :certificate_lookup
 
-  attr_accessor :certificate
-  attr_accessor :all_certificates
+  attr_accessor_with_default :verify_trust, true
   attr_accessor :ssl_client
-  attr_accessor :context
-  attr_accessor :result
+  attr_accessor :openssl_connect_result
 
   validates :url, :presence=>true, :on=>:save
 
@@ -18,27 +16,31 @@ class SiteCheck < ActiveRecord::Base
     sc.lookup
   }
 
-  COMMAND=->(url, port){%x"openssl s_client -connect #{url}:#{port} -CAfile /usr/lib/ssl/certs/ca-certificates.crt"}
-  TIMEOUT_DURATION=2
+  COMMAND=->(url, port){%x"echo QUIT | openssl s_client -connect #{url}:#{port} -CAfile /usr/lib/ssl/certs/ca-certificates.crt"}
+  TIMEOUT_DURATION=10
 
   def openssl_connect(port=443)
-    timeout(TIMEOUT_DURATION) do
+    self.openssl_connect_result=timeout(TIMEOUT_DURATION) do
       COMMAND.call self.url, port
     end
     rescue
   end
 
+  def s_client_issuers
+    self.openssl_connect_result ||= openssl_connect
+    self.openssl_connect_result.scan(/i\:(.+?)\n/).flatten
+  end
+
   def lookup
-    self.context = OpenSSL::SSL::SSLContext.new
-    self.context.verify_depth=1
-    self.context.ca_file="/usr/lib/ssl/certs/ca-certificates.crt"
-    #context.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    context = OpenSSL::SSL::SSLContext.new
+    if self.verify_trust
+      #self.context.verify_depth=5
+      context.ca_file="/usr/lib/ssl/certs/ca-certificates.crt"
+      context.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    end
     tcp_client = TCPSocket.new url, 443
     self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
     self.ssl_client.connect
-    self.result=self.ssl_client.verify_result
-    self.certificate=ssl_client.peer_cert_chain_with_openssl_extension.first
-    self.all_certificates=ssl_client.peer_cert_chain_with_openssl_extension
     serial=self.certificate.serial.to_s
     unless self.certificate.blank?
       self.certificate_lookup=CertificateLookup.find_or_create_by_serial(serial,
@@ -46,6 +48,20 @@ class SiteCheck < ActiveRecord::Base
         common_name: self.certificate.subject.common_name,
         expires_at: self.certificate.not_after)
     end
+  rescue
+    nil
+  end
+
+  def result
+    self.ssl_client.verify_result
+  end
+
+  def certificate
+    ssl_client.peer_cert_chain_with_openssl_extension.first
+  end
+
+  def all_certificates
+    ssl_client.peer_cert_chain_with_openssl_extension
   end
 
   def url=(o_url)
