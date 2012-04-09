@@ -186,7 +186,8 @@ SslCom::Application.routes.draw do
   match 'certificates/apidocs/apply' => 'restful_api#docs_apply', :as => :restful_apidocs_apply
 
   #cert api routes
-  match '/certificates/1.0/create' => "api#create_certificate", :constraints => {:subdomain=>"sws"}
+  match '/certificates/1.0/create' => "api#create_certificate_v1",
+        :constraints => {:subdomain=>"sws"}
 
   #took the anchor version out /\w+\/?$/ but need to test the results of this,
   #specifically the aff code should be the last thing and not followed by other characters

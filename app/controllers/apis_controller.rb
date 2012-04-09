@@ -75,7 +75,7 @@ class ApisController < ApplicationController
     end
   end
 
-  def create_certificate_order
+  def create_certificate_order_v1
     @co = CertificateOrder.new
   end
 end
