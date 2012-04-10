@@ -255,6 +255,10 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def country
+    read_attribute(:country).upcase
+  end
+
   def sent_success
     ca_certificate_requests.all.find{|cr|cr.success?}
   end

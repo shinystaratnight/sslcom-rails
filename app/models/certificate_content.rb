@@ -272,7 +272,7 @@ class CertificateContent < ActiveRecord::Base
           csr.strength < MIN_KEY_SIZE
       errors.add(:signing_request,
         "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
-          Country.accepted_countries.include?(csr.country.upcase)
+          Country.accepted_countries.include?(csr.country)
     end
   end
 
