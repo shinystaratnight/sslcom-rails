@@ -394,7 +394,7 @@ class CertificateOrder < ActiveRecord::Base
   def self.retrieve_ca_certs(start, finish)
     #cos=range(start, finish).pending
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
-    cos.each{|co|co.retrieve_ca_cert}
+    cos.each{|co|co.retrieve_ca_cert(true)}
   end
 
   def self.find_not_new(options=nil)
