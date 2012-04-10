@@ -43,7 +43,6 @@ class OrderNotifier < ActionMailer::Base
     @certificate_order=certificate_order
     @signed_certificate=certificate_order.certificate_content.csr.signed_certificate
     mail(
-      content_type: "text/plain",
       to: contact,
       from: Settings.from_email.orders,
       subject: "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{certificate_order.subject}"
