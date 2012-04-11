@@ -284,7 +284,8 @@
                 or sha512WithRSAEncryption (PKCS#1)
         %dt
           %span.api_key_or_value organization_name
-          %span.optional_api_key [is optional if Organization Name can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Organization Name.
         %dt.optional_api_key organization_unit_name
@@ -295,7 +296,8 @@
           Represents the Post Office Box.
         %dt
           %span.api_key_or_value street_address_1
-          %span.optional_api_key [is optional if Street Address 1 can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Street Address 1.
         %dt.optional_api_key street_address_2
@@ -306,22 +308,26 @@
           Represents the Street Address 3
         %dt
           %span.api_key_or_value locality_name
-          %span.optional_api_key [is optional if Locality Name can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Locality Name (eg city or town name).
         %dt
           %span.api_key_or_value state_or_province_name
-          %span.optional_api_key [is optional if State or Province Name can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the State or Province Name.
         %dt
           %span.api_key_or_value postal_code
-          %span.optional_api_key [is optional if Postal Code can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
         %dd
           Represents the Postal Code.
         %dt
           %span.api_key_or_value country_name
-          %span.optional_api_key [is optional if Country Name can be parsed from the csr]
+          %span.optional_api_key
+            [optional if parsed from csr]
         %dd
           Represents the Country Name (ISO3166 2-character country code).
         %dt.optional_api_key duns_number
