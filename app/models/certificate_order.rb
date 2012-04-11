@@ -653,7 +653,8 @@ class CertificateOrder < ActiveRecord::Base
             'isCustomerValidated' => 'Y',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
-            'foreignOrderNumber' => ref
+            'foreignOrderNumber' => ref,
+            'countryName'=>csr.country
           )
           ssl_com_order(options)
           last_sent = csr.domain_control_validations.last_sent

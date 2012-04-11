@@ -61,7 +61,7 @@ class CertificateContent < ActiveRecord::Base
       :message=> 'contains invalid characters.',
       :if => :certificate_order_has_csr_and_signing_request
     validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
-    validate :csr_validation, :if=>"csr"
+    validate :csr_validation, :if=>"new?"
   end
 
   attr_accessor  :additional_domains #used to html format results to page
@@ -234,8 +234,8 @@ class CertificateContent < ActiveRecord::Base
 
   def domains_validation
     is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
-    invalid_chars_msg = "have invalid characters. Only the following characters
-      are allowed [A-Za-z0-9.-#{'*' if is_wildcard}]"
+    invalid_chars_msg = "domain has invalid characters. Only the following characters
+      are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
     unless domains.blank?
       errors.add(:additional_domains, invalid_chars_msg) unless domains.reject{|domain|
         domain_validation_regex(is_wildcard, domain)}.empty?
@@ -245,8 +245,8 @@ class CertificateContent < ActiveRecord::Base
   def csr_validation
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_free = certificate_order.certificate.is_free?
-    invalid_chars_msg = "has invalid characters. Only the following characters
-      are allowed [A-Za-z0-9.-#{'*' if is_wildcard}]"
+    invalid_chars_msg = "domain has invalid characters. Only the following characters
+          are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     else

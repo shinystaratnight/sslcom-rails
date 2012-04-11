@@ -256,7 +256,14 @@ class Csr < ActiveRecord::Base
   end
 
   def country
-    read_attribute(:country).upcase
+    case read_attribute(:country)
+      when /united states.+/i, /usa/i
+        "US"
+      when /UK/i, /great britain.+/i, /england/i, /united kingdom.+/i
+        "GB"
+      else
+        read_attribute(:country).upcase
+    end
   end
 
   def sent_success
