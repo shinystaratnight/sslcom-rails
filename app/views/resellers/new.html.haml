@@ -5,7 +5,7 @@
   %h3 Reseller Profile Information
   %p Please fill out the required fields below to complete your reseller account registration
   =error_messages_for :reseller
-  -form_for @reseller, :url => account_reseller_path do |f|
+  =form_for @reseller, :url => account_reseller_path do |f|
     #stylized.default_form
       =render :partial => "form", :locals => {:f=>f}
     #button_container

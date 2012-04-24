@@ -28,7 +28,7 @@
                                   %span.validation_attention contacts are required but are missing
                       -elsif current_user && current_user.is_admin?
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
-                          -form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
+                          =form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id
                             %em
                               admin only:
@@ -132,7 +132,7 @@
                               -methods.each do |m|
                                 %dd=m
                           -if current_user.is_admin?
-                            -form_for h do |f|
+                            =form_for h do |f|
                               .validation_admin_controls
                                 =hidden_field_tag :validation, co.validation.id
                                 .validation_setting

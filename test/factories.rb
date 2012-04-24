@@ -76,7 +76,7 @@ FactoryGirl.define do
   end
 
   factory :certificate_content do
-    server_software {ServerSoftware.where(:title =~ "%java%").first}
+    server_software {ServerSoftware.where{title =~ "%java%"}.first}
     workflow_state "new"
 
     trait :standard_csr do

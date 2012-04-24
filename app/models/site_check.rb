@@ -6,11 +6,14 @@ require 'timeout'
 class SiteCheck < ActiveRecord::Base
   belongs_to :certificate_lookup
 
-  attr_accessor_with_default :verify_trust, true
-  attr_accessor :ssl_client
-  attr_accessor :openssl_connect_result
+  attr_accessor :verify_trust, :ssl_client, :openssl_connect_result
 
   validates :url, :presence=>true, :on=>:save
+
+  after_initialize do
+    return unless new_record?
+    self.verify_trust = true
+  end
 
   before_create{|sc|
     sc.lookup

@@ -1,31 +1,37 @@
 class ApiCertificateRequest < CaApiRequest
   attr_accessor :csr_obj
 
-  validate :access_key, :string_key, :csr, :product, :csr_obj, presence: true
-  validate :period, presence: true, format: /\d/, in: NON_EV_PERIODS,
-           if: lambda{|c|!(c.is_ev? || c.is_dv?)}
-  validate :period, presence: true, format: /\d/, in: EV_PERIODS,
-           if: lambda{|c|c.is_ev?}
-  validate :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
-  validate :server_software, presence: true, format: /\d/, in: ServerSoftware.listing.map(&:id)
-  validate :domain, :other_domains, presence: false, if: lambda{|c|!c.is_ucc?}
-  validate :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
-  validate :street_address_1, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("STREET1").blank?}
-  validate :locality_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.locality.blank?}
-  validate :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
-  validate :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
-  validate :country_name, presence: true, if: lambda{|c|c.csr_obj.country.blank?}
-  validate :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
-  validate :dcv_email_address, :email_address, :contact_email_address, format: :email
-  validate :business_category, format: /[bcd]/
-  validate :common_names_flag, format: /[01]/
-
-  before_create :parse_request
-
   NON_EV_PERIODS = [365, 730, 1095, 1461, 1826]
   EV_PERIODS = [365, 730]
 
-  PRODUCTS = %w(evssl evmdssl ovssl wcssl mdssl dvssl uccssl)
+  PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
+              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom"}
+
+  validates :account_key, :secret_key, :csr, :csr_obj, presence: true
+  validates :period, presence: true, format: /\d+/, inclusion: {in: NON_EV_PERIODS},
+           if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+  validates :period, presence: true, format: {with: /\d+/}, inclusion: {in: EV_PERIODS},
+           if: lambda{|c|c.is_ev?}
+  validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
+  validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
+      {in: ServerSoftware.all.map(&:id), message: "%{value} is not a valid server software"}
+  validates :domain, :other_domains, presence: true, if: lambda{|c|c.is_ucc?}
+  validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
+  validates :street_address_1, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("STREET1").blank?}
+  validates :locality_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.locality.blank?}
+  validates :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
+  validates :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
+  validates :country_name, presence: true, inclusion:
+      {in: Country.accepted_countries, message: "%{value} is not a valid ISO3166 2-character country code"},
+           if: lambda{|c|c.csr_obj.try "country.blank?"}
+  #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
+  validates :dcv_email_address, :email_address, :contact_email_address, email: true
+  validates :business_category, format: {with: /[bcd]/}
+  validates :common_names_flag, format: {with: /[01]/}
+  validates :product, presence: true, format: {with: /\d{3}/}, inclusion: {in: PRODUCTS.keys.map(&:to_s)} #use code instead of serial allows attribute changes without affecting the cert name
+  validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
+  validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
+  #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
 
   attr_accessor :account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
     :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -42,4 +48,25 @@ class ApiCertificateRequest < CaApiRequest
   def self.apply_for_certificate(certificate)
 
   end
+
+  def is_ev?
+    product =~ /ev/
+  end
+
+  def is_dv?
+    product =~ /dv/
+  end
+
+  def is_wildcard?
+    product =~ /wildcard/
+  end
+
+  def is_ucc?
+    product =~ /wildcard/
+  end
+
+  def is_not_ip
+    true
+  end
+
 end

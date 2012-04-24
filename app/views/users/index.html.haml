@@ -2,7 +2,7 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 #search_bar
-  -form_tag :search_users, :method=>:get do
+  =form_tag :search_users, :method=>:get do
     username or email
     =text_field_tag :search, @search
     =submit_tag 'search'
@@ -37,7 +37,7 @@
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details
-              -form_for u, :url=>admin_update_user_url(u) do |f|
+              =form_for u, :url=>admin_update_user_url(u) do |f|
                 %table(cellspacing="0")
                   %tbody
                     %tr

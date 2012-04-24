@@ -11,7 +11,7 @@
     -if current_order.amount.to_s.to_i > 0
       This charge will appear as SSL Corporation on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
-  -form_for *url_to_new_order do |f|
+  =form_for *url_to_new_order do |f|
     -if @certificate_order
       =hidden_field :certificate, :product
       =fields_for @certificate_order do |f|
@@ -68,7 +68,7 @@
               =fields_for :billing_profile, @billing_profile do |form|
                 = render :partial => "billing_profiles/form", :locals => { :form => form }
             .subheading Total Amount To Charge
-            =render :partial => "form", :locals => {:f => f, :object => object}
+            =render :partial => "form", :locals => {:f => f, :object => Order.new}
     -if certificate
       #subscriber_agreement
         %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:

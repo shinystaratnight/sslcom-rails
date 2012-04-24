@@ -26,7 +26,7 @@ SslCom::Application.routes.draw do
   match 'site_check' => 'site_checks#new', :as => :site_checks
 
   #api
-  match '/certificates/1.0/create' => 'apis#create_certificate_order',
+  match '/certificates/1.0/create' => 'apis#create_certificate_order_v1_0',
         :as => :api_create_certificate_order, :constraints => {:subdomain=>ApisController::SUBDOMAIN}
 
   resource :account, :controller=>:users do

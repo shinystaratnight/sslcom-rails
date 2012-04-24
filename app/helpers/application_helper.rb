@@ -125,7 +125,7 @@ module ApplicationHelper
   end
 
   def ordered_list_for_tree(channel)
-    returning "" do |tree|
+    "".tap do |tree|
       unless channel.root?
         tree << "<li>" << link_to(channel.name << ' (' << @release_count.select{|r|r.channel_id==channel.id}.size.to_s << ')', channel_path(channel)) << "</li>"
       else

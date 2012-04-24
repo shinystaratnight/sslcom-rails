@@ -1,4 +1,7 @@
 class ApisController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+
+  wrap_parameters false
   respond_to :xml, :json
 
   SUBDOMAIN = "sws"
@@ -75,7 +78,12 @@ class ApisController < ApplicationController
     end
   end
 
-  def create_certificate_order_v1
-    @co = CertificateOrder.new
+  def create_certificate_order_v1_0
+    #@acr = ApiCertificateRequest.new
+    #attr={}
+    #params.each{|k,v|attr.merge(k=>v) if @acr.attributes.keys.include? k}
+    params.delete :controller
+    params.delete :action
+    @acr = ApiCertificateRequest.create(params)
   end
 end

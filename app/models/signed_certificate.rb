@@ -16,12 +16,17 @@ class SignedCertificate < ActiveRecord::Base
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
-  attr_accessor_with_default :email_customer, false
+  attr_accessor :email_customer
 
   BEGIN_TAG="-----BEGIN CERTIFICATE-----"
   END_TAG="-----END CERTIFICATE-----"
   BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
   END_PKCS7_TAG="-----END PKCS7-----"
+
+  after_initialize do
+    return unless new_record?
+    self.email_customer = false
+  end
 
   after_create do |s|
     s.csr.certificate_content.issue!

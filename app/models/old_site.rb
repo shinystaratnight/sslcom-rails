@@ -519,7 +519,12 @@ module OldSite
     alias_attribute :crypted_password, :Password
     alias_attribute :created_at, :CreatedOn
     alias_attribute :updated_at, :LastUpdated
-    attr_accessor_with_default :status, 'enabled'
+    attr_accessor   :status
+
+    after_initialize do
+      return unless new_record?
+      self.status = "enabled"
+    end
 
     def self.invalid_accounts
       [].tap do |ia|

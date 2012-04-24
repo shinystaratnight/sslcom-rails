@@ -5,7 +5,7 @@
   %h3
     \#{@title}
   =error_messages_for :ssl_account
-  -form_for @ssl_account, :url=>update_settings_ssl_account_path do |f|
+  =form_for @ssl_account, :url=>update_settings_ssl_account_path do |f|
     #stylized.default_form
       =render :partial => "settings_form", :locals => {:f=>f}
     #button_container

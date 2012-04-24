@@ -1,7 +1,7 @@
 -content_for :title, "Edit Login Account"
 .reseller_registration_profile
   %h3 Edit Login Account Email
-  -form_for @user do |f|
+  =form_for @user do |f|
     =f.error_messages
     =hidden_field_tag 'edit_action', 'edit_email'
     #stylized.default_form

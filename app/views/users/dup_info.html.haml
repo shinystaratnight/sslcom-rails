@@ -4,7 +4,7 @@
 -emails = ([@user.email]+@user.duplicate_v2_users.map(&:email)).uniq
 .order_container
   %h3=title
-  -form_for @user, :url=>consolidate_user_path(@user) do |f|
+  =form_for @user, :url=>consolidate_user_path(@user) do |f|
     =f.error_messages
     #stylized.default_form
       -if logins.count > 1

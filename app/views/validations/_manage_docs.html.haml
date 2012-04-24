@@ -33,7 +33,7 @@
                 =link_to image_tag('preview.png', :class=>'blue_icon')+'preview', vh.document_url(:preview), :rel=>'prettyPhoto', :class=>'preview_link'
                 =link_to image_tag('download.png', :class=>'blue_icon')+'download', vh.document_url
             .public_settings
-              -form_for vh do |f|
+              =form_for vh do |f|
                 .publish_to_smart_seal_box
                   =f.check_box :publish_to_site_seal
                   make publicly available through SSL Smart SeaL Report

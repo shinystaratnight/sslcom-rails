@@ -12,7 +12,7 @@ class Surl < ActiveRecord::Base
   validates :password, length: {within: 6..20}, presence: true, :if => :perform_password_validation?
 
   attr_accessor :password
-  attr_accessor_with_default :set_access_restrictions, "0"
+  attr_accessor :set_access_restrictions
 
   REDIRECTED="redirect"
   RENDERED="render"
@@ -48,7 +48,7 @@ class Surl < ActiveRecord::Base
     s.update_attributes identifier: s.id.encode62
   end
 
-  default_scope where(:status.ne=~DISABLED_STATUS.to_s).order(:created_at.desc)
+  default_scope where{status >> [nil, DISABLED_STATUS]}.order(:created_at.desc)
 
   def access_granted(surl)
     username==surl.username && valid_password?(surl.password)
@@ -81,6 +81,7 @@ class Surl < ActiveRecord::Base
       self.share = false
       self.require_ssl = false
       self.guid=UUIDTools::UUID.random_create.to_s
+      self.set_access_restrictions="0"
     end
     prep
   end

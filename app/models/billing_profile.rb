@@ -23,7 +23,7 @@ class BillingProfile < ActiveRecord::Base
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
   scope :success, lambda{
-    joins({:orders=>:order_transactions}).where({:orders=>{:order_transactions=>[:success => true]}})
+    joins{orders.transactions}.where{orders.transactions.success==true}
   }
 
   def verification_value?() false end

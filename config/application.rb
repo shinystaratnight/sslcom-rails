@@ -44,19 +44,22 @@ module SslCom
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password, :password_confirmation]
-    config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
+    #config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
 
     #machinist generator
     config.generators do |g|
       g.fixture_replacement :machinist
     end
 
-    config.middleware.use "ForceSSL"
+    #config.middleware.use "ForceSSL"
+    config.force_ssl = true
     config.middleware.use OAuth::Rack::OAuthFilter
+
+    # Enable the asset pipeline
+    config.assets.enabled = false
   end
 end
 
-require "#{Rails.root}/lib/generator_methods.rb"
 require "#{Rails.root}/lib/base.rb"
 require "#{Rails.root}/lib/asset_tag_helper.rb"
 require "#{Rails.root}/lib/array.rb"

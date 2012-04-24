@@ -19,7 +19,7 @@ module CollectiveIdea #:nodoc:
         def purchase(*sellables)
           sellables = sellables.flatten
           raise ArgumentError.new("Sellable models must have a :price") unless sellables.all? {|sellable| sellable.respond_to? :price }
-          returning self.orders.build do |order|
+          self.orders.build.tap do |order|
             sellables.each do |sellable|
               li=order.line_items.build :sellable => sellable
             end

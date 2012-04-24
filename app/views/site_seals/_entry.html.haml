@@ -14,7 +14,7 @@
                     %strong site seal settings
                     %li.small_section
                       -if permitted_to?(:admin_update, co.site_seal)
-                        -form_for co.site_seal, :url=>admin_update_site_seal_path(co.site_seal), :html=>{:alt=>"#{i}", :class=>'edit_site_seal_status'} do |f|
+                        =form_for co.site_seal, :url=>admin_update_site_seal_path(co.site_seal), :html=>{:alt=>"#{i}", :class=>'edit_site_seal_status'} do |f|
                           =hidden_field_tag 'certificate_order', co.id
                           .admin_only(class="admin_approve_#{i}" style='color:red')
                             %em
@@ -31,7 +31,7 @@
                                 #{check_box_tag "email_customer", true, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
                       -else
-                        -form_for co.site_seal, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
+                        =form_for co.site_seal, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                           =hidden_field_tag 'certificate_order', co.id
                           #{f.check_box :preferred_artifacts_status, {}, "activate", "deactivate"}enable Site Seal Artifacts?
                   -if co.site_seal.preferred_seal_image?

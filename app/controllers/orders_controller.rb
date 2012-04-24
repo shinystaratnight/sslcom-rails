@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   include OrdersHelper
-  resource_controller
+  #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
   before_filter :find_order, :only => [:show]

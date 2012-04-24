@@ -13,11 +13,11 @@ class Csr < ActiveRecord::Base
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
   has_many    :domain_control_validations do
     def last_sent
-      where(:email_address !~ 'null').last
+      where{email_address !~ 'null'}.last
     end
 
     def last_emailed
-      where(:email_address !~ 'null', :dcv_method + [nil,'email']).last
+      where{(email_address !~ 'null') & (dcv_method >> [nil,'email'])}.last
     end
   end
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
@@ -28,14 +28,16 @@ class Csr < ActiveRecord::Base
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
   #default_scope order(:created_at.desc) #theres about 17 records without proper bodies we should clean up later
-  default_scope where(:common_name.ne=>nil).order(:created_at.desc)
+  default_scope where{common_name != nil}.order(:created_at.desc)
 
   scope :search, lambda {|term|
-    {:conditions => ["common_name like ?", '%'+term+'%'], :include=>{:certificate_content=>:certificate_order}}
+    {:conditions => ["common_name like ?", '%'+term+'%'],
+     :include=>{:certificate_content=>:certificate_order}}
   }
 
-  scope :pending, joins(:certificate_content).where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']}).
-      select("distinct csrs.*").order(:certificate_contents=>:updated_at)
+  scope :pending, joins(:certificate_content).
+      where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
+      order(:certificate_contents=>:updated_at)
 
   scope :range, lambda{|start, finish|
     if start.is_a? String
@@ -44,7 +46,7 @@ class Csr < ActiveRecord::Base
       start = Date.strptime start, s
       finish = Date.strptime finish, f
     end
-    where(:created_at + (start..finish))} do
+    where{created_at >> (start..finish)}} do
   end
 
   BEGIN_TAG="-----BEGIN CERTIFICATE REQUEST-----"

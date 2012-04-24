@@ -6,20 +6,22 @@ class Order < ActiveRecord::Base
   belongs_to  :billable, :polymorphic => true
   belongs_to  :address
   belongs_to  :billing_profile
-  belongs_to  :deducted_from, :class_name => "Order",
-    :foreign_key => "deducted_from_id"
-  has_many    :line_items, :dependent => :destroy
+  belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
+  has_many    :line_items, dependent: :destroy
   has_many    :payments
-  has_many    :transactions, :class_name => 'OrderTransaction',
-                :dependent => :destroy
+  has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   
   money :amount
   before_create :total, :determine_description
   after_create :generate_reference_number
+
   #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
-  attr_accessor_with_default  :is_free, false
-  attr_accessor_with_default  :receipt, false
-  attr_accessor_with_default  :deposit_mode, false
+  attr_accessor  :is_free, :receipt, :deposit_mode
+
+  after_initialize do
+    return unless new_record?
+    self.is_free, self.receipt, self.deposit_mode = false, false, false
+  end
 
   SSL_CERTIFICATE = "SSL Certificate Order"
 
@@ -27,15 +29,15 @@ class Order < ActiveRecord::Base
 #  default_scope includes(:line_items).where({line_items:
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).where(:state ^ 'payment_declined').order(:created_at.desc)
+  default_scope includes(:line_items).where{state != 'payment_declined'}.order(:created_at.desc)
 
-  scope :not_new, select("distinct orders.*").merge(
-    LineItem.joins(:sellable.type(CertificateOrder)=>:certificate_contents).
-    where(:sellable.type(CertificateOrder)=>{:workflow_state=>'paid'} )) #&
-    #{:sellable.type(CertificateOrder)=>{:certificate_contents=>{:workflow_state.ne=>"new"}}}))
+  scope :not_new, lambda {
+    joins{line_items.sellable(CertificateOrder)}.
+        where{line_items.sellable(CertificateOrder).workflow_state=='paid'}
+  }
 
   scope :search, lambda {|term|
-    where(:reference_number =~ '%'+term+'%')
+    where{reference_number =~ "#{term}"}
   }
 
   scope :not_free, lambda{
@@ -49,7 +51,9 @@ class Order < ActiveRecord::Base
       start = Date.strptime start, s
       finish = Date.strptime finish, f
     end
-    where(:created_at + (start..finish))} do
+    where{created_at >> (start..finish)}
+
+  } do
 
     def amount
       self.not_free.sum(:cents)*0.01
@@ -98,53 +102,83 @@ class Order < ActiveRecord::Base
     update_attribute :canceled_at, Time.now
   end
 
-  # BEGIN acts_as_state_machine
-  acts_as_state_machine :initial => :pending
+  include Workflow
+  workflow do
+    state :pending do
+      event :give_away, transitions_to: :payment_not_required
+      event :payment_authorized, transitions_to: :authorized
+      event :transaction_declined, :transitions_to => :payment_declined
+    end
 
-  state :pending
-  state :authorized
-  state :paid
-  state :fully_refunded
-  state :payment_declined
-  state :payment_not_required
+    state :authorized do
+      event :payment_captured, transitions_to: :paid
+      event :transaction_declined, transitions_to: :authorized
+    end
 
-  event :give_away do
-    transitions :from => :pending,
-                :to   => :payment_not_required
+    state :paid do
+      event :full_refund, transitions_to: :fully_refunded
+    end
 
-    transitions :from => :payment_declined,
-                :to   => :payment_not_required
+    state :fully_refunded
+
+    state :payment_declined do
+      event :give_away, transitions_to: :payment_not_required
+      event :payment_authorized, transitions_to: :authorized
+      event :transaction_declined, :transitions_to => :payment_declined
+
+    end
+
+    state :payment_not_required
+
   end
 
-  event :payment_authorized do
-    transitions :from => :pending,
-                :to   => :authorized
-
-    transitions :from => :payment_declined,
-                :to   => :authorized
-  end
-
-  event :payment_captured do
-    transitions :from => :authorized,
-                :to   => :paid
-  end
-
-  event :transaction_declined do
-    transitions :from => :pending,
-                :to   => :payment_declined
-
-    transitions :from => :payment_declined,
-                :to   => :payment_declined
-
-    transitions :from => :authorized,
-                :to   => :authorized
-  end
-
-  event :full_refund do
-    transitions :from => :paid,
-                :to   => :fully_refunded
-  end
-  # END acts_as_state_machine
+  ## BEGIN acts_as_state_machine
+  #acts_as_state_machine :initial => :pending
+  #
+  #state :pending
+  #state :authorized
+  #state :paid
+  #state :fully_refunded
+  #state :payment_declined
+  #state :payment_not_required
+  #
+  #event :give_away do
+  #  transitions :from => :pending,
+  #              :to   => :payment_not_required
+  #
+  #  transitions :from => :payment_declined,
+  #              :to   => :payment_not_required
+  #end
+  #
+  #event :payment_authorized do
+  #  transitions :from => :pending,
+  #              :to   => :authorized
+  #
+  #  transitions :from => :payment_declined,
+  #              :to   => :authorized
+  #end
+  #
+  #event :payment_captured do
+  #  transitions :from => :authorized,
+  #              :to   => :paid
+  #end
+  #
+  #event :transaction_declined do
+  #  transitions :from => :pending,
+  #              :to   => :payment_declined
+  #
+  #  transitions :from => :payment_declined,
+  #              :to   => :payment_declined
+  #
+  #  transitions :from => :authorized,
+  #              :to   => :authorized
+  #end
+  #
+  #event :full_refund do
+  #  transitions :from => :paid,
+  #              :to   => :fully_refunded
+  #end
+  ## END acts_as_state_machine
 
   # BEGIN number
   def number

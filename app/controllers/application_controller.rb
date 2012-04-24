@@ -546,8 +546,8 @@ class ApplicationController < ActionController::Base
 
   def get_valid_surls(page=nil)
     requested=get_guids
-    guids=page.blank? ? Surl.where(:guid + requested) :
-        Surl.where(:guid + requested).paginate(page)
+    guids=page.blank? ? Surl.where{guid >> requested} :
+        Surl.where{guid >> requested}.paginate(page)
     unless guids.empty?
       (requested - guids.map(&:guid)).map do |g|
         remove_link_from_cookie(g)

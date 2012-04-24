@@ -236,7 +236,7 @@
                                   \#{sc.created_at.strftime("%b %d, %Y")}
                                 -else
                                   &nbsp
-                            -form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                            =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
                               =f.text_area :body, :cols=>30, :rows=>10
                               .clearfix
                                 #{check_box_tag "email_customer", true, true}notify customer?

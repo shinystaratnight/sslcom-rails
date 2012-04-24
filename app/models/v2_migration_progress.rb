@@ -15,13 +15,13 @@ class V2MigrationProgress < ActiveRecord::Base
 
   def self.find_non_mapped(klass)
     ids=klass.all.map(&:id)
-    vps=where({:migratable_type=>klass.to_s} & :migratable_id + ids)
+    vps=where{(migratable_type==klass.to_s) & (migratable_id >> ids)}
     klass.find((ids-vps.map(&:migratable_id)))
   end
 
   def self.find_multiple_mapped(klass)
     ids=klass.all.map(&:id)
-    vps=where({:migratable_type=>klass.to_s} & :migratable_id + ids).
+    vps=where{(migratable_type==klass.to_s) & (migratable_id >> ids)}.
         group(:migratable_id).having("count(migratable_id)>1")
   end
 
@@ -62,10 +62,10 @@ class V2MigrationProgress < ActiveRecord::Base
 
   def self.remove_orphans(options)
     t_ids=all_ids options[:class]
-    vs_ids=select(options[:id]).where(:migratable_type.eq => options[:class_name]).map(&options[:id])
+    vs_ids=select(options[:id]).where{migratable_type == options[:class_name]}.map(&options[:id])
     diff = vs_ids - t_ids
     removed=unless diff.empty?
-      where(options[:id] + diff).delete_all
+      where{options[:id] >> diff}.delete_all
     else
       0
     end

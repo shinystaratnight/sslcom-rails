@@ -15,19 +15,19 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
-  has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
-              as: :api_requestable, dependent: :destroy
+  #has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
+  #            as: :api_requestable, dependent: :destroy
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration
-  attr_accessor_with_default :has_csr, false
+  attr_accessor :has_csr
 
   #will_paginate
   cattr_reader :per_page
   @@per_page = 10
 
   #used to temporarily determine lineitem qty
-  attr_accessor_with_default :quantity, 1
+  attr_accessor :quantity
   preference  :payment_order, :string, :default=>"normal"
   preference  :certificate_chain, :string
 
@@ -48,47 +48,48 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_signed_certificates, lambda {|term|
-    joins({:certificate_contents=>{:csr=>:signed_certificates}}).where({:certificate_contents=>{:csr=>{:signed_certificates=>[:common_name =~ "%#{term}%"]}}})
+    joins{certificate_contents.csr.signed_certificates}.
+        where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
   }
 
   scope :search_csr, lambda {|term|
-    joins({:certificate_contents=>:csr}).where({:certificate_contents=>{:csr=>[:common_name =~ "%#{term}%"]}})
+    joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
   }
 
   scope :search_with_csr, lambda {|term, options|
-    cids=SignedCertificate.select(:csr_id).where(:common_name=~"%#{term}%").map(&:csr_id)
+    cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
       '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
       merge(options)
   }
 
   scope :reprocessing, lambda {
-    cids=Preference.select("owner_id").joins(:owner.type(CertificateContent)).
-        where(:name.matches=>"reprocessing"  && {value: 1}).map(&:owner_id)
-    joins({:certificate_contents=>:csr}).where({:certificate_contents=>:id + cids}).order(:certificate_contents=>{:csr=>:updated_at.desc})
+    cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
+        where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
+    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
+        order(:certificate_contents=>{:csr=>:updated_at.desc})
   }
 
   scope :order_by_csr, lambda {
-    joins({:certificate_contents=>:csr}).order({:certificate_contents=>{:csr=>:updated_at.desc}})
+    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
   }
 
-  scope :unvalidated, where({is_expired: false} & (
-    {:certificate_contents=>:workflow_state + ['pending_validation', 'contacts_provided']})).
-      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
-
-  scope :incomplete, where({is_expired: false} & (
-    {:certificate_contents=>:workflow_state + ['csr_submitted', 'info_provided', 'contacts_provided']})).
-      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
-
-  scope :pending, where({:certificate_contents=>:workflow_state + ['pending_validation', 'validated']}).
-      select("distinct certificate_orders.*").order(:certificate_contents=>:updated_at)
-
-  scope :has_csr, where({:workflow_state=>'paid'} &
-    {:certificate_contents=>{:signing_request.ne=>""}}).select("distinct certificate_orders.*").
+  scope :unvalidated, where{(is_expired==false) &
+    (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
       order(:certificate_contents=>:updated_at)
 
+  scope :incomplete, where{(is_expired==false) &
+    (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
+      order(:certificate_contents=>:updated_at)
+
+  scope :pending, where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
+      order(:certificate_contents=>:updated_at)
+
+  scope :has_csr, where{(workflow_state=='paid') &
+    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
+
   scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}}).select("distinct certificate_orders.*")
+    {:certificate_contents=>{workflow_state: "new"}})
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|
@@ -100,7 +101,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :unrenewed, not_new.where(:renewal_id=>nil)
 
-  scope :renewed, not_new.where(:renewal_id ^ nil)
+  scope :renewed, not_new.where{:renewal_id != nil}
 
   scope :nonfree, not_new.where(:amount.gt => 0)
 
@@ -122,7 +123,9 @@ class CertificateOrder < ActiveRecord::Base
       start = Date.strptime start, s
       finish = Date.strptime finish, f
     end
-    where(:created_at + (start..finish))} do
+    where{created_at >> (start..finish)}
+
+  } do
 
     def amount
       self.nonfree.sum(:amount)*0.01
@@ -177,6 +180,13 @@ class CertificateOrder < ActiveRecord::Base
       v.validation_rulings << vrl
     end
     co.site_seal=SiteSeal.create
+  end
+
+  def after_initialize
+    if new_record?
+      self.quantity = 1
+      self.has_csr = false
+    end
   end
 
   include Workflow

@@ -112,15 +112,15 @@ module ScottBarron                   #:nodoc:
           self.extend(ClassMethods)
           raise NoInitialState unless opts[:initial]
           
-          write_inheritable_attribute :states, {}
-          write_inheritable_attribute :initial_state, opts[:initial]
-          write_inheritable_attribute :transition_table, {}
-          write_inheritable_attribute :event_table, {}
-          write_inheritable_attribute :state_column, opts[:column] || 'state'
+          class_attribute :states, {}
+          class_attribute :initial_state, opts[:initial]
+          class_attribute :transition_table, {}
+          class_attribute :event_table, {}
+          class_attribute :state_column, opts[:column] || 'state'
           
-          class_inheritable_reader    :initial_state
-          class_inheritable_reader    :state_column
-          class_inheritable_reader    :transition_table
+          class_attribute    :initial_state
+          class_attribute    :state_column
+          class_attribute    :transition_table
           class_inheritable_reader    :event_table
           
           self.send(:include, ScottBarron::Acts::StateMachine::InstanceMethods)

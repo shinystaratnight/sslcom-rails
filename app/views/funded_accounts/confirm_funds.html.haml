@@ -6,7 +6,7 @@
 -styles=@certificate_order.blank? ? ['stylized', 'deposit_funds_form'] : ["",""]
 .reseller_registration_select_tier
   %h3=title
-  -form_for FundedAccount.new, :url => apply_or_free, :html => { :method => :put} do |f|
+  =form_for FundedAccount.new, :url => apply_or_free, :html => { :method => :put} do |f|
     -if @certificate_order
       =hidden_field_tag("certificate_order")
     -elsif @certificate_orders

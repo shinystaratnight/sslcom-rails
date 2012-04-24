@@ -41,17 +41,17 @@ class Certificate < ActiveRecord::Base
 
   SUBSCRIBER_AGREEMENTS = {
     free: {title: "Free SSL Subscriber Agreement",
-          location: "/public/agreements/free_ssl_subscriber_agreement.txt"},
+          location: "public/agreements/free_ssl_subscriber_agreement.txt"},
     ev:   {title: "EV SSL Subscriber Agreement",
-          location: "/public/agreements/ssl_subscriber_agreement.txt"},
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
     high_assurance:  {title: "High Assurance SSL Subscriber Agreement",
-          location: "/public/agreements/ssl_subscriber_agreement.txt"},
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
     ucc:  {title: "UCC SSL Subscriber Agreement",
-          location: "/public/agreements/ssl_subscriber_agreement.txt"},
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
     evucc:   {title: "EV SSL Subscriber Agreement",
-          location: "/public/agreements/ssl_subscriber_agreement.txt"},
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
-          location: "/public/agreements/ssl_subscriber_agreement.txt"}}
+          location: "public/agreements/ssl_subscriber_agreement.txt"}}
 
   WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
   #Comodo prods:
@@ -91,9 +91,9 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  scope :public, where((:product ^ 'mssl') & (:serial =~ "%sslcom%"))
-  scope :sitemap, where((:product ^ 'mssl') & (:product !~ '%tr'))
-  scope :for_sale, where(:serial =~ "%sslcom%")
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}
+  scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
+  scope :for_sale, where{serial =~ "%sslcom%"}
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
@@ -296,13 +296,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def duplicate_tiers(new_serial)
-    Certificate.where(:serial =~ "#{serial_root}%").map {|c|c.duplicate(new_serial)}
+    Certificate.where{serial =~ "#{serial_root}%"}.map {|c|c.duplicate(new_serial)}
   end
 
   # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
   def self.create_sslcom_products
     %w(evucc ucc ev ov dv wc).each do |serial|
-      Certificate.where(:serial =~ serial+"%").first.duplicate_tiers serial+"256sslcom"
+      Certificate.where{serial =~ serial+"%"}.first.duplicate_tiers serial+"256sslcom"
     end
   end
 end

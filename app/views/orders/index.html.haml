@@ -1,7 +1,7 @@
 -title = 'Orders History'
 -content_for :title, title
 #search_bar
-  -form_tag :search_orders, :method=>:get do
+  =form_tag :search_orders, :method=>:get do
     order #
     =text_field_tag :search, @search
     =submit_tag 'search'

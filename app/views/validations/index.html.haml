@@ -2,7 +2,7 @@
 =render :partial => 'index_scripts'
 -unless @certificate_orders.blank? || @certificate_orders.empty?
   #search_bar
-    -form_tag :search_validations, :method=>:get do
+    =form_tag :search_validations, :method=>:get do
       subject or ref#
       =text_field_tag :search, @search
       =submit_tag 'search'

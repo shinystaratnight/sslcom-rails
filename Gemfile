@@ -1,17 +1,16 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.10'
+gem 'rails', '3.2.3'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
-gem "rake" #, "0.8.7" #the latest version 0.9.2 causes conflicts
-gem 'mysql2', '~> 0.2.7'
+gem 'mysql2'
 gem 'workflow'
 gem "rabl"
 #gem 'preferences'
 gem 'wirble'
 gem 'awesome_print'
-gem 'activemerchant', '1.10.0'
+gem 'activemerchant'
 #gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
 gem 'will_paginate'
@@ -19,10 +18,11 @@ gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 #gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
-gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
+#gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
+gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
-gem "savon", "0.7.9"
+gem "savon"
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
 gem 'compass'
 gem 'rb-inotify'
@@ -31,7 +31,7 @@ gem 'aws-sdk'
 gem 'xml-simple'
 gem 'json'
 gem 'easy_roles'
-gem 'meta_where' #replace with gem 'squeel' when going to Rails 3.1
+gem 'squeel'
 gem 'yui-compressor'
 gem 'jammit'
 gem "rails_config"
@@ -45,6 +45,7 @@ gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
+gem "therubyracer"
 
 # Deploy with Capistrano
 #gem 'capistrano'
@@ -63,14 +64,14 @@ gem 'nokogiri'
     gem 'ruby_parser'
     #gem 'ruby-debug-base19'
     #gem 'ruby-debug-ide19'
-    gem 'ruby-debug19'
+    #gem 'ruby-debug19'
     gem "rspec-rails"
-    gem 'activerecord-sqlserver-adapter'
+    #gem 'activerecord-sqlserver-adapter'
     gem 'ruby-odbc'
     gem 'launchy'
     gem 'spork-rails'
     #gem 'spork'
-    gem 'active_reload'
+    #gem 'active_reload'
   end
 
   group :test do

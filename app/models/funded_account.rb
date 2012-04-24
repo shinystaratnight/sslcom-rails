@@ -8,7 +8,12 @@ class FundedAccount < ActiveRecord::Base
 
   attr_accessor :funding_source
   attr_accessor :order_type
-  attr_accessor_with_default :deduct_order, false
+  attr_accessor :deduct_order
+
+  after_initialize do
+    return unless new_record?
+    self.deduct_order = false
+  end
 
   NEW_CREDIT_CARD = "new credit card"
 

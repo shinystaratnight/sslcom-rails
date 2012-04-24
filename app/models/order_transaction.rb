@@ -6,11 +6,11 @@ class OrderTransaction < ActiveRecord::Base
   cattr_accessor :gateway
 
   scope :paid_successfully, lambda{
-    where({:success=> true} & {:amount.gt => 0})
+    where{(success == true) & (amount > 0)}
   }
  
   scope :not_free, lambda{
-    where({:amount.gt => 0})
+    where{amount > 0}
   }
 
   class << self

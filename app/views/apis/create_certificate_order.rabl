@@ -1,2 +1,0 @@
-object @co
-attributes :ref

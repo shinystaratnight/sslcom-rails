@@ -9,7 +9,7 @@
     all correspondences related to this certificate order including receipts,
     validation requests, status updates, etc.
   =error_messages_for :contact
-  -form_for @certificate_content do |f|
+  =form_for @certificate_content do |f|
     #stylized.default_form
       =f.fields_for :contacts do |c|
         =render 'certificate_contact_fields', :f => c

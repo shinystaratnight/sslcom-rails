@@ -20,7 +20,7 @@
 #stylized.reseller_registration_form
   .heading Select Pricing Tier
   %p Please select the pricing tier that fits your requirements and click the submit button. Pricing information can be found on the right column.
-  -form_for @reseller, :url => account_reseller_path do |f|
+  =form_for @reseller, :url => account_reseller_path do |f|
     =f.error_messages
     =render :partial => "tiers"
     %div(style='width:100%')

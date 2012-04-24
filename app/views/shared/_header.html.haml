@@ -9,7 +9,7 @@
       %div{:style=>'padding-top:5px;'}
         #cart
           ="#{image_tag 'cart.jpg', {:style=>'vertical-align: bottom;'}}"+"#{link_to pluralize(cart_items.size, "item")<<' in cart', {:controller => :orders, :action => :show_cart, :id => :current}, :id => 'cart_size'}"
-        -form_tag search_path, :method=>:get do
+        =form_tag search_path, :method=>:get do
           #search
             -if show_studio_only?
               %span#search_only_studio{:style=>'visibility: hidden;'}
