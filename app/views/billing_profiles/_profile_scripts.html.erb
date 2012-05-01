@@ -9,8 +9,8 @@ $('#expand_register_card').live('click', function(){
   if(profile_form_hidden){
     $('#register_card_form').fadeIn();
     $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
-    profile_id = $(':radio[name=funding_source]:checked').attr("id");
-    $(':radio[name=funding_source]').attr("checked","");
+    profile_id = $(':radio[name*=funding_source]:checked').attr("id");
+    $(':radio[name*=funding_source]').removeAttr('checked');
     profile_form_hidden = false;
   }
   else{

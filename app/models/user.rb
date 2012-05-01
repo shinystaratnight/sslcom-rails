@@ -46,12 +46,12 @@ class User < ActiveRecord::Base
 
   def deliver_activation_instructions!
     reset_perishable_token!
-    UserNotifier.deliver_activation_instructions(self)
+    UserNotifier.activation_instructions(self).deliver
   end
 
   def deliver_activation_confirmation!
     reset_perishable_token!
-    UserNotifier.deliver_activation_confirmation(self)
+    UserNotifier.activation_confirmation(self).deliver
   end
 
   def deliver_password_reset_instructions!

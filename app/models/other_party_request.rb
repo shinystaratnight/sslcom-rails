@@ -7,7 +7,7 @@ class OtherPartyRequest < ActiveRecord::Base
   validate    :email_addresses_formats
 
   before_validation on: :create do |o|
-    o.identifier='opvr-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+    o.identifier='opvr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
   end
 
   def email_addresses=(emails)

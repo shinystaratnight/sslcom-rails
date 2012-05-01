@@ -9,6 +9,6 @@ class Unsubscribe < ActiveRecord::Base
   ONLY="only"
 
   before_validation do |un|
-    un.ref ||='un-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+    un.ref ||='un-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
   end
 end

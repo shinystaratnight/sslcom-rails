@@ -242,7 +242,7 @@ EOS
 
   #FactoryGirl.define do
   #  sequence :acct_number do |n|
-  #    n #.to_s+ActiveSupport::SecureRandom.hex(1)+
+  #    n #.to_s+SecureRandom.hex(1)+
   #          '-'+Time.now.to_i.to_s(32)
   #  end
   #end
@@ -250,7 +250,7 @@ EOS
   factory :ssl_account do
     preferred_reminder_notice_destinations '0'
     sequence :acct_number do |n|
-      n.to_s+ActiveSupport::SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
+      n.to_s+SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
     end
 
     factory :ssl_account_reseller do

@@ -170,7 +170,7 @@ class CertificateOrder < ActiveRecord::Base
 
   before_create do |co|
     co.is_expired=false
-    co.ref='co-'+ActiveSupport::SecureRandom.hex(1)+Time.now.to_i.to_s(32)
+    co.ref='co-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     v     =co.create_validation
     co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
     co.certificate.validation_rulings.each do |cvrl|
@@ -602,8 +602,7 @@ class CertificateOrder < ActiveRecord::Base
         addys << technical_contact.email if
           technical_contact && et=="processed" &&
           ssl_account.send("preferred_#{et}_include_cert_#{ct}?")
-        addys.uniq!
-      end
+      end.uniq
     end
   end
 
@@ -762,10 +761,10 @@ class CertificateOrder < ActiveRecord::Base
   def post_process_csr
     certificate_content.submit_csr!
     if ssl_account.is_registered_reseller?
-      OrderNotifier.deliver_reseller_certificate_order_paid(ssl_account, self)
+      OrderNotifier.reseller_certificate_order_paid(ssl_account, self).deliver
     else
       receipt_recipients.each do |c|
-        OrderNotifier.deliver_certificate_order_paid(c, self)
+        OrderNotifier.certificate_order_paid(c, self).deliver
       end
     end
     site_seal.conditionally_activate!

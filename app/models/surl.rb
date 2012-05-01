@@ -115,12 +115,12 @@ class Surl < ActiveRecord::Base
 
   # Performs the actual password encryption. You want to change this salt to something else.
   def self.hash_password(password, salt)
-    Digest::SHA1.hexdigest(password, salt)
+    Digest::SHA1.hexdigest(password+salt)
   end
 
   # Sets the hashed version of self.password to password_hash, unless it's blank.
   def hash_password
-    self.password_salt=ActiveSupport::SecureRandom.base64(8)
+    self.password_salt=SecureRandom.base64(8)
     self.password_hash = self.class.hash_password(self.password,self.password_salt) unless self.password.blank?
   end
 

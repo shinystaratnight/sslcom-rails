@@ -86,7 +86,11 @@ module ApplicationHelper
   def country_select_field_for(form, field, priority_countries = nil, options = {}, html_options = {})
     #TODO needs fixing
     #form_field = localized_country_select form.object_name, field, priority_countries, options, html_options
-    form_field = country_select form.object_name, field, priority_countries, options, html_options
+    country_options = options_for_select(Country.all.collect {|c| [ c.name, c.name ] }.sort{|x,y|x[0]<=>y[0]})
+    if priority_countries
+      country_options = options_for_select(priority_countries+[""], disabled: [""])+country_options
+    end
+    form_field = select(form.object_name, field, country_options, options, html_options)
     label = content_tag("label", "#{'*' if options.delete(:required)}#{field.humanize}:".gsub(/\b\w/) {|s| s.upcase }, :for => field) unless options.delete(:no_label)
     append = yield if block_given?
     create_tags label, form_field, options, append

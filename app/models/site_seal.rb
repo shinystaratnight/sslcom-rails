@@ -33,7 +33,7 @@ class SiteSeal < ActiveRecord::Base
   CLICK_TO_EXPAND = 'click to for more details'
 
   before_create {|ss|
-    ss.ref=ActiveSupport::SecureRandom.hex(4)+'-'+Time.now.to_i.to_s(16)
+    ss.ref=SecureRandom.hex(4)+'-'+Time.now.to_i.to_s(16)
   }
 
   preference  :seal_image, :string

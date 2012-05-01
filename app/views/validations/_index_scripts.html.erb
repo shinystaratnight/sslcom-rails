@@ -123,7 +123,7 @@ jQuery(function($) {
     }
     else{
       $('#request_validation_from_others').show();
-      $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').attr("checked", true);
+      $(':radio[name*=preferred_sections][value=<%=OtherPartyValidationRequest::BOTH_SECTIONS%>]').attr("checked", "checked");
       $('#proof_of_dcv_section').hide();
       $('#documents_upload_section').hide();
       $('#documents_upload_heading').hide();

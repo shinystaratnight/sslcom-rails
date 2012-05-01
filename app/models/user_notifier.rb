@@ -4,51 +4,45 @@ class UserNotifier < ActionMailer::Base
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
 
   def activation_instructions(user)
-    subject       "SSL.com Activation Instructions"
-    from          Settings.from_email.activations
-    recipients    user.email
-    sent_on       Time.now
-    body          :account_activation_url => register_url(user.perishable_token)
+    @account_activation_url = register_url(user.perishable_token)
+    mail subject:       "SSL.com Activation Instructions",
+            from:          Settings.from_email.activations,
+            to:    user.email
   end
 
   def activation_confirmation(user)
-    subject       "SSL.com Activation Complete"
-    from          Settings.from_email.activations
-    recipients    user.email
-    sent_on       Time.now
-    body          :root_url => root_url
+    @root_url = root_url
+    mail subject:       "SSL.com Activation Complete",
+            from:          Settings.from_email.activations,
+            to:    user.email
   end
 
- def password_reset_instructions(user)  
-   subject       "SSL.com Password Reset Instructions"  
-   from          Settings.from_email.activations
-   recipients    user.email  
-   sent_on       Time.now  
-   body          :edit_password_reset_url => edit_password_reset_url(user.perishable_token)  
- end
+  def password_reset_instructions(user)
+    @edit_password_reset_url = edit_password_reset_url(user.perishable_token)
+    mail  subject:      "SSL.com Password Reset Instructions",
+             from:         Settings.from_email.activations,
+             to:   user.email
+  end
 
- def password_changed(user)
-   subject       "SSL.com Account Password Changed"
-   from          Settings.from_email.activations
-   recipients    user.email
-   sent_on       Time.now
- end
+  def password_changed(user)
+    mail subject:       "SSL.com Account Password Changed",
+           from:          Settings.from_email.activations,
+           to:    user.email
+  end
 
- def email_changed(user, email)
-   subject       "SSL.com Account Email Address Changed"
-   from          Settings.from_email.activations
-   recipients    email
-   sent_on       Time.now
-   body          :user=>user
- end
+  def email_changed(user, email)
+     @user=user
+     mail  subject:      "SSL.com Account Email Address Changed",
+              from:         Settings.from_email.activations,
+              to:   email
+  end
 
- def username_reminder(user)
-   subject       "SSL.com Username Reminder"
-   from          Settings.from_email.activations
-   recipients    user.email
-   sent_on       Time.now
-   body          :login => user.login
- end
+  def username_reminder(user)
+     @login = user.login
+     mail  subject:       "SSL.com Username Reminder",
+              from:          Settings.from_email.activations,
+              to:    user.email
+  end
 
   def signup_invitation(email, user, message)
     setup_sender_info

@@ -138,7 +138,7 @@ class FundedAccountsController < ApplicationController
         if initial_reseller_deposit?
           account.reseller.finish_signup immutable_cart_item
         end
-        OrderNotifier.deliver_deposit_completed account, @deposit
+        OrderNotifier.deposit_completed(account, @deposit).deliver
         if @certificate_order
           @certificate_order.pay! @gateway_response.success?
           route ||= "edit"
@@ -258,7 +258,7 @@ class FundedAccountsController < ApplicationController
 
   def save_certificate_orders
     current_user.ssl_account.orders << @order
-    OrderNotifier.deliver_certificate_order_prepaid @current_user.ssl_account, @order
+    OrderNotifier.certificate_order_prepaid(@current_user.ssl_account, @order).deliver
     @order.line_items.each do |cert|
       current_user.ssl_account.certificate_orders << cert.sellable
       cert.sellable.pay! true

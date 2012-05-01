@@ -61,7 +61,7 @@ class CertificateContent < ActiveRecord::Base
       :message=> 'contains invalid characters.',
       :if => :certificate_order_has_csr_and_signing_request
     validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
-    validate :csr_validation, :if=>"new?"
+    validate :csr_validation, :if=>"new? && csr"
   end
 
   attr_accessor  :additional_domains #used to html format results to page
@@ -270,9 +270,9 @@ class CertificateContent < ActiveRecord::Base
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength < MIN_KEY_SIZE
-      errors.add(:signing_request,
-        "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
-          Country.accepted_countries.include?(csr.country)
+      #errors.add(:signing_request,
+      #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
+      #    Country.accepted_countries.include?(csr.country)
     end
   end
 

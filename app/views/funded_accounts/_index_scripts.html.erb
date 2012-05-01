@@ -9,7 +9,7 @@ jQuery(function($) {
       $.update_balance_after_load();
     });
     $('#register_card_form').click(function(){
-      $(':radio[id*=funded_account_funding_source]').attr("checked","");
+      $(':radio[id*=funded_account_funding_source]').removeAttr('checked');
     });
     $(':radio[id*=funded_account_funding_source]').click(function(){
       $('#register_card_form').fadeOut();

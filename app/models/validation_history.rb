@@ -81,6 +81,6 @@ class ValidationHistory < ActiveRecord::Base
   private
 
   def set_random_secret
-    self.random_secret = ActiveSupport::SecureRandom.hex(8)
+    self.random_secret = SecureRandom.hex(8)
   end
 end

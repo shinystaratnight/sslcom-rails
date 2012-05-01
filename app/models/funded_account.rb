@@ -20,4 +20,8 @@ class FundedAccount < ActiveRecord::Base
   def deduct_order?
     ["true", true].include? @deduct_order
   end
+
+  def add_cents(cents)
+    FundedAccount.update_counters id, cents: cents
+  end
 end

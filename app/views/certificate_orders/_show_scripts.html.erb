@@ -22,7 +22,7 @@ jQuery(function($) {
       },
       success: function(data, status){
         $('#waiting_bar').hide();
-        $('.submit_signed_certificate').attr('disabled', '');
+        $('.submit_signed_certificate').removeAttr('disabled');
         $('.submit_signed_certificate').attr('value', submit_label);
         if(data.signed_certificate){
           signed_certificate_exists=true;

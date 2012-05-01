@@ -203,7 +203,7 @@ jQuery(function($) {
       $.line_item_total(id);
     });
     $('#register_card_form').live('click', function(){
-      $(':radio[name=funding_source]').attr("checked","");
+      $(':radio[name=funding_source]').removeAttr('checked');
     });
     $(':radio[name=funding_source]').live('click', function(){
       $('#register_card_form').fadeOut();

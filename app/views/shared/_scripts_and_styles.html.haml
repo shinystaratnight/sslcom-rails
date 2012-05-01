@@ -71,7 +71,7 @@
     };
     $.empty_out_cart = function(){
       $.cookie("cart", "", {path: '/'});
-      $('.add_to_cart_button').attr("disabled","");
+      $('.add_to_cart_button').removeAttr("disabled");
       $('#cart','#cart_total').effect("highlight", {}, 3000);
     };
     $('#empty_cart').click(function(){

@@ -103,6 +103,8 @@ class Order < ActiveRecord::Base
   end
 
   include Workflow
+  workflow_column :state
+
   workflow do
     state :pending do
       event :give_away, transitions_to: :payment_not_required
@@ -182,7 +184,7 @@ class Order < ActiveRecord::Base
 
   # BEGIN number
   def number
-    ActiveSupport::SecureRandom.base64(32)
+    SecureRandom.base64(32)
   end
   # END number
 
@@ -253,16 +255,16 @@ class Order < ActiveRecord::Base
   # END authorization_reference
 
   def generate_reference_number
-      update_attribute :reference_number, ActiveSupport::SecureRandom.hex(2)+
+      update_attribute :reference_number, SecureRandom.hex(2)+
         '-'+Time.now.to_i.to_s(32)
   end
 
   def is_free?
-    @is_free.try(:eql, true) || (cents==0)
+    @is_free.try(:==, true) || (cents==0)
   end
 
   def mark_paid!
-    payment_authorized!
+    payment_authorized! unless authorized?
     payment_captured!
   end
 

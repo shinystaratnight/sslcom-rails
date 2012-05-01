@@ -71,7 +71,7 @@ class SslAccount < ActiveRecord::Base
 
   #before create function
   def b_create
-    self.acct_number='a'+ActiveSupport::SecureRandom.hex(1)+
+    self.acct_number='a'+SecureRandom.hex(1)+
         '-'+Time.now.to_i.to_s(32)
   end
 
@@ -255,7 +255,7 @@ class SslAccount < ActiveRecord::Base
     #only do for prepaid, because 1-off certificate_orders when added are not
     #necessarily paid for already
     if !order.new_record? && order.line_items.all? {|c|c.sellable.try(:is_prepaid?)}
-      OrderNotifier.deliver_certificate_order_prepaid self, order
+      OrderNotifier.certificate_order_prepaid(self, order).deliver
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable
         cert.sellable.pay!(true) unless cert.sellable.paid?

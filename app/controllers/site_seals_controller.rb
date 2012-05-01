@@ -116,9 +116,9 @@ class SiteSealsController < ApplicationController
   def notify_customer
     @co.processed_recipients.each do |c|
       if @site_seal.fully_activated?
-        OrderNotifier.deliver_site_seal_approve(c, @co)
+        OrderNotifier.site_seal_approve(c, @co).deliver
       else
-        OrderNotifier.deliver_site_seal_unapprove(c, @co)
+        OrderNotifier.site_seal_unapprove(c, @co).deliver
       end
     end
   end

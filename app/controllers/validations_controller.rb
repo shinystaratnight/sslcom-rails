@@ -286,9 +286,9 @@ class ValidationsController < ApplicationController
       @co.certificate_content.administrative_contact
     recips.each do |c|
       if validation_rulings.all?(&:approved?)
-        OrderNotifier.deliver_validation_approve(c, @co)
+        OrderNotifier.validation_approve(c, @co).deliver
       else
-        OrderNotifier.deliver_validation_unapprove(c, @co, @validation)
+        OrderNotifier.validation_unapprove(c, @co, @validation).deliver
       end
     end
   end

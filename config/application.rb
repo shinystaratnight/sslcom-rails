@@ -57,6 +57,7 @@ module SslCom
 
     # Enable the asset pipeline
     config.assets.enabled = false
+
   end
 end
 
