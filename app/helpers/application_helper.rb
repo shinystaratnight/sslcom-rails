@@ -258,7 +258,7 @@ module ApplicationHelper
 
   def skip_payment?
     cc=@certificate_order.certificate_content
-    !!(@certificate_order.preferred_payment_order=='prepaid' ||
+    !!(@certificate_order.is_prepaid? ||
        (eval("@#{CertificateOrder::REPROCESSING}") || (cc && cc.preferred_reprocessing?)))
   end
 

@@ -37,11 +37,12 @@ class SiteCheck < ActiveRecord::Base
   def lookup
     context = OpenSSL::SSL::SSLContext.new
     if self.verify_trust
-      #self.context.verify_depth=5
+      #context.verify_depth=5
       context.ca_file="/usr/lib/ssl/certs/ca-certificates.crt"
       context.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    tcp_client = TCPSocket.new url, 443
+    u,p = url.split ":"
+    tcp_client = TCPSocket.new(u, p || 443)
     self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
     self.ssl_client.connect
     serial=self.certificate.serial.to_s

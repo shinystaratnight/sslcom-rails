@@ -309,7 +309,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signup_process(cert=certificate)
-    unless is_prepaid?
+    unless skip_payment?
       if ssl_account && ssl_account.has_role?('reseller')
         unless cert.is_ev?
           EXPRESS_SIGNUP_PROCESS
@@ -456,6 +456,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def is_prepaid?
     preferred_payment_order=='prepaid'
+  end
+
+  def skip_payment?
+    !!(is_prepaid? || (certificate_content && certificate_content.preferred_reprocessing?))
   end
 
   def is_intranet?
@@ -683,8 +687,7 @@ class CertificateOrder < ActiveRecord::Base
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref
           )
-          last_sent = csr.domain_control_validations.last.try(:dcv_method)=="http" ?
-              csr.domain_control_validations.last : csr.domain_control_validations.last_sent
+          last_sent = csr.last_dcv
           #43 is the old comodo 30 day trial
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
               mapped_certificate.comodo_product_id) #trial cert does not specify duration

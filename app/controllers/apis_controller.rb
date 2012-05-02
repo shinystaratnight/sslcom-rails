@@ -1,5 +1,4 @@
 class ApisController < ApplicationController
-  skip_before_filter :verify_authenticity_token
 
   wrap_parameters false
   respond_to :xml, :json

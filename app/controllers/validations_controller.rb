@@ -183,7 +183,7 @@ class ValidationsController < ApplicationController
         end
         checkout={}
         if @certificate_order.certificate_content.contacts_provided?
-          @certificate_order.certificate_content.pend_validation!
+          @certificate_order.certificate_content.pend_validation! if @other_party_validation_request.blank?
           checkout={checkout: "true"}
         end
         @validation_histories = @certificate_order.validation_histories

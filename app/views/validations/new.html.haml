@@ -1,19 +1,3 @@
-=render :partial => 'index_scripts'
-%script{:type=>"text/javascript"}
-  :plain
-    //# PLUGIN INTEGRATION
-    jQuery(function($){
-      $('#multi_upload').MultiFile({
-        max: 5,
-        accept: '#{ValidationHistory.multi_upload_types}',
-        STRING:{
-        remove: '#{image_tag('minus.gif')}'},
-        afterFileSelect:function(element,value,master){
-       }
-      });
-      $('#upload_files').click(function(){
-        $('#waiting_bar').show();});
-    });
 -content_for :title, "Validation"
 -co = @certificate_order
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
@@ -93,3 +77,19 @@
           =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
       #button_container(style='display : none')
         #skip_button=link_to image_tag("skip_bl.gif"), co
+=render :partial => 'index_scripts'
+%script{:type=>"text/javascript"}
+  :plain
+    //# PLUGIN INTEGRATION
+    jQuery(function($){
+      $('#multi_upload').MultiFile({
+        max: 5,
+        accept: '#{ValidationHistory.multi_upload_types}',
+        STRING:{
+        remove: '#{image_tag('minus.gif')}'},
+        afterFileSelect:function(element,value,master){
+       }
+      });
+      $('#upload_files').click(function(){
+        $('#waiting_bar').show();});
+    });

@@ -22,8 +22,9 @@ SslCom::Application.routes.draw do
   match 'logout' => 'user_sessions#destroy', :as => :logout
 
   resources :unsubscribes, only: [:edit, :update]
-  resources :site_checks
+  #resources :site_checks
   match 'site_check' => 'site_checks#new', :as => :site_checks
+  match 'site_checks' => 'site_checks#create', :as => :site_checks
 
   #api
   match '/certificates/1.0/create' => 'apis#create_certificate_order_v1_0',
