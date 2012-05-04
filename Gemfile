@@ -16,9 +16,7 @@ gem 'money', '2.1.0'
 gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
-#gem 'hassle', :git => "git://github.com/Papipo/hassle"
 gem 'paperclip'
-#gem 'resource_controller', :git => "git://github.com/BDQ/resource_controller.git"
 gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
@@ -48,7 +46,7 @@ gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer"
 
 # Deploy with Capistrano
-#gem 'capistrano'
+#gem 'rvm-capistrano'
 
 # Bundle the extra gems:
 # gem 'bj'

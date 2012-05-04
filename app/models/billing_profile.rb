@@ -49,6 +49,17 @@ class BillingProfile < ActiveRecord::Base
     card_number.gsub(/(?<=\d{4})\d+(?=\d{4})/, mask)
   end
 
+  def credit_card(options)
+    cc=ActiveMerchant::Billing::CreditCard.new({
+            :first_name => options[:first_name] || first_name,
+            :last_name  => options[:last_name] || last_name,
+            :number     => options[:card_number] || card_number,
+            :month      => options[:expiration_month] || expiration_month,
+            :year       => options[:expiration_year] || expiration_year})
+    cc.merge(:verification_value => options[:expiration_year] || security_code) if options[:cvv]
+    cc
+  end
+
   def american?
     country == AMERICAN
   end

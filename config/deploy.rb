@@ -1,5 +1,5 @@
-# Ensure RVM gems are loaded
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
+set :rvm_ruby_string, 'ruby-1.9.3-p125@rails323'                     # Or:
+#set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
 require "rvm/capistrano"
@@ -170,6 +170,10 @@ namespace :deploy do
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'
+
+#auto install rvm
+#before 'deploy', 'rvm:install_rvm'
+
 
 #whenever
 set :whenever_command, "bundle exec whenever"
