@@ -84,28 +84,7 @@ class FundedAccountsController < ApplicationController
       :last_digits => @profile.last_digits,
       :payment_method => 'credit card'})
     @deposit = account.purchase dep
-    @credit_card = ActiveMerchant::Billing::CreditCard.new({
-      :first_name => @profile.first_name,
-      :last_name  => @profile.last_name,
-      :number     => @profile.card_number,
-      :month      => @profile.expiration_month,
-      :year       => @profile.expiration_year,
-      :verification_value => @profile.security_code
-    })
-    @credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
-    options = {
-      :billing_address => Address.new({
-        :name     => @profile.full_name,
-        :street1 => @profile.address_1,
-        :street2 => @profile.address_2,
-        :locality     => @profile.city,
-        :region    => @profile.state,
-        :country  => @profile.country,
-        :postal_code     => @profile.postal_code,
-        :phone    => @profile.phone
-      }),
-      :description => "Deposit"
-    }
+    @credit_card = @profile.build_credit_card
     if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
       if defined?(::GATEWAY_TEST_CODE)
         @deposit.amount= ::GATEWAY_TEST_CODE
@@ -119,7 +98,7 @@ class FundedAccountsController < ApplicationController
         immutable_cart_item = ResellerTier.find_by_label(current_order.
             line_items.first.sellable.label)
       end
-      @gateway_response = @deposit.purchase(@credit_card, options)
+      @gateway_response = @deposit.purchase(@credit_card, @profile.build_info("Deposit"))
       if @gateway_response.success?
         @deposit.mark_paid!
         flash.now[:notice] = @gateway_response.message
@@ -152,7 +131,8 @@ class FundedAccountsController < ApplicationController
         route ||= "success"
       else
         @deposit.destroy
-        flash.now[:error] = @gateway_response.message
+        flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
+                    @gateway_response.message #not descriptive enough
       end
       route ||= "allocate"
     end

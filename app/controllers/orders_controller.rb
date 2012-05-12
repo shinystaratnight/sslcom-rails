@@ -145,15 +145,7 @@ class OrdersController < ApplicationController
         else
           @order=current_order
         end
-        @credit_card = ActiveMerchant::Billing::CreditCard.new({
-          :first_name => @profile.first_name,
-          :last_name  => @profile.last_name,
-          :number     => @profile.card_number,
-          :month      => @profile.expiration_month,
-          :year       => @profile.expiration_year,
-          :verification_value => @profile.security_code
-        })
-        @credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+        @credit_card = @profile.build_credit_card
       end
       if (@user ? @user.valid? : true) &&
           order_reqs_valid? && purchase_successful?
@@ -272,26 +264,14 @@ class OrdersController < ApplicationController
         true : @credit_card.valid?
     @order.amount= ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
     @order.description = Order::SSL_CERTIFICATE
-    options = {
-      :billing_address => Address.new({
-        :name     => @profile.full_name,
-        :street1 => @profile.address_1,
-        :street2 => @profile.address_2,
-        :locality     => @profile.city,
-        :region    => @profile.state,
-        :country  => @profile.country,
-        :postal_code     => @profile.postal_code,
-        :phone    => @profile.phone
-      }),
-      :description => Order::SSL_CERTIFICATE
-    }
-    @gateway_response = @order.purchase(@credit_card, options)
+    @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
     (@gateway_response.success?).tap do |success|
       if success
         flash.now[:notice] = @gateway_response.message
         @order.mark_paid!
       else
-        flash.now[:error] = @gateway_response.message
+        flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
+            @gateway_response.message #no descriptive enough
         @order.transaction_declined!
         @certificate_order.destroy unless @certificate_order.blank?
       end

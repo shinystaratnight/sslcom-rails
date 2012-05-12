@@ -12,7 +12,7 @@ class SiteCheck < ActiveRecord::Base
 
   after_initialize do
     return unless new_record?
-    self.verify_trust = true
+    self.verify_trust ||= true
   end
 
   before_create{|sc|

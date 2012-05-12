@@ -20,7 +20,9 @@ class Order < ActiveRecord::Base
 
   after_initialize do
     return unless new_record?
-    self.is_free, self.receipt, self.deposit_mode = false, false, false
+    self.is_free ||= false
+    self.receipt ||= false
+    self.deposit_mode ||= false
   end
 
   SSL_CERTIFICATE = "SSL Certificate Order"
@@ -295,33 +297,12 @@ class Order < ActiveRecord::Base
         profile: self.billing_profile, cvv: true})
     options[:profile].cycled_years.map do |exp_year|
       profile=options[:profile]
-      credit_card = ActiveMerchant::Billing::CreditCard.new({
-        :first_name => profile.first_name,
-        :last_name  => profile.last_name,
-        :number     => profile.card_number,
-        :month      => profile.expiration_month,
-        :year       => exp_year
-      })
-      credit_card.merge(:verification_value => profile.security_code) if options[:cvv]
-      credit_card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+      credit_card = profile.build_credit_card(expiration_year: exp_year, cvv: options[:cvv])
       next unless ActiveMerchant::Billing::Base.mode == :test ?
           true : credit_card.valid?
       self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
       self.description = options[:description]
-      info = {
-        :billing_address => Address.new({
-          :name     => profile.full_name,
-          :street1 => profile.address_1,
-          :street2 => profile.address_2,
-          :locality     => profile.city,
-          :region    => profile.state,
-          :country  => profile.country,
-          :postal_code     => profile.postal_code,
-          :phone    => profile.phone
-        }),
-        :description => options[:description]
-      }
-      gateway_response = self.purchase(credit_card, info)
+      gateway_response = self.purchase(credit_card, profile.build_info(options[:description]))
       result=(gateway_response.success?).tap do |success|
         if success
           self.mark_paid!

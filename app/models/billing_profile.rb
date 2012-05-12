@@ -49,15 +49,34 @@ class BillingProfile < ActiveRecord::Base
     card_number.gsub(/(?<=\d{4})\d+(?=\d{4})/, mask)
   end
 
-  def credit_card(options)
-    cc=ActiveMerchant::Billing::CreditCard.new({
-            :first_name => options[:first_name] || first_name,
+  def build_credit_card(options={})
+    options.reverse_merge! cvv: true
+    cc={    :first_name => options[:first_name] || first_name,
             :last_name  => options[:last_name] || last_name,
             :number     => options[:card_number] || card_number,
             :month      => options[:expiration_month] || expiration_month,
-            :year       => options[:expiration_year] || expiration_year})
-    cc.merge(:verification_value => options[:expiration_year] || security_code) if options[:cvv]
-    cc
+            :year       => options[:expiration_year] || expiration_year}
+    cc.merge!(:verification_value => options[:verification_value] || security_code) if options[:cvv]
+    card = ActiveMerchant::Billing::CreditCard.new(cc)
+    card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+    card
+  end
+  
+  def build_address
+    Address.new({
+      :name         => self.full_name,
+      :street1      => self.address_1,
+      :street2      => self.address_2,
+      :locality     => self.city,
+      :region       => self.state,
+      :country      => self.country,
+      :postal_code  => self.postal_code,
+      :phone        => self.phone
+    })
+  end
+
+  def build_info(description)
+    {billing_address: self.build_address, description: description}
   end
 
   def american?

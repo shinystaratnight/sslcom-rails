@@ -12,7 +12,7 @@ class FundedAccount < ActiveRecord::Base
 
   after_initialize do
     return unless new_record?
-    self.deduct_order = false
+    self.deduct_order ||= false
   end
 
   NEW_CREDIT_CARD = "new credit card"

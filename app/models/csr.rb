@@ -264,7 +264,7 @@ class Csr < ActiveRecord::Base
       when /UK/i, /great britain.+/i, /england/i, /united kingdom.+/i
         "GB"
       else
-        read_attribute(:country).upcase
+        read_attribute(:country).blank? ? "" : read_attribute(:country).upcase
     end
   end
 

@@ -187,7 +187,7 @@ class SslAccount < ActiveRecord::Base
   #  order_transactions.where :success=>true
   #end
 
-  #this upgrades ot downgrades the account into a reseller tier
+  # this upgrades or downgrades the account into a reseller tier
   def adjust_reseller_tier(tier, reseller_fields=Reseller::TEMP_FIELDS)
     #if account is not reseller, do it now else just change the tier number
     if reseller.blank?

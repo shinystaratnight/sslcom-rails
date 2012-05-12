@@ -126,11 +126,15 @@ class SiteSeal < ActiveRecord::Base
   end
 
   def latest_certificate_order
-    cn=certificate_order.common_name
-    acct = certificate_order.ssl_account_id
-    CertificateOrder.joins{certificate_contents.csr}.where{
-        (ssl_account_id=="#{acct}") &
-        (certificate_contents.csr.common_name == "#{cn}")}.
-        order("certificate_orders.created_at desc").first
+
+    #having issues with UCC so simplify
+    certificate_order
+
+    #cn=certificate_order.common_name
+    #acct = certificate_order.ssl_account_id
+    #CertificateOrder.joins{certificate_contents.csr}.where{
+    #    (ssl_account_id=="#{acct}") &
+    #    (certificate_contents.csr.common_name == "#{cn}")}.
+    #    order("certificate_orders.created_at desc").first
   end
 end

@@ -184,8 +184,8 @@ class CertificateOrder < ActiveRecord::Base
 
   def after_initialize
     if new_record?
-      self.quantity = 1
-      self.has_csr = false
+      self.quantity ||= 1
+      self.has_csr ||= false
     end
   end
 
@@ -379,6 +379,14 @@ class CertificateOrder < ActiveRecord::Base
     csr.signed_certificate.try(:common_name) || csr.common_name
   end
   alias :common_name :subject
+
+  def display_subject
+    return unless certificate_content.try(:csr)
+    csr = certificate_content.csr
+    names=csr.signed_certificate.subject_alternative_names unless csr.signed_certificate.blank?
+    names=names.join(", ") unless names.blank?
+    names || csr.signed_certificate.try(:common_name) || csr.common_name
+  end
 
   def order
     orders.last

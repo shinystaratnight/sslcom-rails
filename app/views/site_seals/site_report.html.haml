@@ -8,8 +8,8 @@
   %div
     %dl
       %dt.section_header
-        report generated for site
-      %dd=co.subject
+        report generated for site(s)
+      %dd=co.display_subject
   -if ss.has_artifacts?
     %div
       %dl
@@ -42,3 +42,9 @@
           \#{r.company_name.upcase} has been verified as the owner or operator of the Web site
           located at #{co.subject}. Official records confirm #{r.company_name.upcase} as a
           valid business.
+  -if ss.ref == "4d2b52fe-4fa91538"
+    %div
+      %dl
+        %dt.section_header certificate validation warranty
+        %dd
+          $150,000

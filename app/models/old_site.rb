@@ -523,7 +523,7 @@ module OldSite
 
     after_initialize do
       return unless new_record?
-      self.status = "enabled"
+      self.status ||= "enabled"
     end
 
     def self.invalid_accounts
