@@ -19,21 +19,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/billing_profile.rb" afterPath="$PROJECT_DIR$/app/models/billing_profile.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/funded_account.rb" afterPath="$PROJECT_DIR$/app/models/funded_account.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/old_site.rb" afterPath="$PROJECT_DIR$/app/models/old_site.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/signed_certificate.rb" afterPath="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/site_check.rb" afterPath="$PROJECT_DIR$/app/models/site_check.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/site_seal.rb" afterPath="$PROJECT_DIR$/app/models/site_seal.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/surl.rb" afterPath="$PROJECT_DIR$/app/models/surl.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site_seals/site_report.html.haml" afterPath="$PROJECT_DIR$/app/views/site_seals/site_report.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -66,15 +53,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="funded_accounts_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="144" column="0" selection-start="6013" selection-end="6013" vertical-scroll-proportion="-2.612903">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/order.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -111,10 +89,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="102" column="7" selection-start="4728" selection-end="4767" vertical-scroll-proportion="0.42028984">
+            <state line="102" column="7" selection-start="4728" selection-end="4767" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="deploy.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="71" selection-start="155" selection-end="155" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="validation_history.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/validation_history.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="19" column="49" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.7978142">
               <folding />
             </state>
           </provider>
@@ -142,15 +138,6 @@
         <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state line="267" column="0" selection-start="8248" selection-end="8327" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="surl.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="83" column="39" selection-start="2501" selection-end="2501" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1314,10 +1301,10 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5588235" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25490198" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22305141" sideWeight="0.5980392" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25490198" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22305141" sideWeight="0.74509805" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1442786" sideWeight="0.74509805" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4019608" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4019608" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44607842" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1422,20 +1409,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/success.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="794" selection-end="794" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="70" selection-start="843" selection-end="853" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/funded_account.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="14" column="24" selection-start="333" selection-end="333" vertical-scroll-proportion="0.0">
@@ -1529,7 +1502,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="102" column="7" selection-start="4728" selection-end="4767" vertical-scroll-proportion="0.42028984">
+        <state line="102" column="7" selection-start="4728" selection-end="4767" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="71" selection-start="155" selection-end="155" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/validation_history.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="19" column="49" selection-start="1106" selection-end="1106" vertical-scroll-proportion="0.7978142">
           <folding />
         </state>
       </provider>
