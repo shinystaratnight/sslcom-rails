@@ -51,3 +51,190 @@
   %span.footer_link=link_to "Privacy Policy", privacy_policy_url
   %span.footer_link=link_to "Terms of Service", terms_of_use_url
   %span.footer_link=link_to "Copyright", copyright_url
+:javascript
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-30469369-1']);
+  _gaq.push(['_setDomainName', 'ssl.com']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+:javascript
+  jQuery(function($){
+    $.prettyLoader();
+    $("a[rel^='prettyPopin']").prettyPopin();
+    $('div.flash_message').click(function(){
+      $(this).fadeOut();
+    });
+    $('div.flash_message a').click(function(event){
+      event.stopPropagation();
+    });
+    $("a[rel^='prettyPhoto']").prettyPhoto({social_tools: false, allowresize:false, theme:'pp_default', showTitle:false});
+    $('.striped_div > div:nth-child(odd)').css("background-color","#eeeeee");
+    $('.striped_tr tr:nth-child(odd)').css("background-color","#eeeeee");
+    $('#close_window').live('click', function(){
+      window.close();
+    });
+    $('.close').live('click', function(){
+      $(this).remove();
+    });
+    $("input[name='next']").click(function(){
+      $("#waiting_bar").show();
+    });
+    //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
+    //cart functions
+    $.toMoneyFloat = function(money){
+      money = money.replace(",","");
+      money = money.replace("$","");
+      var usdIndex = money.indexOf(" USD");
+      if(usdIndex!=-1)
+        money = money.substring(0,usdIndex)
+      return money;
+    }
+    $.adjust_items_in_cart = function(){
+      var items = "items";
+      var howMany = $.get_cart_items().length;
+      if(howMany==1)
+        items = "item";
+      $("#cart_size").text(howMany.toString()+" "+items+" in cart")
+    };
+    $.adjust_order_total = function(){
+      var total = 0;
+      $('.amount').each(function(){
+        total += parseFloat($.toMoneyFloat($(this).text()));
+      });
+      total=(total!=0)?total.toFixed(2).toString():"0.00";
+      $('#cart_total').text('$'+total+" USD");
+    };
+    $.empty_out_cart = function(){
+      $.cookie("cart", "", {path: '/'});
+      $('.add_to_cart_button').removeAttr("disabled");
+      $('#cart','#cart_total').effect("highlight", {}, 3000);
+    };
+    $('#empty_cart').click(function(){
+      $.empty_out_cart();
+    })
+    $('.remove_from_cart_link').click(function(){
+      var id = $(this).attr("id")
+      $.remove_from_cart(id);
+      $(this).parents('tr[id='+$(this).attr("id")+']').
+        fadeOut('slow', function(){
+          $(this).remove();
+          $.adjust_items_in_cart();
+          $.adjust_order_total();
+          $('#cart','#cart_total').effect("highlight", {}, 3000);}
+        );
+    });
+    $.save_cart = function(cart){
+      if(cart=="" || cart.length==0)
+        $.cookie("cart", null); //deletes cookie jquery method
+      else
+        $.cookie("cart", $.toJSON(cart), { expires:
+          #{Settings.cart_cookie_days}, path: '/'});
+    };
+    $.get_cart_items = function(){
+      if($.cookie("cart")==null || $.cookie("cart")=="")
+        return [];
+      else
+        return $.evalJSON($.cookie("cart"));
+    };
+    $.get_affiliate = function(){
+      return ($.cookie("aid")==null || $.cookie("aid")=="")
+        ? #{ShoppingCart::DEFAULT_AFFILIATE_ID} : $.cookie("aid");
+    };
+    $.remove_from_cart=function(indx){
+      cart = $.get_cart_items();
+      cart.remove(indx);
+      $.save_cart(cart);
+    };
+    $.add_remove_cart_items=function(add, item){
+      cart = $.get_cart_items();
+      indx = $.cart_has_item(item) //find index of existing line item
+      if(indx==-1)
+        if(add){
+          item["#{ShoppingCart::QUANTITY}"]=1;
+          if($.isArray(cart)){
+            cart.push(item);
+          }
+          else
+            cart=[item];
+        }
+        else
+          return;
+      else{
+        matched=cart[indx];
+        if(add)
+          ++matched["#{ShoppingCart::QUANTITY}"];
+        else
+          if(matched["#{ShoppingCart::QUANTITY}"]==1){
+            cart.remove(indx);
+          }
+          else
+            --matched["#{ShoppingCart::QUANTITY}"];
+      }
+      $.save_cart(cart);
+    };
+    $.cart_has_item = function(cart_item){
+      items=$.get_cart_items();
+      if(items==null)
+        return -1;
+      else{
+        var match=true, indx=-1;
+        $(items).each(function(i, v){
+          match=true;
+          for (var key in v) {
+            if(key!="#{ShoppingCart::QUANTITY}" &&
+                key!="#{ShoppingCart::AFFILIATE}" && v[key]!=cart_item[key]){
+              match=false;
+              break;
+            }
+          }
+          if(match){
+            indx=i;
+            return false;
+          }
+        });
+        return indx;
+      }
+    };
+    // Array Remove - By John Resig (MIT Licensed)
+    Array.prototype.remove = function(from, to) {
+      var rest = this.slice((to || from) + 1 || this.length);
+      this.length = from < 0 ? this.length + from : from;
+      return this.push.apply(this, rest);
+    };
+    Array.prototype.find = function(searchStr) {
+      var returnArray = false;
+      for (i=0; i<this.length; i++) {
+        if (typeof(searchStr) == 'function') {
+          if (searchStr.test(this[i])) {
+            if (!returnArray) { returnArray = [] }
+            returnArray.push(i);
+          }
+        } else {
+          if (this[i]===searchStr) {
+            if (!returnArray) { returnArray = [] }
+            returnArray.push(i);
+          }
+        }
+      }
+      return returnArray;
+    };
+    $.update_balance_after_load = function(){
+      var bracket = $.toMoneyFloat($('#funded_account_amount').val());
+      if(bracket == null || bracket == "" || bracket == ".")
+        bracket = 0;
+      var current_balance = $.toMoneyFloat($('#current_balance').text());
+      $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
+    };
+    $.adjust_items_in_cart();
+    /* Easiest Tooltips CONFIG */
+    // these 2 variable determine popup's distance from the cursor
+    // you might want to adjust to get the right result
+    var xOffset = 10;
+    var yOffset = 30;
+    /* END CONFIG */
+  });
+
