@@ -1,6 +1,5 @@
 /* CSS for ssl Website */
 
-body { margin:0 !important; background: #fff; font-family: Arial, Helvetica, "MS Trebuchet", sans-serif;}
 body[class|="page-body"] { background: #fff; /* Applies to IE 7 and most modern browsers except Opera */ }
 
 /*MISCELLANOUS*/
@@ -123,7 +122,6 @@ a img {border:none;}
 #partners div { font-family:Arial, Helvetica; font-size:14px; color:#999999; margin-bottom:10px;}
 
 /*CONTENTS BLOCK*/
-#content { background: url(../images/bg-holder.jpg) repeat-x #e6e6e6; border-top:2px solid #bbbbbb; min-height:300px; font-family:Georgia; padding:45px 0;}
 #content .left-icon-bar { background:#eee; font-size:19px !important; color:#444444; text-align:center; border:1px solid #bbbbbb; padding: 10px 13px;}
 #content #features { margin:0 0 15px -40px; width:320px; }
 #content #features li {
@@ -145,8 +143,5 @@ a img {border:none;}
 
 .sidebarhome { float: left !important; width:320px !important; margin:0 40px 0 -26px !important;}
 .faq-boxes { float: left; width:320px; margin-right:35px; }
-
-.holder { min-height:750px; }
-.inner { overflow:visible !important;}
 
 .sidebarhome { background:none !important;}
