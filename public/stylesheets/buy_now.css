@@ -32,7 +32,7 @@ a img {border:none;}
 .divider { border-bottom:1px solid #bababa; margin:5px 15px;}
 .btn-buynow { height: 34px; margin: 10px 75px; background:url(../images/btn-buynow.jpg) no-repeat; padding:23px 0 0 0;}
 .btn-wegot { background:url(../images/btn-wegot.jpg) no-repeat; padding:3px 0 5px 170px;}
-.logo { background:url(../images/ssl-logo.png) no-repeat; padding-left:125px;}
+.logo { background:url(../images/ssl-logo.png) no-repeat left 2px; padding:0 72px;}
 .logo-small { background:url(../images/ssl-logo-small.png) no-repeat; padding:0 0 5px 90px;}
 .logo-smaller { background:url(../images/ssl-logo-smaller.png) no-repeat; padding:0 0 5px 50px;}
 .section-title { font-weight:bold !important; margin-bottom:20px !important;}
