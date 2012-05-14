@@ -11,10 +11,9 @@ class Reseller < ActiveRecord::Base
   PAYMENT_COLUMNS = %w(tax_number)
   NONREQUIRED_COLUMNS = %w(ext fax)
   REQUIRED_COLUMNS = %w(type_organization organization website address1
-    postal_code city state tax_number country) + ADMIN_COLUMNS -
+    postal_code city state country) + ADMIN_COLUMNS -
     NONREQUIRED_COLUMNS
-  FORM_COLUMNS=%w(type_organization)+ADMIN_COLUMNS+COMPANY_COLUMNS+
-    PAYMENT_COLUMNS
+  FORM_COLUMNS=%w(type_organization)+ADMIN_COLUMNS+COMPANY_COLUMNS
   BUSINESS = "business"
   INDIVIDUAL = "individual"
 

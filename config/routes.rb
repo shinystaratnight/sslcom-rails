@@ -23,7 +23,7 @@ SslCom::Application.routes.draw do
 
   resources :unsubscribes, only: [:edit, :update]
   #resources :site_checks
-  match 'site_check' => 'site_checks#new', :as => :site_checks
+  match 'site_check' => 'site_checks#new', :as => :site_check
   match 'site_checks' => 'site_checks#create', :as => :site_checks
 
   #api
@@ -59,7 +59,7 @@ SslCom::Application.routes.draw do
     end
   end
 
-  resources :resellers, :only=>:index do
+  resources :resellers, :only=>[:index,:new] do
     collection do
       get :details
       get :restful_api
