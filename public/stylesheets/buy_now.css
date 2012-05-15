@@ -1,6 +1,6 @@
 @font-face {
     font-family: "arial black italic";
-    src: url("../fonts/arial-black-italic.ttf");
+    src: url("/fonts/arial-black-italic.ttf");
 }
 body[class|="page-body"] {
     background: none repeat scroll 0 0 #FFFFFF;
@@ -139,15 +139,15 @@ a img {
     text-shadow: 0 -1px 0 #AAAAAA;
 }
 .logo {
-    background: url("../images/ssl-logo.png?1336815194") no-repeat scroll left 2px transparent;
+    background: url("/images/ssl-logo.png?1336815194") no-repeat scroll left 2px transparent;
     padding: 0 72px;
 }
 .logo-small {
-    background: url("../images/ssl-logo-small.png?1336815404") no-repeat scroll 0 0 transparent;
+    background: url("/images/ssl-logo-small.png?1336815404") no-repeat scroll 0 0 transparent;
     padding: 0 0 5px 90px;
 }
 .logo-smaller {
-    background: url("../images/ssl-logo-smaller.png?1336817764") no-repeat scroll 0 0 transparent;
+    background: url("/images/ssl-logo-smaller.png?1336817764") no-repeat scroll 0 0 transparent;
     padding: 0 0 5px 50px;
 }
 .section-title {
@@ -171,6 +171,11 @@ a img {
     text-align: center;
     width: 300px;
 }
+
+#banner-grid .banner1{
+    margin-left: 4px
+}
+
 #banner-grid .banner2 h2 {
     color: #000000 !important;
     font-size: 35px;
@@ -430,7 +435,4 @@ a img {
 }
 .holder {
     min-height: 750px !important;
-}
-.inner {
-    overflow: visible !important;
 }
