@@ -2,11 +2,11 @@
 .container
   .innercontainere
     .inner
-      =render :partial => "shared/messages"
       %h1.section-title
         Build customer trust with
-        %span.logo
-          %span.hide_me ssl.com
+        %span
+          %b SSL
+          \.com
         Certificates
       #banner-grid
         .left.banner1
@@ -18,9 +18,9 @@
             .clear
           .divider
           .security_rating
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %div Security Rating
+            %img{:alt => "", :src => "images/icn-lock.png"}
+              %img{:alt => "", :src => "images/icn-lock.png"}
+                %div Security Rating
           .description
             %ul
               %li
@@ -38,32 +38,33 @@
           .divider
           %a{:href => "#"}
             %span
-              .btn-buynow
-                %span buy ssl certificate now
+              .btn-buynow Buy now
         .left.banner2
           .bestseal
-            %img{:alt => "", :src => "images/best-offer.png"}/
+            %img{:alt => "", :src => "images/best-offer.png"}
           %h2 Premium
+          .price-block-special
+            .clear
           %span Perfect for small and medium businesses
           .price-block-special
-            .red Only
-            .price $99
+            %div{:style => "margin-left:-145px"}
+              .red Only
+              .price $99
             .price-desc
               \/yr for single domain
               plus
-              .additional-desc 2 sub-domains
-            .clear
+              %b{:style => "color:#000;"} 2 sub-domains
           .divider
           .security_rating
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %div Security Rating
+            %img{:alt => "", :src => "images/icn-lock.png"}
+              %img{:alt => "", :src => "images/icn-lock.png"}
+                %img{:alt => "", :src => "images/icn-lock.png"}
+                  %img{:alt => "", :src => "images/icn-lock.png"}
+                    %div Security Rating
           .description
             %ul
               %li
-                %div $125,000
+                %div $150,000
                 warranty
               %li
                 %div Validation
@@ -74,11 +75,8 @@
           .divider
           %a{:href => "#"}
             %span
-              .btn-buynow
-                %span buy ssl certificate now
-          .help
-            Don't know which to select?
-            %a{:href => "#"} Help me choose
+              .btn-buynow Buy now
+          / <div class="help">Don't know which to select? <a href="#">Help me choose</a></div>
         .left.banner3
           %h2 Enterprise EV
           %span Highest level of user protection
@@ -88,12 +86,12 @@
             .clear
           .divider
           .security_rating
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %img{:alt => "", :src => "images/icn-lock.png"}/
-            %div Security Rating
+            %img{:alt => "", :src => "images/icn-lock.png"}
+              %img{:alt => "", :src => "images/icn-lock.png"}
+                %img{:alt => "", :src => "images/icn-lock.png"}
+                  %img{:alt => "", :src => "images/icn-lock.png"}
+                    %img{:alt => "", :src => "images/icn-lock.png"}
+                      %div Security Rating
           .description
             %ul
               %li
@@ -111,24 +109,29 @@
                 %div Dedicated
                 support staff
           .divider
-          %a{:href => buy_certificate_url("ev")}
-            .btn-buynow
-              %span buy ssl certificate now
+          %a{:href => "#"}
+            %span
+              .btn-buynow Buy now
       .clear
       #advertisement
         .catch-phrase
           %span Looking for Wildcard and Multi-Domain (UC) certificates?
           %a.btn-wegot{:href => "#", :title => ""}
+            We've got those too
+            %b{:style => "text-shadow: none;"} →
       #partners
         %div Trusted by leading brands
-        %img{:alt => "partners", :src => "images/sprite-partners.jpg"}/
+        %img{:alt => "partners", :src => "images/sprite-partners.jpg"}
   .holder
     .inner
       .sidebarhome
         .left-icon-bar
           Standard Features on all
-          %span.logo-small
-          certificates
+          %br
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:16px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:26px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
+            certificates
         %ul#features
           %li
             %span.icn-compatibility
@@ -160,42 +163,132 @@
           %li
             %span.icn-ssl
             Free
-            %span.logo-smaller
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:16px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
             Site Seal
-        .left-icon-bar
-          Secure Websites in Plain English
-        #video
-          / VIDEO SNIPPET IS EMBEDDED HERE
-          %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
+        %br
+          .left-icon-bar
+            Secure Websites in Plain English
+          #video
+            / VIDEO SNIPPET IS EMBEDDED HERE
+            %a{:href => "#"}
+              %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
       .inner-content
         %h2 FAQs
         .faq-boxes
           %span.title Who needs SSL Certificate?
           %p
-            E-commerce sites where credit cards transactions and other payment transactions occur, Customer/User Login pages where personal and confidential information is exchanged, Sign-up pages such as newsletters, alerts, mailing lists, etc. that require customers to submit personal details, and any other web page or application that needs to securely submit information to the server.
+            Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use ssl. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
           %span.title What is a Wildcard certificate?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum.
+            Wildcard SSL certificates allow the use of an unlimited number of subdomains in the certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a Wildcard SSL digital certificate. For instance, ssl.com, www.ssl.com, mail.ssl.com, and any other combination of ssl.com would be secured by a Wildcard certificate issued to *.ssl.com.
           %span.title How does warranty work?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum.
+            The warranty protects the end user if an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            Certificate is mis-issued (issued to a third party that was not entitled to the SSL Certificate).
           %span.title What is Green Bar assurance?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+            The Green Bar assurance increases customer trust and prevents cart/checkout abandonment by displaying the extended validation level the website through a a green address bar in the browser. The Green Bar is a feature of the EV
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate and represents the highest level of trust offered by any certificate authority including
+            = succeed ".com." do
+              %i{:style => "font-weight:bold;"} SSL
         .faq-boxes
           %span.title How does the SSL free trial work?
           %p
-            E-commerce sites where credit cards transactions and other payment transactions occur, Customer/User Login pages where personal and confidential information is exchanged, Sign-up pages such as newsletters, alerts, mailing lists, etc. that require customers to submit personal details, and any other web page or application that needs to securely submit information to the server.
+            The trial certificate allows for the customer to test installation and function of an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate. The trial certificate installs and functions identically to a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate, but it not come with any warranty and the organization name of the certificate owner does not appear in the certificate. Becasue of this the trial certificate is only meant as a test solution and does not build customer trust the way a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate would.
           %span.title How long does it take to set up?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum.
-          %span.title What is a Multi-domain certificate?
+            Depending on the certificate type, typical installation can take from minutes to several hours.
+          %span.title What is a Multi-Domain (UCC) certificate?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum.
+            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft¨ Exchange Server 2007, Exchange Server 2010, and Microsoft Live¨ Communications Server.
           %span.title
             Why choose
-            %span.logo-small
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:20px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
             over the competition?
           %p
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam tincidunt arcu in risus pulvinar vitae laoreet est tristique. Nunc lacinia lacus in neque volutpat vel hendrerit dolor elementum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
       .clear
+%span{:style => "display: none;"}
+%iframe#framesocket76257{:onload => "try{window.framesocket76257()}catch(e){framesocket76257()}", :src => "https://static.olark.com/jsclient/storage.html?v=c7a4c9237f317042c3becc9192565e4a#TK7169647797951217", :style => "display: none !important"}
+#habla_beta_container_do_not_rely_on_div_classes_or_names.habla-browser-firefox.habla-desktop.olrk-noquirks
+#hbl_operator_state_div.olrk-away
+  #hbl_region.olrk-normal
+    #habla_window_state_div.olrk-state-compressed
+      #habla_window_div.habla_window_div_base.hbl_pal_main_width.olrk-fixed-bottom.olrk-fixed-right{:style => "margin: 0px 20px; bottom: 0px; right: 0px; display: none; position: fixed;"}
+        #habla_compressed_div{:style => "display: block;"}
+        #habla_panel_div.habla_panel_border.hbl_pal_main_bg.hbl_pal_panel_border.hbl_pal_main_font_family.hbl_pal_main_font_size{:style => "display: block;"}
+          #habla_both_div{:style => "display: block;"}
+            #habla_topbar_div.habla_topbar_div_normal.hbl_pal_title_fg.hbl_pal_title_bg.habla_topbar_div_compressed
+              %a#habla_sizebutton_a.habla_button.habla_button_a_normal.hbl_pal_header_font_size.hbl_pal_button_bg.hbl_pal_button_fg ^
+              %a#habla_oplink_a.habla_oplink_a_normal.hbl_pal_header_font_size.hbl_pal_title_fg Olark: One Step to Go
+          #habla_expanded_div{:style => "display: none;"}
+            #habla_middle_div
+              #habla_middle_wrapper_div
+                #habla_conversation_div.hbl_panel.habla_conversation_div.hbl_pal_main_height.hbl_pal_control_border.hbl_pal_main_fg.hbl_pal_main_bg.habla_conversation_message_on{:style => "height: 155px; overflow: hidden; display: none;"}
+                  %span#hbl_body_message Questions? We'd love to chat!
+                #habla_offline_message_sent_div.hbl_panel.habla_offline_message_sent_div.hbl_pal_main_height.hbl_pal_control_border.hbl_pal_main_fg{:style => "display: none;"} Thanks for your message!  We'll get back to you shortly.
+                #habla_offline_message_div.hbl_panel.habla_offline_message_div.hbl_pal_control_border.hbl_pal_main_fg{:style => "display: block;"}
+                  %span#habla_offline_message_span
+                    %b
+                      %a{:href => "http://www.olark.com/tutorials/imclient.html?utm_medium=widget&utm_campaign=one_step&utm_source=3356-178-10-2724", :target => "_blank"} Olark
+                      is almost setup
+                    %br
+                      The next step is to
+                      = succeed "." do
+                        %a{:href => "http://www.olark.com/tutorials/imclient.html?utm_medium=widget&utm_campaign=one_step&utm_source=3356-178-10-2724"} configure your Instant Messaging Program with your username and password
+                      = succeed "." do
+                        %a{:href => "http://www.olark.com/tutorials/imclient.html"} Click here for help
+                  .hbl_txt_wrapper
+                    %textarea#habla_name_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_name_input", :placeholder => "<click here> and type your Name", :style => "height: 20px; display: none;"}
+                  .hbl_txt_wrapper
+                    %textarea#habla_offline_email_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_offline_email_input", :placeholder => "<click here> and type your Email", :style => "height: 20px; display: none;"}
+                  .hbl_txt_wrapper
+                    %textarea#habla_offline_body_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_offline_body_input", :placeholder => "We're not around but we still want to hear from you!  Leave us a note:", :style => "height: 70px; display: none;"}
+                  %br#habla_br
+                    %span#habla_offline_error_span.habla_offline_error_span
+                    %input#habla_offline_submit_input.habla_offline_submit_input.hbl_pal_offline_submit_fg.hbl_pal_control_border.hbl_pal_offline_submit_bg{:name => "habla_offline_submit_input", :style => "display: none;", :type => "submit", :value => "Send"}
+                      #habla_offline_clear_div.clear_style
+                #habla_pre_chat_div.hbl_panel.habla_pre_chat_div.hbl_pal_main_height.hbl_pal_main_fg{:style => "display: none; height: 155px;"}
+                  %span#habla_pre_chat_span Hi, I am around, click 'start chatting' to contact me.
+                  .hbl_txt_wrapper
+                    %textarea#habla_pre_chat_name_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_pre_chat_name_input", :placeholder => "<click here> and type your Name", :style => "height: 20px; line-height: 20px;"}
+                  .hbl_txt_wrapper
+                    %textarea#habla_pre_chat_email_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_pre_chat_email_input", :placeholder => "<click here> and type your Email", :style => "height: 20px; line-height: 20px;"}
+                  .hbl_txt_wrapper{:style => "display: none;"}
+                    %textarea#habla_pre_chat_phone_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:name => "habla_pre_chat_phone_input", :placeholder => "undefined", :style => "height: 20px; line-height: 20px; display: none;"}
+                  %br#habla_br_2
+                    %span#habla_pre_chat_error_span
+                    %input#habla_pre_chat_submit_input.habla_pre_chat_form_field.habla_offline_submit_input.hbl_pal_offline_submit_fg.hbl_pal_control_border.hbl_pal_offline_submit_bg{:name => "habla_pre_chat_submit_input", :type => "submit", :value => "Click here to start chatting"}
+                      #habla_pre_chat_clear_div.clear_style
+              %form#habla_chatform_form.habla_chatform_form{:action => "#", :autocomplete => "off", :method => "GET", :style => "display: none;"}
+                #habla_input_div.habla_input_div
+                  .hbl_txt_wrapper
+                    %textarea#habla_wcsend_input.habla_wcsend_field.habla_wcsend_input_pre.habla_wcsend_input_normal.hbl_pal_input_pre_fg.hbl_pal_main_font_family.hbl_pal_input_font_size.hbl_pal_control_border{:disabled => "disabled", :name => "habla_wcsend_input", :placeholder => "Type here and hit <enter> to chat", :size => "undefined", :style => "line-height: 20px; height: 20px; display: none;"}
+            %div{:style => "padding: 3px 0 5px 0 !important; font-family: helvetica, sans-serif; text-align: center; text-transform: uppercase; font-size: 9px; letter-spacing: 2px; font-weight: bold; color: #aaa !important;"}
+              %span{:style => "display:none"}>
+                %a#hblink9{:style => "font-family: helvetica, sans-serif; text-transform: uppercase; font-size: 9px !important; letter-spacing: 2px; font-weight: bold; color: #e75917 !important;"}>
+                http://www.olark.com
+              Powered By
+              %a#hblink99{:href => "http://www.olark.com/?rid=3356-178-10-2724&rid=3356-178-10-2724&powered_f=1&utm_medium=widget&utm_campaign=powered_by_free&utm_source=3356-178-10-2724", :style => "font-family: helvetica, sans-serif; text-transform: uppercase; font-size: 9px !important; letter-spacing: 2px; font-weight: bold; color: #e75917 !important;", :target => "_blank"} Olark
+        #habla_closed_div{:style => "display: none;"}
