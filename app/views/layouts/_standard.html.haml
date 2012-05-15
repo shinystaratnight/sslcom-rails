@@ -8,7 +8,8 @@
           -if current_user.ssl_account.has_credits?
             %th.certificate_status=link_to "AVAILABLE CREDITS", credits_certificate_orders_path
           %th.certificate_status=link_to "ITEMS IN CART", show_cart_orders_url
-          %th.certificate_status=link_to "SHORTEN LINKS", root_url(subdomain: "links")
+          -if show_short_link?
+            %th.certificate_status=link_to "SHORTEN LINKS", root_url(subdomain: "links")
           %th=link_to 'Logout', logout_url
         %tr#info
           %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path

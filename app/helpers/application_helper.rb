@@ -17,6 +17,10 @@ module ApplicationHelper
         certificate_order.signup_process[:pages].count)
   end
 
+  def show_short_links?
+    current_page?(action: "buy_now") ? false : true
+  end
+
   # from Dan Webb's MinusMOR plugin
   # enhanced with ability to detect partials with template format, i.e.: _post.html.erb
   def partial(name, options={})
