@@ -3,11 +3,9 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.3'
 
 # Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"
-#gem 'preferences'
 gem 'wirble'
 gem 'awesome_print'
 gem 'activemerchant'
@@ -22,8 +20,6 @@ gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon"
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
-gem 'compass'
-gem 'compass-rails'
 gem 'rb-inotify'
 gem 'aws-s3'
 gem 'aws-sdk'
@@ -38,14 +34,12 @@ gem 'sinatra'
 gem 'uuidtools'
 gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
-#gem 'sauce'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer"
-gem "sass-rails"
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'
@@ -90,5 +84,9 @@ gem 'nokogiri'
     gem 'machinist', '>= 2.0.0.beta2'
     gem 'factory_girl_rails'
   end
-
+  
+  group :assets do
+    gem 'compass-rails'
+    gem 'sass-rails'
+  end
 

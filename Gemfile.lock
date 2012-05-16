@@ -336,7 +336,6 @@ DEPENDENCIES
   capybara
   capybara-firebug!
   capybara-webkit
-  compass
   compass-rails
   cucumber-rails
   database_cleaner
