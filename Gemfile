@@ -23,6 +23,7 @@ gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon"
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
 gem 'compass'
+gem 'compass-rails'
 gem 'rb-inotify'
 gem 'aws-s3'
 gem 'aws-sdk'
@@ -44,6 +45,7 @@ gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer"
+gem "sass-rails"
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'

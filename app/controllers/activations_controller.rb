@@ -11,7 +11,7 @@ class ActivationsController < ApplicationController
     raise Exception if @user.active?
     if @user.activate!(params)
       assign_ssl_links(@user)
-      @user.activation_confirmation.deliver
+      @user.deliver_activation_confirmation!
       flash[:notice] = "Your account has been activated."
       redirect_to account_url
     else
