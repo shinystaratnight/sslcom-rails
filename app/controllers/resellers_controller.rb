@@ -1,5 +1,6 @@
 class ResellersController < ApplicationController
   before_filter :require_user, :except=>[:index, :details]
+  skip_before_filter :finish_reseller_signup
 
   def index
     flash.now[:notice] ||= params[:notice]
@@ -30,8 +31,10 @@ class ResellersController < ApplicationController
       current_user.ssl_account.set_reseller_default_prefs
     end
     @reseller = current_user.ssl_account.reseller
-    unless params["prev.x".intern].nil?
+    if !params["prev.x".intern].nil?
       go_backward
+    elsif !params["cancel.x".intern].nil?
+      cancel
     else
       go_forward
     end
@@ -117,5 +120,9 @@ private
     elsif @reseller.enter_billing_information?
       redirect_to allocate_funds_url
     end
+  end
+
+  def cancel
+    redirect_to home_url
   end
 end

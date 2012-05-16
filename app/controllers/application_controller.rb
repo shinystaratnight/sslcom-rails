@@ -16,6 +16,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_current_user
   before_filter :identify_visitor, :record_visit, :except=>[:refer],
                 if: "Settings.track_visitors"
+  before_filter :finish_reseller_signup, if: "current_user"
 
 #  hide_action :paginated_scope
 
@@ -451,7 +452,7 @@ class ApplicationController < ActionController::Base
 
   def finish_reseller_signup
     redirect_to new_account_reseller_url and return if
-      current_user.ssl_account.has_role?('new_reseller')
+      current_user.ssl_account.is_new_reseller?
   end
 
   def user_not_authorized
