@@ -233,15 +233,15 @@ a img {
 .bottom_navigation li ul {
   display: none;
   position: absolute;
-  width: 160px;
+  width: 220px;
   top: 0;
   left: 0;
-  margin-left: -1px;
+  margin-left: -41px;
 }
 /* line 183, ../../../app/stylesheets/master.sass */
 .bottom_navigation li > ul {
   top: 35px;
-  left: 60px;
+  left: 40px;
   background: #212121;
 }
 /* line 187, ../../../app/stylesheets/master.sass */
@@ -254,7 +254,7 @@ a img {
   background: #232323;
   padding: 10px;
   width: 240px !important;
-  border-top: none;
+  border: none;
   box-shadow: none;
   -moz-box-shadow: none;
   -ms-box-shadow: none;
@@ -270,12 +270,13 @@ a img {
 /* line 204, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a {
   color: #cccccc !important;
+  margin-left: 4px;
 }
-/* line 206, ../../../app/stylesheets/master.sass */
+/* line 207, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a:hover {
   color: white !important;
 }
-/* line 208, ../../../app/stylesheets/master.sass */
+/* line 209, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li:hover {
   width: 240px !important;
   background: black !important;
@@ -283,12 +284,12 @@ a img {
 }
 
 /*content */
-/* line 215, ../../../app/stylesheets/master.sass */
+/* line 216, ../../../app/stylesheets/master.sass */
 .container {
   padding: 15px 0 0 0 !important;
 }
 
-/* line 218, ../../../app/stylesheets/master.sass */
+/* line 219, ../../../app/stylesheets/master.sass */
 #container {
   min-height: 100%;
   margin: 0;
@@ -302,7 +303,7 @@ a img {
 }
 
 /*footer */
-/* line 231, ../../../app/stylesheets/master.sass */
+/* line 232, ../../../app/stylesheets/master.sass */
 #footer {
   clear: both;
   background: #282928;
@@ -314,24 +315,24 @@ a img {
   /* important */
   text-align: left !important;
 }
-/* line 242, ../../../app/stylesheets/master.sass */
+/* line 243, ../../../app/stylesheets/master.sass */
 #footer .content .box-logo {
   width: 190px;
 }
-/* line 245, ../../../app/stylesheets/master.sass */
+/* line 246, ../../../app/stylesheets/master.sass */
 #footer .content .box .footer-like {
   padding: 0px 210px 50px 0;
 }
-/* line 247, ../../../app/stylesheets/master.sass */
+/* line 248, ../../../app/stylesheets/master.sass */
 #footer .content .box .logo-small {
   padding: 0px 210px 60px 0;
   background: url("/images/small-logo.png") no-repeat;
 }
-/* line 250, ../../../app/stylesheets/master.sass */
+/* line 251, ../../../app/stylesheets/master.sass */
 #footer .content .box-social {
   width: 210px;
 }
-/* line 252, ../../../app/stylesheets/master.sass */
+/* line 253, ../../../app/stylesheets/master.sass */
 #footer .content .box {
   width: 185px;
   background: inherit;
@@ -339,43 +340,43 @@ a img {
   margin-bottom: 0 !important;
   color: white;
 }
-/* line 258, ../../../app/stylesheets/master.sass */
+/* line 259, ../../../app/stylesheets/master.sass */
 #footer .content .box b {
   color: white !important;
 }
-/* line 260, ../../../app/stylesheets/master.sass */
+/* line 261, ../../../app/stylesheets/master.sass */
 #footer .content .box .title {
   font-size: 14px;
   margin-left: 34px;
 }
-/* line 263, ../../../app/stylesheets/master.sass */
+/* line 264, ../../../app/stylesheets/master.sass */
 #footer .content .box ul {
   margin: 12px 0 0 0 !important;
 }
-/* line 265, ../../../app/stylesheets/master.sass */
+/* line 266, ../../../app/stylesheets/master.sass */
 #footer .content .box li {
   list-style-type: none;
   padding: 4px;
 }
-/* line 268, ../../../app/stylesheets/master.sass */
+/* line 269, ../../../app/stylesheets/master.sass */
 #footer .content .box a {
   color: #dddddd;
   font-size: 12px;
   margin-left: -8px;
 }
-/* line 272, ../../../app/stylesheets/master.sass */
+/* line 273, ../../../app/stylesheets/master.sass */
 #footer .content .box a b {
   font-size: 12px;
   letter-spacing: -0.5px;
   font-weight: bold;
   font-style: italic;
 }
-/* line 277, ../../../app/stylesheets/master.sass */
+/* line 278, ../../../app/stylesheets/master.sass */
 #footer .content .box a:hover {
   color: white;
   text-decoration: underline;
 }
-/* line 280, ../../../app/stylesheets/master.sass */
+/* line 281, ../../../app/stylesheets/master.sass */
 #footer .content .copyright {
   margin: 0 0 0 220px;
   font-size: 12px;

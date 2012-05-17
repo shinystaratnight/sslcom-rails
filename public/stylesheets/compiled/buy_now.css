@@ -759,3 +759,8 @@ a img {
 .inner {
   overflow: visible !important;
 }
+
+/* line 565, ../../../app/stylesheets/buy_now.sass */
+.requires_flash {
+  font-size: 12px !important;
+}
