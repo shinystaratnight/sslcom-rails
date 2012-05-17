@@ -40,11 +40,12 @@
         %li(class="#{current_page?(surls_root_url(:subdomain=>Surl::SUBDOMAIN)) ? 'active' : ''}")
           =link_to "Shorten Links", surls_root_url(:subdomain=>Surl::SUBDOMAIN)
     =render partial: "/layouts/logo_header"
-#content
-  -if is_public_index_page? || yield(:header)=='public_wo_container'
-    =yield
-  -else
-    .containerl
-      .inner
-        =render :partial => "shared/messages"
-        =yield
+#container
+  #content.content
+    -if is_public_index_page? || yield(:header)=='public_wo_container'
+      =yield
+    -else
+      .containerl
+        .inner
+          =render :partial => "shared/messages"
+          =yield

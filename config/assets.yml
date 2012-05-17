@@ -40,5 +40,6 @@ stylesheets:
     - public/stylesheets/compiled/site_report.css
     - public/stylesheets/prettyPhoto.css
   buy_now:
-    - public/stylesheets/buy_now.css
+    - public/stylesheets/compiled/master.css
+    - public/stylesheets/compiled/buy_now.css
 

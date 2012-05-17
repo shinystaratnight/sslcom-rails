@@ -127,11 +127,11 @@
       .sidebarhome
         .left-icon-bar
           Standard Features on all
-          %br
-            %span{:style => "font-family:helvetica,arial,san-serif;font-size:16px;letter-spacing:-1px;"}
-              %b{:style => "font-family:'arial black italic';font-size:26px;letter-spacing:-2px;font-weight:100;"} SSL
-              \.com
-            certificates
+          %br/
+          %span
+            %b SSL
+            \.com
+          certificates
         %ul#features
           %li
             %span.icn-compatibility
@@ -167,13 +167,24 @@
               %b{:style => "font-family:'arial black italic';font-size:16px;letter-spacing:-2px;font-weight:100;"} SSL
               \.com
             Site Seal
-        %br
-          .left-icon-bar
-            Secure Websites in Plain English
-          #video
-            / VIDEO SNIPPET IS EMBEDDED HERE
-            %a(href="http://app.wistia.com/embed/medias/fd66cacdbc?iframe=true&width=640&height=360&autoplay=false&playbutton=true&controls_visible=false&end_video_behavior=default" rel="prettyPhoto[iframes]")
-              %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
+        %br/
+        .left-icon-bar
+          Secure Websites in Plain English
+        #video
+          / VIDEO SNIPPET IS EMBEDDED HERE
+          %a{:href => "#"}
+            %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
+        %br/
+        %br/
+        .left-icon-bar
+          %span
+            %b SSL
+            \.com
+          Site Seal
+        #badge
+          %a{:href => "#"}
+            %img{:alt => "", :src => "images/ssl_trust_logo.gif"}/
+          %p Lorem ipsum dolor sit amet, ea noluisse qualisque mel, ei vis integre mandamus. Temporibus theophrastus est no, possit scaevola est ei, sea illum
       .inner-content
         %h2 FAQs
         .faq-boxes
@@ -215,7 +226,7 @@
             Depending on the certificate type, typical installation can take from minutes to several hours.
           %span.title What is a Multi-Domain (UCC) certificate?
           %p
-            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft¨ Exchange Server 2007, Exchange Server 2010, and Microsoft Live¨ Communications Server.
+            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for MicrosoftÂ¨ Exchange Server 2007, Exchange Server 2010, and Microsoft LiveÂ¨ Communications Server.
           %span.title
             Why choose
             %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
@@ -228,4 +239,37 @@
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
             is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+        .notes
+          %a{:href => ""}
+            %div Still have questions? Visit the FAQ page for more answers.
+          %h2 Testimonials
+        .testimonial-boxes
+          .box
+            %img{:alt => "", :src => "images/pic1.jpg"}/
+            %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
+            .name
+              %span.black Kim Dotcom
+              %span.gray Megaupload.com
+          .box.long
+            %img{:alt => "", :src => "images/pic3.jpg"}/
+            %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
+            .name
+              %span.black Mahmoud
+              %span.gray Google me
+        .testimonial-boxes
+          .box.short
+            %img{:alt => "", :src => "images/pic2.jpg"}/
+            %blockquote "Leo and I go way back!"
+            .name
+              %span.black Jenna Jameson
+              %span.gray clubjenna.com
+          .box
+            %img{:alt => "", :src => "images/pic4.jpg"}/
+            %blockquote "In my will I stated Kim Jr should switch to SSL.com."
+            .name
+              %span.black Kim Jong II
+              %span.gray iminhell.com
+        .notes
+          %a{:href => ""}
+            %div Still don't believe us? Visit Testimonial for more rave reviews.
       .clear

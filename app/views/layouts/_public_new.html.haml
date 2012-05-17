@@ -1,0 +1,75 @@
+#header
+  .content
+    .logo
+      %a{:href => "http://www.ssl.com"}
+    / end of logo
+    .navigation
+      .top_navigation
+        %ul
+          %li
+            %a{:href => "#{show_cart_orders_url}", :style => "text-decoration:none;"}
+              %span.icn_cart My Cart (#{cart_items_count})
+          %li
+            %span.icn_support
+            %a{:href => "#"} Support
+          /
+            <li class="support"><a href="#">Support</a></li>
+            <li class="divider-horizontal"></li>
+          %li
+            %span.icn_email
+            %a{:href => "#"} Email Us
+          %li
+            %span.icn_phone>
+            1-877-SSL-SECURE
+          %li
+            %span.icn_live
+            %a{:href => "#"} Live Chat
+      / end of top_navigation
+      .bottom_navigation
+        %ul#nav
+          %li=link_to "MY ACCOUNT", root_url
+          %li
+            %a{:href => "#"} FREE TRIAL
+          %li=link_to "RESELLERS", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
+          %li
+            %a{:href => "#"} OUR CERTIFICATES
+            %ul
+              %li
+                %a{:href => "#"}
+                  %i> SSL
+                  \.com Basic
+              %li
+                %a{:href => "#"}
+                  %i> SSL
+                  \.com Premium
+              %li
+                %a{:href => "#"}
+                  %i> SSL
+                  \.com Enterprise EV
+              %li
+                %a{:href => "#"} Wildcard (Unlimited Subdomains)
+              %li
+                %a{:href => "#"} Multi-Domain (UCC)
+              %li
+                %a{:href => "#"} Multi-Domain Plus (UCC EV)
+              %li
+                %a{:href => "#"} Free Trial SSL
+              %li.divider
+              %li
+                %a{:href => "#"} SSL Selection Wizard
+              %li
+                %a{:href => "#"} Compare SSL.com Certificates
+              %li
+                %a{:href => "#"}
+                  %i> SSL
+                  \.com vs Competition
+      .clear
+#container
+  #content.content
+    -if is_public_index_page? || yield(:header)=='public_wo_container'
+      =yield
+    -else
+      .containerl
+        .inner
+          =render :partial => "shared/messages"
+          =yield
