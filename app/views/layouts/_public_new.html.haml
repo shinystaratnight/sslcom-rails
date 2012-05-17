@@ -1,7 +1,7 @@
 #header
   .content
     .logo
-      %a{:href => "http://www.ssl.com"}
+      %a{:href => "http://www.ssl.com"} &nbsp;
     / end of logo
     .navigation
       .top_navigation
@@ -10,19 +10,16 @@
             %a{:href => "#{show_cart_orders_url}", :style => "text-decoration:none;"}
               %span.icn_cart My Cart (#{cart_items_count})
           %li
-            %span.icn_support
-            %a{:href => "#"} Support
-          /
-            <li class="support"><a href="#">Support</a></li>
-            <li class="divider-horizontal"></li>
+            %span.icn_support &nbsp;
+            =link_to "Support", "http://support.ssl.com/Tickets/Submit"
           %li
-            %span.icn_email
-            %a{:href => "#"} Email Us
+            %span.icn_email &nbsp;
+            =link_to "Email Us", contact_us_url
           %li
-            %span.icn_phone>
+            %span.icn_phone> &nbsp;
             1-877-SSL-SECURE
           %li
-            %span.icn_live
+            %span.icn_live &nbsp;
             %a{:href => "#"} Live Chat
       / end of top_navigation
       .bottom_navigation
