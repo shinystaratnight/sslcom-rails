@@ -1,7 +1,7 @@
 #header
   .content
     .logo
-      %a{:href => "http://www.ssl.com"} &nbsp;
+      %a{:href => "#{root_url}"} &nbsp;
     / end of logo
     .navigation
       .top_navigation
@@ -24,7 +24,7 @@
       / end of top_navigation
       .bottom_navigation
         %ul#nav
-          %li=link_to "MY ACCOUNT", root_url
+          %li=link_to "MY ACCOUNT", account_url
           %li=link_to "FREE TRIAL", certificate_url("free")
           %li=link_to "RESELLERS", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
           %li
