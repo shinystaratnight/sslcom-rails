@@ -42,12 +42,9 @@
                 %a{:href => "#"}
                   %i> SSL
                   \.com Enterprise EV
-              %li
-                %a{:href => "#"} Wildcard (Unlimited Subdomains)
-              %li
-                %a{:href => "#"} Multi-Domain (UCC)
-              %li
-                %a{:href => "#"} Multi-Domain Plus (UCC EV)
+              %li=link_to "Wildcard (Unlimited Subdomains)", certificate_url('wildcard')
+              %li=link_to "Multi-Domain (UCC)", certificate_url('ucc')
+              %li=link_to "Multi-Domain Plus (UCC EV)", certificate_url('ev_ucc')
               %li
                 %a{:href => "#"} Free Trial SSL
               %li.divider
