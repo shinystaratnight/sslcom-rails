@@ -107,6 +107,10 @@
     $.adjust_items_in_cart = function(){
       var items = "items";
       var howMany = $.get_cart_items().length;
+      if(howMany>0)
+        $(".icn_cart").addClass("icn_cart-filled").removeClass("icn_cart");
+      else
+        $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
       if(howMany==1)
         items = "item";
       $("#cart_size").text(howMany.toString()+" "+items+" in cart")
