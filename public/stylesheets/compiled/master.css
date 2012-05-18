@@ -378,7 +378,7 @@ a img {
 }
 /* line 281, ../../../app/stylesheets/master.sass */
 #footer .content .copyright {
-  margin: 0 0 0 220px;
+  margin: 25px 0 0 220px;
   font-size: 12px;
   color: white;
 }

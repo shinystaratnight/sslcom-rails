@@ -25,8 +25,7 @@
       .bottom_navigation
         %ul#nav
           %li=link_to "MY ACCOUNT", root_url
-          %li
-            %a{:href => "#"} FREE TRIAL
+          %li=link_to "FREE TRIAL", certificate_url("free")
           %li=link_to "RESELLERS", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
           %li
             %a{:href => "#"} OUR CERTIFICATES

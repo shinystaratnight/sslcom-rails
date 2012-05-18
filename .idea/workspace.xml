@@ -19,9 +19,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/master.sass" afterPath="$PROJECT_DIR$/app/stylesheets/master.sass" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" afterPath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/master.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/master.css" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -54,19 +58,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="_public_new.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_public_new.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="27" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0">
+            <state line="28" column="0" selection-start="865" selection-end="865" vertical-scroll-proportion="0.40894568">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="18" column="26" selection-start="970" selection-end="970" vertical-scroll-proportion="1.0851064">
+            <state line="18" column="26" selection-start="970" selection-end="970" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -75,7 +79,7 @@
       <file leaf-file-name="_site_seal.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site/_site_seal.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.0">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -84,7 +88,7 @@
       <file leaf-file-name="application.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="93" selection-start="594" selection-end="594" vertical-scroll-proportion="0.0">
+            <state line="75" column="0" selection-start="4940" selection-end="6315" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -99,19 +103,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="master.sass" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="10" selection-start="1200" selection-end="1209" vertical-scroll-proportion="-4.129032">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="buy_now.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="187" column="29" selection-start="6155" selection-end="6155" vertical-scroll-proportion="-102.548386">
+            <state line="137" column="17" selection-start="4232" selection-end="4232" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -120,25 +115,16 @@
       <file leaf-file-name="_footer_new.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="66" selection-start="514" selection-end="514" vertical-scroll-proportion="-6.032258">
+            <state line="63" column="0" selection-start="2270" selection-end="2270" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="assets.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/assets.yml">
+      <file leaf-file-name="master.sass" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="37" column="74" selection-start="1251" selection-end="1251" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_scripts_and_styles.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="277" column="64" selection-start="5666" selection-end="5666" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -197,15 +183,15 @@
         <option value="$PROJECT_DIR$/public/stylesheets/buy_now.css" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_public.html.haml" />
-        <option value="$PROJECT_DIR$/app/stylesheets/master.sass" />
         <option value="$PROJECT_DIR$/app/stylesheets/buy_now.sass" />
         <option value="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
         <option value="$PROJECT_DIR$/config/assets.yml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/app/stylesheets/master.sass" />
         <option value="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
-        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
       </list>
     </option>
   </component>
@@ -1228,20 +1214,20 @@
       <item index="0" class="java.lang.String" itemvalue="RSpec.CertificateOrder as a ssl.com certificate order using FactoryGirl should be able to create a new order with a domain validated certificate" />
       <item index="1" class="java.lang.String" itemvalue="RSpec.ApisController responds to create_certificate_order" />
       <item index="2" class="java.lang.String" itemvalue="Rake.routes" />
-      <item index="3" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
-      <item index="4" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
-      <item index="5" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
-      <item index="6" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
-      <item index="7" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="8" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="9" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="11" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="12" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="14" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
-      <item index="15" class="java.lang.String" itemvalue="Spork DRb.RSpec: Spork DRb server" />
-      <item index="16" class="java.lang.String" itemvalue="RSpec.ApisController requires certain parameters for dv certs" />
+      <item index="3" class="java.lang.String" itemvalue="Spork DRb.RSpec: Spork DRb server" />
+      <item index="4" class="java.lang.String" itemvalue="RSpec.ApisController requires certain parameters for dv certs" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="6" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="7" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="8" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="9" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="10" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="11" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="12" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="15" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="16" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
     </list>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
@@ -1345,10 +1331,9 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5588235" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.4304419" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20149253" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1320598" sideWeight="0.5695581" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.400982" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1370432" sideWeight="0.599018" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.400982" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30718955" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1356,6 +1341,7 @@
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4304419" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32843137" sideWeight="0.0" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -1449,114 +1435,88 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1737" column="13" selection-start="31082" selection-end="31082" vertical-scroll-proportion="-7.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/resellers/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="40" column="4" selection-start="1473" selection-end="1473" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/reseller.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="84" column="4" selection-start="3459" selection-end="3459" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="84" column="4" selection-start="3459" selection-end="3459" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_logo_header.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_public.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="36" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="41" column="36" selection-start="1777" selection-end="1777" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/buy_now.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="82" column="44" selection-start="1656" selection-end="1656" vertical-scroll-proportion="-4.322581">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="10" selection-start="1200" selection-end="1209" vertical-scroll-proportion="-4.129032">
-          <folding />
-        </state>
+        <state line="82" column="44" selection-start="1656" selection-end="1656" vertical-scroll-proportion="-4.322581" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/assets.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="74" selection-start="1251" selection-end="1251" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="37" column="74" selection-start="1251" selection-end="1251" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
+    <entry file="file://$PROJECT_DIR$/public/assets/buy_now-datauri.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="27" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/buy_now.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="26" selection-start="970" selection-end="970" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/_site_seal.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="114" selection-start="847" selection-end="847" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="187" column="29" selection-start="6155" selection-end="6155" vertical-scroll-proportion="-102.548386">
-          <folding />
-        </state>
+        <state line="137" column="17" selection-start="4232" selection-end="4232" vertical-scroll-proportion="0.0" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="277" column="64" selection-start="5666" selection-end="5666" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="66" selection-start="514" selection-end="514" vertical-scroll-proportion="-6.032258">
+        <state line="63" column="0" selection-start="2270" selection-end="2270" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="93" selection-start="594" selection-end="594" vertical-scroll-proportion="0.0">
+        <state line="75" column="0" selection-start="4940" selection-end="6315" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="114" selection-start="847" selection-end="847" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="18" column="26" selection-start="970" selection-end="970" vertical-scroll-proportion="1.0851064">
+        <state line="28" column="0" selection-start="865" selection-end="865" vertical-scroll-proportion="0.40894568">
           <folding />
         </state>
       </provider>
