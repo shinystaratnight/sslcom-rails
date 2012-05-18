@@ -8,10 +8,11 @@
     -if @meta
       -@meta.each do |key|
         %meta{:name=>key[0], :content=>key[1]}
-    %meta{ :name => "keywords", :content => h(yield(:keywords).or_else(Settings.meta_keywords))}
+    /%meta{ :name => "keywords", :content => h(yield(:keywords).or_else(Settings.meta_keywords))}
     %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
     %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
     %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
+    %meta(content="width=1115" name="viewport")
     -#the following metas are for google+ custom message
     %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
     %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
