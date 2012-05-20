@@ -1,3 +1,9 @@
+-c={}
+-c[:description]="Premium Extended Validation (EV) SSL Certificate offers the highest level of trust to your website by displaying your website address in bold, bright green. Unlock EV SSL Certificate, the green address bar on your site and retain more sales."
+-c[:keywords]="EV SSL, Extended Validation SSL, EV Certificate, EV SSL Certificate, SSL EV, EV Certificates, SSL EV Certificates, Extended Validation Certificates, Extended SSL, EV SSL Certificate"
+-c[:title]="Extended Validation (EV) SSL Certificates - Get the Green Bar display"
+-c.each do |k, v|
+  -content_for k, c[k]
 -content_for :title, "About #{@certificate.title} Certificates"
 %h3#certificate_crumbs
   =certificate_crumbs

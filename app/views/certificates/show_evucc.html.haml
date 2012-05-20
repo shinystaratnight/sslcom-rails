@@ -1,4 +1,9 @@
--content_for :title, "About #{@certificate.title} Certificates"
+-c={}
+-c[:description]="Premium EV UCC SSL Certificates offers the highest validation level to your customers. It provides SSL security for Microsoft Exchange and Communications Server on a number of different domains."
+-c[:keywords]="EV UCC SSL, communications certificate, EV UC certificate, EV UCC certificate, Secured server, Internet security, multiple domain"
+-c[:title]="Premium Extended Validation (EV) Multi Domain UCC SSL Certificate"
+-c.each do |k, v|
+  -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
 .leftcolb

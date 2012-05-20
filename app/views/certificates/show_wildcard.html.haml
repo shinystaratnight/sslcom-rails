@@ -1,4 +1,9 @@
--content_for :title, "About #{@certificate.title} Certificates"
+-c={}
+-c[:description]="A Wildcard SSL Certificate secures multiple subdomains, eliminating the need to manage multiple certificates. SSL.com provides a smart seal logo to each subdomain secured by SSL.com's Wildcard SSL with an unlimited reissuances for the life of the certificate."
+-c[:keywords]="Wildcard SSL, Wildcard SSL Certificates, Wildcard Certificates, Cheap Wildcard SSL, Wildcard SSL Certificate"
+-c[:title]="Wildcard SSL Certificates - secure multiple subdomains"
+-c.each do |k, v|
+  -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
 .leftcolb

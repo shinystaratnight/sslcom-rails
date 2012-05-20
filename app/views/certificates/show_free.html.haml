@@ -1,4 +1,9 @@
--content_for :title, "About #{@certificate.title} Certificates"
+-c={}
+-c[:description]="Get your Free Class 1 validated and industrial strength encrypted SSL Certificate from SSL.com. Our free SSL Certificates have the same encryption strength and browser acceptance rates as the higher assurance validation SSL Certificates."
+-c[:keywords]="free ssl, free ssl certificate, free ssl certificates, test ssl certificate"
+-c[:title]="SSL.com offers Free SSL Certificate to encrypt your site immediately"
+-c.each do |k, v|
+  -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
 .leftcolb

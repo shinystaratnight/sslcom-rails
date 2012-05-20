@@ -1,4 +1,9 @@
--content_for :title, "About #{@certificate.title} Certificates"
+-c={}
+-c[:description]="Create confidence on your site with High Assurance SSL Certificates from SSL.com, a globally trusted SSL Certificate authority. With each High Assurance SSL Certificate, get extending industry level validation and encryption technology."
+-c[:keywords]="High Assurance SSL Certificate, High Assurance SSL, Buy High Assurance SSL, SSL Certificates, Secure site , Web Server SSL"
+-c[:title]="High Assurance SSL Certificate product overview"
+-c.each do |k, v|
+  -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
 .leftcolb

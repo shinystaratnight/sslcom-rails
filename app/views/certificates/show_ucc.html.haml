@@ -1,4 +1,9 @@
--content_for :title, "About #{@certificate.title} Certificates"
+-c={}
+-c[:description]="Unified Communications Certificates (UCC) are SSL Certificates for Microsoft Exchange and Communications Server. A single UCC provides SSL secured communications on a number of different domains, greatly reducing complexity and cost."
+-c[:keywords]="UCC SSL, communications certificate, UC certificate, Secured server, Internet security, multiple domain"
+-c[:title]="Unified Communications Certificate (UCC) Product overview"
+-c.each do |k, v|
+  -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
 .leftcolb
