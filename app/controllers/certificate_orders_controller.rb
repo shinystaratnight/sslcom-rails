@@ -18,11 +18,11 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew]
+                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
-  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download,
+  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download, :start_over,
     :renew, :reprocess, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
@@ -333,6 +333,12 @@ class CertificateOrdersController < ApplicationController
       :filename => @certificate_order.friendly_common_name+'.zip'
     # The temp file will be deleted some time...
     t.close
+  end
+
+  def start_over
+    @certificate_order.start_over! if !@certificate_order.blank? &&
+      ['csr_submitted', 'info_provided', 'contacts_provided'].include?(@certificate_order.certificate_content.workflow_state)
+    flash[:notice] = "certificate order #{@certificate_order.ref} has been canceled"
   end
 
   private

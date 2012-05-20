@@ -200,6 +200,9 @@ class CertificateOrder < ActiveRecord::Base
 
     state :paid do
       event :cancel, :transitions_to => :canceled
+      event :start_over, transitions_to: :paid do
+        certificate_contents.create(duration: self.certificate_content.duration)
+      end
     end
 
     state :canceled do

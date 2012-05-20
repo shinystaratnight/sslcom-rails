@@ -11,4 +11,6 @@
     #stylized.default_form
       =render :partial => "/certificate_orders/form", :locals => {:f=>f}
     #button_container
-      #next_submit=image_submit_tag "next_bl.gif"
+      #auto_adjust
+        =image_tag "cancel_bl.gif", id: "start_over"
+        =image_submit_tag "next_bl.gif"

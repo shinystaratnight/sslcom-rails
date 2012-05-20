@@ -1,5 +1,4 @@
 -content_for :title, "Show Validation Documentation"
-=render :partial => '/validations/index_scripts'
 -co=@certificate_order
 .upload_document_container
   %h3
@@ -14,3 +13,4 @@
     -unless hide_dcv?
       =render partial: '/validations/proof_of_dcv', locals: {co: co}
     =render partial: "/validations/manage_docs", locals: {co: co}
+=render :partial => '/validations/index_scripts'

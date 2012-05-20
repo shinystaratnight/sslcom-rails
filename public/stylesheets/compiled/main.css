@@ -5171,7 +5171,7 @@ label.error {
   float: none;
 }
 /* line 3882, ../../../app/stylesheets/main.sass */
-#stylized input#upload_files, #surl_stylized input#upload_files {
+#stylized input#upload_files, #stylized input#start_over, #surl_stylized input#upload_files, #surl_stylized input#start_over {
   margin: 1em;
   float: none;
   font-size: 1.8em;
@@ -6668,7 +6668,7 @@ ul#send_to_ca_box {
 }
 
 /* line 4918, ../../../app/stylesheets/main.sass */
-.shiny_blue_button, #stylized input#upload_files, #surl_stylized input#upload_files {
+.shiny_blue_button, #stylized input#upload_files, #stylized input#start_over, #surl_stylized input#upload_files, #surl_stylized input#start_over {
   color: white;
   padding: 10px 20px;
   background-color: #79cff7;

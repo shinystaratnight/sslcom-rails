@@ -89,13 +89,14 @@ SslCom::Application.routes.draw do
       get :renew
       get :reprocess
       get :auto_renew
+      post :start_over
     end
 
     resource :validation do
       post :upload, :send_dcv_email
       get :send_to_ca
-
     end
+
     resource :site_seal
   end
 

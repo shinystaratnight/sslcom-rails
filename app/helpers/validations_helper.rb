@@ -61,6 +61,7 @@ module ValidationsHelper
   end
 
   def last_sent(co)
+    return if co.csr.blank?
     dcvs=co.csr.domain_control_validations
     (dcvs.last.try(:dcv_method)=="http") ? dcvs.last : dcvs.last_sent
   end
