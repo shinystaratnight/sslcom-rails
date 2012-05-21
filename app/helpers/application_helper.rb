@@ -261,8 +261,10 @@ module ApplicationHelper
   end
 
   def skip_payment?
+    order_paid = @certificate_order.order.blank? ? false : @certificate_order.order.paid?
+    start_over = (@certificate_order.certificate_contents.count>1)
     cc=@certificate_order.certificate_content
-    !!(@certificate_order.is_prepaid? ||
+    !!(@certificate_order.is_prepaid? || (order_paid && start_over) ||
        (eval("@#{CertificateOrder::REPROCESSING}") || (cc && cc.preferred_reprocessing?)))
   end
 

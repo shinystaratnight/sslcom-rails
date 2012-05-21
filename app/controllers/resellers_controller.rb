@@ -121,8 +121,4 @@ private
       redirect_to allocate_funds_url
     end
   end
-
-  def cancel
-    redirect_to home_url
-  end
 end

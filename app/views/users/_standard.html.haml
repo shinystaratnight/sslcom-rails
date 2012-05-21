@@ -20,16 +20,14 @@
       through an ssl.com certificate, you will need to acquire an ssl.com
       certificate.
       =link_to "Click here to see a list ssl.com certificate products.", certificates_path
-  /
-    .become_reseller_title(style="margin: 10px 0 0")
-      %p
-        %a(href="#{url_for resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)}")
-          %strong Become a reseller
-          (click here to learn more)
-  /
+  .become_reseller_title(style="margin: 10px 0 0")
     %p
-      Make more profit and save money by reselling ssl.com certificates at a discount.
-      =link_to "Click here to sign up for the ssl.com reseller program.", new_reseller_url
+      %a(href="#{url_for resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)}")
+        %strong Become a reseller
+        (click here to learn more)
+  %p
+    Make more profit and save money by reselling ssl.com certificates at a discount.
+    =link_to "Click here to sign up for the ssl.com reseller program.", new_reseller_url
 #dashboard
   %table(cellspacing="0")
     %caption

@@ -202,7 +202,7 @@ class Order < ActiveRecord::Base
         payment_authorized!
       else
         transaction_declined!
-        errors.add_to_base(authorization.message)
+        errors[:base]<<(authorization.message)
       end
 
       authorization

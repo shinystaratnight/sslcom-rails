@@ -72,7 +72,7 @@ class UserSessionsController < ApplicationController
         flash[:notice_item] = "Click here to have the activation email
           resent to #{@user_session.attempted_record.email}.",
           resend_activation_users_path(:login => @user_session.attempted_record.login)
-        @user_session.errors.add_to_base("please visit
+        @user_session.errors[:base]<<("please visit
           #{resend_activation_users_url(:login => @user_session.attempted_record.login)}
           to have your activation notice resent")
         format.html {render :action => :new}

@@ -212,7 +212,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def proper_certificate?
     if Settings.csr_parser=="remote"
-      errors.add_to_base 'invalid certificate' unless @parsed.is_a?(Array)
+      errors[:base]<<'invalid certificate' unless @parsed.is_a?(Array)
     end
   end
 

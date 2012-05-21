@@ -46,6 +46,7 @@ SslCom::Application.routes.draw do
       get :resend_activation
       get :activation_notice
       get :search
+      get :cancel_reseller_signup
     end
 
     member do

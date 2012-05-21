@@ -11,7 +11,7 @@ class UsersController < ApplicationController
   filter_access_to  :update, :admin_update, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
-  filter_access_to  :edit_password, :edit_email, :require=>:edit
+  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :require=>:edit
 
   def new
   end
@@ -63,6 +63,17 @@ class UsersController < ApplicationController
     end
   end
 
+  def cancel_reseller_signup
+    if current_user.role_symbols.include? Role::RESELLER.to_sym
+      current_user.ssl_account.remove_role! "new_reseller"
+      current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
+      current_user.roles.delete Role.find_by_name(Role::RESELLER)
+    end
+    current_user.roles << Role.find_by_name(Role::CUSTOMER) unless current_user.role_symbols.include?(Role::CUSTOMER.to_sym)
+    flash[:notice]="reseller signup has been canceled"
+    @user=current_user #for rable object reference
+  end
+
   def admin_show    
   end
 
@@ -107,7 +118,7 @@ class UsersController < ApplicationController
     edit_email = (params[:edit_action] == 'edit_email')? true : false
     unless edit_email
       @user.changing_password = true #nonelegant hack to trigger validations of password
-      @user.errors.add_to_base(
+      @user.errors[:base]<<(
         'Old password value does not match password to be changed') unless
         @user.valid_password?(params[:old_password]) unless admin_op?
     end
