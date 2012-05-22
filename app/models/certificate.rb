@@ -1,5 +1,6 @@
 class Certificate < ActiveRecord::Base
   has_many    :product_variant_groups, :as => :variantable
+  has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_many    :discounts, as: :discountable
@@ -112,7 +113,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def items_by_domains
-    product_variant_groups.domains.map(&:product_variant_items).flatten if product.include?('ucc')
+    product_variant_groups.domains.map(&:product_variant_items).flatten if is_ucc?
   end
 
   def items_by_server_licenses
@@ -121,7 +122,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def first_domains_tiers
-    if product.include?('ucc')
+    if is_ucc?
       first = []
       items_by_domains.each_with_index {|d, i| first << d if i%NUM_DOMAINS_TIERS==0}
       first
@@ -145,7 +146,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_ucc?
-    product.include?('ucc')
+    product.include?('ucc') || product.include?('premiumssl')
   end
 
   def is_wildcard?
@@ -234,7 +235,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def duration_in_days(duration)
-    if product.include?('ucc')
+    if is_ucc?
       items_by_domains.select{|n|n.display_order==duration.to_i}.last.value
     else
       items_by_duration[duration.to_i-1].value
@@ -242,7 +243,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def duration_index(value)
-    if product.include? "ucc"
+    if is_ucc?
       items_by_domains.find{|d|d.value==value.to_s}.display_order
     else
       items_by_duration.map(&:value).index(value.to_s)+1
@@ -283,7 +284,7 @@ class Certificate < ActiveRecord::Base
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each do |pvi|
         new_pvi=pvi.dup
-        new_pvi.attributes = {created_at: now, updated_at: now, serial: "sslcom"+pvi.serial}
+        new_pvi.attributes = {created_at: now, updated_at: now, serial: pvi.serial.gsub("ucc256ssl", "premium256ssl")}
         new_pvg.product_variant_items << new_pvi
         unless pvi.sub_order_item.blank?
           new_pvi.sub_order_item=pvi.sub_order_item.dup
@@ -312,25 +313,26 @@ class Certificate < ActiveRecord::Base
   def self.create_premium_ssl
     c=Certificate.public.find_by_product "ucc"
     certs = c.duplicate_tiers "premium256sslcom"
-    certs = Certificate
-    title = "Limited multi-subdomain SSL"
-    {
+    title = "Premium Multi-subdomain SSL"
+    description={
         "certificate_type" => "Premium SSL",
-                  "points" => "<div class='check'>high validation and trust value</div>\n
-                               <div class='check'>results in higher sales conversion</div>\n
-                               <div class='check'>$125,000 USD insurance guarranty</div>\n
-                               <div class='check'>secure up to 200 additional domains</div>\n
-                               <div class='check'>works on MS Exchange or OWA</div>\n
-                               <div class='check'>activates SSL Secure Site Seal</div>\n
-                               <div class='check'>2048 bit public key encryption</div>\n
-                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n
-                               <div class='check'>quick issuance</div>\n
-                               <div class='check'>30 day unconditional refund</div>\n
-                               <div class='check'>24 hour support</div>\n
-                               <div class='check'>unlimited reissuances</div>\n",
+                  "points" => "<div class='check'>high validation and trust value</div>
+                               <div class='check'>results in higher sales conversion</div>
+                               <div class='check'>$125,000 USD insurance guarranty</div>
+                               <div class='check'>works on MS Exchange or OWA</div>
+                               <div class='check'>activates SSL Secure Site Seal</div>
+                               <div class='check'>2048 bit public key encryption</div>
+                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
+                               <div class='check'>quick issuance</div>
+                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>24 hour support</div>
+                               <div class='check'>unlimited reissuances</div>",
         "validation_level" => "domain",
-                 "summary" => "for securing small to medium sites\n",
+                 "summary" => "for securing small to medium sites",
                     "abbr" => "Premium SSL"
     }
+    certs.each do |c|
+      c.update_attributes title: title, description: description, product: c.product.gsub(/^ucc/, "premiumssl")
+    end
   end
 end

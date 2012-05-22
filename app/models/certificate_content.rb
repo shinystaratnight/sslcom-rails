@@ -266,7 +266,7 @@ class CertificateContent < ActiveRecord::Base
           "was determined to be for an ip address. These can only be issued as High Assurance or EV certs.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
-        domain_validation_regex(is_wildcard, csr.read_attribute(:common_name))
+        domain_validation_regex(is_wildcard, csr.read_attribute(:common_name).gsub(/\x00/, ''))
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength < MIN_KEY_SIZE
@@ -277,7 +277,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def domain_validation_regex(is_wildcard, domain)
-    invalid_chars = "[^\\s\\n\\w\\.\\-#{'\\*' if is_wildcard}]"
+    invalid_chars = "[^\\s\\n\\w\\.\\x00\\-#{'\\*' if is_wildcard}]"
     domain.index(Regexp.new(invalid_chars))==nil and
     domain.index(/\.\.+/)==nil and domain.index(/^\./)==nil and
     domain.index(/[^\w]$/)==nil and domain.index(/^[^\w\*]/)==nil and
