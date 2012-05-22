@@ -273,20 +273,20 @@ class Certificate < ActiveRecord::Base
   #deep level copying function, copies own attributes and then duplicates the sub groups and items
   def duplicate(new_serial)
     now=DateTime.now
-    new_cert = self.clone
+    new_cert = self.dup
     new_cert.attributes = {created_at: now, updated_at: now,
                            serial: self.serial.gsub(/.+?(\dtr)?$/, new_serial+'\1')}
     new_cert.save
     self.product_variant_groups.each do |pvg|
-      new_pvg = pvg.clone
+      new_pvg = pvg.dup
       new_pvg.attributes = {created_at: now, updated_at: now}
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each do |pvi|
-        new_pvi=pvi.clone
+        new_pvi=pvi.dup
         new_pvi.attributes = {created_at: now, updated_at: now, serial: "sslcom"+pvi.serial}
         new_pvg.product_variant_items << new_pvi
         unless pvi.sub_order_item.blank?
-          new_pvi.sub_order_item=pvi.sub_order_item.clone
+          new_pvi.sub_order_item=pvi.sub_order_item.dup
           new_pvi.sub_order_item.attributes = {created_at: now, updated_at: now}
           new_pvi.sub_order_item.save
         end
@@ -296,13 +296,41 @@ class Certificate < ActiveRecord::Base
   end
 
   def duplicate_tiers(new_serial)
-    Certificate.where{serial =~ "#{serial_root}%"}.map {|c|c.duplicate(new_serial)}
+    sr = "#{self.serial_root}%"
+    Certificate.where{serial =~ sr}.map {|c|c.duplicate(new_serial)}
   end
 
   # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
   def self.create_sslcom_products
     %w(evucc ucc ev ov dv wc).each do |serial|
-      Certificate.where{serial =~ serial+"%"}.first.duplicate_tiers serial+"256sslcom"
+      s = self.serial+"%"
+      Certificate.where{serial =~ s}.first.duplicate_tiers serial+"256sslcom"
     end
+  end
+
+  # one-time call to create ssl.com premium products
+  def self.create_premium_ssl
+    c=Certificate.public.find_by_product "ucc"
+    certs = c.duplicate_tiers "premium256sslcom"
+    certs = Certificate
+    title = "Limited multi-subdomain SSL"
+    {
+        "certificate_type" => "Premium SSL",
+                  "points" => "<div class='check'>high validation and trust value</div>\n
+                               <div class='check'>results in higher sales conversion</div>\n
+                               <div class='check'>$125,000 USD insurance guarranty</div>\n
+                               <div class='check'>secure up to 200 additional domains</div>\n
+                               <div class='check'>works on MS Exchange or OWA</div>\n
+                               <div class='check'>activates SSL Secure Site Seal</div>\n
+                               <div class='check'>2048 bit public key encryption</div>\n
+                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n
+                               <div class='check'>quick issuance</div>\n
+                               <div class='check'>30 day unconditional refund</div>\n
+                               <div class='check'>24 hour support</div>\n
+                               <div class='check'>unlimited reissuances</div>\n",
+        "validation_level" => "domain",
+                 "summary" => "for securing small to medium sites\n",
+                    "abbr" => "Premium SSL"
+    }
   end
 end

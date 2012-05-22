@@ -321,9 +321,9 @@ class ApplicationController < ActionController::Base
     @certificate_order = current_user.ssl_account.
       certificate_orders.detect(&:new?)
     @certificate = @certificate_order.certificate
-    @certificate_content = @certificate_order.certificate_content.clone
+    @certificate_content = @certificate_order.certificate_content.dup
     @certificate_order = current_user.ssl_account.
-      certificate_orders.detect(&:new?).clone
+      certificate_orders.detect(&:new?).dup
     @certificate_order.duration = @certificate.duration_index(@certificate_content.duration)
     @certificate_order.has_csr = true
     render(:template => "/certificates/buy", :layout=>"application")

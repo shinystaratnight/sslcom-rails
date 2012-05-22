@@ -2318,23 +2318,23 @@ a:hover {
   padding-top: 0pt;
 }
 /* line 1764, ../../../app/stylesheets/main.sass */
-.sidebarhome .industry_programs ul li .floater .content, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .content, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .content {
+.sidebarhome .industry_programs ul li .floater .fl_content, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .fl_content, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .fl_content {
   clear: both;
   height: 110px;
   position: relative;
 }
 /* line 1769, ../../../app/stylesheets/main.sass */
-.sidebarhome .industry_programs ul li .floater .content .reseller_specific_container, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .content .reseller_specific_container, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .content .reseller_specific_container {
+.sidebarhome .industry_programs ul li .floater .fl_content .reseller_specific_container, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .fl_content .reseller_specific_container, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .fl_content .reseller_specific_container {
   float: left;
   margin: 3px;
   width: 130px;
 }
 /* line 1774, ../../../app/stylesheets/main.sass */
-.sidebarhome .industry_programs ul li .floater .content .reseller_specific_container div, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .content .reseller_specific_container div, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .content .reseller_specific_container div {
+.sidebarhome .industry_programs ul li .floater .fl_content .reseller_specific_container div, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .fl_content .reseller_specific_container div, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .fl_content .reseller_specific_container div {
   font-size: 0.6em;
 }
 /* line 1777, ../../../app/stylesheets/main.sass */
-.sidebarhome .industry_programs ul li .floater .content .reseller_specific_container span, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .content .reseller_specific_container span, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .content .reseller_specific_container span {
+.sidebarhome .industry_programs ul li .floater .fl_content .reseller_specific_container span, .sidebarhome .industry_programs .default_container .info_listing ul#privacy li .floater .fl_content .reseller_specific_container span, .default_container .info_listing .sidebarhome .industry_programs ul#privacy li .floater .fl_content .reseller_specific_container span {
   font-size: 0.7em;
   font-family: Helvetica, Arial, sans-serif;
   font-weight: bold;

@@ -71,6 +71,23 @@
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
+-unless @certificate_order.blank? || @certificate_order.id.blank?
+  :javascript
+    jQuery(function($){
+      $("#start_over").click(function(){
+        $.ajax({
+          url: "#{start_over_certificate_order_url(@certificate_order.ref)}",
+          type: "POST",
+          beforeSend: function(){
+            return confirm("Are you sure you want to start over with this certificate order?");
+          },
+          success: function(data, status){
+            if(data.certificate_order.certificate_content.workflow_state=="new")
+              window.location.href = "#{edit_certificate_order_url(@certificate_order.ref)}";
+          }
+        });
+      });
+    });
 :javascript
   jQuery(function($){
     $.prettyLoader();
@@ -95,6 +112,19 @@
       $("#waiting_bar").show();
     });
     //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
+    $("#cancel_reseller_signup").click(function(){
+      $.ajax({
+        url: "#{cancel_reseller_signup_users_url}",
+        type: "GET",
+        beforeSend: function(){
+          return confirm("Are you sure you want to cancel your reseller signup?");
+        },
+        success: function(data, status){
+          if($.inArray("#{Role::CUSTOMER.to_sym}", data.user.role_symbols)>-1)
+            window.location.href = "#{account_url}";
+        }
+      });
+    });
     //cart functions
     $.toMoneyFloat = function(money){
       money = money.replace(",","");
@@ -113,7 +143,8 @@
         $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
       if(howMany==1)
         items = "item";
-      $("#cart_size").text(howMany.toString()+" "+items+" in cart")
+      $("#cart_size").text(howMany.toString()+" "+items+" in cart");
+      $("#cart_count").text(howMany.toString());
     };
     $.adjust_order_total = function(){
       var total = 0;
@@ -126,20 +157,21 @@
     $.empty_out_cart = function(){
       $.cookie("cart", "", {path: '/'});
       $('.add_to_cart_button').removeAttr("disabled");
-      $('#cart','#cart_total').effect("highlight", {}, 3000);
+      $(".icn_cart-filled").addClass("icn_cart").removeClass("icn_cart-filled");
+      $('#cart','#cart_total', '.icn_cart').effect("highlight", {}, 3000);
     };
     $('#empty_cart').click(function(){
       $.empty_out_cart();
     })
     $('.remove_from_cart_link').click(function(){
-      var id = $(this).attr("id")
+      var id = $(this).attr("id");
       $.remove_from_cart(id);
       $(this).parents('tr[id='+$(this).attr("id")+']').
         fadeOut('slow', function(){
           $(this).remove();
           $.adjust_items_in_cart();
           $.adjust_order_total();
-          $('#cart','#cart_total').effect("highlight", {}, 3000);}
+          $('#cart','#cart_total', '.icn_cart').effect("highlight", {}, 3000);}
         );
     });
     $.save_cart = function(cart){

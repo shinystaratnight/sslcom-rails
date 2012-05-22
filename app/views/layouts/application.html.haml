@@ -35,11 +35,12 @@
     #wrapper
       -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless current_subdomain==Reseller::SUBDOMAIN
-          /=render :partial => '/layouts/public_new'
-          -if current_page?(action: "buy_now")
-            =render :partial => '/layouts/public_new'
-          -else
-            =render :partial => '/layouts/public'
+          =render :partial => '/layouts/public_new'
+          -#
+            -if current_page?(action: "buy_now")
+              =render :partial => '/layouts/public_new'
+            -else
+              =render :partial => '/layouts/public'
         -else
           =render :partial => '/layouts/public_resellers'
       -elsif (permitted_to?(:delete, User.last))
@@ -53,11 +54,12 @@
         =render :partial => '/layouts/standard'
       .push
     #footer
-      /=render partial: '/layouts/footer_new'
-      -if current_page? action: "buy_now"
-        =render partial: '/layouts/footer_new'
-      -else
-        =render partial: '/layouts/footer'
+      =render partial: '/layouts/footer_new'
+      -#
+        -if current_page? action: "buy_now"
+          =render partial: '/layouts/footer_new'
+        -else
+          =render partial: '/layouts/footer'
     #swifttagcontainerwoyxz3g3q4
       #proactivechatcontainerwoyxz3g3q4
       #swifttagdatacontainerwoyxz3g3q4(style="display: inline;")

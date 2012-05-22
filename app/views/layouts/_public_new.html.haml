@@ -8,7 +8,10 @@
         %ul
           %li
             %a{:href => "#{show_cart_orders_url}", :style => "text-decoration:none;"}
-              %span.icn_cart My Cart (#{cart_items_count})
+              %span.icn_cart
+                My Cart (
+                %span#cart_count> #{cart_items_count}
+                )
           %li
             %span.icn_support &nbsp;
             =link_to "Support", "http://support.ssl.com/Tickets/Submit"
@@ -31,22 +34,21 @@
             %a{:href => "#"} OUR CERTIFICATES
             %ul
               %li
-                %a{:href => "#"}
+                %a{:href => "#{certificate_url('basic')}"}
                   %i> SSL
                   \.com Basic
               %li
-                %a{:href => "#"}
+                %a{:href => "#{certificate_url('premium')}"}
                   %i> SSL
                   \.com Premium
               %li
-                %a{:href => "#"}
+                %a{:href => "#{certificate_url('ev')}"}
                   %i> SSL
                   \.com Enterprise EV
               %li=link_to "Wildcard (Unlimited Subdomains)", certificate_url('wildcard')
               %li=link_to "Multi-Domain (UCC)", certificate_url('ucc')
-              %li=link_to "Multi-Domain Plus (UCC EV)", certificate_url('ev_ucc')
-              %li
-                %a{:href => "#"} Free Trial SSL
+              %li=link_to "Multi-Domain Plus (UCC EV)", certificate_url('evucc')
+              %li=link_to "Free Trial SSL", certificate_url('evucc')
               %li.divider
               %li
                 %a{:href => "#"} SSL Selection Wizard

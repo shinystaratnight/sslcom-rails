@@ -25,12 +25,14 @@ jQuery(function($) {
   };
   $.update_cart_qty_display = function(){
     qty=$('[id^=remove_]').length;
+    $('#cart_count').text($('#cart_count').text().replace(/\d+/,qty));
     $('#cart_items_qty').text($('#cart_items_qty').text().replace(/\d+/,qty));
     if(qty==1)
       $('#cart_items_qty').text($('#cart_items_qty').text().replace(/[a-zA-Z]+/,'item'));
     else
       $('#cart_items_qty').text($('#cart_items_qty').text().replace(/[a-zA-Z]+/,'items'));
-    $('#cart_items_qty').effect("highlight", {color:'green'}, 500);
+    $('#cart_count').text($('#cart_count').text().replace(/[a-zA-Z]+/,''));
+    $('#cart_items_qty', '.icn_cart').effect("highlight", {color:'green'}, 500);
   };
   $.change_cart_items_qty = function(quantity, indx){
     cart = $.get_cart_items();

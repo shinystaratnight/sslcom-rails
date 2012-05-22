@@ -518,7 +518,7 @@ module Preferences
       # the given name / group
       def clone_preference_value(name, group)
         value = preferred(name, group)
-        value.duplicable? ? value.clone : value
+        value.duplicable? ? value.dup : value
       rescue TypeError, NoMethodError
         value
       end

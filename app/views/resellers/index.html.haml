@@ -54,7 +54,7 @@
             %li
               %a(href="#{send(industry+"_path")}")
                 .floater(class="#{"top" if industry=="host_providers"}")
-                  .content
+                  .fl_content
                     =image_tag(contents[i][0], :class=>"industry")
                     .reseller_specific_container
                       %span=industry.titleize

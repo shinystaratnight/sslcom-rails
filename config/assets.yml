@@ -25,6 +25,7 @@ javascripts:
 stylesheets:
   common:
     - public/stylesheets/compiled/main.css
+    - public/stylesheets/compiled/master.css
     - public/stylesheets/jquery-ui-1.8.7.custom.css
     - public/stylesheets/jquery.tooltip.css
     - public/stylesheets/prettyPhoto.css
@@ -40,6 +41,5 @@ stylesheets:
     - public/stylesheets/compiled/site_report.css
     - public/stylesheets/prettyPhoto.css
   buy_now:
-    - public/stylesheets/compiled/master.css
     - public/stylesheets/compiled/buy_now.css
 

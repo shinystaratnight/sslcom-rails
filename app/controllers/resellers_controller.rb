@@ -112,7 +112,7 @@ private
     @reseller.back! unless @reseller.nil?
     if @reseller.nil? || @reseller.new?
       #to prevent redirect to update method, we clone the object
-      @reseller = @reseller.clone
+      @reseller = @reseller.dup
       render :action => :new
     elsif @reseller.select_tier?
       @reseller_tier = @reseller.reseller_tier

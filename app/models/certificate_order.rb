@@ -174,7 +174,7 @@ class CertificateOrder < ActiveRecord::Base
     v     =co.create_validation
     co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
     co.certificate.validation_rulings.each do |cvrl|
-      vrl = cvrl.clone
+      vrl = cvrl.dup
       vrl.status = ValidationRuling::WAITING_FOR_DOCS
       vrl.workflow_state = "new"
       v.validation_rulings << vrl
