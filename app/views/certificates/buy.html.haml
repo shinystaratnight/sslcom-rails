@@ -10,7 +10,6 @@
   -c[:title] = "#{co.is_unused_credit? ? "Process" : buy_or_get} #{@certificate.title} Certificate"
 -c.each do |k, v|
   -content_for k, c[k]
-=render :partial => '/certificates/index_scripts'
 =order_progress_indicator(1, @certificate)
 -form_params=new_certificate_params
 .reseller_registration_profile
@@ -26,3 +25,4 @@
       =render :partial => "/certificates/form", :locals => {:f=>f}
     #button_container
       #next_submit=image_submit_tag "next_bl.gif"
+=render :partial => '/certificates/index_scripts'

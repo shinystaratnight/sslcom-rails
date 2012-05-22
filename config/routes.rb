@@ -82,6 +82,7 @@ SslCom::Application.routes.draw do
       get :incomplete
       get :reprocessing
       get :search
+      post :parse_csr
     end
 
     member do

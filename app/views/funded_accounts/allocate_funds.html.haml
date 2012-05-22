@@ -34,7 +34,7 @@
               %td Expiry Date
               %td
             -@funded_account.funding_source = ssl_account.billing_profiles.maximum(:id) if @funded_account.funding_source.nil?
-            -ssl_account.billing_profiles.each do |profile|
+            -ssl_account.billing_profiles.reject{|bp|bp.expired?}.each do |profile|
               %tr[profile]
                 %td= f.radio_button :funding_source, profile.id, :class=>'billing_profile_radio'
                 %td= profile.credit_card

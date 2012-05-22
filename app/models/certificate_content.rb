@@ -56,7 +56,7 @@ class CertificateContent < ActiveRecord::Base
 
   unless MIGRATING_FROM_LEGACY
     validates_presence_of :server_software_id, :signing_request,
-      :if => :certificate_order_has_csr
+      :if => "certificate_order_has_csr && !ajax_check_csr"
     validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
       :message=> 'contains invalid characters.',
       :if => :certificate_order_has_csr_and_signing_request
@@ -65,6 +65,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   attr_accessor  :additional_domains #used to html format results to page
+  attr_accessor  :ajax_check_csr
 
   preference  :reprocessing, default: false
 
@@ -131,6 +132,13 @@ class CertificateContent < ActiveRecord::Base
 
     state :revoked
   end
+
+  def after_initialize
+    if new_record?
+      self.ajax_check_csr ||=false
+    end
+  end
+
 
   def domains=(domains)
     unless domains.blank?

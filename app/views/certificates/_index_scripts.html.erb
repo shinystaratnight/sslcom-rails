@@ -20,6 +20,17 @@ jQuery(function($) {
       if(domains.length > <%=Certificate::NUM_DOMAINS_TIERS%>)
         $.update_order_pricing();
   };
+  $("textarea[name*=signing_request]").bind("keyup", function() {
+    $.ajax({
+      url: "<%=parse_csr_certificate_orders_url%>",
+      data: {csr: $(this).val()},
+      type: "POST",
+      success: function(data, status){
+        if(data.certificate_order.certificate_content.workflow_state=="new")
+          window.location.href = "#{edit_certificate_order_url(@certificate_order.ref)}";
+      }
+    });
+  });
   $.update_order_pricing = function(){
     domains_cost = 0.0
     server_license_cost = 0.0;

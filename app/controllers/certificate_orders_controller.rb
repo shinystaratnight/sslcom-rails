@@ -22,7 +22,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
-  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :download, :start_over,
+  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
@@ -339,6 +339,13 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.start_over! if !@certificate_order.blank? &&
       ['csr_submitted', 'info_provided', 'contacts_provided'].include?(@certificate_order.certificate_content.workflow_state)
     flash[:notice] = "certificate order #{@certificate_order.ref} has been canceled and restarted"
+  end
+
+  def parse_csr
+    @cc=CertificateContent.new(ajax_check_csr: true)
+    @cc.csr=Csr.new(body: params[:csr])
+    @cc.valid?
+    rescue
   end
 
   private

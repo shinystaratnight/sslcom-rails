@@ -55,7 +55,7 @@ class Csr < ActiveRecord::Base
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
   def common_name
-    SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '')
+    SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
   end
 
   def body=(csr)

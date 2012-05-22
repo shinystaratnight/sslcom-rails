@@ -8,7 +8,7 @@
         %td Card Number
         %td Expiry Date
         %td
-      -ssl_account.billing_profiles.each do |profile|
+      -ssl_account.billing_profiles.reject{|bp|bp.expired?}.each do |profile|
         %tr[profile]
           %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'
           %td= profile.credit_card
