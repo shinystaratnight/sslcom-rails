@@ -80,6 +80,11 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def lead_up_to_sale
+    u = billable.users.last
+    ["Order for amount #{amount} was made on #{created_at}"] + u.browsing_history("01/01/2000", created_at, "desc")
+  end
+
   def pay(credit_card, options = {})
     response = gateway.purchase(self.amount, credit_card, options_for_payment(options))
     if response.success?

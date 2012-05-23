@@ -72,9 +72,23 @@ class User < ActiveRecord::Base
     UserNotifier.email_changed(self, address).deliver
   end
 
-  def browsing_history
-    visitor_tokens.each do |vt|
-      vt.tracked_urls.map{|t|[t.url, t.created_at]}.uniq
+  def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
+    l_bound = "01/01/2000" if l_bound.blank?
+    s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+    start = Date.strptime l_bound, s
+    finish =
+        if(h_bound.blank?)
+          DateTime.now
+        elsif h_bound.is_a?(String)
+          f= h_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+          Date.strptime h_bound, f
+        else
+          h_bound.to_datetime
+        end
+    count=0
+    visitor_tokens.map do |vt|
+      ["route #{count+=1}"]+
+      vt.trackings.order("created_at "+sort).where{created_at >> (start..finish)}.map{|t| "from #{t.referer.url.blank? ? "unknown" : t.referer.url} to #{t.tracked_url.url} at #{t.created_at}"}.uniq
     end
   end
 
