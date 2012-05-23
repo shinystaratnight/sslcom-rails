@@ -10,24 +10,59 @@ jQuery(function($) {
       textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
       textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
     <%end-%>
-    return textArea.value.split(/\s/);
+    domains = textArea.value.split(/\s/);
+    <%if @certificate.product=="premiumssl"-%>
+      domains = domains.slice(0,3);
+      textArea.value = domains.join(' ');
+    <%end-%>
+    return domains;
   };
   $.adjust_domain_pricing = function(textArea){
       domains = $.domains(textArea);
-      if(domains.toString().indexOf("")!=-1)//check if a blank was caught and drop it
-        domains.pop();
+      $.removeFromArray("",domains);
       $('.order_amount_desc span').text((domains.length > 3) ? domains.length : 3);
       if(domains.length > <%=Certificate::NUM_DOMAINS_TIERS%>)
         $.update_order_pricing();
   };
+  $("textarea[name*=signing_request]").click(function(){
+    $(this).select();
+  });
   $("textarea[name*=signing_request]").bind("keyup", function() {
+    if($(this).val()==""){
+      $(".flash_message").remove();
+      return;
+    }
     $.ajax({
       url: "<%=parse_csr_certificate_orders_url%>",
-      data: {csr: $(this).val()},
+      data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
       type: "POST",
       success: function(data, status){
-        if(data.certificate_order.certificate_content.workflow_state=="new")
-          window.location.href = "#{edit_certificate_order_url(@certificate_order.ref)}";
+        $(".flash_message").remove();
+        var ajax_errors="";
+        if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
+          $.each(data.certificate_content.csr.errors.base, function(key, value){
+            ajax_errors+="<li>"+value+"</li>";
+          });
+        }
+        if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
+          $.each(data.certificate_content.errors.base, function(key, value){
+            ajax_errors+="<li>"+value+"</li>";
+          });
+        if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
+          $.each(data.certificate_content.errors.signing_request, function(key, value){
+            ajax_errors+="<li>signing request "+value+"</li>";
+          });
+        if(ajax_errors!="")
+          $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
+        else{
+          if((typeof data.certificate_content.csr.common_name != 'undefined')){
+            $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>certificate to be issued to: "+data.certificate_content.csr.common_name+"</span></div>");
+          }
+          if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
+            $("textarea[name*=additional_domains]").val(data.certificate_content.csr.subject_alternative_names.join(" "));
+            $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+          }
+        }
       }
     });
   });

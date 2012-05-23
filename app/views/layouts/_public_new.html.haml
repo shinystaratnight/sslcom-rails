@@ -33,22 +33,26 @@
           %li
             %a{:href => "#"} OUR CERTIFICATES
             %ul
-              %li
-                %a{:href => "#{certificate_url('basic')}"}
+              %a{:href => "#{buy_certificate_url('basic')}"}
+                %li
                   %i> SSL
                   \.com Basic
-              %li
-                %a{:href => "#{certificate_url('premiumssl')}"}
+              %a{:href => "#{buy_certificate_url('premiumssl')}"}
+                %li
                   %i> SSL
                   \.com Premium
-              %li
-                %a{:href => "#{certificate_url('ev')}"}
+              %a{:href => "#{buy_certificate_url('ev')}"}
+                %li
                   %i> SSL
                   \.com Enterprise EV
-              %li=link_to "Wildcard (Unlimited Subdomains)", certificate_url('wildcard')
-              %li=link_to "Multi-Domain (UCC)", certificate_url('ucc')
-              %li=link_to "Multi-Domain Plus (UCC EV)", certificate_url('evucc')
-              %li=link_to "Free Trial SSL", certificate_url('evucc')
+              %a{:href => "#{buy_certificate_url('wildcard')}"}
+                %li Wildcard (Unlimited Subdomains)
+              %a{:href => "#{buy_certificate_url('ucc')}"}
+                %li Multi-Domain (UCC)
+              %a{:href => "#{buy_certificate_url('evucc')}"}
+                %li Multi-Domain Plus (UCC EV)
+              %a{:href => "#{buy_certificate_url('free')}"}
+                %li Free Trial SSL
               %li.divider
               %li
                 %a{:href => "#"} SSL Selection Wizard

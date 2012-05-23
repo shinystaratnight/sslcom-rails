@@ -7076,3 +7076,17 @@ span#no_emails_accessible {
 .pop_content {
   font-size: 1.8em;
 }
+
+/* line 5203, ../../../app/stylesheets/main.sass */
+.ajax_info {
+  text-align: left;
+}
+
+/* line 5207, ../../../app/stylesheets/main.sass */
+#csr_section .flash_message {
+  padding: 0;
+}
+/* line 5209, ../../../app/stylesheets/main.sass */
+#csr_section .flash_message.error .ajax_info {
+  color: red;
+}

@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   include V2MigrationProgressAddon
 #  using_access_control
   has_many  :assignments
+  has_many  :visitor_tokens
   has_many  :surls
   has_many  :roles, :through => :assignments
   has_many  :legacy_v2_user_mappings, :as=>:user_mappable
@@ -69,6 +70,10 @@ class User < ActiveRecord::Base
 
   def deliver_email_changed!(address=self.email)
     UserNotifier.email_changed(self, address).deliver
+  end
+
+  def browsing_history
+    visitor_tokens.last.tracked_urls.map{|t|[t.url, t.created_at]}.uniq
   end
 
   # we need to make sure that either a password or openid gets set

@@ -269,6 +269,11 @@
       }
       return returnArray;
     };
+    $.removeFromArray = function(value, arr) {
+        return jQuery.grep(arr, function(elem, index) {
+            return elem !== value;
+        });
+    };
     $.update_balance_after_load = function(){
       var bracket = $.toMoneyFloat($('#funded_account_amount').val());
       if(bracket == null || bracket == "" || bracket == ".")

@@ -342,7 +342,10 @@ class CertificateOrdersController < ApplicationController
   end
 
   def parse_csr
-    @cc=CertificateContent.new(ajax_check_csr: true)
+    c=Certificate.find_by_product(params[:certificate])
+    co=CertificateOrder.new(duration: 1)
+    @cc=co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
+    co=setup_certificate_order(c,co)
     @cc.csr=Csr.new(body: params[:csr])
     @cc.valid?
     rescue
