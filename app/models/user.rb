@@ -73,7 +73,9 @@ class User < ActiveRecord::Base
   end
 
   def browsing_history
-    visitor_tokens.last.tracked_urls.map{|t|[t.url, t.created_at]}.uniq
+    visitor_tokens.each do |vt|
+      vt.tracked_urls.map{|t|[t.url, t.created_at]}.uniq
+    end
   end
 
   # we need to make sure that either a password or openid gets set
