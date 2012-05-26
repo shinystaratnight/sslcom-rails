@@ -1,0 +1,53 @@
+-c={}
+-c[:description]="Unified Communications Certificates (UCC) are SSL Certificates for Microsoft Exchange and Communications Server. A single UCC provides SSL secured communications on a number of different domains, greatly reducing complexity and cost."
+-c[:keywords]="Premium SSL, communications certificate, UC certificate, Secured server, Internet security, multiple subdomains"
+-c[:title]="Premium SSL Product Overview"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h3#certificate_crumbs
+  =certificate_crumbs
+.leftcolb
+  .ssl_key_image_container
+    =image_tag "ssl_key_in_elock.jpg", :title=>'ssl key in elock'
+.right_product_desc
+  %h1
+    Cover 3 subdomains with one SSL Certificate
+  %h2.product_description
+    Great for wider subdomain coverage at low cost
+  .product_description_buy_certificate
+    =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+  =render :partial=>'big_pricing'
+.bottom_product_desc
+  %p
+    The Premium SSL certificate provides SSL security for small to medium sized businesses who want wildcard-like
+    functionality, but at a reduced priced. Premium SSL comes with 3 subdomains and are compatible with Microsoft
+    Exchange and Communications Server. In addition, Premium SSL supports the Microsoft Exchange Auto discover
+    service, a feature of the Exchange platform which greatly eases client administration.
+  %p
+    Your customers need strong SSL encryption technology, and they need assurance from a trusted Certificate
+    Authority such as SSL.com. Premium SSL certificates are domain validated and as a result can be issued within
+    minutes. Since we are globally accepted in over 99.9% of browsers used on the Internet your website will not
+    get confidence-killing popups that result from untrusted or invalid SSL certificates. These popups make customers
+    reluctant to do business with your site and will hurt your bottom line. Our vetting process is simple, quick, and
+    meets the globally agreed upon requirements set forth by the CAB forum.
+    With each multi-subdomain Premium SSL Certificate, you are extending industry level validation and
+    encryption technology to each customer and transaction.
+  %p
+    SSL is an essential part of almost all electronic transactions involved in
+    transmitting sensitive data such as usernames and passwords, credit card
+    information, patient data and many other types of private material, and
+    SSL is also a key component of PCI-compliance which is mandated for
+    organizations wanting to accept credit card information. UCC SSL
+    certificates meet all the criteria above and even adds more value.
+  %p
+    With each Premium SSL certificate you implement, you get the
+    confidence building SSL Secure Smart SeaL, a $10,000 relying party guaranty,
+    24/7 telephone support staff, and unlimited reissues for the life of the
+    certificate. We even offer a 30-day unconditional refund policy in the
+    event you change your mind about Premium SSL on your website.
+    Start building trust and secure your site today with a Premium SSL Certificate.
+=render :partial=>'points_and_other_certs'
+.product_description_buy_certificate
+  =link_to image_tag('buy_bl.gif', :title=>'click to buy this certificate'), buy_certificate_url(@certificate.product_root)
+=render :partial=>'big_pricing'
+=render partial: 'bottom_info'

@@ -82,7 +82,10 @@ class Order < ActiveRecord::Base
 
   def lead_up_to_sale
     u = billable.users.last
-    ["Order for amount #{amount} was made on #{created_at}"] + u.browsing_history("01/01/2000", created_at, "desc")
+    history = u.browsing_history("01/01/2000", created_at, "desc")
+    history = history.compact.sort{|x,y|x[1][0]<=>y[1][0]}.last if history.count > 1
+    history.shift
+    (["Order for amount #{amount} was made on #{created_at}"]<<history).flatten
   end
 
   def pay(credit_card, options = {})

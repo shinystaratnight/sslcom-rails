@@ -1,0 +1,44 @@
+-title = 'Order Tracking History'
+-content_for :title, title
+#search_bar
+  =form_tag :visitor_trackings_orders, :method=>:get do
+    order #
+    =text_field_tag :search, @search
+    =submit_tag 'search'
+=render :partial=>'/certificate_orders/quick_links'
+#certificate_orders
+  %table(cellspacing="0")
+    -if will_paginate @certificate_orders
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @orders
+    %caption
+      =title
+      =will_paginate @orders
+    %tr.heading_row
+      %th.name(scope="col") Description
+      %th(scope="col" colspan="3") Date
+      %th(scope="col") Order #
+      %th(scope="col") Amount
+    -@orders.each do |o|
+      %tr
+        -if o.is_reseller_tier?
+          %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
+        -elsif o.description.blank?
+          %td.name=link_to 'nil', o, :title=> o.description
+        -else
+          %td.name=link_to o.description.shorten(50, false), o, :title=> o.description
+        %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
+        %td=o.reference_number
+        -if o.is_deposit?
+          %td=o.amount.format :with_currency
+        -elsif o.is_reseller_tier?
+          %td
+        -else
+          %td (#{o.amount.format :with_currency})
+      -vt = o.lead_up_to_sale
+      %tr
+        %td(colspan=6)
+          %ul
+            -vt.each do |t|
+              %li=t

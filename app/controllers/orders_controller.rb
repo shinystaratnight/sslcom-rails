@@ -11,6 +11,7 @@ class OrdersController < ApplicationController
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
+  filter_access_to :visitor_trackings, require: [:index]
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
@@ -104,6 +105,16 @@ class OrdersController < ApplicationController
       format.html { render :action => :index}
       format.xml  { render :xml => @orders }
     end
+  end
+
+  def visitor_trackings
+    p = {:page => params[:page]}
+    @orders =
+        if @search = params[:search]
+          Order.search(params[:search]).paginate(p)
+        else
+          Order.paginate(p)
+        end
   end
 
   # GET /orders/1

@@ -157,6 +157,10 @@ class Certificate < ActiveRecord::Base
     product.include?('ev')
   end
 
+  def is_premium_ssl?
+    product_root=="premiumssl"
+  end
+
   def is_dv?
     product.include?('free')
   end
@@ -316,9 +320,9 @@ class Certificate < ActiveRecord::Base
     title = "Premium Multi-subdomain SSL"
     description={
         "certificate_type" => "Premium SSL",
-                  "points" => "<div class='check'>high validation and trust value</div>
+                  "points" => "<div class='check'>quick domain validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$125,000 USD insurance guarranty</div>
+                               <div class='check'>$10,000 USD insurance guarranty</div>
                                <div class='check'>works on MS Exchange or OWA</div>
                                <div class='check'>activates SSL Secure Site Seal</div>
                                <div class='check'>2048 bit public key encryption</div>
@@ -333,6 +337,18 @@ class Certificate < ActiveRecord::Base
     }
     certs.each do |c|
       c.update_attributes title: title, description: description, product: c.product.gsub(/^ucc/, "premiumssl")
+    end
+    price_adjusts={sslcompremium256ssl1yrdm: [9900, 17820, 25245, 31680, 37125],
+     sslcompremium256ssl1yrdm1tr: [9900, 18000, 25245, 31680, 37125],
+     sslcompremium256ssl1yrdm2tr: [7920, 14256, 20196, 25344, 37125],
+     sslcompremium256ssl1yrdm3tr: [7425, 13365, 18934, 23760, 27844],
+     sslcompremium256ssl1yrdm4tr: [6831, 12296, 17419, 21859, 25616],
+     sslcompremium256ssl1yrdm5tr: [5940, 10692, 15147, 19008, 22275]
+    }
+    price_adjusts.each do |k,v|
+      serials=[]
+      1.upto(5){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+      serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, (v[i]/3).ceil)}
     end
   end
 end
