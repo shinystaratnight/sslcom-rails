@@ -8,6 +8,7 @@ include Open3
 class ValidationsController < ApplicationController
   before_filter :find_validation, only: [:update]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload]
+  before_filter :require_user, only: [:index, :new]
   filter_access_to :all
   filter_access_to :upload, :require=>:create
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read

@@ -122,7 +122,7 @@
                   %em> save #{Integer((p*100).ceil)}%
                   )
     -if @certificate.is_ucc? or @certificate.is_wildcard?
-      .clearfix
+      .clearfix(style="#{"display: none" if @certificate.is_premium_ssl?}")
         %label{:for=>"licenses"}
           *Number of licenses:
           =link_to image_tag('question_mark.png'), '#what_is_number_licenses', :rel => 'prettyPhoto', :id => 'what_is_number_licenses_link'

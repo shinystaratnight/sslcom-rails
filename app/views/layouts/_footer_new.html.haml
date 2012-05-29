@@ -7,12 +7,12 @@
     %span.title CERTIFICATES
     %ul
       %li
-        %a{:href => "#"}
+        %a{:href => "#{certificate_url('basicssl')}"}
           %b> SSL
           \.com
           Basic
       %li
-        %a{:href => "#{certificate_url('high_assurance')}"}
+        %a{:href => "#{certificate_url('premiumssl')}"}
           %b> SSL
           \.com Premium
       %li
@@ -47,12 +47,12 @@
     %ul
       %li=link_to "About SSL.com", about_url
       %li=link_to "Contact Us", contact_us_url
-      %li
+      -# %li
         %a{:href => "#"} Jobs
       %li=link_to "CA Repository", repository_url
       %li=link_to "Terms of Service", terms_of_use_url
-      %li=link_to "Privacy", privacy_policy_url
-      %li=link_to "Refund Policy", ""
+      -# %li=link_to "Privacy", privacy_policy_url
+      -# %li=link_to "Refund Policy", ""
 / end of content
 .clear
 .content

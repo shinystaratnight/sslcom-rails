@@ -277,7 +277,7 @@ class CertificateContent < ActiveRecord::Base
         domain_validation_regex(is_wildcard, csr.read_attribute(:common_name).gsub(/\x00/, ''))
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
-          csr.strength < MIN_KEY_SIZE
+          csr.strength.blank? || (csr.strength < MIN_KEY_SIZE)
       #errors.add(:signing_request,
       #  "country code '#{csr.country}' #{NOT_VALID_ISO_CODE}") unless
       #    Country.accepted_countries.include?(csr.country)

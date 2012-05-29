@@ -24,7 +24,7 @@
           .description
             %ul
               %li
-                %div $50,000
+                %div $10,000
                 warranty
               %li
                 %div Validation
@@ -36,7 +36,7 @@
                 %div 10
                 minute issuance
           .divider
-          %a{:href => "#{buy_certificate_url("high_assurance")}"}
+          %a{:href => "#{buy_certificate_url("basicssl")}"}
             %span
               .btn-buynow Buy now
         .left.banner2
@@ -64,7 +64,7 @@
           .description
             %ul
               %li
-                %div $150,000
+                %div $10,000
                 warranty
               %li
                 %div Validation
@@ -73,7 +73,7 @@
                 %div 256-bit
                 encryption
           .divider
-          %a{:href => "#"}
+          %a{:href => "#{buy_certificate_url("basicssl")}"}
             %span
               .btn-buynow Buy now
           / <div class="help">Don't know which to select? <a href="#">Help me choose</a></div>
@@ -183,7 +183,7 @@
           Site Seal
         #badge
           =render 'site_seal'
-          %p Lorem ipsum dolor sit amet, ea noluisse qualisque mel, ei vis integre mandamus. Temporibus theophrastus est no, possit scaevola est ei, sea illum
+          %p Secured seal powered with Smart SeaL Artifacts technology
       .inner-content
         %h2 FAQs
         .faq-boxes
@@ -241,34 +241,35 @@
         .notes
           %a{:href => "http://info.ssl.com"}
             %div Still have questions? Visit the FAQ page for more answers.
+        -#
           %h2 Testimonials
-        .testimonial-boxes
-          .box
-            %img{:alt => "", :src => "images/pic1.jpg"}/
-            %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
-            .name
-              %span.black Kim Dotcom
-              %span.gray Megaupload.com
-          .box.long
-            %img{:alt => "", :src => "images/pic3.jpg"}/
-            %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
-            .name
-              %span.black Mahmoud
-              %span.gray Google me
-        .testimonial-boxes
-          .box.short
-            %img{:alt => "", :src => "images/pic2.jpg"}/
-            %blockquote "Leo and I go way back!"
-            .name
-              %span.black Jenna Jameson
-              %span.gray clubjenna.com
-          .box
-            %img{:alt => "", :src => "images/pic4.jpg"}/
-            %blockquote "In my will I stated Kim Jr should switch to SSL.com."
-            .name
-              %span.black Kim Jong II
-              %span.gray iminhell.com
-        .notes
-          %a{:href => ""}
-            %div Still don't believe us? Visit Testimonial for more rave reviews.
+          .testimonial-boxes
+            .box
+              %img{:alt => "", :src => "images/pic1.jpg"}/
+              %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
+              .name
+                %span.black Kim Dotcom
+                %span.gray Megaupload.com
+            .box.long
+              %img{:alt => "", :src => "images/pic3.jpg"}/
+              %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
+              .name
+                %span.black Mahmoud
+                %span.gray Google me
+          .testimonial-boxes
+            .box.short
+              %img{:alt => "", :src => "images/pic2.jpg"}/
+              %blockquote "Leo and I go way back!"
+              .name
+                %span.black Jenna Jameson
+                %span.gray clubjenna.com
+            .box
+              %img{:alt => "", :src => "images/pic4.jpg"}/
+              %blockquote "In my will I stated Kim Jr should switch to SSL.com."
+              .name
+                %span.black Kim Jong II
+                %span.gray iminhell.com
+          .notes
+            %a{:href => ""}
+              %div Still don't believe us? Visit Testimonial for more rave reviews.
       .clear

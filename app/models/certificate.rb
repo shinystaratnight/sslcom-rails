@@ -49,9 +49,13 @@ class Certificate < ActiveRecord::Base
           location: "public/agreements/ssl_subscriber_agreement.txt"},
     ucc:  {title: "UCC SSL Subscriber Agreement",
           location: "public/agreements/ssl_subscriber_agreement.txt"},
-    evucc:   {title: "EV SSL Subscriber Agreement",
+    evucc:   {title: "Enterprise EV SSL Subscriber Agreement",
           location: "public/agreements/ssl_subscriber_agreement.txt"},
     wildcard: {title: "Wildcard SSL Subscriber Agreement",
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
+    basicssl: {title: "Basic SSL Subscriber Agreement",
+          location: "public/agreements/ssl_subscriber_agreement.txt"},
+    premiumssl: {title: "Premium SSL Subscriber Agreement",
           location: "public/agreements/ssl_subscriber_agreement.txt"}}
 
   WILDCARD_SWITCH_DATE = Date.strptime "02/09/2012", "%m/%d/%Y"
@@ -67,7 +71,7 @@ class Certificate < ActiveRecord::Base
        "ucc"=>361, "evucc"=>410}
   COMODO_PRODUCT_MAPPINGS_SSL_COM =
       {"free"=> 342, "high_assurance"=>301, "wildcard"=>343, "ev"=>337,
-       "ucc"=>279, "evucc"=>410}
+       "ucc"=>279, "evucc"=>410, "premiumssl"=>279, "basicssl"=>301}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)
@@ -92,9 +96,9 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
-  scope :for_sale, where{serial =~ "%sslcom%"}
+  scope :for_sale, where{(serial =~ "%sslcom%")}
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
@@ -276,7 +280,7 @@ class Certificate < ActiveRecord::Base
   end
 
   #deep level copying function, copies own attributes and then duplicates the sub groups and items
-  def duplicate(new_serial)
+  def duplicate(new_serial, old_pvi_serial, new_pvi_serial)
     now=DateTime.now
     new_cert = self.dup
     new_cert.attributes = {created_at: now, updated_at: now,
@@ -288,7 +292,7 @@ class Certificate < ActiveRecord::Base
       new_cert.product_variant_groups << new_pvg
       pvg.product_variant_items.each do |pvi|
         new_pvi=pvi.dup
-        new_pvi.attributes = {created_at: now, updated_at: now, serial: pvi.serial.gsub("ucc256ssl", "premium256ssl")}
+        new_pvi.attributes = {created_at: now, updated_at: now, serial: pvi.serial.gsub(old_pvi_serial, new_pvi_serial)}
         new_pvg.product_variant_items << new_pvi
         unless pvi.sub_order_item.blank?
           new_pvi.sub_order_item=pvi.sub_order_item.dup
@@ -300,9 +304,9 @@ class Certificate < ActiveRecord::Base
     new_cert
   end
 
-  def duplicate_tiers(new_serial)
+  def duplicate_tiers(new_serial, old_pvi_serial, new_pvi_serial)
     sr = "#{self.serial_root}%"
-    Certificate.where{serial =~ sr}.map {|c|c.duplicate(new_serial)}
+    Certificate.where{serial =~ sr}.map {|c|c.duplicate(new_serial, old_pvi_serial, new_pvi_serial)}
   end
 
   # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
@@ -316,13 +320,13 @@ class Certificate < ActiveRecord::Base
   # one-time call to create ssl.com premium products
   def self.create_premium_ssl
     c=Certificate.public.find_by_product "ucc"
-    certs = c.duplicate_tiers "premium256sslcom"
+    certs = c.duplicate_tiers "premium256sslcom", "ucc256ssl", "premium256ssl"
     title = "Premium Multi-subdomain SSL"
     description={
         "certificate_type" => "Premium SSL",
                   "points" => "<div class='check'>quick domain validation</div>
                                <div class='check'>results in higher sales conversion</div>
-                               <div class='check'>$10,000 USD insurance guarranty</div>
+                               <div class='check'>$10,000 USD insurance guaranty</div>
                                <div class='check'>works on MS Exchange or OWA</div>
                                <div class='check'>activates SSL Secure Site Seal</div>
                                <div class='check'>2048 bit public key encryption</div>
@@ -336,11 +340,13 @@ class Certificate < ActiveRecord::Base
                     "abbr" => "Premium SSL"
     }
     certs.each do |c|
-      c.update_attributes title: title, description: description, product: c.product.gsub(/^ucc/, "premiumssl")
+      c.update_attributes title: title,
+                          description: description,
+                          product: c.product.gsub(/^ucc/, "premiumssl")
     end
     price_adjusts={sslcompremium256ssl1yrdm: [9900, 17820, 25245, 31680, 37125],
-     sslcompremium256ssl1yrdm1tr: [9900, 18000, 25245, 31680, 37125],
-     sslcompremium256ssl1yrdm2tr: [7920, 14256, 20196, 25344, 37125],
+     sslcompremium256ssl1yrdm1tr: [9900, 17820, 25245, 31680, 37125],
+     sslcompremium256ssl1yrdm2tr: [7920, 14256, 20196, 25344, 29700],
      sslcompremium256ssl1yrdm3tr: [7425, 13365, 18934, 23760, 27844],
      sslcompremium256ssl1yrdm4tr: [6831, 12296, 17419, 21859, 25616],
      sslcompremium256ssl1yrdm5tr: [5940, 10692, 15147, 19008, 22275]
@@ -349,6 +355,61 @@ class Certificate < ActiveRecord::Base
       serials=[]
       1.upto(5){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
       serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, (v[i]/3).ceil)}
+    end
+  end
+
+  def self.create_basic_ssl
+    c=Certificate.public.find_by_product "high_assurance"
+    certs = c.duplicate_tiers "basic256sslcom", "ov256ssl", "basic256ssl"
+    title = "Basic SSL"
+    description={
+        "certificate_type" => "Basic SSL",
+                  "points" => "<div class='check'>quick domain validation</div>
+                               <div class='check'>results in higher sales conversion</div>
+                               <div class='check'>$10,000 USD insurance guaranty</div>
+                               <div class='check'>activates SSL Secure Site Seal</div>
+                               <div class='check'>2048 bit public key encryption</div>
+                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
+                               <div class='check'>quick issuance</div>
+                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>24 hour support</div>
+                               <div class='check'>unlimited reissuances</div>",
+        "validation_level" => "domain",
+                 "summary" => "for securing small sites",
+                    "abbr" => "Basic SSL"
+    }
+    certs.each do |c|
+      c.update_attributes title: title,
+                          description: description,
+                          product: c.product.gsub(/^high_assurance/, "basicssl"),
+                          icons: c.icons.merge!("main"=> "silver_lock_lg.gif")
+    end
+    price_adjusts={sslcombasic256ssl1yr: [4900, 8820, 12495, 15680, 18375],
+    sslcombasic256ssl1yr1tr: [4900, 8820, 12495, 15680, 18375],
+    sslcombasic256ssl1yr2tr: [3920, 7056, 9996, 12544, 14700],
+    sslcombasic256ssl1yr3tr: [3675, 6615, 9371, 11760, 13781],
+    sslcombasic256ssl1yr4tr: [3381, 6086, 8622, 10819, 12679],
+    sslcombasic256ssl1yr5tr: [2940, 5292, 7497, 9408, 11025]
+    }
+    price_adjusts.each do |k,v|
+      serials=[]
+      1.upto(5){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+      serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, (v[i]/3).ceil)}
+    end
+  end
+
+  def self.transform_products_05282012
+    create_premium_ssl
+    create_basic_ssl
+    Certificate.where{product =~ "ev%"}.each do |c|
+      c.description.merge!(certificate_type: "Enterprise EV")
+      c.title = "Enterprise EV SSL"
+      c.save
+    end
+    Certificate.where{product =~ "evucc%"}.each do |c|
+      c.description.merge!(certificate_type: "Enterprise EV UCC")
+      c.title = "Enterprise EV Multi-domain UCC SSL"
+      c.save
     end
   end
 end
