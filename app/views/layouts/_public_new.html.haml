@@ -27,11 +27,21 @@
       / end of top_navigation
       .bottom_navigation
         %ul#nav
-          %li=link_to "MY ACCOUNT", account_url
-          %li=link_to "FREE TRIAL", certificate_url("free")
-          %li=link_to "RESELLERS", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
+          %a(href="#{account_url}")
+            %li MY ACCOUNT
+          %a(href="#{certificate_url("free")}")
+            %li FREE TRIAL
           %li
-            %a{:href => "#{certificates_url}"} OUR CERTIFICATES
+            %a(href="#{resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)}")
+              RESELLERS
+            %ul
+              %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
+                %li Program Details
+              %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
+                %li Pricing & Sign Up
+          %li
+            %a{:href => "#{certificates_url}"}
+              %div OUR CERTIFICATES
             %ul
               %a{:href => "#{certificate_url('basicssl')}"}
                 %li

@@ -219,12 +219,12 @@ a img {
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 /* line 167, ../../../app/stylesheets/master.sass */
-.bottom_navigation ul#nav li a {
+.bottom_navigation ul#nav a {
   display: block;
   color: #dddddd;
 }
 /* line 170, ../../../app/stylesheets/master.sass */
-.bottom_navigation ul#nav li a:hover {
+.bottom_navigation ul#nav a:hover {
   display: block;
   color: white;
 }
