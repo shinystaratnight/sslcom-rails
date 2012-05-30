@@ -96,7 +96,7 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}# & (product !~ 'high_assurance%')}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
   scope :for_sale, where{(serial =~ "%sslcom%")}
 
@@ -394,7 +394,7 @@ class Certificate < ActiveRecord::Base
     price_adjusts.each do |k,v|
       serials=[]
       1.upto(5){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
-      serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, (v[i]/3).ceil)}
+      serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])}
     end
   end
 

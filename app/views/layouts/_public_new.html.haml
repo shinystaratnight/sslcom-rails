@@ -31,7 +31,7 @@
           %li=link_to "FREE TRIAL", certificate_url("free")
           %li=link_to "RESELLERS", resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)
           %li
-            %a{:href => "#"} OUR CERTIFICATES
+            %a{:href => "#{certificates_url}"} OUR CERTIFICATES
             %ul
               %a{:href => "#{certificate_url('basicssl')}"}
                 %li
