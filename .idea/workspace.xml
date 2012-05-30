@@ -19,9 +19,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/application_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/application_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" afterPath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -84,16 +84,16 @@
       <file leaf-file-name="application.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="16" selection-start="2003" selection-end="2003" vertical-scroll-proportion="0.0">
+            <state line="77" column="0" selection-start="4793" selection-end="6532" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_helper.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="application_helper.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="20" column="9" selection-start="521" selection-end="521" vertical-scroll-proportion="0.39473686">
+            <state line="20" column="55" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -126,19 +126,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_public_new.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_public_new.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="55" selection-start="470" selection-end="470" vertical-scroll-proportion="0.0">
+            <state line="3" column="6" selection-start="56" selection-end="56" vertical-scroll-proportion="0.2">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_points_and_other_certs.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/_points_and_other_certs.html.haml">
+      <file leaf-file-name="_footer_new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="33" selection-start="227" selection-end="227" vertical-scroll-proportion="0.0">
+            <state line="93" column="22" selection-start="3553" selection-end="3553" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -191,7 +191,6 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/certificates_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml" />
@@ -199,13 +198,14 @@
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
         <option value="$PROJECT_DIR$/app/models/site_seal.rb" />
         <option value="$PROJECT_DIR$/app/controllers/site_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
         <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
       </list>
     </option>
   </component>
@@ -1489,13 +1489,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="44" selection-start="1271" selection-end="1271" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
         <state line="4328" column="31" selection-start="82308" selection-end="82308" vertical-scroll-proportion="0.0">
@@ -1573,13 +1566,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="16" column="55" selection-start="470" selection-end="470" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="192" column="57" selection-start="6231" selection-end="6231" vertical-scroll-proportion="0.0">
@@ -1587,16 +1573,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="16" selection-start="2003" selection-end="2003" vertical-scroll-proportion="0.0">
+        <state line="20" column="55" selection-start="521" selection-end="521" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="9" selection-start="521" selection-end="521" vertical-scroll-proportion="0.39473686">
+        <state line="77" column="0" selection-start="4793" selection-end="6532" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="93" column="22" selection-start="3553" selection-end="3553" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="6" selection-start="56" selection-end="56" vertical-scroll-proportion="0.2">
           <folding />
         </state>
       </provider>

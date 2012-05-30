@@ -90,6 +90,9 @@
     });
 :javascript
   jQuery(function($){
+    $('#live_chat').click(function(){
+      $('#habla_topbar_div').click();
+    });
     $.prettyLoader();
     $(".btn-buynow span, .hide_me").hide();
     $("a[rel^='prettyPopin']").prettyPopin();

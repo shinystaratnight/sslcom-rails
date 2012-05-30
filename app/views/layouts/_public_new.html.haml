@@ -1,7 +1,7 @@
 #header
   .content
-    .logo
-      %a{:href => "#{root_url}"} &nbsp;
+    %a{:href => "#{root_url}"}
+      .logo
     / end of logo
     .navigation
       .top_navigation
@@ -23,7 +23,7 @@
             1-877-SSL-SECURE
           %li
             %span.icn_live &nbsp;
-            %a{:href => "#"} Live Chat
+            %a#live_chat{:href => "#"} Live Chat
       / end of top_navigation
       .bottom_navigation
         %ul#nav
