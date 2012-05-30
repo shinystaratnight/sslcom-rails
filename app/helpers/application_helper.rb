@@ -18,7 +18,7 @@ module ApplicationHelper
   end
 
   def show_short_links?
-    current_page?(action: "buy_now") ? false : true
+    false
   end
 
   # from Dan Webb's MinusMOR plugin

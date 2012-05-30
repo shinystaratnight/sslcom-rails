@@ -168,14 +168,15 @@
               \.com
             Site Seal
         %br/
-        .left-icon-bar
-          Secure Websites in Plain English
-        #video
-          / VIDEO SNIPPET IS EMBEDDED HERE
-          %a(href="http://app.wistia.com/embed/medias/fd66cacdbc?iframe=true&width=640&height=360&autoplay=false&playbutton=true&controls_visible=false&end_video_behavior=default" rel="prettyPhoto[iframes]")
-            %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
-        %br/
-        %br/
+        -unless current_page?(root_path)
+          .left-icon-bar
+            Secure Websites in Plain English
+          #video
+            / VIDEO SNIPPET IS EMBEDDED HERE
+            %a(href="http://app.wistia.com/embed/medias/fd66cacdbc?iframe=true&width=640&height=360&autoplay=false&playbutton=true&controls_visible=false&end_video_behavior=default" rel="prettyPhoto[iframes]")
+              %img{:alt => "", :height => "150px", :src => "images/thumb-video.jpg", :width => "318px"}/
+          %br/
+          %br/
         .left-icon-bar
           %span
             %b SSL
@@ -187,6 +188,12 @@
       .inner-content
         %h2 FAQs
         .faq-boxes
+          %span.title What is SSL?
+          %p
+            SSL stands for Secure Sockets Layer, a method used to secure and
+            encrypt sensitive information like credit cards, usernames, passwords,
+            and other private data sent over the Internet. Website pages secured
+            with SSL are those branded with the HTTPS in their URL address.
           %span.title Who needs SSL Certificate?
           %p
             Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use ssl. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
