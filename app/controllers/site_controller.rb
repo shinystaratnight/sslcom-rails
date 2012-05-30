@@ -4,6 +4,7 @@ class SiteController < ApplicationController
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news buy_now)
 
   def index
+    render action: "buy_now"
   end
 
   def sitemap

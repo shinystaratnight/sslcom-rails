@@ -100,7 +100,7 @@ class SiteSeal < ActiveRecord::Base
     case product
     when /ev/
       {:seal_type=>EV_SEAL, :preferred_seal_image=>SEAL_IMAGE}
-    when /high_assurance/, /ucc/, /wildcard/
+    when /high_assurance/, /ucc/, /wildcard/, /premiumssl/, /basicssl/
       {:seal_type=>OV_SEAL, :preferred_seal_image=>SEAL_IMAGE}
     when /free/
       {:seal_type=>DV_SEAL, :preferred_seal_image=>FREE_SEAL_IMAGE}
