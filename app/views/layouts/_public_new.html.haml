@@ -38,7 +38,9 @@
               %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
                 %li Program Details
               %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Pricing & Sign Up
+                %li Pricing
+              %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"}
+                %li Sign Up
           %li
             %a{:href => "#{certificates_url}"}
               %div OUR CERTIFICATES

@@ -2,9 +2,10 @@
 .container
   .innercontainere
     .inner
+      =render :partial => "shared/messages"
       %h1.section-title
         Build customer trust with
-        %span
+        %span(style="font-family: 'arial black italic',helvetica,arial")
           %b SSL
           \.com
         Certificates
@@ -168,7 +169,7 @@
               \.com
             Site Seal
         %br/
-        -unless current_page?(root_path)
+        -if true #unless current_page?(root_path)
           .left-icon-bar
             Secure Websites in Plain English
           #video
