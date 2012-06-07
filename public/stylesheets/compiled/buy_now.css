@@ -228,7 +228,7 @@ a img {
 }
 /* line 170, ../../../app/stylesheets/buy_now.sass */
 .section-title span b {
-  font-family: "arial black italic", helvetica, arial;
+  font-family: "arial black italic", helvetica, arial !important;
   font-weight: bold;
   font-size: 42px;
   font-weight: 100;
