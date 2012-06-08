@@ -1,0 +1,121 @@
+-c={}
+-c[:description]="SSL.com Reseller Program offers volume discounting and low prices on ssl certificates for resellers."
+-c[:keywords]="SSL reseller host providers hosting webmasters low cost ssl certificate authority ssl resellers"
+-c[:title]="SSL Reseller Program, Low Prices for Resellers"
+-c.each do |k, v|
+  -content_for k, c[k]
+-content_for :header, 'public'
+.container
+  .innercontainere.shadow
+    .inner
+      =render :partial => "shared/messages"
+      %h1
+        Increase Your Bottom Line With SSL Reseller
+      %h2
+        SSL Reseller simplifies SSL certificate purchasing and management.
+      .leftcolb
+        .embed_video.center
+          %a(href="#{details_resellers_path}")
+            .pki_image
+      .rightcolc
+        %ul.listd.reseller
+          %li
+            Receive significant 
+            =link_to "discounting", reseller_tiers_path
+          %li
+            Manage SSL certificates effortlessly
+          %li
+            =link_to "Offer SSL certificates", restful_api_path
+            through your site
+          %li
+            Access 24 hour web and phone support
+          %li
+            =link_to "Click here for more details...", details_resellers_path
+        =link_to "Become a reseller!", new_account_url(:subdomain=>Reseller::SUBDOMAIN), :class=>"buttonc"
+        %p
+          No contracts to sign. No setup fees. No quotas.
+        %div(style='text-align: center;')
+          =image_tag "compatible.gif"
+.holder
+  .inner
+    .sidebarhome
+      .industry_programs
+        %h2.right_panel.industries
+          ssl.com solutions for industry
+        %ul
+          -contents = [['hosting_sm.gif', "offer ssl certs with hosting packages"]]
+          -contents << ['domains_sm.gif', "private label ssl certificates"]
+          -contents << ['merchants_sm.gif', "conduct online transactions securely"]
+          -contents << ['handshake_sm.gif', "scale IT security with ssl.com"]
+          -contents << ['government_sm.gif', "secure government websites with ssl.com"]
+          -contents << ['education_sm.gif', "learn about ssl.com programs for schools"]
+          -contents << ['medical_sm.gif', "compliance through ssl.com solutions"]
+          -Reseller::TARGETED.each_with_index do |industry, i|
+            %li
+              %a(href="#{send(industry+"_path")}")
+                .floater(class="#{"top" if industry=="host_providers"}")
+                  .fl_content
+                    =image_tag(contents[i][0], :class=>"industry")
+                    .reseller_specific_container
+                      %span=industry.titleize
+                      %div=contents[i][1]
+    %ul.boxes
+      %li
+        =image_tag "b_icon_t.gif", :alt => ""
+        .text
+          %h3
+            Better tools mean better results.
+          %p
+            Save time with SSL.com's simple yet powerful PKI system for
+            resellers. Manage SSL certs and
+            =link_to "Smart SeaLs", details_site_seals_url
+            easily.
+            Leverage free promo tools to drive sales and increase revenues.
+      %li
+        =image_tag "b_icon_m.gif", :alt => ""
+        .text
+          %h3
+            Save money, increase profits.
+          %p
+            The
+            =link_to "SSL Reseller Program", details_resellers_path
+            allows you to start selling SSL
+            certificates immediately with no contracts or commitments.
+            Simply choose from multiple prepayment levels to achieve higher
+            discounting.
+      %li
+        =image_tag "b_icon_i.gif", :alt => ""
+        .text
+          %h3
+            Seamless integration.
+          %p
+            Our #{link_to "RESTful API", restful_api_url}
+            makes integration with your site seamless. Offer SSL certificates
+            and products as part of an integated offering through your own site.
+      %li
+        =image_tag "b_icon_d.gif", :alt => ""
+        .text
+          %h3
+            Detailed reporting.
+          %p
+            Keep tabs on your account through our advanced reporting system. 
+            With this tool, you can view details about your certificates,
+            account balance, deposits, and much more.
+      %li
+        =image_tag "b_icon_r.gif", :alt => ""
+        .text
+          %h3
+            Retain customers longer.
+          %p
+            Take charge of the renewal process by controlling when and to whom 
+            renewal notices are sent. You can even customize the renewal
+            notices to better suit your needs.
+      %li
+        =image_tag "b_icon_s.gif", :alt => ""
+        .text
+          %h3
+            24-hour worldclass support.
+          %p
+            Expedient SSL implementation is essential to maintain proper uptime, 
+            and we offer multiple levels of support to ensure your SSL
+            management and installations go smoothly.

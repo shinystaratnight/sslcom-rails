@@ -1,6 +1,40 @@
 class AffiliatesController < ApplicationController
-#  resource_controller
-##  ssl_required :new, :create, :update, :edit
+  before_filter :require_user, :except=>[:index, :details]
+
+  def new
+    @affiliate =  Affiliate.new
+  end
+
+  def create
+    unless current_user.role_symbols.include?(Role::RESELLER.to_sym)
+      current_user.roles << Role.find_by_name(Role::RESELLER)
+      current_user.roles.delete Role.find_by_name(Role::CUSTOMER)
+      current_user.ssl_account.add_role! "new_reseller"
+      current_user.ssl_account.set_reseller_default_prefs
+    end
+    @reseller = current_user.ssl_account.reseller
+    if !params["prev.x".intern].nil?
+      go_backward
+    elsif !params["cancel.x".intern].nil?
+      cancel
+    else
+      go_forward
+    end
+  end
+
+  def update
+    @reseller = current_user.ssl_account.reseller
+    unless params["prev.x".intern].nil?
+      go_backward
+    else
+      go_forward
+    end
+  end
+
+  def show
+    redirect_to new_account_reseller_url
+  end
+
 #  belongs_to :user
 #  before_filter :login_required, :except => [:show, :about, :refer]
 #  before_filter :allowed_to_create?, :only=>[:new, :create]

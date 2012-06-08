@@ -1,28 +1,13 @@
+-content_for :title, "Affiliate Registration"
 =render :partial => 'index_scripts'
-.yui-b
-  .box
-    %h3
-      ="Why Become an Affiliate?".l
-    %ul.list.checks
-      %li Start making money in minutes
-      %li Promote studios from your niche
-      %li And/or promote the best paying studios
-      %li Detailed sales reporting
-      %li Identify which ads are producing sales
-      %li Choose which content you want to promote
-      %li New content published daily
-      %li Get real-time promo feeds to use
-      %li Signup is free!
-      %li And much more...
-
-#yui-main
-  .yui-b
-    .box
-      %h3="Become An Affiliate".l
-      = error_messages_for :object
-    %p
-      Start promoting the latest videos on eroslife.com and earn a commission from each sale, just fill
-      out the form below to become an eroslife.com affiliate.
-    #medium-form
-      - form_for Affiliate.new, :html => {:class => "MainForm"} do |f|
-        =render :partial=>'/studios/form', :locals => {:f => f}
+.reseller_registration_profile
+  %h3 SSL.com Affiliate Registration
+  %p Please fill out the required fields below to complete your registration for the SSL.com Affiliate Program
+  =error_messages_for :reseller
+  =form_for @affiliate, :url => account_reseller_path do |f|
+    #stylized.default_form
+      =render :partial => "form", :locals => {:f=>f}
+    #button_container
+      #auto_adjust
+        =image_tag "cancel_bl.gif", id: "cancel_reseller_signup"
+        =image_submit_tag "next_bl.gif"

@@ -67,6 +67,12 @@ SslCom::Application.routes.draw do
     end
   end
 
+  resources :affiliates, :only=>[:index,:new] do
+    collection do
+      get :details
+    end
+  end
+
   resources :reseller_tiers do
     member do
       get :show_popup

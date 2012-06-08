@@ -1,0 +1,58 @@
+.subheading Administrator Information
+-(Affiliate::ADMIN_COLUMNS).each do |column|
+  .clearfix
+    %label{:for=>"#{column}"}="#{column.humanize}#{"*" if Affiliate::REQUIRED_COLUMNS.include? column}"
+    = f.text_field column, :class => :text_field
+.subheading Business Information
+-(Affiliate::FORM_COLUMNS-Affiliate::ADMIN_COLUMNS).each do |column|
+  .clearfix
+    %label{:for=>"#{column}"}="#{column.humanize}#{"*" if Affiliate::REQUIRED_COLUMNS.include? column}"
+    -if column == "country"
+      =country_select_field_for f, column, BillingProfile::TOP_COUNTRIES, {:no_label=>true}, {}
+    -elsif column == "type_organization"
+      .radio_choices
+        .radio_w_desc.clearfix
+          = f.radio_button column, Affiliate::INDIVIDUAL
+          %em Individual
+        .radio_w_desc
+          = f.radio_button column, Affiliate::BUSINESS
+          %em Business
+    -elsif column == "payout_method"
+      .radio_choices{:style=>"float:left;"}
+        %div
+          = f.radio_button column, Affiliate::CHECK
+          check
+        %div
+          = f.radio_button column, Affiliate::EPASSPORTE
+          epassporte
+        %div
+          = f.radio_button column, Affiliate::WIRE
+          wire transfer (fees - $20.00/U.S. domestic; $45.00/International)
+    -elsif column == "payout_threshold"
+      .radio_choices{:style=>"float:left;"}
+        %div
+          = f.radio_button column, "50"
+          $50.00 USD
+        %div
+          = f.radio_button column, "100"
+          $100.00 USD
+        %div
+          = f.radio_button column, "200"
+          $200.00 USD
+    -else
+      = f.text_field column, :class => :text_field
+#epassporte
+  -(Affiliate::EPASSPORTE_ACCOUNT).each do |column|
+    .edit_entry
+      %label{:for=>"#{column}*"}="#{column.humanize}*"
+      = f.text_field column, :class => :text_field
+#checks_payable_to
+  -(Affiliate::CHECKS_PAYABLE_TO).each do |column|
+    .edit_entry
+      %label{:for=>"#{column}*"}="#{column.humanize}*"
+      = f.text_field column, :class => :text_field
+#wire_columns
+  -(Affiliate::BANK_COLUMNS).each do |column|
+    .edit_entry
+      %label{:for=>"#{column}*"}="#{column.humanize}*"
+      = f.text_field column, :class => :text_field
