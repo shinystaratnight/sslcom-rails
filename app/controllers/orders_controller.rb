@@ -165,6 +165,7 @@ class OrdersController < ApplicationController
         @order.billing_profile = @profile
         current_user.ssl_account.orders << @order
         @order.save
+        credit_affiliate(@order)
         if @certificate_orders
           clear_cart
           format.html { redirect_to @order }

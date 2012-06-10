@@ -21,6 +21,21 @@ jQuery(function($) {
       });
       $('#cart').effect("highlight", {}, 3000);
     });
+    $(':radio[id*=affiliate_payout_method_check]').click(function(){
+      $('#checks_payable_to').show();
+      $('#epassporte').hide();
+      $('#wire_columns').hide();
+    });
+    $(':radio[id*=affiliate_payout_method_epassporte]').click(function(){
+      $('#checks_payable_to').hide();
+      $('#epassporte').show();
+      $('#wire_columns').hide();
+    });
+    $(':radio[id*=affiliate_payout_method_wired]').click(function(){
+      $('#checks_payable_to').hide();
+      $('#epassporte').hide();
+      $('#wire_columns').show();
+    });
     $(':radio[id*=reseller_type_organization_individual]').click(function(){
       $('#reseller_organization').parents('.clearfix').hide();
       $('label[for*=tax_number]').text("SS# or Personal ID*").remove('.label_desc');
@@ -43,14 +58,7 @@ jQuery(function($) {
         }
       });
     });
-    $('[id*=reseller_tier]:radio:checked').each(function(){
-      $.select_tier(this);
-    });
+    $(':radio:checked').click();
   });
-  <% unless SERVER_SIDE_CART %>
-  $('[id*=reseller_tier]:radio').click(function(){
-    $.select_tier(this);
-  });
-  <% end %>
 });
 </script>

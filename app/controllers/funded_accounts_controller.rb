@@ -110,6 +110,7 @@ class FundedAccountsController < ApplicationController
           current_user.ssl_account.orders << @order
           @order.save
           @order.mark_paid!
+          credit_affiliate(@order)
         end
         @account_total.save
         dep.save

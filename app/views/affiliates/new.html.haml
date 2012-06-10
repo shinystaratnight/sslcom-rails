@@ -3,8 +3,8 @@
 .reseller_registration_profile
   %h3 SSL.com Affiliate Registration
   %p Please fill out the required fields below to complete your registration for the SSL.com Affiliate Program
-  =error_messages_for :reseller
-  =form_for @affiliate, :url => account_reseller_path do |f|
+  =error_messages_for :affiliate
+  =form_for @affiliate do |f|
     #stylized.default_form
       =render :partial => "form", :locals => {:f=>f}
     #button_container

@@ -67,7 +67,7 @@ SslCom::Application.routes.draw do
     end
   end
 
-  resources :affiliates, :only=>[:index,:new] do
+  resources :affiliates do
     collection do
       get :details
     end

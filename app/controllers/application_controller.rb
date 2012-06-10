@@ -44,6 +44,12 @@ class ApplicationController < ActionController::Base
     session[:cart_items] << line_item.model_and_id
   end
 
+  def credit_affiliate(order)
+    if cookies[:aid] && Affiliate.exists?(cookies[:aid])
+      Affiliate.find(cookies[:aid]).line_items << order.line_items
+    end
+  end
+
   def cart_contents
     cart = cookies[:cart]
     cart.blank? ? {} : JSON.parse(cookies[:cart])

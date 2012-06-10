@@ -6,39 +6,33 @@
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/general_steps.rb" line="32" />
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" line="48" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="561" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="228" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="567" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="229" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/funded_accounts_helper.rb" line="3" mnemonic="5" />
     <bookmark url="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml" line="36" mnemonic="4" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="790" mnemonic="0" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="821" mnemonic="9" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="116" mnemonic="3" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="117" mnemonic="3" />
     <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="70" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="286" mnemonic="1" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="261" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/_form.html.haml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/details.html.haml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/index.html.haml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/new_billing_profile.html.delete_me.haml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/select_tier.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/_affiliate_profile.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/_affiliate_profile.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/_dashboard_nav.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/_dashboard_nav.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/_index_scripts.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/_management.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/_management.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/about.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/about.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/dashboard.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/dashboard.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/edit.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/edit.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/edit_profile.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/edit_profile.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/link_codes.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/link_codes.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/new.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/new.html.haml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/affiliates/show.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates_tmp/show.html.haml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/show.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/affiliate.rb" afterPath="$PROJECT_DIR$/app/models/affiliate.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/_form.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates/_form.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb" afterPath="$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/new.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates/new.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/users/_standard.html.haml" afterPath="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
@@ -75,34 +69,7 @@
       <file leaf-file-name="affiliate.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="92" selection-start="271" selection-end="271" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="reseller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/reseller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="87" column="22" selection-start="2889" selection-end="2889" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="resellers_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/resellers_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="54" column="0" selection-start="217" selection-end="1523" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="452" column="6" selection-start="16815" selection-end="16815" vertical-scroll-proportion="0.0">
+            <state line="13" column="9" selection-start="639" selection-end="639" vertical-scroll-proportion="-7.129032">
               <folding />
             </state>
           </provider>
@@ -111,52 +78,79 @@
       <file leaf-file-name="affiliates_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/affiliates_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="4" column="22" selection-start="143" selection-end="143" vertical-scroll-proportion="0.0">
+            <state line="31" column="0" selection-start="705" selection-end="705" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/affiliates/new.html.haml">
+      <file leaf-file-name="_footer_new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="0" selection-start="82" selection-end="82" vertical-scroll-proportion="0.0">
+            <state line="79" column="7" selection-start="3032" selection-end="3032" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dashboard.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/dashboard.html.haml">
+      <file leaf-file-name="application.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="18" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="47" column="83" selection-start="1922" selection-end="1922" vertical-scroll-proportion="-3.3225806">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="orders_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="167" column="16" selection-start="5075" selection-end="5099" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="funded_accounts_controller.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="112" column="34" selection-start="4934" selection-end="4934" vertical-scroll-proportion="0.83040935">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="order.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="15" column="30" selection-start="539" selection-end="539" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="orders_helper.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="21" column="17" selection-start="588" selection-end="588" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="show.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/affiliates/show.html.haml">
           <provider selected="true" editor-type-id="text-editor">
             <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="new.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/new.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="38" selection-start="911" selection-end="911" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_form.html.haml" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/views/affiliates/_form.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="56" column="54" selection-start="2137" selection-end="2137" vertical-scroll-proportion="3.0037594">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/routes.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="72" column="0" selection-start="2117" selection-end="2117" vertical-scroll-proportion="-5.064516">
               <folding />
             </state>
           </provider>
@@ -208,22 +202,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
-        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/country.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/stylesheets/buy_now.sass" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
         <option value="$PROJECT_DIR$/app/stylesheets/master.sass" />
         <option value="$PROJECT_DIR$/app/models/user.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/affiliates/new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/affiliates/_form.html.haml" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/affiliate.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
       </list>
     </option>
   </component>
@@ -369,6 +363,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="users" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="resellers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -476,11 +492,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/views/affiliates" />
       <recent name="$PROJECT_DIR$/app/views/" />
       <recent name="$PROJECT_DIR$/public/fonts" />
       <recent name="$PROJECT_DIR$/app/views/certificates" />
       <recent name="$PROJECT_DIR$/app/views/layouts" />
-      <recent name="$PROJECT_DIR$/vendor/plugins" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/public/fonts" />
@@ -490,7 +506,7 @@
       <recent name="$PROJECT_DIR$/vendor/plugins/aws-s3" />
     </key>
   </component>
-  <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
+  <component name="RunManager" selected="Rake.routes">
     <configuration default="false" name="CertificateOrder as a ssl.com certificate order using FactoryGirl should be able to create a new order with a domain validated certificate" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
       <predefined_log_file id="RUBY_RSPEC" enabled="true" />
       <module name="ssl_com_rails3" />
@@ -1331,10 +1347,10 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.53104573" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.37908497" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19237147" sideWeight="0.26633987" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19237147" sideWeight="0.62091506" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28635347" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37908497" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19237147" sideWeight="0.6666667" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19237147" sideWeight="0.62091506" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.33333334" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39542484" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1431,114 +1447,116 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="702" column="108" selection-start="22290" selection-end="22290" vertical-scroll-proportion="-5.903226">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="77" selection-start="878" selection-end="878" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/billing_profile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="76" selection-start="1282" selection-end="1282" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="22" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/link_codes.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/users/_standard.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="72" column="0" selection-start="2117" selection-end="2117" vertical-scroll-proportion="-5.064516">
+        <state line="68" column="41" selection-start="3062" selection-end="3062" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/resellers_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="0" selection-start="217" selection-end="1523" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="452" column="6" selection-start="16815" selection-end="16815" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/reseller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="87" column="22" selection-start="2889" selection-end="2889" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/affiliates_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="22" selection-start="143" selection-end="143" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="82" selection-end="82" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/_affiliate_profile.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/dashboard.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="38" selection-start="911" selection-end="911" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="92" selection-start="271" selection-end="271" vertical-scroll-proportion="0.0">
+        <state line="12" column="23" selection-start="580" selection-end="580" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/affiliates/_form.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="54" selection-start="2137" selection-end="2137" vertical-scroll-proportion="3.0037594">
+        <state line="46" column="49" selection-start="1849" selection-end="1849" vertical-scroll-proportion="-12.819673">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates_tmp/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="9" selection-start="639" selection-end="639" vertical-scroll-proportion="-7.129032">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/javascripts/application.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="79" column="7" selection-start="3032" selection-end="3032" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="18" selection-start="321" selection-end="321" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="21" column="17" selection-start="588" selection-end="588" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="15" column="30" selection-start="539" selection-end="539" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/affiliates_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="31" column="0" selection-start="705" selection-end="705" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="47" column="83" selection-start="1922" selection-end="1922" vertical-scroll-proportion="-3.3225806">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="167" column="16" selection-start="5075" selection-end="5099" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="112" column="34" selection-start="4934" selection-end="4934" vertical-scroll-proportion="0.83040935">
           <folding />
         </state>
       </provider>
