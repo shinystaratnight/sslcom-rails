@@ -96,7 +96,7 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}# & (product !~ 'high_assurance%')}
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
   scope :for_sale, where{(serial =~ "%sslcom%")}
 

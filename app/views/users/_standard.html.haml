@@ -20,11 +20,12 @@
       through an ssl.com certificate, you will need to acquire an ssl.com
       certificate.
       =link_to "Click here to see a list ssl.com certificate products.", certificates_path
-  .become_reseller_title(style="margin: 10px 0 0")
-    %p
-      %a(href="#{url_for new_affiliate_url}")
-        %strong NEW! Earn commissions through the SSL.com Affiliate Program
-        (click here to learn more)
+  -#
+    .become_reseller_title(style="margin: 10px 0 0")
+      %p
+        %a(href="#{url_for new_affiliate_url}")
+          %strong NEW! Earn commissions through the SSL.com Affiliate Program
+          (click here to learn more)
   .become_reseller_title(style="margin: 10px 0 0")
     %p
       %a(href="#{url_for resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)}")
@@ -66,7 +67,7 @@
                           %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
-                        %li=link_to 'become an affiliate', new_affiliate_url
+                        -#%li=link_to 'become an affiliate', new_affiliate_url
                         %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box
                       %ul

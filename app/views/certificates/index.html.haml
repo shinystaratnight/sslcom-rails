@@ -19,8 +19,8 @@
     -@certificates.each_with_index do |c,i|
       -if (i % 2)==0
         %tr
-          -if @certificates[i].product=="premiumssl"
-            %td(colspan=2)
+          -if @certificates[i].product_root=="ucc"
+            %td(colspan=2) &nbsp;
           -unless @certificates[i].blank?
             =render partial: "certificate_detail", locals: {c: @certificates[i], i: i}
           -unless @certificates[i+1].blank?

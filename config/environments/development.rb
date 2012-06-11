@@ -24,7 +24,15 @@ SslCom::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-  config.action_mailer.delivery_method = :test
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    :address    => "smtp.fusemail.net",
+    :port       => 25,
+    :domain     => "ssl.com",
+    :authentication => :login,
+    :user_name => "support@ssl.com",
+    :password => "jama1kama1"
+  }
   config.action_mailer.perform_deliveries = true
 
   config.to_prepare do
