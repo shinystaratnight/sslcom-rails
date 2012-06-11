@@ -1,25 +1,15 @@
 /* CSS for ssl Website */
 @font-face {
   font-family: "arial black";
-  src: url(/fonts/aria-black.ttf);
-}
-
-@font-face {
-  font-family: "arial black";
-  src: url(/fonts/aria-black.eot);
+  src: url(/fonts/aria-black.eot) format("eot"), url(/fonts/aria-black.ttf) format("truetype");
 }
 
 @font-face {
   font-family: "arial black italic";
-  src: url(/fonts/arial-black-italic.ttf);
+  src: url(/fonts/arial-black-italic.eot) format("eot"), url(/fonts/arial-black-italic.ttf) format("truetype");
 }
 
-@font-face {
-  font-family: "arial black italic";
-  src: url(/fonts/arial-black-italic.eot);
-}
-
-/* line 18, ../../../app/stylesheets/master.sass */
+/* line 10, ../../../app/stylesheets/master.sass */
 body {
   background: white;
   font-family: Helvetica, Arial, "MS Trebuchet", sans-serif;
@@ -32,38 +22,38 @@ body {
   overflow-x: hidden !important;
   overflow-y: scroll !important;
 }
-/* line 29, ../../../app/stylesheets/master.sass */
+/* line 21, ../../../app/stylesheets/master.sass */
 body[class|="page-body"] {
   background: white;
   /* Applies to IE 7 and most modern browsers except Opera */
 }
 
 /*MISCELLANOUS */
-/* line 35, ../../../app/stylesheets/master.sass */
+/* line 27, ../../../app/stylesheets/master.sass */
 a {
   text-decoration: none;
 }
-/* line 37, ../../../app/stylesheets/master.sass */
+/* line 29, ../../../app/stylesheets/master.sass */
 a img {
   border: none;
 }
 
-/* line 40, ../../../app/stylesheets/master.sass */
+/* line 32, ../../../app/stylesheets/master.sass */
 .bold {
   font-weight: bold;
 }
 
-/* line 43, ../../../app/stylesheets/master.sass */
+/* line 35, ../../../app/stylesheets/master.sass */
 .left {
   float: left;
 }
 
-/* line 46, ../../../app/stylesheets/master.sass */
+/* line 38, ../../../app/stylesheets/master.sass */
 .right {
   float: right;
 }
 
-/* line 49, ../../../app/stylesheets/master.sass */
+/* line 41, ../../../app/stylesheets/master.sass */
 .clear {
   height: 1%;
   clear: both;
@@ -72,12 +62,12 @@ a img {
   visibility: hidden;
 }
 
-/* line 56, ../../../app/stylesheets/master.sass */
+/* line 48, ../../../app/stylesheets/master.sass */
 .divider {
   border-bottom: 1px solid #444444;
 }
 
-/* line 59, ../../../app/stylesheets/master.sass */
+/* line 51, ../../../app/stylesheets/master.sass */
 .divider-horizontal {
   border-right: 1px solid #aaaaaa;
   padding: 0 4px;
@@ -86,36 +76,36 @@ a img {
 }
 
 /*icons */
-/* line 67, ../../../app/stylesheets/master.sass */
+/* line 59, ../../../app/stylesheets/master.sass */
 .icn_live, .icn_phone, .icn_email, .icn_support {
   background: url("/images/icon-set.png") no-repeat;
 }
 
-/* line 70, ../../../app/stylesheets/master.sass */
+/* line 62, ../../../app/stylesheets/master.sass */
 .icn_live {
   background-position: -10px 13px;
   padding: 17px 12px;
 }
 
-/* line 74, ../../../app/stylesheets/master.sass */
+/* line 66, ../../../app/stylesheets/master.sass */
 .icn_phone {
   background-position: -42px 12px;
   padding: 17px 14px;
 }
 
-/* line 78, ../../../app/stylesheets/master.sass */
+/* line 70, ../../../app/stylesheets/master.sass */
 .icn_email {
   background-position: -88px 12px;
   padding: 17px 14px;
 }
 
-/* line 82, ../../../app/stylesheets/master.sass */
+/* line 74, ../../../app/stylesheets/master.sass */
 .icn_support {
   background-position: -130px 12px;
   padding: 17px 12px;
 }
 
-/* line 86, ../../../app/stylesheets/master.sass */
+/* line 78, ../../../app/stylesheets/master.sass */
 .icn_cart {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d;
   padding: 5px 6px 4px 24px;
@@ -125,7 +115,7 @@ a img {
   font-size: 12px;
 }
 
-/* line 94, ../../../app/stylesheets/master.sass */
+/* line 86, ../../../app/stylesheets/master.sass */
 .icn_cart-filled {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d;
   padding: 5px 6px 4px 24px;
@@ -136,19 +126,19 @@ a img {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #8bb43b;
 }
 
-/* line 103, ../../../app/stylesheets/master.sass */
+/* line 95, ../../../app/stylesheets/master.sass */
 .icn_cart:hover, .icn_cart-filled:hover {
   text-decoration: underline;
 }
 
-/* line 106, ../../../app/stylesheets/master.sass */
+/* line 98, ../../../app/stylesheets/master.sass */
 .content {
   margin: 0 auto !important;
   width: 960px;
 }
 
 /*header */
-/* line 112, ../../../app/stylesheets/master.sass */
+/* line 104, ../../../app/stylesheets/master.sass */
 #header {
   text-align: left !important;
   background: #282928 100%;
@@ -157,35 +147,35 @@ a img {
   margin: 0px;
   height: 78px;
 }
-/* line 120, ../../../app/stylesheets/master.sass */
+/* line 112, ../../../app/stylesheets/master.sass */
 #header .content .logo {
   float: left;
   padding: 0px 150px 20px 0;
   margin-right: 15px;
   background: url("/images/big-logo.png") no-repeat;
 }
-/* line 125, ../../../app/stylesheets/master.sass */
+/* line 117, ../../../app/stylesheets/master.sass */
 #header .content .navigation {
   float: left;
   width: 580px;
 }
-/* line 128, ../../../app/stylesheets/master.sass */
+/* line 120, ../../../app/stylesheets/master.sass */
 #header .content .navigation .top_navigation {
   width: 580px;
   padding: 12px 0px 13px 30px;
   margin-left: 1px;
 }
-/* line 132, ../../../app/stylesheets/master.sass */
+/* line 124, ../../../app/stylesheets/master.sass */
 #header .content .navigation .bottom_navigation {
   width: 580px;
   padding: 17px 30px;
 }
 
-/* line 137, ../../../app/stylesheets/master.sass */
+/* line 129, ../../../app/stylesheets/master.sass */
 .top_navigation a {
   color: #cccccc !important;
 }
-/* line 139, ../../../app/stylesheets/master.sass */
+/* line 131, ../../../app/stylesheets/master.sass */
 .top_navigation li {
   float: right !important;
   color: #cccccc;
@@ -193,20 +183,20 @@ a img {
   padding: 0 4px;
   font-size: 12px;
 }
-/* line 140, ../../../app/stylesheets/master.sass */
+/* line 132, ../../../app/stylesheets/master.sass */
 .top_navigation li a:hover {
   color: white !important;
   text-decoration: underline;
   cursor: pointer !important;
 }
 
-/* line 151, ../../../app/stylesheets/master.sass */
+/* line 143, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-/* line 155, ../../../app/stylesheets/master.sass */
+/* line 147, ../../../app/stylesheets/master.sass */
 .bottom_navigation li {
   float: right !important;
   background: #111111;
@@ -220,7 +210,7 @@ a img {
   -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
-/* line 167, ../../../app/stylesheets/master.sass */
+/* line 159, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover {
   background: #232323;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -228,17 +218,17 @@ a img {
   -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
-/* line 173, ../../../app/stylesheets/master.sass */
+/* line 165, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav a {
   display: block;
   color: #dddddd;
 }
-/* line 176, ../../../app/stylesheets/master.sass */
+/* line 168, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav a:hover {
   display: block;
   color: white;
 }
-/* line 181, ../../../app/stylesheets/master.sass */
+/* line 173, ../../../app/stylesheets/master.sass */
 .bottom_navigation li ul {
   display: none;
   position: absolute;
@@ -247,18 +237,18 @@ a img {
   left: 0;
   margin-left: -41px;
 }
-/* line 188, ../../../app/stylesheets/master.sass */
+/* line 180, ../../../app/stylesheets/master.sass */
 .bottom_navigation li > ul {
   top: 35px;
   left: 40px;
   background: #212121;
 }
-/* line 192, ../../../app/stylesheets/master.sass */
+/* line 184, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul, .bottom_navigation li.over ul {
   display: block;
   list-style: none;
 }
-/* line 195, ../../../app/stylesheets/master.sass */
+/* line 187, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li {
   background: #232323;
   padding: 10px;
@@ -270,22 +260,22 @@ a img {
   -webkit-box-shadow: none;
   cursor: pointer;
 }
-/* line 205, ../../../app/stylesheets/master.sass */
+/* line 197, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li.divider {
   margin: 0 0 0 10px;
   padding: 0 10px;
   border-bottom: #999999 1px solid;
 }
-/* line 209, ../../../app/stylesheets/master.sass */
+/* line 201, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a {
   color: #cccccc !important;
   margin-left: 4px;
 }
-/* line 212, ../../../app/stylesheets/master.sass */
+/* line 204, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a:hover {
   color: white !important;
 }
-/* line 214, ../../../app/stylesheets/master.sass */
+/* line 206, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li:hover {
   width: 240px !important;
   background: black !important;
@@ -293,12 +283,12 @@ a img {
 }
 
 /*content */
-/* line 221, ../../../app/stylesheets/master.sass */
+/* line 213, ../../../app/stylesheets/master.sass */
 .container {
   padding: 15px 0 0 0 !important;
 }
 
-/* line 224, ../../../app/stylesheets/master.sass */
+/* line 216, ../../../app/stylesheets/master.sass */
 #container {
   min-height: 100%;
   margin: 0;
@@ -312,7 +302,7 @@ a img {
 }
 
 /*footer */
-/* line 237, ../../../app/stylesheets/master.sass */
+/* line 229, ../../../app/stylesheets/master.sass */
 #footer {
   clear: both;
   background: #282928;
@@ -324,24 +314,24 @@ a img {
   /* important */
   text-align: left !important;
 }
-/* line 248, ../../../app/stylesheets/master.sass */
+/* line 240, ../../../app/stylesheets/master.sass */
 #footer .content .box-logo {
   width: 190px;
 }
-/* line 251, ../../../app/stylesheets/master.sass */
+/* line 243, ../../../app/stylesheets/master.sass */
 #footer .content .box .footer-like {
   padding: 0px 210px 50px 0;
 }
-/* line 253, ../../../app/stylesheets/master.sass */
+/* line 245, ../../../app/stylesheets/master.sass */
 #footer .content .box .logo-small {
   padding: 0px 210px 60px 0;
   background: url("/images/small-logo.png") no-repeat;
 }
-/* line 256, ../../../app/stylesheets/master.sass */
+/* line 248, ../../../app/stylesheets/master.sass */
 #footer .content .box-social {
   width: 210px;
 }
-/* line 258, ../../../app/stylesheets/master.sass */
+/* line 250, ../../../app/stylesheets/master.sass */
 #footer .content .box {
   width: 185px;
   background: inherit;
@@ -349,43 +339,43 @@ a img {
   margin-bottom: 0 !important;
   color: white;
 }
-/* line 264, ../../../app/stylesheets/master.sass */
+/* line 256, ../../../app/stylesheets/master.sass */
 #footer .content .box b {
   color: white !important;
 }
-/* line 266, ../../../app/stylesheets/master.sass */
+/* line 258, ../../../app/stylesheets/master.sass */
 #footer .content .box .title {
   font-size: 14px;
   margin-left: 34px;
 }
-/* line 269, ../../../app/stylesheets/master.sass */
+/* line 261, ../../../app/stylesheets/master.sass */
 #footer .content .box ul {
   margin: 12px 0 0 0 !important;
 }
-/* line 271, ../../../app/stylesheets/master.sass */
+/* line 263, ../../../app/stylesheets/master.sass */
 #footer .content .box li {
   list-style-type: none;
   padding: 4px;
 }
-/* line 274, ../../../app/stylesheets/master.sass */
+/* line 266, ../../../app/stylesheets/master.sass */
 #footer .content .box a {
   color: #dddddd;
   font-size: 12px;
   margin-left: -8px;
 }
-/* line 278, ../../../app/stylesheets/master.sass */
+/* line 270, ../../../app/stylesheets/master.sass */
 #footer .content .box a b {
   font-size: 12px;
   letter-spacing: -0.5px;
   font-weight: bold;
   font-style: italic;
 }
-/* line 283, ../../../app/stylesheets/master.sass */
+/* line 275, ../../../app/stylesheets/master.sass */
 #footer .content .box a:hover {
   color: white;
   text-decoration: underline;
 }
-/* line 286, ../../../app/stylesheets/master.sass */
+/* line 278, ../../../app/stylesheets/master.sass */
 #footer .content .copyright {
   margin: 25px 0 0 220px;
   font-size: 12px;
