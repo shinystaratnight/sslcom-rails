@@ -23,11 +23,11 @@
         %tr
           %th referral link
           %th visits
-          %th uniques
+          %th number sales
           %th total sales
           %th commission
-        -@surls.sort{|a,b|b.created_at<=>a.created_at}.each_with_index do |surl, i|
-          =render partial: "affiliate_row", locals: {surl: surl}
+        -@affiliate.sales_stats.each do |k, v|
+          =render partial: "affiliate_row", locals: {url: k, orders: v}
       -#%p
       -#  Let everyone know you are using secure links with the foremost name in security by using the ssl.com
       -#  domain name as your secure linking service. All links display an ssl daily scanned report near the top

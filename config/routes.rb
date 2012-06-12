@@ -204,6 +204,7 @@ SslCom::Application.routes.draw do
   #specifically the aff code should be the last thing and not followed by other characters
   #that could route this to anything other than an affiliate crediting
   get '*disregard/code/:id'=>'affiliates#refer', id: /\w+\/?/
+  get '/code/:id'=>'affiliates#refer', id: /\w+\/?/
 
   resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
   get '/surls/:id' => 'Surls#destroy', :constraints => {:subdomain=>Surl::SUBDOMAIN}

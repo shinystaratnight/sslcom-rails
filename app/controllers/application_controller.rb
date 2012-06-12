@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
     "hide_documents?", "hide_both?", "hide_validation?"
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
-  before_filter :identify_visitor, :record_visit, :except=>[:refer],
+  before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
 
@@ -522,7 +522,7 @@ class ApplicationController < ActionController::Base
     cur = TrackedUrl.find_or_create_by_md5_and_url(md5_current,request.url)
     prev = TrackedUrl.find_or_create_by_md5_and_url(md5_previous,request.referer)
     Tracking.create(:referer=>prev,:visitor_token=>@visitor_token,
-      :tracked_url=>cur)
+      :tracked_url=>cur, remote_ip: request.remote_ip)
 #    output = cache(md5) { request.request_uri }
 #    if @visitor
 #      md5 = Digest::MD5.hexdigest(request.request_uri)

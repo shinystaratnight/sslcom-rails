@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612134625) do
+ActiveRecord::Schema.define(:version => 20120612195043) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -808,6 +808,7 @@ ActiveRecord::Schema.define(:version => 20120612134625) do
     t.integer  "referer_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "remote_ip"
   end
 
   create_table "unsubscribes", :force => true do |t|

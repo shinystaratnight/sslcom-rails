@@ -1,7 +1,6 @@
--link=surl.full_link
 %tr
-  %td=link_to link, link, target: '_blank'
-  %td=surl.surl_visits.count
-  %td=surl.surl_visits.map(&:referer_address).uniq.count
-  %td=current_user.login
+  %td=url
+  %td=@affiliate.landed_urls_count[url]
+  %td=orders.count
+  %td=orders.sum(&:cents)*0.01
   %td $100

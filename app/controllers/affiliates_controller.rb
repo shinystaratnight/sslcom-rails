@@ -27,7 +27,7 @@ class AffiliatesController < ApplicationController
 
   def show
     p = {:page => params[:page]}
-    @surls = Surl.limit(10).paginate(p)
+    @surls = @affiliate.orders.paginate(p)
 
   end
 
