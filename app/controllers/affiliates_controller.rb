@@ -1,5 +1,6 @@
 class AffiliatesController < ApplicationController
   before_filter :require_user, :except=>[:index, :details]
+  before_filter :find_affiliate, only: [:show]
 
   def new
     @affiliate =  Affiliate.new
@@ -25,7 +26,9 @@ class AffiliatesController < ApplicationController
   end
 
   def show
-    redirect_to new_account_reseller_url
+    p = {:page => params[:page]}
+    @surls = Surl.limit(10).paginate(p)
+
   end
 
   def refer
@@ -84,7 +87,11 @@ class AffiliatesController < ApplicationController
 #    object.user
 #  end
 #
-#  private
+  private
+
+  def find_affiliate
+    @affiliate = Affiliate.find(params[:id])
+  end
 #
 #  def protect_affiliate
 #    @affiliate = Affiliate.find(params[:id])

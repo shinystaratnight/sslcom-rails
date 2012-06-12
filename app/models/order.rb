@@ -7,6 +7,7 @@ class Order < ActiveRecord::Base
   belongs_to  :address
   belongs_to  :billing_profile
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
+  belongs_to  :visitor_token
   has_many    :line_items, dependent: :destroy
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
@@ -390,6 +391,8 @@ class Order < ActiveRecord::Base
       response
     end
   end
+
+
 
   private
 

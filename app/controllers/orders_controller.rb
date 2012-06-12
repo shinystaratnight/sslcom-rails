@@ -164,6 +164,7 @@ class OrdersController < ApplicationController
         save_billing_profile unless (params[:funding_source])
         @order.billing_profile = @profile
         current_user.ssl_account.orders << @order
+        @order.visitor_token=@visitor_token if @visitor_token
         @order.save
         credit_affiliate(@order)
         if @certificate_orders

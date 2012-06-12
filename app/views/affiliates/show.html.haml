@@ -1,38 +1,35 @@
-- @meta = { :description => "#{display_name(object)}'s profile on #{Settings.community_name}.", :keywords => "#{display_name(object)}, #{object.preferences.map{|k,v|k if v==true}.compact.join(", ") unless object.preferences.blank?}" }
--#delete the following when done testing
-- unless object.studio_subscriptions.empty?
-  -test_imgs = [object.studio_subscriptions[0].studio]*12
+-c={}
+-c[:header]='public'
+-c[:title] = "SSL.com Affiliate Sales and Statistics"
+-c.each do |k, v|
+  -content_for k, c[k]
+=render :partial => '/surls/index_scripts'
+.innercontainere
+  .inner
+    =render :partial => "shared/messages"
+    %h1
+      =c[:title]
+    %h2
+      information displayed is for affiliate
+      %strong #{current_user.login}
+    .clearfix
+      %table#manage_current_links(cellspacing=0)
+        %tfoot
+          %tr
+            %td(colspan="#{current_user ? 6 : 5}")
+              -#the following space is needed else this row collapses if too few rows exist
+              &nbsp
+              =will_paginate @surls
+        %tr
+          %th referral link
+          %th visits
+          %th uniques
+          %th total sales
+          %th commission
+        -@surls.sort{|a,b|b.created_at<=>a.created_at}.each_with_index do |surl, i|
+          =render partial: "affiliate_row", locals: {surl: surl}
+      -#%p
+      -#  Let everyone know you are using secure links with the foremost name in security by using the ssl.com
+      -#  domain name as your secure linking service. All links display an ssl daily scanned report near the top
+      -#  to let people know the link is safe.
 
-.yui-b
-  -build_affiliate_links
-  -if @photos_count > 0 || @posts_count > 0
-    .box
-      %h3="Quick Links"
-      =@affiliate_links
-  -unless logged_in?
-    .box.alt
-      %h3="Tips".l
-      %p
-        ="After signing up, you'll receive an e-mail confirmation message.".l
-      %p
-        ="Click the activation link in the e-mail to log in.".l
-      %p= link_to "Already have an account?".l, "/login"
-  .box
-    %h3
-      =:niches.l(:count=>object.stored_preferences.find_all_by_name(Studio::CONTENT_TYPES).select{|pref|pref.value==true}.count)
-    =render :partial=>'shared/preferences', :locals=>{:num_cols=>2, :prefs=> Studio::CONTENT_TYPES.sort, :object=>object, :width=>110}
-#yui-main
-  .yui-b
-    .box
-      #studio_avatar.left
-        = image_tag(object.avatar_photo_url(:thumb), :class => 'polaroid')
-      #studio_profile
-        #studio_name=object.display_name
-        #studio_tagline=object.tagline
-        #studio_country_display=object.country
-        #studio_link=request.url
-        -if object.description
-          #studio_description=object.description
-    .box
-      %h3 Promoting
-      =render :partial=>'/base/micro_image_table', :locals=>{:rows=>1, :cols=>10, :options=> {:width=>65}, :users=>test_imgs, :more_path=>affiliate_studio_subscriptions_path(object)}

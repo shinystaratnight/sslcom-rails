@@ -1,6 +1,8 @@
 class Affiliate < ActiveRecord::Base
-  belongs_to :ssl_account
-  has_many   :line_items
+  belongs_to  :ssl_account
+  has_many    :line_items
+  has_many    :orders, through: :line_items
+  has_many    :visitor_tokens
 
   PROFILE_COLUMNS = %w(display_name tagline description)
   COMPANY_COLUMNS = %w(organization website address1 address2
@@ -64,4 +66,9 @@ class Affiliate < ActiveRecord::Base
   def display_name
     read_attribute(:display_name) || organization || "Studio"
   end
+
+  def certificate_orders
+    line_items.map(&:sellable).reject{|co|!co.is_a? CertificateOrder}
+  end
+
 end

@@ -108,6 +108,7 @@ class FundedAccountsController < ApplicationController
         if apply_order
           @order.deducted_from = @deposit
           current_user.ssl_account.orders << @order
+          @order.visitor_token=@visitor_token if @visitor_token
           @order.save
           @order.mark_paid!
           credit_affiliate(@order)

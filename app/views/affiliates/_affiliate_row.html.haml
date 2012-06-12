@@ -1,0 +1,7 @@
+-link=surl.full_link
+%tr
+  %td=link_to link, link, target: '_blank'
+  %td=surl.surl_visits.count
+  %td=surl.surl_visits.map(&:referer_address).uniq.count
+  %td=current_user.login
+  %td $100

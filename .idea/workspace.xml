@@ -7,19 +7,34 @@
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/general_steps.rb" line="32" />
     <bookmark url="file://$PROJECT_DIR$/features/step_definitions/shopping_steps.rb" line="48" />
     <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="567" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="229" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="230" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/funded_accounts_helper.rb" line="3" mnemonic="5" />
     <bookmark url="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml" line="36" mnemonic="4" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="790" mnemonic="0" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="821" mnemonic="9" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="117" mnemonic="3" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="118" mnemonic="3" />
     <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="70" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="286" mnemonic="1" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="261" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/affiliates/_affiliate_row.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/affiliate.rb" afterPath="$PROJECT_DIR$/app/models/affiliate.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/visitor_token.rb" afterPath="$PROJECT_DIR$/app/models/visitor_token.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/stylesheets/master.sass" afterPath="$PROJECT_DIR$/app/stylesheets/master.sass" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/index.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates/index.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/show.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates/show.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" afterPath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/users/_reseller.html.haml" afterPath="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/users/_standard.html.haml" afterPath="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/development.rb" afterPath="$PROJECT_DIR$/config/environments/development.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/stylesheets/compiled/master.css" afterPath="$PROJECT_DIR$/public/stylesheets/compiled/master.css" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
@@ -53,91 +68,91 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="validation_approve.text.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/order_notifier/validation_approve.text.erb">
+      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="202" selection-start="63" selection-end="63" vertical-scroll-proportion="0.0">
+            <state line="522" column="118" selection-start="19358" selection-end="19358" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="user_notifier.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/user_notifier.rb">
+      <file leaf-file-name="orders_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="0" selection-start="246" selection-end="246" vertical-scroll-proportion="0.0">
+            <state line="124" column="6" selection-start="3629" selection-end="3629" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="development.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
+      <file leaf-file-name="funded_accounts_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="30" column="86" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.0">
+            <state line="110" column="64" selection-start="4913" selection-end="4913" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="order_notifier.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/order_notifier.rb">
+      <file leaf-file-name="order.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="88" selection-start="1404" selection-end="1404" vertical-scroll-proportion="0.0">
+            <state line="9" column="21" selection-start="312" selection-end="312" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/index.html.haml">
+      <file leaf-file-name="affiliate.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="21" column="43" selection-start="1093" selection-end="1093" vertical-scroll-proportion="0.0">
+            <state line="73" column="0" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.7909836">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="buy_now.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
+      <file leaf-file-name="visitor_token.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/visitor_token.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="127" column="19" selection-start="4101" selection-end="4101" vertical-scroll-proportion="0.0">
+            <state line="9" column="49" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="buy_now.sass" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/stylesheets/buy_now.sass">
+      <file leaf-file-name="schema.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/db/schema.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="422" column="13" selection-start="11300" selection-end="11300" vertical-scroll-proportion="-231.41936">
+            <state line="410" column="113" selection-start="11955" selection-end="11955" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="master.sass" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
+      <file leaf-file-name="20101019135512_add_is_expired_to_certificate_orders.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/db/migrate/20101019135512_add_is_expired_to_certificate_orders.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="0" selection-start="213" selection-end="213" vertical-scroll-proportion="0.16748768">
+            <state line="0" column="0" selection-start="0" selection-end="367" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.sass" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
+      <file leaf-file-name="20120612134625_add_visitor_token_to_orders.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/db/migrate/20120612134625_add_visitor_token_to_orders.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="5" column="81" selection-start="108" selection-end="187" vertical-scroll-proportion="0.0">
+            <state line="13" column="18" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_certificate_detail.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml">
+      <file leaf-file-name="20120321191020_create_oauth_tables.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/db/migrate/20120321191020_create_oauth_tables.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
+            <state line="40" column="66" selection-start="1037" selection-end="1037" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -189,22 +204,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/order_notifier/site_seal_approve.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/site_seal_unapprove.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/validation_approve.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/validation_unapprove.erb" />
         <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/_ev_reqs.erb" />
-        <option value="$PROJECT_DIR$/app/views/user_notifier/password_changed.text.haml" />
-        <option value="$PROJECT_DIR$/app/views/user_notifier/password_reset_instructions.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/user_notifier/testme.text.erb" />
-        <option value="$PROJECT_DIR$/app/models/user_notifier.rb" />
-        <option value="$PROJECT_DIR$/app/models/order_notifier.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificates/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
-        <option value="$PROJECT_DIR$/app/stylesheets/buy_now.sass" />
-        <option value="$PROJECT_DIR$/app/stylesheets/master.sass" />
+        <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/index.html.haml" />
+        <option value="$PROJECT_DIR$/config/environments/development.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/_affiliate_row.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/tracking.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20120612134625_add_visitor_token_to_orders.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20120321191020_create_oauth_tables.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/order.rb" />
+        <option value="$PROJECT_DIR$/app/models/visitor_token.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/affiliate.rb" />
       </list>
     </option>
   </component>
@@ -310,7 +325,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
+              <option name="myItemId" value="db" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -324,11 +339,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
+              <option name="myItemId" value="db" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="fonts" />
+              <option name="myItemId" value="migrate" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -377,8 +392,8 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/views/user_notifier" />
       <recent name="$PROJECT_DIR$/app/views/affiliates" />
+      <recent name="$PROJECT_DIR$/app/views/user_notifier" />
       <recent name="$PROJECT_DIR$/app/views/" />
       <recent name="$PROJECT_DIR$/public/fonts" />
       <recent name="$PROJECT_DIR$/app/views/certificates" />
@@ -391,42 +406,7 @@
       <recent name="$PROJECT_DIR$/vendor/plugins/aws-s3" />
     </key>
   </component>
-  <component name="RunManager" selected="Rake.routes">
-    <configuration default="false" name="CertificateOrder as a ssl.com certificate order using FactoryGirl should be able to create a new order with a domain validated certificate" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
-      <predefined_log_file id="RUBY_RSPEC" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" track_test_folders="true" runner="rcov">
-        <COVERAGE_PATTERN ENABLED="true">
-          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
-        </COVERAGE_PATTERN>
-      </EXTENSION>
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$PROJECT_DIR$/spec/models/certificate_order_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*_spec.rb" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_EXAMPLE_NAME" VALUE="CertificateOrder as a ssl.com certificate order using FactoryGirl should be able to create a new order with a domain validated certificate" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_ARGS" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_VERSION" VALUE="" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="USE_CUSTOM_SPEC_RUNNER" VALUE="false" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="true" />
-      <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
-      <RunnerSettings RunnerId="RubyDebugRunner" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyDebugRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Rake.db:migrate">
     <configuration default="false" name="ApisController responds to create_certificate_order" type="RSpecRunConfigurationType" factoryName="RSpec" temporary="true">
       <predefined_log_file id="RUBY_RSPEC" enabled="true" />
       <module name="ssl_com_rails3" />
@@ -541,6 +521,32 @@
       <RunnerSettings RunnerId="RubyDebugRunner" />
       <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyDebugRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="db:migrate" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
+      <module name="ssl_com_rails3" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="development" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="db:migrate" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
+      <RunnerSettings RunnerId="RubyRunner" />
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
@@ -1112,23 +1118,23 @@
       <method />
     </configuration>
     <list size="17">
-      <item index="0" class="java.lang.String" itemvalue="RSpec.CertificateOrder as a ssl.com certificate order using FactoryGirl should be able to create a new order with a domain validated certificate" />
-      <item index="1" class="java.lang.String" itemvalue="RSpec.ApisController responds to create_certificate_order" />
-      <item index="2" class="java.lang.String" itemvalue="Rake.routes" />
-      <item index="3" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
-      <item index="4" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
-      <item index="5" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
-      <item index="6" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
-      <item index="7" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="8" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="9" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="11" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="12" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="14" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
-      <item index="15" class="java.lang.String" itemvalue="Spork DRb.RSpec: Spork DRb server" />
-      <item index="16" class="java.lang.String" itemvalue="RSpec.ApisController requires certain parameters for dv certs" />
+      <item index="0" class="java.lang.String" itemvalue="RSpec.ApisController responds to create_certificate_order" />
+      <item index="1" class="java.lang.String" itemvalue="Rake.routes" />
+      <item index="2" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="3" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="4" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="6" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="7" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="8" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="9" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="10" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="11" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="12" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="13" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="14" class="java.lang.String" itemvalue="Spork DRb.RSpec: Spork DRb server" />
+      <item index="15" class="java.lang.String" itemvalue="RSpec.ApisController requires certain parameters for dv certs" />
+      <item index="16" class="java.lang.String" itemvalue="Rake.db:migrate" />
     </list>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
@@ -1232,13 +1238,13 @@
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.53104573" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25950783" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14445828" sideWeight="0.2785235" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14445828" sideWeight="0.4541387" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.10850112" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.14445828" sideWeight="0.6051454" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.14445828" sideWeight="0.32662192" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33333334" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39542484" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39485458" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4591503" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -1332,114 +1338,114 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/user_notifier/password_changed.text.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="12" selection-start="12" selection-end="12" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/user_notifier/forgot_username.rhtml">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/user_notifier/email_changed.text.erb">
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="13" selection-start="324" selection-end="324" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/_affiliate_row.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="7" column="101" selection-start="190" selection-end="190" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/tracking.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="20" selection-start="176" selection-end="176" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/user_notifier/password_reset_instructions.text.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/line_item.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="31" selection-start="31" selection-end="31" vertical-scroll-proportion="0.0">
+        <state line="5" column="73" selection-start="146" selection-end="146" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/validation_unapprove.text.erb">
+    <entry file="file://$PROJECT_DIR$/db/schema.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="39" selection-start="496" selection-end="496" vertical-scroll-proportion="0.37080538">
+        <state line="410" column="113" selection-start="11955" selection-end="11955" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/validation_approve.text.erb">
+    <entry file="file://$PROJECT_DIR$/db/migrate/20101019135512_add_is_expired_to_certificate_orders.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="202" selection-start="63" selection-end="63" vertical-scroll-proportion="0.0">
+        <state line="0" column="0" selection-start="0" selection-end="367" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/other_party_request_mailer/request_validation.text.erb">
+    <entry file="file://$PROJECT_DIR$/db/migrate/20120612134625_add_visitor_token_to_orders.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="13" column="18" selection-start="250" selection-end="250" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
+    <entry file="file://$PROJECT_DIR$/db/migrate/20120321191020_create_oauth_tables.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="86" selection-start="1180" selection-end="1180" vertical-scroll-proportion="0.0">
+        <state line="40" column="66" selection-start="1037" selection-end="1037" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user_notifier.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="0" selection-start="246" selection-end="246" vertical-scroll-proportion="0.0">
+        <state line="522" column="118" selection-start="19358" selection-end="19358" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order_notifier.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/visitor_token.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="88" selection-start="1404" selection-end="1404" vertical-scroll-proportion="0.0">
+        <state line="9" column="49" selection-start="217" selection-end="217" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="29" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
+        <state line="110" column="64" selection-start="4913" selection-end="4913" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/index.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="21" column="43" selection-start="1093" selection-end="1093" vertical-scroll-proportion="0.0">
+        <state line="124" column="6" selection-start="3629" selection-end="3629" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="127" column="19" selection-start="4101" selection-end="4101" vertical-scroll-proportion="0.0">
+        <state line="9" column="21" selection-start="312" selection-end="312" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/buy_now.sass">
+    <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="422" column="13" selection-start="11300" selection-end="11300" vertical-scroll-proportion="-231.41936">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="81" selection-start="108" selection-end="187" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/stylesheets/master.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="0" selection-start="213" selection-end="213" vertical-scroll-proportion="0.16748768">
+        <state line="73" column="0" selection-start="2856" selection-end="2856" vertical-scroll-proportion="0.7909836">
           <folding />
         </state>
       </provider>

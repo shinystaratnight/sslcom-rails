@@ -1,121 +1,162 @@
--c={}
--c[:description]="SSL.com Reseller Program offers volume discounting and low prices on ssl certificates for resellers."
--c[:keywords]="SSL reseller host providers hosting webmasters low cost ssl certificate authority ssl resellers"
--c[:title]="SSL Reseller Program, Low Prices for Resellers"
--c.each do |k, v|
-  -content_for k, c[k]
--content_for :header, 'public'
+-content_for :header, 'public_wo_container'
 .container
-  .innercontainere.shadow
+  .innercontainere
     .inner
       =render :partial => "shared/messages"
-      %h1
-        Increase Your Bottom Line With SSL Reseller
-      %h2
-        SSL Reseller simplifies SSL certificate purchasing and management.
-      .leftcolb
-        .embed_video.center
-          %a(href="#{details_resellers_path}")
-            .pki_image
-      .rightcolc
-        %ul.listd.reseller
+      %h1.section-title
+        Earn Commissions on Selling
+        %span
+          %b SSL
+          \.com
+        Certificates
+      .clear
+      #advertisement
+        .catch-phrase(style="text-align: left; margin: auto 10px")
+          Affiliate FAQ:
+          %ul
+            %li test
+            %li test
+            %li test
+      #partners
+        %div Trusted by leading brands
+  .holder
+    .inner
+      .sidebarhome1
+        .left-icon-bar
+          Standard Features on all
+          %br/
+          %span
+            %b SSL
+            \.com
+          certificates
+        %ul#features
           %li
-            Receive significant 
-            =link_to "discounting", reseller_tiers_path
+            %span.icn-compatibility
+            Works with over 99% of all browsers
           %li
-            Manage SSL certificates effortlessly
+            %span.icn-lock
+            Padlock symbol & "https" domain
           %li
-            =link_to "Offer SSL certificates", restful_api_path
-            through your site
+            %span.icn-shield
+            Strong 256-bit encryption
           %li
-            Access 24 hour web and phone support
+            %span.icn-mobile
+            Mobile device support
           %li
-            =link_to "Click here for more details...", details_resellers_path
-        =link_to "Become a reseller!", new_account_url(:subdomain=>Reseller::SUBDOMAIN), :class=>"buttonc"
-        %p
-          No contracts to sign. No setup fees. No quotas.
-        %div(style='text-align: center;')
-          =image_tag "compatible.gif"
-.holder
-  .inner
-    .sidebarhome
-      .industry_programs
-        %h2.right_panel.industries
-          ssl.com solutions for industry
-        %ul
-          -contents = [['hosting_sm.gif', "offer ssl certs with hosting packages"]]
-          -contents << ['domains_sm.gif', "private label ssl certificates"]
-          -contents << ['merchants_sm.gif', "conduct online transactions securely"]
-          -contents << ['handshake_sm.gif', "scale IT security with ssl.com"]
-          -contents << ['government_sm.gif', "secure government websites with ssl.com"]
-          -contents << ['education_sm.gif', "learn about ssl.com programs for schools"]
-          -contents << ['medical_sm.gif', "compliance through ssl.com solutions"]
-          -Reseller::TARGETED.each_with_index do |industry, i|
-            %li
-              %a(href="#{send(industry+"_path")}")
-                .floater(class="#{"top" if industry=="host_providers"}")
-                  .fl_content
-                    =image_tag(contents[i][0], :class=>"industry")
-                    .reseller_specific_container
-                      %span=industry.titleize
-                      %div=contents[i][1]
-    %ul.boxes
-      %li
-        =image_tag "b_icon_t.gif", :alt => ""
-        .text
-          %h3
-            Better tools mean better results.
+            %span.icn-medical
+            HIPAA & PCI compliant
+          %li
+            %span.icn-baggage
+            Free lifetime certificate reissues
+          %li
+            %span.icn-lifeguard
+            24/7 chat, email and phone support
+          %li
+            %span.icn-box
+            30 day no questions asked refund policy
+          %li
+            %span.icn-tool
+            Easy to use Account Manager
+          %li
+            %span.icn-ssl
+            Free
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:16px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
+            Site Seal
+        %br/
+      .inner-content
+        %h2 FAQs
+        .faq-boxes
+          %span.title What is SSL?
           %p
-            Save time with SSL.com's simple yet powerful PKI system for
-            resellers. Manage SSL certs and
-            =link_to "Smart SeaLs", details_site_seals_url
-            easily.
-            Leverage free promo tools to drive sales and increase revenues.
-      %li
-        =image_tag "b_icon_m.gif", :alt => ""
-        .text
-          %h3
-            Save money, increase profits.
+            SSL stands for Secure Sockets Layer, a method used to secure and
+            encrypt sensitive information like credit cards, usernames, passwords,
+            and other private data sent over the Internet. Website pages secured
+            with SSL are those branded with the HTTPS in their URL address.
+          %span.title Who needs an SSL Certificate?
           %p
-            The
-            =link_to "SSL Reseller Program", details_resellers_path
-            allows you to start selling SSL
-            certificates immediately with no contracts or commitments.
-            Simply choose from multiple prepayment levels to achieve higher
-            discounting.
-      %li
-        =image_tag "b_icon_i.gif", :alt => ""
-        .text
-          %h3
-            Seamless integration.
+            Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use SSL. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
+          %span.title What is a Wildcard certificate?
           %p
-            Our #{link_to "RESTful API", restful_api_url}
-            makes integration with your site seamless. Offer SSL certificates
-            and products as part of an integated offering through your own site.
-      %li
-        =image_tag "b_icon_d.gif", :alt => ""
-        .text
-          %h3
-            Detailed reporting.
+            Wildcard SSL certificates allow the use of an unlimited number of subdomains in the certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a Wildcard SSL digital certificate. For instance, ssl.com, www.ssl.com, mail.ssl.com, and any other combination of ssl.com would be secured by a Wildcard certificate issued to *.ssl.com.
+          %span.title How does the warranty work?
           %p
-            Keep tabs on your account through our advanced reporting system. 
-            With this tool, you can view details about your certificates,
-            account balance, deposits, and much more.
-      %li
-        =image_tag "b_icon_r.gif", :alt => ""
-        .text
-          %h3
-            Retain customers longer.
+            The warranty protects the end user if an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            Certificate is mis-issued (i.e. issued to a third party that was not entitled to the SSL Certificate).
+          %span.title What is the Green Bar assurance?
           %p
-            Take charge of the renewal process by controlling when and to whom 
-            renewal notices are sent. You can even customize the renewal
-            notices to better suit your needs.
-      %li
-        =image_tag "b_icon_s.gif", :alt => ""
-        .text
-          %h3
-            24-hour worldclass support.
+            The Green Bar assurance increases customer trust and prevents cart/checkout abandonment by displaying the extended validation level of the website through a green address bar in the browser. The Green Bar is a feature of the EV
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate and represents the highest level of trust offered by any certificate authority including
+            = succeed ".com." do
+              %i{:style => "font-weight:bold;"} SSL
+        .faq-boxes
+          %span.title How does the SSL free trial work?
           %p
-            Expedient SSL implementation is essential to maintain proper uptime, 
-            and we offer multiple levels of support to ensure your SSL
-            management and installations go smoothly.
+            The trial certificate allows for the customer to test installation and function of an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate. The trial certificate installs and functions identically to a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate, but it does not come with any warranty and the organization name of the certificate owner does not appear in the certificate. Because of this, the trial certificate is only meant as a test solution and does not build customer trust the way a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate would.
+          %span.title How long does it take to set up?
+          %p
+            Depending on the certificate type, typical installation can take from minutes to several hours.
+          %span.title What is a Multi-Domain (UCC) certificate?
+          %p
+            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft Exchange Server 2007, Exchange Server 2010, and Microsoft Live Communications Server.
+          %span.title
+            Why choose
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:20px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
+            over the competition?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+        .notes
+          %a{:href => "http://info.ssl.com"}
+            %div Still have questions? Visit the FAQ page for more answers.
+        -#
+          %h2 Testimonials
+          .testimonial-boxes
+            .box
+              %img{:alt => "", :src => "images/pic1.jpg"}/
+              %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
+              .name
+                %span.black Kim Dotcom
+                %span.gray Megaupload.com
+            .box.long
+              %img{:alt => "", :src => "images/pic3.jpg"}/
+              %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
+              .name
+                %span.black Mahmoud
+                %span.gray Google me
+          .testimonial-boxes
+            .box.short
+              %img{:alt => "", :src => "images/pic2.jpg"}/
+              %blockquote "Leo and I go way back!"
+              .name
+                %span.black Jenna Jameson
+                %span.gray clubjenna.com
+            .box
+              %img{:alt => "", :src => "images/pic4.jpg"}/
+              %blockquote "In my will I stated Kim Jr should switch to SSL.com."
+              .name
+                %span.black Kim Jong II
+                %span.gray iminhell.com
+          .notes
+            %a{:href => ""}
+              %div Still don't believe us? Visit Testimonial for more rave reviews.
+      .clear

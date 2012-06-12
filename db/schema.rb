@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120321191020) do
+ActiveRecord::Schema.define(:version => 20120612134625) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -512,6 +512,7 @@ ActiveRecord::Schema.define(:version => 20120321191020) do
     t.string   "notes"
     t.string   "po_number"
     t.string   "quote_number"
+    t.integer  "visitor_token_id"
   end
 
   add_index "orders", ["billable_id"], :name => "index_orders_on_billable_id"
