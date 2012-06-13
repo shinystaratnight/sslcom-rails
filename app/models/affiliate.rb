@@ -110,7 +110,7 @@ class Affiliate < ActiveRecord::Base
           [o, urls.find(i)]
         end
       end
-    end.compact
+    end.compact.uniq
   end
 
   def sales_stats

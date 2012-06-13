@@ -39,7 +39,6 @@ class LineItem < ActiveRecord::Base
   end
 
   def net_profit_price
-    amount.cents-(affiliate_payout_rate*amount.cents+
-        studio_fee_rate*amount.cents)
+    amount.cents-(affiliate_payout_rate*amount.cents)
   end
 end

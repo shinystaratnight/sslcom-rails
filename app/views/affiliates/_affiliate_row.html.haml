@@ -2,5 +2,5 @@
   %td=url
   %td=@affiliate.landed_urls_count[url]
   %td=orders.count
-  %td=orders.sum(&:cents)*0.01
-  %td $100
+  %td=Money.new(orders.sum(&:cents)).format
+  %td=Money.new(orders.map(&:line_items).flatten.sum(&:affiliate_commission_price)).format

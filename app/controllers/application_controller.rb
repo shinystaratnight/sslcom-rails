@@ -46,6 +46,9 @@ class ApplicationController < ActionController::Base
 
   def credit_affiliate(order)
     if cookies[:aid] && Affiliate.exists?(cookies[:aid])
+      #10% for retail, 5% for enterprise and resellers
+      rate = current_user.ssl_account.is_registered_reseller? ? 0.05 : 0.1
+      order.line_items.each{|li|li.affiliate_payout_rate=rate}
       Affiliate.find(cookies[:aid]).line_items << order.line_items
     end
   end
