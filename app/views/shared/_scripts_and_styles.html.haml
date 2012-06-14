@@ -1,6 +1,6 @@
 = include_stylesheets :common
 = include_stylesheets :print, media: 'print'
--if current_page?(action: "buy_now") || current_page?(root_path) || current_page?(affiliates_path)
+-if current_page?(action: "buy_now") || current_page?(root_path) || current_page?(affiliates_path) || current_page?(details_affiliates_path)
   = include_stylesheets :buy_now
 /[if lt IE 8]
   = stylesheet_link_tag "compiled/ie"

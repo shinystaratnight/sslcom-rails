@@ -1,79 +1,188 @@
--c={}
--c[:description]="SSL.com Reseller Program offers volume discounting and low prices on ssl certificates."
--c[:keywords]="SSL reseller host providers hosting webmasters low cost ssl certificate authority ssl resellers"
--c[:title]="SSL Reseller Program Details"
--c.each do |k, v|
-  -content_for k, c[k]
--content_for :header, 'public'
-%h1
-  Save Time, Money, and Effort With SSL Reseller
-%h2
-  Lower pricing and better tools results in higher efficiency
-.default_container
-  %h3 SSL Reseller Program Details
-  =image_tag 'increase_profits_with_ssl_reseller.jpg', :id=>'upward_trend'
-  %p
-    The SSL Reseller Program is designed to ease management of bulk ssl
-    certificate purchases while increasing your bottom line through volume
-    discounting. With the SSL Reseller Program, you can view real-time
-    processing status information of each certificate, run historical reports
-    on your certificate purchases, and do a host of other administrative
-    functions. And that's just the beginning....
-  %p
-    Depending on your projected sales volume of ssl certificates, you can "buy"
-    into a higher discounting bracket
-    (#{link_to "click here for pricing tiers", reseller_tiers_path}), resulting
-    in lowered costs and increased profitability. These brackets are suitable
-    for organizations of all sizes; from independent consultants to government
-    institutions to globally based hosting companies, there's a right fit for
-    everyone.
-%h2
-  SSL.com's intuitive certificate management portal saves time
-.default_container
-  %h3 SSL.com Management Portal
-  %p
-    From the administrative screen, you can manage the full
-    life-cycle of each ssl certificate request including buying or renewing
-    certificates, reprocessing existing certificates, or even revoking
-    certificates. Manage your dynamic SSL Secured Smart SeaLs from your
-    administrative screen and choose from a number of designs; you can choose
-    a different design for each site.
-  #ssl_reseller_certs_screenshot
-    =image_tag 'ssl_reseller_certs_screenshot.jpg'
-  %p
-    Even the validation process can be handled on your end (subject to agreed
-    Terms and Conditions) to allow you control over all aspects of your ssl
-    certificate issuances or simply let the validation technicians at SSL.com
-    handle validations diligently so you can focus on what matters to you.
-    Our 24/7 excellent customer support is there for you in the event you have
-    any issues ranging from installation problems to validation questions to
-    anything that will help you get up and running with SSL security quickly.
-    You can chat with someone 24 hours a day through our toll free
-    =Settings.corp_tollfree_tag
-    phone number, or visit support@ssl.com to
-    find answers or open a support ticket.
-%h2
-  Automate ssl certificate installs with SSL.com RESTful api
-.default_container
-  %h3 Private Label and Seamless Integration
-  =image_tag 'shop_securely_with_ssl.jpg', :id=>'shop_securely_with_ssl'
-  %p
-    The SSL Reseller Program is the perfect white-label solution for your ssl
-    certificate needs. Set reminders for expiring ssl certificates and
-    customize the reminder notices to gain more control over what is included in
-    each reminder. You can even set the time period when they are sent out and
-    to which email addresses. The detailed reporting allows you more insight
-    into your order history as well as SSL Certificate purchase history.
-    Filters allow you to search based on a number of factors such as domain
-    name, time period reporting, and more.
-  %p
-    Improve efficiency and productivity by interfacing with SSL.com's RESTful
-    api. No need to login through a web page and
-    manage your certificates from your SSL Reseller interface. You can now
-    handle all ssl certificate life-cycle operations through the RESTful api and
-    build
-    a custom solution more tailored to your needs. This great for host
-    providers and other value added resellers or as a white-label solution.
-#become_a_reseller_today
-  %h3 get started today!
-  =link_to "Become a reseller!", new_account_url, :class=>"buttonc"
+-content_for :header, 'public_wo_container'
+.container
+  .innercontainere
+    .inner
+      =render :partial => "shared/messages"
+      %h1.section-title
+        %span
+          %b SSL
+          \.com
+        Referral Linking Partner Program FAQ
+      %h3
+        %ul(style="width: 60%; margin: 0 auto")
+          %li=link_to "What's the process to becoming an Authorized SSL.com Partner?", anchor: "sign_up"
+          %li Is there any cost to sign up as a partner?
+          %li Do I have to buy certificates before I can resell them?
+          %li Can I sell at prices below other SSL.com partners?
+          %li Am I required to be a host provider to resell SSL certificates?
+          %li When do my commission payments arrive?
+          %li Do royalty payments to me truly recur forever?
+          %li Can I be paid through direct deposit?
+          %li What's the wait time to get up and running on this program?
+          %li Am I able to offer SSL.com Certificates through my website?
+          %li How are SSL.com Certificates sent to my customers?
+          %li Is unsolicited bulk emailing permitted in selling SSL.com?
+      .clear
+  .holder
+    .inner
+      .sidebarhome1
+        .left-icon-bar
+          Standard Features on all
+          %br/
+          %span
+            %b SSL
+            \.com
+          certificates
+        %ul#features
+          %li
+            %span.icn-compatibility
+            Works with over 99% of all browsers
+          %li
+            %span.icn-lock
+            Padlock symbol & "https" domain
+          %li
+            %span.icn-shield
+            Strong 256-bit encryption
+          %li
+            %span.icn-mobile
+            Mobile device support
+          %li
+            %span.icn-medical
+            HIPAA & PCI compliant
+          %li
+            %span.icn-baggage
+            Free lifetime certificate reissues
+          %li
+            %span.icn-lifeguard
+            24/7 chat, email and phone support
+          %li
+            %span.icn-box
+            30 day no questions asked refund policy
+          %li
+            %span.icn-tool
+            Easy to use Account Manager
+          %li
+            %span.icn-ssl
+            Free
+            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
+              %b{:style => "font-family:'arial black italic';font-size:16px;letter-spacing:-2px;font-weight:100;"} SSL
+              \.com
+            Site Seal
+        %br/
+      .inner-content
+        %h2 FAQs
+        .faq-boxes.affiliates
+          %span.title=link_to "What's the process to becoming an Authorized SSL.com Partner?", nil, name: "sign_up"
+          %p
+            SSL stands for Secure Sockets Layer, a method used to secure and
+            encrypt sensitive information like credit cards, usernames, passwords,
+            and other private data sent over the Internet. Website pages secured
+            with SSL are those branded with the HTTPS in their URL address.
+          %span.title Is there any cost to sign up as a partner?
+          %p
+            Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use SSL. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
+          %span.title Do I have to buy certificates before I can resell them?
+          %p
+            Wildcard SSL certificates allow the use of an unlimited number of subdomains in the certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a Wildcard SSL digital certificate. For instance, ssl.com, www.ssl.com, mail.ssl.com, and any other combination of ssl.com would be secured by a Wildcard certificate issued to *.ssl.com.
+          %span.title Am I required to be a host provider to resell SSL certificates?
+          %p
+            The warranty protects the end user if an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            Certificate is mis-issued (i.e. issued to a third party that was not entitled to the SSL Certificate).
+          %span.title Can I sell at prices below other SSL.com partners?
+          %p
+            The Green Bar assurance increases customer trust and prevents cart/checkout abandonment by displaying the extended validation level of the website through a green address bar in the browser. The Green Bar is a feature of the EV
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate and represents the highest level of trust offered by any certificate authority including
+            = succeed ".com." do
+              %i{:style => "font-weight:bold;"} SSL
+          %span.title When do my commission payments arrive?
+          %p
+            The trial certificate allows for the customer to test installation and function of an
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate. The trial certificate installs and functions identically to a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate, but it does not come with any warranty and the organization name of the certificate owner does not appear in the certificate. Because of this, the trial certificate is only meant as a test solution and does not build customer trust the way a standard
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            certificate would.
+          %span.title How long does it take to set up?
+          %p
+            Depending on the certificate type, typical installation can take from minutes to several hours.
+          %span.title Do royalty payments to me truly recur forever?
+          %p
+            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft Exchange Server 2007, Exchange Server 2010, and Microsoft Live Communications Server.
+          %span.title Can I be paid through direct deposit?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+          %span.title What's the wait time to get up and running on this program?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+          %span.title Am I able to offer SSL.com Certificates through my website?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+          %span.title How are SSL.com Certificates sent to my customers?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+          %span.title Is unsolicited bulk emailing permitted in selling SSL.com?
+          %p
+            %i{:style => "font-weight:bold;"}> SSL
+            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            = succeed ".com" do
+              %i{:style => "font-weight:bold;"} SSL
+            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+        .notes
+          %a{:href => "http://info.ssl.com"}
+            %div Still have questions? Visit the FAQ page for more answers.
+        -#
+          %h2 Testimonials
+          .testimonial-boxes
+            .box
+              %img{:alt => "", :src => "images/pic1.jpg"}/
+              %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
+              .name
+                %span.black Kim Dotcom
+                %span.gray Megaupload.com
+            .box.long
+              %img{:alt => "", :src => "images/pic3.jpg"}/
+              %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
+              .name
+                %span.black Mahmoud
+                %span.gray Google me
+          .testimonial-boxes
+            .box.short
+              %img{:alt => "", :src => "images/pic2.jpg"}/
+              %blockquote "Leo and I go way back!"
+              .name
+                %span.black Jenna Jameson
+                %span.gray clubjenna.com
+            .box
+              %img{:alt => "", :src => "images/pic4.jpg"}/
+              %blockquote "In my will I stated Kim Jr should switch to SSL.com."
+              .name
+                %span.black Kim Jong II
+                %span.gray iminhell.com
+          .notes
+            %a{:href => ""}
+              %div Still don't believe us? Visit Testimonial for more rave reviews.
+      .clear
