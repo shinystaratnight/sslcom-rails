@@ -1,7 +1,7 @@
 -content_for :header, 'public_wo_container'
 .container
   .innercontainere
-    .inner
+    .inner(style="margin-bottom: 30px")
       =render :partial => "shared/messages"
       %h1.section-title
         Earn Revenue by Partnering With
@@ -44,6 +44,9 @@
           %a{:href => "#{buy_certificate_url("basicssl")}"}
             %span
               .btn-buynow.reseller Get Started
+          .help
+            Want learn more?
+            =link_to "Read the Frequently Asked Questions", details_affiliates_path
         .right.banner3.reseller
           %h2 Reseller
           %span Product integration
@@ -72,148 +75,47 @@
           %a{:href => "#{buy_certificate_url("ev")}"}
             %span
               .btn-buynow.reseller Sign Up
+          .help
+            Want learn more?
+            =link_to "Click here for details", details_resellers_path
       .clear
       #advertisement
-        .catch-phrase
-        %div Trusted by leading brands
-  .holder
-    .inner
-      .sidebarhome1
-        .left-icon-bar
-          Standard Features on all
-          %br/
-          %span
-            %b SSL
-            \.com
-          certificates
-        %ul#features
-          %li
-            %span.icn-compatibility
-            Works with over 99% of all browsers
-          %li
-            %span.icn-lock
-            Padlock symbol & "https" domain
-          %li
-            %span.icn-shield
-            Strong 256-bit encryption
-          %li
-            %span.icn-mobile
-            Mobile device support
-          %li
-            %span.icn-medical
-            HIPAA & PCI compliant
-          %li
-            %span.icn-baggage
-            Free lifetime certificate reissues
-          %li
-            %span.icn-lifeguard
-            24/7 chat, email and phone support
-          %li
-            %span.icn-box
-            30 day no questions asked refund policy
-          %li
-            %span.icn-tool
-            Easy to use Account Manager
-          %li
-            %span.icn-ssl
-            Free
-            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
-              %b{:style => "font-family:'arial black italic';font-size:16px;letter-spacing:-2px;font-weight:100;"} SSL
-              \.com
-            Site Seal
-        %br/
-      .inner-content
-        %h2 FAQs
-        .faq-boxes
-          %span.title What is SSL?
-          %p
-            SSL stands for Secure Sockets Layer, a method used to secure and
-            encrypt sensitive information like credit cards, usernames, passwords,
-            and other private data sent over the Internet. Website pages secured
-            with SSL are those branded with the HTTPS in their URL address.
-          %span.title Who needs an SSL Certificate?
-          %p
-            Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use SSL. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
-          %span.title What is a Wildcard certificate?
-          %p
-            Wildcard SSL certificates allow the use of an unlimited number of subdomains in the certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a Wildcard SSL digital certificate. For instance, ssl.com, www.ssl.com, mail.ssl.com, and any other combination of ssl.com would be secured by a Wildcard certificate issued to *.ssl.com.
-          %span.title How does the warranty work?
-          %p
-            The warranty protects the end user if an
+        .catch-phrase(style="font-size: 14px")
+          %div(style="text-align: left; margin: auto 15px")
+            Commission structure for Referral Link Program. Discounting under the Reseller Program should refer
+            to the
+            =link_to "Reseller details page.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
+          %table(style="margin: 0 auto; width: 50%")
+            %tbody
+              %tr
+                %th Monthly Sales
+                %th Commission/Discount
+              %tr
+                %td 1 to 4
+                %td 10%
+              %tr
+                %td 5 to 25
+                %td 15%
+              %tr
+                %td 26 to 99
+                %td 20%
+              %tr
+                %td 100 to 149
+                %td
+                  %strong 25%
+              %tr
+                %td 150+
+                %td
+                  %strong Contact Us
+          %div(style="text-align: left; margin: auto 15px")
+            Organizations dealing with an extremely high volume of certificates, including ISPs, web hosting providers,
+            large server administrators, and web developers should contact us by
+            phone at SSL-CERTIFICATE or email at sales@ssl.com for additional information about discounting or
+            pricing.
+
+            Our goal is to establish a qualified network of Authorized
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            Certificate is mis-issued (i.e. issued to a third party that was not entitled to the SSL Certificate).
-          %span.title What is the Green Bar assurance?
-          %p
-            The Green Bar assurance increases customer trust and prevents cart/checkout abandonment by displaying the extended validation level of the website through a green address bar in the browser. The Green Bar is a feature of the EV
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            certificate and represents the highest level of trust offered by any certificate authority including
-            = succeed ".com." do
-              %i{:style => "font-weight:bold;"} SSL
-        .faq-boxes
-          %span.title How does the SSL free trial work?
-          %p
-            The trial certificate allows for the customer to test installation and function of an
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            certificate. The trial certificate installs and functions identically to a standard
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            certificate, but it does not come with any warranty and the organization name of the certificate owner does not appear in the certificate. Because of this, the trial certificate is only meant as a test solution and does not build customer trust the way a standard
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            certificate would.
-          %span.title How long does it take to set up?
-          %p
-            Depending on the certificate type, typical installation can take from minutes to several hours.
-          %span.title What is a Multi-Domain (UCC) certificate?
-          %p
-            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft Exchange Server 2007, Exchange Server 2010, and Microsoft Live Communications Server.
-          %span.title
-            Why choose
-            %span{:style => "font-family:helvetica,arial,san-serif;font-size:14px;letter-spacing:-1px;"}
-              %b{:style => "font-family:'arial black italic';font-size:20px;letter-spacing:-2px;font-weight:100;"} SSL
-              \.com
-            over the competition?
-          %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
-        .notes
-          %a{:href => "http://info.ssl.com"}
-            %div Still have questions? Visit the FAQ page for more answers.
-        -#
-          %h2 Testimonials
-          .testimonial-boxes
-            .box
-              %img{:alt => "", :src => "images/pic1.jpg"}/
-              %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
-              .name
-                %span.black Kim Dotcom
-                %span.gray Megaupload.com
-            .box.long
-              %img{:alt => "", :src => "images/pic3.jpg"}/
-              %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
-              .name
-                %span.black Mahmoud
-                %span.gray Google me
-          .testimonial-boxes
-            .box.short
-              %img{:alt => "", :src => "images/pic2.jpg"}/
-              %blockquote "Leo and I go way back!"
-              .name
-                %span.black Jenna Jameson
-                %span.gray clubjenna.com
-            .box
-              %img{:alt => "", :src => "images/pic4.jpg"}/
-              %blockquote "In my will I stated Kim Jr should switch to SSL.com."
-              .name
-                %span.black Kim Jong II
-                %span.gray iminhell.com
-          .notes
-            %a{:href => ""}
-              %div Still don't believe us? Visit Testimonial for more rave reviews.
-      .clear
+            Partners globally.
+            Territories are non-exclusive and world wide with a
+            limited number of licenses available within most territories.

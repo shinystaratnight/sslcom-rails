@@ -8,20 +8,21 @@
           %b SSL
           \.com
         Referral Linking Partner Program FAQ
-      %h3
+      %h3(style="margin-bottom: 30px")
         %ul(style="width: 60%; margin: 0 auto")
           %li=link_to "What's the process to becoming an Authorized SSL.com Partner?", anchor: "sign_up"
-          %li Is there any cost to sign up as a partner?
-          %li Do I have to buy certificates before I can resell them?
-          %li Can I sell at prices below other SSL.com partners?
-          %li Am I required to be a host provider to resell SSL certificates?
-          %li When do my commission payments arrive?
-          %li Do royalty payments to me truly recur forever?
-          %li Can I be paid through direct deposit?
-          %li What's the wait time to get up and running on this program?
-          %li Am I able to offer SSL.com Certificates through my website?
-          %li How are SSL.com Certificates sent to my customers?
-          %li Is unsolicited bulk emailing permitted in selling SSL.com?
+          %li=link_to "How does it work?", anchor: "how"
+          %li=link_to "Is there any cost to sign up as a partner?", anchor: "cost"
+          %li=link_to "Do I have to buy certificates before I can resell them?", anchor: "prepay"
+          %li=link_to "Can I sell at prices below other SSL.com partners?", anchor: "lower_price"
+          %li=link_to "Am I required to be a host provider to resell SSL certificates?", anchor: "requirement"
+          %li=link_to "When do my commission payments arrive?", anchor: "when"
+          %li=link_to "Do royalty payments to me truly recur forever?", anchor: "forever"
+          %li=link_to "Can I be paid through direct deposit?", anchor: "direct_deposit"
+          %li=link_to "What's the wait time to get up and running on this program?", anchor: "wait_time"
+          %li=link_to "Am I able to offer SSL.com Certificates through my website?", anchor: "my_site"
+          %li=link_to "How are SSL.com Certificates sent to my customers?", anchor: "send_method"
+          %li=link_to "Is unsolicited bulk emailing permitted in selling SSL.com?", anchor: "bulk_email"
       .clear
   .holder
     .inner
@@ -72,117 +73,111 @@
       .inner-content
         %h2 FAQs
         .faq-boxes.affiliates
-          %span.title=link_to "What's the process to becoming an Authorized SSL.com Partner?", nil, name: "sign_up"
+          %span.title=link_to "What's the process to becoming an Authorized SSL.com Partner?", "#",name: "sign_up"
           %p
-            SSL stands for Secure Sockets Layer, a method used to secure and
-            encrypt sensitive information like credit cards, usernames, passwords,
-            and other private data sent over the Internet. Website pages secured
-            with SSL are those branded with the HTTPS in their URL address.
-          %span.title Is there any cost to sign up as a partner?
+            Becoming an SSL.com Referral Link Partner is quick, easy and free. Just signup here. Applications
+            are normally authorized in one business day.
+          %span.title=link_to "How does it work?", "#",name: "how"
           %p
-            Anything (including people, software, computers, and devices) who exchange sensitive information on any network, including the Internet and Web, needs to use SSL. Sensitive information includes things like username and passwords, credit card numbers, or any other data that needs to be kept private.
-          %span.title Do I have to buy certificates before I can resell them?
-          %p
-            Wildcard SSL certificates allow the use of an unlimited number of subdomains in the certificate. Any full domain that matches *.yourdomain.com (where * can be any word and yourdomain.com is your domain) will be secured by a Wildcard SSL digital certificate. For instance, ssl.com, www.ssl.com, mail.ssl.com, and any other combination of ssl.com would be secured by a Wildcard certificate issued to *.ssl.com.
-          %span.title Am I required to be a host provider to resell SSL certificates?
-          %p
-            The warranty protects the end user if an
+            It's very simple. Any visitor that visits www.ssl.com with your code appended to the address
+            (ie www.ssl.com/code/you) belongs to you. Once they purchase an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            Certificate is mis-issued (i.e. issued to a third party that was not entitled to the SSL Certificate).
-          %span.title Can I sell at prices below other SSL.com partners?
+            certificate, they become your customer.
           %p
-            The Green Bar assurance increases customer trust and prevents cart/checkout abandonment by displaying the extended validation level of the website through a green address bar in the browser. The Green Bar is a feature of the EV
+            We also start you off with some predefined links to sales pages to get you up and running quickly.
+            And you continue to earn commission revenue on their renewal
+            purchases. Forever!
+          %span.title=link_to "Is there any cost to sign up as a partner?", "#",name: "cost"
+          %p
+            No. There are no fees, deposits, or hidden costs required! The setup is easy and free, and you can start
+            earning commissions today with absolutely no upfront costs.
+          %span.title=link_to "Do I have to buy certificates before I can resell them?", "#",name: "prepay"
+          %p
+            No. Customers and visitors you refer to ssl.com purchase the certificates, so you're not buying anything.
+            There is no risk or investment on your part.
+          %span.title=link_to "Can I sell at prices below other SSL.com partners?", "#", name: "lower_price"
+          %p
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            certificate and represents the highest level of trust offered by any certificate authority including
-            = succeed ".com." do
-              %i{:style => "font-weight:bold;"} SSL
-          %span.title When do my commission payments arrive?
+            maintains the same retail price for all of our Partners.
+            As a result, Partners do not control pricing under the Referral Link Program.
+            This creates a level playing field with no threat of other Partners underselling you.
           %p
-            The trial certificate allows for the customer to test installation and function of an
+            Your revenue is determined by how many certificates you can sell, not by how much you adjust
+            pricing, thus reducing your profit margins. There is no need to be concerned about how much other
+            Partners are charging.
+          %span.title=link_to "Am I required to be a host provider or web design firm to resell SSL certificates?","#", name: "requirement"
+          %p
+            No. The only requirement is good legal standing, and any organization or individual with a
+            desire to earn revenue will be approved. Earn commission from your existing traffic today.
+          %span.title=link_to "When do my commission payments arrive?", "#",name: "when"
+          %p
+            Commissions are paid immediately at the end of the month following the sales-month. All sales
+            must go past the 30-day refund/trial period before they are paid out. This gives everyone
+            the chance to make a successful sale with a high probability of renewal from your customer.
+          %span.title=link_to "Do royalty payments to me truly recur forever?", "#",name: "forever"
+          %p
+            ABSOLUTELY! All customers you refer belong to you forever. We use cookies to track the customers
+            that you refer. Once that customer purchases an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            certificate. The trial certificate installs and functions identically to a standard
+            certificate, you will receive a commission payment for that sale and all renewal sales provided
+            you remain an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            certificate, but it does not come with any warranty and the organization name of the certificate owner does not appear in the certificate. Because of this, the trial certificate is only meant as a test solution and does not build customer trust the way a standard
+            Partner.
+          %p
+            Although cookies are not 100% perfect, we realize the importance of ensuring our Partners are credited
+            and paid for every sale. A single sale can result in commission income year after year, and
+            represents continuous growth potential.
+          %p
+            This is a Rare Opportunity and an exciting time become an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            certificate would.
-          %span.title How long does it take to set up?
+            Partner. Limited licenses are available for each territory.
+          %span.title=link_to "Can I be paid through direct deposit or Paypal?", "#",name: "direct_deposit"
           %p
-            Depending on the certificate type, typical installation can take from minutes to several hours.
-          %span.title Do royalty payments to me truly recur forever?
+            YES. Commission payments can be wired to your bank account as a direct deposit. We also offer Paypal payments.
+          %span.title=link_to "What's the wait time to get up and running on this program?", "#",name: "wait_time"
           %p
-            Multi-domain certificate (commonly know as Exchange Server Certificates or Unified Communications Certificates - UCC for short) are SSL Certificates that can secure multiple domains and multiple hostnames in a single certificate. They are ideal for cloud services whereby the number of allocated ip addresses are limited yet must be shared with multiple virtual hosts. They are also ideal for Microsoft Exchange Server 2007, Exchange Server 2010, and Microsoft Live Communications Server.
-          %span.title Can I be paid through direct deposit?
+            JUST A FEW HOURS! Once we verify and approve your business license, and your individual or company's taxpayer ID
+            you can start earning commissions immediately!
+          %span.title=link_to "Am I able to offer SSL.com Certificates through my website?", "#",name: "my_site"
           %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            YES, ABSOLUTELY. Your customer trusts your site, and we provide the order form containing your unique ID
+            that you can copy and paste onto your site. When the customer orders the certificate through your site, the order
+            will be sent to
+            = succeed ".com's" do
+              %i{:style => "font-weight:bold;"} SSL
+            secure gateway, and you will be paid for the sale.
+          %p
+            You control the look and feel and all aspects of the HTML and design. Our form just collects the
+            info, completes the sale, and credits you for the sale. Our designers will even work with you to customize the look and feel at no additional charge.
+          %span.title=link_to "How are SSL.com Certificates sent to my customers?", "#",name: "send_method"
+          %p
+            Your customers will manage their own certificates. This frees you up to focus on generating sales
+            and more revenue. Customers download and install
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
-          %span.title What's the wait time to get up and running on this program?
+            certificates themselves if they have access to their own servers. If they are on shared servers,
+            their web host or admins typically will install the certificates.
           %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            We provide installation resources such as online instructions,
+            FAQ's, support forums and free support 24 hours a day.
+          %span.title=link_to "Is unsolicited bulk emailing permitted in selling SSL.com?", "#",name: "bulk_email"
+          %p
+            NO. Using unsolicited bulk email or spam to promote
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
-          %span.title Am I able to offer SSL.com Certificates through my website?
+            certificates and products is not allowed and strictly prohibited.
           %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
+            If an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
-          %span.title How are SSL.com Certificates sent to my customers?
-          %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
-          %span.title Is unsolicited bulk emailing permitted in selling SSL.com?
-          %p
-            %i{:style => "font-weight:bold;"}> SSL
-            \.com believes electronic security should be easy to implement and accessible to everyone without sacrificing product integrity. Because of our core beliefs,
-            = succeed ".com" do
-              %i{:style => "font-weight:bold;"} SSL
-            is engaged with the community at large to provide unprecedented levels support and to offer an enhanced user experience.
+            Partner is determined to be in breach of this agreement after investigation, their account
+            will be promptly terminated.
         .notes
           %a{:href => "http://info.ssl.com"}
-            %div Still have questions? Visit the FAQ page for more answers.
-        -#
-          %h2 Testimonials
-          .testimonial-boxes
-            .box
-              %img{:alt => "", :src => "images/pic1.jpg"}/
-              %blockquote "I wouldn't be sitting in jail right now if I hadn't cancelled my SSL.com certificate."
-              .name
-                %span.black Kim Dotcom
-                %span.gray Megaupload.com
-            .box.long
-              %img{:alt => "", :src => "images/pic3.jpg"}/
-              %blockquote "Verisign and Geotrust are easy hacks. But after Isreal switched to SSL.com we couldn't hack them anymore. Damn you Leo!"
-              .name
-                %span.black Mahmoud
-                %span.gray Google me
-          .testimonial-boxes
-            .box.short
-              %img{:alt => "", :src => "images/pic2.jpg"}/
-              %blockquote "Leo and I go way back!"
-              .name
-                %span.black Jenna Jameson
-                %span.gray clubjenna.com
-            .box
-              %img{:alt => "", :src => "images/pic4.jpg"}/
-              %blockquote "In my will I stated Kim Jr should switch to SSL.com."
-              .name
-                %span.black Kim Jong II
-                %span.gray iminhell.com
-          .notes
-            %a{:href => ""}
-              %div Still don't believe us? Visit Testimonial for more rave reviews.
+            %div Limited number of licenses remain for each territory. Sign up today!
       .clear
