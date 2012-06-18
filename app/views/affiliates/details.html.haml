@@ -7,7 +7,7 @@
         %span
           %b SSL
           \.com
-        Referral Linking Partner Program FAQ
+        Referral Link Partner Program FAQ
       %h3(style="margin-bottom: 30px")
         %ul(style="width: 60%; margin: 0 auto")
           %li=link_to "What's the process to becoming an Authorized SSL.com Partner?", anchor: "sign_up"
@@ -75,7 +75,9 @@
         .faq-boxes.affiliates
           %span.title=link_to "What's the process to becoming an Authorized SSL.com Partner?", "#",name: "sign_up"
           %p
-            Becoming an SSL.com Referral Link Partner is quick, easy and free. Just signup here. Applications
+            Becoming an SSL.com Referral Link Partner is quick, easy and free. Just
+            =link_to "signup here.", new_user_url
+            Applications
             are normally authorized in one business day.
           %span.title=link_to "How does it work?", "#",name: "how"
           %p
@@ -178,6 +180,6 @@
             Partner is determined to be in breach of this agreement after investigation, their account
             will be promptly terminated.
         .notes
-          %a{:href => "http://info.ssl.com"}
+          %a{:href => "#{url_for new_user_url}"}
             %div Limited number of licenses remain for each territory. Sign up today!
       .clear

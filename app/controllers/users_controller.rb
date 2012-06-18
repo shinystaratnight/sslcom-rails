@@ -16,6 +16,10 @@ class UsersController < ApplicationController
   def new
   end
 
+  def new_affiliate
+    render action: "new"
+  end
+
   def search
     index
   end

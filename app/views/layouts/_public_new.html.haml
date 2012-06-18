@@ -32,15 +32,19 @@
           %a(href="#{certificate_url("free")}")
             %li FREE TRIAL
           %li
-            %a(href="#{resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)}")
-              RESELLERS
+            %a(href="#{affiliates_url}")
+              PARTNERS
             %ul
+              %a{:href => "#{details_affiliates_url}"}
+                %li Referral Link FAQ
+              %a{:href => "#{affiliate_signup_url}"}
+                %li Referral Link Signup
               %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Program Details
+                %li Reseller Program Details
               %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Pricing
+                %li Reseller Pricing
               %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Sign Up
+                %li Reseller Sign Up
           %li
             %a{:href => "#{certificates_url}"}
               %div OUR CERTIFICATES

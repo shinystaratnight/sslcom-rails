@@ -184,6 +184,8 @@ SslCom::Application.routes.draw do
     :as => :confirm_funds
   match 'secure/apply_funds' => 'funded_accounts#apply_funds',
     :as => :apply_funds
+  match 'users/new/affiliates' => 'users#new',
+    :as => :affiliate_signup
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders',
     :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders

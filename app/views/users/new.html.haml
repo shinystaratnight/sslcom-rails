@@ -6,13 +6,19 @@
     Enter a desired username and your email address. An activation email will
     be sent to this address. You will need to visit the link provided in the
     email to complete account registration.
+  %p.interested_in_reselling
+    %strong NEW!
+    Earn commission by becoming SSL.com Referral Link Partner. It's easy and free. After creating your ssl.com account
+    be sure to go to click 'Dashboard' and then 'Become an SSL.com Referral Link Partner'.
+    %strong=link_to "Click here to find out more.", details_affiliates_url
   -unless current_subdomain==Reseller::SUBDOMAIN
     %p.interested_in_reselling
-      Interested in becoming an SSL.com reseller and receiving volume
-      discounts on ssl certificate purchases? 
-      =link_to "Click here to find out more.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
-      =#to find out more and to sign up
-      =#%em (initial deposit required).
+      -#
+        Interested in becoming an SSL.com Reseller Partner and receiving volume
+        discounts on ssl certificate purchases?
+        =link_to "Click here to find out more.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
+        =#to find out more and to sign up
+        =#%em (initial deposit required).
   -else
     %p
       Not Interested in becoming an SSL.com reseller and receiving volume

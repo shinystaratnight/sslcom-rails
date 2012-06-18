@@ -41,8 +41,30 @@ class Affiliate < ActiveRecord::Base
   #validates_uniqueness_of   :display_name, :case_sensitive=>false, :allow_nil=>true, :allow_blank=>true
   #validates_length_of   :tagline, :maximum => 60
   #validates_length_of   :description, :maximum => 500
-  validates_length_of   :email,    :within => 3..100
+  validates_length_of   :email, :within => 3..100
   validates_format_of   :email, :with => /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+
+  #include Workflow
+  #workflow do
+  #  state :new do
+  #    event :submit_profile, :transitions_to => :profile_submitted
+  #  end
+  #
+  #  state :profile_submitted do
+  #    event :approve, :transitions_to => :approved
+  #    event :disapprove, :transitions_to => :disapproved
+  #    event :cancel, :transitions_to => :new
+  #  end
+  #
+  #  state :disapproved do
+  #    event :approve, :transitions_to => :approved
+  #    event :cancel,  :transitions_to => :new
+  #  end
+  #
+  #  state :approved do
+  #    event :cancel,  :transitions_to => :new
+  #  end
+  #end
 
   def american?
     country == "United States"
