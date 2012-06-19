@@ -41,7 +41,7 @@
                 %div Free
                 signup
           .divider
-          %a{:href => "#{affiliate_signup_url}"}
+          %a{:href => "#{current_user ? new_affiliate_url : affiliate_signup_url}"}
             %span
               .btn-buynow.reseller Sign Up
           .help
@@ -72,7 +72,7 @@
                 %div Recurring
                 revenue on sales
           .divider
-          %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"}
+          %a{:href => "#{current_user ? new_reseller_url : new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"}
             %span
               .btn-buynow.reseller Sign Up
           .help

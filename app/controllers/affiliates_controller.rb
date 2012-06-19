@@ -7,12 +7,13 @@ class AffiliatesController < ApplicationController
   end
 
   def create
-    @affiliate = current_user.ssl_account.build_affiliate(params[:affiliate])
+    @affiliate = Affiliate.new(params[:affiliate])
+    @affiliate.ssl_account = current_user.ssl_account
     if @affiliate.save
       flash[:notice]="Congrats! You can start earning commissions immediately as an ssl.com affiliate."
       redirect_to affiliate_url(@affiliate)
     else
-      render action: :new
+      render action: "new"
     end
   end
 

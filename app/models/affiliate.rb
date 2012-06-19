@@ -7,14 +7,14 @@ class Affiliate < ActiveRecord::Base
 
   PROFILE_COLUMNS = %w(display_name tagline description)
   COMPANY_COLUMNS = %w(organization website address1 address2
-    postal_code city state country contact_email contact_phone)
+    postal_code city state country)
   ADMIN_COLUMNS = %w(first_name last_name email phone)
   PAYMENT_COLUMNS = %w(payout_threshold payout_method)
   EPASSPORTE_ACCOUNT = %w(epassporte_account)
   CHECKS_PAYABLE_TO = %w(checks_payable_to)
   BANK_COLUMNS = %w(bank_name bank_routing_number bank_account_number swift_code)
-  REQUIRED_COLUMNS = %w(type_organization website address1 postal_code city
-    state country contact_email contact_phone) + ADMIN_COLUMNS
+  REQUIRED_COLUMNS = %w(type_organization organization website address1
+    postal_code city state country) + ADMIN_COLUMNS
   FORM_COLUMNS=%w(type_organization)+ADMIN_COLUMNS+COMPANY_COLUMNS+
     PAYMENT_COLUMNS
   #guarantee 10% profit on each sale

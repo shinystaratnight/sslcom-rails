@@ -137,6 +137,10 @@ class User < ActiveRecord::Base
     role_symbols.include? :customer
   end
 
+  def is_affiliate?
+    !!ssl_account.affiliate
+  end
+
   #if user has duplicate v2 users and is not consolidated
   #then find the duplicate v2 user matching the username
   #and copy it's username, crypted password, and email in the respective users fields

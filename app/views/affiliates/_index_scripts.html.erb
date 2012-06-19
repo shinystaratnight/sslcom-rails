@@ -13,7 +13,7 @@ jQuery(function($) {
       if($(country_select).find(':selected').text()=="United States")
         $('label[for*=state]').text("State*");
       else
-        $('label[for*=state]').text("State/Province");
+        $('label[for*=state]').text("State/Province*");
     };
     $('.add_to_cart').click(function() {
       $(this).parent().effect("transfer", {

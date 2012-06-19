@@ -1,12 +1,10 @@
 -c={}
--c[:header]='public'
 -c[:title] = "SSL.com Affiliate Sales and Statistics"
 -c.each do |k, v|
   -content_for k, c[k]
 =render :partial => '/surls/index_scripts'
 .innercontainere
   .inner
-    =render :partial => "shared/messages"
     %h1
       =c[:title]
     %h2
