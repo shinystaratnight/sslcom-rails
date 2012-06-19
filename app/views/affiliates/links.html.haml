@@ -1,0 +1,35 @@
+-c={}
+-c[:title] = "Referral Link Codes"
+-c.each do |k, v|
+  -content_for k, c[k]
+=render :partial => '/surls/index_scripts'
+-id = current_user.ssl_account.affiliate.id
+.container
+  .innercontainere
+    .inner
+      =render :partial => "shared/messages"
+      %h1
+        =c[:title]
+      %h2
+        Use the following preset links or create your own
+      %table#manage_current_links(cellspacing=0)
+        %tr
+          %th pages
+          %th(width="70%") links
+        %tr
+          %td SSL.com Home
+          %td
+            =text_field_tag :original, root_url+"code/#{id}", size: 50
+            =submit_tag "copy", class: 'shiny_silver_button'
+        -Certificate.root_products.each do |c|
+          %tr
+            %td=c.title
+            %td
+              =text_field_tag :original, buy_certificate_url(c.product_root)+"/code/#{id}", size: 50
+              =submit_tag "copy", class: 'shiny_silver_button'
+        %tr
+          %td Create custom link
+          %td
+            If you'd like to create your own link to any page within the ssl.com site, append "/code/#{id}" to
+            any ssl.com URL. For example, to link to our main certificate product page, use
+            "#{certificates_url}/code/#{id}"

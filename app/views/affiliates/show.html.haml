@@ -12,19 +12,13 @@
       %strong #{current_user.login}
     .clearfix
       %table#manage_current_links(cellspacing=0)
-        %tfoot
-          %tr
-            %td(colspan="#{current_user ? 6 : 5}")
-              -#the following space is needed else this row collapses if too few rows exist
-              &nbsp
-              =will_paginate @surls
         %tr
           %th referral link
           %th visits
           %th number sales
           %th total sales
           %th commission
-        -@affiliate.sales_stats.each do |k, v|
+        -@stats.each do |k, v|
           =render partial: "affiliate_row", locals: {url: k, orders: v}
       -#%p
       -#  Let everyone know you are using secure links with the foremost name in security by using the ssl.com

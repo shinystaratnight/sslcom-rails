@@ -1,6 +1,6 @@
 class AffiliatesController < ApplicationController
   before_filter :require_user, :except=>[:index, :details]
-  before_filter :find_affiliate, only: [:show]
+  before_filter :find_affiliate, only: [:show, :sales, :links]
 
   def new
     @affiliate =  Affiliate.new
@@ -28,8 +28,12 @@ class AffiliatesController < ApplicationController
 
   def show
     p = {:page => params[:page]}
-    @surls = @affiliate.orders.paginate(p)
+    @stats = @affiliate.sales_stats
+  end
 
+  def sales
+    p = {:page => params[:page]}
+    @stats = @affiliate.sales_stats
   end
 
   def refer
