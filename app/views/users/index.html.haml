@@ -29,7 +29,9 @@
           %td.dropdown=image_tag 'expand.png'
           %td.name.expandable=u.login
           %td.expandable=u.email
-          %td.expandable=u.role_symbols.join("/").or_else("user")
+          -type=u.role_symbols.join("/").or_else("user")
+          -type+="/affiliate" if u.is_affiliate?
+          %td.expandable=type
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
           -us, us_class=user_status(u)
