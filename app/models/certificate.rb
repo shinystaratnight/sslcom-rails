@@ -21,12 +21,12 @@ class Certificate < ActiveRecord::Base
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
     "SSL128TRIAL30 Trial SSL Certificate",
-    "RapidSSL Trial (FreeSSL) SSL Certificate"], "high_assurance", "free"]
+    "RapidSSL Trial (FreeSSL) SSL Certificate"], "premiumssl", "free"]
   MAP_TO_OV=[["Comodo Elite SSL Certificate",
     "Comodo Premium SSL Certificate", "Comodo InstantSSL SSL Certificate",
     "SSL128SCG2.5 SSL Certificate", "Comodo Pro SSL Certificate",
     "ssl certificate", "RapidSSL SSL Certificate", "XRamp Enterprise SSL Certificate"],
-    "high_assurance", "high_assurance"]
+    "basicssl", "basicssl"]
   MAP_TO_EV=[["thawte SGC SuperCert SSL Certificate",
     "Geotrust QuickSSL Premium SSL Certificate",
     "Verisign Secure Site SSL Certificate", "thawte SSL Web Server Cert",
