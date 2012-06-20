@@ -20,7 +20,7 @@ module OrdersHelper
 
   def cart_items_count
     items=cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/}
-    current_user ? items.select{|i|current_user.ssl_account.can_buy?(i)}.count : items.count
+    current_user ? items.compact.select{|i|current_user.ssl_account.can_buy?(i)}.count : items.count
   end
 
   def current_order

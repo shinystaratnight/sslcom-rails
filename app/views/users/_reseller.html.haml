@@ -11,11 +11,15 @@
     processing status information of each certificate, run historical reports
     on your certificate purchases, and do a host of other administrative
     functions. And that's just the beginning....
-  .become_reseller_title(style="margin: 10px 0 0")
-    %p
-      %a(href="#{url_for new_affiliate_url}")
-        %strong NEW! Earn commissions through the SSL.com Affiliate Program
-        (click here to learn more)
+  -unless current_user.is_affiliate?
+    .become_reseller_title(style="margin: 10px 0 0")
+      %p
+        %strong.red NEW! Earn commissions through the SSL.com Referral Link Program
+      %p
+        %a(href="#{url_for new_affiliate_url}")
+          Click here
+        to become an SSL.com Referral Link Partner or
+        =link_to "click here for more details", details_affiliates_path
 #dashboard
   %table(cellspacing="0")
     %caption
