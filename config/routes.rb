@@ -70,11 +70,11 @@ SslCom::Application.routes.draw do
   resources :affiliates do
     collection do
       get :details
-      get :sales
     end
 
     member do
       get :links
+      get :sales
     end
   end
 

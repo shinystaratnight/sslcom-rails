@@ -23,7 +23,7 @@
   -unless current_user.is_affiliate?
     .become_reseller_title(style="margin: 10px 0 0")
       %p
-        %strong NEW! Earn commissions through the SSL.com Referral Link Program
+        %strong.red NEW! Earn commissions through the SSL.com Referral Link Program
       %p
         %a(href="#{url_for new_affiliate_url}")
           Click here

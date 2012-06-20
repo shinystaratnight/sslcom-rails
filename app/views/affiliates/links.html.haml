@@ -3,11 +3,10 @@
 -c.each do |k, v|
   -content_for k, c[k]
 =render :partial => '/surls/index_scripts'
--id = current_user.ssl_account.affiliate.id
+-id = @affiliate.id
 .container
   .innercontainere
     .inner
-      =render :partial => "shared/messages"
       %h1
         =c[:title]
       %h2

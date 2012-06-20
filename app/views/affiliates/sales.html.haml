@@ -2,7 +2,6 @@
 -c[:title] = "SSL.com Affiliate Sales and Statistics"
 -c.each do |k, v|
   -content_for k, c[k]
-=render :partial => '/surls/index_scripts'
 .innercontainere
   .inner
     %h1
@@ -13,7 +12,9 @@
     .clearfix
       -if @stats.empty?
         %h2
-          no sales or statistics have been recorded yet. Please visit the links page to get started.
+          No sales or statistics have been recorded yet. Please
+          =link_to "visit the links", links_affiliate_url(current_user.ssl_account.affiliate)
+          page to get started.
       -else
         %table#manage_current_links(cellspacing=0)
           %tr
