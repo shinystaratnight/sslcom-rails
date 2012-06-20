@@ -20,6 +20,7 @@
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -64,7 +65,7 @@
       <file leaf-file-name="ssl_account.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="130" column="44" selection-start="4741" selection-end="4741" vertical-scroll-proportion="0.0">
+            <state line="125" column="18" selection-start="4616" selection-end="4616" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -73,7 +74,7 @@
       <file leaf-file-name="orders_helper.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="22" column="54" selection-start="708" selection-end="708" vertical-scroll-proportion="0.47692308">
+            <state line="22" column="0" selection-start="654" selection-end="654" vertical-scroll-proportion="0.32994923">
               <folding />
             </state>
           </provider>
@@ -188,7 +189,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/models/user.rb" />
         <option value="$PROJECT_DIR$/app/views/affiliates/index.html.haml" />
         <option value="$PROJECT_DIR$/app/views/affiliates/_index_scripts.html.erb" />
         <option value="$PROJECT_DIR$/app/views/affiliates/new.html.haml" />
@@ -204,6 +204,7 @@
         <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
         <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
         <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
       </list>
     </option>
   </component>
@@ -1259,8 +1260,8 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.26633987" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25207296" sideWeight="0.71732026" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28267974" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25207296" sideWeight="0.50816995" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.49183005" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38562092" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1432,14 +1433,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="130" column="44" selection-start="4741" selection-end="4741" vertical-scroll-proportion="0.0">
+        <state line="125" column="18" selection-start="4616" selection-end="4616" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="22" column="54" selection-start="708" selection-end="708" vertical-scroll-proportion="0.47692308">
+        <state line="22" column="0" selection-start="654" selection-end="654" vertical-scroll-proportion="0.32994923">
           <folding />
         </state>
       </provider>

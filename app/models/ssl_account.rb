@@ -122,7 +122,9 @@ class SslAccount < ActiveRecord::Base
 
   def can_buy?(item)
     item = Certificate.public.find_by_product(item[ShoppingCart::PRODUCT_CODE]) if item.is_a?(Hash)
-    if item.reseller_tier.nil?
+    if item.blank?
+      return false
+    elsif item.reseller_tier.nil?
       return true
     elsif reseller.nil?
       return false
