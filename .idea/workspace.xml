@@ -19,6 +19,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate.rb" afterPath="$PROJECT_DIR$/app/models/certificate.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
     </list>
@@ -101,7 +102,7 @@
       <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="137" column="32" selection-start="5531" selection-end="5531" vertical-scroll-proportion="0.0">
+            <state line="135" column="0" selection-start="5383" selection-end="5383" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -128,7 +129,7 @@
       <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="260" column="0" selection-start="9169" selection-end="9169" vertical-scroll-proportion="0.0">
+            <state line="258" column="49" selection-start="9150" selection-end="9164" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -137,7 +138,7 @@
       <file leaf-file-name="certificate.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="28" column="22" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.40723982">
+            <state line="23" column="64" selection-start="934" selection-end="948" vertical-scroll-proportion="-0.7692308">
               <folding />
             </state>
           </provider>
@@ -1424,13 +1425,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="137" column="32" selection-start="5531" selection-end="5531" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="84" column="6" selection-start="2279" selection-end="2279" vertical-scroll-proportion="0.0">
@@ -1445,16 +1439,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="135" column="0" selection-start="5383" selection-end="5383" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="260" column="0" selection-start="9169" selection-end="9169" vertical-scroll-proportion="0.0">
+        <state line="258" column="49" selection-start="9150" selection-end="9164" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="22" selection-start="1252" selection-end="1252" vertical-scroll-proportion="0.40723982">
+        <state line="23" column="64" selection-start="934" selection-end="948" vertical-scroll-proportion="-0.7692308">
           <folding />
         </state>
       </provider>
