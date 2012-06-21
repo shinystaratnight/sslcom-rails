@@ -66,6 +66,16 @@ class Affiliate < ActiveRecord::Base
   #  end
   #end
 
+  def landed_urls
+    code="%code/#{id}"
+    code_t = code+"/"
+    TrackedUrl.where{(url=~code) | (url =~code_t)}
+  end
+
+  def landed_urls_count
+    landed_urls.group{url}.count
+  end
+
   def american?
     country == "United States"
   end
@@ -94,18 +104,10 @@ class Affiliate < ActiveRecord::Base
     line_items.map(&:sellable).reject{|co|!co.is_a? CertificateOrder}
   end
 
+
+  # gives all the urls visited, even after the landed url. Too much detail for affiliates to use
   def tracked_urls_count
     tracked_urls.group{url}.count
-  end
-
-  def landed_urls
-    code="%code/#{id}"
-    code_t = code+"/"
-    tracked_urls.where{(url=~code) | (url =~code_t)}
-  end
-
-  def landed_urls_count
-    landed_urls.group{url}.count
   end
 
   def find_orders_by_url
@@ -148,5 +150,6 @@ class Affiliate < ActiveRecord::Base
     end
     stats_hash
   end
+
 
 end

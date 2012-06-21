@@ -6968,7 +6968,7 @@ span#no_emails_accessible {
 }
 
 /* line 5133, ../../../app/stylesheets/main.sass */
-#manage_current_links, #accepted_country_codes, #restricted_country_codes {
+#manage_current_links, #accepted_country_codes, #restricted_country_codes, #affiliate_sales {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
   background: -webkit-linear-gradient(top, #fffff5 0%, #fdffb8);
@@ -6987,26 +6987,26 @@ span#no_emails_accessible {
   width: 100%;
 }
 /* line 5142, ../../../app/stylesheets/main.sass */
-#manage_current_links th, #accepted_country_codes th, #restricted_country_codes th {
+#manage_current_links th, #accepted_country_codes th, #restricted_country_codes th, #affiliate_sales th {
   border: 1px solid #efc960;
   border-top: none;
 }
 /* line 5146, ../../../app/stylesheets/main.sass */
-#manage_current_links td, #manage_current_links th, #accepted_country_codes td, #accepted_country_codes th, #restricted_country_codes td, #restricted_country_codes th {
+#manage_current_links td, #manage_current_links th, #accepted_country_codes td, #accepted_country_codes th, #restricted_country_codes td, #restricted_country_codes th, #affiliate_sales td, #affiliate_sales th {
   text-align: left;
   vertical-align: top;
 }
 /* line 5150, ../../../app/stylesheets/main.sass */
-#manage_current_links td .original_link, #manage_current_links th .original_link, #accepted_country_codes td .original_link, #accepted_country_codes th .original_link, #restricted_country_codes td .original_link, #restricted_country_codes th .original_link {
+#manage_current_links td .original_link, #manage_current_links th .original_link, #accepted_country_codes td .original_link, #accepted_country_codes th .original_link, #restricted_country_codes td .original_link, #restricted_country_codes th .original_link, #affiliate_sales td .original_link, #affiliate_sales th .original_link {
   width: 70%;
 }
 /* line 5153, ../../../app/stylesheets/main.sass */
-#manage_current_links td .actions, #manage_current_links th .actions, #accepted_country_codes td .actions, #accepted_country_codes th .actions, #restricted_country_codes td .actions, #restricted_country_codes th .actions {
+#manage_current_links td .actions, #manage_current_links th .actions, #accepted_country_codes td .actions, #accepted_country_codes th .actions, #restricted_country_codes td .actions, #restricted_country_codes th .actions, #affiliate_sales td .actions, #affiliate_sales th .actions {
   display: block;
   width: 160px;
 }
 /* line 5157, ../../../app/stylesheets/main.sass */
-#manage_current_links td, #accepted_country_codes td, #restricted_country_codes td {
+#manage_current_links td, #accepted_country_codes td, #restricted_country_codes td, #affiliate_sales td {
   border-top: 1px solid #efc960;
 }
 
@@ -7016,22 +7016,27 @@ span#no_emails_accessible {
 }
 
 /* line 5163, ../../../app/stylesheets/main.sass */
+#affiliate_sales {
+  margin-bottom: 40px;
+}
+
+/* line 5166, ../../../app/stylesheets/main.sass */
 #accepted_country_codes {
   margin-bottom: 1em;
 }
 
-/* line 5166, ../../../app/stylesheets/main.sass */
+/* line 5169, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5169, ../../../app/stylesheets/main.sass */
+/* line 5172, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5173, ../../../app/stylesheets/main.sass */
+/* line 5176, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -7039,35 +7044,35 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5179, ../../../app/stylesheets/main.sass */
+/* line 5182, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5183, ../../../app/stylesheets/main.sass */
+/* line 5186, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5188, ../../../app/stylesheets/main.sass */
+/* line 5191, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;
 }
 
-/* line 5192, ../../../app/stylesheets/main.sass */
+/* line 5195, ../../../app/stylesheets/main.sass */
 .account_type {
   float: right;
 }
 
-/* line 5195, ../../../app/stylesheets/main.sass */
+/* line 5198, ../../../app/stylesheets/main.sass */
 .adjust_status {
   float: left;
 }
 
-/* line 5198, ../../../app/stylesheets/main.sass */
+/* line 5201, ../../../app/stylesheets/main.sass */
 #http_dcv_url {
   font-style: italic;
   background-color: #eeeeee;
@@ -7075,26 +7080,26 @@ span#no_emails_accessible {
   font-size: 1.2em;
 }
 
-/* line 5204, ../../../app/stylesheets/main.sass */
+/* line 5207, ../../../app/stylesheets/main.sass */
 .pop_container {
   display: none;
 }
 
-/* line 5207, ../../../app/stylesheets/main.sass */
+/* line 5210, ../../../app/stylesheets/main.sass */
 .pop_content {
   font-size: 1.8em;
 }
 
-/* line 5210, ../../../app/stylesheets/main.sass */
+/* line 5213, ../../../app/stylesheets/main.sass */
 .ajax_info {
   text-align: left;
 }
 
-/* line 5214, ../../../app/stylesheets/main.sass */
+/* line 5217, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message {
   padding: 0;
 }
-/* line 5216, ../../../app/stylesheets/main.sass */
+/* line 5219, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message.error .ajax_info {
   color: red;
 }

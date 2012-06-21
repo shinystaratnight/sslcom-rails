@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120612195043) do
+ActiveRecord::Schema.define(:version => 20120621213833) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -232,8 +232,8 @@ ActiveRecord::Schema.define(:version => 20120612195043) do
     t.string   "key",          :limit => 40
     t.string   "secret",       :limit => 40
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   add_index "client_applications", ["key"], :name => "index_client_applications_on_key", :unique => true
@@ -415,6 +415,7 @@ ActiveRecord::Schema.define(:version => 20120612195043) do
     t.integer "cents"
     t.string  "currency"
     t.float   "affiliate_payout_rate"
+    t.string  "aff_url"
   end
 
   add_index "line_items", ["order_id"], :name => "index_line_items_on_order_id"
@@ -451,8 +452,8 @@ ActiveRecord::Schema.define(:version => 20120612195043) do
   create_table "oauth_nonces", :force => true do |t|
     t.string   "nonce"
     t.integer  "timestamp"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   add_index "oauth_nonces", ["nonce", "timestamp"], :name => "index_oauth_nonces_on_nonce_and_timestamp", :unique => true
@@ -469,8 +470,8 @@ ActiveRecord::Schema.define(:version => 20120612195043) do
     t.datetime "authorized_at"
     t.datetime "invalidated_at"
     t.datetime "valid_to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
   end
 
   add_index "oauth_tokens", ["token"], :name => "index_oauth_tokens_on_token", :unique => true

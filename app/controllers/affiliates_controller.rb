@@ -38,8 +38,12 @@ class AffiliatesController < ApplicationController
 
   def refer
     id = params[:id]
-    cookies[:aid] = {:value=>id, :path => "/", :expires => Settings.
-        cart_cookie_days.to_i.days.from_now} if Affiliate.exists?(id)
+    if Affiliate.exists?(id)
+      cookies[:aid] = {:value=>id, :path => "/", :expires => Settings.
+          cart_cookie_days.to_i.days.from_now}
+      cookies[:ref] = {:value=>request.url, :path => "/", :expires => Settings.
+          cart_cookie_days.to_i.days.from_now}
+    end
     redirect_to request.url.gsub(/\/code\/\w+\/?$/,"")
   end
 

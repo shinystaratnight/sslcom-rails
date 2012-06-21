@@ -17,13 +17,13 @@
           =link_to "visit the links", links_affiliate_url(@affiliate)
           page to get started.
       -else
-        %table#manage_current_links(cellspacing=0)
+        %table#affiliate_sales(cellspacing=0)
           %tr
             %th referral link
             %th visits
             %th number sales
             %th total sales
             %th commission
-          -@stats.each do |k, v|
-            =render partial: "affiliate_row", locals: {url: k, orders: v, landed_urls: landed_urls}
+          -landed_urls.each do |k, v|
+            =render partial: "affiliate_row", locals: {url: k, count: v}
 
