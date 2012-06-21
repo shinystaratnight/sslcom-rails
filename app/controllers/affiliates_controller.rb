@@ -1,5 +1,5 @@
 class AffiliatesController < ApplicationController
-  before_filter :require_user, :except=>[:index, :details]
+  before_filter :require_user, :except=>[:index, :details, :refer]
   before_filter :find_affiliate, only: [:show, :sales, :links]
 
   def new
