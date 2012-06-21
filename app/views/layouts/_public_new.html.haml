@@ -71,10 +71,13 @@
                 %li Multi-Domain Plus (UCC EV)
               %a{:href => "#{certificate_url('free')}"}
                 %li Free Trial SSL
-              -#
-                %li.divider
-                %li
-                  %a{:href => "#"} SSL Selection Wizard
+              %li.divider
+              %li
+                %a{:href => "#{details_site_seals_url({:subdomain=>false})}"} Smart SeaL
+            -#
+              %li.divider
+              %li
+                %a{:href => "#"} SSL Selection Wizard
                 %li
                   %a{:href => "#"} Compare SSL.com Certificates
                 %li

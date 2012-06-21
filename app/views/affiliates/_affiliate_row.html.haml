@@ -1,6 +1,7 @@
+orders ||= nil
 %tr
   %td=url
-  %td=@affiliate.landed_urls_count[url]
-  %td=orders.count
-  %td=Money.new(orders.sum(&:cents)).format
-  %td=Money.new(orders.map(&:line_items).flatten.sum(&:affiliate_commission_price)).format
+  %td=landed_urls.delete(url)
+  %td=orders.blank? ? 0 : orders.count
+  %td=orders.blank? ? 0 : Money.new(orders.sum(&:cents)).format
+  %td=orders.blank? ? 0 : Money.new(orders.map(&:line_items).flatten.sum(&:affiliate_commission_price)).format

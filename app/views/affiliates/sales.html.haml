@@ -2,6 +2,7 @@
 -c[:title] = "SSL.com Affiliate Sales and Statistics"
 -c.each do |k, v|
   -content_for k, c[k]
+-landed_urls = @affiliate.landed_urls_count
 .innercontainere
   .inner
     %h1
@@ -10,10 +11,10 @@
       information displayed is for affiliate
       %strong #{current_user.login}
     .clearfix
-      -if @stats.empty?
+      -if landed_urls.empty?
         %h2
           No sales or statistics have been recorded yet. Please
-          =link_to "visit the links", links_affiliate_url(current_user.ssl_account.affiliate)
+          =link_to "visit the links", links_affiliate_url(@affiliate)
           page to get started.
       -else
         %table#manage_current_links(cellspacing=0)
@@ -24,5 +25,5 @@
             %th total sales
             %th commission
           -@stats.each do |k, v|
-            =render partial: "affiliate_row", locals: {url: k, orders: v}
+            =render partial: "affiliate_row", locals: {url: k, orders: v, landed_urls: landed_urls}
 
