@@ -66,11 +66,11 @@ class Affiliate < ActiveRecord::Base
   #  end
   #end
 
-  def landed_urls
-    code="%code/#{id}"
-    code_t = code+"/"
-    TrackedUrl.where{(url=~code) | (url =~code_t)}
-  end
+  #def landed_urls
+  #  code="%code/#{id}"
+  #  code_t = code+"/"
+  #  TrackedUrl.where{(url=~code) | (url =~code_t)}
+  #end
 
   def landed_urls_count
     landed_urls.group{url}.count
@@ -151,5 +151,16 @@ class Affiliate < ActiveRecord::Base
     stats_hash
   end
 
+  def landed_urls
+    code="%code/#{id}"
+    code_t = code+"/"
+    tu=Tracking.joins{tracked_url}.where{(tracked_url.url=~code) | (tracked_url.url =~code_t)}.map(&:tracked_url)
+    urls=tu.map(&:url).uniq
+    {}.tap do |h|
+    urls.each{|u|
+      h.merge! u => tu.select{|t|t.url==u}.count
+    }
+    end
+  end
 
 end
