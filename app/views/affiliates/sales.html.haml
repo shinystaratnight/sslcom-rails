@@ -22,7 +22,7 @@
             %th referral link
             %th visits
             %th number sales
-            %th total sales
+            %th sales amount
             %th commission
           -landed_urls.each do |k, v|
             =render partial: "affiliate_row", locals: {url: k, count: v}

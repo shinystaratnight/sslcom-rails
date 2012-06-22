@@ -1,6 +1,8 @@
 class AffiliatesController < ApplicationController
   before_filter :require_user, :except=>[:index, :details, :refer]
   before_filter :find_affiliate, only: [:show, :sales, :links]
+  filter_access_to :update, attribute_check: true
+  filter_access_to :show, :sales, :links, attribute_check: true, require: :read
 
   def new
     @affiliate =  Affiliate.new
@@ -27,13 +29,9 @@ class AffiliatesController < ApplicationController
   end
 
   def show
-    p = {:page => params[:page]}
-    @stats = @affiliate.sales_stats
   end
 
   def sales
-    p = {:page => params[:page]}
-    @stats = @affiliate.sales_stats
   end
 
   def refer

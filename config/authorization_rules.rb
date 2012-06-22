@@ -12,6 +12,7 @@ authorization do
     has_permission_on :signed_certificates, :to => :manage
     has_permission_on :ssl_accounts, :to => [:create, :read, :update]
     has_permission_on :resellers, :to => [:create, :read, :update]
+    has_permission_on :affiliates, :to => :manage
     has_permission_on :users, :to => :admin_manage
     has_permission_on :site_seals, :to => :admin_manage, :except=>:delete
     has_permission_on :validations, :validation_histories, :to => :admin_manage
@@ -57,6 +58,9 @@ authorization do
       if_attribute :id => is {user.ssl_account.id}
     end
     has_permission_on :resellers, :to => [:create, :read, :update] do
+      if_attribute :ssl_account => is {user.ssl_account}
+    end
+    has_permission_on :affiliates, :to => [:create, :read, :update] do
       if_attribute :ssl_account => is {user.ssl_account}
     end
     has_permission_on :users, :to => [:create, :show, :update] do

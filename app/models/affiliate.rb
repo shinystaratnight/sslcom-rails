@@ -66,15 +66,6 @@ class Affiliate < ActiveRecord::Base
   #  end
   #end
 
-  #def landed_urls
-  #  code="%code/#{id}"
-  #  code_t = code+"/"
-  #  TrackedUrl.where{(url=~code) | (url =~code_t)}
-  #end
-
-  def landed_urls_count
-    landed_urls.group{url}.count
-  end
 
   def american?
     country == "United States"
@@ -108,47 +99,6 @@ class Affiliate < ActiveRecord::Base
   # gives all the urls visited, even after the landed url. Too much detail for affiliates to use
   def tracked_urls_count
     tracked_urls.group{url}.count
-  end
-
-  def find_orders_by_url
-    code="%code/#{id}"
-    code_t = code+"/"
-    orders.map do |o|
-      unless o.visitor_token.blank?
-        o_date = o.created_at
-        urls = o.visitor_token.tracked_urls.where{((url=~code) | (url =~code_t)) & (created_at < o_date)}.uniq
-        i=nil
-        previous_gap=nil
-        urls.each{|u|
-          if i.blank?
-            i = u.id
-            previous_gap = o.created_at - u.created_at
-          else
-            if(o.created_at - u.created_at < previous_gap)
-              previous_gap = o.created_at - u.created_at
-              i = u.id
-            end
-          end
-        }
-        if i
-          [o, urls.find(i)]
-        end
-      end
-    end.compact.uniq
-  end
-
-  def sales_stats
-    ss=find_orders_by_url
-    stats_hash={}
-    ss.each do |stat|
-      url=stat[1].url
-      if stats_hash[url]
-        stats_hash[url] << stat[0]
-      else
-        stats_hash.merge! url => [stat[0]]
-      end
-    end
-    stats_hash
   end
 
   def landed_urls
