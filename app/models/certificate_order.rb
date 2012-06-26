@@ -682,7 +682,7 @@ class CertificateOrder < ActiveRecord::Base
           )
           ssl_com_order(options)
           last_sent = csr.domain_control_validations.last_sent
-          if !skip_verification?
+          if !skip_verification? && !last_sent.blank?
             if last_sent.dcv_method=="http"
               options.merge!('dcvMethod' => "HTTP_CSR_HASH")
             elsif last_sent.try("is_eligible_to_send?")

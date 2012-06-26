@@ -27,8 +27,13 @@
       / end of top_navigation
       .bottom_navigation
         %ul#nav
-          %a(href="#{account_url}")
-            %li MY ACCOUNT
+          %li
+            %a(href="#{account_url}")
+              MY ACCOUNT
+            -if current_user
+              %ul
+                %a{:href => "#{logout_url}"}
+                  %li Logout
           %a(href="#{certificate_url("free")}")
             %li FREE TRIAL
           %li
