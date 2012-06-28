@@ -17,6 +17,7 @@
         %h3
           =link_to 'wildcard and exchange (ucc) ssl certificates', wildcard_or_ucc_certificates_url
     -@certificates.each_with_index do |c,i|
+      -next if @certificates[i].product_root=~/^free/
       -if (i % 2)==0
         %tr
           -if @certificates[i].product_root=="ucc"

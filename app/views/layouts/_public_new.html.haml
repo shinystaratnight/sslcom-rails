@@ -34,8 +34,9 @@
               %ul
                 %a{:href => "#{logout_url}"}
                   %li Logout
-          %a(href="#{certificate_url("free")}")
-            %li FREE TRIAL
+          -if Settings.offer_trial
+            %a(href="#{certificate_url("free")}")
+              %li FREE TRIAL
           %li
             %a(href="#{affiliates_url}")
               PARTNERS
@@ -74,8 +75,9 @@
                 %li Multi-Domain (UCC)
               %a{:href => "#{certificate_url('evucc')}"}
                 %li Multi-Domain Plus (UCC EV)
-              %a{:href => "#{certificate_url('free')}"}
-                %li Free Trial SSL
+              -if Settings.offer_trial
+                %a{:href => "#{certificate_url('free')}"}
+                  %li Free Trial SSL
               %li.divider
               %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
                 %li Smart SeaL

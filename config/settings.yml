@@ -12,6 +12,7 @@ show_advertising: false
 closed_beta_mode: false
 track_visitors: true
 enable_exception_notifier: true
+offer_trial: false
 minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3
 ucc_max_domains: 200
