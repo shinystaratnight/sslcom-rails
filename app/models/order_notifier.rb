@@ -5,6 +5,11 @@ class OrderNotifier < ActionMailer::Base
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
   default_url_options[:host] = Settings.actionmailer_host
 
+  def test
+    p caller[0] =~ /`([^']*)'/ and $1
+  end
+  alias_method :something, :test
+
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload

@@ -1,6 +1,6 @@
 class ApisController < ApplicationController
 
-  wrap_parameters false
+  wrap_parameters ApiCertificateRequest, include: [*ApiCertificateRequest::ACCESSORS]
   respond_to :xml, :json
 
   SUBDOMAIN = "sws"
@@ -9,22 +9,12 @@ class ApisController < ApplicationController
   # GET /apis.xml
   def index
     @apis = Api.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @apis }
-    end
+    respond_with @apis
   end
 
-  # GET /apis/1
-  # GET /apis/1.xml
   def show
     @api = Api.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.xml  { render :xml => @api }
-    end
+    respond_with @api
   end
 
   # GET /apis/new
@@ -45,8 +35,9 @@ class ApisController < ApplicationController
 
   # POST /certificates/create
   # POST /certificates/create.xml
-  def create_certificate
-    @co = CertificateOrder.last
+  def create
+    @api = Api.create(params[:api])
+    respond_with @api
   end
 
   # PUT /apis/1
@@ -81,8 +72,9 @@ class ApisController < ApplicationController
     #@acr = ApiCertificateRequest.new
     #attr={}
     #params.each{|k,v|attr.merge(k=>v) if @acr.attributes.keys.include? k}
-    params.delete :controller
-    params.delete :action
-    @acr = ApiCertificateRequest.create(params)
+    #params.delete :controller
+    #params.delete :action
+    @acr = ApiCertificateRequest.create(params[:api_certificate_request])
+    respond_with @acr
   end
 end
