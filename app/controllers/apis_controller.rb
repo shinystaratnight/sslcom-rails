@@ -69,12 +69,8 @@ class ApisController < ApplicationController
   end
 
   def create_certificate_order_v1_0
-    #@acr = ApiCertificateRequest.new
-    #attr={}
-    #params.each{|k,v|attr.merge(k=>v) if @acr.attributes.keys.include? k}
-    #params.delete :controller
-    #params.delete :action
-    @acr = ApiCertificateRequest.create(params[:api_certificate_request])
+    @acr = ApiCertificateRequest.new(params[:api_certificate_request])
+
     respond_with @acr
   end
 end

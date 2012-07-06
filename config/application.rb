@@ -85,15 +85,6 @@ SERVER_SIDE_CART = false
 SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
   downcase=='postgresql' ? 'ilike' : 'like'
 
-
-SubdomainFu.configure do |config|
-  config.tld_sizes = {:development => 1,
-   :test => 1,
-   :production => 1} # set all at once (also the defaults)
-  config.mirrors = %w(www)
-  config.preferred_mirror = "www"
-end
-
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 

@@ -77,12 +77,13 @@ gem 'nokogiri'
     gem 'database_cleaner'
     gem 'webrat'
     gem 'email_spec'
-    gem 'firewatir'
+    #gem 'firewatir'
     gem 'rspec'
     gem 'mainline'
     gem 'rack-test'
     gem 'machinist', '>= 2.0.0.beta2'
     gem 'factory_girl_rails'
+    gem 'term-ansicolor'
   end
   
   group :assets do

@@ -49,4 +49,4 @@ SslCom::Application.configure do
   # END ActiveMerchant configuration
 end
 
-require "#{Rails.root}/lib/firewatir_url.rb"
+#require "#{Rails.root}/lib/firewatir_url.rb"
