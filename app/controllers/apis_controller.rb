@@ -70,7 +70,16 @@ class ApisController < ApplicationController
 
   def create_certificate_order_v1_0
     @acr = ApiCertificateRequest.new(params[:api_certificate_request])
+    if @acr.csr_obj.valid? && @acr.save
+      if @acr.create_certificate_order
+        # successfully charged
+      else
+        # declined
 
-    respond_with @acr
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    #respond_with @acr
   end
 end

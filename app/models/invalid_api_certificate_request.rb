@@ -1,0 +1,2 @@
+class InvalidApiCertificateRequest < CaApiRequest
+end
