@@ -10,14 +10,15 @@ class ApiCertificateRequest < CaApiRequest
   validates :account_key, :secret_key, :csr, :csr_obj, presence: true
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateRequest::NON_EV_PERIODS,
-    message: "%{value} needs to one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    message: "needs to one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateRequest::EV_PERIODS,
-    message: "%{value} needs to one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
+    message: "needs to one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
   validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
-      {in: ServerSoftware.pluck(:id).map(&:to_s), message: "%{value} is not a valid server software"}
-  validates :domain, :other_domains, presence: true, if: lambda{|c|c.is_ucc?}
+      {in: ServerSoftware.pluck(:id).map(&:to_s),
+      message: "needs to one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
+  validates :domain, :other_domains, presence: false, if: lambda{|c|!c.is_ucc?}
   validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"}, if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"}, if: lambda{|c|!c.is_dv? && c.post_office_box.blank?} #|| c.parsed_field("STREET1").blank?}
@@ -25,8 +26,8 @@ class ApiCertificateRequest < CaApiRequest
   validates :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
   validates :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
-      {in: Country.accepted_countries, message: "%{value} is not a valid ISO3166 2-character country code"},
-           if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
+      {in: Country.accepted_countries, message: "needs to one of the following: #{Country.accepted_countries.join(', ')}"},
+      if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
@@ -69,9 +70,11 @@ class ApiCertificateRequest < CaApiRequest
 
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-    certificate_order = CertificateOrder.new
+    certificate_order = CertificateOrder.new(duration: period)
+    certificate_content=certificate_order.certificate_contents.build(
+        csr: self.csr_obj, server_software_id: self.server_software)
+    certificate_content.certificate_order = certificate_order
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
-    certificate_content=certificate_order.certificate_contents.build(csr: self.csr_obj, server_software_id: self.server_software)
     certificate_content.valid?
     respond_to do |format|
       if @certificate_order.save
@@ -89,7 +92,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def setup_certificate_order(certificate, certificate_order)
-    duration = certificate.duration_in_days(certificate_order.duration)
+    duration = self.period
     certificate_order.certificate_content.duration = duration
     if certificate.is_ucc? || certificate.is_wildcard?
       psl = certificate.items_by_server_licenses.find { |item|
@@ -164,23 +167,23 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def serial
-    PRODUCTS[self.product.to_sym]
+    PRODUCTS[self.product.to_sym] if product
   end
 
   def is_ev?
-    serial =~ /ev/
+    serial =~ /ev/ if serial
   end
 
   def is_dv?
-    serial =~ /dv/
+    serial =~ /dv/ if serial
   end
 
   def is_wildcard?
-    product =~ /wildcard/
+    serial =~ /ucc/ if serial
   end
 
   def is_ucc?
-    product =~ /wildcard/
+    serial =~ /ucc/ if serial
   end
 
   def is_not_ip

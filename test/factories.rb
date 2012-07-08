@@ -35,6 +35,7 @@ FactoryGirl.define do
     end
     factory :ev_certificate do
       product "ev"
+      serial "evucc256sslcom"
     end
     factory :wildcard_certificate do
       product "wildcard"
