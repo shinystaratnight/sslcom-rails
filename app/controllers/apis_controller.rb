@@ -69,16 +69,21 @@ class ApisController < ApplicationController
   end
 
   def create_certificate_order_v1_0
-    @acr = ApiCertificateRequest.new(params[:api_certificate_request])
-    if @acr.csr_obj.valid? && @acr.save
-      if @acr.create_certificate_order
-        # successfully charged
-      else
-        # declined
-
-      end
+    @result = @acr = ApiCertificateRequest.new(params[:api_certificate_request])
+    unless @acr.csr_obj.valid?
+      # we do this sloppy maneuver because the rabl template only reports errors
+      @result = @acr.csr_obj
     else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      if @acr.save
+        if @result = @acr.create_certificate_order
+          # successfully charged
+          if @result.errors.empty?
+            render(:template => "apis/success_create_certificate_order_v1_0")
+          end
+        end
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      end
     end
     #respond_with @acr
   end

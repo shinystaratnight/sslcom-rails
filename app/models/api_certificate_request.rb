@@ -18,7 +18,6 @@ class ApiCertificateRequest < CaApiRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
-  validates :domain, :other_domains, presence: false, if: lambda{|c|!c.is_ucc?}
   validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"}, if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"}, if: lambda{|c|!c.is_dv? && c.post_office_box.blank?} #|| c.parsed_field("STREET1").blank?}
@@ -70,23 +69,65 @@ class ApiCertificateRequest < CaApiRequest
 
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-    certificate_order = CertificateOrder.new(duration: period)
+    certificate_order = current_user.ssl_account.certificate_orders.build(duration: period)
     certificate_content=certificate_order.certificate_contents.build(
         csr: self.csr_obj, server_software_id: self.server_software)
     certificate_content.certificate_order = certificate_order
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
-    certificate_content.valid?
-    respond_to do |format|
-      if @certificate_order.save
-        if is_reseller? && (current_order.amount.cents >
-              current_user.ssl_account.funded_account.amount.cents)
-          format.html {redirect_to allocate_funds_for_order_path(:id=>
-                'certificate')}
-        else
-          format.html {redirect_to confirm_funds_path(:id=>'certificate_order')}
+    order = current_user.ssl_account.purchase(@certificate_order)
+    order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
+    errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
+        (order.amount.cents > current_user.ssl_account.funded_account.amount.cents)
+    # we need to validate the csr here
+    if errors.blank?
+      if certificate_content.valid? &&
+        apply_funds(certificate_order: @certificate_order, current_user: current_user, order: order)
+        if certificate_content.save
+          setup_certificate_content(
+              certificate_order: certificate_order,
+              certificate_content: certificate_content,
+              current_user: current_user)
         end
+        return @certificate_order
       else
-        format.html { render(:template => "certificates/buy")}
+        return certificate_content
+      end
+    end
+  end
+
+  def setup_certificate_content(options)
+    certificate_order= options[:certificate_order]
+    cc = options[:certificate_content]
+    cc.create_registrant(
+        company_name: self.organization_name,
+        department: self.organization_unit_name,
+        po_box: self.post_office_box,
+        address1: self.street_address_1,
+        address2: self.street_address_2,
+        address3: self.street_address_3,
+        city: self.locality_name,
+        state: self.state_or_province_name,
+        postal_code: self.postal_code,
+        country: self.country_name)
+    if cc.csr_submitted?
+      cc.provide_info!
+      CertificateContent::CONTACT_ROLES.each do |role|
+        c = CertificateContact.new
+        r = options[:current_user].ssl_account.reseller
+        CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
+          c.send((field+'=').to_sym, r.send(field.to_sym))
+        end
+        c.company_name = r.organization
+        c.country = Country.find_by_name_caps(r.country.upcase).iso1_code if
+            Country.find_by_name_caps(r.country.upcase)
+        c.clear_roles
+        c.add_role! role
+        cc.certificate_contacts << c
+        cc.update_attribute(role+"_checkbox", true) unless
+          role==CertificateContent::ADMINISTRATIVE_ROLE
+      end
+      unless certificate_order.certificate.is_ev?
+        cc.provide_contacts!
       end
     end
   end
@@ -131,38 +172,20 @@ class ApiCertificateRequest < CaApiRequest
     certificate_order
   end
 
-  def apply_funds
-    @account_total = @funded_account = current_user.ssl_account.funded_account
-    @funded_account.cents -= @order.cents unless @funded_account.blank?
-    respond_to do |format|
-      if @funded_account.cents >= 0 and @order.line_items.size > 0
-        @funded_account.deduct_order = true
-        if @order.cents > 0
-          @order.save
-          @order.mark_paid!
-        end
-        @funded_account.save
-        flash.now[:notice] = "The transaction was successful."
-        if @certificate_order
-          @certificate_order.pay! true
-          return redirect_to edit_certificate_order_path(@certificate_order)
-        elsif @certificate_orders
-          current_user.ssl_account.orders << @order
-          clear_cart
-          flash[:notice] = "Order successfully placed. %s"
-          flash[:notice_item] = "Click here to finish processing your
-            ssl.com certificates.", credits_certificate_orders_path
-          format.html { redirect_to @order }
-        end
-        format.html { render :action => "success" }
-      else
-        if @order.line_items.size == 0
-          flash.now[:error] = "Cart is currently empty"
-        elsif @funded_account.cents <= 0
-          flash.now[:error] = "There is insufficient funds in your SSL account"
-        end
-        format.html { render :action => "confirm_funds" }
+  def apply_funds(options)
+    order = options[:order]
+    @account_total = funded_account = options[:current_user].ssl_account.funded_account
+    funded_account.cents -= order.cents unless funded_account.blank?
+    if funded_account.cents >= 0 and order.line_items.size > 0
+      funded_account.deduct_order = true
+      if order.cents > 0
+        order.save
+        order.mark_paid!
       end
+      Authorization::Maintenance::without_access_control do
+        funded_account.save
+      end
+      options[:certificate_order].pay! true
     end
   end
 
@@ -171,19 +194,19 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def is_ev?
-    serial =~ /ev/ if serial
+    serial =~ /^ev/ if serial
   end
 
   def is_dv?
-    serial =~ /dv/ if serial
+    serial =~ /^dv/ if serial
   end
 
   def is_wildcard?
-    serial =~ /ucc/ if serial
+    serial =~ /^wc/ if serial
   end
 
   def is_ucc?
-    serial =~ /ucc/ if serial
+    serial =~ /^ucc/ if serial
   end
 
   def is_not_ip

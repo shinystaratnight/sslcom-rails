@@ -1,4 +1,4 @@
 object false
 glue @result do
-  attributes :errors
+  attributes ref: :order_number
 end

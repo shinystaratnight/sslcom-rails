@@ -261,8 +261,7 @@ class CertificateContent < ActiveRecord::Base
       #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
       asterisk_found = (csr.common_name=~/^\*\./)==0
       if is_wildcard && !asterisk_found
-        errors.add(:signing_request, "is wildcard certificate order,
-          so it must begin with *.")
+        errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
       elsif !is_wildcard && asterisk_found
         errors.add(:signing_request,
           "cannot begin with *. since it is not a wildcard")

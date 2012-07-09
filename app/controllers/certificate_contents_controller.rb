@@ -13,7 +13,7 @@ class CertificateContentsController < ApplicationController
     respond_to do |format|
       if @certificate_content.update_attributes(params[:certificate_content])
         #this is a hack as a result of migrating to Rails 3 since functionality broke
-        #only when saving fields of the same name but different value do the contacts succesfully
+        #only when saving fields of the same name but different value do the contacts successfully
         #save. so here we will ensure there are 4 contacts
         unless @certificate_content.has_all_contacts?
           CertificateContent::CONTACT_ROLES.each_with_index do |role, index|
