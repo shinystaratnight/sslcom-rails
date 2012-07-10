@@ -37,9 +37,9 @@
     deducted from reseller account associated with the account number specified in the account_key.
   %dl.listing
     %dt version
-    %dd 1.0
+    %dd 1.3
     %dt example url
-    %dd https://sws.ssl.com/certificates/1.0/create
+    %dd https://sws.ssl.com/certificates/1.3/create
     %dt method
     %dd POST
     %dt
@@ -121,38 +121,16 @@
         %dt
           %span.optional_api_key other_domains
         %dd
-          Applies only to Multi-domain, EV Multi-domain, or UCC (product=mdssl, evmdssl, or uccssl).
-          A comma-separated (or whitespace-separated) list of Domain Names / IP
-          Addresses to be placed into the SSL Certificate.
-          If the CSR's Subject Alternative Name extension...
-          %ul
-            %li
-              includes 1 or more domain names, and this parameter is&nbsp;
-              %em(style='text-decoration: underline')> omitted
-              , then the domain names from the CSR will be used.
-            %li
-              includes 1 or more domain names, and this parameter is&nbsp;
-              %em(style='text-decoration: underline')> specified
-              , then the domain names from the CSR will be ignored.
-            %li
-              is not present, or is present but includes 0 domain names, then this
-              parameter must be present.
+          Applies only to UCC or EV UCC multi-domain certificates. These are the additional domains that
+          will appear in the subject alternative names (SAN) field of the ssl certificate.
           NOTE: commas and/or whitespace may need to be manually URL-encoded
           (e.g. %2C for a comma), depending on whether or not the calling
           environment does this automatically.
         %dt.optional_api_key domain
         %dd
-          Applies only to Multi-domain, EV Multi-domain, or UCC (product=mdssl, evmdssl, or uccssl).
-          One of the domain names listed in the 'other_domains' parameter, which should appear
-          as the first Common Name in the Subject DN of the resulting SSL certificate.
-          %ul
-            %li
-              For Multi-domain Certificates: If this parameter is omitted, the Common
-              Names will be listed in alphabetical order within the certificate.
-            %li
-              For Unified Communications Certificates: If this parameter is omitted, then
-              the value of the CSR's Common Name will be used as the primary domain
-              name instead.
+          Applies only to UCC or EV UCC multi-domain certificates. This is the primary domain that
+          will appear in the common name field of the ssl certificate. If not specified, the common name
+          will be extracted from the certificate signing request (csr).
         %dt.optional_api_key common_names_flag
         %dd
           Applies only to Multi-domain or EV Multi-domain (product=mdssl or evmdssl).

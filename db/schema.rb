@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120621213833) do
+ActiveRecord::Schema.define(:version => 20120709162402) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -199,6 +199,7 @@ ActiveRecord::Schema.define(:version => 20120621213833) do
     t.datetime "updated_at"
     t.boolean  "is_expired"
     t.integer  "renewal_id"
+    t.boolean  "is_test"
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
@@ -953,9 +954,11 @@ ActiveRecord::Schema.define(:version => 20120621213833) do
   end
 
   create_table "visitor_tokens", :force => true do |t|
-    t.integer "user_id"
-    t.integer "affiliate_id"
-    t.string  "guid"
+    t.integer  "user_id"
+    t.integer  "affiliate_id"
+    t.string   "guid"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "visitor_tokens", ["guid", "affiliate_id"], :name => "index_visitor_tokens_on_guid_and_affiliate_id"

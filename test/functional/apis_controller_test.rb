@@ -4,7 +4,7 @@ class ApisControllerTest < ActionController::TestCase
   test "should get index" do
     get :index
     assert_response :success
-    assert_not_nil assigns(:apis)
+    assert_not_nil assigns(:api_certificate_requests)
   end
 
   test "should get new" do

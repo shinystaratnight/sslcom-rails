@@ -27,8 +27,10 @@ SslCom::Application.routes.draw do
   match 'site_checks' => 'site_checks#create', :as => :site_checks
 
   #api
-  match '/certificates/1.0/create' => 'apis#create_certificate_order_v1_0',
-        :as => :api_create_certificate_order, :constraints => {:subdomain=>ApisController::SUBDOMAIN}
+  match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
+        :as => :api_certificate_requests_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+  match '/certificates/1.3/dcv_emails' => 'api_dcv_emails#create_v1_3',
+        :as => :api_dcv_emails_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
 
   resource :account, :controller=>:users do
     resource :reseller

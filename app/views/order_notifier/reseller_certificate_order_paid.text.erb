@@ -1,5 +1,5 @@
 <%last_sent=@certificate_order.certificate_content.csr.domain_control_validations.last_sent%>
-SSL Certificate Order Confirmation (#<%=@certificate_order.order.reference_number%>)
+<%= "(TEST)" if @certificate_order.is_test%> SSL Certificate Order Confirmation (#<%=@certificate_order.order.reference_number%>)
 
 Dear <%="#{@ssl_account.reseller.first_name} #{@ssl_account.reseller.last_name}"%>,
 

@@ -1,0 +1,2 @@
+class InvalidApiDcvEmails < CaApiRequest
+end

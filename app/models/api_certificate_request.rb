@@ -7,6 +7,8 @@ class ApiCertificateRequest < CaApiRequest
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
               :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom"}
 
+  DCV_METHODS = %w(email http_csr_hash)
+
   validates :account_key, :secret_key, :csr, :csr_obj, presence: true
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateRequest::NON_EV_PERIODS,
@@ -29,6 +31,8 @@ class ApiCertificateRequest < CaApiRequest
       if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
+  validates :dcv_method, inclusion: {in: ApiCertificateRequest::DCV_METHODS,
+      message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
@@ -46,7 +50,8 @@ class ApiCertificateRequest < CaApiRequest
       :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
-      :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number]
+      :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
+      :dcv_email_addresses, :dcv_method]
 
   attr_accessor *ACCESSORS
 
@@ -69,7 +74,10 @@ class ApiCertificateRequest < CaApiRequest
 
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-    certificate_order = current_user.ssl_account.certificate_orders.build(duration: period)
+    co_params = {duration: period, is_api_call: true}
+    co_params.merge!({is_test: true}) #if @is_test
+    co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
+    certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
     certificate_content=certificate_order.certificate_contents.build(
         csr: self.csr_obj, server_software_id: self.server_software)
     certificate_content.certificate_order = certificate_order
@@ -78,10 +86,9 @@ class ApiCertificateRequest < CaApiRequest
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
         (order.amount.cents > current_user.ssl_account.funded_account.amount.cents)
-    # we need to validate the csr here
     if errors.blank?
       if certificate_content.valid? &&
-        apply_funds(certificate_order: @certificate_order, current_user: current_user, order: order)
+          apply_funds(certificate_order: @certificate_order, current_user: current_user, order: order)
         if certificate_content.save
           setup_certificate_content(
               certificate_order: certificate_order,
@@ -126,9 +133,8 @@ class ApiCertificateRequest < CaApiRequest
         cc.update_attribute(role+"_checkbox", true) unless
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
-      unless certificate_order.certificate.is_ev?
-        cc.provide_contacts!
-      end
+      cc.provide_contacts!
+      cc.pend_validation! !certificate_order.is_test
     end
   end
 
@@ -175,7 +181,7 @@ class ApiCertificateRequest < CaApiRequest
   def apply_funds(options)
     order = options[:order]
     @account_total = funded_account = options[:current_user].ssl_account.funded_account
-    funded_account.cents -= order.cents unless funded_account.blank?
+    funded_account.cents -= order.cents unless @certificate_order.is_test
     if funded_account.cents >= 0 and order.line_items.size > 0
       funded_account.deduct_order = true
       if order.cents > 0
@@ -183,7 +189,7 @@ class ApiCertificateRequest < CaApiRequest
         order.mark_paid!
       end
       Authorization::Maintenance::without_access_control do
-        funded_account.save
+        funded_account.save unless @certificate_order.is_test
       end
       options[:certificate_order].pay! true
     end

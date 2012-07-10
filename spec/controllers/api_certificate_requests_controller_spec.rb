@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-describe ApisController do
+describe ApiCertificateRequestsController do
   #render_views
 
   it "responds to create_certificate_order" do
-    post :create_certificate_order_v1_0
+    post :create_certificate_order_v1_3
     response.code.should eq("200")
   end
 
   it "requires certain parameters for dv certs" do
-    post :create_certificate_order_v1_0, api_certificate_request: {ca: "p100", secret_key: "cv"}, format: :json
+    post :create_certificate_order_v1_3, api_certificate_request: {ca: "p100", secret_key: "cv"}, format: :json
     response.body.should eq("200")
   end
 
@@ -32,7 +32,7 @@ describe ApisController do
               registered_country_name: "US",
               incorporation_date: "12/12/2000",
               is_customer_validated: "y"}
-    post :create_certificate_order_v1_0, api_certificate_request: params, format: :json
+    post :create_certificate_order_v1_3, api_certificate_request: params, format: :json
     response.body.should eq("200")
   end
 

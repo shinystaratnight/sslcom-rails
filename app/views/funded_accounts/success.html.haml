@@ -5,7 +5,8 @@
         $.empty_out_cart();
       });
     });
--title = is_receipt? ? "Show Order Transaction" : "Order Was Successful"
+-title = @certificate_order.is_test ? "(TEST) " : ""
+-title += is_receipt? ? "Show Order Transaction" : "Order Was Successful"
 -content_for :title, title
 =render(:partial => 'shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 4]}) if @reseller_initial_deposit
 -if @certificate_order

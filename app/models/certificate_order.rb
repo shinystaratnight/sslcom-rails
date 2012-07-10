@@ -19,8 +19,11 @@ class CertificateOrder < ActiveRecord::Base
   #            as: :api_requestable, dependent: :destroy
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
-  attr_accessor :duration
-  attr_accessor :has_csr
+  attr_accessor :duration, :has_csr
+
+  # the following only apply to api calls
+  attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method,
+      :dcv_email_address, :dcv_email_addresses, :is_api_call
 
   #will_paginate
   cattr_reader :per_page
@@ -43,13 +46,15 @@ class CertificateOrder < ActiveRecord::Base
   default_scope joins(:certificate_contents).includes(:certificate_contents).
     order(:created_at.desc).readonly(false)
 
+  scope :non_test, where{(is_test == nil) | (is_test==false)}
+
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
 
   scope :search_signed_certificates, lambda {|term|
     joins{certificate_contents.csr.signed_certificates}.
-        where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
+      where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
   }
 
   scope :search_csr, lambda {|term|
@@ -328,11 +333,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.skip_verification?(certificate)
-    certificate.is_ucc?
+    certificate.skip_verification?
   end
 
   def skip_verification?
-    certificate.is_ucc? || ((csr.is_intranet? || csr.is_ip_address?) if csr)
+    (certificate.is_ucc? && !certificate.is_ev?) || ((csr.is_intranet? || csr.is_ip_address?) if csr)
+  end
+
+  def order_status
+    if is_ev?
+      "waiting for documents"
+    end
   end
 
   def prepaid_signup_process(cert=certificate)
@@ -713,7 +724,16 @@ class CertificateOrder < ActiveRecord::Base
           end
           #ssl.com Sub CA certs
           ssl_com_order(options)
-          if !skip_verification?
+          if is_api_call
+            options.merge!('dcvMethod' => dcv_method) if dcv_method
+            if dcv_method.blank? || dcv_method=~/email/i
+              if dcv_email_addresses && is_ucc?
+                options.merge!('dcvEmailAddress' => dcv_email_addresses)
+              elsif dcv_email_address
+                options.merge!('dcvEmailAddresses' => dcv_email_address)
+              end
+            end
+          elsif !skip_verification?
             if last_sent.dcv_method=="http"
               options.merge!('dcvMethod' => "HTTP_CSR_HASH")
             elsif last_sent.try("is_eligible_to_send?")
@@ -736,7 +756,7 @@ class CertificateOrder < ActiveRecord::Base
             end
           end
           if certificate.is_ucc?
-            domains=certificate_content.domains.flatten
+            domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
             options.merge!(
               'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
               'primaryDomainName'=>csr.common_name
@@ -772,8 +792,7 @@ class CertificateOrder < ActiveRecord::Base
           'stateOrProvinceName' => obj.state,
           'postalCode' => obj.postal_code,
           'countryName' => obj.country}
-    options.merge!(
-      f.each{|k,v|f[k]=CGI.escape(v)})
+    options.merge!(f.each{|k,v|f[k]=CGI.escape(v) unless v.blank?})
   end
 
   def post_process_csr

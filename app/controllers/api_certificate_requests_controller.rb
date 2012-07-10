@@ -1,4 +1,5 @@
-class ApisController < ApplicationController
+class ApiCertificateRequestsController < ApplicationController
+  skip_filter :identify_visitor, :record_visit
 
   wrap_parameters ApiCertificateRequest, include: [*ApiCertificateRequest::ACCESSORS]
   respond_to :xml, :json
@@ -68,7 +69,7 @@ class ApisController < ApplicationController
     end
   end
 
-  def create_certificate_order_v1_0
+  def create_v1_3
     @result = @acr = ApiCertificateRequest.new(params[:api_certificate_request])
     unless @acr.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
@@ -78,7 +79,11 @@ class ApisController < ApplicationController
         if @result = @acr.create_certificate_order
           # successfully charged
           if @result.errors.empty?
-            render(:template => "apis/success_create_certificate_order_v1_0")
+            @result.certificate_url = url_for(@result)
+            @result.receipt_url = url_for(@result.order)
+            @result.smart_seal_url = certificate_order_site_seal_url(@result)
+            @result.validation_url = certificate_order_validation_url(@result)
+            render(:template => "api_certificate_requests/success_create_v1_3")
           end
         end
       else
