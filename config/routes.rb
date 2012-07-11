@@ -29,7 +29,11 @@ SslCom::Application.routes.draw do
   #api
   match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
         :as => :api_certificate_requests_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+  match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
+        :as => :api_certificate_requests_retrieve_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
   match '/certificates/1.3/dcv_emails' => 'api_dcv_emails#create_v1_3',
+        :as => :api_dcv_emails_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+  match '/certificates/1.3/retrieve' => 'api_dcv_emails#create_v1_3',
         :as => :api_dcv_emails_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
 
   resource :account, :controller=>:users do

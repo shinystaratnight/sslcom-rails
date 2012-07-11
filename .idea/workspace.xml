@@ -18,29 +18,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/api_dcv_emails.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/invalid_api_dcv_emails.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_3.rabl" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_3.rabl" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_dcv_emails/success_create_v1_3.rabl" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/apis/success_create_certificate_order_v1_0.rabl" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/controllers/apis_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api_dcv_emails_controller.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/apis/create_certificate_order_v1_0.rabl" afterPath="$PROJECT_DIR$/app/views/api_dcv_emails/create_v1_3.rabl" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/apis/edit.html.erb" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/edit.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/apis/index.html.erb" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/index.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/apis/new.html.erb" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/new.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/views/apis/show.html.erb" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/show.html.erb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/spec/controllers/apis_controller_spec.rb" afterPath="$PROJECT_DIR$/spec/controllers/api_certificate_requests_controller_spec.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/api_certificate_request.rb" afterPath="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" afterPath="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/reseller_certificate_order_paid.text.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/reseller_certificate_order_paid.text.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/restful_api/docs_apply.html.haml" afterPath="$PROJECT_DIR$/app/views/restful_api/docs_apply.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/functional/apis_controller_test.rb" afterPath="$PROJECT_DIR$/test/functional/apis_controller_test.rb" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -73,64 +57,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="90" column="0" selection-start="2254" selection-end="2332" vertical-scroll-proportion="0.0">
+            <state line="101" column="86" selection-start="2731" selection-end="2731" vertical-scroll-proportion="0.38535032">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="success_create_v1_3.rabl" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/api_dcv_emails/success_create_v1_3.rabl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="20" selection-start="33" selection-end="33" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="create_v1_3.rabl" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/api_dcv_emails/create_v1_3.rabl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="20" selection-start="33" selection-end="33" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_dcv_emails_controller.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="api_dcv_emails_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api_dcv_emails_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="44" selection-start="531" selection-end="531" vertical-scroll-proportion="0.56478405">
+            <state line="19" column="0" selection-start="331" selection-end="699" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="invalid_api_dcv_emails.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/invalid_api_dcv_emails.rb">
+      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="25" selection-start="25" selection-end="25" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="invalid_api_certificate_request.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/invalid_api_certificate_request.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_certificate_requests_controller_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/controllers/api_certificate_requests_controller_spec.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="14" selection-start="418" selection-end="418" vertical-scroll-proportion="0.0">
+            <state line="32" column="49" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -139,25 +87,61 @@
       <file leaf-file-name="api_certificate_request.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="13" selection-start="3432" selection-end="3443" vertical-scroll-proportion="0.0">
+            <state line="16" column="46" selection-start="1095" selection-end="1113" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_dcv_emails.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/api_dcv_emails.rb">
+      <file leaf-file-name="server.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/webrick/server.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="32" selection-start="219" selection-end="219" vertical-scroll-proportion="0.0">
+            <state line="190" column="0" selection-start="5127" selection-end="5127" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <file leaf-file-name="api_certificate_retrieve.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="46" column="0" selection-start="1943" selection-end="1943" vertical-scroll-proportion="0.0">
+            <state line="1" column="57" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="success_retrieve_v1_3.rabl" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="3" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_create.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="12" column="0" selection-start="364" selection-end="434" vertical-scroll-proportion="-6.580645">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="success_create_v1_3.rabl" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_3.rabl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="2" column="31" selection-start="47" selection-end="60" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="24" column="80" selection-start="1315" selection-end="1379" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -209,22 +193,22 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/restful_api/docs_apply.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/apis_controller_spec.rb" />
         <option value="$PROJECT_DIR$/app/controllers/apis_controller.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/models/api_certificate_dcv_emails.rb" />
         <option value="$PROJECT_DIR$/spec/controllers/api_certificate_requests_controller_spec.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/invalid_api_dcv_emails.rb" />
         <option value="$PROJECT_DIR$/app/models/api_dcv_emails.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/api_dcv_emails_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/api_dcv_emails/create_v1_3.rabl" />
         <option value="$PROJECT_DIR$/app/views/api_dcv_emails/success_create_v1_3.rabl" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/api_dcv_emails_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl" />
+        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
       </list>
     </option>
   </component>
@@ -445,6 +429,28 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api_certificate_requests" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
@@ -491,11 +497,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/views/api_certificate_requests" />
       <recent name="$PROJECT_DIR$/app/models" />
       <recent name="$PROJECT_DIR$/app/views/api_dcv_emails" />
       <recent name="$PROJECT_DIR$/app/controllers" />
       <recent name="$PROJECT_DIR$/app/views/apis" />
-      <recent name="$PROJECT_DIR$/app/views/affiliates" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/public/fonts" />
@@ -1458,55 +1464,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="96" column="43" selection-start="4730" selection-end="4730" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="734" column="0" selection-start="23681" selection-end="23681" vertical-scroll-proportion="-402.51614">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="83" column="44" selection-start="2504" selection-end="2504" vertical-scroll-proportion="0.65648854">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_dcv_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="62" selection-start="371" selection-end="371" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="133" selection-start="116" selection-end="184" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="63" selection-start="1192" selection-end="1216" vertical-scroll-proportion="-2.096774">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/controllers/api_certificate_requests_controller_spec.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="14" selection-start="418" selection-end="418" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="46" column="0" selection-start="1943" selection-end="1943" vertical-scroll-proportion="0.0">
@@ -1524,20 +1481,6 @@
     <entry file="file://$PROJECT_DIR$/app/models/invalid_api_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="46" column="13" selection-start="3432" selection-end="3443" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="90" column="0" selection-start="2254" selection-end="2332" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1563,9 +1506,72 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="80" selection-start="1315" selection-end="1379" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_3.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="2" column="31" selection-start="47" selection-end="60" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.rvm/rubies/ruby-1.9.3-p125/lib/ruby/1.9.1/webrick/server.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="190" column="0" selection-start="5127" selection-end="5127" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="32" column="49" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="0" selection-start="364" selection-end="434" vertical-scroll-proportion="-6.580645">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api_dcv_emails_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="44" selection-start="531" selection-end="531" vertical-scroll-proportion="0.56478405">
+        <state line="19" column="0" selection-start="331" selection-end="699" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="58" selection-end="58" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1" column="57" selection-start="110" selection-end="110" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="46" selection-start="1095" selection-end="1113" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="101" column="86" selection-start="2731" selection-end="2731" vertical-scroll-proportion="0.38535032">
           <folding />
         </state>
       </provider>

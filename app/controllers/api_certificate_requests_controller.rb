@@ -1,7 +1,8 @@
 class ApiCertificateRequestsController < ApplicationController
   skip_filter :identify_visitor, :record_visit
 
-  wrap_parameters ApiCertificateRequest, include: [*ApiCertificateRequest::ACCESSORS]
+  wrap_parameters ApiCertificateRequest, include:
+      [*(ApiCertificateRequest::ACCESSORS+ApiCertificateRequest::RETRIEVE_ACCESSORS).uniq]
   respond_to :xml, :json
 
   SUBDOMAIN = "sws"
@@ -70,7 +71,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def create_v1_3
-    @result = @acr = ApiCertificateRequest.new(params[:api_certificate_request])
+    @result = @acr = ApiCertificateCreate.new(params[:api_certificate_request])
     unless @acr.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @acr.csr_obj
@@ -91,5 +92,17 @@ class ApiCertificateRequestsController < ApplicationController
       end
     end
     #respond_with @acr
+  end
+
+  def retrieve_v1_3
+    @result = ApiCertificateRetrieve.new(params[:api_certificate_request])
+    @result.ca = 'ssl.com'
+    if @result.save
+      @certificate_order = CertificateOrder.find_by_ref(@result.ref)
+      render(:template => "api_certificate_requests/success_retrieve_v1_3") and return
+    else
+      InvalidApiDcvEmails.create parameters: params, ca: "ssl.com"
+    end
+    render(:template => "api_certificate_requests/create_v1_3")
   end
 end
