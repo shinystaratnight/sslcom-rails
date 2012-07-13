@@ -1,5 +1,5 @@
 class ApiCertificateRequest < CaApiRequest
-  attr_accessor :csr_obj, :current_user
+  attr_accessor :csr_obj, :current_user, :test
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -27,4 +27,11 @@ class ApiCertificateRequest < CaApiRequest
       end
     end
   end
+
+  after_initialize do
+    if new_record?
+      self.ca ||= "ssl.com"
+    end
+  end
+
 end

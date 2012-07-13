@@ -75,7 +75,7 @@ class ApiCertificateCreate < ApiCertificateRequest
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
     co_params = {duration: period, is_api_call: true}
-    co_params.merge!({is_test: true}) #if @is_test
+    co_params.merge!({is_test: self.test})
     co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
     certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
     certificate_content=certificate_order.certificate_contents.build(

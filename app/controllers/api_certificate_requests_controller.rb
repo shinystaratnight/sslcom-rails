@@ -1,4 +1,5 @@
 class ApiCertificateRequestsController < ApplicationController
+  before_filter :set_test
   skip_filter :identify_visitor, :record_visit
 
   wrap_parameters ApiCertificateRequest, include:
@@ -7,7 +8,7 @@ class ApiCertificateRequestsController < ApplicationController
           ApiCertificateRequest::DCV_EMAILS_ACCESSORS).uniq]
   respond_to :xml, :json
 
-  SUBDOMAIN = "sws"
+  TEST_SUBDOMAIN = "sws-test"
 
   # GET /apis
   # GET /apis.xml
@@ -74,6 +75,7 @@ class ApiCertificateRequestsController < ApplicationController
 
   def create_v1_3
     @result = ApiCertificateCreate.new(params[:api_certificate_request])
+    @result.test = @test
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -101,7 +103,7 @@ class ApiCertificateRequestsController < ApplicationController
 
   def retrieve_v1_3
     @result = ApiCertificateRetrieve.new(params[:api_certificate_request])
-    @result.ca = 'ssl.com'
+    @result.test = @test
     if @result.save
       @certificate_order = CertificateOrder.find_by_ref(@result.ref)
       render(:template => "api_certificate_requests/success_retrieve_v1_3") and return
@@ -113,7 +115,7 @@ class ApiCertificateRequestsController < ApplicationController
 
   def dcv_emails_v1_3
     @result=ApiDcvEmails.new(params[:api_certificate_request])
-    @result.ca = 'ssl.com'
+    @result.test = @test
     if @result.save
       @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
       unless @result.email_addresses.blank?
@@ -123,5 +125,11 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
     render action: :create_v1_3
+  end
+
+  private
+
+  def set_test
+    @test = (current_subdomain==TEST_SUBDOMAIN) ? true : false
   end
 end
