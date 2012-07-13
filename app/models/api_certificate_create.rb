@@ -1,33 +1,39 @@
+require "declarative_authorization/maintenance"
+
 class ApiCertificateCreate < ApiCertificateRequest
-  attr_accessor :csr_obj
+  attr_accessor :csr_obj, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
+    :order_number, :order_amount
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
 
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
-              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom"}
+              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
+              :"107"=>"premiumssl256sslcom", :"200"=>"ecossl256"}
 
   DCV_METHODS = %w(email http_csr_hash)
 
-  validates :account_key, :secret_key, :csr, :csr_obj, presence: true
+  validates :account_key, :secret_key, :csr, presence: true
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
+    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
   validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
   validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
-  validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"}, if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
-  validates :street_address_1, presence: {message: "is required if post_office_box is not specified"}, if: lambda{|c|!c.is_dv? && c.post_office_box.blank?} #|| c.parsed_field("STREET1").blank?}
+  validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
+            if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
+  validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
+            if: lambda{|c|!c.is_dv? && c.post_office_box.blank?} #|| c.parsed_field("STREET1").blank?}
   validates :locality_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.locality.blank?}
   validates :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
   validates :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
-      {in: Country.accepted_countries, message: "needs to one of the following: #{Country.accepted_countries.join(', ')}"},
+      {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
@@ -39,13 +45,16 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validates :product, presence: true, format: {with: /\d{3}/},
-            inclusion: {in: PRODUCTS.keys.map(&:to_s)}
+            inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
+            message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}
   validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
   validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
   #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
+  validate :verify_dcv_email_address, on: :create
 
   after_initialize do
     if new_record? && self.csr
+      self.dcv_method ||= "http_csr_hash"
       self.csr_obj = Csr.new(body: self.csr)
       unless self.csr_obj.errors.empty?
         self.errors[:csr] << "has problems and or errors"
@@ -53,14 +62,16 @@ class ApiCertificateCreate < ApiCertificateRequest
     end
   end
 
-  def self.apply_for_certificate(certificate)
-
+  def verify_dcv_email_address
+    if self.dcv_email_address && dcv_method=="http_csr_hash"
+      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
+                                                        self.csr_obj.common_name).email_address_choices
+      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
+          emails.include?(self.dcv_email_address)
+    end
   end
 
   def create_certificate_order
-    # identify user and reseller tier
-    current_user = User.find_by_login "rabbit"
-
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
     co_params = {duration: period, is_api_call: true}

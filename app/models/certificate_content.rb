@@ -133,7 +133,7 @@ class CertificateContent < ActiveRecord::Base
     state :revoked
   end
 
-  def after_initialize
+  after_initialize do
     if new_record?
       self.ajax_check_csr ||=false
     end

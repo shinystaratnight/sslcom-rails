@@ -1,5 +1,5 @@
 class ApiCertificateRequest < CaApiRequest
-  attr_accessor :csr_obj
+  attr_accessor :csr_obj, :current_user
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -8,11 +8,23 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_email_addresses, :dcv_method, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
-      :order_number]
+      :dcv_email_addresses, :dcv_method]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :show_validity_period,
-    :show_domains, :show_ext_status, :response_format]
+    :show_domains, :show_ext_status]
 
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS).uniq
+  DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain_name]
+
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS).uniq
+
+  before_validation(on: :create) do
+    if self.account_key && self.secret_key
+      ac=ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key)
+      unless ac.blank?
+        self.current_user = ac.ssl_account.users.last
+      else
+        errors[:login] << "account_key not found or wrong secret_key"
+      end
+    end
+  end
 end

@@ -46,7 +46,7 @@ class CertificateOrder < ActiveRecord::Base
   default_scope joins(:certificate_contents).includes(:certificate_contents).
     order(:created_at.desc).readonly(false)
 
-  scope :non_test, where{(is_test == nil) | (is_test==false)}
+  scope :not_test, where{(is_test == nil) | (is_test==false)}
 
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -187,7 +187,7 @@ class CertificateOrder < ActiveRecord::Base
     co.site_seal=SiteSeal.create
   end
 
-  def after_initialize
+  after_initialize do
     if new_record?
       self.quantity ||= 1
       self.has_csr ||= false

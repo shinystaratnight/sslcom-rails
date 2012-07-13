@@ -93,12 +93,12 @@ class OrdersController < ApplicationController
     p = {:page => params[:page]}
     @orders = if @search = params[:search]
       (current_user.is_admin? ?
-        Order.search(params[:search]) :
-        current_user.ssl_account.orders.
+        Order.not_test.search(params[:search]) :
+        current_user.ssl_account.orders.not_test.
           search(params[:search]).not_new).paginate(p)
     else
-      ((current_user.is_admin? ? Order :
-        current_user.ssl_account.orders.not_new).paginate(p))
+      ((current_user.is_admin? ? Order.not_test :
+        current_user.ssl_account.orders.not_new.not_test).paginate(p))
     end
 
     respond_to do |format|

@@ -1,8 +1,6 @@
-class ApiDcvEmails < CaApiRequest
-  validates :account_key, :secret_key, :domain_name, presence: true
+class ApiDcvEmails < ApiCertificateRequest
+  validates :account_key, :secret_key, presence: true
+  validates :domain_name, domain_name: true
 
-  ACCESSORS = [:account_key, :secret_key, :domain_name]
-
-  attr_accessor *ACCESSORS
   attr_accessor :email_addresses
 end

@@ -90,7 +90,15 @@
                             =link_to 'certificate pricing', reseller_tier_url(user.ssl_account.reseller.reseller_tier.id)
                 %tr
                   %td(colspan="5")
-                    .full_width_box
+                    -if ac = user.ssl_account.api_credential
+                      .certificate_details_box
+                        %ul
+                          %li
+                            %strong
+                              api credentials
+                          %li account key: #{ac.account_key}
+                          %li secret key: #{ac.secret_key}
+                    .certificate_details_box
                       %ul
                         %li
                           %strong

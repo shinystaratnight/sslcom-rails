@@ -28,13 +28,11 @@ SslCom::Application.routes.draw do
 
   #api
   match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
-        :as => :api_certificate_requests_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+        :as => :api_certificate_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
   match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
-        :as => :api_certificate_requests_retrieve_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
-  match '/certificates/1.3/dcv_emails' => 'api_dcv_emails#create_v1_3',
-        :as => :api_dcv_emails_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
-  match '/certificates/1.3/retrieve' => 'api_dcv_emails#create_v1_3',
-        :as => :api_dcv_emails_create_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+        :as => :api_certificate_retrieve_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
+  match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
+        :as => :api_dcv_emails_v1_3, :constraints => {:subdomain=>ApiCertificateRequestsController::SUBDOMAIN}
 
   resource :account, :controller=>:users do
     resource :reseller
@@ -209,7 +207,7 @@ SslCom::Application.routes.draw do
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)
   end
-  match 'certificates/apidocs/apply' => 'restful_api#docs_apply', :as => :restful_apidocs_apply
+  match 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply
 
   #took the anchor version out /\w+\/?$/ but need to test the results of this,
   #specifically the aff code should be the last thing and not followed by other characters

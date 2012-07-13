@@ -1,4 +1,4 @@
 object false
-glue @api_dcv_emails do
+glue @result do
   attributes :email_addresses
 end

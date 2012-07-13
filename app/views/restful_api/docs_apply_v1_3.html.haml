@@ -1,0 +1,600 @@
+-c={}
+-c[:description]="SSL.com offers a restful api to allow resellers to automate integrate ssl certificate purchasing"
+-c[:keywords]="ssl certificate api rest restful digital certificates integrate resellers automate manage"
+-c[:title] = "SSL.com API For Certificates"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 RESTful api for automated and seamless ssl certificate purchasing
+.default_container
+  %h3 SSL Certificate RESTful API Overview
+  %p
+    Software developers can now integrate SSL.com certificate purchasing into their process flows.
+    The SSL.com Certificate API provides an open standards interface in the
+    form of REST using the well established http protocol and JSON standards.
+    By adopting well-established standards, the api minimizes the learning
+    curve for the development team and results in faster deployment.
+  %p
+    Leveraging this open standard api, developers can automatically purchase and manage
+    their ssl certificates. Developers can access status information, as well as cancel
+    and reprocess existing certificates. Even validations can be handled through the api.
+    Requests and responses are in the form of JSON so several return values can be handled in a single response.
+    And best of all, it's all open standards so developers can be up and running quickly and not
+    be tied into a proprietary api language.
+  %h3 Getting Started
+  %p
+    Developers must create an SSL.com Reseller account in order to get the required account_key and secret_key
+    credentials necessary to interface with the api. Once this has been done, please visit the "Dashboard" and
+    at the bottom of the screen under "api login credentials", the account_key and secret_key can be found.
+%h2
+  SSL API Developer's Guide
+.default_container
+  %h3~"POST /certificates/<version>/create"
+  %p
+    Create an ssl.com certificate order. Upon successful application, the price (if any) of the ssl certificate will be
+    deducted from reseller account associated with the account number specified in the account_key.
+  %dl.listing
+    %dt version
+    %dd 1.3
+    %dt example testing url (test orders)
+    %dd https://sws-test.sslpki.com/certificates/1.3/create
+    %dt example production url (live orders)
+    %dd https://sws.sslpki.com/certificates/1.3/create
+    %dt method
+    %dd POST
+    %dt
+      parameters
+    %dd
+      (!required items are in&nbsp;
+      %span.api_key_or_value> bold
+      , optional items are in&nbsp;
+      %span.optional_api_key> italics
+      ; only a single value is allowed per parameter unless otherwise specified)
+    %dd
+      %dl
+        %dt.api_key_or_value account_key
+        %dd The SWS account key of the reseller.
+        %dt.api_key_or_value secret_key
+        %dd The SWS secret key of the reseller.
+        %dt.optional_api_key test
+        %dd
+          Put this request in test mode. If 'y', then the this will be a test order and will not be
+          charged and funds will not be deducted from the reseller account. If 'n', then the order will be processed
+          normally and funds deducted. Defaults to 'n' if this parameter is not specified.
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (make this request a test - order will not be deducted or saved)
+            %dd
+              %span.api_key_or_value n
+              (default; order will process normally and will be saved)
+        %dt.api_key_or_value product
+        %dd
+          The product code of the ssl certificate being purchased. Select only one code from
+          the following choices:
+          %dl
+            %dd
+              %span.api_key_or_value 100
+              (for Enterprise EV Multi-domain SSL)
+            %dd
+              %span.api_key_or_value 102
+              (for UCC Multi-domain SSL)
+            %dd
+              %span.api_key_or_value 103
+              (for Enterprise EV SSL)
+            %dd
+              %span.api_key_or_value 105
+              (for Multi-subdomain Wildcard SSL)
+            %dd
+              %span.api_key_or_value 106
+              (for Basic SSL)
+            %dd
+              %span.api_key_or_value 107
+              (for Premium SSL)
+            %dd
+              %span.api_key_or_value 200
+              (for EcoSSL - for select partners only)
+            %dd
+              %span.api_key_or_value 201
+              (for EcoSSL Wildcard - for select partners only)
+            %dd
+              %span.api_key_or_value 202
+              (for EcoSSL UCC - for select partners only)
+            %dd
+              %span.api_key_or_value 203
+              (for EcoSSL EV - for select partners only)
+            %dd
+              %span.api_key_or_value 204
+              (for EcoSSL EV UCC - for select partners only)
+        %dt.api_key_or_value period
+        %dd
+          The number of days the certificate is valid for.
+          Depending on the certificate specified by the 'product' key, different options are available (select only one):
+          %dl
+            %dd
+              %span.api_key_or_value 365, 730, 1095, 1461, or 1826
+              for non EV SSL certs
+            %dd
+              %span.api_key_or_value
+                365 or 730
+              for EV SSL certs
+        %dt.api_key_or_value server_count
+        %dd
+          Applies only to Wildcard, Multi-domain, EV Multi-domain, or UCC (product=wcssl, mdssl, evmd265, or uccssl).
+          The number of servers the ssl certificate will be installed on.
+        %dt.api_key_or_value server_software
+        %dd
+          The server software which the ssl certificate is to be installed on.
+          %dl
+            -ServerSoftware.all.each do |ss|
+              %dd
+                %span.api_key_or_value= ss.id
+                =ss.title
+        %dt
+          %span.optional_api_key other_domains
+        %dd
+          Applies only to UCC or EV UCC multi-domain certificates. These are the additional domains that
+          will appear in the subject alternative names (SAN) field of the ssl certificate.
+          NOTE: commas and/or whitespace may need to be manually URL-encoded
+          (e.g. %2C for a comma), depending on whether or not the calling
+          environment does this automatically.
+        %dt.optional_api_key domain
+        %dd
+          Applies only to UCC or EV UCC multi-domain certificates. This is the primary domain that
+          will appear in the common name field of the ssl certificate. If not specified, the common name
+          will be extracted from the certificate signing request (csr).
+        %dt.optional_api_key common_names_flag
+        %dd
+          Applies only to UCC or EV UCC multi-domain certificates..
+          %ul
+            %li
+              If omitted, all of the domain names listed in "other_domains" will be
+              included as Common Names in the Subject DN of the resulting SSL Certificate.
+            %li
+              If 1, there will only be 1 Common Name in the resulting certificate. This
+              will have the value provided by "domain" (so, in this case,
+              "domain" must have a value).
+            %li
+              If 0, no Common Names will be included in the resulting certificate.
+              Note that all of the domain names listed in "other_domains" will always be
+              included as DNS Name components of the Subject Alternative Name
+              extension in the resulting Multi-domain SSL Certificate or EV Multi-domain SSL Certificate.
+        %dt.api_key_or_value csr
+        %dd
+          Certificate signing request (Base-64 encoded). Opening and closing tags are optional i.e:
+        %dd
+          %dl
+            %dt
+            %dd -----BEGIN xxxxx-----
+            %dd and
+            %dd -----END xxxxx-----
+        %dd
+          %ul.csr_fields
+            %li
+              %dt Version
+              %dd 0
+            %li
+              %dt Subject
+              %dd
+                The fields may be in any order (although multiple street addresses, if
+                present, should be in the correct order). note: DirectoryString is a choice of
+                PrintableString, TeletexString, BMPString, UniversalString (ASCII only) or UTF8String.
+              %dd.api_csr_params_table
+                MUST include these fields:
+                .api_csr_params
+                  %table
+                    %thead
+                      %tr.odd
+                        %th OID
+                        %th description
+                        %th ASN.1 type(s)
+                        %th max length
+                    %tbody
+                      %tr.even
+                        %td.numeric 2.5.4.3
+                        %td Common Name (Fully-Qualified Domain Name)
+                        %td DirectoryString
+                        %td.numeric 64 chars
+              %dd.api_csr_params_table
+                MAY include these fields (all other fields not listed will be ignored):
+                .api_csr_params
+                  %table
+                    %thead
+                      %tr.odd
+                        %th OID
+                        %th description
+                        %th ASN.1 type(s)
+                        %th max length
+                    %tbody
+                      %tr.even
+                        %td.numeric 2.5.4.10
+                        %td Organization Name
+                        %td DirectoryString
+                        %td.numeric 64 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.11
+                        %td Organizational Unit
+                        %td DirectoryString
+                        %td.numeric 64 chars
+                      %tr.even
+                        %td.numeric 2.5.4.18
+                        %td Post Office Box
+                        %td DirectoryString
+                        %td.numeric 40 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.9
+                        %td Street Address 1
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.9
+                        %td Street Address 2
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.9
+                        %td Street Address 3
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.7
+                        %td Locality Name
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.8
+                        %td State or Province Name
+                        %td DirectoryString
+                        %td.numeric 128 chars
+                      %tr.even
+                        %td.numeric 2.5.4.17
+                        %td Postal Code
+                        %td DirectoryString
+                        %td.numeric 40 chars
+                      %tr.odd
+                        %td.numeric 2.5.4.6
+                        %td Country Name (ISO3166 2-character code)
+                        %td
+                        %td.numeric
+              %dt Subject Public Key Info
+              %dd Algorithm OID = rsaEncryption (PKCS#1)
+              %dd Size = 512 to 8192 bits
+              %dt Attributes
+              %dd Any attributes MAY be present, but will be ignored
+              %dt Signature Algorithm
+              %dd
+                md5WithRSAEncryption (PKCS#1)
+                or sha1WithRSAEncryption (PKCS#1)
+                or sha224WithRSAEncryption (PKCS#1)
+                or sha256WithRSAEncryption (PKCS#1)
+                or sha384WithRSAEncryption (PKCS#1)
+                or sha512WithRSAEncryption (PKCS#1)
+        %dt
+          %span.api_key_or_value organization_name
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
+        %dd
+          Represents the Organization Name.
+        %dt.optional_api_key organization_unit_name
+        %dd
+          Represents the Organization Unit Name (eg department name).
+        %dt
+          %span.optional_api_key post_office_box
+          %span.optional_api_key
+            [required if street_address_1 is missing]
+        %dd
+          Represents the Post Office Box.
+        %dt
+          %span.api_key_or_value street_address_1
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
+        %dd
+          Represents the Street Address 1.
+        %dt.optional_api_key street_address_2
+        %dd
+          Represents the Street Address 2
+        %dt.optional_api_key street_address_3
+        %dd
+          Represents the Street Address 3
+        %dt
+          %span.api_key_or_value locality_name
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
+        %dd
+          Represents the Locality Name (eg city or town name).
+        %dt
+          %span.api_key_or_value state_or_province_name
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
+        %dd
+          Represents the State or Province Name.
+        %dt
+          %span.api_key_or_value postal_code
+          %span.optional_api_key
+            [optional if parsed from csr; ignored for domain validated certificates]
+        %dd
+          Represents the Postal Code.
+        %dt
+          %span.api_key_or_value country_name
+          %span.optional_api_key
+            [optional if parsed from csr]
+        %dd
+          Represents the Country Name (ISO3166 2-character country code).
+        %dt.optional_api_key duns_number
+        %dd
+          Represents the Dun and Bradstreet number.
+        %dt.optional_api_key company_number
+        %dd
+          Represents the company registration number.
+        %dt.optional_api_key registered_locality_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL. Represents the city or town (if any) of
+          jurisdiction in which the company is incorporated or registered.
+        %dt.optional_api_key registered_state_or_province_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL. Represents the state or province (if any)
+          of jurisdiction in which the company is incorporated or registered.
+        %dt.api_key_or_value registered_country_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL. Represents the Country Name
+          (ISO3166 2-character country code) of jurisdiction in which the company is incorporated or registered.
+        %dt.api_key_or_value incorporation_date
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL.
+          Represents the date of incorporation of the company (YYYY-MM-DD).
+        %dt.optional_api_key assumed_name
+        %dd
+          Applies only to EV SSL or EV Multi-domain SSL.
+          Represents the dba (doing business as) or assumed named of the company.
+        %dt.optional_api_key business_category
+        %dd
+          Represents the business category (or type) of the company or registrant.
+          %dl
+            %dd
+              %span.optional_api_value b
+              (for Private Organization)
+            %dd
+              %span.optional_api_value c
+              (for Government Entity)
+            %dd
+              %span.optional_api_value d
+              (for Business Entity)
+        %dt.optional_api_key email_address
+        %dd
+          Represents the email address to send the processed ssl certificate to.
+          If this parameter is not specified, then the certificate
+          will be sent to the reseller admin email address. If value 'none' is specified, then the ssl
+          certificate will not be emailed to any email address, but the certificate still can be retrieved
+          via an api call.
+        %dt.optional_api_key contact_email_address
+        %dd
+          Represents an email address will be the only email address that SSL.com
+          Validation Staff will correspond with during the processing of this order. Otherwise reseller admin email
+          address will be used.
+        %dt.api_key_or_value dcv_email_address
+        %dd
+          Represents the email address with which to perform Domain Control Validation for this certificate.
+          This will be one email address selected from a number of email address choices.
+          See the documentation below for the dcv_emails API for more information on how to query for these
+          choices.
+        %dt.optional_api_key ca_certificate_id
+        %dd
+          Overrides SSL.com’s default choice of CA certificate/key to
+          be used to issue this certificate.
+          This functionality is only available by special agreement with SSL.com.
+        %dt.api_key_or_value is_customer_validated [ignored for dv certs]
+        %dd
+          Has the customer been validated according to SSL.com's RA validation guidelines?
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (the host or reseller has validated the customer)
+            %dd
+              %span.api_key_or_value n
+              (SSL.com will perform the validation)
+        %dt.optional_api_key hide_certificate_reference
+        %dd
+          Hide the certificate reference number in the emailed ssl certificate. By default, the ssl certificate
+          reference number is displayed in the email.
+          %dl
+            %dd
+              %span.api_key_or_value y
+              (hide the certificate reference number in the emailed ssl certificate)
+            %dd
+              %span.api_key_or_value n
+              (default; show the certificate reference number in the emailed ssl certificate)
+        %dt.optional_api_key external_order_number
+        %dd
+          This identifier is provided for integration with partner systems. If the external system has a record
+          or identifier that needs to associate with this particular ssl certificate order, then the developer
+          provides an external order number or identifier so that the developer can make the association.
+    %dt
+      %div.api_sub_section successful response
+    %dd
+      Upon successful order placement, returns a JSON formatted response containing information about the newly created
+      ssl certificate order:
+      %dl
+        %dt.api_key_or_value order_number
+        %dd This is the order number that should be used when referencing this new order.
+        %dt.api_key_or_value order_status
+        %dd
+          Represents the status of the order. Valid values are:
+          %dl
+            %dd
+              "waiting for domain control validation"
+            %dd
+              "waiting for documents"
+            %dd
+              "pending validation"
+            %dd
+              "validated"
+            %dd
+              "issued"
+        %dt.api_key_or_value order_amount
+        %dd This is the amount (in USD) that was debited from the reseller account.
+        %dt.api_key_or_value certificate_url
+        %dd This is the url where the ssl certificate can be managed or downloaded.
+        %dt.api_key_or_value order_receipt_url
+        %dd This is the url where order receipt is displayed.
+        %dt.api_key_or_value smart_seal_url
+        %dd This is the url where the smart seal can be configured.
+        %dt.api_key_or_value validation_documents_url
+        %dd This is the url where validation documents can be submitted or reviewed for acceptance.
+    %dd
+      Sample JSON return value for a successful request:
+      %dl
+        %dd
+          {"order_number" : "abcd1234", "order_status" : "pending validation",
+          "order_amount" : "$49.00",
+          "certificate_url" : "https://www.ssl.com/certificate_orders/abcd1234",
+          "order_receipt_url" : "https://www.ssl.com/orders/abcd1234",
+          "smart_seal_url" : "https://www.ssl.com/smart_seals/abcd1234",
+          "validation_documents_url" : "https://www.ssl.com/validations/abcd1234"}
+    %dt
+      %div.api_sub_section errors
+    %dd
+      If order placement is unsuccessful, then the JSON response will include only include the parent key 'errors' and
+      an array of possible errors.
+    %dd
+      Sample JSON return value for a failed request:
+      %dl
+        %dd
+          {"errors":{"account_key":["can't be blank"],
+          "secret_key":["can't be blank"],
+          "csr":["can't be blank"],
+          "period":["can't be blank","is invalid","needs to be one of the following: 365, 730, 1095, 1461, 1826"],
+          "server_software":["can't be blank","is invalid",
+          "needs to be one of the following: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+          21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37"],
+          "organization_name":["can't be blank"],"post_office_box":
+          ["is required if street_address_1 is not specified"],"street_address_1":
+          ["is required if post_office_box is not specified"],"locality_name":
+          ["can't be blank"],"state_or_province_name":["can't be blank"],
+          "postal_code":["can't be blank"],"product":["can't be blank",
+          "is invalid","needs to one of the following: 100, 101, 102, 103, 104, 105, 106, 107, 200"],
+          "is_customer_validated":["is invalid","can't be blank"]}}
+.default_container
+  %h3~"POST /certificates/<version>/dcv_emails"
+  %p
+    Query for a list of email address choices that can be used in validating the ownership or control of a domain
+    name. One of these email addresses can then be used in the dcv_email_address parameter when placing an order.
+    See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders
+    through the api.
+  %dl.listing
+    %dt version
+    %dd 1.3
+    %dt example testing url (test orders)
+    %dd https://sws-test.sslpki.com/certificates/1.3/dcv_emails
+    %dt example production url (live orders)
+    %dd https://sws.sslpki.com/certificates/1.3/dcv_emails
+    %dt method
+    %dd POST
+    %dt
+      parameters
+    %dd
+      (!required items are in&nbsp;
+      %span.api_key_or_value> bold
+      , optional items are in&nbsp;
+      %span.optional_api_key> italics
+      ; only a single value is allowed per parameter unless otherwise specified)
+    %dd
+      %dl
+        %dt.api_key_or_value account_key
+        %dd The SWS account key of the reseller.
+        %dt.api_key_or_value secret_key
+        %dd The SWS secret key of the reseller.
+        %dt.api_key_or_value domain_name
+        %dd
+          Get the list of email address choices for this domain name which typically will be the domain name
+          for which the certificate will be issued to.
+    %dt
+      %div.api_sub_section successful response
+    %dd
+      Returns a JSON formatted response containing an array of email address choices under the single parent key
+      'email_addresses'.
+      %dl
+        %dt.api_key_or_value email_addresses
+        %dd This is an array of email address choices that can satisfy proof of domain control.
+    %dd
+      Sample JSON return value for a successful request:
+      %dl
+        %dd
+          {"email_addresses":["webmaster@ssl.com",
+          "postmaster@ssl.com","hostmaster@ssl.com","administrator@ssl.com",
+          "admin@ssl.com","webmaster@certs.ssl.com","postmaster@certs.ssl.com",
+          "hostmaster@certs.ssl.com","administrator@certs.ssl.com",
+          "admin@certs.ssl.com"]}
+    %dt
+      %div.api_sub_section errors
+    %dd
+      If a query is unsuccessful, then the JSON response will include only include the parent key 'errors' and
+      an array of possible errors. A sample JSON return value for a failed query would look like:
+      %dl
+        %dd
+          {"errors":{"domain_name":["%&* is not a valid domain name"]}}
+.default_container
+  %h3~"POST /certificates/<version>/retrieve"
+  %p
+    Retrieve the certificate or check the status of a certificate order placed earlier.
+    See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders
+    through the api.
+  %dl.listing
+    %dt version
+    %dd 1.3
+    %dt example testing url (test orders)
+    %dd https://sws-test.sslpki.com/certificates/1.3/retrieve
+    %dt example production url (live orders)
+    %dd https://sws.sslpki.com/certificates/1.3/retrieve
+    %dt method
+    %dd POST
+    %dt
+      parameters
+    %dd
+      (!required items are in&nbsp;
+      %span.api_key_or_value> bold
+      , optional items are in&nbsp;
+      %span.optional_api_key> italics
+      ; only a single value is allowed per parameter unless otherwise specified)
+    %dd
+      %dl
+        %dt.api_key_or_value account_key
+        %dd The SWS account key of the reseller.
+        %dt.api_key_or_value secret_key
+        %dd The SWS secret key of the reseller.
+        %dt.api_key_or_value ref
+        %dd
+          The ref number of the ssl.com certificate order that we are querying about or want to retrieve. The ref
+          number normally has the format co-xxxxxxx where x is any hex value.
+        %dt.api_key_or_value query_type
+        %dd
+          The ref number of the ssl.com certificate order that we are querying about or want to retrieve. The ref
+          number normally has the format co-xxxxxxx where x is any hex value.
+    %dt
+      %div.api_sub_section successful response
+    %dd
+      Returns a JSON formatted response containing an array of email address choices under the single parent key
+      'email_addresses'.
+      %dl
+        %dt.api_key_or_value email_addresses
+        %dd This is an array of email address choices that can satisfy proof of domain control.
+    %dd
+      Sample JSON return value for a successful request:
+      %dl
+        %dd
+          {"email_addresses":["webmaster@ssl.com",
+          "postmaster@ssl.com","hostmaster@ssl.com","administrator@ssl.com",
+          "admin@ssl.com","webmaster@certs.ssl.com","postmaster@certs.ssl.com",
+          "hostmaster@certs.ssl.com","administrator@certs.ssl.com",
+          "admin@certs.ssl.com"]}
+    %dt
+      %div.api_sub_section errors
+    %dd
+      If a query is unsuccessful, then the JSON response will include only include the parent key 'errors' and
+      an array of possible errors. A sample JSON return value for a failed request would look like:
+      %dl
+        %dd
+          {"errors":{"account_key":["can't be blank"],
+          "secret_key":["can't be blank"],"ref":["can't be blank"],
+          "query_type":["can't be blank","is invalid","needs to one of the following: 0, 1, 2, 3"]}}
+

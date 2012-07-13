@@ -39,6 +39,12 @@ class Order < ActiveRecord::Base
         where{line_items.sellable(CertificateOrder).workflow_state=='paid'}
   }
 
+  scope :not_test, lambda {
+    joins{line_items.sellable(CertificateOrder)}.
+        where{(line_items.sellable(CertificateOrder).is_test==nil) |
+        (line_items.sellable(CertificateOrder).is_test==false)}
+  }
+
   scope :search, lambda {|term|
     where{reference_number =~ "#{term}"}
   }

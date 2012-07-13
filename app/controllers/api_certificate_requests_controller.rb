@@ -2,7 +2,9 @@ class ApiCertificateRequestsController < ApplicationController
   skip_filter :identify_visitor, :record_visit
 
   wrap_parameters ApiCertificateRequest, include:
-      [*(ApiCertificateRequest::ACCESSORS+ApiCertificateRequest::RETRIEVE_ACCESSORS).uniq]
+      [*(ApiCertificateRequest::ACCESSORS+
+          ApiCertificateRequest::RETRIEVE_ACCESSORS+
+          ApiCertificateRequest::DCV_EMAILS_ACCESSORS).uniq]
   respond_to :xml, :json
 
   SUBDOMAIN = "sws"
@@ -71,27 +73,30 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def create_v1_3
-    @result = @acr = ApiCertificateCreate.new(params[:api_certificate_request])
-    unless @acr.csr_obj.valid?
+    @result = ApiCertificateCreate.new(params[:api_certificate_request])
+    if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
-      @result = @acr.csr_obj
+      @result = @result.csr_obj
     else
-      if @acr.save
-        if @result = @acr.create_certificate_order
+      if @result.save
+        if @acr = @result.create_certificate_order
           # successfully charged
-          if @result.errors.empty?
-            @result.certificate_url = url_for(@result)
-            @result.receipt_url = url_for(@result.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@result)
-            @result.validation_url = certificate_order_validation_url(@result)
+          if @acr.errors.empty?
+            @result.ref = @acr.ref
+            @result.order_amount = @acr.order.amount.format
+            @result.certificate_url = url_for(@acr)
+            @result.receipt_url = url_for(@acr.order)
+            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
+            @result.validation_url = certificate_order_validation_url(@acr)
             render(:template => "api_certificate_requests/success_create_v1_3")
+          else
+            @result = @acr #so that rabl can report errors
           end
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    #respond_with @acr
   end
 
   def retrieve_v1_3
@@ -101,8 +106,22 @@ class ApiCertificateRequestsController < ApplicationController
       @certificate_order = CertificateOrder.find_by_ref(@result.ref)
       render(:template => "api_certificate_requests/success_retrieve_v1_3") and return
     else
-      InvalidApiDcvEmails.create parameters: params, ca: "ssl.com"
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
-    render(:template => "api_certificate_requests/create_v1_3")
+    render action: :create_v1_3
+  end
+
+  def dcv_emails_v1_3
+    @result=ApiDcvEmails.new(params[:api_certificate_request])
+    @result.ca = 'ssl.com'
+    if @result.save
+      @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      unless @result.email_addresses.blank?
+        render(:template => "api_certificate_requests/success_dcv_emails_v1_3") and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render action: :create_v1_3
   end
 end

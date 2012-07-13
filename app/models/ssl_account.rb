@@ -2,6 +2,7 @@ class SslAccount < ActiveRecord::Base
   using_access_control
   acts_as_billable
   easy_roles :roles
+  has_one   :api_credential
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
   has_many  :certificate_orders, :include => [:orders] do
@@ -177,6 +178,7 @@ class SslAccount < ActiveRecord::Base
     self.preferred_confirmation_include_cert_admin=false
     self.preferred_confirmation_include_cert_bill=false
     self.save
+    create_api_credential if api_credential.blank?
   end
 
   #def order_transactions
