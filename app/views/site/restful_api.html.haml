@@ -20,8 +20,6 @@
 .default_container
   %h3 API Documentation
   %p
-    We are excited to provide documentation our open api once the beta-testing phase is completed.
-    In the meantime, please check back regularly or
-    =link_to "register as a reseller", new_user_url(subdomain: Reseller::SUBDOMAIN)
-    where you will be notified when the program has completed beta testing. The current api document
-    under development can be found #{link_to "here", restful_apidocs_apply_url}.
+    Click #{link_to "here for the current api documentation", restful_apidocs_apply_url}.
+    Currently only reseller partners can access the api. To register for a free reseller account please visit the
+    #{link_to "reseller registration page", new_user_url(subdomain: Reseller::SUBDOMAIN)}.

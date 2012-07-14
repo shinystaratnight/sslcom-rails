@@ -26,8 +26,8 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 #set :domain, 'staging2.ssl.com' #development
-#set :domain, '184.73.226.63' #production
-set :domain, 'sws.sslpki.com' #api
+set :domain, '184.73.226.63' #production
+#set :domain, '174.129.43.244' # sws.sslpki.com api
 #set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"

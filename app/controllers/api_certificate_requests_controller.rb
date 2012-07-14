@@ -85,6 +85,7 @@ class ApiCertificateRequestsController < ApplicationController
           # successfully charged
           if @acr.errors.empty?
             @result.ref = @acr.ref
+            @result.order_status = "pending validation"
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)

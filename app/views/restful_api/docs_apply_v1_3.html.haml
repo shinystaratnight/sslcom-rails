@@ -568,8 +568,20 @@
           number normally has the format co-xxxxxxx where x is any hex value.
         %dt.api_key_or_value query_type
         %dd
-          The ref number of the ssl.com certificate order that we are querying about or want to retrieve. The ref
-          number normally has the format co-xxxxxxx where x is any hex value.
+          The return value of this retrieval. Must be one of the following:
+          %dl
+            %dd
+              %span.api_key_or_value status
+              for order status inquiry only
+            %dd
+              %span.api_key_or_value all_certificates
+              for the entire certificate chain including end, root and intermediate certificates if ready
+            %dd
+              %span.api_key_or_value end_certificate
+              for the end certificate only if ready (no root or intermediate certificates)
+            %dd
+              %span.api_key_or_value ca_bundle
+              for the root and intermediate certificates (no end certificate)
     %dt
       %div.api_sub_section successful response
     %dd
