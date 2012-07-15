@@ -80,7 +80,7 @@
                     .certificate_details_box
                       %ul
                         %li
-                          %strong deposit account
+                          %strong available funds
                           %li=user.ssl_account.funded_account.amount(true).format :with_currency=>false
                           %li
                             =link_to 'deposit funds', allocate_funds_url
@@ -98,6 +98,7 @@
                               api credentials
                           %li account key: #{ac.account_key}
                           %li secret key: #{ac.secret_key}
+                        %li=link_to 'view documentation', restful_apidocs_apply_url
                     .certificate_details_box
                       %ul
                         %li

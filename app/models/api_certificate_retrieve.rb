@@ -1,6 +1,7 @@
 class ApiCertificateRetrieve < ApiCertificateRequest
   QUERY_TYPE = %w(order_status end_certificate all_certificates ca_bundle)
-  RESPONSE_TYPE = [*(0..3)]
+  RESPONSE_TYPE = %w(zip netscape pkcs7 individually_encoded)
+  RESPONSE_ENCODING = %w(base64 binary)
 
   validates :account_key, :secret_key, :ref, presence: true
   validates :query_type, presence: true,
@@ -9,6 +10,9 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   validates :response_type, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateRetrieve::RESPONSE_TYPE,
     message: "needs to be one of the following: #{RESPONSE_TYPE.join(', ')}"}, if: lambda{|c|c.response_type}
+  validates :response_type, presence: true, format: /\d+/,
+    inclusion: {in: ApiCertificateRetrieve::RESPONSE_ENCODING,
+    message: "needs to be one of the following: #{RESPONSE_ENCODING.join(', ')}"}, if: lambda{|c|c.response_encoding}
   validates :show_validity_period, format: /[YNyn]/, if: lambda{|c|c.show_validity_period}
   validates :show_domains, format: /[YNyn]/, if: lambda{|c|c.show_domains}
   validates :show_ext_status, format: /[YNyn]/, if: lambda{|c|c.show_ext_status}

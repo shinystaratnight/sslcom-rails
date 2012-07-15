@@ -13,8 +13,8 @@ class ApiCertificateRequest < CaApiRequest
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_email_addresses, :dcv_method]
 
-  RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :show_validity_period,
-    :show_domains, :show_ext_status]
+  RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
+    :show_validity_period, :show_domains, :show_ext_status]
 
   DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain_name]
 

@@ -611,6 +611,38 @@
             %dd
               %span.api_key_or_value ca_bundle
               for the root and intermediate certificates (no end certificate)
+        %dt.optional_api_key response_type
+        %dd
+          How should the return value be packaged:
+          %dl
+            %dd
+              %span.api_key_or_value zip
+              \- zip file format (query_type must be 'all_certificates')
+            %dd
+              %span.api_key_or_value netscape
+              \- Netscape certificate sequence format (query_type must be 'all_certificates')
+            %dd
+              %span.api_key_or_value pkcs7
+              \- PKCS7 format (query_type must be 'all_certificates')
+            %dd
+              %span.api_key_or_value individually_encoded
+              \- individually encoded format
+        %dt.optional_api_key response_encoding
+        %dd
+          How should the certificate(s) be encoded:
+          %dl
+            %dd
+              %span.api_key_or_value base64
+              \- base64 encoding
+            %dd
+              %span.api_key_or_value binary
+              \- binary encoding (query_type must be 'all_certificates' and response_type must be 'zip' or 'pkcs7')
+        %dt.optional_api_key show_validity_period
+        %dd
+          Return the validity period. Value can be and of the following: Y,N,y,n
+        %dt.optional_api_key show_domains
+        %dd
+          Show all domains on this certificate. Each domain is a key, and it's validation status is the value. Can be and of the following: Y,N,y,n
     %dd
       Using the curl command line utility, you can test an api request using something similar to the following:
       %dl

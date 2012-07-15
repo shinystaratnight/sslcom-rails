@@ -39,7 +39,7 @@
     %span.title PROGRAMS
     %ul
       %li=link_to "Partners", affiliates_url
-      %li=link_to "RESTful API", restful_api_url
+      %li=link_to "RESTful API", restful_apidocs_apply_url
       -Reseller::TARGETED.each do |t|
         %li=send :link_to, t.titleize, eval("#{t}_url")
   .box
