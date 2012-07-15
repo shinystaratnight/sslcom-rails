@@ -461,12 +461,13 @@
       Sample JSON return value for a successful request:
       %dl
         %dd
-          {"order_number" : "abcd1234", "order_status" : "pending validation",
-          "order_amount" : "$49.00",
-          "certificate_url" : "https://www.ssl.com/certificate_orders/abcd1234",
-          "order_receipt_url" : "https://www.ssl.com/orders/abcd1234",
-          "smart_seal_url" : "https://www.ssl.com/smart_seals/abcd1234",
-          "validation_documents_url" : "https://www.ssl.com/validations/abcd1234"}
+          :plain
+            {"order_number" : "abcd1234", "order_status" : "pending validation",
+            "order_amount" : "$49.00",
+            "certificate_url" : "https://www.ssl.com/certificate_orders/abcd1234",
+            "order_receipt_url" : "https://www.ssl.com/orders/abcd1234",
+            "smart_seal_url" : "https://www.ssl.com/smart_seals/abcd1234",
+            "validation_documents_url" : "https://www.ssl.com/validations/abcd1234"}
     %dt
       %div.api_sub_section errors
     %dd
@@ -476,20 +477,21 @@
       Sample JSON return value for a failed request:
       %dl
         %dd
-          {"errors":{"account_key":["can't be blank"],
-          "secret_key":["can't be blank"],
-          "csr":["can't be blank"],
-          "period":["can't be blank","is invalid","needs to be one of the following: 365, 730, 1095, 1461, 1826"],
-          "server_software":["can't be blank","is invalid",
-          "needs to be one of the following: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-          21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37"],
-          "organization_name":["can't be blank"],"post_office_box":
-          ["is required if street_address_1 is not specified"],"street_address_1":
-          ["is required if post_office_box is not specified"],"locality_name":
-          ["can't be blank"],"state_or_province_name":["can't be blank"],
-          "postal_code":["can't be blank"],"product":["can't be blank",
-          "is invalid","needs to one of the following: 100, 101, 102, 103, 104, 105, 106, 107, 200"],
-          "is_customer_validated":["is invalid","can't be blank"]}}
+          :plain
+            {"errors":{"account_key":["can't be blank"],
+            "secret_key":["can't be blank"],
+            "csr":["can't be blank"],
+            "period":["can't be blank","is invalid","needs to be one of the following: 365, 730, 1095, 1461, 1826"],
+            "server_software":["can't be blank","is invalid",
+            "needs to be one of the following: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37"],
+            "organization_name":["can't be blank"],"post_office_box":
+            ["is required if street_address_1 is not specified"],"street_address_1":
+            ["is required if post_office_box is not specified"],"locality_name":
+            ["can't be blank"],"state_or_province_name":["can't be blank"],
+            "postal_code":["can't be blank"],"product":["can't be blank",
+            "is invalid","needs to one of the following: 100, 101, 102, 103, 104, 105, 106, 107, 200"],
+            "is_customer_validated":["is invalid","can't be blank"]}}
 .default_container
   %h3~"POST /certificates/<version>/dcv_emails"
   %p
@@ -558,7 +560,8 @@
       an array of possible errors. A sample JSON return value for a failed query would look like:
       %dl
         %dd
-          {"errors":{"domain_name":["%&* is not a valid domain name"]}}
+          :plain
+            {"errors":{"domain_name":["%&* is not a valid domain name"]}}
 .default_container
   %h3~"POST /certificates/<version>/retrieve"
   %p
@@ -640,11 +643,7 @@
       Sample JSON return value for a successful request:
       %dl
         %dd
-          {"email_addresses":["webmaster@ssl.com",
-          "postmaster@ssl.com","hostmaster@ssl.com","administrator@ssl.com",
-          "admin@ssl.com","webmaster@certs.ssl.com","postmaster@certs.ssl.com",
-          "hostmaster@certs.ssl.com","administrator@certs.ssl.com",
-          "admin@certs.ssl.com"]}
+          {"order_status":"waiting for domain control validation"}
     %dt
       %div.api_sub_section errors
     %dd
@@ -652,7 +651,9 @@
       an array of possible errors. A sample JSON return value for a failed request would look like:
       %dl
         %dd
-          {"errors":{"account_key":["can't be blank"],
-          "secret_key":["can't be blank"],"ref":["can't be blank"],
-          "query_type":["can't be blank","is invalid","needs to one of the following: 0, 1, 2, 3"]}}
+          :plain
+            {"errors":{"account_key":["can't be blank"],"secret_key":["can't be blank"],
+            "ref":["can't be blank"],"query_type":["can't be blank",
+            "needs to be one of the following: order_status, end_certificate,
+            all_certificates, ca_bundle"]}}
 

@@ -106,7 +106,7 @@ class ApiCertificateRequestsController < ApplicationController
     @result = ApiCertificateRetrieve.new(params[:api_certificate_request])
     @result.test = @test
     if @result.save
-      @result.order_status = ApiCertificateRequest::ORDER_STATUS[0]
+      @result.order_status = ApiCertificateRequest::ORDER_STATUS[2]
       render(:template => "api_certificate_requests/success_retrieve_v1_3") and return
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
