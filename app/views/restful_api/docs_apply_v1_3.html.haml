@@ -410,6 +410,22 @@
           or identifier that needs to associate with this particular ssl certificate order, then the developer
           provides an external order number or identifier so that the developer can make the association.
     %dt
+      %div.api_sub_section sample request
+    %dd
+      Using the curl command line utility, you can test an api request using something similar to the following:
+      %dl
+        %dd
+          :plain
+            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
+            "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",\"product\" :
+            \"100\", \"period\" : \"365\", \"server_count\" : \"1\", \"server_software\" : \"15\",
+            \"organization_name\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
+            \"locality_name\" : \"new york\", \"state_or_province_name\" : \"new york\", \"postal_code\" :
+            \"77777\", \"country_name\" : \"US\", \"duns_number\" : \"1234567\", \"company_number\" :
+            \"yoursite_number\", \"registered_country_name\" : \"US\", \"incorporation_date\" :
+            \"12/12/2000\", \"is_customer_validated\" : \"y\",
+            \"dcv_email_address\" : \"admin@yoursite.com\", \"csr\" : \"-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----\"}" https://sws-test.sslpki.com/certificates/1.3/create
+    %dt
       %div.api_sub_section successful response
     %dd
       Upon successful order placement, returns a JSON formatted response containing information about the newly created
@@ -509,6 +525,16 @@
           Get the list of email address choices for this domain name which typically will be the domain name
           for which the certificate will be issued to.
     %dt
+      %div.api_sub_section sample request
+    %dd
+      Using the curl command line utility, you can test an api request using something similar to the following:
+      %dl
+        %dd
+          :plain
+            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"account_key\" :
+            \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\", \"domain_name\" : \"yoursite.com\"}"
+            https://sws-test.sslpki.com/certificates/1.3/dcv_emails
+    %dt
       %div.api_sub_section successful response
     %dd
       Returns a JSON formatted response containing an array of email address choices under the single parent key
@@ -571,7 +597,7 @@
           The return value of this retrieval. Must be one of the following:
           %dl
             %dd
-              %span.api_key_or_value status
+              %span.api_key_or_value order_status
               for order status inquiry only
             %dd
               %span.api_key_or_value all_certificates
@@ -582,14 +608,34 @@
             %dd
               %span.api_key_or_value ca_bundle
               for the root and intermediate certificates (no end certificate)
+    %dd
+      Using the curl command line utility, you can test an api request using something similar to the following:
+      %dl
+        %dd
+          :plain
+            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
+            "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxx\", \"ref\" : \"co-xxxxxxx\",
+            \"query_type\" : \"status\"}" https://sws-test.sslpki.com/certificates/1.3/retrieve
     %dt
       %div.api_sub_section successful response
     %dd
-      Returns a JSON formatted response containing an array of email address choices under the single parent key
-      'email_addresses'.
+      Upon successful order retrieval, returns a JSON formatted response containing status information and,
+      if requested, the actual certificate based on the the ssl certificate ref number:
       %dl
-        %dt.api_key_or_value email_addresses
-        %dd This is an array of email address choices that can satisfy proof of domain control.
+        %dt.api_key_or_value order_status
+        %dd
+          Represents the status of the order. Valid values are:
+          %dl
+            %dd
+              "waiting for domain control validation"
+            %dd
+              "waiting for documents"
+            %dd
+              "pending validation"
+            %dd
+              "validated"
+            %dd
+              "issued"
     %dd
       Sample JSON return value for a successful request:
       %dl

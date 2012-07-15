@@ -1,4 +1,4 @@
 object false
-glue @certificate_order do
-  attributes :ref
+glue @result do
+  attributes :order_status
 end

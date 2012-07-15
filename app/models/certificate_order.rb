@@ -333,7 +333,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.skip_verification?(certificate)
-    certificate.skip_verification?
+    certificate.is_ucc? #certificate.skip_verification?
   end
 
   def skip_verification?
@@ -703,7 +703,7 @@ class CertificateOrder < ActiveRecord::Base
           end
         else
           options.merge!(
-            'test' => Rails.env =~ /production/i ? "N" : 'Y',
+            'test' => Rails.env =~ /production/i ? (is_test ? "Y" : "N") : 'Y',
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),

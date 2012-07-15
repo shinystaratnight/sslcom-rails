@@ -9,7 +9,9 @@ class ApiCertificateCreate < ApiCertificateRequest
 
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
               :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
-              :"107"=>"premiumssl256sslcom", :"200"=>"ecossl256"}
+              :"107"=>"premiumssl256sslcom",
+              :"200"=> "evucc256sslcom", :"201"=>"ucc256sslcom", :"202"=>"ev256sslcom",
+              :"203"=>"ov256sslcom", :"204"=>"dv256sslcom"}
 
   DCV_METHODS = %w(email http_csr_hash)
 
