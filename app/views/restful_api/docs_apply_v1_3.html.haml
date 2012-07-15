@@ -416,7 +416,7 @@
       %dl
         %dd
           :plain
-            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
+            curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
             "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",\"product\" :
             \"100\", \"period\" : \"365\", \"server_count\" : \"1\", \"server_software\" : \"15\",
             \"organization_name\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
@@ -533,7 +533,7 @@
       %dl
         %dd
           :plain
-            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"account_key\" :
+            curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"account_key\" :
             \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\", \"domain_name\" : \"yoursite.com\"}"
             https://sws-test.sslpki.com/certificates/1.3/dcv_emails
     %dt
@@ -648,7 +648,7 @@
       %dl
         %dd
           :plain
-            curl -v -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
+            curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
             "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxx\", \"ref\" : \"co-xxxxxxx\",
             \"query_type\" : \"status\"}" https://sws-test.sslpki.com/certificates/1.3/retrieve
     %dt
