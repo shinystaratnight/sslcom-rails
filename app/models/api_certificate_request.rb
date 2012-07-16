@@ -2,7 +2,7 @@ class ApiCertificateRequest < CaApiRequest
   attr_accessor :csr_obj, :current_user, :test
 
   ORDER_STATUS = ["waiting for domain control validation",
-                "waiting for documents", "pending validation", "validated", "issued"]
+                "waiting for documents", "pending validation", "validated", "issued", "revoked", "canceled"]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,

@@ -10,7 +10,7 @@
       %th(scope="col") Pricing
       -unless tier.label == "1"
         %th(scope="col") Savings
-    -tier.certificates.all.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten.each_with_index do |item, i|
+    -tier.certificates.public.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten.each_with_index do |item, i|
       -compare_item = compare_tier.find{|c|c.serial==item.serial.slice(/.+(?=\dtr)/)}
       %tr(class="#{(i.odd?) ? 'alt' : ''}")
         %td=item.certificate.description["abbr"]

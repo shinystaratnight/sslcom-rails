@@ -437,16 +437,8 @@
         %dd
           Represents the status of the order. Valid values are:
           %dl
-            %dd
-              "waiting for domain control validation"
-            %dd
-              "waiting for documents"
-            %dd
-              "pending validation"
-            %dd
-              "validated"
-            %dd
-              "issued"
+            -ApiCertificateRequest::ORDER_STATUS.each do |status|
+              %dd.api_key_or_value=status
         %dt.api_key_or_value order_amount
         %dd This is the amount (in USD) that was debited from the reseller account.
         %dt.api_key_or_value certificate_url
@@ -497,7 +489,7 @@
   %p
     Query for a list of email address choices that can be used in validating the ownership or control of a domain
     name. One of these email addresses can then be used in the dcv_email_address parameter when placing an order.
-    See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders
+    ~"See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders"
     through the api.
   %dl.listing
     %dt version
@@ -566,7 +558,7 @@
   %h3~"POST /certificates/<version>/retrieve"
   %p
     Retrieve the certificate or check the status of a certificate order placed earlier.
-    See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders
+    ~"See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders"
     through the api.
   %dl.listing
     %dt version
@@ -639,10 +631,13 @@
               \- binary encoding (query_type must be 'all_certificates' and response_type must be 'zip' or 'pkcs7')
         %dt.optional_api_key show_validity_period
         %dd
-          Return the validity period. Value can be and of the following: Y,N,y,n
+          Return the validity period. Value can be and of the following:
+          %span.api_key_or_value Y,N,y,n
         %dt.optional_api_key show_domains
         %dd
-          Show all domains on this certificate. Each domain is a key, and it's validation status is the value. Can be and of the following: Y,N,y,n
+          Show all domains on this certificate. Each domain is a key, and it's validation status is the value.
+          Can be and of the following:
+          %span.api_key_or_value Y,N,y,n
     %dd
       Using the curl command line utility, you can test an api request using something similar to the following:
       %dl
@@ -661,16 +656,14 @@
         %dd
           Represents the status of the order. Valid values are:
           %dl
-            %dd
-              "waiting for domain control validation"
-            %dd
-              "waiting for documents"
-            %dd
-              "pending validation"
-            %dd
-              "validated"
-            %dd
-              "issued"
+            -ApiCertificateRequest::ORDER_STATUS.each do |status|
+              %dd.api_key_or_value=status
+        %dt.optional_api_key certificate
+        %dd
+        %dt.optional_api_key zip_file
+        %dd
+        %dt.optional_api_key ca_bundle
+        %dd
     %dd
       Sample JSON return value for a successful request:
       %dl
