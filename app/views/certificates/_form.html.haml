@@ -1,67 +1,71 @@
 -if @certificate.is_ucc?
   -first = @certificate.items_by_domains[0]
   -second = @certificate.items_by_domains[1]
--unless @certificate_order.is_unused_credit?
-  .clearfix
-    %label{:for=>"has_csr"}
-      *Do you have your CSR?:
-      %span.label_desc certificate signing request
-    .radio_choices
-      .radio_w_desc.clearfix
-        =f.radio_button :has_csr, true
-        %span.has_csr_container I want to submit my CSR now
-      .radio_w_desc.clearfix
-        =f.radio_button :has_csr, false
-        %span.has_csr_container I will submit my CSR later or have someone else do it
+-if Settings.show_csr_submit_on_buy_page
+  -unless @certificate_order.is_unused_credit?
+    .clearfix
+      %label{:for=>"has_csr"}
+        *Do you have your CSR?:
+        %span.label_desc certificate signing request
+      .radio_choices
+        .radio_w_desc.clearfix
+          =f.radio_button :has_csr, true
+          %span.has_csr_container I want to submit my CSR now
+        .radio_w_desc.clearfix
+          =f.radio_button :has_csr, false
+          %span.has_csr_container I will submit my CSR later or have someone else do it
+  -else
+    =f.hidden_field :has_csr
 -else
   =f.hidden_field :has_csr
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|
-  #csr_section
-    %p
-      In order to submit a Certificate Signing Request (CSR), you must first
-      generate it on the web server that will be utilizing the SSL server
-      certificate. If you need instructions on generating a CSR,
-      =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
-      Once the CSR is ready, you may copy and paste it
-      into the text box below. Your CSR should appear similar
-      (although not identical) to:
-    %dl.cert_example
-      .sample_csr
-        %dt
-        %dd -----BEGIN NEW CERTIFICATE REQUEST-----
-        %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
-        %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
-        %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
-        %dd (more encoding...)
-        %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
-        %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
-        %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
-        %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
-        %dd -----END NEW CERTIFICATE REQUEST-----
-    %p
-      %em Note:  The Common Name (CN) field in your CSR must conform to the following rules:
-    %ul.cert_reqs
-      -unless @certificate.is_wildcard?
-        -unless @certificate.allow_wildcard_ucc?
-          %li It cannot represent a wildcard domain name (i.e. *.domain.com)
-        %li It must represent your fully-qualified domain name (i.e. submit.domain.com)
-        -unless @certificate.is_free?
-          %li Or, it must represent the name of your server (i.e. localhost or bizserver)
-        %li Or, it must represent an IP address (i.e. 208.113.41.231)
-      -else
-        %li It must represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
-    .clearfix
-      %label{:for=>"certificate_order_certificate_content_server_software"}
-        *CSR:
-        %span.label_desc certificate signing request
-      =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
-    .clearfix
-      %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
-        *Server Software:
-        %span.label_desc software used to generate csr
-      -ss=ServerSoftware.all
-      -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
-      =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
+  -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit?
+    #csr_section
+      %p
+        In order to submit a Certificate Signing Request (CSR), you must first
+        generate it on the web server that will be utilizing the SSL server
+        certificate. If you need instructions on generating a CSR,
+        =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
+        Once the CSR is ready, you may copy and paste it
+        into the text box below. Your CSR should appear similar
+        (although not identical) to:
+      %dl.cert_example
+        .sample_csr
+          %dt
+          %dd -----BEGIN NEW CERTIFICATE REQUEST-----
+          %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
+          %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
+          %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
+          %dd (more encoding...)
+          %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
+          %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
+          %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
+          %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
+          %dd -----END NEW CERTIFICATE REQUEST-----
+      %p
+        %em Note:  The Common Name (CN) field in your CSR must conform to the following rules:
+      %ul.cert_reqs
+        -unless @certificate.is_wildcard?
+          -unless @certificate.allow_wildcard_ucc?
+            %li It cannot represent a wildcard domain name (i.e. *.domain.com)
+          %li It must represent your fully-qualified domain name (i.e. submit.domain.com)
+          -unless @certificate.is_free?
+            %li Or, it must represent the name of your server (i.e. localhost or bizserver)
+          %li Or, it must represent an IP address (i.e. 208.113.41.231)
+        -else
+          %li It must represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
+      .clearfix
+        %label{:for=>"certificate_order_certificate_content_server_software"}
+          *CSR:
+          %span.label_desc certificate signing request
+        =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
+      .clearfix
+        %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
+          *Server Software:
+          %span.label_desc software used to generate csr
+        -ss=ServerSoftware.all
+        -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
+        =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
   -unless @certificate_order.is_unused_credit?
     -if @certificate.is_ucc?
       .clearfix
