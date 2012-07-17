@@ -631,12 +631,12 @@
               \- binary encoding (query_type must be 'all_certificates' and response_type must be 'zip' or 'pkcs7')
         %dt.optional_api_key show_validity_period
         %dd
-          Return the validity period. Value can be and of the following:
+          Return the validity period. Value can be any of the following:
           %span.api_key_or_value Y,N,y,n
         %dt.optional_api_key show_domains
         %dd
           Show all domains on this certificate. Each domain is a key, and it's validation status is the value.
-          Can be and of the following:
+          Can be any of the following:
           %span.api_key_or_value Y,N,y,n
     %dd
       Using the curl command line utility, you can test an api request using something similar to the following:
@@ -660,10 +660,25 @@
               %dd.api_key_or_value=status
         %dt.optional_api_key certificate
         %dd
+          Base64 encoded (and then url encoded) end-entity certificate. This key
+          is only present when response_type is set to individually_encoded and query_type is set to
+          all_certificates or end_certificate.
         %dt.optional_api_key zip_file
         %dd
+          Base64 encoded (and then url encoded) zip file. This key
+          is only present when response_type is set to zip.
         %dt.optional_api_key ca_bundle
         %dd
+          Base64 encoded (and then url encoded) end-entity certificate. This key
+          is only present when response_type is set to individually_encoded. If there is more than 1 certificate,
+          an array of encoded certificates will be returned.
+        %dt.optional_api_key domains
+        %dd
+          All domains associated with this certificate if show_domains was set to Y or y.
+          Each domain is a key, and it's validation status is the value.
+        %dt.optional_api_key validity_period
+        %dd
+          Number of days this certificate is effective if show_domains is set to Y or y.
     %dd
       Sample JSON return value for a successful request:
       %dl

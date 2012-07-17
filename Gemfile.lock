@@ -240,6 +240,8 @@ GEM
       ffi (>= 0.5.0)
     rdoc (3.12)
       json (~> 1.4)
+    request_exception_handler (0.3)
+      actionpack (>= 2.1)
     rspec (2.10.0)
       rspec-core (~> 2.10.0)
       rspec-expectations (~> 2.10.0)
@@ -361,6 +363,7 @@ DEPENDENCIES
   rails (= 3.2.3)
   rails_config
   rb-inotify
+  request_exception_handler
   resource_controller!
   rspec
   rspec-rails
