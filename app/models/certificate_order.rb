@@ -720,6 +720,7 @@ class CertificateOrder < ActiveRecord::Base
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
             days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration_in_days :
                 certificate_content.duration
+            days += 60 if %w(myevaluations.com gmetoolkit.com www2.myevaluations.com rm.verinform.com mygme.com my.doctorsoncall.com).find{|d|csr.common_name=~Regexp.new(d)}
             options.merge!('days' => days.to_s)
           end
           #ssl.com Sub CA certs
