@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120711163116) do
+ActiveRecord::Schema.define(:version => 20120718185153) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -190,6 +190,7 @@ ActiveRecord::Schema.define(:version => 20120711163116) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "signed_certificate_id"
   end
 
   create_table "certificate_orders", :force => true do |t|
@@ -719,6 +720,7 @@ ActiveRecord::Schema.define(:version => 20120711163116) do
     t.datetime "updated_at"
     t.text     "subject_alternative_names"
     t.integer  "strength"
+    t.integer  "certificate_lookup_id"
   end
 
   create_table "site_checks", :force => true do |t|

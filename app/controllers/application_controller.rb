@@ -524,9 +524,11 @@ class ApplicationController < ActionController::Base
   def record_visit
     return if request.method.downcase != "get"
     md5_current = Digest::MD5.hexdigest(request.url)
-    md5_previous = Digest::MD5.hexdigest(request.referer) if request.referer
+    if request.referer
+      md5_previous = Digest::MD5.hexdigest(request.referer)
+    end
     cur = TrackedUrl.find_or_create_by_md5_and_url(md5_current,request.url)
-    prev = TrackedUrl.find_or_create_by_md5_and_url(md5_previous,request.referer)
+    prev = request.referer ? TrackedUrl.find_or_create_by_md5_and_url(md5_previous,request.referer) : nil
     Tracking.create(:referer=>prev,:visitor_token=>@visitor_token,
       :tracked_url=>cur, remote_ip: request.remote_ip)
 #    output = cache(md5) { request.request_uri }
@@ -602,6 +604,10 @@ class ApplicationController < ActionController::Base
       request_uri: request.url,
       http_user_agent: request.env['HTTP_USER_AGENT'],
       result: @render_result
+  end
+
+  def record_order_visit(order)
+    order.update_attribute :visitor_token, @visitor_token if @visitor_token
   end
 
   def assign_ssl_links(user)

@@ -53,6 +53,9 @@ class Order < ActiveRecord::Base
     not_new.where :cents.gt=>0
   }
 
+  scope :tracked_visitor, where{visitor_token_id != nil}
+
+
   scope :range, lambda{|start, finish|
     if start.is_a? String
       s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"

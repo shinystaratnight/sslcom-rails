@@ -6,4 +6,6 @@ class VisitorToken < ActiveRecord::Base
   has_many    :trackings
   has_many    :tracked_urls, :through=>:trackings
   has_many    :orders
+
+
 end

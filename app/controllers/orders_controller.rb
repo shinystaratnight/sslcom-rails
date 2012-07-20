@@ -164,8 +164,7 @@ class OrdersController < ApplicationController
         save_billing_profile unless (params[:funding_source])
         @order.billing_profile = @profile
         current_user.ssl_account.orders << @order
-        @order.visitor_token=@visitor_token if @visitor_token
-        @order.save
+        record_order_visit(@order)
         credit_affiliate(@order)
         if @certificate_orders
           clear_cart
@@ -198,7 +197,7 @@ class OrdersController < ApplicationController
       if @order.cents == 0 and @order.line_items.size > 0 and (@user ? @user.valid? : true)
         save_user unless current_user
         current_user.ssl_account.orders << @order
-        @order.save
+        record_order_visit(@order)
         @order.give_away!
         if @certificate_orders
           clear_cart
@@ -225,7 +224,7 @@ class OrdersController < ApplicationController
       elsif @order.cents == 0 and @order.line_items.size > 0 and (@user || current_user)
         save_user unless current_user
         current_user.ssl_account.orders << @order
-        @order.save
+        record_order_visit(@order)
         @order.give_away!
         if @certificate_order
           @certificate_order.pay! true

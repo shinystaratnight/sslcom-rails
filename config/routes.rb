@@ -169,7 +169,6 @@ SslCom::Application.routes.draw do
   end
 
   resources :apis
-
   resources :billing_profiles
   resources :certificates do
     collection do

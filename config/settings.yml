@@ -12,6 +12,7 @@ show_advertising: false
 closed_beta_mode: false
 track_visitors: true
 show_csr_submit_on_buy_page: true
+enable_google_translate: false
 enable_exception_notifier: true
 offer_trial: false
 minimum_deposit_amount: 10.00

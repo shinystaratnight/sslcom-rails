@@ -108,8 +108,7 @@ class FundedAccountsController < ApplicationController
         if apply_order
           @order.deducted_from = @deposit
           current_user.ssl_account.orders << @order
-          @order.visitor_token=@visitor_token if @visitor_token
-          @order.save
+          record_order_visit(@order)
           @order.mark_paid!
           credit_affiliate(@order)
         end
@@ -163,7 +162,7 @@ class FundedAccountsController < ApplicationController
       if @funded_account.cents >= 0 and @order.line_items.size > 0
         @funded_account.deduct_order = true
         if @order.cents > 0
-          @order.save
+          record_order_visit(@order)
           @order.mark_paid!
         end
         @funded_account.save
@@ -194,7 +193,7 @@ class FundedAccountsController < ApplicationController
   def create_free_ssl
     respond_to do |format|
       if @order.cents == 0 and @order.line_items.size > 0
-        @order.save
+        record_order_visit(@order)
         @order.give_away!
         if @certificate_order
           @certificate_order.pay! true
