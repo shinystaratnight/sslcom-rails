@@ -207,6 +207,7 @@ SslCom::Application.routes.draw do
     send("match", i=>"site##{i}", :as => i.to_sym)
   end
   match 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply
+  match 'certificates/apidocs/dcv' => 'restful_api#dcv', :as => :restful_api_dcv
 
   #took the anchor version out /\w+\/?$/ but need to test the results of this,
   #specifically the aff code should be the last thing and not followed by other characters

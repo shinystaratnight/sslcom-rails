@@ -30,7 +30,9 @@
 %h2
   SSL API Developer's Guide
 .default_container
-  %h3~"POST /certificates/<version>/create"
+  %h3
+    %a(name="create")
+      ~"POST /certificates/<version>/create"
   %p
     Create an ssl.com certificate order. Upon successful application, the price (if any) of the ssl certificate will be
     deducted from reseller account associated with the account number specified in the account_key.
@@ -376,7 +378,7 @@
         %dd
           Represents the email address with which to perform Domain Control Validation for this certificate.
           This will be one email address selected from a number of email address choices.
-          See the documentation below for the dcv_emails API for more information on how to query for these
+          See the #{link_to "documentation below for the dcv_emails API", anchor:"dcv_emails"} for more information on how to query for these
           choices.
         %dt.optional_api_key ca_certificate_id
         %dd
@@ -485,11 +487,13 @@
             "is invalid","needs to one of the following: 100, 101, 102, 103, 104, 105, 106, 107, 200"],
             "is_customer_validated":["is invalid","can't be blank"]}}
 .default_container
-  %h3~"POST /certificates/<version>/dcv_emails"
+  %h3
+    %a(name="dcv_emails")
+      ~"POST /certificates/<version>/dcv_emails"
   %p
-    Query for a list of email address choices that can be used in validating the ownership or control of a domain
+    Query for a list of email address choices (#{link_to "click here to see the possible choices", controller: "restful_api", action: "dcv", anchor: "email"}) that can be used in validating the ownership or control of a domain
     name. One of these email addresses can then be used in the dcv_email_address parameter when placing an order.
-    ~"See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders"
+    See '#{link_to "POST /certificates/<version>/create", anchor: "create"}' above for more details on placing ssl.com certificate orders.
     through the api.
   %dl.listing
     %dt version
@@ -555,10 +559,12 @@
           :plain
             {"errors":{"domain_name":["%&* is not a valid domain name"]}}
 .default_container
-  %h3~"POST /certificates/<version>/retrieve"
+  %h3
+    %a(name="retrieve")
+      ~"POST /certificates/<version>/retrieve"
   %p
     Retrieve the certificate or check the status of a certificate order placed earlier.
-    ~"See 'POST /certificates/<version>/create' above for more details on placing ssl.com certificate orders"
+    See '#{link_to "POST /certificates/<version>/create", anchor: "create"}' above for more details on placing ssl.com certificate orders"
     through the api.
   %dl.listing
     %dt version

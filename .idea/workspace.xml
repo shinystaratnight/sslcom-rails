@@ -18,32 +18,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/restful_api/dcv.html.haml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/_affiliate_profile.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/_dashboard_nav.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/_index_scripts.html.erb" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/_management.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/about.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/dashboard.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/edit.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/edit_profile.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/link_codes.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/new.html.haml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/views/affiliates_tmp/show.html.haml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/restful_api_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/restful_api_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/tracking.rb" afterPath="$PROJECT_DIR$/app/models/tracking.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/visitor_token.rb" afterPath="$PROJECT_DIR$/app/models/visitor_token.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/affiliates/details.html.haml" afterPath="$PROJECT_DIR$/app/views/affiliates/details.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/restful_api/dcv.html.haml" afterPath="$PROJECT_DIR$/app/views/restful_api/dcv.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" afterPath="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/requirements.haml" afterPath="$PROJECT_DIR$/app/views/validations/requirements.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db/schema.rb" afterPath="$PROJECT_DIR$/db/schema.rb" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -76,33 +55,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="settings.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/settings.yml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="14" column="30" selection-start="962" selection-end="962" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="order.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="63" column="62" selection-start="2033" selection-end="2033" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="user.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/user.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="85" column="76" selection-start="2518" selection-end="2518" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="tracking.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/tracking.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -112,10 +64,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dcv.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="dcv.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/restful_api/dcv.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="44" column="91" selection-start="2270" selection-end="2270" vertical-scroll-proportion="-0.8218085">
+            <state line="73" column="90" selection-start="3416" selection-end="3416" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="docs_apply_v1_3.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="568" column="34" selection-start="27278" selection-end="27278" vertical-scroll-proportion="-5.870968">
               <folding />
             </state>
           </provider>
@@ -130,10 +91,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="details.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="details.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/affiliates/details.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="95" column="26" selection-start="3971" selection-end="3971" vertical-scroll-proportion="0.92321754">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_footer_new.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="35" column="88" selection-start="1472" selection-end="1472" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="requirements.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/requirements.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="49" column="101" selection-start="2554" selection-end="2554" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -142,7 +121,7 @@
       <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="171" column="0" selection-start="4077" selection-end="4077" vertical-scroll-proportion="-3.548387">
+            <state line="209" column="80" selection-start="5784" selection-end="5784" vertical-scroll-proportion="-7.83871">
               <folding />
             </state>
           </provider>
@@ -212,9 +191,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/controllers/certificate_expirations_controller.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20120718172856_create_certificate_expiration.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20120718172856_add_starts_at_to_certificate_lookups.rb" />
         <option value="$PROJECT_DIR$/db/migrate/20120718185153_add_certificate_lookup_to_signed_certificates.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
         <option value="$PROJECT_DIR$/config/settings.yml" />
@@ -225,9 +201,12 @@
         <option value="$PROJECT_DIR$/app/models/visitor_token.rb" />
         <option value="$PROJECT_DIR$/app/models/order.rb" />
         <option value="$PROJECT_DIR$/app/models/tracking.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/restful_api_controller.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/requirements.haml" />
         <option value="$PROJECT_DIR$/app/views/restful_api/dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/details.html.haml" />
       </list>
     </option>
   </component>
@@ -400,28 +379,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="restful_api" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="affiliates" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1373,8 +1330,8 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21973465" sideWeight="0.36335403" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20563847" sideWeight="0.6863354" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3136646" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20563847" sideWeight="0.6863354" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3136646" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24378882" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1472,21 +1429,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="23" selection-start="0" selection-end="37" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="28" column="6" selection-start="1933" selection-end="1933" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/visitor_token.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="82" selection-start="218" selection-end="218" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="165" column="0" selection-start="6800" selection-end="6800" vertical-scroll-proportion="0.0">
@@ -1537,9 +1479,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/config/routes.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="171" column="0" selection-start="4077" selection-end="4077" vertical-scroll-proportion="-3.548387">
+        <state line="209" column="80" selection-start="5784" selection-end="5784" vertical-scroll-proportion="-7.83871">
           <folding />
         </state>
       </provider>
@@ -1551,23 +1500,37 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates/index.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="568" column="34" selection-start="27278" selection-end="27278" vertical-scroll-proportion="-5.870968">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/affiliates/details.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="35" column="88" selection-start="1472" selection-end="1472" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/requirements.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="49" column="101" selection-start="2554" selection-end="2554" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/restful_api/dcv.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="91" selection-start="2270" selection-end="2270" vertical-scroll-proportion="-0.8218085">
+        <state line="73" column="90" selection-start="3416" selection-end="3416" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/details.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="95" column="26" selection-start="3971" selection-end="3971" vertical-scroll-proportion="0.92321754">
           <folding />
         </state>
       </provider>
