@@ -1,6 +1,6 @@
 require "declarative_authorization/maintenance"
 
-class ApiCertificateCreate < ApiCertificateRequest
+class ApiCertificateReprocess < ApiCertificateRequest
   attr_accessor :csr_obj, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
@@ -13,15 +13,13 @@ class ApiCertificateCreate < ApiCertificateRequest
               :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
-  DCV_METHODS = %w(email http_csr_hash dns)
-
-  validates :account_key, :secret_key, :csr, presence: true
+  validates :account_key, :secret_key, :csr, :ref, presence: true
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    message: "needs to be one of the following: #{ApiCertificateCreate::NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
+    message: "needs to be one of the following: #{ApiCertificateCreate::EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
   validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
@@ -40,7 +38,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
-      message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
+      message: "needs to one of the following: #{ApiCertificateCreate::DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
@@ -48,11 +46,11 @@ class ApiCertificateCreate < ApiCertificateRequest
   # use code instead of serial allows attribute changes without affecting the cert name
   validates :product, presence: true, format: {with: /\d{3}/},
             inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
-            message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}
+            message: "needs to one of the following: #{ApiCertificateCreate::PRODUCTS.keys.map(&:to_s).join(', ')}"}
   validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
   validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
   #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
-  validate :verify_dcv_email_address, on: :create
+  validate :verify_dcv_methods, on: :create
 
   after_initialize do
     if new_record? && self.csr
@@ -64,13 +62,16 @@ class ApiCertificateCreate < ApiCertificateRequest
     end
   end
 
-  def verify_dcv_email_address
-    if self.dcv_email_address && dcv_method=="http_csr_hash"
-      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
-                                                        self.csr_obj.common_name).email_address_choices
-      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
-          emails.include?(self.dcv_email_address)
-    end
+  #TODO finish this
+  def verify_dcv_methods
+    # if non ucc then look for email address, http_csr_hash, or dns
+    #if self.dcv_email_address && dcv_method=="http_csr_hash"
+    #  emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
+    #                                                    self.csr_obj.common_name).email_address_choices
+    #  errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
+    #      emails.include?(self.dcv_email_address)
+    #end
+    true
   end
 
   def create_certificate_order

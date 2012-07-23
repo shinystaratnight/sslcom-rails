@@ -33,6 +33,8 @@ SslCom::Application.routes.draw do
         :as => :api_certificate_retrieve_v1_3
   match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
         :as => :api_dcv_emails_v1_3
+  match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
+        :as => :api_certificate_reprocess_v1_3
 
   resource :account, :controller=>:users do
     resource :reseller
