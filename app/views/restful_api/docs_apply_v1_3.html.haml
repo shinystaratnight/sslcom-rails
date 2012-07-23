@@ -375,7 +375,7 @@
           Optional if preferred key 'dcv_email_address' is used. This parameter is the preferred parameter between the two.
           Represents the domain control validation (dcv) method (or methods if the certificate is UCC or EV UCC).
           The 3 types of accepted values are the chosen dcv email address, 'file', or 'dns'. For UCC or EV UCC
-          where multiple domains need to be validated, then the submitted value should be an array with each domain
+          where multiple domains need to be validated, then the submitted value should be a JSON object with each domain
           as a key and any accepted option as the value. There is no need to specify anything for intranet domains.
           Example for a UCC certificate: "dcv_methods" : { "www.domain.net" : "admin@domain.net", "yoursite.com" : "file"}
           %dl
@@ -384,10 +384,10 @@
               This is an email address #{link_to "chosen from the dcv emails lookup", anchor:"dcv_emails"}.
             %dd
               %span.api_key_or_value file
-              This option is used for #{link_to "verifying a file over http", controller: "restful_api", action: "dcv", anchor:"file"}.
+              This option is used for validation via #{link_to "verifying a file over http", controller: "restful_api", action: "dcv", anchor:"file"}.
             %dd
               %span.api_key_or_value dns
-              This option is used for #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
+              This option is used for validation via for #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
         %dt.optional_api_key ca_certificate_id
         %dd
           Overrides SSL.com’s default choice of CA certificate/key to
@@ -500,7 +500,7 @@
       ~"POST /certificates/<version>/dcv_emails"
   %p
     Query for a list of email address choices (#{link_to "click here to see the possible choices", controller: "restful_api", action: "dcv", anchor: "email"}) that can be used in validating the ownership or control of a domain
-    name. One of these email addresses can then be used in the dcv_email_address parameter when placing an order.
+    name. One of these email addresses can then be used in the dcv_email_address or dcv_methods parameter when placing an order.
     See '#{link_to "POST /certificates/<version>/create", anchor: "create"}' above for more details on placing ssl.com certificate orders.
     through the api.
   %dl.listing
@@ -557,6 +557,73 @@
           "admin@ssl.com","webmaster@certs.ssl.com","postmaster@certs.ssl.com",
           "hostmaster@certs.ssl.com","administrator@certs.ssl.com",
           "admin@certs.ssl.com"]}
+    %dt
+      %div.api_sub_section errors
+    %dd
+      If a query is unsuccessful, then the JSON response will include only include the parent key 'errors' and
+      an array of possible errors. A sample JSON return value for a failed query would look like:
+      %dl
+        %dd
+          :plain
+            {"errors":{"domain_name":["%&* is not a valid domain name"]}}
+.default_container
+  %h3
+    %a(name="dcv_email_resend")
+      ~"POST /certificates/<version>/dcv_email_resend"
+  %p
+    Resend dcv email from the list of email address choices (#{link_to "click here to see the possible choices", controller: "restful_api", action: "dcv", anchor: "email"}) used in validating the ownership or control of a domain
+    name.
+  %dl.listing
+    %dt version
+    %dd 1.3
+    %dt example testing url (test orders)
+    %dd https://sws-test.sslpki.com/certificates/1.3/dcv_email_resend
+    %dt example production url (live orders)
+    %dd https://sws.sslpki.com/certificates/1.3/dcv_email_resend
+    %dt method
+    %dd POST
+    %dt
+      parameters
+    %dd
+      (!required items are in&nbsp;
+      %span.api_key_or_value> bold
+      , optional items are in&nbsp;
+      %span.optional_api_key> italics
+      ; only a single value is allowed per parameter unless otherwise specified)
+    %dd
+      %dl
+        %dt.api_key_or_value account_key
+        %dd The SWS account key of the reseller.
+        %dt.api_key_or_value secret_key
+        %dd The SWS secret key of the reseller.
+        %dt.optional_api_key email_address
+        %dd
+          Resend the validation email to this email address. If the this parameter is left blank,
+          then the validation email will be resent to the original email address specified during order placement.
+          The value must (#{link_to "be one of the possible choices", controller: "restful_api", action: "dcv", anchor: "email"}).
+    %dt
+      %div.api_sub_section sample request
+    %dd
+      Using the curl command line utility, you can test an api request using something similar to the following:
+      %dl
+        %dd
+          :plain
+            curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"account_key\" :
+            \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\", \"domain_name\" : \"yoursite.com\"}"
+            https://sws-test.sslpki.com/certificates/1.3/dcv_email_resend
+    %dt
+      %div.api_sub_section successful response
+    %dd
+      Returns a JSON formatted response containing the time and date when the email was sent under the key
+      'sent_at'.
+      %dl
+        %dt.api_key_or_value sent_at
+        %dd This is the time and date when the email was resent.
+    %dd
+      Sample JSON return value for a successful request:
+      %dl
+        %dd
+          {"sent_at":["2012-01-22 00:36:20"]}
     %dt
       %div.api_sub_section errors
     %dd
@@ -712,7 +779,7 @@
             all_certificates, ca_bundle"]}}
 .default_container
   %h3
-    %a(name="create")
+    %a(name="reprocess")
       ~"POST /certificates/<version>/reprocess"
   %p
     Reprocess or redo an existing certificate order that has been issued already.
@@ -898,7 +965,7 @@
         %dd
           Represents the domain control validation (dcv) method (or methods if the certificate is UCC or EV UCC).
           The 3 types of accepted values are the chosen dcv email address, 'file', or 'dns'. For UCC or EV UCC
-          where multiple domains need to be validated, then the submitted value should be an array with each domain
+          where multiple domains need to be validated, then the submitted value should be a JSON object with each domain
           as a key and any accepted option as the value. There is no need to specify anything for intranet domains.
           Example for a UCC certificate: "dcv_methods" : { "www.domain.net" : "admin@domain.net", "yoursite.com" : "file"}
           %dl
@@ -907,10 +974,10 @@
               This is an email address #{link_to "chosen from the dcv emails lookup", anchor:"dcv_emails"}.
             %dd
               %span.api_key_or_value file
-              This option is used for #{link_to "verifying a file over http", controller: "restful_api", action: "dcv", anchor:"file"}.
+              This option is used for validation via #{link_to "verifying a file over http", controller: "restful_api", action: "dcv", anchor:"file"}.
             %dd
               %span.api_key_or_value dns
-              This option is used for #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
+              This option is used for validation via #{link_to "verifying a CNAME dns entry", controller: "restful_api", action: "dcv", anchor:"dns"}.
         %dt.optional_api_key ca_certificate_id
         %dd
           Overrides SSL.com’s default choice of CA certificate/key to
@@ -940,14 +1007,13 @@
         %dd
           :plain
             curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
-            "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",\"product\" :
-            \"100\", \"period\" : \"365\", \"server_count\" : \"1\", \"server_software\" : \"15\",
+            "{\"account_key\" : \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\",
             \"organization_name\" : \"yoursite\", \"street_address_1\" : \"somewhere st\",
             \"locality_name\" : \"new york\", \"state_or_province_name\" : \"new york\", \"postal_code\" :
             \"77777\", \"country_name\" : \"US\", \"duns_number\" : \"1234567\", \"company_number\" :
             \"yoursite_number\", \"registered_country_name\" : \"US\", \"incorporation_date\" :
-            \"12/12/2000\", \"is_customer_validated\" : \"y\",
-            \"dcv_email_address\" : \"admin@yoursite.com\", \"csr\" : \"-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----\"}" https://sws-test.sslpki.com/certificates/1.3/create
+            \"12/12/2000\",
+            \"dcv_methods\" : \"admin@yoursite.com\", \"csr\" : \"-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----\"}" https://sws-test.sslpki.com/certificates/1.3/reprocess
     %dt
       %div.api_sub_section successful response
     %dd
@@ -995,16 +1061,10 @@
           :plain
             {"errors":{"account_key":["can't be blank"],
             "secret_key":["can't be blank"],
-            "csr":["can't be blank"],
-            "period":["can't be blank","is invalid","needs to be one of the following: 365, 730, 1095, 1461, 1826"],
-            "server_software":["can't be blank","is invalid",
-            "needs to be one of the following: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37"],
+            "csr":["can't be blank"], "ref":["can't be blank"],
             "organization_name":["can't be blank"],"post_office_box":
             ["is required if street_address_1 is not specified"],"street_address_1":
             ["is required if post_office_box is not specified"],"locality_name":
             ["can't be blank"],"state_or_province_name":["can't be blank"],
-            "postal_code":["can't be blank"],"product":["can't be blank",
-            "is invalid","needs to one of the following: 100, 101, 102, 103, 104, 105, 106, 107, 200"],
-            "is_customer_validated":["is invalid","can't be blank"]}}
+            "postal_code":["can't be blank"]}}
 
