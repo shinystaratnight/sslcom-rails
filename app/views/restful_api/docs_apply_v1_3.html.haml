@@ -598,9 +598,9 @@
         %dd The SWS secret key of the reseller.
         %dt.optional_api_key email_address
         %dd
-          Resend the validation email to this email address. If the this parameter is left blank,
+          Resend the validation email to this email address. If this parameter is left blank,
           then the validation email will be resent to the original email address specified during order placement.
-          The value must (#{link_to "be one of the possible choices", controller: "restful_api", action: "dcv", anchor: "email"}).
+          The value must #{link_to "be one of the possible choices outlined here", controller: "restful_api", action: "dcv", anchor: "email"}.
     %dt
       %div.api_sub_section sample request
     %dd

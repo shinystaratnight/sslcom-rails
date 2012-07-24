@@ -48,7 +48,7 @@ class SignedCertificatesController < ApplicationController
     tmp_file="#{Rails.root}/tmp/sc_int_#{@signed_certificate.id}.txt"
     File.open(tmp_file, 'wb') do |f|
       tmp=""
-      if @signed_certificate.certificate_order.is_nginx?
+      if @signed_certificate.certificate_order.is_nginx? || @signed_certificate.certificate_order.is_heroku?
         tmp << @signed_certificate.body+"\n"
       end
       @signed_certificate.certificate_order.bundled_cert_names.each do |file_name|

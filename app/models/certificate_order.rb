@@ -521,8 +521,12 @@ class CertificateOrder < ActiveRecord::Base
     [25].include? software.id
   end
 
+  def is_heroku?
+    [38].include? software.id
+  end
+
   def has_bundle?
-    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk?)
+    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk? || is_heroku?)
   end
 
   def bundle_name
@@ -533,6 +537,8 @@ class CertificateOrder < ActiveRecord::Base
         'Nginx bundle'
       elsif is_cpanel? || is_red_hat? || is_plesk?
         'ca bundle (Apache SSLCACertificateFile)'
+      elsif is_heroku?
+        'ca bundle for heroku'
       end
     else
       ""

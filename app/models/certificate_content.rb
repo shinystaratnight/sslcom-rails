@@ -30,7 +30,7 @@ class CertificateContent < ActiveRecord::Base
       9=>6, 10=>29, 11=>32, 12=>7, 13=>8, 14=>9, 15=>10,
       16=>11, 17=>12, 18=>13, 19=>14, 20=>35, 21=>15,
       22=>16, 23=>17, 24=>18, 25=>30, 26=>19, 27=>20, 28=>21,
-      29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1}
+      29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1}
   
   ICANN_TLDS = %w(AC AD AE AERO AF AG AI AL AM AN AO AQ AR ARPA AS ASIA AT AU AW AX AZ BA BB BD BE BF
     BG BH BI BIZ BJ BM BN BO BR BS BT BV BW BY BZ CA CAT CC CD CF CG CH CI CK CL CM CN CO COM COOP CR
