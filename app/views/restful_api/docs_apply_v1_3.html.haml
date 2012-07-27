@@ -364,7 +364,7 @@
           address will be used.
         %dt.api_key_or_value dcv_email_address
         %dd
-          Optional if 'dcv_methods' is used. This parameter is kept for legacy purposes.
+          Required if 'dcv_methods' is not used. This parameter is kept for legacy purposes.
           See 'dcv_methods' for the preferred parameter to use.
           Represents the email address with which to perform Domain Control Validation for this certificate.
           This will be one email address selected from a number of email address choices.
@@ -372,7 +372,8 @@
           choices.
         %dt.api_key_or_value dcv_methods
         %dd
-          Optional if preferred key 'dcv_email_address' is used. This parameter is the preferred parameter between the two.
+          Required if preferred key 'dcv_email_address' is not used. This parameter is the preferred parameter between
+          the two and will take priority over 'dcv_email_address'.
           Represents the domain control validation (dcv) method (or methods if the certificate is UCC or EV UCC).
           The 3 types of accepted values are the chosen dcv email address, 'file', or 'dns'. For UCC or EV UCC
           where multiple domains need to be validated, then the submitted value should be a JSON object with each domain
@@ -596,6 +597,8 @@
         %dd The SWS account key of the reseller.
         %dt.api_key_or_value secret_key
         %dd The SWS secret key of the reseller.
+        %dt.api_key_or_value ref
+        %dd The reference number of the certificate order that we want to resend the dcv email for.
         %dt.optional_api_key email_address
         %dd
           Resend the validation email to this email address. If this parameter is left blank,
@@ -609,7 +612,7 @@
         %dd
           :plain
             curl -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "{\"account_key\" :
-            \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\", \"domain_name\" : \"yoursite.com\"}"
+            \"xxxxxx\",\"secret_key\" : \"xxxxxxxxx\", \"email_address\" : \"admin@yoursite.com\", \"ref\" : \"co-xxxxxx\"}"
             https://sws-test.sslpki.com/certificates/1.3/dcv_email_resend
     %dt
       %div.api_sub_section successful response

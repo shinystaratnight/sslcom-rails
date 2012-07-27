@@ -26,15 +26,19 @@ SslCom::Application.routes.draw do
   match 'site_check' => 'site_checks#new', :as => :site_check
   match 'site_checks' => 'site_checks#create', :as => :site_checks
 
-  #api
+  # api
   match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
         :as => :api_certificate_create_v1_3
   match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
         :as => :api_certificate_retrieve_v1_3
   match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
         :as => :api_dcv_emails_v1_3
+  match '/certificates/1.3/dcv_email_resend' => 'api_certificate_requests#dcv_email_resend_v1_3',
+        :as => :api_dcv_email_resend_v1_3
   match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
         :as => :api_certificate_reprocess_v1_3
+  match '/certificates/1.3/revoke' => 'api_certificate_requests#revoke_v1_3',
+        :as => :api_certificate_revoke_v1_3
 
   resource :account, :controller=>:users do
     resource :reseller

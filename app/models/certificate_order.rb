@@ -538,7 +538,7 @@ class CertificateOrder < ActiveRecord::Base
       elsif is_cpanel? || is_red_hat? || is_plesk?
         'ca bundle (Apache SSLCACertificateFile)'
       elsif is_heroku?
-        'ca bundle for heroku'
+        'ca bundle for Heroku'
       end
     else
       ""

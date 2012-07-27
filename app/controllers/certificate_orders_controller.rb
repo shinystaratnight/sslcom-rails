@@ -51,6 +51,7 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1
   # GET /certificate_orders/1.xml
   def show
+    redirect_to edit_certificate_order_path(@certificate_order) and return if @certificate_order.certificate_content.new?
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @certificate_order }

@@ -107,6 +107,38 @@ class ApiCertificateRequestsController < ApplicationController
     render action: :create_v1_3
   end
 
+  def dcv_email_resend_v1_3
+    @result=ApiDcvEmailResend.new(params[:api_certificate_request])
+    record_parameters
+    if @result.save
+      @result.sent_at=Time.now
+      unless @result.email_addresses.blank?
+        template = "api_certificate_requests/success_dcv_email_resend_v1_3"
+        @result.update_attribute :response, render_to_string(:template => template)
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render action: :create_v1_3
+  end
+
+  def dcv_revoke_v1_3
+    @result=ApiDcvEmails.new(params[:api_certificate_request])
+    record_parameters
+    if @result.save
+      @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      unless @result.email_addresses.blank?
+        template = "api_certificate_requests/success_dcv_emails_v1_3"
+        @result.update_attribute :response, render_to_string(:template => template)
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render action: :create_v1_3
+  end
+
   private
 
   def set_test

@@ -65,7 +65,9 @@ class ApiCertificateCreate < ApiCertificateRequest
   end
 
   def verify_dcv_email_address
-    if self.dcv_email_address && dcv_method=="http_csr_hash"
+    if self.dcv_methods
+
+    elsif self.dcv_email_address
       emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
                                                         self.csr_obj.common_name).email_address_choices
       errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless

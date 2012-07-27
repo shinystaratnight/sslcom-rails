@@ -15,7 +15,10 @@
       %tr(class="#{(i.odd?) ? 'alt' : ''}")
         %td=item.certificate.description["abbr"]
         %td=item.description
-        %td=item.price.format
+        %td
+          -unless item.certificate.product_root=='free'
+            %span(style="color: red; text-decoration: line-through;")=compare_item.price.format
+          =item.price.format
         -unless tier.label == "1"
           %td
             %span.save
