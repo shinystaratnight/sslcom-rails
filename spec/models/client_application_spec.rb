@@ -9,7 +9,6 @@ describe ClientApplication do
     @application.should be_valid
   end
 
-
   it "should not have errors" do
     @application.errors.full_messages.should == []
   end
