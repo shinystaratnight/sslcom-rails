@@ -10,14 +10,23 @@
     <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="229" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/funded_accounts_helper.rb" line="3" mnemonic="5" />
     <bookmark url="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml" line="36" mnemonic="4" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="822" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="823" mnemonic="0" />
     <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="70" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="157" mnemonic="2" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" line="138" mnemonic="3" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/orders_helper.rb" line="25" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="295" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/orders_controller.rb" line="259" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="84" mnemonic="3" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier" />
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/orders_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
+    </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -49,91 +58,91 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="account_maintenance.feature" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/account_maintenance.feature">
+      <file leaf-file-name="visitor_token.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/visitor_token.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="3" column="45" selection-start="90" selection-end="90" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="sandbox.feature" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/features/sandbox.feature">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="786" column="46" selection-start="25912" selection-end="25912" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="assignments.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/fixtures/assignments.yml">
+      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="294" column="32" selection-start="12232" selection-end="12232" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="billing_profiles.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/fixtures/billing_profiles.yml">
+      <file leaf-file-name="buy.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="9" column="0" selection-start="464" selection-end="464" vertical-scroll-proportion="-4.935484">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="csrs.yml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/fixtures/csrs.yml">
+      <file leaf-file-name="orders_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="259" column="0" selection-start="8223" selection-end="8223" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificates_api_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/certificates_api_spec.rb">
+      <file leaf-file-name="certificate_orders_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="141" column="30" selection-start="5184" selection-end="5184" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="spec_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/spec_helper.rb">
+      <file leaf-file-name="certificates_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="12" column="20" selection-start="395" selection-end="395" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/models/certificate_spec.rb">
+      <file leaf-file-name="certificate.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="189" column="4" selection-start="7466" selection-end="7466" vertical-scroll-proportion="0.3313433">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="client_application_spec.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/spec/models/client_application_spec.rb">
+      <file leaf-file-name="orders_helper.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="51" selection-start="511" selection-end="511" vertical-scroll-proportion="0.0">
+            <state line="105" column="0" selection-start="3283" selection-end="3283" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="deploy.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <file leaf-file-name="ssl_account.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="31" column="63" selection-start="963" selection-end="963" vertical-scroll-proportion="0.85109985">
+            <state line="125" column="22" selection-start="4610" selection-end="4610" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -185,10 +194,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
         <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/api_dcv_emails.rb" />
@@ -196,11 +201,15 @@
         <option value="$PROJECT_DIR$/app/models/api_dcv_email_resend.rb" />
         <option value="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" />
         <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/views/reseller_tiers/_tier.html.haml" />
         <option value="$PROJECT_DIR$/spec/models/client_application_spec.rb" />
         <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
       </list>
     </option>
   </component>
@@ -213,8 +222,8 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="23" />
-    <option name="width" value="1658" />
-    <option name="height" value="1026" />
+    <option name="width" value="1258" />
+    <option name="height" value="776" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -369,6 +378,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="accounts_examples" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="config" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1299,16 +1322,16 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="23" y="0" width="1658" height="1026" extended-state="6" />
+    <frame x="23" y="0" width="1258" height="776" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.53104573" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24496645" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21793275" sideWeight="0.25503355" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21793275" sideWeight="0.49217004" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2997763" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3400621" sideWeight="0.30315614" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2172471" sideWeight="0.33074534" order="1" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2172471" sideWeight="0.318323" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5031056" sideWeight="0.90448505" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.31260228" sideWeight="0.09551495" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24378882" sideWeight="0.8986711" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1401,101 +1424,14 @@
           <url>file://$PROJECT_DIR$/app/views/funded_accounts/success.html.haml</url>
           <line>21</line>
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/views/certificates/buy.html.haml</url>
+          <line>23</line>
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="507" column="10" selection-start="15642" selection-end="15642" vertical-scroll-proportion="-3.2580645">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/signed_certificates_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="50" column="22" selection-start="1889" selection-end="1889" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/shopping.feature">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/accounts_examples/activation.feature">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/accounts_examples/creation.feature">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/account_maintenance.feature">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/sandbox.feature">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/fixtures/assignments.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/fixtures/billing_profiles.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/fixtures/csrs.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/certificates_api_spec.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/spec_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/spec/models/certificate_spec.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p125@rails323/gems/actionpack-3.2.3/lib/action_view/helpers/cache_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
@@ -1512,7 +1448,98 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="31" column="63" selection-start="963" selection-end="963" vertical-scroll-proportion="0.85109985">
+        <state line="169" column="118" selection-start="5141" selection-end="5141" vertical-scroll-proportion="-38.19355">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="11" selection-start="2914" selection-end="2914" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/schedule.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="24" selection-start="711" selection-end="711" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/tracking.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="47" selection-start="137" selection-end="137" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/visitor_token.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="45" selection-start="90" selection-end="90" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="105" column="0" selection-start="3283" selection-end="3283" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="0" selection-start="464" selection-end="464" vertical-scroll-proportion="-4.935484">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="786" column="46" selection-start="25912" selection-end="25912" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="259" column="0" selection-start="8223" selection-end="8223" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="294" column="32" selection-start="12232" selection-end="12232" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="20" selection-start="395" selection-end="395" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="141" column="30" selection-start="5184" selection-end="5184" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="125" column="22" selection-start="4610" selection-end="4610" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="189" column="4" selection-start="7466" selection-end="7466" vertical-scroll-proportion="0.3313433">
           <folding />
         </state>
       </provider>

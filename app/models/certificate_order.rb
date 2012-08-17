@@ -783,8 +783,9 @@ class CertificateOrder < ActiveRecord::Base
 
   #get the most recent order_number as the one
   def external_order_number
-    certificate_contents.map(&:csr).map(&:sent_success).flatten.uniq.first.order_number if
-        certificate_contents.map(&:csr) && certificate_contents.map(&:csr).map(&:sent_success)
+    certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.first.order_number if
+        certificate_contents.map(&:csr) && !certificate_contents.map(&:csr).map(&:sent_success).blank? &&
+        certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.first
     #csr.sent_success.order_number if csr && csr.sent_success
   end
 

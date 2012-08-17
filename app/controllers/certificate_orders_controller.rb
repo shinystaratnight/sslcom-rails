@@ -139,7 +139,7 @@ class CertificateOrdersController < ApplicationController
   def create
     redirect_to new_order_url and return unless current_user
     certificate_order = CertificateOrder.new(params[:certificate_order])
-    @certificate = Certificate.public.find_by_product(params[:certificate][:product])
+    @certificate = Certificate.find_by_product(params[:certificate][:product])
     determine_eligibility_to_buy(@certificate, certificate_order)
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
     respond_to do |format|

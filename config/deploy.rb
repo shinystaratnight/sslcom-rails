@@ -11,7 +11,7 @@ set :rvm_ruby_string, 'default'
 set :rvm_type, :user
 
 #tell git to clone only the latest revision and not the whole repository
-#set :git_shallow_clone, 1
+set :git_shallow_clone, 1
 
 set :keep_releases, 3
 
@@ -36,7 +36,7 @@ set :domain, 'staging2.ssl.com' #development
 # Alternate SCM
 # Git
 set :scm, :git
-set :repository, "git@github.com:codelux/ssl_com.git"
+set :repository, "git@github.com:codelux/ssl_com_rails3.git"
 set :deploy_to, "/home/ubuntu/sites/#{application}"
 set :deploy_via, :remote_cache
 
@@ -179,4 +179,4 @@ after 'deploy:update', 'deploy:symlink_shared'
 #whenever
 set :whenever_command, "bundle exec whenever"
 # disable this on production web
-#require "whenever/capistrano"
+require "whenever/capistrano"
