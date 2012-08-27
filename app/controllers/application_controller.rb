@@ -136,7 +136,7 @@ class ApplicationController < ActionController::Base
     limit=free_qty_limit
     certs.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
-      certificate = Certificate.find_by_product(c[ShoppingCart::PRODUCT_CODE])
+      certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
       if certificate.is_free?
         qty=c[ShoppingCart::QUANTITY].to_i > limit ? limit : c[ShoppingCart::QUANTITY].to_i
       else
@@ -171,7 +171,7 @@ class ApplicationController < ActionController::Base
       certificate_order = CertificateOrder.new :server_licenses=>parts[2],
         :duration=>parts[1], :quantity=>parts[4].to_i
       certificate_order.certificate_contents.build :domains=>parts[3]
-      certificate = Certificate.find_by_product(parts[0])
+      certificate = Certificate.for_sale.find_by_product(parts[0])
       unless current_user.blank?
         current_user.ssl_account.clear_new_certificate_orders
         next unless current_user.ssl_account.can_buy?(certificate)
@@ -292,7 +292,7 @@ class ApplicationController < ActionController::Base
 
   def prep_certificate_orders_instances
     if params[:certificate_order]
-      @certificate = Certificate.find_by_product(params[:certificate][:product])
+      @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
       co_valid = certificate_order_steps
       if params["prev.x".intern] || !co_valid
         @certificate_order.has_csr=true

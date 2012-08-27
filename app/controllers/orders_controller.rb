@@ -29,7 +29,7 @@ class OrdersController < ApplicationController
 
   def new
     if params[:certificate_order]
-      @certificate = Certificate.find_by_product(params[:certificate][:product])
+      @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
       unless params["prev.x".intern].nil?
         redirect_to buy_certificate_url(@certificate) and return
       end
