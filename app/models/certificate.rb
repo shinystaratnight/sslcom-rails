@@ -98,7 +98,7 @@ class Certificate < ActiveRecord::Base
 
   scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
-  scope :for_sale, where{(serial =~ "%sslcom%")}
+  scope :for_sale, where{(product != 'mssl') & (serial =~ "%sslcom%")}
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|

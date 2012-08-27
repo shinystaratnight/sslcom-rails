@@ -103,7 +103,7 @@ class CertificatesController < ApplicationController
     prod = params[:id]=='mssl' ? 'high_assurance' : params[:id]
     @certificate =
       if(params[:action]=="buy")
-        Certificate.public.find_by_product(prod+@tier)
+        Certificate.for_sale.find_by_product(prod+@tier)
       else
         Certificate.find_by_product(prod+@tier)
       end
