@@ -113,4 +113,14 @@ class Affiliate < ActiveRecord::Base
     end
   end
 
+  # this function gets the unique referral urls
+  def referral_urls
+    r=Tracking.affiliate_referers(id).pluck(:referer_id).compact
+    TrackedUrl.where{id >> r}.pluck(:url)
+  end
+
+  def sold_to
+    orders.map(&:billable).map(&:users)
+  end
+
 end

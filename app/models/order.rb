@@ -55,7 +55,6 @@ class Order < ActiveRecord::Base
 
   scope :tracked_visitor, where{visitor_token_id != nil}
 
-
   scope :range, lambda{|start, finish|
     if start.is_a? String
       s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
@@ -334,6 +333,11 @@ class Order < ActiveRecord::Base
     end.last
   end
 
+  def self.referers_for_paid(how_many)
+    not_free.first(how_many).map{|o|
+      [o.reference_number, o.created_at, o.referer_urls] unless o.referer_urls.blank?}.compact.flatten
+  end
+
   def to_param
     reference_number
   end
@@ -364,6 +368,9 @@ class Order < ActiveRecord::Base
     includes(:line_items).all.select{|o|o.cents<o.line_items.sum(:cents)}
   end
 
+  def referer_urls
+    visitor_token.trackings.non_ssl_com_referer.map(&:referer).map(&:url) if visitor_token
+  end
 
   # We'll raise this exception in the case of an unsettled credit.
   class UnsettledCreditError < RuntimeError

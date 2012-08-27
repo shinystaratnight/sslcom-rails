@@ -123,6 +123,10 @@ class User < ActiveRecord::Base
     SignedCertificate.with_permissions_to(:update)
   end
 
+  def referer_urls
+    visitor_tokens.map{|v|v.trackings.non_ssl_com_referer}.flatten.map{|t|t.referer.url}
+  end
+
   def role_symbols
     (roles || []).map do |role|
       role.name.underscore.to_sym

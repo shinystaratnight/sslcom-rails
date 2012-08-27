@@ -25,8 +25,8 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-set :domain, 'staging2.ssl.com' #development
-#set :domain, '184.73.226.63' #production
+#set :domain, 'staging2.ssl.com' #development
+set :domain, '184.73.226.63' #production
 #set :domain, '174.129.43.244' # sws.sslpki.com api
 #set :deploy_via, :copy
 #set :copy_strategy, :export
@@ -179,4 +179,4 @@ after 'deploy:update', 'deploy:symlink_shared'
 #whenever
 set :whenever_command, "bundle exec whenever"
 # disable this on production web
-require "whenever/capistrano"
+#require "whenever/capistrano"

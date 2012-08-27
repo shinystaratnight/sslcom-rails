@@ -16,9 +16,19 @@ class Tracking < ActiveRecord::Base
     parents.first if parents
   end
 
-  SSL_LINKS = ["http://ssl.com%", "https://ssl.com%", "http://www.ssl.com%", "https://www.ssl.com%",
-               "https://ssl/", "http://reseller.ssl.com%", "https://reseller.ssl.com%",
-               "http://sws.ssl.com%", "https://sws.ssl.com%","http://staging.ssl.com%", "https://staging1.ssl.com%"]
+  SSL_LINKS = ["/", "http://ssl.com%", "https://ssl.com%", "http://www.ssl.com%", "https://www.ssl.com%",
+               "https://ssl/", "http://reseller.ssl.com%", "https://reseller.ssl.com%","http://staging1.ssl.com%",
+               "http://sws.ssl.com%", "https://sws.ssl.com%","http://staging.ssl.com%", "https://staging1.ssl.com%",
+               "http://staging2.ssl.com%", "https://staging2.ssl.com%",
+               "http://www.cms.ssl.com%", "https://www.cms.ssl.com%",
+               "http://www.fnl.ssl.com%", "https://www.fnl.ssl.com%",
+               "http://links.ssl.com%", "https://links.ssl.com%",
+               "http://info.ssl.com%", "https://info.ssl.com%"]
 
-  scope :non_ssl_com, joins(:tracked_url).where{tracked_urls.url.not_like_all SSL_LINKS}
+  scope :non_ssl_com_url, joins{tracked_url}.where{tracked_urls.url.not_like_all SSL_LINKS}
+  scope :non_ssl_com_referer, joins{referer}.where{referer.url.not_like_all SSL_LINKS}
+  scope :affiliate_referers, lambda {|affid|
+    joins{tracked_url}.where{tracked_urls.url =~ "%/code/#{affid}%"}
+  }
+
 end
