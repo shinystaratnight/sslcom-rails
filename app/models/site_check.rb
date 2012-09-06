@@ -43,10 +43,12 @@ class SiteCheck < ActiveRecord::Base
       context.ca_file="/usr/lib/ssl/certs/ca-certificates.crt"
       context.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    u,p = url.split ":"
-    tcp_client = TCPSocket.new(u, p || 443)
-    self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
-    self.ssl_client.connect
+    timeout(10) do
+      u,p = url.split ":"
+      tcp_client = TCPSocket.new(u, p || 443)
+      self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
+      self.ssl_client.connect
+    end
   rescue
     nil
   end
@@ -81,13 +83,14 @@ class SiteCheck < ActiveRecord::Base
   end
 
   def create_certificate_lookup
-    unless self.certificate.blank?
-      serial=self.certificate.serial.to_s
-      self.certificate_lookup=CertificateLookup.find_or_create_by_serial(serial,
-        serial: serial, certificate: self.certificate.to_s,
-        common_name: self.certificate.subject.common_name,
-        expires_at: self.certificate.not_after)
-    end
+    self.certificate_lookup=
+      unless self.certificate.blank?
+        serial=self.certificate.serial.to_s
+        CertificateLookup.find_or_create_by_serial(serial,
+          serial: serial, certificate: self.certificate.to_s,
+          common_name: self.certificate.subject.common_name,
+          expires_at: self.certificate.not_after)
+      end
   end
 
 end
