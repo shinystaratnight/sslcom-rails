@@ -9,6 +9,7 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :parent, :foreign_key=>:parent_id,
     :class_name=> 'SignedCertificate', :dependent=>:destroy
   belongs_to :csr
+  belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
   validate :proper_certificate?, :if=>

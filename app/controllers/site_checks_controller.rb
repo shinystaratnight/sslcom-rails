@@ -43,8 +43,12 @@ class SiteChecksController < ApplicationController
   # POST /site_checks.xml
   def create
     @site_checks=[]
-    params[:urls].gsub(/\s+/, "").split(/[,\n]/).each do |url|
-      @site_checks << SiteCheck.create(url: url)
+    if params[:site_check]
+      @site_checks << SiteCheck.create(params[:site_check])
+    else
+      params[:urls].gsub(/\s+/, "").split(/[,\n]/).each do |url|
+        @site_checks << SiteCheck.create(url: url)
+      end
     end
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120718185153) do
+ActiveRecord::Schema.define(:version => 20120906161230) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -190,7 +190,6 @@ ActiveRecord::Schema.define(:version => 20120718185153) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "signed_certificate_id"
   end
 
   create_table "certificate_orders", :force => true do |t|
@@ -317,6 +316,7 @@ ActiveRecord::Schema.define(:version => 20120718185153) do
     t.text     "subject_alternative_names"
     t.integer  "strength"
     t.boolean  "challenge_password"
+    t.integer  "certificate_lookup_id"
   end
 
   add_index "csrs", ["common_name"], :name => "index_csrs_on_common_name"

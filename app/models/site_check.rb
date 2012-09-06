@@ -3,6 +3,10 @@ require 'net/https'
 require 'open-uri'
 require 'timeout'
 
+
+# A site check is a query from the website to
+# query the ssl status of a domain
+
 class SiteCheck < ActiveRecord::Base
   belongs_to :certificate_lookup
 
@@ -11,13 +15,11 @@ class SiteCheck < ActiveRecord::Base
   validates :url, :presence=>true, :on=>:save
 
   after_initialize do
-    return unless new_record?
+    self.lookup
     self.verify_trust ||= true
   end
 
-  before_create{|sc|
-    sc.lookup
-  }
+  before_create :create_certificate_lookup
 
   COMMAND=->(url, port){%x"echo QUIT | openssl s_client -connect #{url}:#{port} -CAfile /usr/lib/ssl/certs/ca-certificates.crt"}
   TIMEOUT_DURATION=10
@@ -45,13 +47,6 @@ class SiteCheck < ActiveRecord::Base
     tcp_client = TCPSocket.new(u, p || 443)
     self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context
     self.ssl_client.connect
-    serial=self.certificate.serial.to_s
-    unless self.certificate.blank?
-      self.certificate_lookup=CertificateLookup.find_or_create_by_serial(serial,
-        serial: serial, certificate: self.certificate.to_s,
-        common_name: self.certificate.subject.common_name,
-        expires_at: self.certificate.not_after)
-    end
   rescue
     nil
   end
@@ -61,11 +56,11 @@ class SiteCheck < ActiveRecord::Base
   end
 
   def certificate
-    ssl_client.peer_cert_chain_with_openssl_extension.first
+    ssl_client.peer_cert_chain_with_openssl_extension.first unless all_certificates.blank?
   end
 
   def all_certificates
-    ssl_client.peer_cert_chain_with_openssl_extension
+    ssl_client.peer_cert_chain_with_openssl_extension unless ssl_client.blank?
   end
 
   def url=(o_url)
@@ -83,6 +78,16 @@ class SiteCheck < ActiveRecord::Base
 
   def subject_to_array(subject)
     subject.split(/\/(?=[\w\d\.]+\=)/).reject{|o|o.blank?}.map{|o|o.split(/(?<!\\)=/)}
+  end
+
+  def create_certificate_lookup
+    unless self.certificate.blank?
+      serial=self.certificate.serial.to_s
+      self.certificate_lookup=CertificateLookup.find_or_create_by_serial(serial,
+        serial: serial, certificate: self.certificate.to_s,
+        common_name: self.certificate.subject.common_name,
+        expires_at: self.certificate.not_after)
+    end
   end
 
 end

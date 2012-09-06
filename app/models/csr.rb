@@ -22,6 +22,7 @@ class Csr < ActiveRecord::Base
   end
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
+  belongs_to  :certificate_lookup
   has_many    :certificate_orders, :through=>:certificate_content
   serialize   :subject_alternative_names
   validates_presence_of :body
@@ -248,6 +249,12 @@ class Csr < ActiveRecord::Base
   
   def signed_certificate
     signed_certificates.last
+  end
+
+  def replace_csr(csr)
+    update_attribute :body, csr
+    certificate_content.update_attribute(:workflow_state, "contacts_provided") if
+        certificate_content.pending_validation?
   end
 
   def options_for_ca_dcv
