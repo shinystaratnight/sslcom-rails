@@ -122,6 +122,37 @@ class SslAccount < ActiveRecord::Base
     reseller.reseller_tier.label if has_role?('reseller')
   end
 
+  def signed_certificates
+    certificate_orders.map(&:certificate_contents).flatten.compact.
+      map(&:csr).flatten.compact.map(&:signed_certificate)
+  end
+
+  def unique_signed_certificates
+    ([]).tap do |result|
+      tmp_certs={}
+      signed_certificates.compact.each do |sc|
+        if tmp_certs[sc.common_name]
+          tmp_certs[sc.common_name] << sc
+        else
+          tmp_certs.merge! sc.common_name => [sc]
+        end
+      end
+      tmp_certs
+      tmp_certs.each do |k,v|
+        result << tmp_certs[k].max{|a,b|a.expiration_date <=> b.expiration_date}
+      end
+    end
+  end
+
+  def unrenewed_signed_certificates(recents_only=true)
+    unique_signed_certificates.select{|sc|
+      sc.certificate_order.renewal.blank? || recents_only ? (sc.certificate_order.renewal.created_at < 60.days.ago) : false}
+  end
+
+  def renewed_signed_certificates
+    unique_signed_certificates.select{|sc| sc.certificate_order.renewal}
+  end
+
   def can_buy?(item)
     item = Certificate.for_sale.find_by_product(item[ShoppingCart::PRODUCT_CODE]) if item.is_a?(Hash)
     if item.blank?

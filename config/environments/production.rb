@@ -60,6 +60,7 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
+  config.logger = Logger.new(config.log_path, 50, 5242880)
   config.log_level = :info
   # END ActiveMerchant configuration
 end
