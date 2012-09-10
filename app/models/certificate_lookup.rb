@@ -6,6 +6,9 @@ class CertificateLookup < ActiveRecord::Base
   has_many :csrs
   has_many :signed_certificates
 
+  scope :most_recent_expiring, lambda{
+    find_by_sql("select * from certificate_lookups as c where expires_at between '2012-09-08' AND '2012-11-08' AND created_at = ( select max(created_at) from certificate_lookups where common_name like c.common_name )")}
+
   # scan all certs in the Web and update csrs and signed_certificates. Uniqueness
   # of installed certs on the Web will be determined by serial number
   def self.scan_certificates(cutoff_date=Date.today)

@@ -144,9 +144,9 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
-  def unrenewed_signed_certificates(recents_only=true)
+  def unrenewed_signed_certificates(renew_threshold=nil)
     unique_signed_certificates.select{|sc|
-      sc.certificate_order.renewal.blank? || recents_only ? (sc.certificate_order.renewal.created_at < 60.days.ago) : false}
+      sc.certificate_order.renewal.blank? || renew_threshold ? (sc.certificate_order.renewal.created_at < renew_threshold.days.ago) : false}
   end
 
   def renewed_signed_certificates

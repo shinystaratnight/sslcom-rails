@@ -46,6 +46,38 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  scope :most_recent_expiring, lambda{
+    find_by_sql("select * from signed_certificates as T where expiration_date between '2012-09-08' AND '2012-11-08' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
+
+  def self.rebill
+    cl = CertificateLookup.includes{signed_certificates}.
+        most_recent_expiring.map(&:signed_certificates).flatten.compact
+    # just update expiration date for rebilling, but do not save it to SignedCertificate
+    mre=self.most_recent_expiring.each do |sc|
+        # replace signed_certificate with one from lookups
+        remove = cl.select{|c|c.common_name == sc.common_name}.
+            sort{|a,b|a.created_at <=> b.created_at}
+        if remove.last
+          sc = cl.delete(remove.last)
+          remove.each {|r| cl.delete(r)}
+        end
+    end
+    tmp_certs={}
+    result = []
+    cl.each do |sc|
+      if tmp_certs[sc.common_name]
+        tmp_certs[sc.common_name] << sc
+      else
+        tmp_certs.merge! sc.common_name => [sc]
+      end
+    end
+    tmp_certs
+    tmp_certs.each do |k,v|
+      result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
+    end
+    (mre << result).flatten
+  end
+
   def common_name
     SimpleIDN.to_unicode read_attribute(:common_name)
   end
