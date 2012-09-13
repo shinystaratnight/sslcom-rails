@@ -4,6 +4,10 @@ class SiteController < ApplicationController
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news buy_now)
 
   def index
+    sc = SignedCertificate.renew('2012-10-01', '2012-10-13')
+    co=sc.detect{|sc|sc.certificate_order.renewal.blank?}.certificate_order.do_auto_renew
+
+
     render action: "buy_now"
   end
 

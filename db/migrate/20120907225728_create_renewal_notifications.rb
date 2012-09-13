@@ -1,8 +1,7 @@
-class CreateAutoRenewals < ActiveRecord::Migration
+class CreateRenewalNotifications < ActiveRecord::Migration
   def self.up
-    create_table :auto_renewals, force: true do |t|
+    create_table :renewal_notifications, force: true do |t|
       t.references  :certificate_order
-      t.references  :order
       t.text        :body
       t.string      :recipients, :subject
       t.timestamps

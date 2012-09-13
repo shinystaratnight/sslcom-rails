@@ -453,9 +453,11 @@ class CertificateOrder < ActiveRecord::Base
   If order is over a certain amount, notify customer first and let them know they do not need to
   do anything
 =end
-  def auto_renew
-    if renewal.blank? #does a credit already exists for this cert order
-      purchase_renewal
+  # notify can be "none", "success", or "all"
+  def do_auto_renew(notify="success")
+    #does a credit already exists for this cert order
+    if renewal.blank? && (auto_renew.blank? || auto_renew=="scheduled")
+      purchase_renewal(notify)
     end
   end
 
@@ -817,28 +819,44 @@ class CertificateOrder < ActiveRecord::Base
     site_seal.conditionally_activate!
   end
 
-  #will cycle through billing profile to purchase certificate order
-  #use the billing profile associated with this order
-  #otherwise, find most recent successfully purchased order and use it's billing profile,
-  #cannot rely on order transactions, since the data was not migrated
-  def purchase_renewal
+  # will cycle through billing profile to purchase certificate order
+  # use the billing profile associated with this order
+  # otherwise, find most recent successfully purchased order and use it's billing profile,
+  # cannot rely on order transactions, since the data was not migrated
+
+  # notify can be "none", "success", or "all"
+  def purchase_renewal(notify)
     bp=order.billing_profile
     response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
       reorder=ssl_account.purchase self
       reorder.amount = amount
-      #reorder.cents = cart_items.inject(0){|result, element| result +
-      #    element.attributes_before_type_cast["amount"].to_f}
-      #reorder = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
       gateway_response=reorder.rebill(options)
+      RenewalAttempt.create(
+          certificate_order_id: self.id, order_transaction_id: gateway_response.id)
       if gateway_response.success?
+        self.quantity=1
         clone_for_renew([self], reorder)
         reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
         reorder.save
-        break gateway_response
+        if notify=="success"
+          begin
+            logger.info "Sending notification to #{receipt_recipients.join(",")}"
+            body = OrderNotifier.certificate_order_paid(receipt_recipients, self, true)
+            body.deliver unless body.to.empty?
+            RenewalNotification.create(certificate_order_id:
+                self.id, subject: parent.common_name,
+                body: body, recipients: receipt_recipients)
+          rescue Exception=>e
+            logger.error e.backtrace.inspect
+            raise e
+          end
+        end
+        return gateway_response
       end
-    end
+      gateway_response
+    end.last
   end
 
   #def purchase_using(profile)

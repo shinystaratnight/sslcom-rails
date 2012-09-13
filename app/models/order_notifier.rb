@@ -27,9 +27,10 @@ class OrderNotifier < ActionMailer::Base
           to:    ssl_account.receipt_recipients.uniq
   end
 
-  def certificate_order_paid(contact, certificate_order)
+  def certificate_order_paid(contact, certificate_order, renewal=false)
+    @renewal = renewal
     setup(contact, certificate_order)
-    mail  subject:      "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})",
+    mail  subject:      "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate #{@renewal ? "Renewal Processed" : "Confirmation"} For #{certificate_order.subject} (Order ##{certificate_order.ref})",
           from:         Settings.from_email.orders,
           to:   contact
   end

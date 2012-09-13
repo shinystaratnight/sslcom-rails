@@ -5,12 +5,12 @@ Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 Dear Customer,
 <%end -%>
 
-The following SSL certificate order has been placed:
+The following SSL certificate <%="renewal" if @renewal%> order has been placed:
 
 Date: <%=@certificate_order.order.created_at.strftime("%B %d, %Y %T")%>
 Reference Number: <%=@certificate_order.order.reference_number%>
 Description:
-    <%="#{@certificate_order.description} for #{(@certificate_order.certificate_content.csr.common_name)}"%>
+    <%="#{@certificate_order.description} #{'renewal' if @renewal} for #{(@certificate_order.certificate_content.csr.common_name)}"%>
 <%order_line_items(@certificate_order,true).each do |item|-%>
       - <%=item%>
 <%end-%>

@@ -314,16 +314,20 @@ class Order < ActiveRecord::Base
         profile: self.billing_profile, cvv: true})
     options[:profile].cycled_years.map do |exp_year|
       profile=options[:profile]
-      credit_card = profile.build_credit_card(expiration_year: exp_year, cvv: options[:cvv])
+      params = {expiration_year: exp_year, cvv: options[:cvv]}
+      if defined?(::GATEWAY_TEST_CODE)
+        params.merge!(card_number: "4222222222222")
+        self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
+      end
+      credit_card = profile.build_credit_card(params)
       next unless ActiveMerchant::Billing::Base.mode == :test ?
           true : credit_card.valid?
-      self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
       self.description = options[:description]
       gateway_response = self.purchase(credit_card, profile.build_info(options[:description]))
       result=(gateway_response.success?).tap do |success|
         if success
           self.mark_paid!
-          break gateway_response
+          return gateway_response
           #do we want to save the billing profile? if so do it here
         else
           self.transaction_declined!

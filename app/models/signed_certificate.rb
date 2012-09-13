@@ -46,14 +46,14 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :most_recent_expiring, lambda{
-    find_by_sql("select * from signed_certificates as T where expiration_date between '2012-09-08' AND '2012-11-08' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
+  scope :most_recent_expiring, lambda{|start, finish|
+    find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
 
-  def self.rebill
+  def self.renew(start, finish)
     cl = CertificateLookup.includes{signed_certificates}.
-        most_recent_expiring.map(&:signed_certificates).flatten.compact
+        most_recent_expiring(start,finish).map(&:signed_certificates).flatten.compact
     # just update expiration date for rebilling, but do not save it to SignedCertificate
-    mre=self.most_recent_expiring.each do |sc|
+    mre=self.most_recent_expiring(start,finish).each do |sc|
         # replace signed_certificate with one from lookups
         remove = cl.select{|c|c.common_name == sc.common_name}.
             sort{|a,b|a.created_at <=> b.created_at}
@@ -75,7 +75,8 @@ class SignedCertificate < ActiveRecord::Base
     tmp_certs.each do |k,v|
       result << tmp_certs[k].max{|a,b|a.created_at <=> b.created_at}
     end
-    (mre << result).flatten
+    expiring = (mre << result).flatten
+    #expiring.each {|e|e.certificate_order.do_auto_renew}
   end
 
   def common_name

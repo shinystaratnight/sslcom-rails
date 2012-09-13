@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120907225728) do
+ActiveRecord::Schema.define(:version => 20120913155722) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -86,16 +86,6 @@ ActiveRecord::Schema.define(:version => 20120907225728) do
     t.string   "nick_name"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "auto_renewals", :force => true do |t|
-    t.integer  "certificate_order_id"
-    t.integer  "order_id"
-    t.text     "body"
-    t.string   "recipients"
-    t.string   "subject"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
   end
 
   create_table "billing_profiles", :force => true do |t|
@@ -219,6 +209,8 @@ ActiveRecord::Schema.define(:version => 20120907225728) do
     t.boolean  "is_expired"
     t.integer  "renewal_id"
     t.boolean  "is_test"
+    t.string   "auto_renew"
+    t.string   "auto_renew_status"
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
@@ -644,6 +636,22 @@ ActiveRecord::Schema.define(:version => 20120907225728) do
     t.integer  "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "renewal_attempts", :force => true do |t|
+    t.integer  "certificate_order_id"
+    t.integer  "order_transaction_id"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+  end
+
+  create_table "renewal_notifications", :force => true do |t|
+    t.integer  "certificate_order_id"
+    t.text     "body"
+    t.string   "recipients"
+    t.string   "subject"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
   end
 
   create_table "reseller_tiers", :force => true do |t|
