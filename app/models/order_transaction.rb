@@ -1,5 +1,7 @@
 class OrderTransaction < ActiveRecord::Base
-  belongs_to :order
+  belongs_to  :order
+  has_many    :renewal_attempts
+
   serialize :params
   serialize :avs
   serialize :cvv

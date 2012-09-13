@@ -8,6 +8,8 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
   has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
     :dependent=>:destroy #represents a child renewal
+  has_many    :renewal_attempts
+  has_many    :renewal_notifications
   has_many    :certificate_contents, :dependent => :destroy
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
@@ -164,6 +166,8 @@ class CertificateOrder < ActiveRecord::Base
   RENEWING = 'renewing'
   REPROCESSING = 'reprocessing'
   RECERTS = [RENEWING, REPROCESSING]
+  RENEWAL_DATE_CUTOFF = 45.days.ago
+  RENEWAL_DATE_RANGE = 45.days.from_now
 
   # changed for the migration
   unless MIGRATING_FROM_LEGACY
@@ -456,9 +460,53 @@ class CertificateOrder < ActiveRecord::Base
   # notify can be "none", "success", or "all"
   def do_auto_renew(notify="success")
     #does a credit already exists for this cert order
-    if renewal.blank? && (auto_renew.blank? || auto_renew=="scheduled")
+    if (renewal.blank? || renewal_attempts_old?) && (auto_renew.blank? || auto_renew=="scheduled")
       purchase_renewal(notify)
     end
+  end
+
+  def renewal_attempts_old?
+    renewal_attempts.blank? ? true : renewal_attempts.last.created_at < RENEWAL_DATE_CUTOFF
+  end
+
+  def setup_certificate_order(certificate, certificate_order)
+    duration = certificate.duration_in_days(certificate_order.duration)
+    certificate_order.certificate_content.duration = duration
+    if certificate.is_ucc? || certificate.is_wildcard?
+      psl = certificate.items_by_server_licenses.find { |item|
+        item.value==duration.to_s }
+      so  = SubOrderItem.new(:product_variant_item=>psl,
+       :quantity            =>certificate_order.server_licenses.to_i,
+       :amount              =>psl.amount*certificate_order.server_licenses.to_i)
+      certificate_order.sub_order_items << so
+      if certificate.is_ucc?
+        pd                 = certificate.items_by_domains.find_all { |item|
+          item.value==duration.to_s }
+        additional_domains = (certificate_order.certificate_contents[0].
+            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        so                 = SubOrderItem.new(:product_variant_item=>pd[0],
+                                              :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
+                                              :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
+        certificate_order.sub_order_items << so
+        if additional_domains > 0
+          so = SubOrderItem.new(:product_variant_item=>pd[1],
+                                :quantity            =>additional_domains,
+                                :amount              =>pd[1].amount*additional_domains)
+          certificate_order.sub_order_items << so
+        end
+      end
+    end
+    unless certificate.is_ucc?
+      pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
+      so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
+                             :amount              =>pvi.amount)
+      certificate_order.sub_order_items << so
+    end
+    certificate_order.amount = certificate_order.
+        sub_order_items.map(&:amount).sum
+    certificate_order.certificate_contents[0].
+        certificate_order    = certificate_order
+    certificate_order
   end
 
   def refund
@@ -830,23 +878,29 @@ class CertificateOrder < ActiveRecord::Base
     response=[bp, (ssl_account.orders.map(&:billing_profile)-[bp]).shift].compact.each do |bp|
       p "purchase using billing_profile_id==#{bp.id}"
       options={profile: bp, cvv: false}
-      reorder=ssl_account.purchase self
-      reorder.amount = amount
+      new_cert = self.dup
+      new_cert.certificate_contents.build
+      new_cert.duration=1 #only renew 1 year at a time
+      co = setup_certificate_order(renewal_certificate, new_cert)
+      co.parent = self
+      reorder=ssl_account.purchase co
+      #reorder.amount = self.renewal_certificate.amount
       gateway_response=reorder.rebill(options)
       RenewalAttempt.create(
           certificate_order_id: self.id, order_transaction_id: gateway_response.id)
       if gateway_response.success?
-        self.quantity=1
-        clone_for_renew([self], reorder)
-        reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
+        #self.quantity=1
+        #clone_for_renew([self], reorder)
+        #reorder.line_items.last.sellable.update_attribute :renewal_id, self.id
+        co.save
         reorder.save
         if notify=="success"
           begin
             logger.info "Sending notification to #{receipt_recipients.join(",")}"
-            body = OrderNotifier.certificate_order_paid(receipt_recipients, self, true)
+            body = OrderNotifier.certificate_order_paid(receipt_recipients, co, true)
             body.deliver unless body.to.empty?
             RenewalNotification.create(certificate_order_id:
-                self.id, subject: parent.common_name,
+                co.id, subject: body.subject,
                 body: body, recipients: receipt_recipients)
           rescue Exception=>e
             logger.error e.backtrace.inspect
@@ -874,10 +928,16 @@ class CertificateOrder < ActiveRecord::Base
     certificate_orders.each do |cert|
       cert.quantity.times do |i|
         #could use cert.dup after >=3.1, but we are currently on 3.0.10 so we'll do this manually
-        new_cert = CertificateOrder.new(cert.attributes.merge(id: nil, ref: nil, created_at: nil, updated_at: nil))
+        new_cert = cert.dup
         cert.sub_order_items.each {|soi|
-          new_cert.sub_order_items << SubOrderItem.new(soi.attributes.merge(id: nil, created_at: nil, updated_at: nil))
+          new_cert.sub_order_items << soi.dup
         }
+        if cert.migrated_from_v2?
+          pvg = new_cert.sub_order_items[0].
+              product_variant_item.product_variant_group
+          pvg.variantable=cert.renewal_certificate
+          pvg.save
+        end
         new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
         new_cert.preferred_payment_order = 'prepaid'
         new_cert.save
