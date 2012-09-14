@@ -87,6 +87,7 @@ SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
 
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
+ActiveMerchant::Billing::CreditCard.require_verification_value=false
 
 
 

@@ -4,9 +4,9 @@ class SiteController < ApplicationController
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news buy_now)
 
   def index
-    sc = SignedCertificate.renew('2012-09-03', '2012-10-13').reject{|sc|sc.csr.certificate_content.blank?}
+    sc = SignedCertificate.renew(Date.today, 45.days.from_now).reject{|sc|sc.csr.certificate_content.blank?}
     co=sc.map(&:certificate_order).uniq.reject{|co|co.certificate.is_free?}
-    co.each{|c|c.do_auto_renew}
+    co.each{|c|c.do_auto_renew unless ["fiondassl", "leo@ssl.com", "tagrnmnm"].include?(c.ssl_account.users.last.login)}
 
     render action: "buy_now"
   end

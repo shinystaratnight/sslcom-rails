@@ -884,7 +884,7 @@ class CertificateOrder < ActiveRecord::Base
       co = setup_certificate_order(renewal_certificate, new_cert)
       co.parent = self
       reorder=ssl_account.purchase co
-      #reorder.amount = self.renewal_certificate.amount
+      reorder.cents = co.attributes_before_type_cast["amount"].to_f
       gateway_response=reorder.rebill(options)
       RenewalAttempt.create(
           certificate_order_id: self.id, order_transaction_id: gateway_response.id)
