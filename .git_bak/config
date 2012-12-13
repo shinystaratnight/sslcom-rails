@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "heroku"]
+	url = git@heroku.com:evening-spring-93.git
+	fetch = +refs/heads/*:refs/remotes/heroku/*
+[remote "trybamboo"]
+	url = git@heroku.com:blazing-winter-91.git
+	fetch = +refs/heads/*:refs/remotes/trybamboo/*
+[remote "production"]
+	url = git@heroku.com:evening-spring-93-production.git
+	fetch = +refs/heads/*:refs/remotes/production/*
+[remote "origin"]
+	url = git@github.com:codelux/ssl_com_rails3.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master

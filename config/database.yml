@@ -60,6 +60,17 @@ production:
   password: kama2jama2
   socket: /var/run/mysqld/mysqld.sock
 
+ssl_gs:
+  adapter: mysql2
+  encoding: utf8
+  reconnect: false
+  database: ssl_gs
+  pool: 5
+  username: ssl_db
+  password: kama2jama2
+  socket: /var/run/mysqld/mysqld.sock
+
+
 
 cucumber:
   <<: *TEST

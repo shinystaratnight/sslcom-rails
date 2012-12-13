@@ -11,6 +11,7 @@ gem 'awesome_print'
 gem 'activemerchant'
 #gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
+gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'

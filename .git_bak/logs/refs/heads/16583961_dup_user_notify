@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 b534d3cfdf6087a54d7c95c5bbe1d6008257f098 Leo Grove <leo.grove@ssl.com> 1315964689 -0500	branch: Created from HEAD
+b534d3cfdf6087a54d7c95c5bbe1d6008257f098 913525ca8ef0173e91bb378ac4222a7ca297dae2 Leo Grove <leo.grove@ssl.com> 1315976072 -0500	commit: notify admin when dup username or email is being used to login or reset credentials
+913525ca8ef0173e91bb378ac4222a7ca297dae2 b82c14cf30c9dfc94a1abf5504a118b83a4ac81a Leo Grove <leo.grove@ssl.com> 1316045816 -0500	commit: completed testing of duplicate user names and emails

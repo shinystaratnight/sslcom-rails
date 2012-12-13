@@ -1,5 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 require 'oauth/rack/oauth_filter'
+require 'rack/ssl-enforcer'
 require 'rails/all'
 
 Bundler.setup
@@ -51,9 +52,11 @@ module SslCom
       g.fixture_replacement :machinist
     end
 
-    #config.middleware.use "ForceSSL"
-    config.force_ssl = true
     config.middleware.use OAuth::Rack::OAuthFilter
+
+    config.middleware.use Rack::SslEnforcer,
+      only: [%r(^/certificates/.*?/buy), %r(^/login), %r(^/account), %r(^/user_session/new), %r(^/user/new),
+             %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds)]
 
     # Enable the asset pipeline
     config.assets.enabled = false
@@ -68,7 +71,6 @@ require "#{Rails.root}/lib/range.rb"
 require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
-#require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/subdomain-fu.rb"
 require "will_paginate"
 

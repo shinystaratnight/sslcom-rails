@@ -14,7 +14,7 @@ track_visitors: true
 show_csr_submit_on_buy_page: true
 enable_google_translate: false
 enable_exception_notifier: true
-offer_trial: false
+offer_trial: true
 minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3
 ucc_max_domains: 200
@@ -50,7 +50,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNodes=8P3K3M"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi5Kimi5'
+comodo_api_password: 'Jimi6Kimi6'
 authorize_net_key: '52HQJAeBz9m'
 authorize_net_transaction_id: '734s6P38Fv3HaY2V'
 p_authorize_net_key: '6Y6ckBFU6nYc'

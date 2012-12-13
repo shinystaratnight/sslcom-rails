@@ -908,6 +908,8 @@ class CertificateOrder < ActiveRecord::Base
           end
         end
         return gateway_response
+      else
+        co.destroy
       end
       gateway_response
     end.last
