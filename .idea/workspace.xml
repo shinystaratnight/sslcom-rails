@@ -17,7 +17,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" afterPath="$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -50,26 +52,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="development.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="24" column="72" selection-start="975" selection-end="975" vertical-scroll-proportion="0.0">
-              <folding>
-                <marker date="1355297017000" expanded="true" signature="30:1419" placeholder="do ... end" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="site_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="55" selection-start="142" selection-end="142" vertical-scroll-proportion="0.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -108,10 +90,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_scripts_and_styles.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_scripts_and_styles.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="34" selection-start="650" selection-end="650" vertical-scroll-proportion="0.42056075">
+            <state line="15" column="49" selection-start="650" selection-end="650" vertical-scroll-proportion="-9.375">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Capfile" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Capfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="deploy.rb" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="8" column="92" selection-start="345" selection-end="345" vertical-scroll-proportion="-3.7101967">
               <folding />
             </state>
           </provider>
@@ -138,7 +138,7 @@
       <file leaf-file-name="Gemfile" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Gemfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+            <state line="1" column="0" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -1395,20 +1395,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/surl.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="70" column="18" selection-start="2208" selection-end="2208" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/billing_profiles_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="3" selection-start="101" selection-end="101" vertical-scroll-proportion="0.0">
@@ -1434,7 +1420,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state line="24" column="72" selection-start="975" selection-end="975" vertical-scroll-proportion="0.0">
           <folding>
-            <marker date="1355297017000" expanded="true" signature="30:1419" placeholder="do ... end" />
+            <marker date="1355297017000" expanded="true" signature="-1:-1" placeholder="do ... end" />
           </folding>
         </state>
       </provider>
@@ -1471,7 +1457,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+        <state line="1" column="0" selection-start="29" selection-end="29" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
@@ -1506,7 +1492,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/shared/_scripts_and_styles.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="34" selection-start="650" selection-end="650" vertical-scroll-proportion="0.42056075">
+        <state line="15" column="49" selection-start="650" selection-end="650" vertical-scroll-proportion="-9.375">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Capfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8" column="92" selection-start="345" selection-end="345" vertical-scroll-proportion="-3.7101967">
           <folding />
         </state>
       </provider>

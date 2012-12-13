@@ -41,7 +41,9 @@ gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer"
+gem "libv8"
 gem 'request_exception_handler'
+gem 'rvm-capistrano'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'
