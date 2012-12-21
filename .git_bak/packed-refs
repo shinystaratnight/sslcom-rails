@@ -1,7 +1,0 @@
-b534d3cfdf6087a54d7c95c5bbe1d6008257f098 refs/heads/16577547-forward-val-request
-b82c14cf30c9dfc94a1abf5504a118b83a4ac81a refs/heads/16583961_dup_user_notify
-24cc99470d1bd9daa2527dc876882039a7cb9d75 refs/heads/18436555-verify-v1-migration-integrity
-b18461523adc8a9114f7225c87831f8dd20697da refs/heads/20393639-skip_billing
-1c1d3c424c227c1cc1feb57b6326403965adb3fe refs/heads/list
-b18461523adc8a9114f7225c87831f8dd20697da refs/heads/master
-80bde99f4cea71c0330daeffdc0cc5f5c0d15b44 refs/remotes/heroku/master

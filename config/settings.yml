@@ -50,7 +50,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNodes=8P3K3M"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi6Kimi6'
+comodo_api_password: 'Jimi7Kimi7'
 authorize_net_key: '52HQJAeBz9m'
 authorize_net_transaction_id: '734s6P38Fv3HaY2V'
 p_authorize_net_key: '6Y6ckBFU6nYc'

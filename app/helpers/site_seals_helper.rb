@@ -59,7 +59,7 @@ module SiteSealsHelper
   end
 
   def popup_code(co)
-    {onclick:
+    {style: "border: none;", onclick:
          "window.open('#{site_report_site_seal_url(co.site_seal)}', 'site_report','#{SiteSeal::REPORT_DIMENSIONS}')",
     onmouseover: "this.style.cursor='pointer'"}
   end

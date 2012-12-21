@@ -3,6 +3,7 @@ db/*.sqlite3
 log/*.log
 tmp/**/*
 config/ssl/*
+config/database.yml
 capybara*.html
 
 config/settings.local.yml

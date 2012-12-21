@@ -55,8 +55,8 @@ module SslCom
     config.middleware.use OAuth::Rack::OAuthFilter
 
     config.middleware.use Rack::SslEnforcer,
-      only: [%r(^/certificates/.*?/buy), %r(^/login), %r(^/account), %r(^/user_session/new), %r(^/user/new),
-             %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds)]
+      only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
+             %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
 
     # Enable the asset pipeline
     config.assets.enabled = false

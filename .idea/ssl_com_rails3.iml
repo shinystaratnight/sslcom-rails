@@ -273,6 +273,7 @@
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.7.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.0.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v1.2.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.13.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v1.1.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara-firebug (v1.3.0@36e996, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara-webkit (v0.13.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
@@ -298,6 +299,7 @@
     <orderEntry type="library" scope="PROVIDED" name="gherkin (v2.11.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="gyoku (v0.4.6, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="haml (v3.2.0.rc.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="highline (v1.6.15, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="hike (v1.2.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="httparty (v0.9.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="httpauth (v0.2.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
@@ -309,6 +311,7 @@
     <orderEntry type="library" scope="PROVIDED" name="json (v1.7.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jwt (v0.1.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="launchy (v2.1.2, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="libv8 (v3.11.8.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="libwebsocket (v0.1.7.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="machinist (v2.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="mail (v2.4.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
@@ -359,6 +362,7 @@
     <orderEntry type="library" scope="PROVIDED" name="ruby-odbc (v0.99994, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby_parser (v3.1.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rubyzip (v0.9.9@a64b01, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rvm-capistrano (v1.2.7, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.2.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass-rails (v3.2.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="savon (v1.2.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
