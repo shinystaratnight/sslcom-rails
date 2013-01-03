@@ -5024,7 +5024,6 @@ label.error {
   background: -webkit-linear-gradient(#dedede, #ffffff 20%);
   background: -moz-linear-gradient(#dedede, #ffffff 20%);
   background: -o-linear-gradient(#dedede, #ffffff 20%);
-  background: -ms-linear-gradient(#dedede, #ffffff 20%);
   background: linear-gradient(#dedede, #ffffff 20%);
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -5186,7 +5185,6 @@ label.error {
   background: -webkit-linear-gradient(top, #dddddd, #ffffff);
   background: -moz-linear-gradient(top, #dddddd, #ffffff);
   background: -o-linear-gradient(top, #dddddd, #ffffff);
-  background: -ms-linear-gradient(top, #dddddd, #ffffff);
   background: linear-gradient(top, #dddddd, #ffffff);
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -5534,7 +5532,6 @@ table#line_items_receipt td {
   background: -webkit-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
   background: -moz-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
   background: -o-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
-  background: -ms-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
   background: linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
 }
 /* line 4152, ../../../app/stylesheets/main.sass */
@@ -5570,7 +5567,7 @@ table#line_items_receipt td {
   color: #666666;
 }
 /* line 4179, ../../../app/stylesheets/main.sass */
-#form_progress_indicator ul li#selected, #form_progress_indicator .default_container .info_listing ul#privacy li#selected, .default_container .info_listing #form_progress_indicator ul#privacy li#selected {
+#form_progress_indicator ul li#selected {
   color: #ff3333;
 }
 
@@ -5602,11 +5599,11 @@ table#line_items_receipt td {
   list-style-type: none;
 }
 /* line 4203, ../../../app/stylesheets/main.sass */
-.default_container .info_listing ul#privacy li, .default_container .info_listing ul#privacy li {
+.default_container .info_listing ul#privacy li {
   margin: 0.8em 0;
 }
 /* line 4206, ../../../app/stylesheets/main.sass */
-.default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:last-child, .default_container .info_listing ul#privacy li:last-child {
+.default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:last-child {
   margin: 0;
 }
 /* line 4209, ../../../app/stylesheets/main.sass */
@@ -5967,7 +5964,15 @@ h3#certificate_crumbs {
 }
 
 /* Product Page */
-/* line 4475, ../../../app/stylesheets/main.sass */
+/* Product Page */
+/* line 4476, ../../../app/stylesheets/main.sass */
+.center_product_desc {
+  background: white url(/images/bg.gif) repeat-x scroll 0 0;
+  margin: 9px 0 0;
+  padding: 0.6em;
+}
+
+/* line 4481, ../../../app/stylesheets/main.sass */
 .right_product_desc {
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
   float: right;
@@ -5976,62 +5981,62 @@ h3#certificate_crumbs {
   width: 440px;
 }
 
-/* line 4482, ../../../app/stylesheets/main.sass */
+/* line 4488, ../../../app/stylesheets/main.sass */
 .bottom_product_desc {
   padding: 1em 0;
   width: 65%;
   float: left;
   line-height: 2.2em;
 }
-/* line 4488, ../../../app/stylesheets/main.sass */
+/* line 4494, ../../../app/stylesheets/main.sass */
 .bottom_product_desc p {
   margin: 0 0 12px;
   font-size: 1.5em;
   color: black;
 }
 
-/* line 4493, ../../../app/stylesheets/main.sass */
+/* line 4499, ../../../app/stylesheets/main.sass */
 #upward_trend {
   float: right;
   margin: 10px 0 10px 10px;
   border: 2px solid #cccccc;
 }
 
-/* line 4498, ../../../app/stylesheets/main.sass */
+/* line 4504, ../../../app/stylesheets/main.sass */
 #shop_securely_with_ssl {
   float: left;
   margin: 10px 10px 0 0;
   border: 2px solid #cccccc;
 }
 
-/* line 4503, ../../../app/stylesheets/main.sass */
+/* line 4509, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot {
   margin: 0pt auto;
   width: 540px;
 }
-/* line 4507, ../../../app/stylesheets/main.sass */
+/* line 4513, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot img {
   border: 2px solid #cccccc;
   margin: 10px auto;
 }
 
-/* line 4511, ../../../app/stylesheets/main.sass */
+/* line 4517, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today {
   margin: 15px;
   text-align: center;
 }
-/* line 4514, ../../../app/stylesheets/main.sass */
+/* line 4520, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today h3 {
   color: #222222;
 }
 
-/* line 4517, ../../../app/stylesheets/main.sass */
+/* line 4523, ../../../app/stylesheets/main.sass */
 ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   margin: 0 1.5em 2em;
   font-size: 1.3em;
 }
 
-/* line 4521, ../../../app/stylesheets/main.sass */
+/* line 4527, ../../../app/stylesheets/main.sass */
 #documents_entry {
   border-bottom: 2px dotted #cccccc;
   border-top: 2px dotted #cccccc;
@@ -6039,26 +6044,26 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   padding: 0 20px;
 }
 
-/* line 4527, ../../../app/stylesheets/main.sass */
+/* line 4533, ../../../app/stylesheets/main.sass */
 #documents_list {
   float: left;
   font-size: 1.4em;
   width: 100%;
 }
-/* line 4532, ../../../app/stylesheets/main.sass */
+/* line 4538, ../../../app/stylesheets/main.sass */
 #documents_list dl {
   float: left;
   padding: 14px;
   display: inline;
 }
-/* line 4537, ../../../app/stylesheets/main.sass */
+/* line 4543, ../../../app/stylesheets/main.sass */
 #documents_list dd {
   margin: 0 0 0 98px;
   padding: 0;
   line-height: 1.5em;
   color: #666666;
 }
-/* line 4543, ../../../app/stylesheets/main.sass */
+/* line 4549, ../../../app/stylesheets/main.sass */
 #documents_list dd.title {
   margin: 0;
   padding: 0;
@@ -6066,11 +6071,11 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   letter-spacing: 1px;
   color: #627081;
 }
-/* line 4550, ../../../app/stylesheets/main.sass */
+/* line 4556, ../../../app/stylesheets/main.sass */
 #documents_list dl dd.img {
   margin: 0;
 }
-/* line 4553, ../../../app/stylesheets/main.sass */
+/* line 4559, ../../../app/stylesheets/main.sass */
 #documents_list dd.img .img_preview img {
   float: left;
   margin: 0 8px 0 0;
@@ -6080,32 +6085,32 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   border-right-color: #c8cdd2;
   background: white;
 }
-/* line 4562, ../../../app/stylesheets/main.sass */
+/* line 4568, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview {
   font-size: 80%;
   margin: 0 0 0 22px;
   clear: both;
   width: 7em;
 }
-/* line 4568, ../../../app/stylesheets/main.sass */
+/* line 4574, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview a {
   padding: 2px 0;
 }
 
-/* line 4571, ../../../app/stylesheets/main.sass */
+/* line 4577, ../../../app/stylesheets/main.sass */
 img.blue_icon {
   vertical-align: middle;
   margin-right: 0.2em;
 }
 
-/* line 4575, ../../../app/stylesheets/main.sass */
+/* line 4581, ../../../app/stylesheets/main.sass */
 .documents_list_notes {
   color: #333333;
   padding: 14px 0;
   float: left;
 }
 
-/* line 4580, ../../../app/stylesheets/main.sass */
+/* line 4586, ../../../app/stylesheets/main.sass */
 #search_bar {
   padding: 0.5em;
   background: #eeeeff;
@@ -6117,37 +6122,37 @@ img.blue_icon {
   border: 1px solid #ccccff;
 }
 
-/* line 4591, ../../../app/stylesheets/main.sass */
+/* line 4597, ../../../app/stylesheets/main.sass */
 #validation_requirements_box ul, #validation_requirements_box .default_container .info_listing ul#privacy, .default_container .info_listing #validation_requirements_box ul#privacy {
   padding-left: 1.2em;
 }
 
-/* line 4594, ../../../app/stylesheets/main.sass */
+/* line 4600, ../../../app/stylesheets/main.sass */
 #site_seal_instructions, #site_seal_documents {
   text-align: left;
 }
 
-/* line 4599, ../../../app/stylesheets/main.sass */
+/* line 4605, ../../../app/stylesheets/main.sass */
 .subject_column.show_validation, .subject_column.center_subject {
   margin: 0pt auto;
   width: 90%;
 }
-/* line 4603, ../../../app/stylesheets/main.sass */
+/* line 4609, ../../../app/stylesheets/main.sass */
 .subject_column a {
   float: left;
 }
 
-/* line 4606, ../../../app/stylesheets/main.sass */
+/* line 4612, ../../../app/stylesheets/main.sass */
 .bordered_prod {
   border: 1px grey solid;
   padding: 1px;
 }
 
-/* line 4610, ../../../app/stylesheets/main.sass */
+/* line 4616, ../../../app/stylesheets/main.sass */
 .has_csr_container, .has_account_container, .clickable_choice {
   cursor: pointer;
 }
-/* line 4613, ../../../app/stylesheets/main.sass */
+/* line 4619, ../../../app/stylesheets/main.sass */
 .has_csr_container .what_is_this, .has_account_container .what_is_this, .clickable_choice .what_is_this {
   background-color: white;
   padding: 1px;
@@ -6155,109 +6160,109 @@ img.blue_icon {
   vertical-align: top;
 }
 
-/* line 4619, ../../../app/stylesheets/main.sass */
+/* line 4625, ../../../app/stylesheets/main.sass */
 .document_access_type {
   margin-left: 1em;
 }
 
-/* line 4622, ../../../app/stylesheets/main.sass */
+/* line 4628, ../../../app/stylesheets/main.sass */
 .doc_attribute {
   text-align: left;
   padding-left: 0.2em;
   WIDTH: 12em;
 }
 
-/* line 4627, ../../../app/stylesheets/main.sass */
+/* line 4633, ../../../app/stylesheets/main.sass */
 .public_settings {
   float: right;
   padding: 14px 0;
   color: #333333;
 }
 
-/* line 4632, ../../../app/stylesheets/main.sass */
+/* line 4638, ../../../app/stylesheets/main.sass */
 .preview_link {
   margin-right: 1em;
 }
 
-/* line 4635, ../../../app/stylesheets/main.sass */
+/* line 4641, ../../../app/stylesheets/main.sass */
 .site_seal_notes {
   margin: 0.6em 0 0 1em;
   clear: both;
 }
 
-/* line 4639, ../../../app/stylesheets/main.sass */
+/* line 4645, ../../../app/stylesheets/main.sass */
 .approved_validation_document {
   background: url(/images/bg-list.gif) no-repeat left top;
 }
-/* line 4642, ../../../app/stylesheets/main.sass */
+/* line 4648, ../../../app/stylesheets/main.sass */
 .approved_validation_document.crossout span {
   text-decoration: line-through;
 }
 
-/* line 4646, ../../../app/stylesheets/main.sass */
+/* line 4652, ../../../app/stylesheets/main.sass */
 ul.applicable_documents li, .default_container .info_listing ul.applicable_documents#privacy li, ul.applied_docs li, .default_container .info_listing ul.applied_docs#privacy li {
   padding-left: 16px;
   line-height: 1.4em;
 }
 
-/* line 4650, ../../../app/stylesheets/main.sass */
+/* line 4656, ../../../app/stylesheets/main.sass */
 .validation_admin_controls {
   margin-bottom: 2em;
 }
 
-/* line 4653, ../../../app/stylesheets/main.sass */
+/* line 4659, ../../../app/stylesheets/main.sass */
 .tree-connect {
   padding-left: 1.2em;
   background: url(/images/tree-connect.gif) no-repeat left center;
 }
 
-/* line 4657, ../../../app/stylesheets/main.sass */
+/* line 4663, ../../../app/stylesheets/main.sass */
 span.rule_name {
   background: lightyellow;
   font-weight: bold;
   text-decoration: underline;
 }
 
-/* line 4662, ../../../app/stylesheets/main.sass */
+/* line 4668, ../../../app/stylesheets/main.sass */
 .rules_methods_block, .small_section {
   padding-bottom: 1em;
 }
-/* line 4665, ../../../app/stylesheets/main.sass */
+/* line 4671, ../../../app/stylesheets/main.sass */
 .rules_methods_block li.email_customer, .small_section li.email_customer {
   padding: 0.5em;
 }
 
-/* line 4668, ../../../app/stylesheets/main.sass */
+/* line 4674, ../../../app/stylesheets/main.sass */
 ul[class^=status_history] > li, .default_container .info_listing ul[class^=status_history]#privacy > li {
   border: 1px solid #cffff9;
   background: none repeat scroll 0 0 #eefafc;
   margin: 0.2em auto;
 }
 
-/* line 4673, ../../../app/stylesheets/main.sass */
+/* line 4679, ../../../app/stylesheets/main.sass */
 #cart_items a {
   color: orange;
 }
 
-/* line 4676, ../../../app/stylesheets/main.sass */
+/* line 4682, ../../../app/stylesheets/main.sass */
 .interested_in_reselling {
   color: maroon;
 }
 
-/* line 4679, ../../../app/stylesheets/main.sass */
+/* line 4685, ../../../app/stylesheets/main.sass */
 .orig {
   text-decoration: line-through;
   color: red;
 }
 
-/* line 4683, ../../../app/stylesheets/main.sass */
+/* line 4689, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal {
   margin: 0 auto;
   text-align: center;
   float: right;
   width: 300px;
 }
-/* line 4689, ../../../app/stylesheets/main.sass */
+/* line 4695, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #container {
   font-size: 1.3em;
   padding: 0em 3em 1em;
@@ -6266,19 +6271,19 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   width: auto;
   text-align: inherit !important;
 }
-/* line 4697, ../../../app/stylesheets/main.sass */
+/* line 4703, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #description {
   text-align: left;
 }
 
-/* line 4700, ../../../app/stylesheets/main.sass */
+/* line 4706, ../../../app/stylesheets/main.sass */
 #global_footer {
   margin: 0 auto;
   padding-top: 24px;
   text-align: center;
   width: 970px;
 }
-/* line 4706, ../../../app/stylesheets/main.sass */
+/* line 4712, ../../../app/stylesheets/main.sass */
 #global_footer ul, #global_footer .default_container .info_listing ul#privacy, .default_container .info_listing #global_footer ul#privacy {
   color: white;
   float: left;
@@ -6286,7 +6291,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   margin-left: 5em;
   padding-left: 0em;
 }
-/* line 4713, ../../../app/stylesheets/main.sass */
+/* line 4719, ../../../app/stylesheets/main.sass */
 #global_footer ul li, #global_footer .default_container .info_listing ul#privacy li, .default_container .info_listing #global_footer ul#privacy li {
   color: #fda58a;
   font-family: Arial, Helvetica, sans-serif;
@@ -6296,7 +6301,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   padding-top: 8px;
   text-align: left;
 }
-/* line 4722, ../../../app/stylesheets/main.sass */
+/* line 4728, ../../../app/stylesheets/main.sass */
 #global_footer h4, #global_footer h4 a, #global_footer h4 a:visited, #global_footer h4 a:hover {
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -6307,12 +6312,12 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   text-align: left;
 }
 
-/* line 4732, ../../../app/stylesheets/main.sass */
+/* line 4738, ../../../app/stylesheets/main.sass */
 #section_box {
   padding-top: 0.35em;
 }
 
-/* line 4735, ../../../app/stylesheets/main.sass */
+/* line 4741, ../../../app/stylesheets/main.sass */
 #copyright_statement {
   clear: both;
   color: #999999;
@@ -6323,13 +6328,13 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   width: 970px;
 }
 
-/* line 4744, ../../../app/stylesheets/main.sass */
+/* line 4750, ../../../app/stylesheets/main.sass */
 span.footer_link {
   color: #ffc2af;
   padding-left: 1em;
 }
 
-/* line 4748, ../../../app/stylesheets/main.sass */
+/* line 4754, ../../../app/stylesheets/main.sass */
 #logo_box {
   background-image: url("/images/footer_logo.png");
   background-position: left top;
@@ -6341,289 +6346,289 @@ span.footer_link {
   width: 100px;
 }
 
-/* line 4758, ../../../app/stylesheets/main.sass */
+/* line 4764, ../../../app/stylesheets/main.sass */
 #ssl_site_seal_sample {
   float: right;
   padding: 10px 0 10px 10px;
 }
 
-/* line 4762, ../../../app/stylesheets/main.sass */
+/* line 4768, ../../../app/stylesheets/main.sass */
 #sample_site_report, #sample_artifacts {
   margin-right: 10px 10px 0 0;
   float: left;
   width: 300px;
 }
-/* line 4767, ../../../app/stylesheets/main.sass */
+/* line 4773, ../../../app/stylesheets/main.sass */
 #sample_site_report img, #sample_artifacts img {
   border: 2px solid #cccccc;
 }
 
-/* line 4770, ../../../app/stylesheets/main.sass */
+/* line 4776, ../../../app/stylesheets/main.sass */
 #sample_artifacts {
   margin-left: 10px;
   float: right;
 }
 
-/* line 4774, ../../../app/stylesheets/main.sass */
+/* line 4780, ../../../app/stylesheets/main.sass */
 .contact_us_container {
   width: 330px;
   margin-top: 2.2em;
   padding-bottom: 0.4em;
 }
-/* line 4779, ../../../app/stylesheets/main.sass */
+/* line 4785, ../../../app/stylesheets/main.sass */
 .contact_us_container.no_top_margin {
   margin-top: 0;
 }
-/* line 4782, ../../../app/stylesheets/main.sass */
+/* line 4788, ../../../app/stylesheets/main.sass */
 .contact_us_container p.contact_us_header {
   color: #333333;
 }
-/* line 4785, ../../../app/stylesheets/main.sass */
+/* line 4791, ../../../app/stylesheets/main.sass */
 .contact_us_container p.description, .contact_us_container p.sub_description, .contact_us_container p.main_description {
   margin: 1em 1em 2em;
 }
-/* line 4788, ../../../app/stylesheets/main.sass */
+/* line 4794, ../../../app/stylesheets/main.sass */
 .contact_us_container p.sub_description {
   font-size: 1.3em;
   color: #222222;
 }
-/* line 4792, ../../../app/stylesheets/main.sass */
+/* line 4798, ../../../app/stylesheets/main.sass */
 .contact_us_container p.main_description {
   width: 630px;
   margin-bottom: 1em;
 }
-/* line 4796, ../../../app/stylesheets/main.sass */
+/* line 4802, ../../../app/stylesheets/main.sass */
 .contact_us_container ul, .contact_us_container .default_container .info_listing ul#privacy, .default_container .info_listing .contact_us_container ul#privacy {
   font-size: 1.4em;
 }
-/* line 4799, ../../../app/stylesheets/main.sass */
+/* line 4805, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.phone_numbers, .contact_us_container .default_container .info_listing ul.phone_numbers#privacy, .default_container .info_listing .contact_us_container ul.phone_numbers#privacy {
   list-style-type: none;
 }
-/* line 4802, ../../../app/stylesheets/main.sass */
+/* line 4808, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.benefits, .contact_us_container .default_container .info_listing ul.benefits#privacy, .default_container .info_listing .contact_us_container ul.benefits#privacy {
   list-style-type: circle;
 }
 
-/* line 4805, ../../../app/stylesheets/main.sass */
+/* line 4811, ../../../app/stylesheets/main.sass */
 .contact_us_support {
   float: right;
   width: 330px;
   background: white url(/images/bg.gif) repeat-x;
 }
-/* line 4810, ../../../app/stylesheets/main.sass */
+/* line 4816, ../../../app/stylesheets/main.sass */
 .contact_us_support .support_panel {
   margin: 10px;
 }
-/* line 4813, ../../../app/stylesheets/main.sass */
+/* line 4819, ../../../app/stylesheets/main.sass */
 .contact_us_support .contact_us_container {
   width: inherit;
 }
 
-/* line 4816, ../../../app/stylesheets/main.sass */
+/* line 4822, ../../../app/stylesheets/main.sass */
 img.industry_reseller {
   border: 2px solid #cccccc;
   float: right;
   margin: 0 0 5px 10px;
 }
 
-/* line 4821, ../../../app/stylesheets/main.sass */
+/* line 4827, ../../../app/stylesheets/main.sass */
 img.industry {
   width: 75px;
   float: right;
 }
 
-/* line 4825, ../../../app/stylesheets/main.sass */
+/* line 4831, ../../../app/stylesheets/main.sass */
 .center {
   text-align: center;
   margin: 0 auto;
   float: none;
 }
 
-/* line 4829, ../../../app/stylesheets/main.sass */
+/* line 4835, ../../../app/stylesheets/main.sass */
 #other_services {
   clear: both;
   padding-top: 2em;
 }
-/* line 4833, ../../../app/stylesheets/main.sass */
+/* line 4839, ../../../app/stylesheets/main.sass */
 #other_services h2#main_description {
   font-size: 2em;
 }
-/* line 4836, ../../../app/stylesheets/main.sass */
+/* line 4842, ../../../app/stylesheets/main.sass */
 #other_services h2#sub_description {
   font-size: 1.6em;
   color: black;
 }
 
-/* line 4840, ../../../app/stylesheets/main.sass */
+/* line 4846, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 4843, ../../../app/stylesheets/main.sass */
+/* line 4849, ../../../app/stylesheets/main.sass */
 .previous_requests {
   float: left;
   font-weight: bold;
 }
 
-/* line 4847, ../../../app/stylesheets/main.sass */
+/* line 4853, ../../../app/stylesheets/main.sass */
 #sales_number_in_header img {
   margin: 2px 12px 0 0;
   float: left;
 }
 
-/* line 4851, ../../../app/stylesheets/main.sass */
+/* line 4857, ../../../app/stylesheets/main.sass */
 .api_sub_section {
   font-size: 120%;
   margin-top: 12px;
   font-weight: bold;
 }
 
-/* line 4856, ../../../app/stylesheets/main.sass */
+/* line 4862, ../../../app/stylesheets/main.sass */
 dl.listing {
   font-size: 1.4em;
 }
-/* line 4859, ../../../app/stylesheets/main.sass */
+/* line 4865, ../../../app/stylesheets/main.sass */
 dl.listing dd {
   margin-left: 1em;
 }
-/* line 4862, ../../../app/stylesheets/main.sass */
+/* line 4868, ../../../app/stylesheets/main.sass */
 dl.listing dl.last_list {
   margin-bottom: 1em;
 }
-/* line 4865, ../../../app/stylesheets/main.sass */
+/* line 4871, ../../../app/stylesheets/main.sass */
 dl.listing dt.validation_type {
   font-weight: bold;
 }
-/* line 4868, ../../../app/stylesheets/main.sass */
+/* line 4874, ../../../app/stylesheets/main.sass */
 dl.listing dt.ev_instructions {
   color: #028005;
 }
-/* line 4871, ../../../app/stylesheets/main.sass */
+/* line 4877, ../../../app/stylesheets/main.sass */
 dl.listing .green {
   color: green;
 }
 
-/* line 4874, ../../../app/stylesheets/main.sass */
+/* line 4880, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value, .api_key_or_value {
   color: black;
 }
 
-/* line 4877, ../../../app/stylesheets/main.sass */
+/* line 4883, ../../../app/stylesheets/main.sass */
 .api_key_or_value {
   font-weight: bold;
 }
 
-/* line 4880, ../../../app/stylesheets/main.sass */
+/* line 4886, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value {
   font-style: italic;
 }
 
-/* line 4883, ../../../app/stylesheets/main.sass */
+/* line 4889, ../../../app/stylesheets/main.sass */
 .api_csr_params_table {
   padding: 1em;
 }
 
-/* line 4886, ../../../app/stylesheets/main.sass */
+/* line 4892, ../../../app/stylesheets/main.sass */
 .api_csr_params {
   font-size: 0.8em;
 }
-/* line 4888, ../../../app/stylesheets/main.sass */
+/* line 4894, ../../../app/stylesheets/main.sass */
 .api_csr_params table {
   border: 1px solid black;
 }
-/* line 2, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 2, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table th {
   text-align: center;
   font-weight: bold;
 }
-/* line 6, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 6, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table td,
 .api_csr_params table th {
   padding: 2px;
 }
-/* line 8, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
+/* line 8, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_scaffolding.scss */
 .api_csr_params table td.numeric,
 .api_csr_params table th.numeric {
   text-align: right;
 }
-/* line 14, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 14, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th, .api_csr_params table td {
   border-right: 1px solid #e64425;
   border-bottom: 1px solid #e64425;
   border-left-width: 0px;
   border-top-width: 0px;
 }
-/* line 21, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 21, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th:last-child, .api_csr_params table th.last, .api_csr_params table td:last-child, .api_csr_params table td.last {
   border-right-width: 0px;
 }
-/* line 29, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 29, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tbody tr:last-child th, .api_csr_params table tbody tr:last-child td, .api_csr_params table tfoot tr:last-child th, .api_csr_params table tfoot tr:last-child td {
   border-bottom-width: 0px;
 }
-/* line 32, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 32, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tbody tr.last th, .api_csr_params table tbody tr.last td, .api_csr_params table tfoot tr.last th, .api_csr_params table tfoot tr.last td {
   border-bottom-width: 0px;
 }
-/* line 4, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 4, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table thead th {
   border-bottom: 1px solid black;
 }
-/* line 7, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 7, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table tfoot th, .api_csr_params table tfoot td {
   border-top: 1px solid black;
 }
-/* line 10, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
+/* line 10, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_borders.scss */
 .api_csr_params table th:first-child {
   border-right: 1px solid black;
 }
-/* line 2, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 2, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table th {
   background-color: white;
 }
-/* line 4, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 4, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table th.even, .api_csr_params table th:nth-child(2n) {
   background-color: #eeeeee;
 }
-/* line 8, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 8, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.odd td, .api_csr_params table tr:nth-child(2n+1) td {
   background-color: #f1dcfb;
 }
-/* line 10, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 10, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.odd td.even, .api_csr_params table tr.odd td:nth-child(2n), .api_csr_params table tr:nth-child(2n+1) td.even, .api_csr_params table tr:nth-child(2n+1) td:nth-child(2n) {
   background-color: #e0cbea;
 }
-/* line 14, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 14, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.even td {
   background-color: #fbe1dc;
 }
-/* line 16, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 16, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tr.even td.even, .api_csr_params table tr.even td:nth-child(2n) {
   background-color: #ead0cb;
 }
-/* line 19, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 19, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tfoot th, .api_csr_params table tfoot td {
   background-color: white;
 }
-/* line 21, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
+/* line 21, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/utilities/tables/_alternating-rows-and-columns.scss */
 .api_csr_params table tfoot th.even, .api_csr_params table tfoot th:nth-child(2n), .api_csr_params table tfoot td.even, .api_csr_params table tfoot td:nth-child(2n) {
   background-color: #eeeeee;
 }
 
-/* line 4895, ../../../app/stylesheets/main.sass */
+/* line 4901, ../../../app/stylesheets/main.sass */
 ul.csr_fields, .default_container .info_listing ul.csr_fields#privacy {
   list-style: none;
   padding: 1em 0 0 0;
 }
-/* line 11, ../../../../../../.rvm/gems/ruby-1.9.3-p125@rails323/gems/compass-0.12.1/frameworks/compass/stylesheets/compass/typography/lists/_bullets.scss */
+/* line 11, ../../../../../../.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/typography/lists/_bullets.scss */
 ul.csr_fields li, .default_container .info_listing ul.csr_fields#privacy li {
   list-style-image: none;
   list-style-type: none;
   margin-left: 0;
 }
 
-/* line 4899, ../../../app/stylesheets/main.sass */
+/* line 4905, ../../../app/stylesheets/main.sass */
 ul#send_to_ca_box {
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
@@ -6638,28 +6643,28 @@ ul#send_to_ca_box {
   padding-bottom: 1em;
 }
 
-/* line 4906, ../../../app/stylesheets/main.sass */
+/* line 4912, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results {
   font-size: 0.8em;
 }
-/* line 4909, ../../../app/stylesheets/main.sass */
+/* line 4915, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results dd {
   text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6);
 }
 
-/* line 4912, ../../../app/stylesheets/main.sass */
+/* line 4918, ../../../app/stylesheets/main.sass */
 #processing_ca {
   text-align: center;
   margin: 10px auto;
   display: none;
 }
 
-/* line 4917, ../../../app/stylesheets/main.sass */
+/* line 4923, ../../../app/stylesheets/main.sass */
 #dcv_box {
   margin-bottom: 2em;
 }
 
-/* line 4920, ../../../app/stylesheets/main.sass */
+/* line 4926, ../../../app/stylesheets/main.sass */
 .shiny_silver_button {
   color: #050505;
   padding: 10px 20px;
@@ -6668,7 +6673,6 @@ ul#send_to_ca_box {
   background: -webkit-linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
   background: -moz-linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
   background: -o-linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
-  background: -ms-linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
   background: linear-gradient(top, #ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5);
   -webkit-border-radius: 10px;
   -moz-border-radius: 10px;
@@ -6682,7 +6686,7 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px white;
 }
 
-/* line 4930, ../../../app/stylesheets/main.sass */
+/* line 4936, ../../../app/stylesheets/main.sass */
 .shiny_blue_button, #stylized input#upload_files, #stylized input#start_over, #surl_stylized input#upload_files, #surl_stylized input#start_over {
   color: white;
   padding: 10px 20px;
@@ -6691,7 +6695,6 @@ ul#send_to_ca_box {
   background: -webkit-linear-gradient(top, #79cff7 0%, #11557a);
   background: -moz-linear-gradient(top, #79cff7 0%, #11557a);
   background: -o-linear-gradient(top, #79cff7 0%, #11557a);
-  background: -ms-linear-gradient(top, #79cff7 0%, #11557a);
   background: linear-gradient(top, #79cff7 0%, #11557a);
   -webkit-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4), inset 0px 0px 2px rgba(255, 255, 255, 0.7);
   -moz-box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4), inset 0px 0px 2px rgba(255, 255, 255, 0.7);
@@ -6705,60 +6708,60 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.4), 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* line 4940, ../../../app/stylesheets/main.sass */
+/* line 4946, ../../../app/stylesheets/main.sass */
 #busy_sending {
   display: none;
 }
 
-/* line 4943, ../../../app/stylesheets/main.sass */
+/* line 4949, ../../../app/stylesheets/main.sass */
 #dcv_sent_to_address {
   font-weight: bold;
 }
 
-/* line 4946, ../../../app/stylesheets/main.sass */
+/* line 4952, ../../../app/stylesheets/main.sass */
 .category_border {
   margin-bottom: 1em;
 }
 
-/* line 4949, ../../../app/stylesheets/main.sass */
+/* line 4955, ../../../app/stylesheets/main.sass */
 #subscriber_agreement textarea {
   width: 100%;
 }
 
-/* line 4952, ../../../app/stylesheets/main.sass */
+/* line 4958, ../../../app/stylesheets/main.sass */
 textarea[id^=certificate_order] {
   width: 300px;
 }
 
-/* line 4955, ../../../app/stylesheets/main.sass */
+/* line 4961, ../../../app/stylesheets/main.sass */
 #agreement {
   font-size: 1.3em;
 }
 
-/* line 4958, ../../../app/stylesheets/main.sass */
+/* line 4964, ../../../app/stylesheets/main.sass */
 .waiting_bar {
   text-align: center;
 }
 
-/* line 4961, ../../../app/stylesheets/main.sass */
+/* line 4967, ../../../app/stylesheets/main.sass */
 .close_flash_message {
   color: #6b9029;
   font-size: 0.9em;
   float: right;
   margin-right: 1em;
 }
-/* line 4967, ../../../app/stylesheets/main.sass */
+/* line 4973, ../../../app/stylesheets/main.sass */
 .close_flash_message span {
   border: 1px solid;
   padding: 0pt 0.2em;
 }
 
-/* line 4972, ../../../app/stylesheets/main.sass */
+/* line 4978, ../../../app/stylesheets/main.sass */
 #new_user_session input[type=password], #new_user_session input[type=text] {
   width: 196px;
 }
 
-/* line 4975, ../../../app/stylesheets/main.sass */
+/* line 4981, ../../../app/stylesheets/main.sass */
 .dcv_not_satisfied {
   background: #fff7f8;
   border-left: 1px solid #feb6b6;
@@ -6766,7 +6769,7 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4981, ../../../app/stylesheets/main.sass */
+/* line 4987, ../../../app/stylesheets/main.sass */
 .dcv_satisfied {
   background: #f8fff7;
   border-left: 1px solid #d8feb6;
@@ -6774,67 +6777,67 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 4987, ../../../app/stylesheets/main.sass */
+/* line 4993, ../../../app/stylesheets/main.sass */
 .validation_section {
   padding-bottom: 1em;
 }
 
-/* line 4990, ../../../app/stylesheets/main.sass */
+/* line 4996, ../../../app/stylesheets/main.sass */
 span#no_emails_accessible {
   font-size: 0.9em;
   color: #ff2626;
 }
 
-/* line 4994, ../../../app/stylesheets/main.sass */
+/* line 5000, ../../../app/stylesheets/main.sass */
 #social_share {
   float: left;
   margin: 0px 4px 0px 2px;
   padding-top: 2px;
 }
-/* line 5000, ../../../app/stylesheets/main.sass */
+/* line 5006, ../../../app/stylesheets/main.sass */
 #sales_number_in_header #social_share {
   margin: -4px 8em 0px 2px;
 }
 
-/* line 5003, ../../../app/stylesheets/main.sass */
+/* line 5009, ../../../app/stylesheets/main.sass */
 #logo_share {
   float: left;
   width: 180px;
 }
 
-/* line 5007, ../../../app/stylesheets/main.sass */
+/* line 5013, ../../../app/stylesheets/main.sass */
 #twitter {
   float: left;
   height: 5px;
   padding: 0 0.5em;
 }
 
-/* line 5012, ../../../app/stylesheets/main.sass */
+/* line 5018, ../../../app/stylesheets/main.sass */
 #google, #facebook {
   float: left;
   width: 60px;
   padding: 0 0.4em;
 }
 
-/* line 5017, ../../../app/stylesheets/main.sass */
+/* line 5023, ../../../app/stylesheets/main.sass */
 #logo_share #social_share {
   float: left;
 }
 
-/* line 5020, ../../../app/stylesheets/main.sass */
+/* line 5026, ../../../app/stylesheets/main.sass */
 .site_seal_footer {
   float: left;
   margin-top: 30px;
 }
 
-/* line 5025, ../../../app/stylesheets/main.sass */
+/* line 5031, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl, #surl_stylized .edit_surl, #surl_stylized .single_prompt {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
-/* line 5030, ../../../app/stylesheets/main.sass */
+/* line 5036, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl label, #surl_stylized .edit_surl label, #surl_stylized .single_prompt label {
   font-size: 1.4em;
   display: block;
@@ -6843,17 +6846,17 @@ span#no_emails_accessible {
   width: 100%;
   text-align: left;
 }
-/* line 5038, ../../../app/stylesheets/main.sass */
+/* line 5044, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt, #surl_stylized .single_prompt #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 5042, ../../../app/stylesheets/main.sass */
+/* line 5048, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized #new_surl #shorten_prompt input[type=email], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=email], #surl_stylized .single_prompt #shorten_prompt input[type=password], #surl_stylized .single_prompt #shorten_prompt input[type=text], #surl_stylized .single_prompt #shorten_prompt input[type=url], #surl_stylized .single_prompt #shorten_prompt input[type=email] {
   width: 300px;
 }
-/* line 5045, ../../../app/stylesheets/main.sass */
+/* line 5051, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .single_prompt #advanced_options_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   width: 100%;
   float: left;
@@ -6869,75 +6872,75 @@ span#no_emails_accessible {
   -o-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 5056, ../../../app/stylesheets/main.sass */
+/* line 5062, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #advanced_options_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
-/* line 5061, ../../../app/stylesheets/main.sass */
+/* line 5067, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   float: none;
   width: 60%;
 }
-/* line 5066, ../../../app/stylesheets/main.sass */
+/* line 5072, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p, #surl_stylized .single_prompt #access_restriction_container p {
   text-align: left;
 }
-/* line 5069, ../../../app/stylesheets/main.sass */
+/* line 5075, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   width: 65%;
 }
-/* line 5072, ../../../app/stylesheets/main.sass */
+/* line 5078, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label, #surl_stylized .single_prompt #access_restriction_container #advanced_options label {
   width: 6em;
 }
-/* line 5075, ../../../app/stylesheets/main.sass */
+/* line 5081, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url], #surl_stylized .single_prompt #access_restriction_container input[type=password], #surl_stylized .single_prompt #access_restriction_container input[type=text], #surl_stylized .single_prompt #access_restriction_container input[type=url] {
   width: 300px;
 }
-/* line 5078, ../../../app/stylesheets/main.sass */
+/* line 5084, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container {
   width: 50%;
   float: none;
 }
-/* line 5083, ../../../app/stylesheets/main.sass */
+/* line 5089, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 750px;
 }
 
-/* line 5087, ../../../app/stylesheets/main.sass */
+/* line 5093, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 5090, ../../../app/stylesheets/main.sass */
+/* line 5096, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 5093, ../../../app/stylesheets/main.sass */
+/* line 5099, ../../../app/stylesheets/main.sass */
 #surl_link, #surl_link_error {
   font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5098, ../../../app/stylesheets/main.sass */
+/* line 5104, ../../../app/stylesheets/main.sass */
 #surl_link input, #surl_link_error input {
   width: 360px;
 }
 
-/* line 5101, ../../../app/stylesheets/main.sass */
+/* line 5107, ../../../app/stylesheets/main.sass */
 #surl_link_error {
   font-size: 1.5em;
   margin: 1em auto;
 }
-/* line 5105, ../../../app/stylesheets/main.sass */
+/* line 5111, ../../../app/stylesheets/main.sass */
 #surl_link_error ul, #surl_link_error .default_container .info_listing ul#privacy, .default_container .info_listing #surl_link_error ul#privacy {
   list-style-type: none;
   margin: 0;
 }
 
-/* line 5109, ../../../app/stylesheets/main.sass */
+/* line 5115, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
@@ -6946,7 +6949,7 @@ span#no_emails_accessible {
   display: none;
 }
 
-/* line 5116, ../../../app/stylesheets/main.sass */
+/* line 5122, ../../../app/stylesheets/main.sass */
 .old_link {
   color: black;
   font-style: italic;
@@ -6954,12 +6957,12 @@ span#no_emails_accessible {
   margin: 0.4em auto;
 }
 
-/* line 5122, ../../../app/stylesheets/main.sass */
+/* line 5128, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field {
   display: none;
   margin-left: 30px;
 }
-/* line 5126, ../../../app/stylesheets/main.sass */
+/* line 5132, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field label {
   font-size: 1em;
   font-weight: normal;
@@ -6968,20 +6971,19 @@ span#no_emails_accessible {
   width: 38%;
   color: #333333;
 }
-/* line 5134, ../../../app/stylesheets/main.sass */
+/* line 5140, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
 }
 
-/* line 5138, ../../../app/stylesheets/main.sass */
+/* line 5144, ../../../app/stylesheets/main.sass */
 #manage_current_links, #accepted_country_codes, #restricted_country_codes, #affiliate_sales {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
   background: -webkit-linear-gradient(top, #fffff5 0%, #fdffb8);
   background: -moz-linear-gradient(top, #fffff5 0%, #fdffb8);
   background: -o-linear-gradient(top, #fffff5 0%, #fdffb8);
-  background: -ms-linear-gradient(top, #fffff5 0%, #fdffb8);
   background: linear-gradient(top, #fffff5 0%, #fdffb8);
   -webkit-border-radius: 15px;
   -moz-border-radius: 15px;
@@ -6993,57 +6995,57 @@ span#no_emails_accessible {
   float: left;
   width: 100%;
 }
-/* line 5147, ../../../app/stylesheets/main.sass */
+/* line 5153, ../../../app/stylesheets/main.sass */
 #manage_current_links th, #accepted_country_codes th, #restricted_country_codes th, #affiliate_sales th {
   border: 1px solid #efc960;
   border-top: none;
 }
-/* line 5151, ../../../app/stylesheets/main.sass */
+/* line 5157, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th, #accepted_country_codes td, #accepted_country_codes th, #restricted_country_codes td, #restricted_country_codes th, #affiliate_sales td, #affiliate_sales th {
   text-align: left;
   vertical-align: top;
 }
-/* line 5155, ../../../app/stylesheets/main.sass */
+/* line 5161, ../../../app/stylesheets/main.sass */
 #manage_current_links td .original_link, #manage_current_links th .original_link, #accepted_country_codes td .original_link, #accepted_country_codes th .original_link, #restricted_country_codes td .original_link, #restricted_country_codes th .original_link, #affiliate_sales td .original_link, #affiliate_sales th .original_link {
   width: 70%;
 }
-/* line 5158, ../../../app/stylesheets/main.sass */
+/* line 5164, ../../../app/stylesheets/main.sass */
 #manage_current_links td .actions, #manage_current_links th .actions, #accepted_country_codes td .actions, #accepted_country_codes th .actions, #restricted_country_codes td .actions, #restricted_country_codes th .actions, #affiliate_sales td .actions, #affiliate_sales th .actions {
   display: block;
   width: 160px;
 }
-/* line 5162, ../../../app/stylesheets/main.sass */
+/* line 5168, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #accepted_country_codes td, #restricted_country_codes td, #affiliate_sales td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5165, ../../../app/stylesheets/main.sass */
+/* line 5171, ../../../app/stylesheets/main.sass */
 #manage_current_links {
   display: none;
 }
 
-/* line 5168, ../../../app/stylesheets/main.sass */
+/* line 5174, ../../../app/stylesheets/main.sass */
 #affiliate_sales {
   margin-bottom: 40px;
 }
 
-/* line 5171, ../../../app/stylesheets/main.sass */
+/* line 5177, ../../../app/stylesheets/main.sass */
 #accepted_country_codes {
   margin-bottom: 1em;
 }
 
-/* line 5174, ../../../app/stylesheets/main.sass */
+/* line 5180, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5177, ../../../app/stylesheets/main.sass */
+/* line 5183, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5181, ../../../app/stylesheets/main.sass */
+/* line 5187, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -7051,35 +7053,35 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5187, ../../../app/stylesheets/main.sass */
+/* line 5193, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5191, ../../../app/stylesheets/main.sass */
+/* line 5197, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5196, ../../../app/stylesheets/main.sass */
+/* line 5202, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;
 }
 
-/* line 5200, ../../../app/stylesheets/main.sass */
+/* line 5206, ../../../app/stylesheets/main.sass */
 .account_type {
   float: right;
 }
 
-/* line 5203, ../../../app/stylesheets/main.sass */
+/* line 5209, ../../../app/stylesheets/main.sass */
 .adjust_status {
   float: left;
 }
 
-/* line 5206, ../../../app/stylesheets/main.sass */
+/* line 5212, ../../../app/stylesheets/main.sass */
 #http_dcv_url {
   font-style: italic;
   background-color: #eeeeee;
@@ -7087,26 +7089,26 @@ span#no_emails_accessible {
   font-size: 1.2em;
 }
 
-/* line 5212, ../../../app/stylesheets/main.sass */
+/* line 5218, ../../../app/stylesheets/main.sass */
 .pop_container {
   display: none;
 }
 
-/* line 5215, ../../../app/stylesheets/main.sass */
+/* line 5221, ../../../app/stylesheets/main.sass */
 .pop_content {
   font-size: 1.8em;
 }
 
-/* line 5218, ../../../app/stylesheets/main.sass */
+/* line 5224, ../../../app/stylesheets/main.sass */
 .ajax_info {
   text-align: left;
 }
 
-/* line 5222, ../../../app/stylesheets/main.sass */
+/* line 5228, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message {
   padding: 0;
 }
-/* line 5224, ../../../app/stylesheets/main.sass */
+/* line 5230, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message.error .ajax_info {
   color: red;
 }
