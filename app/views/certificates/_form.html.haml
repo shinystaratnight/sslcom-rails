@@ -24,7 +24,16 @@
       %p
         In order to submit a Certificate Signing Request (CSR), you must first
         generate it on the web server that will be utilizing the SSL server
-        certificate. If you need instructions on generating a CSR,
+        certificate.
+      %ul(style="font-size:1.4em; margin-bottom:20px")
+        %li
+          for Microsoft Windows try the
+          =link_to "SSLTools Manager", "http://www.ssltools.com/manager"
+        %li
+          for Apache, Nginx, or other OpenSSL platform try the
+          =link_to "OpenSSL CSR Tool", "http://tools.ssl.com"
+      %p
+        For other platforms or if you need further instructions on generating a CSR,
         =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
         Once the CSR is ready, you may copy and paste it
         into the text box below. Your CSR should appear similar
