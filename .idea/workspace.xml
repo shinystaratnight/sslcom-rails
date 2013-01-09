@@ -17,11 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/_form.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -115,19 +111,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_visit.html.haml" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="_visit.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="6" column="47" selection-start="331" selection-end="331" vertical-scroll-proportion="-3.75">
+            <state line="3" column="31" selection-start="103" selection-end="103" vertical-scroll-proportion="0.10638298">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_form.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="_form.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="0.4">
+            <state line="29" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="-3.75">
               <folding />
             </state>
           </provider>
@@ -202,8 +198,8 @@
         <option value="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml" />
       </list>
     </option>
   </component>
@@ -217,8 +213,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="65" />
     <option name="y" value="24" />
-    <option name="width" value="1215" />
-    <option name="height" value="672" />
+    <option name="width" value="1615" />
+    <option name="height" value="922" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -1262,16 +1258,16 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1215" height="672" extended-state="6" />
+    <frame x="65" y="24" width="1615" height="922" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.41666666" sideWeight="0.29613733" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2905569" sideWeight="0.29613733" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28370607" sideWeight="0.46246973" order="0" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15364806" sideWeight="0.5833333" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39756945" sideWeight="0.52971244" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.114377" sideWeight="0.6029056" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.39709443" sideWeight="0.52971244" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36631945" sideWeight="0.6978541" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.35588235" sideWeight="0.87467813" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
@@ -1457,16 +1453,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="47" selection-start="331" selection-end="331" vertical-scroll-proportion="-3.75">
+        <state line="29" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="-3.75">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="0.4">
+        <state line="3" column="31" selection-start="103" selection-end="103" vertical-scroll-proportion="0.10638298">
           <folding />
         </state>
       </provider>
