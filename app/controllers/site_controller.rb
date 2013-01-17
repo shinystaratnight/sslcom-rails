@@ -8,6 +8,10 @@ class SiteController < ApplicationController
     render action: "buy_now"
   end
 
+  def subject_alternative_name
+
+  end
+
   def sitemap
     # we use online generators now so the dynamic code is kept for legacy purposes
     #headers['Content-Type'] = 'application/xml'

@@ -1,0 +1,46 @@
+-c={}
+-c[:description]="With a single UCC Certificate, secure multiple host names with SSL.com SAN Certificates, also commonly referred to as Subject Alternative Names (or SAN)."
+-c[:keywords]="about ssl ssl.com certificates what is"
+-c[:title] = "Subject Alternative Name / SAN Certificates / UC Certificate"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1 SAN Certificates - Subject Alternative Name
+
+%h2 A Closer Look at the Subject Alternative Name Field
+
+%p
+  With a single SSL certificate, Subject Alternative Names (SAN)
+  (also known as Unified Communications Certificate or UCC) enable SSL protection of multiple domains and host names.
+  This also means that a single ip address can be used for several websites that each need individual SSL certificate protection.
+%p
+  SAN certificates have recently gained traction following the release of Microsoft Exchange Server 2007,
+  which use Subject Alternative Names to simplify server configuration. However,
+  the Subject Alternative Name extension has been around since before 1999 as part of the X509 certificate standard.
+%h3
+  What can Subject Alternative Names do?
+%ul
+  %li
+    %p
+      Subject Alternative Names allow a number of domains specified to be protected by a single SSL certificate.
+      It also allows securing host names with differing domain name extensions in one SSL Certificate. For instance,
+      while a wildcard certificate can protect all first-level subdomains on a single domain like *.domain.com,
+      a wildcard cannot protect both www.domain.com and www.domain.org, whereas a SAN certificate will.
+  %li
+    %p
+      Virtual Host Multiple SSL sites on a single IP address. Hosting multiple SSL-enabled sites on a single server
+      typically requires a unique IP address per site, but a certificate with Subject Alternative Names can solve this
+      problem. Microsoft IIS 6 and Apache are both able to Virtual Host HTTPS sites using Unified Communications SSL,
+      also known as SAN certificates.
+  %li
+    %p
+      Greatly simplify your Exchange Server 2007 SSL configuration. Using a SAN certificate saves you the hassle and
+      time involved in configuring multiple IP addresses on your Exchange 2007 server, binding each IP address to a
+      different certificate, and running a lot of low level PowerShell commands just to piece it all together.
+-#
+  %h3
+    Where can you see Subject Alternative Names in action?
+  %p
+    To see an example of Subject Alternative Names, visit this page using https and then click the padlock in your
+    browser to examine our SSL certificate. In the certificate details you will find a Subject Alternative Name
+    extension that lists both www.digicert.com and digicert.com.
