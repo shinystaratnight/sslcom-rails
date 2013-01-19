@@ -17,7 +17,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" afterPath="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -50,15 +51,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="_support_contact.text.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/order_notifier/_support_contact.text.erb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="16" column="119" selection-start="1153" selection-end="1153" vertical-scroll-proportion="-10.0">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="site_check.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/site_check.rb">
           <provider selected="true" editor-type-id="text-editor">
@@ -68,10 +60,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="subject_alternative_name.html.haml" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="subject_alternative_name.html.haml" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="41" column="20" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.60040987">
+            <state line="3" column="74" selection-start="248" selection-end="308" vertical-scroll-proportion="-1.875">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="show_evucc.html.haml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="58" column="0" selection-start="3406" selection-end="3406" vertical-scroll-proportion="2.2885907">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="show_ucc.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="40" column="0" selection-start="2341" selection-end="2508" vertical-scroll-proportion="-9.291667">
               <folding />
             </state>
           </provider>
@@ -131,15 +141,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_visit.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_visit.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="25" selection-start="97" selection-end="97" vertical-scroll-proportion="-1.875">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindManager">
@@ -186,13 +187,11 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/helpers/site_seals_helper.rb" />
         <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/config/application.rb" />
         <option value="$PROJECT_DIR$/app/views/certificates/show_basicssl.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml" />
         <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
-        <option value="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
@@ -202,6 +201,8 @@
         <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/site_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" />
       </list>
     </option>
   </component>
@@ -329,6 +330,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="site" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="certificates" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1251,10 +1274,10 @@
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5155483" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28993055" sideWeight="0.29613733" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.28993055" sideWeight="0.29613733" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28370607" sideWeight="0.46246973" order="0" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.255794" sideWeight="0.7100694" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.255794" sideWeight="0.7100694" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328125" sideWeight="0.74440897" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20729685" sideWeight="0.33169934" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36631945" sideWeight="0.6978541" order="9" side_tool="true" content_ui="tabs" />
@@ -1351,18 +1374,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/public/images/download.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="96" selection-start="567" selection-end="567" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state line="29" column="39" selection-start="1181" selection-end="1181" vertical-scroll-proportion="-3.75">
@@ -1426,13 +1437,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="210" column="34" selection-start="5837" selection-end="5837" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="0" selection-start="282" selection-end="282" vertical-scroll-proportion="0.0">
@@ -1454,9 +1458,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="210" column="34" selection-start="5837" selection-end="5837" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="41" column="20" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.60040987">
+        <state line="3" column="74" selection-start="248" selection-end="308" vertical-scroll-proportion="-1.875">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="40" column="0" selection-start="2341" selection-end="2508" vertical-scroll-proportion="-9.291667">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="58" column="0" selection-start="3406" selection-end="3406" vertical-scroll-proportion="2.2885907">
           <folding />
         </state>
       </provider>
