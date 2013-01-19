@@ -17,11 +17,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="do not bill if signing up for free reseller tier">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/site_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/site_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/order_notifier/_support_contact.text.erb" afterPath="$PROJECT_DIR$/app/views/order_notifier/_support_contact.text.erb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" afterPath="$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
     <ignored path="ssl_com_rails3.iws" />
@@ -75,7 +71,7 @@
       <file leaf-file-name="subject_alternative_name.html.haml" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="1" selection-start="2373" selection-end="2373" vertical-scroll-proportion="0.75409836">
+            <state line="41" column="20" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.60040987">
               <folding />
             </state>
           </provider>
@@ -1460,7 +1456,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/subject_alternative_name.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="1" selection-start="2373" selection-end="2373" vertical-scroll-proportion="0.75409836">
+        <state line="41" column="20" selection-start="2583" selection-end="2583" vertical-scroll-proportion="0.60040987">
           <folding />
         </state>
       </provider>

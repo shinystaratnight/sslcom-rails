@@ -22,21 +22,24 @@
 %ul
   %li
     %p
+      Implement SSL on Exchange Server 2007 and 2013 and simply the SSL configuration. SAN certificates use one ip
+      address. This results in one certificate
+      for one ip address, exponentially reducing the time and frustration involved in managing multiple certificates,
+      each bound to a unique ip address, and then running numerous low-level PowerShell commands to get it all working.
+  %li
+    %p
       Subject Alternative Names allow a number of domains specified to be protected by a single SSL certificate.
       It also allows securing host names with differing domain name extensions in one SSL Certificate. For instance,
       while a wildcard certificate can protect all first-level subdomains on a single domain like *.domain.com,
       a wildcard cannot protect both www.domain.com and www.domain.org, whereas a SAN certificate will.
   %li
     %p
-      Virtual Host Multiple SSL sites on a single IP address. Hosting multiple SSL-enabled sites on a single server
-      typically requires a unique IP address per site, but a certificate with Subject Alternative Names can solve this
-      problem. Microsoft IIS 6 and Apache are both able to Virtual Host HTTPS sites using Unified Communications SSL,
+      Host multiple SSL sites on a single ip address. This is ideal for virtual hosting or cloud hosting like
+      Amazon AWS where 1 ip address is allocated per server (until recently). Hosting multiple SSL-enabled sites on a
+      single server traditionally required a unique ip address for each site,
+      however, the advent of certificates as Unified Communications SSL solved this limitation.
+      Apache and Microsoft IIS are both capable of Virtual Hosting HTTPS sites using Subject Alternative Name certificates,
       also known as SAN certificates.
-  %li
-    %p
-      Greatly simplify your Exchange Server 2007 SSL configuration. Using a SAN certificate saves you the hassle and
-      time involved in configuring multiple IP addresses on your Exchange 2007 server, binding each IP address to a
-      different certificate, and running a lot of low level PowerShell commands just to piece it all together.
 -#
   %h3
     Where can you see Subject Alternative Names in action?
