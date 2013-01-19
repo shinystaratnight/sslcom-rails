@@ -6,10 +6,7 @@
   -content_for k, c[k]
 %h3#certificate_crumbs
   =certificate_crumbs
-.leftcolb
-  .go_green_with_ev_image_container
-    =image_tag "go_green_with_ev_ucc.jpg"
-.right_product_desc
+.center_product_desc
   %h1
     Cover multiple domains with one EV UCC SSL
   %h2.product_description
@@ -24,7 +21,7 @@
     wildcard ssl certificates, a single Enterprise EV UCC can provide SSL secured
     communications on a number of different domains, both internal and external,
     reducing server security administration complexity, and cost. In addition,
-    Enterprise EV UCC support the Microsoft Exchange Auto discover service, a
+    Enterprise EV UCC supports the Microsoft Exchange Auto discover service, a
     feature of the Exchange platform which greatly eases client administration.
   %p
     Today's sophisticated browsers come with enhanced security features to
@@ -36,23 +33,32 @@
     Certificates increase trust among visitors by displaying your website
     address in bold, bright green. This bright green display tells your
     visitors that your company has gone through a rigorous validation process,
-    backed by SSL Inc and our auditors, and that your website is trustworthy
+    backed by SSL Corp and our auditors, and that your website is trustworthy
     and ready for business. If you're not using Enterprise EV UC Certificates for
-    your UCC SSL needs, then you're not tapping into the full potential of
+    your SAN/UCC SSL needs, then you're not tapping into the full potential of
     today's advanced browsers.
   %p
-    SSL is an essential part of almost all electronic transactions involved in
-    transmitting sensitive data such as usernames and passwords, credit card
-    information, patient data and many other types of private material, and
-    SSL is also a key component of PCI-compliance which is mandated for
-    organizations wanting to accept credit card information. Enterprise EV UC
-    Certificates meet all the criteria above and even add more value.
+    The Unified Communications Certificate (commonly known as UC certificate, UCC certificate or SANS certificate)
+    is a multi-domain ssl certificate that can secure up to 200 domains.
+    This is accomplished through the
+    =link_to "Subject Alternative Name (SAN) field,", san_path
+    and browsers check this field for a matching
+    domain or ip address to one in the address bar.
+  =image_tag "ucc_cert_ssl_com.jpg"
   %p
-    With each EV UCC SSL you implement, you get the
+    Since an ssl certificate binds to a single ip address, EV UCC is ideal for environments when multiple domain names,
+    internal as well as global, need to be shared in a single ssl certificate such as Microsoft Exchange
+    (OWA, Outlook Anywhere, ActiveSync, Autodiscovery, and SMTP) or Office Communications Server 2007.
+    It also works great in virtual hosting environments or where multiple sites need to share a single ip address like
+    in Amazon's EC2 cloud.
+  %p
+    Each SSL.com Extended Validation UCC certificate comes with 99% browser acceptance,
+    unlimited server licenses, the
     confidence building SSL Secure Smart SeaL, a $250,000 performance guaranty,
     24/7 telephone support staff, and unlimited reissues for the life of the
     certificate. We even offer a 30-day unconditional refund policy in the
-    event you change your mind about EV UCC SSL on your website.
+    event you change your mind about UCC SSL on your website.
+    Start building trust and secure your site today with a SAN/UC Certificate.
   %p
     For more information about how SAN/UC certificates work, please visit:
     =link_to "Subject Alternative Name / SAN Certificates / UC Certificate.", san_path
