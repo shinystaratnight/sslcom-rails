@@ -79,7 +79,7 @@
     -if @certificate.is_ucc?
       .clearfix
         %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
-          .label_text
+          #domains_label_text
             -if @certificate.is_premium_ssl?
               Extra Subdomains (3 max)
             -else
