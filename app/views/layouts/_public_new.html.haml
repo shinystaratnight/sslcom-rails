@@ -79,9 +79,9 @@
               %a{:href => "#{certificate_url('wildcard')}"}
                 %li Wildcard (Unlimited Subdomains)
               %a{:href => "#{certificate_url('ucc')}"}
-                %li Multi-Domain (UCC)
+                %li Multi-Domain (SAN/UCC)
               %a{:href => "#{certificate_url('evucc')}"}
-                %li Multi-Domain Plus (UCC EV)
+                %li Multi-Domain Plus (SAN/UCC EV)
               -if Settings.offer_trial
                 %a{:href => "#{certificate_url('free')}"}
                   %li Free Trial SSL

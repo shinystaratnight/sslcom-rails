@@ -176,6 +176,7 @@ SslCom::Application.routes.draw do
 
   resources :apis
   resources :billing_profiles
+  match '/certificates/what_is_a_wildcard_ssl_certificate', to: "certificates#what_is_a_wildcard_ssl_certificate", as: :what_is_wildcard
   resources :certificates do
     collection do
       get :single_domain

@@ -79,11 +79,12 @@
     -if @certificate.is_ucc?
       .clearfix
         %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
-          -if @certificate.is_premium_ssl?
-            All Sub-Domains (3 max)
-          -else
-            Additional Domains:
-          =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+          .label_text
+            -if @certificate.is_premium_ssl?
+              Extra Subdomains (3 max)
+            -else
+              Additional Domains:
+              =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
           %span.label_desc separated by space or new line
           %span.label_break
           %span.label_desc can skip and edit later
@@ -157,7 +158,7 @@
           .order_amount_desc
             (includes
             %span 3
-            domains)
+            #{"sub" if @certificate.is_premium_ssl?}domains)
 #what_is_number_licenses.hidden
   #what_is_number_licenses_explain
     %p

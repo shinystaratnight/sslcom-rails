@@ -1,0 +1,67 @@
+-c={}
+-c[:description]="A Wildcard SSL Certificate secures multiple subdomains, eliminating the need to manage multiple certificates. SSL.com provides a smart seal logo to each subdomain secured by SSL.com's Wildcard SSL with an unlimited reissuances for the life of the certificate."
+-c[:keywords]="Wildcard SSL, Wildcard SSL Certificates, Wildcard Certificates, Cheap Wildcard SSL, Wildcard SSL Certificate"
+-c[:title]="Wildcard SSL Certificates - secure multiple subdomains"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h3#certificate_crumbs
+  =certificate_crumbs
+.center_product_desc
+  %h1
+    What is a Wildcard SSL Certificate?
+  %h2.product_description
+    Eliminate the hassle of managing multiple certificates
+  %p
+    A Wildcard SSL certificate secures your website URL, and an unlimited number of its subdomains. A single Wildcard certificate can secure
+    %em> domain.com
+    ,
+    = succeed "," do
+      %em www.domain.com
+    = succeed "and" do
+      %em
+        mail.
+        %em> domain
+        \.com,
+    any other
+    %em> subdomain.domain.com
+    \.
+  %p
+    Wildcard certificates secure all of the subdomains at the level you specify when you submit your request. Just add an asterisk (*) in the subdomain area of the common name where you want to specify the wildcard. For example:
+  %p
+    If you configure
+    = succeed "," do
+      %em *.domain.com
+    you can secure
+    %br
+      %strong> www
+      \.domain.com
+      %br
+        %strong> secure
+        \.domain.com
+        %br
+          %strong> blog
+          \.domain.com, etc.
+  %p
+    If you configure
+    = succeed "," do
+      %em *.www.domain.com
+    you can secure
+    %br
+      %strong> mail
+      \.www.domain.com
+      %br
+        %strong> secure
+        \.www.domain.com
+        %br
+          %strong> blog
+          \.www.domain.com, etc.
+  %p
+    Wildcard certificates secure websites the same as a regular SSL certificate, and requests are processed using the same validation methods. However, some Web servers might require a unique IP address for each subdomain on the Wildcard certificate.
+  %p.note
+    NOTE: A Wildcard certificate secures only the level of subdomain you specify. So, if a certificate is configured for
+    = succeed "," do
+      %em *.www.domain.com
+    it will not secure
+    = succeed "." do
+      %em www.domain.com
+=render partial: 'bottom_info'

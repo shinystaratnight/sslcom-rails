@@ -2,12 +2,16 @@ module CertificatesHelper
   def certificate_crumbs
     crumb = link_to "ssl certificates", certificates_path
     crumb << " :: "
-    if @certificate.is_ucc? || @certificate.is_wildcard?
+    if current_page?(what_is_wildcard_path)
       crumb << link_to("wildcard or ucc", wildcard_or_ucc_certificates_url)
     else
-      crumb << link_to("single domain", single_domain_certificates_url)
+      if @certificate.is_ucc? || @certificate.is_wildcard?
+        crumb << link_to("wildcard or ucc", wildcard_or_ucc_certificates_url)
+      else
+        crumb << link_to("single domain", single_domain_certificates_url)
+      end
+      crumb << " :: #{@certificate.title}"
     end
-    crumb << " :: #{@certificate.title}"
   end
 
   def new_certificate_params
