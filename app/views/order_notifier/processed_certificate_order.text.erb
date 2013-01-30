@@ -20,9 +20,19 @@ Your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle
 
 You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> for <%=@certificate_order.subject%> in text format at the bottom of this email.
 
+!!!IMPORTANT!!!
+Your SSL.com certificate requires that the SSL.com CA intermediate certificate be installed on your server to avoid trust issues with your visitor's browsers. You can find this intermediate certificate file in the attached zip file.
+
+If you are installing on Microsoft IIS, Exchange, Lync, Outlook/OWA, or Windows, you can download the SSLTools Manager (http://www.ssltools.com/manager) and click the 'Update' button to automatically have the intermediate certificate installed.
+<%if @certificate_order.has_bundle?%>
+
+If you installing on any other system, your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}."%> Please follow the appropriate installation instructions found at http://info.ssl.com/?cNode=2T0V6X&pNodes=8P3K3M.
+<%end-%>
+!!!
+
 When you have installed your SSL.com Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services.
 
-Get your secure Smart SeaL by clicking here.
+Get your secure Smart SeaL by visiting the following url - <%=certificate_order_site_seal_url(@certificate_order)%>.
 
 Should you have any questions or issues you would like to discuss, please do not hesitate to contact us.
 
