@@ -17,7 +17,7 @@
     %li.heading other SSL certificates
     -Certificate.public.reject{|c|c.product=~/\dtr/ || c.product=~/free/}.each do |cert|
       -unless cert==@certificate
-        %li=link_to cert.title, certificate_path(:id=>cert.product_root)
+        %li=link_to cert.title, buy_certificate_path(:id=>cert.product_root)
 .reseller_registration_profile
   #buy_certificate_heading
     %h1

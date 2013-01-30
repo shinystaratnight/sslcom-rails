@@ -5973,7 +5973,7 @@ h3#certificate_crumbs {
   position: absolute;
   margin-top: 7em;
   font-size: 1.2em;
-  width: 10%;
+  width: 134px;
 }
 /* line 4483, ../../../app/stylesheets/main.sass */
 #buy_other_certs ul, #buy_other_certs .default_container .info_listing ul#privacy, .default_container .info_listing #buy_other_certs ul#privacy {
