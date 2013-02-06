@@ -139,15 +139,18 @@
                   %em> save #{Integer((p*100).ceil)}%
                   )
     -if @certificate.is_ucc? or @certificate.is_wildcard?
-      .clearfix(style="#{"display: none" if @certificate.is_premium_ssl?}")
-        %label{:for=>"licenses"}
-          *Number of licenses:
-          =link_to image_tag('question_mark.png'), '#what_is_number_licenses', :rel => 'prettyPhoto', :id => 'what_is_number_licenses_link'
-          %span.label_desc installing on how many servers
-        =select_field_for(f, :server_licenses.to_s, (1..100).collect{|i|[i,i-1]},{:no_label=>true}, {})
-        #server_license_cost_ea_desc
-          $
-          %span#server_license_cost_ea> 10
+      -if Settings.single_server_license_only
+        =f.hidden_field(:server_licenses.to_s, value: "0")
+      -else
+        .clearfix(style="#{"display: none" if @certificate.is_premium_ssl?}")
+          %label{:for=>"licenses"}
+            *Number of licenses:
+            =link_to image_tag('question_mark.png'), '#what_is_number_licenses', :rel => 'prettyPhoto', :id => 'what_is_number_licenses_link'
+            %span.label_desc installing on how many servers
+          =select_field_for(f, :server_licenses.to_s, (1..100).collect{|i|[i,i-1]},{:no_label=>true}, {})
+          #server_license_cost_ea_desc
+            $
+            %span#server_license_cost_ea> 10
     .clearfix
       %label{:for => "expense_amount"}
         Order Amount:
