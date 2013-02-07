@@ -10,4 +10,4 @@
       =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
     %tr
       %td.description.total_row total
-      %td.price.total_row(colspan='2')= order.amount.format
+      %td.price.total_row(colspan='2')= order.final_amount.format

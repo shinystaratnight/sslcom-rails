@@ -11,7 +11,8 @@ class Order < ActiveRecord::Base
   has_many    :line_items, dependent: :destroy
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
-  
+  has_many    :discounts, :as => :discountable
+
   money :amount
   before_create :total, :determine_description
   after_create :generate_reference_number
@@ -89,6 +90,14 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def discount_amount
+    t=0
+    discounts.each do |d|
+      d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+    end
+    Money.new(t)
+  end
+
   def lead_up_to_sale
     u = billable.users.last
     history = u.browsing_history("01/01/2000", created_at, "desc")
@@ -98,7 +107,7 @@ class Order < ActiveRecord::Base
   end
 
   def pay(credit_card, options = {})
-    response = gateway.purchase(self.amount, credit_card, options_for_payment(options))
+    response = gateway.purchase(self.final_amount, credit_card, options_for_payment(options))
     if response.success?
       self.payments.build(:amount => self.amount,
           :confirmation => response.authorization,
@@ -114,6 +123,10 @@ class Order < ActiveRecord::Base
     
   def total
     self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+  end
+
+  def final_amount
+    amount-discount_amount
   end
   
   # TODO: Should this do more?
@@ -230,7 +243,7 @@ class Order < ActiveRecord::Base
   # BEGIN capture_payment
   def capture_payment(options = {})
     transaction do
-      capture = OrderTransaction.capture(amount, authorization_reference, options)
+      capture = OrderTransaction.capture(final_amount, authorization_reference, options)
       transactions.push(capture)
       if capture.success?
         payment_captured!
@@ -249,7 +262,7 @@ class Order < ActiveRecord::Base
     options[:order_id] = number
     transaction do
 
-      authorization = OrderTransaction.purchase(amount, credit_card, options)
+      authorization = OrderTransaction.purchase(final_amount, credit_card, options)
       transactions.push(authorization)
 
       if authorization.success?

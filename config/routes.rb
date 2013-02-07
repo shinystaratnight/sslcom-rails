@@ -170,7 +170,7 @@ SslCom::Application.routes.draw do
       get :show_cart
       get :search
       get :visitor_trackings
-      post :create_free_ssl, :create_multi_free_ssl
+      post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
     end
   end
 

@@ -31,8 +31,8 @@
         %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
         %td=o.reference_number
         -if o.is_deposit?
-          %td=o.amount.format :with_currency
+          %td=o.final_amount.format :with_currency
         -elsif o.is_reseller_tier?
           %td
         -else
-          %td (#{o.amount.format :with_currency})
+          %td (#{o.final_amount.format :with_currency})

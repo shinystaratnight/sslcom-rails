@@ -7138,3 +7138,16 @@ span#no_emails_accessible {
 #csr_section .flash_message.error .ajax_info {
   color: red;
 }
+
+/* line 5252, ../../../app/stylesheets/main.sass */
+#stylized button#apply_discount {
+  padding: 4px;
+  margin: 5px;
+  background: lightgreen;
+}
+
+/* line 5257, ../../../app/stylesheets/main.sass */
+#discount_applied {
+  font-size: 1.4em;
+  font-style: italic;
+}

@@ -60,6 +60,9 @@ class FundedAccountsController < ApplicationController
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
+      if (params[:discount_code])
+        @order.discounts<<Discount.find_by(params[:discount_code]) if Discount.find_by(params[:discount_code]).exists?
+      end
       @account_total.cents += @funded_account.amount.cents - @order.cents
       @funded_account.errors.add(:amount, "being loaded is not sufficient") if @account_total.cents <= 0
       @funded_account.errors.add(:amount,

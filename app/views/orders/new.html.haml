@@ -67,6 +67,12 @@
             #register_card_form{initial_display?}
               =fields_for :billing_profile, @billing_profile do |form|
                 = render :partial => "billing_profiles/form", :locals => { :form => form }
+            .subheading Optional Discounting
+            .clearfix
+              = label_tag :discount_code, "Coupon Code:"
+              = text_field_tag(:discount_code.to_s, nil, :class=>"form_row class_billing_profile_"+:security_code.to_s, size: 6)
+              = button_tag("update price", id: "apply_discount", name: "apply_discount", :type => 'button')
+              =# link_to image_tag('question_mark.png'), '#what_is_security_code', :rel => 'prettyPhoto', :id => 'what_is_security_code_link'
             .subheading Total Amount To Charge
             =render :partial => "form", :locals => {:f => f, :object => Order.new}
     -if certificate

@@ -3,7 +3,6 @@ class Certificate < ActiveRecord::Base
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
-  has_many    :discounts, as: :discountable
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
   serialize   :icons
@@ -195,7 +194,8 @@ class Certificate < ActiveRecord::Base
   end
 
   def allow_wildcard_ucc?
-    allow_wildcard_ucc
+    true
+    #allow_wildcard_ucc
   end
 
   def site_seal

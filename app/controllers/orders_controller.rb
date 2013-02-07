@@ -11,7 +11,7 @@ class OrdersController < ApplicationController
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
-  filter_access_to :visitor_trackings, require: [:index]
+  filter_access_to :visitor_trackings, :lookup_discount, require: [:index]
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
@@ -66,6 +66,11 @@ class OrdersController < ApplicationController
     respond_to do |format|
       format.js { render :action => "cart_quantity.js.erb", :layout => false }
     end
+  end
+
+  def lookup_discount
+    @discount=Discount.find_by_ref(params[:discount_code])
+  rescue
   end
 
   def user_orders
@@ -141,6 +146,9 @@ class OrdersController < ApplicationController
 
   def create
     @order = Order.new(params[:order])
+    if (params[:discount_code])
+      @order.discounts<<Discount.find_by_ref(params[:discount_code]) if Discount.find_by_ref(params[:discount_code])
+    end
     @profile = @billing_profile = BillingProfile.new(params[:billing_profile])
     unless current_user
       @user = User.new(params[:user])

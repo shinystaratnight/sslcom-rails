@@ -212,7 +212,35 @@ jQuery(function($) {
       $('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
       profile_form_hidden = true;
     });
+    $("button[name=apply_discount]").bind("click", function() {
+      if($('#discount_code').val()==""){
+        $('span#discount_applied,span#invalid_discount_code').remove();
+        $('div#tier_load_amount').text(old_total_text);
+        return;
+      }
+      $.ajax({
+        url: "<%=lookup_discount_orders_url%>",
+        data: {discount_code: $('#discount_code').val()},
+        type: "POST",
+        success: function(data, status){
+          $('span#discount_applied,span#invalid_discount_code').remove();
+          $('div#tier_load_amount').text(old_total_text);
+          if((typeof data.discount != 'undefined')){
+            apply=parseFloat(data.discount.value);
+            old_total=parseFloat($.toMoneyFloat($('div#tier_load_amount').text()));
+            new_total=old_total-(old_total*apply);
+            $('div#tier_load_amount').text('$'+new_total.toFixed(2).toString()+" USD");
+            if($('span#discount_applied').length==0)
+              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied</span>");
+          }
+          else if($('#discount_code').val()!=""){
+            $('label[for=discount_code]').append("<span style='color:red' class='label_desc' id='invalid_discount_code'>invalid discount code</span>");
+          }
+        }
+      });
+    });
     $.adjust_cart_total();
+    old_total_text=$('div#tier_load_amount').text();
   });
 });
 </script>
