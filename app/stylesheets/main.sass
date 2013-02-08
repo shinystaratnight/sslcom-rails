@@ -4338,11 +4338,13 @@ table#line_items_receipt
 
 #current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
 #calculated_price, .displayed_csr_field
-  margin: 0pt 0.6em
   float: left
   font-size: 1.6em
   font-weight: bold
   margin: 2px 0.6em 20px
+
+#tier_load_amount
+  margin: 0px 0.6em 20px
 
 #confirmed_validation
   font-size: 1.3em
@@ -5249,17 +5251,22 @@ span#no_emails_accessible
     &.error .ajax_info
       color: red
 
-#stylized button#apply_discount
-  padding: 4px
-  margin: 5px
-  background: lightgreen
+#stylized
+
+  button#apply_discount
+    padding: 4px
+    margin: 5px
+    background: lightgreen
+
+  #invalid_discount_code
+    color: red
+    background: yellow
 
 #discount_applied
   font-size: 1.4em
   font-style: italic
-
-
-
-
+  border: dashed 1px
+  background: yellow
+  padding: 1px
 
 

@@ -163,7 +163,7 @@ SslCom::Application.routes.draw do
   end
 
   match '/validation_histories/:id/documents/:style.:extension' =>
-    'validation_histories#documents', :as => :validation_document
+    'validation_histories#documents', :as => :validation_document, style: /.+/i
 
   resources :orders do
     collection do

@@ -231,10 +231,10 @@ jQuery(function($) {
             new_total=old_total-(old_total*apply);
             $('div#tier_load_amount').text('$'+new_total.toFixed(2).toString()+" USD");
             if($('span#discount_applied').length==0)
-              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied</span>");
+              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied (-$"+(old_total*apply).toFixed(2).toString()+" USD)</span>");
           }
           else if($('#discount_code').val()!=""){
-            $('label[for=discount_code]').append("<span style='color:red' class='label_desc' id='invalid_discount_code'>invalid discount code</span>");
+            $('label[for=discount_code]').append("<span class='label_desc' id='invalid_discount_code'>invalid discount code</span>");
           }
         }
       });
