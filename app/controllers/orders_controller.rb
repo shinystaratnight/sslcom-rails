@@ -11,7 +11,7 @@ class OrdersController < ApplicationController
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
-  filter_access_to :visitor_trackings, :lookup_discount, require: [:index]
+  filter_access_to :visitor_trackings, require: [:index]
   filter_access_to :show,:attribute_check=>true
 
   def show_cart

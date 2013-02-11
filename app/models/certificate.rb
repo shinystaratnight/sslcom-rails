@@ -194,7 +194,8 @@ class Certificate < ActiveRecord::Base
   end
 
   def allow_wildcard_ucc?
-    true
+    ie_ev? ? false : true
+    #true
     #allow_wildcard_ucc
   end
 

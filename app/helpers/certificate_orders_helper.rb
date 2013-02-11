@@ -6,7 +6,7 @@ module CertificateOrdersHelper
       soi = certificate_order.sub_order_items.detect{|item|item.
           product_variant_item.is_server_license?}
       unless soi.blank?
-        if certificate_order.created_at && certificate_order.created_at < DateTime.new(2013, 2, 6)
+        if soi.quantity>0
           items << pluralize(soi.quantity+1, "server license")
         end
         if certificate_order.certificate.is_ucc?

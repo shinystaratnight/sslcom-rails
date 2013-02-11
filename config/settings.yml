@@ -11,7 +11,7 @@ meta_title: "Secure your Websites with SSL Certificates, EV SSL, Wildcard Certif
 show_advertising: false
 closed_beta_mode: false
 track_visitors: true
-single_server_license_only: true
+single_server_license_only: false
 show_csr_submit_on_buy_page: true
 enable_google_translate: false
 enable_exception_notifier: true

@@ -81,7 +81,7 @@ authorization do
 
   role :guest do
     has_permission_on :orders, :to => [:show_cart, :create_free_ssl, :create_multi_free_ssl,
-                                       :allocate_funds_for_order]
+                                       :allocate_funds_for_order, :lookup_discount]
     has_permission_on :csrs, :certificate_orders, :orders, :to => :create
     has_permission_on :users, :ssl_accounts, :resellers, :to =>
       [:create, :update]
@@ -98,7 +98,7 @@ privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search, :admin_index]
   privilege :manage, :includes => [:create, :read, :update, :delete]
-  privilege :read, :includes => [:index, :show, :search, :show_cart]
+  privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount]
   privilege :create, :includes => :new
   privilege :update, :includes => [:edit, :edit_update, :edit_email]
   privilege :delete, :includes => :destroy
