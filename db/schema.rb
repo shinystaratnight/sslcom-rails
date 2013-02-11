@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120914215852) do
+ActiveRecord::Schema.define(:version => 20130211054329) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -368,6 +368,20 @@ ActiveRecord::Schema.define(:version => 20120914215852) do
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "discounts_certificates", :force => true do |t|
+    t.integer  "discount_id"
+    t.integer  "certificate_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "discounts_orders", :force => true do |t|
+    t.integer  "discount_id"
+    t.integer  "order_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "domain_control_validations", :force => true do |t|

@@ -1,5 +1,6 @@
 class Discount < ActiveRecord::Base
-  belongs_to  :discountable, polymorphic: true
+  has_and_belongs_to_many :certificates
+  has_and_belongs_to_many :orders
   APPLY_AS = [:percentage, :absolute]
 
 end

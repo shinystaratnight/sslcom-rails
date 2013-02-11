@@ -11,7 +11,7 @@ class Order < ActiveRecord::Base
   has_many    :line_items, dependent: :destroy
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
-  has_many    :discounts, :as => :discountable
+  has_and_belongs_to_many    :discounts
 
   money :amount
   before_create :total, :determine_description
@@ -301,7 +301,7 @@ class Order < ActiveRecord::Base
   def commit_discounts
     temp_discounts.each do |td|
       discounts<<Discount.find(td)
-    end unless temp_discounts.empty?
+    end unless temp_discounts.blank?
     temp_discounts=nil
   end
 
