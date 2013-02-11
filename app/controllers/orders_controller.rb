@@ -147,7 +147,8 @@ class OrdersController < ApplicationController
   def create
     @order = Order.new(params[:order])
     if (params[:discount_code])
-      @order.discounts<<Discount.find_by_ref(params[:discount_code]) if Discount.find_by_ref(params[:discount_code])
+      @order.temp_discounts =[]
+      @order.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
     end
     @profile = @billing_profile = BillingProfile.new(params[:billing_profile])
     unless current_user

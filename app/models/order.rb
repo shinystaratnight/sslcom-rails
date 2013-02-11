@@ -15,10 +15,10 @@ class Order < ActiveRecord::Base
 
   money :amount
   before_create :total, :determine_description
-  after_create :generate_reference_number
+  after_create :generate_reference_number, :commit_discounts
 
   #is_free? is used to as a way to allow orders that are not charged (ie cent==0)
-  attr_accessor  :is_free, :receipt, :deposit_mode
+  attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
 
   after_initialize do
     return unless new_record?
@@ -92,8 +92,15 @@ class Order < ActiveRecord::Base
 
   def discount_amount
     t=0
-    discounts.each do |d|
-      d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+    unless id
+      temp_discounts.each do |d|
+        d=Discount.find(d)
+        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+      end unless temp_discounts.blank?
+    else
+      discounts.each do |d|
+        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+      end unless discounts.empty?
     end
     Money.new(t)
   end
@@ -126,7 +133,7 @@ class Order < ActiveRecord::Base
   end
 
   def final_amount
-    amount-discount_amount
+    Money.new(amount.cents)-discount_amount
   end
   
   # TODO: Should this do more?
@@ -289,6 +296,13 @@ class Order < ActiveRecord::Base
   def generate_reference_number
       update_attribute :reference_number, SecureRandom.hex(2)+
         '-'+Time.now.to_i.to_s(32)
+  end
+
+  def commit_discounts
+    temp_discounts.each do |td|
+      discounts<<Discount.find(td)
+    end unless temp_discounts.empty?
+    temp_discounts=nil
   end
 
   def is_free?
