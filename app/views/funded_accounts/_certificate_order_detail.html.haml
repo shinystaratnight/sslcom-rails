@@ -8,6 +8,13 @@
         %th.quantity(scope='col') quantity
         %th.price(scope='col') price
       =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
+    -unless order.discounts.empty?
+      %tr
+        %td.description.total_row(style="font-weight: normal") subtotal
+        %td.price.total_row(colspan='2' style="font-weight: normal") #{order.amount.format}
+      %tr(style="color:red")
+        %td.description.total_row(style="font-weight: normal")=order.discounts.last.label
+        %td.price.total_row(colspan='2' style="font-weight: normal") -#{order.discount_amount.format}
     %tr
       %td.description.total_row total
       %td.price.total_row(colspan='2')= order.final_amount.format
