@@ -60,9 +60,6 @@ class FundedAccountsController < ApplicationController
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
-      if (params[:discount_code])
-        @order.discounts<<Discount.find_by(params[:discount_code]) if Discount.find_by(params[:discount_code]).exists?
-      end
       @account_total.cents += @funded_account.amount.cents - @order.cents
       @funded_account.errors.add(:amount, "being loaded is not sufficient") if @account_total.cents <= 0
       @funded_account.errors.add(:amount,
@@ -111,6 +108,7 @@ class FundedAccountsController < ApplicationController
         if apply_order
           @order.deducted_from = @deposit
           current_user.ssl_account.orders << @order
+          apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
           record_order_visit(@order)
           @order.mark_paid!
           credit_affiliate(@order)
@@ -160,11 +158,12 @@ class FundedAccountsController < ApplicationController
 
   def apply_funds
     @account_total = @funded_account = current_user.ssl_account.funded_account
-    @funded_account.cents -= @order.cents unless @funded_account.blank?
+    apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
+    @funded_account.cents -= @order.final_amount.cents unless @funded_account.blank?
     respond_to do |format|
       if @funded_account.cents >= 0 and @order.line_items.size > 0
         @funded_account.deduct_order = true
-        if @order.cents > 0
+        if @order.final_amount.cents > 0
           record_order_visit(@order)
           @order.mark_paid!
         end

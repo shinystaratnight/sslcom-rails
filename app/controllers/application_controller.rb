@@ -56,6 +56,13 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def apply_discounts(order)
+    if (params[:discount_code])
+      order.temp_discounts =[]
+      order.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+    end
+  end
+
   def cart_contents
     cart = cookies[:cart]
     cart.blank? ? {} : JSON.parse(cookies[:cart])
