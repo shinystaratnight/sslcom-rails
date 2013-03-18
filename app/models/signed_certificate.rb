@@ -193,11 +193,11 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def friendly_common_name
-    common_name.gsub('*', 'STAR').gsub('.', '_')
+    common_name ? common_name.gsub('*', 'STAR').gsub('.', '_') : csr.common_name.gsub('*', 'STAR').gsub('.', '_')
   end
 
   def nonidn_friendly_common_name
-    SimpleIDN.to_ascii(read_attribute(:common_name)).gsub('*', 'STAR').gsub('.', '_')
+    SimpleIDN.to_ascii(read_attribute(:common_name) || csr.common_name).gsub('*', 'STAR').gsub('.', '_')
   end
 
   def certificate_order
