@@ -272,7 +272,7 @@
     <orderEntry type="library" scope="PROVIDED" name="aws-s3 (v0.6.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.7.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.0.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.2.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.3.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.13.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v1.1.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara-firebug (v1.3.0@36e996, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
