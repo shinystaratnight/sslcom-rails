@@ -81,7 +81,7 @@ class SiteSealsController < ApplicationController
     @co = CertificateOrder.find params[:certificate_order]
     respond_to do |format|
       #allows us to bypass attr_protected. note this is admin only function
-      @site_seal.send :attributes=, params[:site_seal], false
+      @site_seal.assign_attributes params[:site_seal], without_protection: true
       if @site_seal.save
         notify_customer if params[:email_customer]
         format.html { redirect_to(@site_seal) }
