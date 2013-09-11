@@ -75,36 +75,36 @@
         -ss=ServerSoftware.all
         -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
         =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
-  -unless @certificate_order.is_unused_credit?
-    -if @certificate.is_ucc?
-      .clearfix
-        %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
-          #domains_label_text
-            -if @certificate.is_premium_ssl?
-              Extra Subdomains (3 max)
-            -else
-              Additional Domains:
-              =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
-          %span.label_desc separated by space or new line
+  -if @certificate.is_ucc?
+    .clearfix
+      %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
+        #domains_label_text
+          -if @certificate.is_premium_ssl?
+            Extra Subdomains (3 max)
+          -else
+            Additional Domains:
+            =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
+        %span.label_desc separated by space or new line
+        %span.label_break
+        %span.label_desc can skip and edit later
+        -unless @certificate.is_premium_ssl?
           %span.label_break
-          %span.label_desc can skip and edit later
-          -unless @certificate.is_premium_ssl?
-            %span.label_break
-            %span.label_desc 200 domains maximum
-            %span.label_break
-            %span.label_desc
-              $
-              %span#first_domain_tier_price>
-                #{first.price.format}
-              \ for first 3 domains
-            %span.label_break
-            %span.label_desc
-              $
-              %span#second_domain_tier_price>
-                #{second.price.format}
-              \ ea for domains 4-200
+          %span.label_desc 200 domains maximum
+          %span.label_break
+          %span.label_desc
+            $
+            %span#first_domain_tier_price>
+              #{first.price.format}
+            \ for first 3 domains
+          %span.label_break
+          %span.label_desc
+            $
+            %span#second_domain_tier_price>
+              #{second.price.format}
+            \ ea for domains 4-200
 
-        =cert_form.text_area :additional_domains, :cols=>40, :rows=>10
+      =cert_form.text_area :additional_domains, :cols=>40, :rows=>10
+  -unless @certificate_order.is_unused_credit?
     .clearfix
       %label{:for=>"server_software"}
         *Duration:

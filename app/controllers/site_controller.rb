@@ -1,7 +1,9 @@
 class SiteController < ApplicationController
   respond_to :xml, :html, only: :sitemap
+  layout false, only: [:customers, :paid_cert_orders]
 
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news buy_now)
+
 
   def index
 
@@ -11,6 +13,20 @@ class SiteController < ApplicationController
   def subject_alternative_name
 
   end
+
+  #def paid_cert_orders
+  #  co = CertificateOrder.nonfree
+  #  render :text => proc { |response, output|
+  #    output.write "<table><thead><th>date</th><th>ref</th><th>domain</th><th>amount</th></thead>"
+  #    co.each do |i|
+  #      output.write("<tr>")
+  #      output.write("<td>#{co.created_at.strftime("%b %d, %Y")}")
+  #      output.write("<td>#{co.ref_num}")
+  #      output.write("<td>#{co.csr.try :common_name}")
+  #      output.write("<td>#{co.amount}")
+  #    end
+  #  }
+  #end
 
   def sitemap
     # we use online generators now so the dynamic code is kept for legacy purposes

@@ -155,15 +155,13 @@ namespace :delayed_job do
   end
 end
 
-desc "remotely console"
- task :console, :roles => :app do
-   input = ''
-   run "cd #{current_path} && ./script/console #{rails_env}", :once => true do |channel, stream, data|
-     next if data.chomp == input.chomp || data.chomp == ''
-     print data
-     channel.send_data(input = $stdin.gets) if data =~ /^(>|\?)>/
-   end
- end
+desc 'remote rails console'
+@object = namespace :rails do
+  task :console, :roles => :app do
+    exec %{ssh -l #{user} #{domain} -t "~/.rvm/bin/rvm-shell -c 'cd #{current_path} && bundle exec rails c #{rails_env}'"}
+  end
+end
+@object
 
 namespace :deploy do
   task :symlink_shared, :roles => :app do
