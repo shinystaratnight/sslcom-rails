@@ -544,11 +544,15 @@ class CertificateOrder < ActiveRecord::Base
   alias :software :server_software
 
   def is_open_ssl?
-    [3, 4, 35].include? software.id
+    [3, 4, 35, 39].include? software.id
   end
 
   def is_apache?
     [3, 4].include? software.id
+  end
+
+  def is_amazon_balancer?
+    [39].include? software.id
   end
 
   def is_iis?
@@ -576,13 +580,15 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def has_bundle?
-    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk? || is_heroku?)
+    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk? || is_heroku? || is_amazon_balancer?)
   end
 
   def bundle_name
     if has_bundle?
       if is_apache?
         'Apache bundle (SSLCACertificateFile)'
+      elsif is_amazon_balancer?
+        'Amazon bundle (SSLCACertificateFile)'
       elsif is_nginx?
         'Nginx bundle'
       elsif is_cpanel? || is_red_hat? || is_plesk?
@@ -611,20 +617,20 @@ class CertificateOrder < ActiveRecord::Base
       Certificate::COMODO_BUNDLES.select do |k,v|
         if certificate.serial=~/256sslcom/
           if certificate.is_ev?
-            k=="sslcom_ev_ca_bundle.txt"
+            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
           #elsif certificate.is_free?
           #  k=="sslcom_free_ca_bundle.txt"
           elsif certificate.is_essential_ssl?
-            k=="sslcom_addtrust_ca_bundle.txt"
+            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
           else
-            k=="sslcom_high_assurance_ca_bundle.txt"
+            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
           end
         elsif certificate.comodo_product_id==342
-          k=="free_ssl_ca_bundle.txt"
+          k=="free_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
         elsif certificate.comodo_product_id==43
-          k=="trial_ssl_ca_bundle.txt"
+          k=="trial_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
         else
-          k=="ssl_ca_bundle.txt"
+          k=="ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
         end
       end.map{|k,v|k}
     else

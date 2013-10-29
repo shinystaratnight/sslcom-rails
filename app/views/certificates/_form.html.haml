@@ -102,8 +102,7 @@
             %span#second_domain_tier_price>
               #{second.price.format}
             \ ea for domains 4-200
-
-      =cert_form.text_area :additional_domains, :cols=>40, :rows=>10
+      =cert_form.text_area :additional_domains, cols: 40, rows: 10
   -unless @certificate_order.is_unused_credit?
     .clearfix
       %label{:for=>"server_software"}

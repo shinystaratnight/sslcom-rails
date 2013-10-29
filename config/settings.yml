@@ -10,7 +10,7 @@ meta_keywords: "ssl certificates, ssl certificate, cheap ssl, wildcard certifica
 meta_title: "Secure your Websites with SSL Certificates, EV SSL, Wildcard Certificate, Multi Domain SSL & Free SSL"
 show_advertising: false
 closed_beta_mode: false
-track_visitors: true
+track_visitors: false
 single_server_license_only: true
 show_csr_submit_on_buy_page: true
 enable_google_translate: false
@@ -51,7 +51,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNodes=8P3K3M"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi8Kimi8'
+comodo_api_password: 'Jimi10Kimi10'
 authorize_net_key: '52HQJAeBz9m'
 authorize_net_transaction_id: '734s6P38Fv3HaY2V'
 p_authorize_net_key: '6Y6ckBFU6nYc'
