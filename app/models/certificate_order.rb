@@ -813,20 +813,22 @@ class CertificateOrder < ActiveRecord::Base
           if certificate.is_wildcard?
             options.merge!('servers' => server_licenses.to_s || '1')
           end
-          if certificate.is_ev?
-            certificate_content.tap do |cc|
-              options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
-              options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
-              options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
-            end
+        end
+        if certificate.is_ev?
+          certificate_content.tap do |cc|
+            options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
+            options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
+            options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
           end
-          if certificate.is_ucc?
-            domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
-            options.merge!(
+        end
+        if certificate.is_ucc?
+          domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
+          options.merge!(
               'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
-              'primaryDomainName'=>csr.common_name
-            )
-          end
+              'primaryDomainName'=>csr.common_name,
+              'maxSubjectCNs'=>1
+          )
+          options.merge!('days' => '1095') if options['days'].to_i > 1095 #Comodo doesn't support more than 3 years
         end
       end
     end
