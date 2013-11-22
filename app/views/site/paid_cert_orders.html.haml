@@ -1,0 +1,39 @@
+-#%table
+-#  %thead
+-#    %th Date
+-#    %th Type
+-#    %th Domain
+-#    %th Amount
+-#    %th Login Email
+-#    %th First Name
+-#    %th Last Name
+-#    %th Company
+-#    %th Email
+-#    %th Phone
+-#  -#CertificateOrder.unscoped.includes(:certificate_contents, :ssl_account=>:users).where({:workflow_state=>'paid'}).order(:created_at.desc).each do |co|
+-#  -CertificateOrder.unscoped.includes(:certificate_contents, :ssl_account=>:users).where({:workflow_state=>'paid'} & {:amount.gt=> 0}).order(:created_at.desc).each do |co|
+-#    %tr
+-#      %td=co.created_at.strftime("%b %d, %Y")
+-#      %td=co.certificate.try(:title) || ""
+-#      %td=co.certificate_content ? co.csr.try(:common_name) : ""
+-#      %td=co.amount
+-#      %td=co.ssl_account.users.last.email
+-#      %td
+-#      %td
+-#      %td
+-#      %td
+-#      %td
+-#    -if co.certificate_content
+-#      -co.certificate_content.certificate_contacts.group(:email).each do |cc|
+-#        %tr
+-#          %td
+-#          %td
+-#          %td
+-#          %td
+-#          %td
+-#          %td=cc.first_name
+-#          %td=cc.last_name
+-#          %td=cc.contactable.registrant.company_name
+-#          %td=cc.email
+-#          %td=cc.phone
+-#
