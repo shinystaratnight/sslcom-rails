@@ -5,6 +5,7 @@ jQuery(function($) {
     var signed_certificate_exists = <%=!@cc.csr.signed_certificate.blank?%>;
     var submit_label;
     $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
+    $('#csr_body').val($('textarea#tmp_csr').val());
     $('.new_signed_certificate').ajaxForm({
       dataType: 'json',
       beforeSubmit: function(){
@@ -35,7 +36,7 @@ jQuery(function($) {
           $('.country').text(data.signed_certificate.country);
           $('.expires_on').text(Date.parse(data.signed_certificate.expiration_date_js).toString("MMM dd, yyyy"));
           $('.issued_on').text(Date.parse(data.signed_certificate.created_at_js).toString("MMM dd, yyyy"));
-          $('.submitted_on').text("submitted on " + Date.parse('today').toString("MMM dd, yyyy"));
+          $('#signed_certificate_submitted_on .submitted_on').text("submitted on " + Date.parse('today').toString("MMM dd, yyyy"));
         }
         else{
           $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
@@ -48,6 +49,47 @@ jQuery(function($) {
           }
           errorString = errorArray.join(",\n");
           alert("The signed certificate was not successfully saved. The following errors were reported:\n\n"+errorString);
+        }
+      }
+    });
+    $('.edit_csr').ajaxForm({
+      dataType: 'json',
+      beforeSubmit: function(){
+        confirmed = confirm('Are you sure you want to overwrite the csr? This action cannot be undone.');
+        if(confirmed){
+          $('#waiting_on_csr').show();
+          $('.submit_csr').attr('disabled', 'disabled');
+          submit_label = $('.submit_csr').attr('value');
+          $('.submit_csr').attr('value', 'Submitting...');
+        }
+        return confirmed;
+      },
+      success: function(data, status){
+        $('#waiting_on_csr').hide();
+        $('.submit_csr').removeAttr('disabled');
+        $('.submit_csr').attr('value', submit_label);
+        if(data.csr){
+          csr_exists=true;
+          $('textarea#tmp_csr').val($('#csr_body').val());
+          $('.common_name').text(data.csr.common_name);
+          $('.organization').text(data.csr.organization);
+          $('.department').text(data.csr.organization_unit);
+          $('.state').text(data.csr.state);
+          $('.city').text(data.csr.locality);
+          $('.country').text(data.csr.country);
+          $('#csr_submitted_on .submitted_on').text("submitted on " + Date.parse('today').toString("MMM dd, yyyy"));
+        }
+        else{
+          $('#csr_body').val($('textarea#tmp_csr').val());
+          errorArray=[];
+          i=0;
+          for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+              errorArray.push(((key=="base")? "" : (key + ": ")) + data[key].join(", "));
+            }
+          }
+          errorString = errorArray.join(",\n");
+          alert("The csr was not successfully saved. The following errors were reported:\n\n"+errorString);
         }
       }
     });

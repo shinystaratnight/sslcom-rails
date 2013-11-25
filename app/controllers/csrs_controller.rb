@@ -7,8 +7,12 @@ class CsrsController < ApplicationController
   def update
     respond_to do |format|
       if @csr.update_attributes(params[:csr])
-        flash[:notice] = 'Certificate was successfully updated.'
-        format.html { redirect_to(@csr.certificate_content.certificate_order) }
+        @csr.certificate_content.tap do |cc|
+          cc.update_attribute(:workflow_state, "contacts_provided") if cc.pending_validation?
+        end
+        format.html {
+          flash[:notice] = 'Csr was successfully updated.'
+          redirect_to(@csr.certificate_content.certificate_order) }
         format.xml  { head :ok }
         format.js   { render :json=>@csr.to_json(:include=>:signed_certificate)}
       else

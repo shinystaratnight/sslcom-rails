@@ -212,12 +212,28 @@
                       %td(colspan="5")
                         .certificate_details_box
                           %strong certificate signing request
-                          -unless csr.blank?
-                            %div
-                              submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
-                            =text_area_tag :csr, csr.body, :size=>"30x10"
+                          -unless permitted_to?(:create, SignedCertificate.new) && current
+                            -unless csr.blank?
+                              %div
+                                submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
+                              =text_area_tag :csr, csr.body, :size=>"30x10"
+                            -else
+                              no certificate signing request found
                           -else
-                            no certificate signing request found
+                            #csr_submitted_on
+                              %span.submitted_on
+                                -unless csr.try(:created_at).blank?
+                                  submitted on
+                                  \#{csr.created_at.strftime("%b %d, %Y")}
+                                -else
+                                  &nbsp
+                            =form_for csr do |f|
+                              =f.text_area :body, :cols=>30, :rows=>10
+                              .clearfix
+                              =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                              #temporary_csr.hidden[csr, :new]
+                                =text_area_tag :tmp_csr, csr.try(:body)
                         .certificate_details_box
                           %strong signed certificate
                           -unless permitted_to?(:create, SignedCertificate.new) && current

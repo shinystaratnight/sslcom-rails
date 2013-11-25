@@ -37,6 +37,7 @@ class SignedCertificate < ActiveRecord::Base
     s.send_processed_certificate if s.email_customer
     cc=s.csr.certificate_content
     co=cc.certificate_order
+    co.site_seal.fully_activate! unless co.site_seal.fully_activated?
     co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
     last_sent=s.csr.domain_control_validations.last_sent
     last_sent.satisfy! if(last_sent && !last_sent.satisfied?)

@@ -1,12 +1,12 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.3'
+gem 'rails', '~> 3.2.3'
 
 # Bundle edge Rails instead:
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"
-gem 'wirble'
+gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
 #gem 'money', :git => "git://github.com/RubyMoney/money.git"
@@ -21,11 +21,11 @@ gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon"
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
-gem 'rb-inotify'
+gem 'rb-inotify', :require => false
 gem 'aws-s3'
 gem 'aws-sdk'
 gem 'xml-simple'
-gem 'json'
+gem 'json', '~> 1.8.1'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
@@ -40,8 +40,8 @@ gem 'openssl-extensions', :require => 'openssl-extensions/all'
 gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
-gem "therubyracer"
-gem "libv8"
+gem "therubyracer", '~> 0.12.0', platform: :ruby
+gem "libv8", '~> 3.16.14.0'
 gem 'request_exception_handler'
 gem 'rvm-capistrano'
 
@@ -57,41 +57,37 @@ gem 'nokogiri'
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-  group :development, :test do
-    gem "builder"
-    gem 'ruby_parser'
-    #gem 'ruby-debug-base19'
-    #gem 'ruby-debug-ide19'
-    #gem 'ruby-debug19'
-    gem "rspec-rails"
-    #gem 'activerecord-sqlserver-adapter'
-    gem 'ruby-odbc'
-    gem 'launchy'
-    gem 'spork-rails'
-    #gem 'spork'
-    #gem 'active_reload'
-  end
+#
+group :development do
+  gem 'foreman'
+  gem 'dotenv-rails'
+  gem 'guard-livereload'
+end
 
-  group :test do
-    gem 'cucumber-rails', require: false
-    gem 'capybara'
-    gem 'capybara-webkit'
-    gem 'capybara-firebug', git: 'git://github.com/jfirebaugh/capybara-firebug.git'
-    gem 'selenium-webdriver'
-    gem 'database_cleaner'
-    gem 'webrat'
-    gem 'email_spec'
-    #gem 'firewatir'
-    gem 'rspec'
-    gem 'mainline'
-    gem 'rack-test'
-    gem 'machinist', '>= 2.0.0.beta2'
-    gem 'factory_girl_rails'
-    gem 'term-ansicolor'
-  end
-  
-  group :assets do
-    gem 'compass-rails'
-    gem 'sass-rails'
-  end
+group :development, :test do
+  gem 'pry-remote'
+  gem "builder"
+  gem 'ruby_parser'
+  #gem 'ruby-debug-base19'
+  #gem 'ruby-debug-ide19'
+  #gem 'ruby-debug19'
+  gem "rspec-rails", '~> 2.14.0'
+  #gem 'activerecord-sqlserver-adapter'
+  gem 'ruby-odbc'
+  gem 'launchy'
+  gem 'spork-rails'
+  #gem 'spork'
+  #gem 'active_reload'
+end
 
+group :test do
+  gem 'factory_girl_rails'
+  gem 'webmock'
+end
+
+group :assets do
+  gem 'sass-rails'
+  gem 'coffee-rails'
+  gem 'uglifier'
+  gem 'compass-rails'
+end
