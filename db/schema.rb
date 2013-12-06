@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130211054329) do
+ActiveRecord::Schema.define(:version => 20131206151716) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -541,16 +541,19 @@ ActiveRecord::Schema.define(:version => 20130211054329) do
     t.datetime "updated_at"
     t.datetime "paid_at"
     t.datetime "canceled_at"
-    t.integer  "lock_version",       :default => 0
+    t.integer  "lock_version",           :default => 0
     t.string   "description"
-    t.string   "state",              :default => "pending"
-    t.string   "status",             :default => "active"
+    t.string   "state",                  :default => "pending"
+    t.string   "status",                 :default => "active"
     t.string   "reference_number"
     t.integer  "deducted_from_id"
     t.string   "notes"
     t.string   "po_number"
     t.string   "quote_number"
     t.integer  "visitor_token_id"
+    t.string   "ext_affiliate_name"
+    t.string   "ext_affiliate_id"
+    t.boolean  "ext_affiliate_credited"
   end
 
   add_index "orders", ["billable_id"], :name => "index_orders_on_billable_id"

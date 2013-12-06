@@ -119,6 +119,13 @@ module OrdersHelper
     current_order.amount.to_s.to_i<=0
   end
   
+  def shareasale
+    if @order.ext_affiliate_name=="shareasale" && !@order.ext_affiliate_credited?
+      @order.toggle! :ext_affiliate_credited
+      "<img src='https://shareasale.com/sale.cfm?amount=#{@order.amount}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}' width='1' height='1'>".html_safe
+    end
+  end
+  
 =begin
   def setup_certificate_order
     #adjusting duration to reflect number of days validity

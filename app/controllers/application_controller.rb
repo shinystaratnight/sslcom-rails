@@ -53,6 +53,11 @@ class ApplicationController < ActionController::Base
         li.aff_url = cookies[:ref] unless cookies[:ref].blank?
       }
       Affiliate.find(cookies[:aid]).line_items << order.line_items
+    else
+      order.ext_affiliate_name="shareasale"
+      order.ext_affiliate_id="50573"
+      order.ext_affiliate_credited=false
+      order.save validate: false
     end
   end
 
