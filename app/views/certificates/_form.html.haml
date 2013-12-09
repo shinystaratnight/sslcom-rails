@@ -1,21 +1,18 @@
 -if @certificate.is_ucc?
   -first = @certificate.items_by_domains[0]
   -second = @certificate.items_by_domains[1]
--if Settings.show_csr_submit_on_buy_page
-  -unless @certificate_order.is_unused_credit?
-    .clearfix
-      %label{:for=>"has_csr"}
-        *Do you have your CSR?:
-        %span.label_desc certificate signing request
-      .radio_choices
-        .radio_w_desc.clearfix
-          =f.radio_button :has_csr, true
-          %span.has_csr_container I want to submit my CSR now
-        .radio_w_desc.clearfix
-          =f.radio_button :has_csr, false
-          %span.has_csr_container I will submit my CSR later or have someone else do it
-  -else
-    =f.hidden_field :has_csr
+-unless @certificate_order.is_unused_credit?
+  .clearfix#has_csr_switch
+    %label{:for=>"has_csr"}
+      *Do you have your CSR?:
+      %span.label_desc certificate signing request
+    .radio_choices
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, true
+        %span.has_csr_container I want to submit my CSR now
+      .radio_w_desc.clearfix
+        =f.radio_button :has_csr, false
+        %span.has_csr_container I will submit my CSR later or have someone else do it
 -else
   =f.hidden_field :has_csr
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|

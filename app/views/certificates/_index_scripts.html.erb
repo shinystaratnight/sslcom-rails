@@ -196,7 +196,7 @@ jQuery(function($) {
         $('#form_progress_indicator').fadeIn();
       }
     });
-    <%if Settings.show_csr_submit_on_buy_page && !@certificate_order.is_unused_credit?%>
+    <%if !@certificate_order.is_unused_credit?%>
     $('form').submit(function(){
       //add to cart if csr is not ready
       if($(':radio[name*=has_csr]').length!=0 &&
@@ -222,6 +222,9 @@ jQuery(function($) {
       $.adjust_domain_pricing($('textarea[id$=domains]')[0]);
     <%end-%>
     $.update_order_pricing();
+    <%unless Settings.show_csr_submit_on_buy_page%>
+      $('#has_csr_switch').hide();
+    <%end%>
   });
 });
 </script>
