@@ -193,7 +193,7 @@ class Csr < ActiveRecord::Base
         end
         !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
-    rescue Timeout::Error, OpenURI::HTTPError
+    rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
       if retries==0
         return false
