@@ -73,30 +73,82 @@
         -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
         =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
   -else
-    %p
-      %em Each domain the ssl certificate will secure conforms to the following:
-    %ul.cert_reqs
-      -unless @certificate.is_wildcard?
+    -if @certificate.is_wildcard?
+      %p #{@certificate.title} Summary
+      %ul.cert_reqs
+        %li Can secure any number of subdomains (no limit) for 1 single price
+        %li No additional charge for each subdomain
+        %li All entries will have the same domain name
+        %li Only requires 1 ip address (great for hosting and virtual hosts)
+      %p Example entries include:
+      %ul.cert_reqs
+        %li www.domain.com
+        %li mail.domain.com
+        %li lync.domain.com
+        %li yada.domain.com
+      %p and so on...
+    -elsif @certificate.is_premium_ssl?
+      %p #{@certificate.title} Summary
+      %ul.cert_reqs
+        %li Can secure up to 3 different subdomains
+        %li An entry can be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
+        %li All entries must have the same domain name, but can have different subdomains
+        %li An entry cannot represent a wildcard domain name (i.e. *.domain.com)
+        %li Only requires 1 ip address (great for hosting and virtual hosts)
+      %p Example entries include:
+      %ul.cert_reqs
+        %li www.domain.com
+        %li lync.domain.com
+        %li yada.domain.com
+    -elsif @certificate.is_ucc?
+      %p #{'Extended Validation' if @certificate.is_ev?} UC Certificate (aka SANs, Exchange SSL, multidomain SSL) Summary
+      %ul.cert_reqs
+        -if @certificate.is_ev?
+          %li Displays your company name with a green background in the address bar
+          %li Displays your company details in the SSL Certificate details
+        %li Can secure up to 200 entries (first 3 are free, additional charge per entry after the 3rd entry)
+        %li An entry can be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
+        -unless @certificate.is_ev?
+          %li An entry can be a single worded server name
+          %li An entry can be an internal ip address (but the certificate will not be effective past Dec 2015 per CAB Forum Reqs.)
         -unless @certificate.allow_wildcard_ucc?
-          %li It cannot represent a wildcard domain name (i.e. *.domain.com)
-        -if @certificate.is_premium_ssl?
-          %li It will secure up to 3 subdomain names (i.e. www.domain.com, mail.domain.com, lync.domain.com)
+          %li An entry cannot represent a wildcard domain name (i.e. *.domain.com)
+        %li Only requires 1 ip address (great for hosting and virtual hosts)
+        %li Uses the Subject Alternative Name (SAN) extension field
+      %p Example entries include:
+      %ul.cert_reqs
+        %li www.domain.com
+        %li lync.domain.com
+        %li yada.yada.domain.co.uk
+        -unless @certificate.is_ev?
+          %li www.example1.local
+          %li exchange
+          %li 10.10.10.10
+    -else
+      %p
+        %em Each domain the ssl certificate will secure conforms to the following:
+      %ul.cert_reqs
+        -unless @certificate.is_wildcard?
+          -unless @certificate.allow_wildcard_ucc?
+            %li It cannot represent a wildcard domain name (i.e. *.domain.com)
+          -if @certificate.is_premium_ssl?
+            %li It will secure up to 3 subdomain names (i.e. www.domain.com, mail.domain.com, lync.domain.com)
+          -else
+            %li It will secure a fully-qualified domain name (i.e. www.domain.com)
+            -if @certificate.is_ucc? && !@certificate.is_ev?
+              %li It will secure a local ip address (i.e. 10.0.0.0)
+            -unless @certificate.is_free?
+              %li It will secure a single word server name (i.e. localhost or bizserver)
         -else
-          %li It will secure a fully-qualified domain name (i.e. www.domain.com)
-          -if @certificate.is_ucc? && !@certificate.is_ev?
-            %li It will secure a local ip address (i.e. 10.0.0.0)
-          -unless @certificate.is_free?
-            %li It will secure a single word server name (i.e. localhost or bizserver)
-      -else
-        %li It will secure all subdomains (i.e. www.domain.com, mail.domain.com, lync.domain.com, etc.)
+          %li It will secure all subdomains (i.e. www.domain.com, mail.domain.com, lync.domain.com, etc.)
   -if @certificate.is_ucc?
     .clearfix
       %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}
         #domains_label_text
           -if @certificate.is_premium_ssl?
-            Extra Subdomains (3 max)
+            Subdomains (3 max)
           -else
-            Additional Domains:
+            Domains:
             =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
         %span.label_desc separated by space or new line
         %span.label_break

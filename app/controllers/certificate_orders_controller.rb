@@ -336,6 +336,7 @@ class CertificateOrdersController < ApplicationController
     t.close
   end
 
+  # this function allows the customer to resubmit a new csr even while the order is being processed
   def start_over
     @certificate_order.start_over! if !@certificate_order.blank? &&
       ['csr_submitted', 'info_provided', 'contacts_provided'].include?(@certificate_order.certificate_content.workflow_state)
