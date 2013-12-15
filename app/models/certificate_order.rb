@@ -838,8 +838,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_contents.map(&:csr).flatten.map(&:ca_certificate_requests)
   end
 
-  # creates a new external ca order history by deleting the old external order id and requests
+  # creates a new external ca order history by deleting the old external order id and requests thus allowing us
+  # to start a new history with comodo for an existing ssl.com cert order
   # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we just create a new one
+  # and have the old one refunded
   def reset_ext_ca_order
     certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
     cc=certificate_content
