@@ -1,34 +1,35 @@
 !!!
 %html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
-    :javascript
-      var _sf_startpt=(new Date()).getTime()
-    %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
-    %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
+    -cache("head_"+params.to_s, expires_in: 1.year) do
+      :javascript
+        var _sf_startpt=(new Date()).getTime()
+      %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
+      %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
 
-    %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
-    -if @meta
-      -@meta.each do |key|
-        %meta{:name=>key[0], :content=>key[1]}
-    /%meta{ :name => "keywords", :content => h(yield(:keywords).or_else(Settings.meta_keywords))}
-    %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
-    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
-    %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
-    %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
-    %meta(content="width=1115" name="viewport")
-    -#the following metas are for google+ custom message
-    %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
-    %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
-    -#the following metas are for facebook custom message
-    %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
-    %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
-    %meta(property="og:type" content="product")
-    %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
-    %meta(property="og:fb:app_id" content="175898732515690")
-    -if Settings.enable_google_translate
-      %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
-    =csrf_meta_tag
-    =render :partial => "shared/scripts_and_styles"
+      %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
+      -if @meta
+        -@meta.each do |key|
+          %meta{:name=>key[0], :content=>key[1]}
+      /%meta{ :name => "keywords", :content => h(yield(:keywords).or_else(Settings.meta_keywords))}
+      %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
+      %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
+      %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
+      %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
+      %meta(content="width=1115" name="viewport")
+      -#the following metas are for google+ custom message
+      %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
+      %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
+      -#the following metas are for facebook custom message
+      %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
+      %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
+      %meta(property="og:type" content="product")
+      %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
+      %meta(property="og:fb:app_id" content="175898732515690")
+      -if Settings.enable_google_translate
+        %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
+      =csrf_meta_tag
+      =render :partial => "shared/scripts_and_styles"
   %body
     =render partial: "layouts/facebook"
     -#=render partial: "layouts/uservoice"
@@ -58,20 +59,21 @@
         =render :partial => '/layouts/standard'
       .push
     #footer
-      =render partial: '/layouts/footer_new'
-      -#
-        -if current_page? action: "buy_now"
-          =render partial: '/layouts/footer_new'
-        -else
-          =render partial: '/layouts/footer'
-    #swifttagcontainerwoyxz3g3q4
-      #proactivechatcontainerwoyxz3g3q4
-      #swifttagdatacontainerwoyxz3g3q4(style="display: inline;")
-    -if Rails.env=~/production/i
-      / begin olark code
-      %script(data-cfasync="false" type='text/javascript')
-        /*{literal}<![CDATA[*/
-        window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
-        /* custom configuration goes here (www.olark.com/documentation) */
-        olark.identify('3356-178-10-2724');/*]]>{/literal}*/
-      / end olark code
+      -cache("footer_"+params.to_s, expires_in: 1.year) do
+        =render partial: '/layouts/footer_new'
+        -#
+          -if current_page? action: "buy_now"
+            =render partial: '/layouts/footer_new'
+          -else
+            =render partial: '/layouts/footer'
+      #swifttagcontainerwoyxz3g3q4
+        #proactivechatcontainerwoyxz3g3q4
+        #swifttagdatacontainerwoyxz3g3q4(style="display: inline;")
+      -if Rails.env=~/production/i
+        / begin olark code
+        %script(data-cfasync="false" type='text/javascript')
+          /*{literal}<![CDATA[*/
+          window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){f[z]=function(){(a.s=a.s||[]).push(arguments)};var a=f[z]._={},q=c.methods.length;while(q--){(function(n){f[z][n]=function(){f[z]("call",n,arguments)}})(c.methods[q])}a.l=c.loader;a.i=nt;a.p={0:+new Date};a.P=function(u){a.p[u]=new Date-a.p[0]};function s(){a.P(r);f[z](r)}f.addEventListener?f.addEventListener(r,s,false):f.attachEvent("on"+r,s);var ld=function(){function p(hd){hd="head";return["<",hd,"></",hd,"><",i,' onl' + 'oad="var d=',g,";d.getElementsByTagName('head')[0].",j,"(d.",h,"('script')).",k,"='",l,"//",a.l,"'",'"',"></",i,">"].join("")}var i="body",m=d[i];if(!m){return setTimeout(ld,100)}a.P(1);var j="appendChild",h="createElement",k="src",n=d[h]("div"),v=n[j](d[h](z)),b=d[h]("iframe"),g="document",e="domain",o;n.style.display="none";m.insertBefore(n,m.firstChild).id=z;b.frameBorder="0";b.id=z+"-loader";if(/MSIE[ ]+6/.test(navigator.userAgent)){b.src="javascript:false"}b.allowTransparency="true";v[j](b);try{b.contentWindow[g].open()}catch(w){c[e]=d[e];o="javascript:var d="+g+".open();d.domain='"+d.domain+"';";b[k]=o+"void(0);"}try{var t=b.contentWindow[g];t.write(p());t.close()}catch(x){b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
+          /* custom configuration goes here (www.olark.com/documentation) */
+          olark.identify('3356-178-10-2724');/*]]>{/literal}*/
+        / end olark code
