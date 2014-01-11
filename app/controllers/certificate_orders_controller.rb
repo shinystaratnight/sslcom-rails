@@ -30,6 +30,8 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
+  NUM_ROWS_LIMIT=2
+
   def search
     index
   end

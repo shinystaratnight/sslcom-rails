@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.2.3'
+gem 'rails', '~> 3.2.15'
 
 # Bundle edge Rails instead:
 gem 'mysql2'
@@ -44,6 +44,7 @@ gem "therubyracer", '~> 0.12.0', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
 gem 'request_exception_handler'
 gem 'rvm-capistrano'
+gem 'newrelic_rpm'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'
