@@ -10,6 +10,8 @@ class SiteSeal < ActiveRecord::Base
   FREE_SEAL_IMAGE = 'free_ssl_trust_logo.gif'
   SEAL_IMAGE = 'ssl_trust_logo.gif'
 
+  REPORT_CACHE_KEY = "ssl_com_report_"
+
   REPORT_DIMENSIONS = 'height=500, width=400, top=100, left=100'
 
   FULLY_ACTIVATED = :fully_activated
@@ -90,6 +92,7 @@ class SiteSeal < ActiveRecord::Base
       self.update_attributes SiteSeal.generate_options(certificate_order.
           certificate.product)
     end
+    Rails.cache.delete REPORT_CACHE_KEY+self.id.to_s
   end
 
   def to_param

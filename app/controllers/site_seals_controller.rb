@@ -5,8 +5,6 @@ class SiteSealsController < ApplicationController
   filter_access_to :edit, :update, :admin_update, attribute_check: true
   filter_access_to :site_report, :artifacts, :details, :require=>:read
 
-  caches_action :show, :site_report, expires_in: 30.minutes, :cache_path => Proc.new { |c| c.params }
-
   def search
     index
     render action: :index
