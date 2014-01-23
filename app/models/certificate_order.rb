@@ -835,7 +835,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def csr_ca_api_requests
-    certificate_contents.map(&:csr).flatten.map(&:ca_certificate_requests)
+    certificate_contents.map(&:csr).flatten.compact.map(&:ca_certificate_requests)
   end
 
   # creates a new external ca order history by deleting the old external order id and requests thus allowing us
