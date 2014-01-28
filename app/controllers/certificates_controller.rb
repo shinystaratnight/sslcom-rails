@@ -4,12 +4,11 @@ class CertificatesController < ApplicationController
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
   before_filter :find_certificate, only: [:show, :buy]
 
-  caches_action :buy, :index, :single_domain, :wildcard_or_ucc, :show, expires_in: 24.hours, :cache_path => Proc.new { |c| c.params }
+  #caches_action :buy, :index, :single_domain, :wildcard_or_ucc, :show, expires_in: 24.hours, :cache_path => Proc.new { |c| c.params }
 
   def index
-    @certificates = Rails.cache.fetch(@tier.blank? ? "tier_nil" : "tier_#{@tier.id}", expires_in: 30.days) do
-        @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-    end
+    @certificates = @tier.blank? ? Certificate.root_products :
+      Certificate.tiered_products(@tier)
   end
 
   def single_domain
