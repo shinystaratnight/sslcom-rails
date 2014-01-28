@@ -4,7 +4,7 @@ class SiteController < ApplicationController
 
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news buy_now)
 
-  #caches_action :index, expires_in: 1.year, :cache_path => Proc.new { |c| c.params }
+  caches_action :index, expires_in: 1.year, :cache_path => Proc.new { |c| c.params }
 
   def index
 
