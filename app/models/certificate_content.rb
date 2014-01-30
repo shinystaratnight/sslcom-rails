@@ -75,18 +75,21 @@ class CertificateContent < ActiveRecord::Base
       event :submit_csr, :transitions_to => :csr_submitted
       event :cancel, :transitions_to => :canceled
       event :issue, :transitions_to => :issued
+      event :reset, :transitions_to => :new
     end
 
     state :csr_submitted do
       event :provide_info, :transitions_to => :info_provided
       event :reprocess, :transitions_to => :reprocess_requested
       event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
     end
 
     state :info_provided do
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
     end
 
     state :contacts_provided do
@@ -105,6 +108,7 @@ class CertificateContent < ActiveRecord::Base
         end
       end
       event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
     end
 
     state :pending_validation do
@@ -113,12 +117,14 @@ class CertificateContent < ActiveRecord::Base
         self.preferred_reprocessing = false if self.preferred_reprocessing?
       end
       event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
     end
 
     state :validated do
       event :pend_validation, :transitions_to => :pending_validation
       event :issue, :transitions_to => :issued
       event :cancel, :transitions_to => :canceled
+      event :reset, :transitions_to => :new
     end
 
     state :issued do
@@ -126,6 +132,7 @@ class CertificateContent < ActiveRecord::Base
       event :cancel, :transitions_to => :canceled
       event :revoke, :transitions_to => :revoked
       event :issue, :transitions_to => :issued
+      event :reset, :transitions_to => :new
     end
 
     state :canceled

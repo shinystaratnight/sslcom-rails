@@ -209,8 +209,10 @@ class CertificateOrder < ActiveRecord::Base
 
     state :paid do
       event :cancel, :transitions_to => :canceled
-      event :start_over, transitions_to: :paid do
-        certificate_contents.create(duration: self.certificate_content.duration)
+      event :start_over, transitions_to: :paid do |complete=false|
+        duration = self.certificate_content.duration
+        self.certificate_content.delete if self.certificate_content.csr.blank? or complete
+        certificate_contents.create(duration: duration)
       end
     end
 
@@ -848,6 +850,18 @@ class CertificateOrder < ActiveRecord::Base
     cc.preferred_reprocessing = false
     cc.save validation: false
   end
+
+  # resets this order as if it never processed
+  def reset(complete=false,ext_ca_orders=false)
+    self.reset_ext_ca_order if ext_ca_orders
+    certificate_content.csr.destroy
+    certificate_content.reset!(complete)
+
+    self.start_over! if !self.blank? &&
+        ['csr_submitted', 'info_provided', 'contacts_provided'].include?(self.certificate_content.workflow_state)
+
+  end
+
 
   #get the most recent order_number as the one
   def external_order_number
