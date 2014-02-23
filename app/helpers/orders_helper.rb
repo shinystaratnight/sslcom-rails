@@ -122,7 +122,7 @@ module OrdersHelper
   def shareasale
     if @order.ext_affiliate_name=="shareasale" && !@order.ext_affiliate_credited?
       @order.toggle! :ext_affiliate_credited
-      "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.amount}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
+      "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
     end
   end
   

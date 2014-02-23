@@ -10,7 +10,7 @@ class CertificateOrder < ActiveRecord::Base
     :dependent=>:destroy #represents a child renewal
   has_many    :renewal_attempts
   has_many    :renewal_notifications
-  has_many    :certificate_contents, :dependent => :destroy
+  has_many    :certificate_contents
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
@@ -211,8 +211,11 @@ class CertificateOrder < ActiveRecord::Base
       event :cancel, :transitions_to => :canceled
       event :start_over, transitions_to: :paid do |complete=false|
         duration = self.certificate_content.duration
-        self.certificate_content.delete if self.certificate_content.csr.blank? or complete
-        certificate_contents.create(duration: duration)
+        temp_cc=self.certificate_contents.create(duration: duration)
+        # Do not delete the last one
+        (self.certificate_contents-[temp_cc]).each do |cc|
+          cc.delete if ((cc.csr and cc.csr.signed_certificate.blank?) || complete)
+        end
       end
     end
 
@@ -840,30 +843,30 @@ class CertificateOrder < ActiveRecord::Base
     certificate_contents.map(&:csr).flatten.compact.map(&:ca_certificate_requests)
   end
 
-  # creates a new external ca order history by deleting the old external order id and requests thus allowing us
+  # Creates a new external ca order history by deleting the old external order id and requests thus allowing us
   # to start a new history with comodo for an existing ssl.com cert order
   # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we just create a new one
   # and have the old one refunded
   def reset_ext_ca_order
-    certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
+    certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
     cc=certificate_content
     cc.preferred_reprocessing = false
     cc.save validation: false
   end
 
-  # resets this order as if it never processed
+  # Resets this order as if it never processed
+  #   <tt>complete</tt> - removes the certificate_content (and it's csr and other properties)
+  #   <tt>ext_ca_orders</tt> - removes the external calls history to comodo for this order
   def reset(complete=false,ext_ca_orders=false)
     self.reset_ext_ca_order if ext_ca_orders
-    certificate_content.csr.destroy
-    certificate_content.reset!(complete)
+    self.certificate_content.csr.delete unless certificate_content.csr.blank?
 
-    self.start_over! if !self.blank? &&
-        ['csr_submitted', 'info_provided', 'contacts_provided'].include?(self.certificate_content.workflow_state)
-
+    self.start_over!(complete) unless ['canceled', 'revoked'].
+        include?(self.certificate_content.workflow_state)
   end
 
 
-  #get the most recent order_number as the one
+  # Get the most recent order_number as the one
   def external_order_number
     certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.first.order_number if
         certificate_contents.map(&:csr) && !certificate_contents.map(&:csr).map(&:sent_success).blank? &&
