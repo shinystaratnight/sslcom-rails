@@ -59,7 +59,7 @@
       <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="2" column="47" selection-start="136" selection-end="136" vertical-scroll-proportion="0.099322796" vertical-offset="0" max-vertical-offset="3652">
+            <state line="46" column="13" selection-start="1844" selection-end="1844" vertical-scroll-proportion="0.6455982" vertical-offset="726" max-vertical-offset="3696">
               <folding />
             </state>
           </provider>
@@ -1445,7 +1445,11 @@
       <created>1393392759377</created>
       <updated>1393392759377</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="removed  verify_authenticity_token for api&#10;">
+      <created>1393397807429</created>
+      <updated>1393397807429</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1524,7 +1528,8 @@
     <MESSAGE value="allow ucc and premium ssl reprocess to change domains and subdomains" />
     <MESSAGE value="include amazon as an option for server software" />
     <MESSAGE value="added general error handling for api&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="added general error handling for api&#10;" />
+    <MESSAGE value="removed  verify_authenticity_token for api&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed  verify_authenticity_token for api&#10;" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1724,13 +1729,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="684" column="76" selection-start="24590" selection-end="24590" vertical-scroll-proportion="0.0" vertical-offset="14715" max-vertical-offset="15246">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="105" selection-start="1022" selection-end="1022" vertical-scroll-proportion="0.0" vertical-offset="528" max-vertical-offset="4070">
@@ -1759,9 +1757,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="684" column="76" selection-start="24590" selection-end="24590" vertical-scroll-proportion="0.0" vertical-offset="14715" max-vertical-offset="15246">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="47" selection-start="136" selection-end="136" vertical-scroll-proportion="0.099322796" vertical-offset="0" max-vertical-offset="3652">
+        <state line="46" column="13" selection-start="1844" selection-end="1844" vertical-scroll-proportion="0.6455982" vertical-offset="726" max-vertical-offset="3696">
           <folding />
         </state>
       </provider>

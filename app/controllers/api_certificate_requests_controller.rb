@@ -44,7 +44,9 @@ class ApiCertificateRequestsController < ApplicationController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-  rescue
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
     error(500, 500, "server error")
   end
 
