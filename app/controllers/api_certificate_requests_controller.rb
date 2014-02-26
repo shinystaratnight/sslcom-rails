@@ -1,6 +1,6 @@
 class ApiCertificateRequestsController < ApplicationController
   before_filter :set_test
-  skip_filter :identify_visitor, :record_visit
+  skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
 
   wrap_parameters ApiCertificateRequest, include:
       [*(ApiCertificateRequest::ACCESSORS+
