@@ -676,6 +676,10 @@ class ApplicationController < ActionController::Base
     @other_party_validation_request && @other_party_validation_request.hide_both?
   end
 
+  def error(status, code, message)
+    render :js => {:response_type => "ERROR", :response_code => code, :message => message}.to_json, :status => status
+  end
+
   class Helper
     include Singleton
     include ActionView::Helpers::NumberHelper

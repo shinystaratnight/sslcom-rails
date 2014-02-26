@@ -44,6 +44,8 @@ class ApiCertificateRequestsController < ApplicationController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
+  rescue
+    error(500, 500, "server error")
   end
 
   def reprocess_v1_3
