@@ -19,6 +19,10 @@ class Csr < ActiveRecord::Base
     def last_emailed
       where{(email_address !~ 'null') & (dcv_method >> [nil,'email'])}.last
     end
+
+    def last_method
+      where{dcv_method >> ['http','https','email']}.last
+    end
   end
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
@@ -160,7 +164,7 @@ class Csr < ActiveRecord::Base
   end
 
   def last_dcv
-    (domain_control_validations.last.try(:dcv_method)=="http") ?
+    (%w(http, https).include?(domain_control_validations.last.try(:dcv_method))) ?
         domain_control_validations.last :
         domain_control_validations.last_sent
   end
@@ -181,7 +185,9 @@ class Csr < ActiveRecord::Base
     retries=2
     begin
       timeout(Surl::TIMEOUT_DURATION) do
+        http_or_s = "http"
         if retries<2
+          http_or_s = "https"
           uri = URI.parse(dcv_url(true))
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
@@ -191,7 +197,7 @@ class Csr < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1

@@ -102,10 +102,11 @@ class ValidationsController < ApplicationController
           error<<'Please select a valid verification email address.' unless @dcv.errors.blank?
         elsif params[:method]=="http"
           #verify http dcv
-          unless @certificate_order.csr.dcv_verified?
+          http_or_s = @certificate_order.csr.dcv_verified?
+          unless http_or_s
             error<<"Please be sure #{@certificate_order.csr.dcv_url} (or https://) is publicly available"
           else
-            @dcv.hash_satisfied
+            @dcv.hash_satisfied(http_or_s)
             @certificate_order.validation.approve! unless
               (@certificate_order.validation.approved? || @certificate_order.validation.approved_through_override?)
           end

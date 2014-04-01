@@ -50,9 +50,9 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def hash_satisfied
+  def hash_satisfied(http_or_s)
     satisfy!
-    update_attributes sent_at: DateTime.now, dcv_method: "http"
+    update_attributes sent_at: DateTime.now, dcv_method: http_or_s
   end
 
   # the 24 hour limit no longer applies, but will keep this in case we need it again

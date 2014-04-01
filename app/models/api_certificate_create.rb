@@ -13,7 +13,7 @@ class ApiCertificateCreate < ApiCertificateRequest
               :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
-  DCV_METHODS = %w(email http_csr_hash dns)
+  DCV_METHODS = %w(email http_csr_hash dns https_csr_hash)
 
   validates :account_key, :secret_key, :csr, presence: true
   validates :period, presence: true, format: /\d+/,
