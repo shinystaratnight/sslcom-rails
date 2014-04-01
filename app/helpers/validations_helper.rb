@@ -2,7 +2,7 @@ module ValidationsHelper
   def overall_status(validation_rulings)
     unless validation_rulings.empty?
       dcvs=@cert_order.csr.domain_control_validations
-      last_sent=%w(http, https).include?(dcvs.last.try(:dcv_method)) ? dcvs.last : dcvs.last_sent
+      last_sent=%w(http https).include?(dcvs.last.try(:dcv_method)) ? dcvs.last : dcvs.last_sent
       dcv_wait=(!@cert_order.csr.blank? && last_sent.try("satisfied?")) ? "" :
           ", waiting for response to domain control validation email"
       if validation_rulings.detect(&:new?)
@@ -63,6 +63,6 @@ module ValidationsHelper
   def last_sent(co)
     return if co.csr.blank?
     dcvs=co.csr.domain_control_validations
-    (%w(http, https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
+    (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 end

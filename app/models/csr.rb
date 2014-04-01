@@ -164,7 +164,7 @@ class Csr < ActiveRecord::Base
   end
 
   def last_dcv
-    (%w(http, https).include?(domain_control_validations.last.try(:dcv_method))) ?
+    (%w(http https).include?(domain_control_validations.last.try(:dcv_method))) ?
         domain_control_validations.last :
         domain_control_validations.last_sent
   end

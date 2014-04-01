@@ -17,12 +17,18 @@
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="434" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="">
+    <list default="true" id="37576a19-6e46-4716-8527-30a71a399d0a" name="Default" comment="CA certificate retrieve range based on Csr#updated_at&#10;">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/common-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/common.js.gz" afterPath="$PROJECT_DIR$/public/assets/common.js.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" afterPath="$PROJECT_DIR$/public/assets/print-datauri.css.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/shared.js.gz" afterPath="$PROJECT_DIR$/public/assets/shared.js.gz" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/database.yml" afterPath="$PROJECT_DIR$/config/database.yml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/domain_control_validation.rb" afterPath="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/settings.yml" afterPath="$PROJECT_DIR$/config/settings.yml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/validations_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/validations_helper.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <list id="06a4b956-5b0c-48d0-9bf8-e151e0b45095" name="Rejected commit: Default" comment="do not bill if signing up for free reseller tier" />
@@ -36,7 +42,8 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1396310852251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1396326977845" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1396360074956" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1396309478015" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -62,10 +69,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="436" column="14" selection-start="14166" selection-end="14166" vertical-scroll-proportion="-7.5384617" vertical-offset="9298" max-vertical-offset="22242">
+            <state line="784" column="0" selection-start="26078" selection-end="26078" vertical-scroll-proportion="0.33178654" vertical-offset="17105" max-vertical-offset="22242">
               <folding />
             </state>
           </provider>
@@ -74,7 +81,25 @@
       <file leaf-file-name="deploy.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="38" column="28" selection-start="1088" selection-end="1088" vertical-scroll-proportion="0.0" vertical-offset="528" max-vertical-offset="4070">
+            <state line="168" column="83" selection-start="5131" selection-end="5131" vertical-scroll-proportion="0.0" vertical-offset="2623" max-vertical-offset="4092">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="about.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/site/about.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="71" selection-start="299" selection-end="299" vertical-scroll-proportion="-4.2580647" vertical-offset="0" max-vertical-offset="682">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database.yml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/database.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="55" column="56" selection-start="1552" selection-end="1552" vertical-scroll-proportion="0.0" vertical-offset="1210" max-vertical-offset="2024">
               <folding />
             </state>
           </provider>
@@ -83,34 +108,16 @@
       <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="13" selection-start="2914" selection-end="2925" vertical-scroll-proportion="0.0" vertical-offset="1411" max-vertical-offset="2464">
+            <state line="73" column="13" selection-start="2914" selection-end="2925" vertical-scroll-proportion="0.0" vertical-offset="1606" max-vertical-offset="2464">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="schema.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/db/schema.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="220" column="4" selection-start="6635" selection-end="6635" vertical-scroll-proportion="0.0" vertical-offset="4734" max-vertical-offset="22836">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="domain_control_validation.rb" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="domain_control_validation.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="27" column="0" selection-start="771" selection-end="771" vertical-scroll-proportion="0.77516776" vertical-offset="132" max-vertical-offset="1650">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_admin.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_admin.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="7" column="42" selection-start="289" selection-end="289" vertical-scroll-proportion="-4.967742" vertical-offset="0" max-vertical-offset="1100">
+            <state line="54" column="0" selection-start="1445" selection-end="1445" vertical-scroll-proportion="0.0" vertical-offset="1040" max-vertical-offset="1650">
               <folding />
             </state>
           </provider>
@@ -119,25 +126,7 @@
       <file leaf-file-name="csr.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="183" column="0" selection-start="6381" selection-end="6381" vertical-scroll-proportion="0.0" vertical-offset="3828" max-vertical-offset="6908">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="validations_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="108" column="0" selection-start="4226" selection-end="4226" vertical-scroll-proportion="0.0" vertical-offset="1984" max-vertical-offset="7436">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_dcv_options.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="38" selection-start="38" selection-end="38" vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="264">
+            <state line="164" column="20" selection-start="5954" selection-end="5954" vertical-scroll-proportion="0.0" vertical-offset="3454" max-vertical-offset="6908">
               <folding />
             </state>
           </provider>
@@ -146,7 +135,25 @@
       <file leaf-file-name="certificate_orders_helper.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="73" column="67" selection-start="2883" selection-end="2909" vertical-scroll-proportion="0.0" vertical-offset="1453" max-vertical-offset="4026">
+            <state line="73" column="16" selection-start="2858" selection-end="2858" vertical-scroll-proportion="0.0" vertical-offset="1412" max-vertical-offset="4026">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="validations_helper.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/helpers/validations_helper.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="65" column="5" selection-start="2768" selection-end="2768" vertical-scroll-proportion="0.0" vertical-offset="1045" max-vertical-offset="1628">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="validations_controller.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="108" column="0" selection-start="4226" selection-end="4226" vertical-scroll-proportion="0.0" vertical-offset="2497" max-vertical-offset="7436">
               <folding />
             </state>
           </provider>
@@ -221,13 +228,14 @@
         <option value="$PROJECT_DIR$/app/controllers/certificates_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/validations_helper.rb" />
         <option value="$PROJECT_DIR$/config/settings.yml" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
-        <option value="$PROJECT_DIR$/app/models/csr.rb" />
         <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/app/views/site/about.html.haml" />
+        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/validations_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/csr.rb" />
       </list>
     </option>
   </component>
@@ -239,10 +247,10 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="64" />
-    <option name="y" value="-9" />
-    <option name="width" value="1857" />
-    <option name="height" value="957" />
+    <option name="x" value="65" />
+    <option name="y" value="24" />
+    <option name="width" value="1855" />
+    <option name="height" value="923" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -286,6 +294,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="RailsProjectView" />
       <pane id="ProjectPane">
         <subPane>
@@ -634,50 +643,9 @@
               <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="layouts" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="Favorites">
         <subPane subId="ssl_com_rails3">
           <PATH>
@@ -737,7 +705,7 @@
       <recent name="$PROJECT_DIR$/vendor/plugins/aws-s3" />
     </key>
   </component>
-  <component name="RunManager" selected="IRB console.Rails console: ssl_com_rails3">
+  <component name="RunManager" selected="Rails.Production: ssl_com_rails3">
     <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
       <module name="ssl_com_rails3" />
       <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1109,25 +1077,26 @@
       <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
       <item index="3" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
       <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="5" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
-      <item index="6" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="7" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="8" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="9" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rake.test" />
-      <item index="11" class="java.lang.String" itemvalue="Rake.spec" />
-      <item index="12" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
-      <item index="14" class="java.lang.String" itemvalue="Rake.routes" />
-      <item index="15" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="5" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="6" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="7" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="8" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="9" class="java.lang.String" itemvalue="Rake.test" />
+      <item index="10" class="java.lang.String" itemvalue="Rake.spec" />
+      <item index="11" class="java.lang.String" itemvalue="Ruby remote debug.console debug" />
+      <item index="12" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+      <item index="15" class="java.lang.String" itemvalue="Rake.routes" />
       <item index="16" class="java.lang.String" itemvalue="Spork DRb.RSpec with Spork DRb server: ssl_com_rails3" />
     </list>
     <recent_temporary>
-      <list size="4">
-        <item index="0" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Spork DRb.RSpec with Spork DRb server: ssl_com_rails3" />
         <item index="1" class="java.lang.String" itemvalue="Rake.routes" />
         <item index="2" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
         <item index="3" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+        <item index="4" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
       </list>
     </recent_temporary>
     <configuration default="true" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda">
@@ -1217,7 +1186,15 @@
       <created>1396311174496</created>
       <updated>1396311174496</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="CA certificate retrieve range based on Csr#updated_at &#10;">
+      <created>1396322625394</created>
+      <updated>1396322625395</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Changed About Us&#10;">
+      <created>1396328259133</created>
+      <updated>1396328259133</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -1241,32 +1218,32 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="64" y="-9" width="1857" height="957" extended-state="6" />
+    <frame x="65" y="24" width="1855" height="923" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5147059" sideWeight="0.49667773" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962757" sideWeight="0.67936116" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19240196" sideWeight="0.43194887" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20465687" sideWeight="0.7258786" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44067797" sideWeight="0.26964855" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17787659" sideWeight="0.26289925" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45710784" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2748466" sideWeight="0.55879825" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3267974" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23072657" sideWeight="0.31562975" order="0" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23072657" sideWeight="0.6843703" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19240196" sideWeight="0.43194887" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962757" sideWeight="0.67936116" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23349972" sideWeight="0.31558186" order="0" side_tool="true" content_ui="tabs" x="54" y="378" width="338" height="183" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.23349972" sideWeight="0.68244576" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.37867647" sideWeight="0.7258786" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17787659" sideWeight="0.26289925" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.44067797" sideWeight="0.26964855" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36397058" sideWeight="0.8686695" order="2" side_tool="false" content_ui="tabs" x="36" y="224" width="1231" height="296" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.45710784" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Data Sources" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.53104573" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2748466" sideWeight="0.55879825" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32063884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Duplicates" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3287037" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.6365105" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289689" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -1299,7 +1276,9 @@
     <MESSAGE value="removed  verify_authenticity_token for api&#10;" />
     <MESSAGE value="logging stacktrace in api error events&#10;" />
     <MESSAGE value="Allow for submitting HTTPS for dcv to Comodo. Also perform dcv on reprocess/rekey&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Allow for submitting HTTPS for dcv to Comodo. Also perform dcv on reprocess/rekey&#10;" />
+    <MESSAGE value="CA certificate retrieve range based on Csr#updated_at &#10;" />
+    <MESSAGE value="Changed About Us&#10;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed About Us&#10;" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="true" />
   </component>
   <component name="XDebuggerManager">
@@ -1335,15 +1314,10 @@
           <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="23" />
+      <option name="time" value="28" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="61" selection-end="166" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/initializers/rails_config.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="20" selection-start="66" selection-end="66" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="0" />
@@ -1419,13 +1393,6 @@
         <state line="15" column="25" selection-start="413" selection-end="413" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="462" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/database.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="56" selection-start="1728" selection-end="1728" vertical-scroll-proportion="0.0" vertical-offset="1188" max-vertical-offset="2024">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/affiliate.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state line="101" column="108" selection-start="3591" selection-end="3591" vertical-scroll-proportion="0.0" vertical-offset="2142" max-vertical-offset="2882" />
@@ -1445,9 +1412,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2464">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2464" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
@@ -1457,9 +1422,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2552">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2552" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
@@ -1471,58 +1434,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="740">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="740" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="753">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="753" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="6" column="2" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1144">
-          <folding />
-        </state>
+        <state line="6" column="2" selection-start="258" selection-end="258" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1144" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="66" selection-start="456" selection-end="456" vertical-scroll-proportion="0.0" vertical-offset="220" max-vertical-offset="1870">
-          <folding />
-        </state>
+        <state line="10" column="66" selection-start="456" selection-end="456" vertical-scroll-proportion="0.0" vertical-offset="220" max-vertical-offset="1870" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="88" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0" vertical-offset="7" max-vertical-offset="2486">
-          <folding />
-        </state>
+        <state line="14" column="88" selection-start="534" selection-end="534" vertical-scroll-proportion="0.0" vertical-offset="7" max-vertical-offset="2486" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/product_variant_item.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/line_item.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="68" selection-start="453" selection-end="453" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1100">
-          <folding />
-        </state>
+        <state line="14" column="68" selection-start="453" selection-end="453" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1100" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/funded_account.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="75" selection-start="540" selection-end="540" vertical-scroll-proportion="0.0" vertical-offset="47" max-vertical-offset="726">
-          <folding />
-        </state>
+        <state line="27" column="75" selection-start="540" selection-end="540" vertical-scroll-proportion="0.0" vertical-offset="47" max-vertical-offset="726" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
@@ -1534,30 +1481,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_reprocess.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="56" column="27" selection-start="4144" selection-end="4144" vertical-scroll-proportion="0.0" vertical-offset="1079" max-vertical-offset="5126">
-          <folding />
-        </state>
+        <state line="56" column="27" selection-start="4144" selection-end="4144" vertical-scroll-proportion="0.0" vertical-offset="1079" max-vertical-offset="5126" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/domain_validation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/ca_dcv_request.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="679" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
@@ -1567,44 +1506,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/validations_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="57" selection-start="2821" selection-end="2821" vertical-scroll-proportion="0.0" vertical-offset="1169" max-vertical-offset="1628">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="58" column="11" selection-start="4097" selection-end="4097" vertical-scroll-proportion="0.0" vertical-offset="1123" max-vertical-offset="5148">
-          <folding />
-        </state>
+        <state line="58" column="11" selection-start="4097" selection-end="4097" vertical-scroll-proportion="0.0" vertical-offset="1123" max-vertical-offset="5148" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/settings.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="53" column="34" selection-start="2415" selection-end="2415" vertical-scroll-proportion="0.0" vertical-offset="1254" max-vertical-offset="2838">
-          <folding />
-        </state>
+        <state line="53" column="34" selection-start="2415" selection-end="2415" vertical-scroll-proportion="0.0" vertical-offset="1254" max-vertical-offset="2838" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv_options.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="38" selection-start="38" selection-end="38" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="459">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="67" selection-start="2883" selection-end="2909" vertical-scroll-proportion="0.0" vertical-offset="1453" max-vertical-offset="4026">
-          <folding />
-        </state>
+        <state line="0" column="38" selection-start="38" selection-end="38" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="459" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_admin.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="42" selection-start="289" selection-end="289" vertical-scroll-proportion="-4.967742" vertical-offset="0" max-vertical-offset="1100">
+        <state line="7" column="42" selection-start="289" selection-end="289" vertical-scroll-proportion="0.0" vertical-offset="154" max-vertical-offset="1100">
           <folding />
         </state>
       </provider>
@@ -1623,37 +1542,65 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="38" column="28" selection-start="1088" selection-end="1088" vertical-scroll-proportion="0.0" vertical-offset="528" max-vertical-offset="4070">
+        <state line="55" column="56" selection-start="1552" selection-end="1552" vertical-scroll-proportion="0.0" vertical-offset="1056" max-vertical-offset="2024">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="436" column="14" selection-start="14166" selection-end="14166" vertical-scroll-proportion="-7.5384617" vertical-offset="9298" max-vertical-offset="22242">
+        <state line="168" column="83" selection-start="5131" selection-end="5131" vertical-scroll-proportion="0.0" vertical-offset="2623" max-vertical-offset="4092">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/site/about.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="71" selection-start="299" selection-end="299" vertical-scroll-proportion="-4.2580647" vertical-offset="0" max-vertical-offset="682">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="108" column="0" selection-start="4226" selection-end="4226" vertical-scroll-proportion="0.0" vertical-offset="1984" max-vertical-offset="7436">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="183" column="0" selection-start="6381" selection-end="6381" vertical-scroll-proportion="0.0" vertical-offset="3828" max-vertical-offset="6908">
+        <state line="108" column="0" selection-start="4226" selection-end="4226" vertical-scroll-proportion="0.0" vertical-offset="2167" max-vertical-offset="7436">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="27" column="0" selection-start="771" selection-end="771" vertical-scroll-proportion="0.77516776" vertical-offset="132" max-vertical-offset="1650">
+        <state line="54" column="0" selection-start="1445" selection-end="1445" vertical-scroll-proportion="0.0" vertical-offset="1040" max-vertical-offset="1650">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="73" column="16" selection-start="2858" selection-end="2858" vertical-scroll-proportion="0.0" vertical-offset="1412" max-vertical-offset="4026">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/validations_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="65" column="5" selection-start="2768" selection-end="2768" vertical-scroll-proportion="0.0" vertical-offset="1045" max-vertical-offset="1628">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="164" column="20" selection-start="5954" selection-end="5954" vertical-scroll-proportion="0.0" vertical-offset="3454" max-vertical-offset="6908">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="784" column="0" selection-start="26078" selection-end="26078" vertical-scroll-proportion="0.33178654" vertical-offset="17105" max-vertical-offset="22242">
           <folding />
         </state>
       </provider>

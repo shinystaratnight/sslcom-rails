@@ -71,7 +71,7 @@ module CertificateOrdersHelper
           last_sent=certificate_order.csr.last_dcv
           if last_sent.blank?
             'please wait' #assume intranet
-          elsif %w(http, https).include?(last_sent.try(:dcv_method))
+          elsif %w(http https).include?(last_sent.try(:dcv_method))
             instructions="Please wait while we perform final validations.
             Normal process times should be less than several hours, but can take up to 24 hours. "
             instructions << "Also, be sure to leave #{certificate_order.certificate_content.csr.dcv_url}
