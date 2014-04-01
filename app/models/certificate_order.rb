@@ -761,14 +761,7 @@ class CertificateOrder < ActiveRecord::Base
           ssl_com_order(options)
           last_sent = csr.domain_control_validations.last_method
           if !skip_verification? && !last_sent.blank?
-            if last_sent.dcv_method=="http"
-              options.merge!('dcvMethod' => "HTTP_CSR_HASH")
-            elsif last_sent.dcv_method=="https"
-              options.merge!('dcvMethod' => "HTTS_CSR_HASH")
-            elsif last_sent.try("is_eligible_to_send?")
-              options.merge!('dcvEmailAddress' => last_sent.email_address)
-              last_sent.send_dcv! unless last_sent.sent_dcv?
-            end
+            perform_dcv(last_sent, options)
           end
         else
           options.merge!(
@@ -806,14 +799,7 @@ class CertificateOrder < ActiveRecord::Base
               end
             end
           elsif !skip_verification?
-            if last_sent.dcv_method=="http"
-              options.merge!('dcvMethod' => "HTTP_CSR_HASH")
-            elsif last_sent.dcv_method=="https"
-              options.merge!('dcvMethod' => "HTTS_CSR_HASH")
-            elsif last_sent.try("is_eligible_to_send?")
-              options.merge!('dcvEmailAddress' => last_sent.email_address)
-              last_sent.send_dcv! unless last_sent.sent_dcv?
-            end
+            perform_dcv(last_sent, options)
           end
           fill_csr_fields options, certificate_content.registrant
           unless csr.csr_override.blank?
@@ -840,6 +826,17 @@ class CertificateOrder < ActiveRecord::Base
           options.merge!('days' => '1095') if options['days'].to_i > 1095 #Comodo doesn't support more than 3 years
         end
       end
+    end
+  end
+
+  def perform_dcv(last_sent, options)
+    if last_sent.dcv_method=="http"
+      options.merge!('dcvMethod' => "HTTP_CSR_HASH")
+    elsif last_sent.dcv_method=="https"
+      options.merge!('dcvMethod' => "HTTPS_CSR_HASH")
+    elsif last_sent.try("is_eligible_to_send?")
+      options.merge!('dcvEmailAddress' => last_sent.email_address)
+      last_sent.send_dcv! unless last_sent.sent_dcv?
     end
   end
 
