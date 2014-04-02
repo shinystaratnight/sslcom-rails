@@ -24,7 +24,6 @@ class DomainControlValidation < ActiveRecord::Base
 
       on_entry do
         self.update_attribute :sent_at, DateTime.now
-        self.csr.touch
       end
     end
 

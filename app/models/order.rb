@@ -63,7 +63,7 @@ class Order < ActiveRecord::Base
       start = Date.strptime start, s
       finish = Date.strptime finish, f
     end
-    where{created_at >> (start..finish)}
+    where{created_at >> (start..finish)}.uniq
 
   } do
 
