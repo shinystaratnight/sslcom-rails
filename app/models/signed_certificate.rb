@@ -275,7 +275,7 @@ class SignedCertificate < ActiveRecord::Base
       f.write body+"\n"
     end
     sc_pkcs7="#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
-    CertUtil.pem_to_pkcs7(sc_pem, sc_int, sc_pkcs7)
+    ::CertUtil.pem_to_pkcs7(sc_pem, sc_int, sc_pkcs7)
     sc_pkcs7
   end
 

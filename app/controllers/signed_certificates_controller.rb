@@ -1,7 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :server_bundle, :pkcs7_file, :require=>:show
+  filter_access_to :server_bundle, :pkcs7, :require=>:show
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml

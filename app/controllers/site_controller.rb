@@ -7,7 +7,6 @@ class SiteController < ApplicationController
   caches_action :index, expires_in: 1.year, :cache_path => Proc.new { |c| c.params }
 
   def index
-
     render action: "buy_now"
   end
 
