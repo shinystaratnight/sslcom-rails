@@ -243,6 +243,46 @@ class SignedCertificate < ActiveRecord::Base
     ([self.common_name]+(self.subject_alternative_names||[])).uniq.any? {|n|CertificateContent.is_tld?(n)}
   end
 
+  def ca_bundle(is_windows=nil)
+    tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
+    File.open(tmp_file, 'wb') do |f|
+      tmp=""
+      if certificate_order.is_nginx? || certificate_order.is_heroku?
+        tmp << body+"\n"
+      end
+      certificate_order.bundled_cert_names.each do |file_name|
+        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        tmp << file.readlines.join("")
+      end
+      tmp.gsub!(/\n/, "\r\n") if is_windows
+      f.write tmp
+    end
+    tmp_file
+  end
+
+  def pkcs7_file
+    sc_int="#{Rails.root}/tmp/sc_int_#{id}.cer"
+    File.open(sc_int, 'wb') do |f|
+      tmp=""
+      certificate_order.bundled_cert_names.each do |file_name|
+        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        tmp << file.readlines.join("")
+      end
+      f.write tmp
+    end
+    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+    File.open(sc_pem, 'wb') do |f|
+      f.write body+"\n"
+    end
+    sc_pkcs7="#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
+    CertUtil.pem_to_pkcs7(sc_pem, sc_int, sc_pkcs7)
+    sc_pkcs7
+  end
+
+  def to_pkcs7
+    File.read(pkcs7_file)
+  end
+
   private
 
   def proper_certificate?

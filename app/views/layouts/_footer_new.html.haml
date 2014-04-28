@@ -61,32 +61,33 @@
     %b>
       %i> SSL
     \.com Corp. All Rights Reserved
-:javascript
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-30469369-1']);
-  _gaq.push(['_setDomainName', 'ssl.com']);
-  _gaq.push(['_trackPageview']);
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-/ Google Code for Remarketing Tag
-/
-  \------------------------------------------------
-  Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. See more information and instructions on how to setup the tag on: http://google.com/ads/remarketingsetup
-  \-------------------------------------------------
-:javascript
-  /* <![CDATA[ */
-  var google_conversion_id = 975052302;
-  var google_custom_params = window.google_tag_params;
-  var google_remarketing_only = true;
-  /* ]]> */
-%script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
-  :cdata
-%noscript
-  %div{style: "display:inline;"}
-    %img{alt: "", height: "1", src: "//googleads.g.doubleclick.net/pagead/viewthroughconversion/975052302/?value=0&guid=ON&script=0", style: "border-style:none;", width: "1"}/
+-if Rails.env=~/production/
+  :javascript
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-30469369-1']);
+    _gaq.push(['_setDomainName', 'ssl.com']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  / Google Code for Remarketing Tag
+  /
+    \------------------------------------------------
+    Remarketing tags may not be associated with personally identifiable information or placed on pages related to sensitive categories. See more information and instructions on how to setup the tag on: http://google.com/ads/remarketingsetup
+    \-------------------------------------------------
+  :javascript
+    /* <![CDATA[ */
+    var google_conversion_id = 975052302;
+    var google_custom_params = window.google_tag_params;
+    var google_remarketing_only = true;
+    /* ]]> */
+  %script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
+    :cdata
+  %noscript
+    %div{style: "display:inline;"}
+      %img{alt: "", height: "1", src: "//googleads.g.doubleclick.net/pagead/viewthroughconversion/975052302/?value=0&guid=ON&script=0", style: "border-style:none;", width: "1"}/
 -unless @certificate_order.blank? || @certificate_order.id.blank?
   :javascript
     jQuery(function($){

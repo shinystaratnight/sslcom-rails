@@ -5,6 +5,11 @@ class CaCertificateRequest < CaApiRequest
     $1
   end
 
+  def certificate_id
+    response =~ /(?<=certificateID=)(.+?)&/
+    $1
+  end
+
   def total_cost
     response =~ /(?<=totalCost=)(.+?)&/
     $1.to_f

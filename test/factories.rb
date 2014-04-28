@@ -1,34 +1,38 @@
+require 'faker'
+
 FactoryGirl.define do
   factory :user  do
     association :ssl_account
     roles {|roles|[roles.association(:role)]}
 
     factory :customer do
-      after_create {|user|user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]}
+      after(:create) {|user|user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]}
     end
 
     factory :sysadmin do
-      after_create {|user|user.roles = [FactoryGirl.create(:role, name: "sysadmin")]}
+      after(:create) {|user|user.roles = [FactoryGirl.create(:role, name: "sysadmin")]}
     end
 
     factory :reseller_user do
-      after_create {|user|user.roles = [FactoryGirl.create(:role, name: Role::RESELLER)]}
+      after(:create) {|user|user.roles = [FactoryGirl.create(:role, name: Role::RESELLER)]}
 
       factory :tier_2_reseller do
-        after_create{|user|
+        after(:create){|user|
           user.ssl_account=FactoryGirl.create(:ssl_account_reseller_tier_2)
           user.save
         }
       end
     end
   end
-  
+
   #factory :registrant do
   #  association :contactable, :factory=>:certificate_content
   #end
 
   factory :certificate do
-    after_create {|c|Factory(:certificate_preference, owner: c)}
+    after(:create) {|c|
+      create(:certificate_preference, owner: c)
+    }
 
     factory :dv_certificate do
       product "free"
@@ -89,12 +93,12 @@ FactoryGirl.define do
       standard_csr
 
       factory :certificate_content_w_registrant do
-        after_create{|cc|FactoryGirl.create :registrant, contactable: cc}
+        after(:create){|cc|FactoryGirl.create :registrant, contactable: cc}
         workflow_state "info_provided"
 
         factory :certificate_content_w_contacts do
           workflow_state "contacts_provided"
-          after_create {|cc|
+          after(:create) {|cc|
             FactoryGirl.create(:billing_certificate_contact, contactable: cc)
             FactoryGirl.create(:administrative_certificate_contact, contactable: cc)
             FactoryGirl.create(:business_certificate_contact, contactable: cc)
@@ -108,7 +112,7 @@ FactoryGirl.define do
       end
     end
   end
-  
+
   factory :certificate_order do
     has_csr false
     association :ssl_account
@@ -123,10 +127,9 @@ FactoryGirl.define do
     end
 
     trait :dv do
-      after_build do |co|
-        si=FactoryGirl.create(:dv_sub_order_item,
-          sub_itemable: co)
-        co.sub_order_items << si
+      # association :certificate, factory: :dv_certificate
+      after(:build) do |co, evaluator|
+        co.sub_order_items << create(:dv_sub_order_item)
       end
     end
 
@@ -149,7 +152,7 @@ FactoryGirl.define do
   end
 
   factory :csr do
-    #association :certificate_content
+    association :certificate_content
 
     trait :has_standard_signed_cert do
       signed_certificates {|sc|[sc.association(:signed_certificate)]}
@@ -202,9 +205,10 @@ xMajgLU=
 EOS
   end
   end
-  
+
   factory :sub_order_item do
-    sub_itemable { |i| i.association(:certificate_order) }
+    # sub_itemable { |i| i.association(:certificate_order) }
+    # association :sub_itemable, factory: :new_dv_certificate_order
 
     trait :dv do
       association :product_variant_item, factory: :dv_product_variant_item
@@ -214,20 +218,18 @@ EOS
       dv
     end
   end
-  
+
   factory :funded_account do
     association :ssl_account
   end
-  
+
   factory :product_variant_item do
     association :product_variant_group
     sequence(:display_order, 100)
     status "live"
-  
-    factory :dv_product_variant_item, class: "ProductVariantItem" do |pvi|
-      pvi.product_variant_group{|product_variant_group|
-        product_variant_group.association(:product_variant_group, variantable:
-            Certificate.where(product: "free").first)}#FactoryGirl.create(:dv_certificate))}
+
+    factory :dv_product_variant_item do
+      association :product_variant_group, factory: :dv_product_variant_group
     end
   end
 
@@ -235,6 +237,10 @@ EOS
     status "live"
     sequence(:display_order, 100)
     association :variantable, factory: :certificate
+
+    factory :dv_product_variant_group do
+      association :variantable, factory: :dv_certificate
+    end
   end
 
   #factory :reminder_trigger do
@@ -255,17 +261,17 @@ EOS
     end
 
     factory :ssl_account_reseller do
-      after_create {|sa|
+      after(:create) {|sa|
         sa.add_role! "reseller"
         sa.set_reseller_default_prefs
       }
       factory :ssl_account_reseller_tier_1 do
-        after_create {|sa|
+        after(:create) {|sa|
           sa.reseller_tier=ResellerTier.find(1)
           sa.save}
       end
       factory :ssl_account_reseller_tier_2 do
-        after_create {|sa|
+        after(:create) {|sa|
           FactoryGirl.create(:reseller, ssl_account: sa, reseller_tier: ResellerTier.find(2))}
       end
     end

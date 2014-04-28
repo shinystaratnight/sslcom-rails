@@ -1,7 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :server_bundle, :require=>:show
+  filter_access_to :server_bundle, :pkcs7_file, :require=>:show
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml
@@ -45,21 +45,14 @@ class SignedCertificatesController < ApplicationController
 
   def server_bundle
     @signed_certificate = SignedCertificate.find(params[:id])
-    tmp_file="#{Rails.root}/tmp/sc_int_#{@signed_certificate.id}.txt"
-    File.open(tmp_file, 'wb') do |f|
-      tmp=""
-      if @signed_certificate.certificate_order.is_nginx? || @signed_certificate.certificate_order.is_heroku?
-        tmp << @signed_certificate.body+"\n"
-      end
-      @signed_certificate.certificate_order.bundled_cert_names.each do |file_name|
-        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
-        tmp << file.readlines.join("")
-      end
-      tmp.gsub!(/\n/, "\r\n") if is_client_windows?
-      f.write tmp
-    end
-    send_file tmp_file, :type => 'text', :disposition => 'attachment',
-      :filename =>"ca_bundle.txt"
+    send_file @signed_certificate.ca_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
+      :filename =>"ca_bundle.crt"
+  end
+
+  def pkcs7
+    @signed_certificate = SignedCertificate.find(params[:id])
+    send_file @signed_certificate.pkcs7_file, :type => 'text', :disposition => 'attachment',
+              :filename =>"#{@signed_certificate.friendly_common_name}.pb7"
   end
 
   protected

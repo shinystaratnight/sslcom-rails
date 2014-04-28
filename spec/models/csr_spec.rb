@@ -13,6 +13,6 @@ describe Csr, "as an ssl.com certificate signing request" do
   end
 
   it "should be able to be created" do
-    csr = Factory(:ssl_danskkabeltv_dk_2048_csr)
+    csr = create(:ssl_danskkabeltv_dk_2048_csr)
   end
 end

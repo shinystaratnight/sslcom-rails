@@ -131,6 +131,7 @@ SslCom::Application.routes.draw do
     resources :signed_certificates do
       member do
         get :server_bundle
+        get :pkcs7
       end
     end
     collection do

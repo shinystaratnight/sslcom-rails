@@ -22,12 +22,12 @@ class ComodoApi
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
     con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
     con.use_ssl = true
+    certificate_order.certificate_content.csr.touch
     res = con.start do |http|
       http.request_post(url.path, options)
     end
     certificate_order.certificate_content.csr.ca_certificate_requests.create(request_url: host,
       parameters: options, method: "post", response: res.body, ca: "comodo")
-    certificate_order.certificate_content.csr.touch
   end
 
   def self.domain_control_email_choices(csr_or_domain)
@@ -64,7 +64,6 @@ class ComodoApi
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
     con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
     con.use_ssl = true
-    dcv.csr.touch
     res = con.start do |http|
       http.request_post(url.path, options)
     end
@@ -75,7 +74,7 @@ class ComodoApi
 
   def self.collect_ssl(certificate_order)
     options = {'queryType' => 2, "showExtStatus"=>"Y",
-               'orderNumber'=> certificate_order.external_order_number}.
+               'orderNumber'=> certificate_order.external_order_number_for_extract}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = COLLECT_SSL_URL
     url = URI.parse(host)

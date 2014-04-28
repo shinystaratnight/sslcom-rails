@@ -51,11 +51,11 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNodes=8P3K3M"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi11Kimi11'
+comodo_api_password: 'Jimi12Kimi12'
 authorize_net_key: '2s9n7LCP'
 authorize_net_transaction_id: '27PD3Czbb343hY5R'
-p_authorize_net_key: '6Y6ckBFU6nYc'
-p_authorize_net_transaction_id: '67DV52cZWu4mGv9L'
+p_authorize_net_key: '3XzF96x5'
+p_authorize_net_transaction_id: '473cmgtHDd7yY49K'
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local

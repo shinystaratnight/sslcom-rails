@@ -48,9 +48,21 @@ module SslCom
     #config.action_mailer.default_url_options = { :host => Settings.actionmailer_host }
 
     #machinist generator
+    # config.generators do |g|
+    #   g.fixture_replacement :machinist
+    # end
+
     config.generators do |g|
-      g.fixture_replacement :machinist
-    end
+      g.test_framework :rspec,
+        :fixtures => true,
+        :view_specs => false,
+        :helper_specs => false,
+        :routing_specs => false,
+        :controller_specs => true,
+        :request_specs => true
+      g.fixture_replacement :factory_girl,
+        :dir => "spec/factories"
+    end #See more at: http://everydayrails.com/2012/03/12/testing-series-rspec-setup.html#sthash.nLKiuyz7.dpuf
 
     config.middleware.use OAuth::Rack::OAuthFilter
 

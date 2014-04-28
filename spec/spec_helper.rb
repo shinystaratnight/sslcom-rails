@@ -1,7 +1,7 @@
 require 'rubygems'
-require 'spork'
+require "capybara/rspec"
 
-Spork.prefork do
+prefork = lambda {
   #require 'ruby-debug'
   # Loading more in this block will cause your tests to run faster. However,
   # if you change any configuration or code from libraries loaded here, you'll
@@ -18,7 +18,7 @@ Spork.prefork do
     Encoding.default_internal = 'utf-8'
   end
 
-  ENV["RAILS_ENV"] ||= 'test'
+  ENV["RAILS_ENV"] = 'test'
   require File.expand_path("../../config/environment", __FILE__)
   require 'rspec/rails'
   require 'rubygems'
@@ -28,17 +28,23 @@ Spork.prefork do
   require 'cucumber'
   $KCODE='u' unless Cucumber::RUBY_1_9
 
-  RSpec.configure do |c|
-    c.before do
-      ::Term::ANSIColor.coloring = true
-    end
-  end
-
   # Requires supporting ruby files with custom matchers and macros, etc,
   # in spec/support/ and its subdirectories.
   Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
   RSpec.configure do |config|
+    config.include FactoryGirl::Syntax::Methods
+
+    # uncomment if FactoryGirl 4
+    # config.before(:suite) do
+    #   begin
+    #     DatabaseCleaner.start
+    #     FactoryGirl.lint
+    #   ensure
+    #     DatabaseCleaner.clean
+    #   end
+    # end
+
     # == Mock Framework
     #
     # If you prefer to use mocha, flexmock or RR, uncomment the appropriate line:
@@ -281,15 +287,15 @@ EOS
   #    conf.application_host = "127.0.0.1"
   #    conf.application_port = "3001"
   #end
-end
+}
 
 
-Spork.each_run do
+each_run = lambda {
   # This code will be run each time you run your specs.
   require 'factory_girl_rails'
   FactoryGirl.definition_file_paths = [File.join(Rails.root, 'spec', 'factories')]
   FactoryGirl.find_definitions
-end
+}
 
 # --- Instructions ---
 # Sort the contents of this file into a Spork.prefork and a Spork.each_run
@@ -319,3 +325,22 @@ end
 #
 # These instructions should self-destruct in 10 seconds.  If they don't, feel
 # free to delete them
+
+if defined?(Zeus)
+  prefork.call
+  $each_run = each_run
+  class << Zeus.plan
+    def after_fork_with_test
+      after_fork_without_test
+      $each_run.call
+    end
+    alias_method_chain :after_fork, :test
+  end
+elsif ENV['spork'] || $0 =~ /\bspork$/
+  require 'spork'
+  Spork.prefork(&prefork)
+  Spork.each_run(&each_run)
+else
+  prefork.call
+  each_run.call
+end

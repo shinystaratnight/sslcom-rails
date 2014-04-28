@@ -68,7 +68,7 @@ class Order < ActiveRecord::Base
   } do
 
     def amount
-      self.not_free.sum(:cents)*0.01
+      sum(&:cents)*0.01
     end
   end
 

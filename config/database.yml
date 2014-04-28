@@ -54,7 +54,7 @@ production:
   encoding: utf8
   reconnect: false
   database: ssl_com_production
-  host: 174.129.27.189
+  host: 174.129.35.108
   pool: 5
   username: ssl_db
   password: kama2jama2
@@ -69,8 +69,6 @@ ssl_gs:
   username: ssl_db
   password: kama2jama2
   socket: /var/run/mysqld/mysqld.sock
-
-
 
 cucumber:
   <<: *TEST

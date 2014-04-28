@@ -71,21 +71,26 @@ group :development, :test do
   gem 'pry-remote'
   gem "builder"
   gem 'ruby_parser'
-  #gem 'ruby-debug-base19'
-  #gem 'ruby-debug-ide19'
-  #gem 'ruby-debug19'
   gem "rspec-rails", '~> 2.14.0'
   #gem 'activerecord-sqlserver-adapter'
   gem 'ruby-odbc'
   gem 'launchy'
-  gem 'spork-rails'
+  gem 'factory_girl_rails'
   #gem 'spork'
   #gem 'active_reload'
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'cucumber-rails', :require => false
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'webrat'
+  gem 'email_spec'
+  gem 'rspec'
   gem 'webmock'
+  gem 'faker'
+  gem 'guard-rspec'
+  gem 'launchy' #http://everydayrails.com/2012/03/12/testing-series-rspec-setup.html#sthash.huwPdI5i.dpuf
 end
 
 group :assets do

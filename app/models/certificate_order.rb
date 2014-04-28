@@ -170,12 +170,12 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_RANGE = 45.days.from_now
 
   # changed for the migration
-  unless MIGRATING_FROM_LEGACY
-    validates :certificate, presence: true
-  else
-    validates :certificate, presence: true, :unless=>Proc.new {|co|
-      !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
-  end
+  # unless MIGRATING_FROM_LEGACY
+  #   validates :certificate, presence: true
+  # else
+  #   validates :certificate, presence: true, :unless=>Proc.new {|co|
+  #     !co.orders.last.nil? && (co.orders.last.preferred_migrated_from_v2 == true)}
+  # end
 
   before_create do |co|
     co.is_expired=false
@@ -433,9 +433,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.retrieve_ca_certs(start, finish)
-    #cos=range(start, finish).pending
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
-    cos.each{|co|co.retrieve_ca_cert(true)}
+    #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents whch contain the external_order_number
+    cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
   end
 
   def self.find_not_new(options=nil)
@@ -846,8 +846,8 @@ class CertificateOrder < ActiveRecord::Base
 
   # Creates a new external ca order history by deleting the old external order id and requests thus allowing us
   # to start a new history with comodo for an existing ssl.com cert order
-  # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we just create a new one
-  # and have the old one refunded
+  # useful in the event Comodo take forever to make changes to an existing order (and sometimes cannot) so we
+  # just create a new one and have the old one refunded
   def reset_ext_ca_order
     certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.uniq.each{|a|a.delete}
     cc=certificate_content
@@ -866,13 +866,39 @@ class CertificateOrder < ActiveRecord::Base
         include?(self.certificate_content.workflow_state)
   end
 
-
   # Get the most recent order_number as the one
   def external_order_number
-    certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.first.order_number if
-        certificate_contents.map(&:csr) && !certificate_contents.map(&:csr).map(&:sent_success).blank? &&
-        certificate_contents.map(&:csr).map(&:sent_success).flatten.compact.uniq.first
-    #csr.sent_success.order_number if csr && csr.sent_success
+    all_csrs = certificate_contents.map(&:csr)
+    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map.flatten.compact.uniq.first.order_number if
+        all_csrs && !sent_success_map.blank? &&
+        sent_success_map.flatten.compact.uniq.first
+    #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
+  end
+
+  def sent_success_count
+    all_csrs = certificate_contents.map(&:csr)
+    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map.flatten.compact.uniq.count if
+        all_csrs && !sent_success_map.blank?
+  end
+
+  def external_order_number_for_extract
+    unless certificate.is_ucc?
+      external_order_number
+    else
+      external_order_number + (sent_success_count > 1 ? "repl##{sent_success_count-1}" : "")
+    end
+  end
+
+  # Get the most recent certificate_id (useful for UCC replacements)
+  def external_certificate_id
+    all_csrs = certificate_contents.map(&:csr)
+    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map.flatten.compact.uniq.first.certificate_id if
+        all_csrs && !sent_success_map.blank? &&
+        sent_success_map.flatten.compact.uniq.first
+    #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
   end
 
   private

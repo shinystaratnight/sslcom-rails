@@ -124,6 +124,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "updated_at"
   end
 
+  add_index "billing_profiles", ["ssl_account_id"], :name => "index_billing_profile_on_ssl_account_id"
+
   create_table "ca_api_requests", :force => true do |t|
     t.integer  "api_requestable_id"
     t.string   "api_requestable_type"
@@ -193,6 +195,9 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "updated_at"
   end
 
+  add_index "certificate_contents", ["certificate_order_id"], :name => "index_certificate_contents_on_certificate_order_id"
+  add_index "certificate_contents", ["workflow_state"], :name => "index_certificate_contents_on_workflow_state"
+
   create_table "certificate_lookups", :force => true do |t|
     t.text     "certificate"
     t.string   "serial"
@@ -226,6 +231,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
   add_index "certificate_orders", ["is_expired"], :name => "index_certificate_orders_on_is_expired"
   add_index "certificate_orders", ["ref"], :name => "index_certificate_orders_on_ref"
+  add_index "certificate_orders", ["site_seal_id"], :name => "index_certificate_orders_site_seal_id"
+  add_index "certificate_orders", ["workflow_state"], :name => "index_certificate_orders_on_workflow_state"
 
   create_table "certificates", :force => true do |t|
     t.integer  "reseller_tier_id"
@@ -287,6 +294,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "updated_at"
   end
 
+  add_index "contacts", ["contactable_id", "contactable_type"], :name => "index_contacts_on_contactable_id_and_contactable_type"
+
   create_table "countries", :force => true do |t|
     t.string  "iso1_code"
     t.string  "name_caps"
@@ -332,6 +341,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.integer  "certificate_lookup_id"
   end
 
+  add_index "csrs", ["certificate_content_id", "common_name"], :name => "index_csrs_on_common_name_and_certificate_content_id"
+  add_index "csrs", ["certificate_content_id"], :name => "index_csrs_on_certificate_content_id"
   add_index "csrs", ["common_name"], :name => "index_csrs_on_common_name"
   add_index "csrs", ["organization"], :name => "index_csrs_on_organization"
 
@@ -456,6 +467,7 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
   end
 
   add_index "line_items", ["order_id"], :name => "index_line_items_on_order_id"
+  add_index "line_items", ["sellable_id", "sellable_type"], :name => "index_line_items_on_sellable_id_and_sellable_type"
   add_index "line_items", ["sellable_id"], :name => "index_line_items_on_sellable_id"
   add_index "line_items", ["sellable_type"], :name => "index_line_items_on_sellable_type"
 
@@ -556,12 +568,14 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.boolean  "ext_affiliate_credited"
   end
 
+  add_index "orders", ["billable_id", "billable_type"], :name => "index_orders_on_billable_id_and_billable_type"
   add_index "orders", ["billable_id"], :name => "index_orders_on_billable_id"
   add_index "orders", ["billable_type"], :name => "index_orders_on_billable_type"
   add_index "orders", ["created_at"], :name => "index_orders_on_created_at"
   add_index "orders", ["po_number"], :name => "index_orders_on_po_number"
   add_index "orders", ["quote_number"], :name => "index_orders_on_quote_number"
   add_index "orders", ["reference_number"], :name => "index_orders_on_reference_number"
+  add_index "orders", ["status"], :name => "index_orders_on_status"
   add_index "orders", ["updated_at"], :name => "index_orders_on_updated_at"
 
   create_table "other_party_requests", :force => true do |t|
@@ -605,6 +619,7 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
   end
 
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], :name => "index_preferences_on_owner_and_name_and_preference", :unique => true
+  add_index "preferences", ["owner_id", "owner_type"], :name => "index_preferences_on_owner_id_and_owner_type"
 
   create_table "product_variant_groups", :force => true do |t|
     t.integer  "variantable_id"
@@ -769,6 +784,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.integer  "certificate_lookup_id"
   end
 
+  add_index "signed_certificates", ["csr_id"], :name => "index_signed_certificates_on_csr_id"
+
   create_table "site_checks", :force => true do |t|
     t.text     "url"
     t.integer  "certificate_lookup_id"
@@ -783,6 +800,9 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "site_seals", ["ref"], :name => "index_site_seals_ref"
+  add_index "site_seals", ["workflow_state"], :name => "index_site_seals_workflow_state"
 
   create_table "ssl_accounts", :force => true do |t|
     t.string   "acct_number"
@@ -836,6 +856,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "updated_at"
   end
 
+  add_index "surl_visits", ["surl_id"], :name => "index_surl_visits_on_surl_id"
+
   create_table "surls", :force => true do |t|
     t.integer  "user_id"
     t.text     "original"
@@ -859,6 +881,7 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
   end
 
   add_index "tracked_urls", ["md5", "url"], :name => "index_tracked_urls_on_md5_and_url", :length => {"md5"=>100, "url"=>100}
+  add_index "tracked_urls", ["md5"], :name => "index_tracked_urls_on_md5"
 
   create_table "trackings", :force => true do |t|
     t.integer  "tracked_url_id"
@@ -946,6 +969,8 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "updated_at"
   end
 
+  add_index "validation_histories", ["validation_id"], :name => "index_validation_histories_validation_id"
+
   create_table "validation_history_validations", :force => true do |t|
     t.integer  "validation_history_id"
     t.integer  "validation_id"
@@ -975,6 +1000,9 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "validation_rulings", ["validation_rulable_id", "validation_rulable_type"], :name => "index_validation_rulings_on_rulable_id_and_rulable_type"
+  add_index "validation_rulings", ["validation_rule_id"], :name => "index_validation_rulings_on_validation_rule_id"
 
   create_table "validation_rulings_validation_histories", :force => true do |t|
     t.integer  "validation_history_id"
@@ -1018,6 +1046,7 @@ ActiveRecord::Schema.define(:version => 20131206151716) do
   end
 
   add_index "visitor_tokens", ["guid", "affiliate_id"], :name => "index_visitor_tokens_on_guid_and_affiliate_id"
+  add_index "visitor_tokens", ["guid"], :name => "index_visitor_tokens_on_guid"
 
   create_table "whois_lookups", :force => true do |t|
     t.integer  "csr_id"
