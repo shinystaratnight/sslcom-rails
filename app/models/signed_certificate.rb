@@ -280,6 +280,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def to_pkcs7
+    return body if body.starts_with?(BEGIN_PKCS7_TAG)
     File.read(pkcs7_file)
   end
 

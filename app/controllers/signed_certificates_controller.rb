@@ -51,8 +51,8 @@ class SignedCertificatesController < ApplicationController
 
   def pkcs7
     @signed_certificate = SignedCertificate.find(params[:id])
-    send_file @signed_certificate.pkcs7_file, :type => 'text', :disposition => 'attachment',
-              :filename =>"#{@signed_certificate.friendly_common_name}.pb7"
+    send_data @signed_certificate.to_pkcs7, :type => 'text', :disposition => 'attachment',
+              :filename =>"#{@signed_certificate.friendly_common_name}.p7b"
   end
 
   protected
