@@ -606,14 +606,6 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def file_extension
-    is_iis? ? '.cer' : '.crt'
-  end
-
-  def file_type
-    is_iis? ? 'PKCS#7' : 'X.509'
-  end
-
   # depending on the server software type we will bundle different root and intermediate certs
   # override is a target server software other than the default one for this order
   def bundled_cert_names(override=nil)
@@ -728,7 +720,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def friendly_common_name
-    certificate_content.csr.signed_certificate.friendly_common_name
+    certificate_content.csr.signed_certificate.nonidn_friendly_common_name
   end
 
   def request_csr_from

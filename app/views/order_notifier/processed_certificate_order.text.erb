@@ -9,22 +9,25 @@ We strongly recommend that you follow the installation instructions at <%=Settin
 
 Attached to this email you should find a .zip file containing:
 
-<%@certificate_order.bundled_cert_names.each do |cc|%>
-    * <%=cc%> - <%=Certificate::COMODO_BUNDLES[cc]%>
-<%end%>
-    * Your Certificate (<%=@certificate_order.file_type%>) - <%=@signed_certificate.friendly_common_name%><%@certificate_order.file_extension%>
+<%if @certificate_order.is_iis?%>
+    * Your Certificate (.pb7) - <%=@signed_certificate.friendly_common_name%>.pb7
+<%else-%>
+  <%@certificate_order.bundled_cert_names.each do |cc|%>
+    * <%=Certificate::COMODO_BUNDLES[cc]%> - <%=cc%>
+  <%end-%>
+    * Your Certificate (<%=@signed_certificate.file_type%>) - <%=@signed_certificate.friendly_common_name%><%=@signed_certificate.file_extension%>
+<%end-%>
 
 <%if @certificate_order.has_bundle?-%>
 Your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}"%>
 <%end-%>
 
-You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> for <%=@certificate_order.subject%> in text format at the bottom of this email.
+You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> SSL certificate for <%=@certificate_order.subject%> in text format at the bottom of this email.
 
 !!!IMPORTANT!!!
 Your SSL.com certificate requires that the SSL.com CA intermediate certificate be installed on your server to avoid trust issues with your visitor's browsers. You can find this intermediate certificate file in the attached zip file.
 
-If you are installing on Microsoft IIS, Exchange, Lync, Outlook/OWA, or Windows, you can download the SSLTools Manager (http://www.ssltools.com/manager) and click the 'Update' button to automatically have the intermediate certificate installed.
-<%if @certificate_order.has_bundle?%>
+<%if @certificate_order.has_bundle? -%>
 
 If you installing on any other system, your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}."%> Please follow the appropriate installation instructions found at http://info.ssl.com/?cNode=2T0V6X&pNodes=8P3K3M.
 <%end-%>
@@ -37,5 +40,8 @@ Get your secure Smart SeaL by visiting the following url - <%=certificate_order_
 Should you have any questions or issues you would like to discuss, please do not hesitate to contact us.
 
 <%=render(:partial=>"support_contact")%>
-
+<%if @certificate_order.is_iis?%>
+<%=@signed_certificate.to_pkcs7%>
+<%else-%>
 <%=@signed_certificate.body%>
+<%end-%>

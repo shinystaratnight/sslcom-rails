@@ -132,6 +132,7 @@ SslCom::Application.routes.draw do
       member do
         get :server_bundle
         get :pkcs7
+        get :whm_zip
       end
     end
     collection do

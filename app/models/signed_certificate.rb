@@ -178,13 +178,36 @@ class SignedCertificate < ActiveRecord::Base
             file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       end
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
-      zos.get_output_stream(nonidn_friendly_common_name+co.file_extension){|f| f.puts cert}
+      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+    end
+    path
+  end
+
+  def zipped_whm_bundle(is_windows=false)
+    co=csr.certificate_content.certificate_order
+    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
+      file=File.new(ca_bundle(is_windows=nil), "r")
+      zos.get_output_stream(nonidn_friendly_common_name+".ca-bundle") {|f|f.puts (is_windows ?
+          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+      cert = is_windows ? body.gsub(/\n/, "\r\n") : body
+      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+    end
+    path
+  end
+
+  def zipped_pkcs7(is_windows=false)
+    co=csr.certificate_content.certificate_order
+    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
+      cert = is_windows ? body.gsub(/\n/, "\r\n") : body
+      zos.get_output_stream(nonidn_friendly_common_name+".p7b"){|f| f.puts to_pkcs7}
     end
     path
   end
 
   def send_processed_certificate
-    zip_path = create_signed_cert_zip_bundle
+    zip_path = certificate_order.is_iis? ? zipped_pkcs7 : create_signed_cert_zip_bundle
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
     co.processed_recipients.each do |c|
@@ -282,6 +305,20 @@ class SignedCertificate < ActiveRecord::Base
   def to_pkcs7
     return body if body.starts_with?(BEGIN_PKCS7_TAG)
     File.read(pkcs7_file)
+  end
+
+  def file_extension
+    if file_type=="PKCS#7"
+      '.p7b'
+    elsif certificate_order.is_iis?
+      '.cer'
+    else
+      '.crt'
+    end
+  end
+
+  def file_type
+    body.starts_with?(BEGIN_PKCS7_TAG) ? 'PKCS#7' : 'X.509'
   end
 
   private

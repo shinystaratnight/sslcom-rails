@@ -1,7 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :server_bundle, :pkcs7, :require=>:show
+  filter_access_to :server_bundle, :pkcs7, :whm_zip, :require=>:show
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml
@@ -46,13 +46,19 @@ class SignedCertificatesController < ApplicationController
   def server_bundle
     @signed_certificate = SignedCertificate.find(params[:id])
     send_file @signed_certificate.ca_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
-      :filename =>"ca_bundle.crt"
+      :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.ca-bundle"
   end
 
   def pkcs7
     @signed_certificate = SignedCertificate.find(params[:id])
     send_data @signed_certificate.to_pkcs7, :type => 'text', :disposition => 'attachment',
-              :filename =>"#{@signed_certificate.friendly_common_name}.p7b"
+              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.p7b"
+  end
+
+  def whm_zip
+    @signed_certificate = SignedCertificate.find(params[:id])
+    send_file @signed_certificate.zipped_whm_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
+              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.zip"
   end
 
   protected
