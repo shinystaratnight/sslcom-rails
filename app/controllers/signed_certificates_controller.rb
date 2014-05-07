@@ -55,6 +55,12 @@ class SignedCertificatesController < ApplicationController
               :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.p7b"
   end
 
+  def nginx
+    @signed_certificate = SignedCertificate.find(params[:id])
+    send_data @signed_certificate.to_nginx, :type => 'text', :disposition => 'attachment',
+              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.crt"
+  end
+
   def whm_zip
     @signed_certificate = SignedCertificate.find(params[:id])
     send_file @signed_certificate.zipped_whm_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',

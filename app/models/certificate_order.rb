@@ -590,10 +590,8 @@ class CertificateOrder < ActiveRecord::Base
 
   def bundle_name
     if has_bundle?
-      if is_apache?
+      if is_apache? or is_amazon_balancer?
         'Apache bundle (SSLCACertificateFile)'
-      elsif is_amazon_balancer?
-        'Amazon bundle (SSLCACertificateFile)'
       elsif is_nginx?
         'Nginx bundle'
       elsif is_cpanel? || is_red_hat? || is_plesk?

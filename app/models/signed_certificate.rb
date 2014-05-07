@@ -283,6 +283,27 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file
   end
 
+
+  def to_nginx(is_windows=nil)
+    "".tap do |tmp|
+      tmp << body+"\n"
+      #be careful since depends on filename. It's convenient right now for AddTrust, Comodo, Sslcom
+      certificate_order.bundled_cert_names.sort{|a,b|b<=>a}.each do |file_name|
+        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        tmp << file.readlines.join("")
+      end
+      tmp.gsub!(/\n/, "\r\n") if is_windows
+    end
+  end
+
+  def to_nginx_file(is_windows=nil)
+    tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
+    File.open(tmp_file, 'wb') do |f|
+      f.write to_nginx(is_windows)
+    end
+    tmp_file
+  end
+
   def pkcs7_file
     sc_int="#{Rails.root}/tmp/sc_int_#{id}.cer"
     File.open(sc_int, 'wb') do |f|

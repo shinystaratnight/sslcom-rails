@@ -17,6 +17,7 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
+  skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over]
   filter_access_to :all
