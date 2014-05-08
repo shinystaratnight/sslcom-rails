@@ -11,6 +11,14 @@ Attached to this email you should find a .zip file containing:
 
 <%if @certificate_order.is_iis?%>
     * Your Certificate (.pb7) - <%=@signed_certificate.friendly_common_name%>.pb7
+<%elsif @certificate_order.is_nginx?-%>
+    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.chained.crt
+<%elsif @certificate_order.is_cpanel? or @certificate_order.is_apache?-%>
+    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
+    * Your Intermediate Certificates - <%=@signed_certificate.friendly_common_name%>.ca-bundle
+<%elsif @certificate_order.is_apache?-%>
+    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
+    * Your Intermediate Certificates - <%=SignedCertificate::APACHE_BUNDLE%>
 <%else-%>
   <%@certificate_order.bundled_cert_names.each do |cc|%>
     * <%=Certificate::COMODO_BUNDLES[cc]%> - <%=cc%>
@@ -24,14 +32,7 @@ Your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle
 
 You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> SSL certificate for <%=@certificate_order.subject%> in text format at the bottom of this email.
 
-!!!IMPORTANT!!!
-Your SSL.com certificate requires that the SSL.com CA intermediate certificate be installed on your server to avoid trust issues with your visitor's browsers. You can find this intermediate certificate file in the attached zip file.
-
-<%if @certificate_order.has_bundle? -%>
-
-If you installing on any other system, your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}."%> Please follow the appropriate installation instructions found at http://info.ssl.com/?cNode=2T0V6X&pNodes=8P3K3M.
-<%end-%>
-!!!
+If you would like your certificate in various other formats or for other server platforms, you can download it from here <%=certificate_order_url(@certificate_order)%>. Please follow the appropriate installation instructions found at <%=SignedCertificate::OTHER_INSTALL_LINK%>.
 
 When you have installed your SSL.com Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services.
 
@@ -42,6 +43,8 @@ Should you have any questions or issues you would like to discuss, please do not
 <%=render(:partial=>"support_contact")%>
 <%if @certificate_order.is_iis?%>
 <%=@signed_certificate.to_pkcs7%>
+<%elsif @certificate_order.is_nginx?-%>
+<%=@signed_certificate.to_nginx%>
 <%else-%>
 <%=@signed_certificate.body%>
 <%end-%>

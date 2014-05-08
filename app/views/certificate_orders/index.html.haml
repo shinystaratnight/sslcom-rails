@@ -125,19 +125,5 @@
                             %li.category_border
                               #{cc.server_software.title}
                           -if cc.csr && cc.csr.signed_certificate
-                            %li
-                              %strong certificate (#{cc.server_software.title})
-                            %li
-                              =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co)
-                              =link_to "download certificates", download_certificate_order_path(co)
-                            %li
-                              =link_to image_tag('download.png', :class=>'blue_icon'), pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-                              =link_to "download for Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-                            %li(class="#{co.has_bundle? ? '': 'category_border'}")
-                              =link_to image_tag('download.png', :class=>'blue_icon'), pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-                              =link_to "download for WHM/cpanel", whm_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-                            -if co.has_bundle?
-                              %li.category_border
-                                =link_to image_tag('download.png', :class=>'blue_icon'), server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-                                =link_to co.bundle_name, server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+                            =render partial: 'download', locals: {co: co}
                           =render partial: 'shared/small_admin_functions', locals: {co: co}

@@ -1,0 +1,32 @@
+-cc=co.certificate_content
+%li
+  %strong download certificate
+%li
+  =link_to image_tag('download.png', :class=>'blue_icon'), pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  =link_to "for Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  \/
+  =link_to "instructions", SignedCertificate::IIS_INSTALL_LINK
+%li
+  =link_to image_tag('download.png', :class=>'blue_icon'), whm_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  =link_to "for WHM/cpanel", whm_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  \/
+  =link_to "instructions", SignedCertificate::CPANEL_INSTALL_LINK, :target => "_blank"
+%li
+  =link_to image_tag('download.png', :class=>'blue_icon'), apache_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  =link_to "for Apache", apache_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  \/
+  =link_to "instructions", SignedCertificate::APACHE_INSTALL_LINK, :target => "_blank"
+%li
+  =link_to image_tag('download.png', :class=>'blue_icon'), nginx_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  =link_to "for Nginx", nginx_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+  \/
+  =link_to "instructions", SignedCertificate::NGINX_INSTALL_LINK, :target => "_blank"
+-if co.has_bundle?
+  %li
+    =link_to image_tag('download.png', :class=>'blue_icon'), server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+    =link_to co.bundle_name, server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+%li.category_border
+  =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co)
+  =link_to "for Other platforms", download_certificate_order_path(co)
+  \/
+  =link_to "instructions", SignedCertificate::OTHER_INSTALL_LINK, :target => "_blank"

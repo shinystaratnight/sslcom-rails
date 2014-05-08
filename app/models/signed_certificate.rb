@@ -24,6 +24,15 @@ class SignedCertificate < ActiveRecord::Base
   BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
   END_PKCS7_TAG="-----END PKCS7-----"
 
+  IIS_INSTALL_LINK = "https://support.ssl.com/Knowledgebase/Article/View/7/8/how-to-install-an-ssl-certificate-in-iis-7"
+  CPANEL_INSTALL_LINK = "http://docs.cpanel.net/twiki/bin/view/AllDocumentation/WHMDocs/InstallCert"
+  NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
+  OTHER_INSTALL_LINK = "http://info.ssl.com/?cNode=2T0V6X&pNodes=8P3K3M"
+  APACHE_INSTALL_LINK = "http://info.ssl.com/article.aspx?id=10022"
+
+  APACHE_BUNDLE = "ca-bundle-client.crt"
+
+
   after_initialize do
     return unless new_record?
     self.email_customer ||= false
@@ -196,6 +205,19 @@ class SignedCertificate < ActiveRecord::Base
     path
   end
 
+  def zipped_apache_bundle(is_windows=false)
+    co=csr.certificate_content.certificate_order
+    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
+      file=File.new(ca_bundle(is_windows=nil), "r")
+      zos.get_output_stream(APACHE_BUNDLE) {|f|f.puts (is_windows ?
+          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+      cert = is_windows ? body.gsub(/\n/, "\r\n") : body
+      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+    end
+    path
+  end
+
   def zipped_pkcs7(is_windows=false)
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
@@ -207,7 +229,18 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def send_processed_certificate
-    zip_path = certificate_order.is_iis? ? zipped_pkcs7 : create_signed_cert_zip_bundle
+    zip_path =
+        if certificate_order.is_iis?
+          zipped_pkcs7
+        elsif certificate_order.is_nginx?
+          to_nginx_file
+        elsif certificate_order.is_cpanel?
+          zipped_whm_bundle
+        elsif certificate_order.is_apache?
+          zipped_apache_bundle
+        else
+          create_signed_cert_zip_bundle
+        end
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
     co.processed_recipients.each do |c|
@@ -270,7 +303,7 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
       tmp=""
-      if certificate_order.is_nginx? || certificate_order.is_heroku?
+      if certificate_order.is_heroku?
         tmp << body+"\n"
       end
       certificate_order.bundled_cert_names.each do |file_name|

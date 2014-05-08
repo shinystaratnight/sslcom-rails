@@ -1,7 +1,7 @@
 class SignedCertificatesController < ApplicationController
   before_filter :new_signed_certificate_from_params, :on=>:create
   filter_access_to :all, :attribute_check=>true
-  filter_access_to :server_bundle, :pkcs7, :whm_zip, :require=>:show
+  filter_access_to :server_bundle, :pkcs7, :whm_zip, :nginx, :apache_zip, :require=>:show
 
   # DELETE /signed_certificates/1
   # DELETE /signed_certificates/1.xml
@@ -58,12 +58,18 @@ class SignedCertificatesController < ApplicationController
   def nginx
     @signed_certificate = SignedCertificate.find(params[:id])
     send_data @signed_certificate.to_nginx, :type => 'text', :disposition => 'attachment',
-              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.crt"
+              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.chained.crt"
   end
 
   def whm_zip
     @signed_certificate = SignedCertificate.find(params[:id])
     send_file @signed_certificate.zipped_whm_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
+              :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.zip"
+  end
+
+  def apache_zip
+    @signed_certificate = SignedCertificate.find(params[:id])
+    send_file @signed_certificate.zipped_apache_bundle(is_client_windows?), :type => 'text', :disposition => 'attachment',
               :filename =>"#{@signed_certificate.nonidn_friendly_common_name}.zip"
   end
 

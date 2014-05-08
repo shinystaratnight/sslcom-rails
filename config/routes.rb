@@ -133,6 +133,8 @@ SslCom::Application.routes.draw do
         get :server_bundle
         get :pkcs7
         get :whm_zip
+        get :nginx
+        get :apache_zip
       end
     end
     collection do

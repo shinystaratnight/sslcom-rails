@@ -585,16 +585,14 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def has_bundle?
-    !!(is_apache? || is_nginx? || is_cpanel? || is_red_hat? || is_plesk? || is_heroku? || is_amazon_balancer?)
+    !!(is_red_hat? || is_plesk? || is_heroku? || is_amazon_balancer?)
   end
 
   def bundle_name
     if has_bundle?
       if is_apache? or is_amazon_balancer?
         'Apache bundle (SSLCACertificateFile)'
-      elsif is_nginx?
-        'Nginx bundle'
-      elsif is_cpanel? || is_red_hat? || is_plesk?
+      elsif is_red_hat? || is_plesk?
         'ca bundle (Apache SSLCACertificateFile)'
       elsif is_heroku?
         'ca bundle for Heroku'
