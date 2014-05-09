@@ -303,9 +303,6 @@ class SignedCertificate < ActiveRecord::Base
     tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
       tmp=""
-      if certificate_order.is_heroku?
-        tmp << body+"\n"
-      end
       certificate_order.bundled_cert_names.each do |file_name|
         file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
         tmp << file.readlines.join("")
