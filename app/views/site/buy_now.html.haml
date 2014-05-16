@@ -4,11 +4,7 @@
     .inner
       =render :partial => "shared/messages"
       %h1.section-title
-        Build customer trust with
-        %span
-          %b SSL
-          \.com
-        Certificates
+        SSL certificates for authentication & encryption
       #banner-grid
         .left.banner1
           %a(style="display:block" href="#{certificate_url("basicssl")}")
@@ -16,7 +12,7 @@
             %span Excellent value ssl certificate
             .price-block
               .price $49
-              .price-desc /yr for single domain
+              .price-desc /yr
               .clear
             .divider
             .security_rating
@@ -29,8 +25,8 @@
                   %div $10,000
                   warranty
                 %li
-                  %div Validation
-                  of domain control
+                  %div Trusted
+                  in over 99% browsers
                 %li
                   %div 2048-bit
                   ssl encryption
@@ -48,13 +44,11 @@
             %h2 Wildcard SSL
             .price-block-special
               .clear
-            %span SSL for many domains
+            %span SSL for multiple site protection
             .price-block-special
-              %div{:style => "margin-left:-145px"}
-                .price &nbsp;&nbsp;&nbsp;&nbsp;$225
+              .price $225
               .price-desc
-                \/yr for unlimited
-                %b{:style => "color:#000;"} sub-domains
+                \/yr
             .divider
             .security_rating
               %img{:alt => "ssl lock image", :src => "images/icn-lock.png"}
@@ -68,11 +62,17 @@
                   %div $10,000
                   warranty
                 %li
-                  %div Validation
-                  of domain control
+                  %div Unlimited
+                  subdomains
+                %li
+                  %div Trusted
+                  in over 99% browsers
                 %li
                   %div 2048-bit
                   ssl encryption
+                %li
+                  %div 5
+                  minute issuance
             .divider
             %a{:href => "#{buy_certificate_url("wildcard")}"}
               %span
@@ -84,7 +84,7 @@
             %span Highest assurance ssl protection
             .price-block
               .price $299
-              .price-desc /yr for single domain
+              .price-desc /yr
               .clear
             .divider
             .security_rating
@@ -109,7 +109,7 @@
                   assurance
                 %li
                   %div Organization
-                  shown in ssl certificate
+                  in ssl certificate
             .divider
             %a{:href => "#{buy_certificate_url("ev")}"}
               %span
