@@ -59,8 +59,8 @@
         =render :partial => '/layouts/standard'
       .push
     #footer
-      -cache("footer_"+params.to_s, expires_in: 1.year) do
-        =render partial: '/layouts/footer_new'
+      =render partial: '/layouts/footer_new'
+      -cache("footer_"+params.to_s, expires_in: 1.second) do
         -#
           -if current_page? action: "buy_now"
             =render partial: '/layouts/footer_new'
