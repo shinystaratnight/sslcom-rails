@@ -22,7 +22,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
     message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
-  validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
+  # validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
