@@ -8,6 +8,42 @@ describe ApiCertificateCreate do
       end
     end
 
+    it "saves a certificate order when create_certificate_order is called"
+
+    it "parses the csr correctly" do
+      create :api_credential
+      acc = create :api_certificate_create
+      expect(Csr.new(body: acc.csr).common_name).to eq("*.corp.crowdfactory.com")
+    end
+
+    it "has a valid csr object" do
+      create :api_credential
+      acc = create :api_certificate_create
+      expect(acc.csr_obj).to be_an_instance_of(Csr)
+    end
+
+    it "has a default dcv method" do
+      create :api_credential
+      expect(create(:api_certificate_create).dcv_method).to eq("http_csr_hash")
+    end
+
+    it "deducts the proper amount when create_certificate_order is called" do
+      create :api_credential
+      create :basic_ssl
+      acc = create :api_certificate_create
+      expect(acc.create_certificate_order).to be_valid
+    end
+
+    it "requires proper validation" do
+      create :api_credential
+      expect(create :api_certificate_create).to be_valid
+    end
+
+    it "is invalid with invalid account key" do
+      create :api_credential
+      expect(create :api_certificate_create_invalid_account_key).to be_invalid
+    end
+
     it "is invalid without account_key" do
       acc = ApiCertificateCreate.new(account_key: nil)
       expect(acc).to have(1).errors_on :account_key

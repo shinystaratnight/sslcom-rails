@@ -54,7 +54,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
   validate :verify_dcv_email_address, on: :create
 
-  after_initialize do
+  before_validation do
     if new_record? && self.csr
       self.dcv_method ||= "http_csr_hash"
       self.csr_obj = Csr.new(body: self.csr)
@@ -81,25 +81,27 @@ class ApiCertificateCreate < ApiCertificateRequest
     co_params = {duration: period, is_api_call: true}
     co_params.merge!({is_test: self.test})
     co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
-    certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
-    certificate_content=certificate_order.certificate_contents.build(
-        csr: self.csr_obj, server_software_id: self.server_software)
-    certificate_content.certificate_order = certificate_order
+    csr = self.csr_obj
+    csr.save
+    certificate_order = api_requestable.certificate_orders.build(co_params)
+    certificate_content=CertificateContent.new(
+        csr: csr, server_software_id: self.server_software)
+    certificate_order.certificate_contents << certificate_content
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
-    order = current_user.ssl_account.purchase(@certificate_order)
+    order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test
       errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-        (order.amount.cents > current_user.ssl_account.funded_account.amount.cents)
+        (order.amount.cents > api_requestable.funded_account.amount.cents)
     end
     if errors.blank?
       if certificate_content.valid? &&
-          apply_funds(certificate_order: @certificate_order, current_user: current_user, order: order)
+          apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
         if certificate_content.save
           setup_certificate_content(
               certificate_order: certificate_order,
               certificate_content: certificate_content,
-              current_user: current_user)
+              ssl_account: api_requestable)
         end
         return @certificate_order
       else
@@ -126,7 +128,7 @@ class ApiCertificateCreate < ApiCertificateRequest
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
         c = CertificateContact.new
-        r = options[:current_user].ssl_account.reseller
+        r = options[:ssl_account].reseller
         CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
           c.send((field+'=').to_sym, r.send(field.to_sym))
         end
@@ -186,7 +188,7 @@ class ApiCertificateCreate < ApiCertificateRequest
 
   def apply_funds(options)
     order = options[:order]
-    @account_total = funded_account = options[:current_user].ssl_account.funded_account
+    @account_total = funded_account = options[:ssl_account].funded_account
     funded_account.cents -= order.cents unless @certificate_order.is_test
     if funded_account.cents >= 0 and order.line_items.size > 0
       funded_account.deduct_order = true

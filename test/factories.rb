@@ -44,6 +44,19 @@ FactoryGirl.define do
     factory :wildcard_certificate do
       product "wildcard"
     end
+
+    factory :basic_ssl do
+      product "basicssl"
+      serial "basic256sslcom"
+      published_as "live"
+
+      after(:create) do |c, evaluator|
+        # create :basic_ssl_product_variant_group, variantable: c
+
+        c.product_variant_groups << create(:basic_ssl_product_variant_group)
+        # create_list :basic_ssl_product_variant_group, 1, variantable: c
+      end
+    end
   end
 
   factory :server_software do
@@ -231,15 +244,28 @@ EOS
     factory :dv_product_variant_item do
       association :product_variant_group, factory: :dv_product_variant_group
     end
+
+    factory :basic_ssl_product_variant_item do
+      value "365"
+      association :product_variant_group, factory: :basic_ssl_product_variant_group
+    end
   end
 
   factory :product_variant_group do
     status "live"
+    published_as "live"
+    title "Duration"
     sequence(:display_order, 100)
     association :variantable, factory: :certificate
 
     factory :dv_product_variant_group do
       association :variantable, factory: :dv_certificate
+    end
+
+    factory :basic_ssl_product_variant_group do
+      after(:create) do |pvg, evaluator|
+        create_list :basic_ssl_product_variant_item, 1, product_variant_group: pvg
+      end
     end
   end
 
@@ -261,19 +287,29 @@ EOS
     end
 
     factory :ssl_account_reseller do
+      association :reseller
       after(:create) {|sa|
         sa.add_role! "reseller"
         sa.set_reseller_default_prefs
       }
       factory :ssl_account_reseller_tier_1 do
-        after(:create) {|sa|
-          sa.reseller_tier=ResellerTier.find(1)
-          sa.save}
+        association :reseller, factory: :reseller_reseller_tier_1
       end
+
       factory :ssl_account_reseller_tier_2 do
         after(:create) {|sa|
           FactoryGirl.create(:reseller, ssl_account: sa, reseller_tier: ResellerTier.find(2))}
       end
+    end
+  end
+
+  factory :reseller_tier do
+
+    factory :reseller_tier_1 do
+      after(:create) do |tier, evaluator|
+        create_list :reseller, 1, reseller_tier: tier
+      end
+
     end
   end
 
@@ -292,6 +328,11 @@ EOS
     email "someone@example.com"
     phone "111-111-1111"
     association :ssl_account
+
+    factory :reseller_reseller_tier_1 do
+      association :reseller_tier, factory: :reseller_tier_1
+    end
+
   end
 
   factory :role do
@@ -349,6 +390,52 @@ dp6YRn8XDWkkbOWgSCHfQGqD52BCZ82ZsAziZun+pSwYDNNSdg==
 
   factory :duplicate_v2_user do
 
+  end
+
+  factory :api_certificate_create do
+    account_key "000000"
+    period "365"
+    server_software "1"
+    secret_key "000000"
+    #TODO make not required if dv
+    organization_name "Acme"
+    street_address_1 "123 Oak Dr"
+    locality_name "Pal Alot"
+    state_or_province_name "CA"
+    postal_code "00000"
+    country_name "US"
+    product "200"
+    is_customer_validated "true"
+    csr <<EOS
+-----BEGIN CERTIFICATE REQUEST-----
+MIIC6jCCAdICAQAwgaQxCzAJBgNVBAYTAkRLMRMwEQYDVQQIEwpDb3BlbmhhZ2Vu
+MRQwEgYDVQQHEwtBbGJlcnRzbHVuZDEPMA0GA1UECxMGVGVrbmlrMRcwFQYDVQQK
+Ew5EYW5zayBLYWJlbCBUVjEcMBoGA1UEAxMTc3NsLmRhbnNra2FiZWx0di5kazEi
+MCAGCSqGSIb3DQEJARYTc2xoQGRhbnNra2FiZWx0di5kazCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBANG+v2MNf5oD/iQhOuKlBzJRqAFHMj3KuKejfw29
+eubsO+PATjwJAoyuN+smnlSjzL8or6Yb1wNaBPbDY3OprO4+KJ7tgMfxnqScrbdi
+RuqbhFy2WOs/UmsMyP0Eb7GSf2dPktgvhK8h5Y8lsGpZFpWj05CdewdFYD2THz9f
+uonFBk0OsaMKu48wE9exT0PsdtSG5Z2bEYs24gHO4IgqyKtSSsciUBghx161NBX/
+1d6xwiXwv25SKEOr2vww/IYUGvfIKZNHDcren2PShmSUE+WW5uTeY18Lbzs51Gxh
+MTjRZvrI9VSoxYp3hjh/CIpuIDL/ACe/3Ht90nQ3RAXz0PsCAwEAAaAAMA0GCSqG
+SIb3DQEBBQUAA4IBAQDFxzw9pi2agvF6bRl1RxyinfnBLVrZcszp07rEf+D6sLcE
+m/hEPcd5cisk/NAOU1YrWZPBmVxyQeNP/9t22P98cZvVxGam257/D/hKLCFvT6O+
+8qR/i6wAl19BMX0jLMODNkXHRMHq4v/Uv9DkpejcwvqzcrH2EbKL/ZYgM4e7CtlK
+Sv4v5KfdNucQPgoaWB76OFkqmVsLTZAeFhT9+R8c1kXAeaqWk5wSYVyJVofFG5Ox
+dqdBYOw9UwEsiFwYYMk6XSRXDPA9ldBYqgb/ck/BxFVFzdLg2p8plZWjuhqcNI9E
+wJ4W0jbRq+eaj9c10Q3cPAT65yYggar+AKD7Gr+H
+-----END CERTIFICATE REQUEST-----
+EOS
+
+    factory :api_certificate_create_invalid_account_key do
+      account_key "00001"
+    end
+  end
+
+  factory :api_credential do
+    account_key "000000"
+    secret_key "000000"
+    association :ssl_account, factory: :ssl_account_reseller_tier_1
   end
 end
 
