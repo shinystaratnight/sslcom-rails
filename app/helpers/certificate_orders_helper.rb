@@ -78,12 +78,12 @@ module CertificateOrdersHelper
             on the server until the certificate is issued." if certificate_content.preferred_reprocessing?
             link_to("please wait #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
-                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
+                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto[iframes]').html_safe+
             content_tag(:div, content_tag(:div, content_tag(:p, instructions), :class=>"pop_content"), id: "pp-#{certificate_order.ref}", class: "pop_container")
           else
             link_to("response needed #{image_tag('question_mark.png', alt:
                 "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
-                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto').html_safe+
+                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto[iframes]').html_safe+
             content_tag(:div, render(partial: "certificate_orders/validation_pop", locals: {last_sent: last_sent}), id: "pp-#{certificate_order.ref}", class: "pop_container")
           end
         when "issued"

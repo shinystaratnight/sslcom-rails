@@ -54,12 +54,12 @@
                 %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
               %li
                 %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
-              %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Reseller Program Details
-              %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Reseller Pricing
-              %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"}
-                %li Reseller Sign Up
+              %li
+                %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Program Details
+              %li
+                %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Pricing
+              %li
+                %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
           %li
             %a{:href => "#{certificates_url}"}
               %div OUR CERTIFICATES

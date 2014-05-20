@@ -49,6 +49,7 @@ set :user, "ubuntu"
 set :branch, "master"
 set :use_sudo, false
 
+role :cache, domain
 role :web, domain # Your HTTP server, Apache/etc
 role :app, domain # This may be the same as your `Web` server
 role :db, domain, :primary => true # This is where Rails migrations will run
@@ -85,9 +86,9 @@ role :db, domain, :primary => true # This is where Rails migrations will run
   end
 
   namespace :memcached do
-    desc "Flush memcached"
-    task :clear, :roles => [:cache], :only => {:memcached => true} do
-      run "cd #{current_path} && /usr/bin/env rake cache:clear RAILS_ENV=#{rails_env}"
+    desc "Flushes memcached local instance"
+    task :flush, :roles => [:app] do
+      run("cd #{current_path} && bundle exec rake memcached:flush")
     end
   end
 
