@@ -1,5 +1,10 @@
 require 'rubygems'
 require "capybara/rspec"
+require 'webmock/rspec'
+require 'declarative_authorization/maintenance'
+include Authorization::TestHelper
+
+WebMock.disable_net_connect!(allow_localhost: true)
 
 prefork = lambda {
   #require 'ruby-debug'
@@ -275,6 +280,12 @@ tFOUsgj8kIeBCz+QtsQ=
 EOS
 }
 
+    config.before(:each) do
+      stub_request(:post, "https://secure.comodo.net/products/!AutoApplySSL").
+        with(:body => /.*/,
+          :headers => {'Accept'=>'*/*', 'User-Agent'=>'Ruby'}).
+        to_return(:status => 200, :body => "", :headers => {})
+    end
   end
 
   #require 'sauce'

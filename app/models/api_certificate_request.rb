@@ -35,7 +35,6 @@ class ApiCertificateRequest < CaApiRequest
     if self.account_key && self.secret_key
       ac=ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key)
       unless ac.blank?
-        self.current_user = ac.ssl_account.users.last
         self.api_requestable = ac.ssl_account
       else
         errors[:login] << "account_key not found or wrong secret_key"

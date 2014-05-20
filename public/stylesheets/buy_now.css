@@ -97,6 +97,7 @@ a img {
     margin: 15px 75px;
     padding: 10px 0 0 34px;
     text-shadow: 0 1px 0 #4B681E;
+    line-height: 16px;
 }
 .btn-buynow:hover {
     background: url("/images/btn-buynow-sprite.png") no-repeat scroll 0 -43px transparent;

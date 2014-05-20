@@ -108,6 +108,7 @@ class ApiCertificateCreate < ApiCertificateRequest
         return certificate_content
       end
     end
+    errors
   end
 
   def setup_certificate_content(options)
@@ -188,7 +189,7 @@ class ApiCertificateCreate < ApiCertificateRequest
 
   def apply_funds(options)
     order = options[:order]
-    @account_total = funded_account = options[:ssl_account].funded_account
+    funded_account = options[:ssl_account].funded_account
     funded_account.cents -= order.cents unless @certificate_order.is_test
     if funded_account.cents >= 0 and order.line_items.size > 0
       funded_account.deduct_order = true

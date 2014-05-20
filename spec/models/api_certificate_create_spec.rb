@@ -10,9 +10,15 @@ describe ApiCertificateCreate do
 
     it "saves a certificate order when create_certificate_order is called"
 
-    it "parses the csr correctly" do
+    it "parses the basic ssl csr correctly" do
       create :api_credential
       acc = create :api_certificate_create
+      expect(Csr.new(body: acc.csr).common_name).to eq("ssl.danskkabeltv.dk")
+    end
+
+    it "parses the wildcard ssl csr correctly" do
+      create :api_credential
+      acc = create :api_certificate_create_wildcard_5yr
       expect(Csr.new(body: acc.csr).common_name).to eq("*.corp.crowdfactory.com")
     end
 
@@ -27,11 +33,27 @@ describe ApiCertificateCreate do
       expect(create(:api_certificate_create).dcv_method).to eq("http_csr_hash")
     end
 
-    it "deducts the proper amount when create_certificate_order is called" do
+    it "places a valid order" do
       create :api_credential
       create :basic_ssl
       acc = create :api_certificate_create
       expect(acc.create_certificate_order).to be_valid
+    end
+
+    it "deducts the proper amount when create_certificate_order is called" do
+      cred = create :api_credential
+      create :basic_ssl
+      acc = create :api_certificate_create
+      expect(acc.create_certificate_order).to be_instance_of CertificateOrder
+      expect(cred.ssl_account.funded_account(true).cents).to eq(95100)
+    end
+
+    it "returns error if not enough funds exists" do
+      cred = create :api_credential
+      create :wildcard_certificate
+      acc = create :api_certificate_create_wildcard_5yr
+      expect(acc.create_certificate_order).to be_instance_of CertificateOrder
+      expect(cred.ssl_account.funded_account(true).cents).to eq(95100)
     end
 
     it "requires proper validation" do

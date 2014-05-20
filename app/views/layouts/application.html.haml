@@ -6,15 +6,13 @@
         var _sf_startpt=(new Date()).getTime()
       %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
       %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
-
       %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
       -if @meta
         -@meta.each do |key|
           %meta{:name=>key[0], :content=>key[1]}
-      /%meta{ :name => "keywords", :content => h(yield(:keywords).or_else(Settings.meta_keywords))}
       %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
       %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }
-      %meta{ :content => "IE=EmulateIE7", "http-equiv" => "X-UA-Compatible" }
+      %meta{ :content => "IE=Edge,chrome=1", "http-equiv" => "X-UA-Compatible" }
       %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
       %meta(content="width=1115" name="viewport")
       -#the following metas are for google+ custom message

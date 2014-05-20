@@ -37,12 +37,20 @@ FactoryGirl.define do
     factory :dv_certificate do
       product "free"
     end
+
     factory :ev_certificate do
       product "ev"
       serial "evucc256sslcom"
     end
+
     factory :wildcard_certificate do
       product "wildcard"
+      serial "wc256sslcom"
+      published_as "live"
+      after(:create) do |c, evaluator|
+        c.product_variant_groups << create(:wildcard_ssl_product_variant_group)
+        c.product_variant_groups << create(:wildcard_ssl_license_product_variant_group)
+      end
     end
 
     factory :basic_ssl do
@@ -146,9 +154,21 @@ FactoryGirl.define do
       end
     end
 
+    trait :wildcard do
+      after(:build) do |co, evaluator|
+        co.sub_order_items << create(:wildcard_sub_order_item)
+        co.sub_order_items << create(:wildcard_1_license_sub_order_item)
+      end
+    end
+
     factory :new_dv_certificate_order do
       new
       dv
+    end
+
+    factory :new_wildcard_certificate_order do
+      new
+      wildcard
     end
 
     factory :completed_unvalidated_dv_certificate_order do
@@ -227,13 +247,21 @@ EOS
       association :product_variant_item, factory: :dv_product_variant_item
     end
 
+    trait :wildcard do
+      association :product_variant_item, factory: :wildcard_ssl_5yr_product_variant_item
+    end
+
     factory :dv_sub_order_item do
       dv
     end
-  end
 
-  factory :funded_account do
-    association :ssl_account
+    factory :wildcard_sub_order_item do
+      wildcard
+    end
+
+    factory :wildcard_1_license_sub_order_item do
+      association :product_variant_item, factory: :wildcard_ssl_license_product_variant_item
+    end
   end
 
   factory :product_variant_item do
@@ -247,7 +275,26 @@ EOS
 
     factory :basic_ssl_product_variant_item do
       value "365"
+      amount "4900"
       association :product_variant_group, factory: :basic_ssl_product_variant_group
+    end
+
+    factory :ev_ssl_2yr_product_variant_item do
+      value "730"
+      amount "47900"
+      association :product_variant_group, factory: :ev_ssl_product_variant_group
+    end
+
+    factory :wildcard_ssl_5yr_product_variant_item do
+      value "1826"
+      amount "200000"
+      association :product_variant_group, factory: :wildcard_ssl_product_variant_group
+    end
+
+    factory :wildcard_ssl_license_product_variant_item do
+      value "1"
+      amount "0"
+      association :product_variant_group, factory: :wildcard_ssl_license_product_variant_group
     end
   end
 
@@ -258,6 +305,10 @@ EOS
     sequence(:display_order, 100)
     association :variantable, factory: :certificate
 
+    trait :server_license do
+      title "Server Licenses"
+    end
+
     factory :dv_product_variant_group do
       association :variantable, factory: :dv_certificate
     end
@@ -265,6 +316,21 @@ EOS
     factory :basic_ssl_product_variant_group do
       after(:create) do |pvg, evaluator|
         create_list :basic_ssl_product_variant_item, 1, product_variant_group: pvg
+      end
+    end
+
+    factory :wildcard_ssl_product_variant_group do
+      # association :variantable, factory: :wildcard_certificate
+      after(:create) do |pvg, evaluator|
+        create_list :wildcard_ssl_5yr_product_variant_item, 1, product_variant_group: pvg
+      end
+    end
+
+    factory :wildcard_ssl_license_product_variant_group do
+      # association :variantable, factory: :wildcard_certificate
+      server_license
+      after(:create) do |pvg, evaluator|
+        create_list :wildcard_ssl_license_product_variant_item, 1, product_variant_group: pvg
       end
     end
   end
@@ -286,6 +352,13 @@ EOS
       n.to_s+SecureRandom.hex(1)+'-'+Time.now.to_i.to_s(32)
     end
 
+    after(:create) {|sa|
+      without_access_control do
+        sa.funded_account.cents = 100000
+        sa.funded_account.save
+      end
+    }
+
     factory :ssl_account_reseller do
       association :reseller
       after(:create) {|sa|
@@ -301,6 +374,10 @@ EOS
           FactoryGirl.create(:reseller, ssl_account: sa, reseller_tier: ResellerTier.find(2))}
       end
     end
+  end
+
+  factory :funded_account do
+    cents "100000"
   end
 
   factory :reseller_tier do
@@ -426,6 +503,29 @@ dqdBYOw9UwEsiFwYYMk6XSRXDPA9ldBYqgb/ck/BxFVFzdLg2p8plZWjuhqcNI9E
 wJ4W0jbRq+eaj9c10Q3cPAT65yYggar+AKD7Gr+H
 -----END CERTIFICATE REQUEST-----
 EOS
+    factory :api_certificate_create_wildcard_5yr do
+      product "201"
+      csr <<EOS
+-----BEGIN CERTIFICATE REQUEST-----
+MIIC0TCCAbkCAQAwgYsxCzAJBgNVBAYTAnVzMQ8wDQYDVQQIEwZPcmVnb24xETAP
+BgNVBAcTCFBvcnRsYW5kMRswGQYDVQQKExJDcm93ZCBGYWN0b3J5IEluYy4xGTAX
+BgNVBAsTEE9wZXJhdGlvbnMgR3JvdXAxIDAeBgNVBAMMFyouY29ycC5jcm93ZGZh
+Y3RvcnkuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAq5f0CVkd
+zR6lMoI/ejRvK/8Q+TLOk9SEyKxAx9hpmwf8+qLnt5Et6w1gplpqgjREQj6LMpcj
+99gNoRTfkGGu+AO23wOPjmknAPHUEHAoPR3JIv643Dk4vTXGTLTAeoi5equEaq5l
+6iz32UtSpROBHPRJjVHg/wC/UkolDT2tfhVOYELyzTW44OkWaVAgvjLEXEu2Wq2J
+LZuShvfA6dPHfpgfZVAQD1/ucnlkbDXaGcb/vldgirEND8OvA0uufuKFUOjd+NdQ
+eCCxHgN5YiKax4EMZ5Xu3BQK1XNkcbee8pW/fdhPX8ZpraoamgjU1aFfW9GGiKpH
+JSl/u5EkcYFl/wIDAQABoAAwDQYJKoZIhvcNAQEFBQADggEBAJiiuHHG3sIfZqqd
+J1MYS1S8pp9z8fzwEagl1PseGpr4tzqdI/YyAmsKbJ/5Vcjl7omnH5EbjbrWHxnT
+HI/yD9iYzys5APRYuWTsu2062E1oBuqCUZlambofM3OJ3ZOaqKDMuKPOYaZXZ5oa
+wo5DnhHydWM5oueaWbMuLv8ydbqolP+MrBhbA8CQp+nlwsxeJHyFhJINL0Ewb/GE
+oMFCVp27p9bIE35qpNqOaYAcLxp6wTFTPRg048vpYbZxNfwV07uMTJnge7YdQ9KP
+yMi36slJID403aJwthhX8cwWVOLpbBjDG9gcucR1l3TSDW8QVWDMari4ih5mIIQP
+xMajgLU=
+-----END CERTIFICATE REQUEST-----
+EOS
+    end
 
     factory :api_certificate_create_invalid_account_key do
       account_key "00001"
@@ -435,7 +535,11 @@ EOS
   factory :api_credential do
     account_key "000000"
     secret_key "000000"
-    association :ssl_account, factory: :ssl_account_reseller_tier_1
+    association :ssl_account, factory: :ssl_account_reseller
+
+    factory :api_credential_no_funds do
+      association :ssl_account, factory: :ssl_account_reseller_no_funds
+    end
   end
 end
 

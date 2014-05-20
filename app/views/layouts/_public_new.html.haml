@@ -39,21 +39,21 @@
               MY ACCOUNT
             -if current_user
               %ul
-                %a{:href => "#{logout_url}"}
-                  %li Logout
+                %li
+                  =link_to "Logout", logout_url
           -if Settings.offer_trial
-            %a(href="#{certificate_url("free")}")
-              %li FREE TRIAL
+            %li
+              %a(href="#{certificate_url("free")}") FREE TRIAL
           %li
             %a(href="#{affiliates_url}")
               PARTNERS
             %ul
-              %a{:href => "#{affiliates_url}"}
-                %li Overview
-              %a{:href => "#{details_affiliates_url}"}
-                %li Referral Link FAQ
-              %a{:href => "#{affiliate_signup_url}"}
-                %li Referral Link Signup
+              %li
+                %a{:href => "#{affiliates_url}"} Overview
+              %li
+                %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
+              %li
+                %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
               %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
                 %li Reseller Program Details
               %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"}
@@ -64,30 +64,35 @@
             %a{:href => "#{certificates_url}"}
               %div OUR CERTIFICATES
             %ul
-              %a{:href => "#{certificate_url('basicssl')}"}
-                %li
+              %li
+                %a{:href => "#{certificate_url('basicssl')}"}
                   %i> SSL
                   \.com Basic
-              %a{:href => "#{certificate_url('premiumssl')}"}
-                %li
+              %li
+                %a{:href => "#{certificate_url('premiumssl')}"}
                   %i> SSL
                   \.com Premium
-              %a{:href => "#{certificate_url('ev')}"}
-                %li
+              %li
+                %a{:href => "#{certificate_url('ev')}"}
                   %i> SSL
                   \.com Enterprise EV
-              %a{:href => "#{certificate_url('wildcard')}"}
-                %li Wildcard (Unlimited Subdomains)
-              %a{:href => "#{certificate_url('ucc')}"}
-                %li Multi-Domain (SAN/UCC)
-              %a{:href => "#{certificate_url('evucc')}"}
-                %li Multi-Domain Plus (SAN/UCC EV)
+              %li
+                %a{:href => "#{certificate_url('wildcard')}"}
+                  Wildcard (Unlimited Subdomains)
+              %li
+                %a{:href => "#{certificate_url('ucc')}"}
+                  Multi-Domain (SAN/UCC)
+              %li
+                %a{:href => "#{certificate_url('evucc')}"}
+                  Multi-Domain Plus (SAN/UCC EV)
               -if Settings.offer_trial
-                %a{:href => "#{certificate_url('free')}"}
-                  %li Free Trial SSL
+                %li
+                  %a{:href => "#{certificate_url('free')}"}
+                    Free Trial SSL
               %li.divider
-              %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
-                %li Smart SeaL
+              %li
+                %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
+                  Smart SeaL
             -#
               %li.divider
               %li

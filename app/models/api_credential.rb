@@ -2,7 +2,7 @@ class ApiCredential < ActiveRecord::Base
   belongs_to :ssl_account
 
   validates :account_key, :secret_key, presence: true, length: {minimum: 6}
-  validates :ssl_account, presence: true
+  # validates :ssl_account, presence: true, on: :create
 
   after_initialize do
     if new_record?

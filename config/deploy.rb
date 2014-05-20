@@ -84,6 +84,13 @@ role :db, domain, :primary => true # This is where Rails migrations will run
 
   end
 
+  namespace :memcached do
+    desc "Flush memcached"
+    task :clear, :roles => [:cache], :only => {:memcached => true} do
+      run "cd #{current_path} && /usr/bin/env rake cache:clear RAILS_ENV=#{rails_env}"
+    end
+  end
+
   namespace :deploy do
 
     desc <<-DESC
