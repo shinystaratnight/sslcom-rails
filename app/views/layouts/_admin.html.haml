@@ -25,19 +25,19 @@
   .containerp
     #prog_nav_container
       %ul(id="prog_nav")
-        %li(id="#{'t-intro' if current_page?(account_url)}")
+        %li(id="#{current_page?(account_url) ? 't-intro' : 'dashboard' }")
           =link_to "Dashboard", account_url
-        %li(id="#{'t-intro' if current_page?(users_url)}")
+        %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_certificates'}")
           =link_to "Users", users_url
-        %li(id="#{'t-intro' if current_page?(validations_url)}")
+        %li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
           =link_to "Validations", validations_url
-        %li(id="#{'t-intro' if current_page?(validations_url)}")
+        %li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
           =link_to "Documents", validations_url
-        %li(id="#{'t-intro' if current_page?(site_seals_url)}")
+        %li(id="#{current_page?(site_seals_url) ? 't-intro' : 'manage_site_seals'}")
           =link_to "Smart SeaLs", site_seals_url
-        %li(id="#{'t-intro' if current_page?(certificate_orders_url)}")
+        %li(id="#{current_page?(certificate_orders_url) ? 't-intro' : 'manage_certificate_orders'}")
           =link_to "Orders", certificate_orders_path
-        %li(id="#{'t-intro' if current_page?(orders_url)}")
+        %li(id="#{current_page?(orders_url) ? 't-intro' : 'manage_orders'}")
           =link_to "Transactions", orders_path
     .inner
       =render :partial => "shared/messages"

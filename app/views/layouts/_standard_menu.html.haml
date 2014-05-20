@@ -1,19 +1,19 @@
 #prog_nav_container
   %ul(id="prog_nav")
-    %li(id="#{'t-intro' if current_page?(account_url)}")
+    %li(id="#{current_page?(account_url) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_url
-    %li(id="#{'t-intro' if current_page?(certificates_url)}")
+    %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}")
       =link_to "Certificates", certificates_url
-    %li(id="#{'t-intro' if is_on?("validations")}")
+    %li(id="#{is_on?("validations") ? 't-intro' : 'manage_validations'}")
       =link_to "Validations", validations_url
-    %li(id="#{'t-intro' if is_on?("site_seals")}")
+    %li(id="#{is_on?("site_seals") ? 't-intro' : 'manage_site_seals'}")
       =link_to "Smart SeaLs", site_seals_url
     -unless current_user.ssl_account.affiliate.blank?
-      %li(id="#{'t-intro' if current_page?(affiliate_path(current_user.ssl_account.affiliate))}")
+      %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
         =link_to "Affiliate", affiliate_path(current_user.ssl_account.affiliate)
-    %li(id="#{'t-intro' if is_on?("certificate_orders")}")
+    %li(id="#{is_on?("certificate_orders") ? 't-intro' : 'manage_certificate_orders' }")
       =link_to "Orders", certificate_orders_path
-    %li(id="#{'t-intro' if is_on?("orders") && !@prev}")
+    %li(id="#{(is_on?("orders") && !@prev) ? 't-intro' : 'manage_orders'}")
       =link_to "History", orders_path
-    %li(id="#{'t-intro' if current_page?(edit_settings_ssl_account_url)}")
+    %li(id="#{current_page?(edit_settings_ssl_account_url) ? 't-intro' : 'manage_settings'}")
       =link_to "Settings", edit_settings_ssl_account_url
