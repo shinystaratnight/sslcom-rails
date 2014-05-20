@@ -5,7 +5,7 @@
   %ul.clearfix
     -pages[0].each_with_index do |page, index|
       -adj_index = index + 1
-      %li(style="#{style}" id="#{pages[1] == adj_index ? 'selected' : ''}")
+      %li(style="#{style}" id="#{pages[1] == adj_index ? 'selected' : 'unselected_'+adj_index.to_s}")
         %span(class="#{adj_index < pages[1] ? 'finished' : ''}")
           %strong=adj_index
           -if certificate.try("is_free?") && page=~/Payment/i
