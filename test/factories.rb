@@ -182,6 +182,16 @@ FactoryGirl.define do
   end
 
   factory :order do
+    cents 4900
+    currency "USD"
+    association :billable, factory: :ssl_account
+    description "SSL Certificate Purchase"
+    state "paid"
+    status "active"
+  end
+
+  factory :billing_profile do
+
   end
 
   factory :csr do

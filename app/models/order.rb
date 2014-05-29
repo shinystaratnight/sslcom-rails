@@ -33,7 +33,7 @@ class Order < ActiveRecord::Base
 #  default_scope includes(:line_items).where({line_items:
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).where{state != 'payment_declined'}.order(:created_at.desc)
+  default_scope includes(:line_items).where{state << ['payment_declined','fully_refunded']}.order(:created_at.desc)
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder)}.
@@ -157,7 +157,9 @@ class Order < ActiveRecord::Base
     end
 
     state :paid do
-      event :full_refund, transitions_to: :fully_refunded
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable.refund!} if complete
+      end
     end
 
     state :fully_refunded

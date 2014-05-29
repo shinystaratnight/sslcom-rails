@@ -45,7 +45,7 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope joins(:certificate_contents).includes(:certificate_contents).
+  default_scope where{workflow_state << ['canceled','refunded']}.joins(:certificate_contents).includes(:certificate_contents).
     order(:created_at.desc).readonly(false)
 
   scope :not_test, where{(is_test == nil) | (is_test==false)}
@@ -209,6 +209,7 @@ class CertificateOrder < ActiveRecord::Base
 
     state :paid do
       event :cancel, :transitions_to => :canceled
+      event :refund, :transitions_to => :refunded
       event :start_over, transitions_to: :paid do |complete=false|
         duration = self.certificate_content.duration
         temp_cc=self.certificate_contents.create(duration: duration)
@@ -220,9 +221,7 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     state :canceled do
-      event :refund, :transitions_to => :refunded do |order_date|
-        halt unless has_expired?(order_date)
-      end
+      event :refund, :transitions_to => :refunded
     end
 
     state :refunded #only refund a canceled order
