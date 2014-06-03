@@ -25,8 +25,11 @@ describe OrdersController do
       end
 
       it "shows the certificate reference number" do
+        @customer = create :customer
         order = create :order
-        post :create, order: attributes_for(:order), user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
+        activate_authlogic
+        UserSession.create(@customer)
+        post :create, order: attributes_for(:order), certificate_order: attributes_for(:certificate_order), user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
         expect(response.body).to have_content(order.reference_number)
       end
 

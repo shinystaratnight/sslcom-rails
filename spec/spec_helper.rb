@@ -2,7 +2,13 @@ require 'rubygems'
 require "capybara/rspec"
 require 'webmock/rspec'
 require 'declarative_authorization/maintenance'
+require 'authlogic/test_case' # include at the top of test_helper.rb
+include Authlogic::TestCase
 include Authorization::TestHelper
+
+def setup
+  :activate_authlogic
+end
 
 WebMock.disable_net_connect!(allow_localhost: true)
 

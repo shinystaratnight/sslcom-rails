@@ -6,7 +6,14 @@ FactoryGirl.define do
     roles {|roles|[roles.association(:role)]}
 
     factory :customer do
-      after(:create) {|user|user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]}
+      login "customer"
+      email "customer@domain.com"
+      status "enabled"
+      after(:create) {|user|
+        user.crypted_password = "iMc/GE5OmEG6SCL8+UWCsI9l/n1VMr5GTSG12A=="
+        user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]
+        user.save
+      }
     end
 
     factory :sysadmin do
@@ -363,10 +370,10 @@ EOS
     end
 
     after(:create) {|sa|
-      without_access_control do
+      # without_access_control do
         sa.funded_account.cents = 100000
-        sa.funded_account.save
-      end
+        # sa.funded_account.save
+      # end
     }
 
     factory :ssl_account_reseller do
