@@ -1,24 +1,124 @@
 -c={}
 -c[:description]="SSL.com certificates are globally trusted by #{Settings.browser_acceptance} of browsers"
 -c[:keywords]="ssl ssl.com certificates browsers acceptance #{Settings.browser_acceptance} compatible blackberry rim mozilla aol firefox internet explorer safari chrome opera netscape"
--c[:title] = "SSL.com Certificate Browser Acceptance"
+-c[:title] = "SSL.com Certificate Compatibility"
 -c[:header] = "public"
 -c.each do |k, v|
   -content_for k, c[k]
 %h1=c[:title]
-%h2 Overwhelmingly accepted and trusted by most users globally
+%h2 Overwhelmingly accepted and trusted by over 99.9% of users globally
 .default_container
-  %h3 Browser Listings
+  %h3 SSL.com SSL Compatibility and Acceptance
   %p
-    SSL.com certificates are accepted by over #{Settings.browser_acceptance} of Internet users globally. This
-    meets or exceeds trust levels of other leading certificate authorities.
-  .info_listing
-    =image_tag "compatible.gif", title: "ssl.com certificate compatible browsers"
-  %ul
-    %li Internet Explorer 5.01 and above
-    %li Netscape 4.77 and above
-    %li Firefox 0.1 and above
-    %li Mozilla 0.6 and above
-    %li AOL 5 and above
-    %li Opera 8 and above
-    %li Safari 1.2 and above
+    SSL.com certificates are accepted by over 99.9% of browsers, tablets, and mobile devices. This
+    meets or exceeds trust levels of other leading certificate authorities such as Geotrust, Verisign,
+    and Godaddy.
+  %p 
+    To ensure long-term reliable and security for websites secured with SSL.com issued ssl certificates,
+    all SSL.com root and intermediate certificates are signed using 2048 bit keys.
+  .content
+    %table
+      %tbody
+        %tr{:align => "left", :valign => "top"}
+          %td{:width => "250"}
+            %p
+              %strong Web Browsers:
+            %ul
+              %li Microsoft Internet Explorer 5.01 +
+              %li Mozilla Firefox 1.0 +
+              %li Mozilla 0.6 +
+              %li Google Chrome
+              %li Konqueror (KDE)
+              %li Netscape 4.77 +
+              %li Opera 6.1 +
+              %li Apple Safari 1.2 +
+              %li Camino 1.0 +
+              %li AOL 5 +
+            %p
+              %strong Server Platforms
+            %ul
+              %li Apache
+              %li BEA Weblogic
+              %li C2Net Stronghold
+              %li cPanel / Web Host Manager
+              %li Ensim Control Panel
+              %li Hsphere
+              %li IBM HTTP Server
+              %li iPlanet Server / Sun One
+              %li Java Web Server (Javasoft / Sun)
+              %li Lotus Domino
+              %li Microsoft IIS
+              %li Microsoft ISA
+              %li Microsoft Live Communication Server
+              %li Microsoft SQL Server 2005
+              %li Netscape Enterprise Server
+              %li Novell ConsoleOne + Novel Webserver
+              %li OpenLDAP
+              %li Oracle HTTP Server
+              %li Plesk
+              %li Tomcat
+              %li Webmin
+              %li WebSTAR
+              %li Zeus Web Server
+              %li All other SSL-Capable Server Platforms
+            %p
+              %strong Application Suites:
+            %ul
+              %li Microsoft Authenticode
+              %li Visual Basic for Applications (VBA)
+              %li Adobe AIR
+              %li Sun Java SE 1.4.2 +
+              %li Mozilla Suite 1.0 +
+              %li Sea Monkey
+          %td{:width => "250"}
+            %p
+              %strong Mobile Devices / PDAs / Micro Browsers / Games Consoles
+            %ul
+              %li Android 1.5 +
+              %li iOS 1.0 +
+              %li Windows Phone 7 +
+              %li Microsoft Windows Mobile 5/6
+              %li Blackberry 4.3.0 +
+              %li Microsoft Windows CE 4.0
+              %li Microsoft IE Pocket PC 2003
+              %li Microsoft IE Smartphone 2003
+              %li Palm OS 5.0 +
+              %li Netfront Browser 3.0 +
+              %li KDDI Openwave 6.2.0.12 +
+              %li Brew
+              %li Opera Mini 3.0 +
+              %li Opera Mobile 6.0 +
+              %li NTT / DoCoMo
+              %li Sony Playstation Portable
+              %li Sony Playstation 3
+              %li Nintendo Wii
+            %p
+              %strong Extended Validation Browsers:
+            %ul
+              %li Microsoft Internet Explorer 7 + (Vista)
+              %li Microsoft Internet Explorer 7 + (Windows XP)
+              %li Opera 9.5 +
+              %li Firefox 3 +
+              %li Apple Safari 3.2 +
+              %li Google Chrome 1 +
+            %p
+              %strong Email Clients (S/MIME):
+            %ul
+              %li Microsoft Outlook 99 +
+              %li Microsoft Outlook 2000
+              %li Microsoft Outlook 2003
+              %li Microsoft Outlook 2007
+              %li Microsoft Outlook XP
+              %li Microsoft Outlook Express 5 +
+              %li Microsoft Entourage (OS/X)
+              %li Mozilla Thunderbird 1.0 +
+              %li Qualcomm Eudora 6.2 +
+              %li Lotus Notes (6 +)
+              %li Mail.app (Mac OS X)
+              %li Microsoft / Windows Mail 1.0 + (Vista)
+              %li The Bat 1 +
+            %p
+              %strong Document Security Platforms:
+            %ul
+              %li Microsoft Office(Word, Excel, Powerpoint, Access,InfoPath)
+              %li Open Office Suite
