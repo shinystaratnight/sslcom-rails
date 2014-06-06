@@ -25,15 +25,15 @@ describe OrdersController do
       end
 
       it "shows the certificate reference number" do
-        @cookies = { :cart =>
-                         '[{"pr":"basicssl","du":"1","li":"0","do":"0","af":1,"q":1}]' }
-        controller.stub!(:cookies).and_return(@cookies)
-        create :basic_ssl
-        @customer = create :customer
+        # @cookies = { :cart =>
+        #                  '[{"pr":"basicssl","du":"1","li":"0","do":"0","af":1,"q":1}]' }
+        # controller.stub(:cookies).and_return(@cookies)
+        # create :basic_ssl
+        # @customer = create :customer
         order = create :order
-        activate_authlogic
-        UserSession.create(@customer)
-        post :create, order: attributes_for(:order), user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
+        # activate_authlogic
+        # UserSession.create(@customer)
+        post :create, order: attributes_for(:order)#, user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
         expect(response.body).to have_content(order.reference_number)
       end
 

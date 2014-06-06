@@ -39,7 +39,7 @@
           =co.order.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(cc)}")
           #{expires_on(cc)}
-        %td
+        %td.ssl_action
           #{action(co)}
       %tr.hidden.expanded
         %td(colspan="6")

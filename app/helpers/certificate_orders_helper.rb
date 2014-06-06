@@ -94,7 +94,11 @@ module CertificateOrdersHelper
               link_to 'renew', renew_certificate_order_path(certificate_order)
             end
           else
-            link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
+            if certificate_order.certificate.is_free?
+              "<ul><li>#{link_to 'click to upgrade', renew_certificate_order_path(certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(certificate_order)}</li></ul>".html_safe
+            else
+              link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
+            end
           end
         when "canceled"
       end

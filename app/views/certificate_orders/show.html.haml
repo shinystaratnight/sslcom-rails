@@ -33,7 +33,7 @@
           =@certificate_order.order.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(@cc)}")
           %span.expires_on=expires_on(@cc)
-        %td=action(@certificate_order)
+        %td.ssl_action=action(@certificate_order)
       %tr.expanded
         %td(colspan="5")
           .certificate_details
