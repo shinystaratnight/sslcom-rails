@@ -70,7 +70,7 @@ class BillingProfile < ActiveRecord::Base
       :locality     => self.city,
       :region       => self.state,
       :country      => self.country,
-      :postal_code  => self.postal_code,
+      :postal_code  => defined?(::DECLINE_ZIP_CODE) ? ::DECLINE_ZIP_CODE : self.postal_code, #testing decline or not
       :phone        => self.phone
     })
   end

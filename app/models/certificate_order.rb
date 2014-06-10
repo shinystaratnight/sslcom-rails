@@ -515,10 +515,6 @@ class CertificateOrder < ActiveRecord::Base
     certificate_order
   end
 
-  def refund
-
-  end
-
   def validation_methods
     validation.validation_rules.map(&:applicable_validation_methods).
       flatten.uniq
@@ -842,6 +838,13 @@ class CertificateOrder < ActiveRecord::Base
     cc=certificate_content
     cc.preferred_reprocessing = false
     cc.save validation: false
+  end
+
+  def change_ext_ca_order(new_number)
+    if old_number = external_order_number
+      ss=certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.last
+      ss.update_attribute :response, ss.response.gsub(old_number, new_number.to_s)
+    end
   end
 
   # Resets this order as if it never processed

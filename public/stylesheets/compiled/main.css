@@ -7195,9 +7195,8 @@ span#no_emails_accessible {
 
 /* line 5298, ../../../app/stylesheets/main.sass */
 .ssl_action ul, .ssl_action .default_container .info_listing ul#privacy, .default_container .info_listing .ssl_action ul#privacy {
-  line-height: 1.2em;
+  line-height: 1.4em;
   padding: 0px;
   font-size: 0.7em;
   list-style-type: none;
-  text-align: left;
 }

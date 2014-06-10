@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe OrdersController do
+render_views
+
+  before(:each) do
+    request.host = "www.ssl.com"
+  end
 
   describe "Get #show" do
     it "assigns the order" do
@@ -30,11 +35,12 @@ describe OrdersController do
         # controller.stub(:cookies).and_return(@cookies)
         # create :basic_ssl
         # @customer = create :customer
-        order = create :order
+        # order = create :order
         # activate_authlogic
         # UserSession.create(@customer)
-        post :create, order: attributes_for(:order)#, user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
-        expect(response.body).to have_content(order.reference_number)
+        # post :create, order: attributes_for(:order)#, user: attributes_for(:customer), billing_profile: attributes_for(:billing_profile)
+        # expect(response.body).to have_content(order.reference_number)
+        expect(request.flash[:error]).to eq("test")
       end
 
       it "renders the order page" do
