@@ -86,6 +86,9 @@ jQuery(function($) {
         }
         $('#first_domain_tier_price').text(durations[duration_index-1][0].toFixed(2));
         $('#second_domain_tier_price').text(durations[duration_index-1][1].toFixed(2));
+        <%unless @certificate.is_ev?%>
+          $('#third_domain_tier_price').text(durations[duration_index-1][2].toFixed(2));
+        <%end%>
       <%end%>
     <%end%>
     $('#calculated_price').text('$'+((parseFloat(duration_cost)+
@@ -125,9 +128,9 @@ jQuery(function($) {
     <%c = -1%>
     <%@certificate.num_durations.times do |i| -%>
       <%if @certificate.is_ucc?-%>
-        durations[<%=i%>] = new Array(<%=Certificate::NUM_DOMAINS_TIERS%>);
-        <%Certificate::NUM_DOMAINS_TIERS.times do |j|%>
-            durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains[c+=1].price*((j==0)?3:1))%>;
+        durations[<%=i%>] = new Array(<%=@certificate.num_domain_tiers%>);
+        <%@certificate.num_domain_tiers.times do |j|%>
+            durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains(true)[i][j].price*((j==0)?3:1))%>;
         <%end%>
       <%else -%>
         durations[<%=i%>] = <%=@certificate.items_by_duration[i].price%>;

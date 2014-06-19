@@ -118,6 +118,7 @@ class ApplicationController < ActionController::Base
                                 :amount              =>pd[1].amount*additional_domains)
           certificate_order.sub_order_items << so
         end
+
       end
     end
     unless certificate.is_ucc?

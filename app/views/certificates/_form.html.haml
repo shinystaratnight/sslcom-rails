@@ -1,6 +1,8 @@
 -if @certificate.is_ucc?
-  -first = @certificate.items_by_domains[0]
-  -second = @certificate.items_by_domains[1]
+  -if @certificate.is_ev?
+    -first, second = @certificate.items_by_domains(true).transpose[0]
+  -else
+    -first, second, third = @certificate.items_by_domains(true).transpose[0]
 -unless @certificate_order.is_unused_credit?
   .clearfix#has_csr_switch
     %label{:for=>"has_csr"}
@@ -167,7 +169,13 @@
             $
             %span#second_domain_tier_price>
               #{second.price.format}
-            \ ea for domains 4-200
+            \ ea domain after 3rd
+          -unless @certificate.is_ev?
+            %span.label_desc
+              $
+              %span#third_domain_tier_price>
+                #{third.price.format}
+              \ ea wildcard domain
       =cert_form.text_area :additional_domains, cols: 40, rows: 10
   -unless @certificate_order.is_unused_credit?
     .clearfix

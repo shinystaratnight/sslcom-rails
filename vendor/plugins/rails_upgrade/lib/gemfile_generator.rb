@@ -47,7 +47,7 @@ module Rails
         data = {}
         
         # Add new keys from old keys
-        data[:require] = options[:lib] if options[:lib]
+        data[:require] = options[:acts_as_money] if options[:acts_as_money]
         data[:source] = options[:source] if options[:source]
         
         version = options[:version]

@@ -11,7 +11,7 @@ class Certificate < ActiveRecord::Base
   serialize   :title
   preference  :certificate_chain, :string
 
-  NUM_DOMAINS_TIERS = 2
+  NUM_DOMAINS_TIERS = 3
   UCC_INITIAL_DOMAINS_BLOCK = 3
   UCC_MAX_DOMAINS = 200
 
@@ -122,8 +122,22 @@ class Certificate < ActiveRecord::Base
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
-  def items_by_domains
-    product_variant_groups.domains.map(&:product_variant_items).flatten if is_ucc?
+  # use multi_dim to return a multi dimension array of domain types
+  def items_by_domains(multi_dim=false)
+    if is_ucc?
+      unless multi_dim
+        product_variant_groups.domains.map(&:product_variant_items).flatten
+      else
+        unless is_ev?
+          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              product_variant_items.where{serial=~"%yradm%"}.flatten,
+              product_variant_items.where{serial=~"%yrwcdm%"}.flatten)
+        else
+          product_variant_items.where{serial=~"%yrdm%"}.flatten.zip(
+              product_variant_items.where{serial=~"%yradm%"}.flatten)
+        end
+      end
+    end
   end
 
   def items_by_server_licenses
@@ -133,17 +147,25 @@ class Certificate < ActiveRecord::Base
 
   def first_domains_tiers
     if is_ucc?
-      first = []
-      items_by_domains.each_with_index {|d, i| first << d if i%NUM_DOMAINS_TIERS==0}
-      first
+      items_by_domains(true).transpose[0]
     end
   end
 
   def num_durations
     if is_ucc?
-      items_by_domains.size / NUM_DOMAINS_TIERS
+      items_by_domains.size / num_domain_tiers
     else
       items_by_duration.size
+    end
+  end
+
+  def num_domain_tiers
+    if is_ucc?
+      if is_ev?
+        NUM_DOMAINS_TIERS.to_i - 1
+      else
+        NUM_DOMAINS_TIERS.to_i
+      end
     end
   end
 
