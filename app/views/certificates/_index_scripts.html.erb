@@ -11,18 +11,17 @@ jQuery(function($) {
       textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
     <%end-%>
     domains = textArea.value.split(/\s/);
-    <%if @certificate.product=="premiumssl"-%>
+    <%if @certificate.is_premium_ssl?-%>
       domains = domains.slice(0,3);
       textArea.value = domains.join(' ');
     <%end-%>
-    return domains;
+    return domains.filter(Boolean);
   };
   $.adjust_domain_pricing = function(textArea){
       domains = $.domains(textArea);
       $.removeFromArray("",domains);
-      $('.order_amount_desc span').text((domains.length > 3) ? domains.length : 3);
-      if(domains.length > <%=Certificate::NUM_DOMAINS_TIERS%>)
-        $.update_order_pricing();
+      $('.order_amount_desc span').text((domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>) ? domains.length : <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>);
+      $.update_order_pricing();
   };
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
@@ -80,13 +79,17 @@ jQuery(function($) {
         included = " (included)";
       $('#server_license_cost_ea').text(server_license_cost.toFixed(2)+included);
       <%if @certificate.is_ucc?%>
-        if(domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>){
+        wildcard_domains = $.grep(domains, function( n, i ) {
+          return ( n.indexOf('*.')==0);
+        }).filter(Boolean);
+        if((domains.length - wildcard_domains.length) > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>){
           num_domains_buy = domains.length-<%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
           domains_cost = durations[duration_index-1][1]*num_domains_buy;
         }
         $('#first_domain_tier_price').text(durations[duration_index-1][0].toFixed(2));
         $('#second_domain_tier_price').text(durations[duration_index-1][1].toFixed(2));
-        <%unless @certificate.is_ev?%>
+        <%unless @certificate.is_ev? or @certificate.is_premium_ssl?%>
+          domains_cost = domains_cost + durations[duration_index-1][2]*wildcard_domains.length;
           $('#third_domain_tier_price').text(durations[duration_index-1][2].toFixed(2));
         <%end%>
       <%end%>
@@ -130,7 +133,7 @@ jQuery(function($) {
       <%if @certificate.is_ucc?-%>
         durations[<%=i%>] = new Array(<%=@certificate.num_domain_tiers%>);
         <%@certificate.num_domain_tiers.times do |j|%>
-            durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains(true)[i][j].price*((j==0)?3:1))%>;
+          durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains(true)[i][j].price*((j==0)?3:1))%>;
         <%end%>
       <%else -%>
         durations[<%=i%>] = <%=@certificate.items_by_duration[i].price%>;

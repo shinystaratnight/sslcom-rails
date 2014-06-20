@@ -106,19 +106,29 @@ class ApplicationController < ActionController::Base
       if certificate.is_ucc?
         pd                 = certificate.items_by_domains.find_all { |item|
           item.value==duration.to_s }
-        additional_domains = (certificate_order.certificate_contents[0].
-            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
         so                 = SubOrderItem.new(:product_variant_item=>pd[0],
                                               :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
                                               :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
         certificate_order.sub_order_items << so
+        # calculate wildcards by subtracting their total from additional_domains
+        wildcards = 0
+        if certificate.allow_wildcard_ucc?
+          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}
+          additional_domains -= wildcards.count
+        end
         if additional_domains > 0
           so = SubOrderItem.new(:product_variant_item=>pd[1],
                                 :quantity            =>additional_domains,
                                 :amount              =>pd[1].amount*additional_domains)
           certificate_order.sub_order_items << so
         end
-
+        if wildcards.count > 0
+          so = SubOrderItem.new(:product_variant_item=>pd[2],
+                                :quantity            =>wildcards.count,
+                                :amount              =>pd[2].amount*wildcards.count)
+          certificate_order.sub_order_items << so
+        end
       end
     end
     unless certificate.is_ucc?
@@ -202,8 +212,7 @@ class ApplicationController < ActionController::Base
         if certificate.is_ucc?
           pd = certificate.items_by_domains.find_all{|item|
             item.value==duration.to_s}
-          additional_domains = (certificate_order.certificate_contents[0].
-            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+          additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
           so = SubOrderItem.new(:product_variant_item=>pd[0],
             :quantity=>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
             :amount=>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)

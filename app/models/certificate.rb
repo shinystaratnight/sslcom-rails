@@ -161,7 +161,7 @@ class Certificate < ActiveRecord::Base
 
   def num_domain_tiers
     if is_ucc?
-      if is_ev?
+      if is_ev? or is_premium_ssl?
         NUM_DOMAINS_TIERS.to_i - 1
       else
         NUM_DOMAINS_TIERS.to_i
@@ -223,7 +223,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def allow_wildcard_ucc?
-    is_ev? ? false : true
+    (is_ev? or is_premium_ssl?) ? false : true
     #true
     #allow_wildcard_ucc
   end

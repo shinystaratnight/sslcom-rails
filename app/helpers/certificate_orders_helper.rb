@@ -10,17 +10,17 @@ module CertificateOrdersHelper
           items << pluralize(soi.quantity+1, "server license")
         end
         if certificate_order.certificate.is_ucc?
-          soid = certificate_order.sub_order_items.find_all{|item|item.
-              product_variant_item.is_domain?}
-          quantity = soid.sum(&:quantity)
+          quantity = certificate_order.purchased_domains('all')
           unless certificate_order.certificate_contents.empty?
             d=certificate_order.certificate_content.domains
             domains = d.blank? ? "" : certificate_order.
               certificate_content.domains.join(", ")
+            wildcard_qty=certificate_order.purchased_domains('wildcard')
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
             else
-              items << content_tag(:dt,pluralize(quantity, "domain")) +
+              items << content_tag(:dt,pluralize(quantity, "#{certificate_order.certificate.is_premium_ssl? ? 'sub' : ''}domain")+
+                (wildcard_qty==0 ? '' : " (#{pluralize(certificate_order.purchased_domains('wildcard'), 'wildcard ssl domain')})")) +
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
           end

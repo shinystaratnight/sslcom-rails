@@ -156,8 +156,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
       if certificate.is_ucc?
         pd                 = certificate.items_by_domains.find_all { |item|
           item.value==duration.to_s }
-        additional_domains = (certificate_order.certificate_contents[0].
-            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
         so                 = SubOrderItem.new(:product_variant_item=>pd[0],
                                               :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
                                               :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)

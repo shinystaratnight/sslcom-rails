@@ -412,6 +412,35 @@ class CertificateOrder < ActiveRecord::Base
     names || csr.signed_certificate.try(:common_name) || csr.common_name
   end
 
+  def domains
+    if certificate_content.domains.kind_of?(Array)
+      certificate_content.domains.flatten
+    else
+      certificate_content.domains
+    end
+  end
+
+  def wildcard_domains
+    domains.find_all{|d|d=~/^\*\./} unless domains.blank?
+  end
+
+  def nonwildcard_domains
+    domains-nonwildcard_domains unless domains.blank?
+  end
+
+  # count of domains bought
+  # type can be 'wildcard', 'all'
+  def purchased_domains(type="nonwildcard")
+    soid = sub_order_items.find_all{|item|item.
+      product_variant_item.is_domain?}
+    case type
+      when 'all'
+        soid.sum(&:quantity)
+      when 'wildcard'
+        soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
+    end
+  end
+
   def order
     orders.last
   end
@@ -488,8 +517,7 @@ class CertificateOrder < ActiveRecord::Base
       if certificate.is_ucc?
         pd                 = certificate.items_by_domains.find_all { |item|
           item.value==duration.to_s }
-        additional_domains = (certificate_order.certificate_contents[0].
-            domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
         so                 = SubOrderItem.new(:product_variant_item=>pd[0],
                                               :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
                                               :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
