@@ -16,13 +16,23 @@
       %td(colspan=2)
         %h3
           =link_to 'wildcard and exchange (ucc) ssl certificates', wildcard_or_ucc_certificates_url
-    -@certificates.each_with_index do |c,i|
-      -next if @certificates[i].product_root=~/^free/
+    -singles = @certificates.map{|c|c if(c.is_single? || c.is_premium_ssl?)}.compact
+    -multis = @certificates.map{|c|c if(c.is_multi? && !c.is_premium_ssl?)}.compact
+    -all = singles.zip(multis)
+    -all.each_with_index do |c,i|
       -if (i % 2)==0
         %tr
-          -if @certificates[i].product_root=="ucc"
+          -unless c[0].blank?
+            =render partial: "certificate_detail", locals: {c: c[0], i: i}
+          -unless c[1].blank?
+            =render partial: "certificate_detail", locals: {c: c[1], i: i}
+          -else
             %td(colspan=2) &nbsp;
-          -unless @certificates[i].blank?
-            =render partial: "certificate_detail", locals: {c: @certificates[i], i: i}
-          -unless @certificates[i+1].blank?
-            =render partial: "certificate_detail", locals: {c: @certificates[i+1], i: i}
+      -else
+        %tr
+          -unless c[0].blank?
+            =render partial: "certificate_detail", locals: {c: c[0], i: i}
+          -unless c[1].blank?
+            =render partial: "certificate_detail", locals: {c: c[1], i: i}
+          -else
+            %td(colspan=2) &nbsp;
