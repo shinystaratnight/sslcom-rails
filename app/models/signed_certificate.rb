@@ -172,6 +172,21 @@ class SignedCertificate < ActiveRecord::Base
     csr.certificate_content.certificate_order.ssl_account
   end
 
+  # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
+  def duration_remaining
+    (Time.now - effective_date)/(expiration_date - effective_date)
+  end
+
+  def remaining_days(round=false)
+    sum = (Time.now - effective_date)
+    (round ? sum.round : sum)/1.day
+  end
+
+  def total_days(round=false)
+    sum = (expiration_date - effective_date)
+    (round ? sum.round : sum)/1.day
+  end
+
   def expired?
     return false unless expiration_date
     expiration_date < (Time.new)

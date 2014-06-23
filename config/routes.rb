@@ -215,7 +215,7 @@ SslCom::Application.routes.draw do
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}
   match '/subject_alternative_name' => 'site#subject_alternative_name', as: :san
   match 'browser_compatibility' => 'site#compatibility', as: :browsers
-  match 'top-level-domains-tlds' => 'site#top_level_domains_tlds', as: :tlds
+  match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds
   #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("match", i=>"site##{i}", :as => i.to_sym)

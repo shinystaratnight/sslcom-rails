@@ -250,6 +250,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def prorated
+
+  end
+
   # unit can be :days or :years
   def certificate_duration(unit=:as_is)
     years=if migrated_from_v2? && !preferred_v2_line_items.blank?
@@ -291,7 +295,7 @@ class CertificateOrder < ActiveRecord::Base
     if migrated_from_v2?
       Certificate.map_to_legacy(preferred_v2_product_description, 'renew')
     elsif certificate.is_free?
-      Certificate.for_sale.find_by_product "high_assurance"
+      Certificate.for_sale.find_by_product "basicssl"
     else
       certificate
     end
