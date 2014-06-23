@@ -1,0 +1,21 @@
+-c={}
+-c[:description]="SSL.com issues signed certificates for the following top level domains"
+-c[:keywords]="ssl top-level domains tlds gtlds signed certificates"
+-c[:title] = "Acceptable Top Level Domains (tlds) for SSL Certificates"
+-c[:header] = "public"
+-c.each do |k, v|
+  -content_for k, c[k]
+%h1=c[:title]
+%h2 Acceptable Top Level Domains (tlds)
+.default_container
+  %h3 ICANN tlds listing in alphabetical order
+  %p
+    The following list represents all acceptable top-level domains (tlds) to for use with SSL.com ssl certificates.
+    A tld can be found to the right of the furthest right dot in a domain name. For instance, 'info' would be the tld for
+    'www.domain.info', com for 'www.ssl.com', etc.
+  %table#accepted_country_codes(cellpadding="6")
+    %thead
+      %th Top-Level Domain Name (tld)
+    -CertificateContent::ICANN_TLDS.each do |c|
+      %tr
+        %td.full_name #{c}
