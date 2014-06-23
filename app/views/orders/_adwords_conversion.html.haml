@@ -9,6 +9,21 @@
   var google_conversion_value = "#{@order.amount}";
   var google_remarketing_only = false;
   /* ]]> */
+  ga('require', 'ecommerce', 'ecommerce.js');
+  ga('ecommerce:addTransaction', {
+  'id': '975052302', // Transaction ID. Required.
+  'affiliation': 'SSL.com', // store name.
+  'revenue': '#{@order.amount}' // total revenue.
+  });
+  ga('ecommerce:addItem', {
+  'id': '975052302', // Transaction ID. Required. Same as in the transaction data.
+  'name': 'ssl', // Product name. Required.
+  'sku': 'ssl', // Product SKU.
+  'category': 'SSL Certificate', // Product Category or variation.
+  'price': '#{@order.amount}', // Product price.
+  'quantity': '1' // Product Quantity.
+  });
+  ga('ecommerce:send');
 %script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
 %noscript
   %div{style: "display:inline;"}
