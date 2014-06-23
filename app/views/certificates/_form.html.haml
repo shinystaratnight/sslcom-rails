@@ -122,13 +122,13 @@
       %p Example entries include:
       %ul.cert_reqs
         %li www.domain.com
+        %li *.example.com
         %li lync.domain.com
         %li any.any.domain.co.uk
         -unless @certificate.is_ev?
           %li www.example1.local
           %li exchange
           %li 10.10.10.10
-          %li *.example.com
     -else
       %p
         %em Each domain the ssl certificate will secure conforms to the following:
