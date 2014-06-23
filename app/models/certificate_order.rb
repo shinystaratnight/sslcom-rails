@@ -234,8 +234,25 @@ class CertificateOrder < ActiveRecord::Base
         sub_order_items[0].product_variant_item
   end
 
-  def certificate_duration
-    if migrated_from_v2? && !preferred_v2_line_items.blank?
+  def signed_certificate
+    certificate_content.csr.signed_certificate if certificate_content && certificate_content.csr
+  end
+
+  def signed_certificates(index=nil)
+    all_csrs = certificate_contents.map(&:csr).flatten.compact
+    unless all_csrs.blank?
+      case index
+        when nil
+          all_csrs.map(&:signed_certificates).flatten
+        else
+          all_csrs.map(&:signed_certificates).flatten[index]
+      end
+    end
+  end
+
+  # unit can be :days or :years
+  def certificate_duration(unit=:as_is)
+    years=if migrated_from_v2? && !preferred_v2_line_items.blank?
       preferred_v2_line_items.split('|').detect{|item|
         item =~/years?/i || item =~/days?/i}.scan(/\d+.+?(?:ear|ay)s?/).last
     else
@@ -249,21 +266,24 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
-  end
-
-
-  def certificate_duration_in_days
-    case certificate_duration.gsub(/[^\d]+/,"").to_i
-      when 1
-        365
-      when 2
-        720
-      when 3
-        1095
-      when 4
-        1460
-      when 5
-        1825
+    if unit==:years
+      years =~ /^(\d+)/
+      $1
+    elsif unit==:days
+      case years.gsub(/[^\d]+/,"").to_i
+        when 1
+          365
+        when 2
+          720
+        when 3
+          1095
+        when 4
+          1460
+        when 5
+          1825
+      end
+    else
+      years
     end
   end
 
@@ -320,10 +340,6 @@ class CertificateOrder < ActiveRecord::Base
 
   def migrated_from_v2?
     order.try(:preferred_migrated_from_v2)
-  end
-
-  def signed_certificate
-    certificate_content.csr.signed_certificate
   end
 
   def signup_process(cert=certificate)
@@ -793,7 +809,7 @@ class CertificateOrder < ActiveRecord::Base
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
               mapped_certificate.comodo_product_id) #trial cert does not specify duration
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
-            days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration_in_days :
+            days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration(:days) :
                 certificate_content.duration
             # temporary for a certain customer wanting to move over a number of domains to ssl.com
             days += 60 if

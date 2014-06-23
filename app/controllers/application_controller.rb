@@ -113,9 +113,9 @@ class ApplicationController < ActionController::Base
         certificate_order.sub_order_items << so
         # calculate wildcards by subtracting their total from additional_domains
         wildcards = 0
-        if certificate.allow_wildcard_ucc?
-          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}
-          additional_domains -= wildcards.count
+        if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
+          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
+          additional_domains -= wildcards
         end
         if additional_domains > 0
           so = SubOrderItem.new(:product_variant_item=>pd[1],
@@ -123,10 +123,10 @@ class ApplicationController < ActionController::Base
                                 :amount              =>pd[1].amount*additional_domains)
           certificate_order.sub_order_items << so
         end
-        if wildcards.count > 0
+        if wildcards > 0
           so = SubOrderItem.new(:product_variant_item=>pd[2],
-                                :quantity            =>wildcards.count,
-                                :amount              =>pd[2].amount*wildcards.count)
+                                :quantity            =>wildcards,
+                                :amount              =>pd[2].amount*wildcards)
           certificate_order.sub_order_items << so
         end
       end

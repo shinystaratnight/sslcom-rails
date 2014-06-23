@@ -112,13 +112,14 @@
         %li An entry CAN be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
         -unless @certificate.is_ev?
           %li An entry CAN be a single worded server name
-          %li An entry CAN be an internal ip address (but the certificate will not be effective past Dec 2015 per CAB Forum Reqs.)
+          %li An entry CAN be an internal ip address (but the certificate #{link_to "will not be effective past Dec 2015", "https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf", target: "_blank"} per CAB Forum Reqs.)
         -unless @certificate.allow_wildcard_ucc?
           %li An entry CANNOT represent a wildcard domain name (i.e. *.domain.com); for multi domain wildcard ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
         -else
           %li An entry CAN represent a wildcard domain name (i.e. *.domain.com, but NOT multiple levels like *.*.domain.com)
         %li Only requires 1 ip address (great for hosting and virtual hosts)
         %li Uses the Subject Alternative Name (SAN) extension field
+      %p Example entries include:
       %p Example entries include:
       %ul.cert_reqs
         %li www.domain.com
@@ -156,7 +157,7 @@
           -if @certificate.is_premium_ssl?
             Subdomains (3 max)
           -else
-            Domains:
+            Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
             =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
         %span.label_desc separated by space or new line
         %span.label_break

@@ -123,7 +123,9 @@ class CertificateOrdersController < ApplicationController
     unless @certificate_order.blank?
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
-      @certificate_content = @certificate_order.certificate_contents.build
+      domains = @certificate_order.domains
+      @certificate_content = @certificate_order.certificate_contents.build(domains: domains)
+      # @certificate_content.additional_domains = domains
       #reset dcv validation
       @certificate_order.validation.validation_rules.each do |vr|
         if vr.description=~/^domain/

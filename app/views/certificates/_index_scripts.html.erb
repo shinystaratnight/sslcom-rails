@@ -70,7 +70,7 @@ jQuery(function($) {
   $.update_order_pricing = function(){
     domains_cost = 0.0
     server_license_cost = 0.0;
-    duration_index = $(':radio[name*=duration]:checked').val();
+    duration_index = <%= @certificate_order.certificate ? @certificate_order.certificate_duration(:years) : "$(':radio[name*=duration]:checked').val();".html_safe %>
     duration_cost = durations[duration_index-1];
     <%if @certificate.is_ucc? || @certificate.is_wildcard?%>
       server_license_cost = licenses[duration_index-1] * $('#certificate_order_server_licenses').val();

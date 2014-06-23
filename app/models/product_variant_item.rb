@@ -29,7 +29,7 @@ class ProductVariantItem < ActiveRecord::Base
   private
 
   # A one time method to add wildcard domains as a separate charge item
-  def self.add_wildcard_domains
+  def self.add_wildcards_to_ucc
     tier_discounts = [1, 0.80, 0.75, 0.7, 0.6]
     prices = {ucc: 12900, evucc: 19900}
     out=[]
@@ -47,7 +47,7 @@ class ProductVariantItem < ActiveRecord::Base
       amount = prices[type] * duration.to_i * (tier ? tier_discounts[tier.to_i-1] : 1)
       if type == :ucc #there is no evucc wildcard but kept the logic anyway
         ProductVariantItem.create amount: amount.round(2).to_i, serial: serial, title: "each #{duration} Year Wildcard Domain", description: "each #{duration} Year Wildcard Domain".downcase,
-              text_only_description: "each #{duration} Year Wildcard Domain".downcase, display_order: pvi.display_order+=1,
+              text_only_description: "each #{duration} Year Wildcard Domain".downcase, display_order: duration,
               product_variant_group_id: pvi.product_variant_group_id, status: pvi.status, item_type: pvi.item_type,
               value: pvi.value, published_as: pvi.published_as
       end
