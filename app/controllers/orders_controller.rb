@@ -280,7 +280,7 @@ class OrdersController < ApplicationController
   def purchase_successful?
     return false unless ActiveMerchant::Billing::Base.mode == :test ?
         true : @credit_card.valid?
-    @order.amount= ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
+    @order.amount= BillingProfile::TEST_AMOUNT if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
     @order.description = Order::SSL_CERTIFICATE
     @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
     (@gateway_response.success?).tap do |success|

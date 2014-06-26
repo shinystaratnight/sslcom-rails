@@ -34,7 +34,6 @@ SslCom::Application.configure do
 
   ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info
-  # DECLINE_ZIP_CODE = 46282
   # GATEWAY_TEST_CODE = 1.0
   # END ActiveMerchant configuration
 

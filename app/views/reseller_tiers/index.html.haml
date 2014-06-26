@@ -13,4 +13,4 @@
   =render :partial => "tiers"
   #become_a_reseller_today
     %h3 get started today!
-    =link_to "Become a reseller!", new_account_url, :class=>"buttonc"
+    =link_to "Become a reseller!", new_account_url(:subdomain=>Reseller::SUBDOMAIN), :class=>"buttonc"

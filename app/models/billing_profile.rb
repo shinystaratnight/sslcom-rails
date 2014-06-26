@@ -20,6 +20,11 @@ class BillingProfile < ActiveRecord::Base
   CREDIT_CARDS = ["Visa", "Master Card", "Discover", "American Express"]
   AMERICAN = "United States"
 
+  # test - see http://developer.authorize.net/tools/errorgenerationguide/
+  #TEST_ZIP_CODE = 46204
+      #46282 #decline
+  #TEST_AMOUNT = 70.02
+
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
   scope :success, lambda{
@@ -70,7 +75,7 @@ class BillingProfile < ActiveRecord::Base
       :locality     => self.city,
       :region       => self.state,
       :country      => self.country,
-      :postal_code  => defined?(::DECLINE_ZIP_CODE) ? ::DECLINE_ZIP_CODE : self.postal_code, #testing decline or not
+      :postal_code  => (Rails.env=~/development/i && defined?(TEST_ZIP_CODE)) ? TEST_ZIP_CODE : self.postal_code, #testing decline or not
       :phone        => self.phone
     })
   end

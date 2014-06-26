@@ -349,9 +349,9 @@ class Order < ActiveRecord::Base
     options[:profile].cycled_years.map do |exp_year|
       profile=options[:profile]
       params = {expiration_year: exp_year, cvv: options[:cvv]}
-      if defined?(::GATEWAY_TEST_CODE)
+      if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
         params.merge!(card_number: "4222222222222")
-        self.amount = ::GATEWAY_TEST_CODE if defined?(::GATEWAY_TEST_CODE)
+        self.amount= BillingProfile::TEST_AMOUNT
       end
       credit_card = profile.build_credit_card(params)
       next unless ActiveMerchant::Billing::Base.mode == :test ?

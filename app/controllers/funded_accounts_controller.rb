@@ -87,8 +87,8 @@ class FundedAccountsController < ApplicationController
     @deposit = account.purchase dep
     @credit_card = @profile.build_credit_card
     if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
-      if defined?(::GATEWAY_TEST_CODE)
-        @deposit.amount= ::GATEWAY_TEST_CODE
+      if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
+        @deposit.amount= BillingProfile::TEST_AMOUNT
       else
         @deposit.amount= @funded_account.amount
       end
