@@ -86,7 +86,7 @@ jQuery(function($) {
           num_domains_buy = domains.length-<%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
           domains_cost = durations[duration_index-1][1]*num_domains_buy;
         }
-        <%ratio = ("* (1-"+@certificate_order.signed_certificates.last.duration_remaining.to_s+")") if @certificate_order.signed_certificates.try(:last)%>
+        <%ratio = ("* "+@certificate_order.duration_remaining.to_s) if @certificate_order.signed_certificates.try(:last)%>
         $('#first_domain_tier_price').text((durations[duration_index-1][0]<%=ratio%>).toFixed(2));
         $('#second_domain_tier_price').text((durations[duration_index-1][1]<%=ratio%>).toFixed(2));
         <%unless @certificate.is_ev? or @certificate.is_premium_ssl?%>

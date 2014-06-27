@@ -250,6 +250,26 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
+  def duration_remaining
+    remaining_days/total_days
+  end
+
+  def used_days(round=false)
+    sum = (Time.now - signed_certificates.first.effective_date)
+    (round ? sum.round : sum)/1.day
+  end
+
+  def remaining_days(round=false)
+    days = total_days-used_days
+    (round ? days.round : days)
+  end
+
+  def total_days(round=false)
+    sum = (signed_certificates.last.expiration_date - signed_certificates.first.effective_date)
+    (round ? sum.round : sum)/1.day
+  end
+
   def prorated
 
   end

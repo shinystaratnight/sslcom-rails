@@ -174,12 +174,17 @@ class SignedCertificate < ActiveRecord::Base
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining
-    (Time.now - effective_date)/(expiration_date - effective_date)
+    remaining_days/total_days
+  end
+
+  def used_days(round=false)
+    sum = (Time.now - effective_date)
+    (round ? sum.round : sum)/1.day
   end
 
   def remaining_days(round=false)
-    sum = (Time.now - effective_date)
-    (round ? sum.round : sum)/1.day
+    days = total_days-used_days
+    (round ? days.round : days)
   end
 
   def total_days(round=false)
