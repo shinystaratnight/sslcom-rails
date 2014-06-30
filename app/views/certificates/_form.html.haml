@@ -108,7 +108,7 @@
         -if @certificate.is_ev?
           %li Displays your company name with a green background in the address bar
           %li Displays your company details in the SSL Certificate details
-        %li CAN secure up to 200 entries (first 3 are free, additional charge per entry after the 3rd entry)
+        %li CAN secure up to 2000 entries (first 3 are free, additional charge per entry after the 3rd entry)
         %li An entry CAN be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
         -unless @certificate.is_ev?
           %li An entry CAN be a single worded server name
@@ -164,7 +164,7 @@
         %span.label_desc can skip and edit later
         -unless @certificate.is_premium_ssl?
           %span.label_break
-          %span.label_desc 200 domains maximum
+          %span.label_desc 2000 domains maximum
           %span.label_break
           %span.label_desc
             $

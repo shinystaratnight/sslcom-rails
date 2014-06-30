@@ -251,23 +251,40 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
-  def duration_remaining
-    remaining_days/total_days
+  def duration_remaining(options={duration: :order})
+    remaining_days(options)/total_days(options)
   end
 
-  def used_days(round=false)
-    sum = (Time.now - signed_certificates.first.effective_date)
-    (round ? sum.round : sum)/1.day
+  def used_days(options={round: false})
+    if signed_certificates && !signed_certificates.empty?
+      sum = (Time.now - signed_certificates.first.effective_date)
+      (options[:round] ? sum.round : sum)/1.day
+    else
+      0
+    end
   end
 
-  def remaining_days(round=false)
-    days = total_days-used_days
-    (round ? days.round : days)
+  def remaining_days(options={round: false, duration: :order})
+    tot, used = total_days(options), used_days(options)
+    if tot && used
+      days = total_days(options)-used_days(options)
+      (options[:round] ? days.round : days)
+    end
   end
 
-  def total_days(round=false)
-    sum = (signed_certificates.last.expiration_date - signed_certificates.first.effective_date)
-    (round ? sum.round : sum)/1.day
+
+  # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
+  def total_days(options={round: false, duration: :order})
+    if options[:duration]== :actual
+      if signed_certificates && !signed_certificates.empty?
+        sum = (signed_certificates.last.expiration_date - signed_certificates.first.effective_date)
+        (options[:round] ? sum.round : sum)/1.day
+      else
+        0
+      end
+    else
+      certificate_duration(:days)
+    end
   end
 
   def prorated
