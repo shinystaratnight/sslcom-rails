@@ -80,14 +80,17 @@
       %ul.cert_reqs
         %li CAN secure any number of subdomains (no limit) for 1 single price
         %li No additional charge for each subdomain
-        %li All entries will have the same domain name
+        %li Secures root domain as well as subdomains (ie domain.com, www.domain.com, exch01.domain.com)
+        %li All entries will have the same root domain name
         %li Only requires 1 ip address (great for hosting and virtual hosts)
       %p Example entries include:
       %ul.cert_reqs
+        %li domain.com
         %li www.domain.com
         %li mail.domain.com
         %li lync.domain.com
-        %li any.domain.com
+        %li exch01.domain.com
+        %li autodiscover.domain.com
       %p and so on...
     -elsif @certificate.is_premium_ssl?
       %p #{@certificate.title} Summary
