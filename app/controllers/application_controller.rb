@@ -485,8 +485,9 @@ class ApplicationController < ActionController::Base
   end
 
   def finish_reseller_signup
+    blocked = %w(certificate_orders orders site_seals validations ssl_accounts users)
     redirect_to new_account_reseller_url and return if
-      current_user.ssl_account.is_new_reseller?
+      current_user.ssl_account.is_new_reseller? and blocked.include?(controller_name)
   end
 
   def user_not_authorized
