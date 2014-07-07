@@ -1,6 +1,7 @@
 class DomainControlValidation < ActiveRecord::Base
   has_many :ca_dcv_requests, as: :api_requestable, dependent: :destroy
-  belongs_to :csr
+  belongs_to :csr # only for single domain certs
+  belongs_to :certificate_name # only for UCC or multi domain certs
   serialize :candidate_addresses
 
   validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}

@@ -5,6 +5,7 @@ class CertificateContent < ActiveRecord::Base
   has_one     :csr
   has_one     :registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
+  has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
 
 #  attr_accessible :certificate_contacts_attributes
 
@@ -12,6 +13,8 @@ class CertificateContent < ActiveRecord::Base
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
+
+  after_update :certificate_names_from_domains, :if => :domains_changed?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -36,6 +39,7 @@ class CertificateContent < ActiveRecord::Base
     AC
     ACADEMY
     ACCOUNTANTS
+    ACTIVE
     ACTOR
     AD
     AE
@@ -109,6 +113,7 @@ class CertificateContent < ActiveRecord::Base
     CAB
     CAMERA
     CAMP
+    CANCERRESEARCH
     CAPETOWN
     CAPITAL
     CARDS
@@ -161,6 +166,7 @@ class CertificateContent < ActiveRecord::Base
     CREDITCARD
     CRUISES
     CU
+    CUISINELLA
     CV
     CW
     CX
@@ -176,6 +182,7 @@ class CertificateContent < ActiveRecord::Base
     DESI
     DIAMONDS
     DIGITAL
+    DIRECT
     DIRECTORY
     DISCOUNT
     DJ
@@ -364,6 +371,7 @@ class CertificateContent < ActiveRecord::Base
     MH
     MIAMI
     MIL
+    MINI
     MK
     ML
     MM
@@ -431,6 +439,7 @@ class CertificateContent < ActiveRecord::Base
     PINK
     PK
     PL
+    PLACE
     PLUMBING
     PM
     PN
@@ -475,6 +484,7 @@ class CertificateContent < ActiveRecord::Base
     SAARLAND
     SB
     SC
+    SCHMIDT
     SCHULE
     SCOT
     SD
@@ -508,6 +518,7 @@ class CertificateContent < ActiveRecord::Base
     SUPPORT
     SURF
     SURGERY
+    SUZUKI
     SV
     SX
     SY
@@ -660,7 +671,8 @@ class CertificateContent < ActiveRecord::Base
     ZA
     ZM
     ZONE
-    ZW)
+    ZW
+    )
 
   INTRANET_IP_REGEX = /^(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})$/
 
@@ -760,6 +772,15 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def certificate_names_from_domains
+    self.domains.flatten.each do |domain|
+      certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
+    end
+    # delete orphaned certificate_names
+    certificate_names.map(&:name).each do |cn|
+      certificate_names.find_by_name(cn).destroy unless domains.flatten.include?(cn)
+    end
+  end
 
   def domains=(domains)
     unless domains.blank?

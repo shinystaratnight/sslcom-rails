@@ -30,9 +30,9 @@ class ComodoApi
       parameters: options, method: "post", response: res.body, ca: "comodo")
   end
 
-  def self.domain_control_email_choices(csr_or_domain)
-    is_a_csr = csr_or_domain.is_a?(Csr) ? true : false
-    options = {'domainName' => is_a_csr ? csr_or_domain.try(:common_name) : csr_or_domain}.
+  def self.domain_control_email_choices(obj_or_domain)
+    is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(Entry)) ? true : false
+    options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"
     url = URI.parse(host)
@@ -45,9 +45,9 @@ class ComodoApi
     end
     attr = {request_url: host,
       parameters: options, method: "post", response: res.body, ca: "comodo"}
-    if is_a_csr
-      dcv=csr_or_domain.ca_dcv_requests.create(attr)
-      csr_or_domain.domain_control_validations.create(
+    if is_a_obj
+      dcv=obj_or_domain.ca_dcv_requests.create(attr)
+      obj_or_domain.domain_control_validations.create(
         candidate_addresses: dcv.email_address_choices, subject: dcv.domain_name)
       dcv
     else

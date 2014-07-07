@@ -1,7 +1,8 @@
 require "declarative_authorization/maintenance"
 
 class ApiCertificateCreate < ApiCertificateRequest
-  attr_accessor :csr_obj, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
+  attr_accessor :csr_obj, # temporary csr object
+    :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
@@ -55,11 +56,14 @@ class ApiCertificateCreate < ApiCertificateRequest
   validate :verify_dcv_email_address, on: :create
 
   before_validation do
-    if new_record? && self.csr
-      self.dcv_method ||= "http_csr_hash"
-      self.csr_obj = Csr.new(body: self.csr)
-      unless self.csr_obj.errors.empty?
-        self.errors[:csr] << "has problems and or errors"
+    if new_record?
+      if self.csr # a single domain validation
+        self.dcv_method ||= "http_csr_hash"
+        self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
+        unless self.csr_obj.errors.empty?
+          self.errors[:csr] << "has problems and or errors"
+        end
+      elsif self.certificate_name # a multi domain validation
       end
     end
   end
