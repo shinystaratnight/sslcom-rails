@@ -29,6 +29,8 @@ SslCom::Application.routes.draw do
   # api
   match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
         :as => :api_certificate_create_v1_3
+  match '/certificates/1.4/create' => 'api_certificate_requests#create_v1_4',
+        :as => :api_certificate_create_v1_4
   match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
         :as => :api_certificate_retrieve_v1_3
   match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',

@@ -1,7 +1,8 @@
 require "declarative_authorization/maintenance"
 
-class ApiCertificateReprocess < ApiCertificateRequest
-  attr_accessor :csr_obj, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
+class ApiCertificateCreate_v1_4 < ApiCertificateRequest
+  attr_accessor :csr_obj, # temporary csr object
+    :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
@@ -13,14 +14,16 @@ class ApiCertificateReprocess < ApiCertificateRequest
               :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
-  validates :account_key, :secret_key, :csr, :ref, presence: true
+  DCV_METHODS = %w(email http_csr_hash dns https_csr_hash)
+
+  validates :account_key, :secret_key, presence: true
+  validates :csr, presence: true, unless: "ref.blank?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{ApiCertificateCreate::NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{ApiCertificateCreate::EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
-  # validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
+    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
@@ -38,7 +41,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
-      message: "needs to one of the following: #{ApiCertificateCreate::DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
+      message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
   validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
@@ -46,65 +49,72 @@ class ApiCertificateReprocess < ApiCertificateRequest
   # use code instead of serial allows attribute changes without affecting the cert name
   validates :product, presence: true, format: {with: /\d{3}/},
             inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
-            message: "needs to one of the following: #{ApiCertificateCreate::PRODUCTS.keys.map(&:to_s).join(', ')}"}
-  validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
-  validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
-  #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
-  validate :verify_dcv_methods, on: :create
+            message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}, if: "ref.blank?"
+  validate :verify_dcv_email_address, on: :create, unless: "email_address.blank?"
 
-  after_initialize do
-    if new_record? && self.csr
-      self.dcv_method ||= "http_csr_hash"
-      self.csr_obj = Csr.new(body: self.csr)
-      unless self.csr_obj.errors.empty?
-        self.errors[:csr] << "has problems and or errors"
+  before_validation do
+    if new_record?
+      if self.csr # a single domain validation
+        self.dcv_method ||= "http_csr_hash"
+        self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
+        unless self.csr_obj.errors.empty?
+          self.errors[:csr] << "has problems and or errors"
+        end
+      elsif self.api_requestable.is_a?(CertificateName) # a multi domain validation
+        #TODO add dcv validation
       end
     end
   end
 
-  #TODO finish this
-  def verify_dcv_methods
-    # if non ucc then look for email address, http_csr_hash, or dns
-    #if self.dcv_email_address && dcv_method=="http_csr_hash"
-    #  emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
-    #                                                    self.csr_obj.common_name).email_address_choices
-    #  errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
-    #      emails.include?(self.dcv_email_address)
-    #end
-    true
-  end
-
   def create_certificate_order
     # create certificate
+    # if self.ref
+    #   if CertificateOrder.find_by_ref self.ref
+    #     CertificateOrder.find_by_ref self.ref
+    #   else
+    #     errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
+    #   end
+    # else
+    #
+    # end
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
     co_params = {duration: period, is_api_call: true}
     co_params.merge!({is_test: self.test})
     co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
-    certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
-    certificate_content=certificate_order.certificate_contents.build(
-        csr: self.csr_obj, server_software_id: self.server_software)
-    certificate_content.certificate_order = certificate_order
+    certificate_order = api_requestable.certificate_orders.build(co_params)
+    if self.csr
+      # process csr
+      csr = self.csr_obj
+      csr.save
+    else
+      # or make a certificate voucher
+      certificate_order.preferred_payment_order = 'prepaid'
+    end
+    certificate_content=CertificateContent.new(
+        csr: csr, server_software_id: self.server_software)
+    certificate_order.certificate_contents << certificate_content
     @certificate_order = setup_certificate_order(@certificate, certificate_order)
-    order = current_user.ssl_account.purchase(@certificate_order)
+    order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test
       errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-        (order.amount.cents > current_user.ssl_account.funded_account.amount.cents)
+        (order.amount.cents > api_requestable.funded_account.amount.cents)
     end
     if errors.blank?
       if certificate_content.valid? &&
-          apply_funds(certificate_order: @certificate_order, current_user: current_user, order: order)
+          apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
         if certificate_content.save
           setup_certificate_content(
               certificate_order: certificate_order,
               certificate_content: certificate_content,
-              current_user: current_user)
+              ssl_account: api_requestable)
         end
         return @certificate_order
       else
         return certificate_content
       end
     end
+    self
   end
 
   def setup_certificate_content(options)
@@ -125,7 +135,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
         c = CertificateContact.new
-        r = options[:current_user].ssl_account.reseller
+        r = options[:ssl_account].reseller
         CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
           c.send((field+'=').to_sym, r.send(field.to_sym))
         end
@@ -150,8 +160,8 @@ class ApiCertificateReprocess < ApiCertificateRequest
       psl = certificate.items_by_server_licenses.find { |item|
         item.value==duration.to_s }
       so  = SubOrderItem.new(:product_variant_item=>psl,
-       :quantity            =>certificate_order.server_licenses.to_i,
-       :amount              =>psl.amount*certificate_order.server_licenses.to_i)
+                             :quantity            =>certificate_order.server_licenses.to_i,
+                             :amount              =>psl.amount*certificate_order.server_licenses.to_i)
       certificate_order.sub_order_items << so
       if certificate.is_ucc?
         pd                 = certificate.items_by_domains.find_all { |item|
@@ -161,10 +171,22 @@ class ApiCertificateReprocess < ApiCertificateRequest
                                               :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
                                               :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
         certificate_order.sub_order_items << so
+        # calculate wildcards by subtracting their total from additional_domains
+        wildcards = 0
+        if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
+          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
+          additional_domains -= wildcards
+        end
         if additional_domains > 0
           so = SubOrderItem.new(:product_variant_item=>pd[1],
                                 :quantity            =>additional_domains,
                                 :amount              =>pd[1].amount*additional_domains)
+          certificate_order.sub_order_items << so
+        end
+        if wildcards > 0
+          so = SubOrderItem.new(:product_variant_item=>pd[2],
+                                :quantity            =>wildcards,
+                                :amount              =>pd[2].amount*wildcards)
           certificate_order.sub_order_items << so
         end
       end
@@ -184,7 +206,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
 
   def apply_funds(options)
     order = options[:order]
-    @account_total = funded_account = options[:current_user].ssl_account.funded_account
+    funded_account = options[:ssl_account].funded_account
     funded_account.cents -= order.cents unless @certificate_order.is_test
     if funded_account.cents >= 0 and order.line_items.size > 0
       funded_account.deduct_order = true
@@ -223,4 +245,14 @@ class ApiCertificateReprocess < ApiCertificateRequest
     true
   end
 
+  def verify_dcv_email_address
+    if self.dcv_methods
+
+    elsif self.dcv_email_address
+      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
+                                                        self.csr_obj.common_name).email_address_choices
+      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
+          emails.include?(self.dcv_email_address)
+    end
+  end
 end
