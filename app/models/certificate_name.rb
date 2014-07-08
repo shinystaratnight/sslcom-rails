@@ -2,6 +2,7 @@
 
 class CertificateName < ActiveRecord::Base
   belongs_to  :certificate_content
+  has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
   has_many    :domain_control_validations do

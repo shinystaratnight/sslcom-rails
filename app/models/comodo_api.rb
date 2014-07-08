@@ -31,7 +31,7 @@ class ComodoApi
   end
 
   def self.domain_control_email_choices(obj_or_domain)
-    is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(Entry)) ? true : false
+    is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(CertificateName)) ? true : false
     options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"

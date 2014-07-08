@@ -829,6 +829,7 @@ class CertificateOrder < ActiveRecord::Base
             'countryName'=>csr.country
           )
           ssl_com_order(options)
+          #TODO build facility for multi domain validation support
           last_sent = csr.domain_control_validations.last_method
           if !skip_verification? && !last_sent.blank?
             perform_dcv(last_sent, options)

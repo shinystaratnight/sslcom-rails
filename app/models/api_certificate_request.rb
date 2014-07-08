@@ -27,7 +27,7 @@ class ApiCertificateRequest < CaApiRequest
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
-  DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain_name]
+  DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain_name, :domain_names]
 
   attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS).uniq
 

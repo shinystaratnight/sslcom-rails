@@ -84,7 +84,7 @@ class ApiCertificateRequestsController < ApplicationController
   def retrieve_v1_3
     @result = ApiCertificateRetrieve.new(params[:api_certificate_request])
     record_parameters
-    if @result.valid?
+    if @result.save
       template = "api_certificate_requests/success_retrieve_v1_3"
       @result.order_status = ApiCertificateRequest::ORDER_STATUS[2]
       @result.update_attribute :response, render_to_string(:template => template)
@@ -99,7 +99,14 @@ class ApiCertificateRequestsController < ApplicationController
     @result=ApiDcvEmails.new(params[:api_certificate_request])
     record_parameters
     if @result.save
-      @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      @result.email_addresses={}
+      if @result.domain_name
+        @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      else
+        @result.domain_names.each do |domain|
+          @result.email_addresses.merge! domain=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+        end
+      end
       unless @result.email_addresses.blank?
         template = "api_certificate_requests/success_dcv_emails_v1_3"
         @result.update_attribute :response, render_to_string(:template => template)
@@ -118,6 +125,22 @@ class ApiCertificateRequestsController < ApplicationController
       @result.sent_at=Time.now
       unless @result.email_addresses.blank?
         template = "api_certificate_requests/success_dcv_email_resend_v1_3"
+        @result.update_attribute :response, render_to_string(:template => template)
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render action: :create_v1_3
+  end
+
+  def dcv_validation_v1_3
+    @result=ApiDcvEmails.new(params[:api_certificate_request])
+    record_parameters
+    if @result.save
+      @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      unless @result.email_addresses.blank?
+        template = "api_certificate_requests/success_dcv_emails_v1_3"
         @result.update_attribute :response, render_to_string(:template => template)
         render(:template => template) and return
       end

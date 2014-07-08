@@ -63,19 +63,8 @@ class ApiCertificateCreate < ApiCertificateRequest
         unless self.csr_obj.errors.empty?
           self.errors[:csr] << "has problems and or errors"
         end
-      elsif self.certificate_name # a multi domain validation
+      elsif self.api_requestable.is_a?(CertificateName) # a multi domain validation
       end
-    end
-  end
-
-  def verify_dcv_email_address
-    if self.dcv_methods
-
-    elsif self.dcv_email_address
-      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
-                                                        self.csr_obj.common_name).email_address_choices
-      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
-          emails.include?(self.dcv_email_address)
     end
   end
 
@@ -231,4 +220,14 @@ class ApiCertificateCreate < ApiCertificateRequest
     true
   end
 
+  def verify_dcv_email_address
+    if self.dcv_methods
+
+    elsif self.dcv_email_address
+      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
+                                                        self.csr_obj.common_name).email_address_choices
+      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
+          emails.include?(self.dcv_email_address)
+    end
+  end
 end
