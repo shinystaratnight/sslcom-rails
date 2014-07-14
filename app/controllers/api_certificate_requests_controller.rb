@@ -1,5 +1,5 @@
 class ApiCertificateRequestsController < ApplicationController
-  before_filter :set_test
+  before_filter :set_test, :record_parameters
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
 
   wrap_parameters ApiCertificateRequest, include:
@@ -17,8 +17,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def create_v1_3
-    @result = ApiCertificateCreate.new(params[:api_certificate_request])
-    record_parameters
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -52,8 +50,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def create_v1_4
-    @result = ApiCertificateCreate_v1_4.new(params[:api_certificate_request])
-    record_parameters
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -61,10 +57,10 @@ class ApiCertificateRequestsController < ApplicationController
       if @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
-          if @acr.errors.empty?
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
             @result.ref = @acr.ref
-            @result.order_status = "pending validation"
+            @result.order_status = @acr.status
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)
@@ -87,12 +83,21 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_validate_v1_4
-
+    if @result.save
+      if @certificate_order.is_a?(CertificateOrder)
+        @certificate_order.api_validate(@result)
+        template = "api_certificate_requests/success_retrieve_v1_3"
+        @result.order_status = @certificate_order.status
+        @result.update_attribute :response, render_to_string(:template => template)
+        render(:template => template) and return
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      end
+    end
+    render action: :create_v1_3
   end
 
   def reprocess_v1_3
-    @result = ApiCertificateCreate.new(params[:api_certificate_request])
-    record_parameters
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -122,11 +127,9 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def retrieve_v1_3
-    @result = ApiCertificateRetrieve.new(params[:api_certificate_request])
-    record_parameters
-    if @result.save
+    if @result.save && @certificate_order.is_a?(CertificateOrder)
       template = "api_certificate_requests/success_retrieve_v1_3"
-      @result.order_status = ApiCertificateRequest::ORDER_STATUS[2]
+      @result.order_status = @certificate_order.status
       @result.update_attribute :response, render_to_string(:template => template)
       render(:template => template) and return
     else
@@ -136,8 +139,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_emails_v1_3
-    @result=ApiDcvEmails.new(params[:api_certificate_request])
-    record_parameters
     if @result.save
       @result.email_addresses={}
       if @result.domain_name
@@ -159,8 +160,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_email_resend_v1_3
-    @result=ApiDcvEmailResend.new(params[:api_certificate_request])
-    record_parameters
     if @result.save
       @result.sent_at=Time.now
       unless @result.email_addresses.blank?
@@ -175,8 +174,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_revoke_v1_3
-    @result=ApiDcvEmails.new(params[:api_certificate_request])
-    record_parameters
     if @result.save
       @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
       unless @result.email_addresses.blank?
@@ -197,6 +194,22 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def record_parameters
+    klass = case current_page?
+              when :create_v1_3
+                ApiCertificateCreate
+              when :create_v1_4
+                ApiCertificateCreate_v1_4
+              when :reprocess_v1_3
+                ApiCertificateCreate
+              when :retrieve_v1_3
+                ApiCertificateRetrieve
+              when :dcv_email_resend_v1_3
+                ApiDcvEmailResend
+              when :dcv_emails_v1_3, :dcv_revoke_v1_3
+                ApiDcvEmails
+            end
+    @certificate_order=@result.find_certificate_order
+    @result=klass.new(params[:api_certificate_request])
     @result.test = @test
     @result.request_url = request.url
     @result.parameters = params.to_json
@@ -205,5 +218,4 @@ class ApiCertificateRequestsController < ApplicationController
   def decode_error
     render :text => "JSON request could not be parsed", :status => 400
   end
-
 end

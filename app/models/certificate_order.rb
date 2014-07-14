@@ -684,6 +684,45 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def status
+    if certificate_content.new?
+      "unused. waiting on certificate signing request (csr) from customer"
+    elsif certificate_order.expired?
+      'n/a'
+    else
+      case certificate_content.workflow_state
+        when "csr_submitted"
+          "waiting on registrant information from customer"
+        when "info_provided"
+          "waiting on contacts information from customer"
+        when "reprocess_requested"
+          "reissue requested. waiting on certificate signing request (csr)from customer"
+        when "contacts_provided"
+          "waiting on validation from customer"
+        when "pending_validation", "validated"
+          last_sent=certificate_order.csr.last_dcv
+          if last_sent.blank?
+            'validating, please wait' #assume intranet
+          elsif %w(http https).include?(last_sent.try(:dcv_method))
+            'validating, please wait'
+          else
+            "waiting validation email response from customer"
+          end
+        when "issued"
+          if certificate_content.expiring?
+            if certificate_order.renewal && certificate_order.renewal.paid?
+              "renewed. see #{certificate_order.renewal.ref} for renewal"
+            else
+              "expiring. renew soon"
+            end
+          else
+            "issued"
+          end
+        when "canceled"
+      end
+    end
+  end
+
   # depending on the server software type we will bundle different root and intermediate certs
   # override is a target server software other than the default one for this order
   def bundled_cert_names(override=nil)

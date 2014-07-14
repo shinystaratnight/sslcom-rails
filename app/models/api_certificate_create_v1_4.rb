@@ -20,13 +20,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :csr, presence: true, unless: "ref.blank?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?) &&
+          c.ref.blank?}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
+    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, if: "ref.blank?"
   validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -68,58 +69,76 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def create_certificate_order
     # create certificate
-    # if self.ref
-    #   if CertificateOrder.find_by_ref self.ref
-    #     CertificateOrder.find_by_ref self.ref
-    #   else
-    #     errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
-    #   end
-    # else
-    #
-    # end
-    @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-    co_params = {duration: period, is_api_call: true}
-    co_params.merge!({is_test: self.test})
-    co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
-    certificate_order = api_requestable.certificate_orders.build(co_params)
-    if self.csr
-      # process csr
-      csr = self.csr_obj
-      csr.save
-    else
-      # or make a certificate voucher
-      certificate_order.preferred_payment_order = 'prepaid'
-    end
-    certificate_content=CertificateContent.new(
-        csr: csr, server_software_id: self.server_software)
-    certificate_order.certificate_contents << certificate_content
-    @certificate_order = setup_certificate_order(@certificate, certificate_order)
-    order = api_requestable.purchase(@certificate_order)
-    order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-    unless self.test
-      errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-        (order.amount.cents > api_requestable.funded_account.amount.cents)
-    end
-    if errors.blank?
-      if certificate_content.valid? &&
-          apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
-        if certificate_content.save
-          setup_certificate_content(
-              certificate_order: certificate_order,
-              certificate_content: certificate_content,
-              ssl_account: api_requestable)
+    # certificate_order=nil
+    if self.ref
+      if self.find_certificate_order.is_a?(CertificateOrder)
+        certificate_content = @certificate_order.certificate_content
+        @certificate = @certificate_order.certificate
+        csr = self.csr_obj
+        csr.save
+        certificate_content.csr = csr
+        certificate_content.save
+        if errors.blank?
+          if certificate_content.valid?
+            if certificate_content.save
+              setup_certificate_content(
+                  certificate_order: @certificate_order,
+                  certificate_content: certificate_content,
+                  ssl_account: api_requestable)
+            end
+            return @certificate_order
+          else
+            return certificate_content
+          end
         end
-        return @certificate_order
-      else
-        return certificate_content
       end
+      self
+    else
+      @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
+      co_params = {duration: period, is_api_call: true}
+      co_params.merge!({is_test: self.test})
+      co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
+      co = api_requestable.certificate_orders.build(co_params)
+      if self.csr
+        # process csr
+        csr = self.csr_obj
+        csr.save
+      else
+        # or make a certificate voucher
+        co.preferred_payment_order = 'prepaid'
+      end
+      certificate_content=CertificateContent.new(
+          csr: csr, server_software_id: self.server_software)
+      co.certificate_contents << certificate_content
+      @certificate_order = setup_certificate_order(@certificate, co)
+      order = api_requestable.purchase(@certificate_order)
+      order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
+      unless self.test
+        errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
+            (order.amount.cents > api_requestable.funded_account.amount.cents)
+      end
+      if errors.blank?
+        if certificate_content.valid? &&
+            apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
+          if certificate_content.save && csr
+            setup_certificate_content(
+                certificate_order: @certificate_order,
+                certificate_content: certificate_content,
+                ssl_account: api_requestable)
+          end
+          return @certificate_order
+        else
+          return certificate_content
+        end
+      end
+      self
     end
-    self
   end
 
   def setup_certificate_content(options)
     certificate_order= options[:certificate_order]
     cc = options[:certificate_content]
+    cc.registrant.destroy unless cc.registrant.blank?
     cc.create_registrant(
         company_name: self.organization_name,
         department: self.organization_unit_name,
