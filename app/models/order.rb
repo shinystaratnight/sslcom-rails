@@ -94,12 +94,12 @@ class Order < ActiveRecord::Base
     t=0
     unless id
       temp_discounts.each do |d|
-        d=Discount.find(d)
-        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+        d=Discount.unscoped.find(d)
+        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
       end unless temp_discounts.blank?
     else
-      discounts.each do |d|
-        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i*100)
+      discounts.unscoped.each do |d|
+        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
       end unless discounts.empty?
     end
     Money.new(t)

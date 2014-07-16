@@ -30,7 +30,11 @@ class OrderTransaction < ActiveRecord::Base
     
     def purchase(amount, credit_card, options = {})
       process('purchase', amount) do |gw|
-        gw.purchase(amount, credit_card, options)
+        if amount==0.0
+          ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
+        else
+          gw.purchase(amount, credit_card, options)
+        end
       end
     end
 

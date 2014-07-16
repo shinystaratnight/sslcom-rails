@@ -281,12 +281,15 @@ class OrdersController < ApplicationController
     return false unless ActiveMerchant::Billing::Base.mode == :test ?
         true : @credit_card.valid?
     @order.amount= BillingProfile::TEST_AMOUNT if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
-    @order.description = Order::SSL_CERTIFICATE
+    @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
     @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
     (@gateway_response.success?).tap do |success|
       if success
         flash.now[:notice] = @gateway_response.message
         @order.mark_paid!
+        @order.discounts.each do |discount|
+          discount.decrement_counter(:uses) unless discount.uses.blank?
+        end
       else
         flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
             @gateway_response.message #no descriptive enough

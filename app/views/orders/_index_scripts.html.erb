@@ -226,12 +226,16 @@ jQuery(function($) {
           $('span#discount_applied,span#invalid_discount_code').remove();
           $('div#tier_load_amount').text(old_total_text);
           if((typeof data.discount != 'undefined')){
-            apply=parseFloat(data.discount.value);
-            old_total=parseFloat($.toMoneyFloat($('div#tier_load_amount').text()));
-            new_total=old_total-(old_total*apply);
-            $('div#tier_load_amount').text('$'+new_total.toFixed(2).toString()+" USD");
+            apply = parseFloat(data.discount.value);
+            old_total = parseFloat($.toMoneyFloat($('div#tier_load_amount').text()));
+            if(data.discount.apply_as=='absolute')
+              discount = apply;
+            else
+              discount = old_total * apply;
+            new_total = old_total - discount;
+                    $('div#tier_load_amount').text('$'+new_total.toFixed(2).toString()+" USD");
             if($('span#discount_applied').length==0)
-              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied (-$"+(old_total*apply).toFixed(2).toString()+" USD)</span>");
+              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied (-$"+(discount).toFixed(2).toString()+" USD)</span>");
           }
           else if($('#discount_code').val()!=""){
             $('label[for=discount_code]').append("<span class='label_desc' id='invalid_discount_code'>invalid discount code</span>");
