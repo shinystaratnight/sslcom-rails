@@ -239,5 +239,5 @@ SslCom::Application.routes.draw do
   #get ':id'=>'surls#show', id: /[0-9a-z]+/i
 
   match '/:controller(/:action(/:id))'
-  match "*path" => redirect("https://www.ssl.com/?utm_source=any&utm_medium=any&utm_campaign=404_error")
+  # match "*path" => redirect("https://www.ssl.com/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 end

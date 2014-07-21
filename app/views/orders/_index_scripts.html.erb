@@ -229,7 +229,7 @@ jQuery(function($) {
             apply = parseFloat(data.discount.value);
             old_total = parseFloat($.toMoneyFloat($('div#tier_load_amount').text()));
             if(data.discount.apply_as=='absolute')
-              discount = apply;
+              discount = apply * .01;
             else
               discount = old_total * apply;
             new_total = old_total - discount;

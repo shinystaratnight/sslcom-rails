@@ -389,7 +389,7 @@ ActiveRecord::Schema.define(:version => 20140716180357) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "status"
-    t.integer  "uses"
+    t.integer  "remaining"
   end
 
   create_table "discounts_certificates", :force => true do |t|

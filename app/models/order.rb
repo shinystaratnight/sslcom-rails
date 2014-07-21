@@ -98,9 +98,9 @@ class Order < ActiveRecord::Base
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
       end unless temp_discounts.blank?
     else
-      discounts.unscoped.each do |d|
+      Discount.unscoped {self.discounts.include_all}.each do |d|
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
-      end unless discounts.empty?
+      end unless Discount.unscoped {self.discounts.include_all}.empty?
     end
     Money.new(t)
   end
