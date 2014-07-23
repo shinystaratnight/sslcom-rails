@@ -194,25 +194,25 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def record_parameters
-    klass = case current_page?
-              when :create_v1_3
+    klass = case params[:action]
+              when "create_v1_3"
                 ApiCertificateCreate
-              when :create_v1_4
+              when "create_v1_4"
                 ApiCertificateCreate_v1_4
-              when :reprocess_v1_3
+              when "reprocess_v1_3"
                 ApiCertificateCreate
-              when :retrieve_v1_3
+              when "retrieve_v1_3"
                 ApiCertificateRetrieve
-              when :dcv_email_resend_v1_3
+              when "dcv_email_resend_v1_3"
                 ApiDcvEmailResend
-              when :dcv_emails_v1_3, :dcv_revoke_v1_3
+              when "dcv_emails_v1_3", "dcv_revoke_v1_3"
                 ApiDcvEmails
             end
-    @certificate_order=@result.find_certificate_order
     @result=klass.new(params[:api_certificate_request])
     @result.test = @test
     @result.request_url = request.url
     @result.parameters = params.to_json
+    @certificate_order=@result.find_certificate_order
   end
 
   def decode_error
