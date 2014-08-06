@@ -289,7 +289,7 @@ class OrdersController < ApplicationController
         @order.mark_paid!
         # in case the discount becomes invalid before check out, give it to the customer
         Discount.unscoped {@order.discounts.include_all}.each do |discount|
-          Discount.decrement_counter(:uses, discount) unless discount.uses.blank?
+          Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
         end
       else
         flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :

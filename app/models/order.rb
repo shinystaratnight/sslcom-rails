@@ -8,7 +8,8 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
-  has_many    :line_items, dependent: :destroy
+  has_many    :line_items, dependent: :destroy, before_add: Proc.new { |p, d| p.amount = 0 if p.line_items.count==0},
+              after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_and_belongs_to_many    :discounts

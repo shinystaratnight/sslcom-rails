@@ -915,6 +915,9 @@ class CertificateOrder < ActiveRecord::Base
           unless csr.csr_override.blank?
             fill_csr_fields options, csr.csr_override
           end
+          if false #TODO make country override option
+            override_params(options) #essentialssl
+          end
           if certificate.is_wildcard?
             options.merge!('servers' => server_licenses.to_s || '1')
           end
@@ -937,6 +940,13 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def override_params(options)
+    options["countryName"]="US"
+    options["prioritiseCSRValues"]="N"
+    # options["product"]=301 #essentialssl
+    # options.merge!('caCertificateID' => 401) #essentialssl
   end
 
   def perform_dcv(last_sent, options)
@@ -981,6 +991,21 @@ class CertificateOrder < ActiveRecord::Base
 
     self.start_over!(complete) unless ['canceled', 'revoked'].
         include?(self.certificate_content.workflow_state)
+  end
+
+  # Removes any certificate_contents that were not processed, except the last one
+  def remove_orphaned_certificate_contents
+    cc_count = certificate_contents.count
+    return false if cc_count <= 1
+    certificate_contents.each_with_index do |cc, i|
+      next if i == cc_count-1 # ignore the most recent certificate_content
+      cc.destroy if cc.csr.blank? || cc.csr.signed_certificate.blank?
+    end
+  end
+
+  # Removes the last certificate_content in the event it was a mistake
+  def remove_last_certificate_content
+    self.certificate_content.destroy if self.certificate_contents.count > 1
   end
 
   # Get the most recent order_number as the one

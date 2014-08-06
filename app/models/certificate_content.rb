@@ -64,6 +64,7 @@ class CertificateContent < ActiveRecord::Base
     AT
     ATTORNEY
     AU
+    AUCTION
     AUDIO
     AUTOS
     AW
@@ -135,6 +136,7 @@ class CertificateContent < ActiveRecord::Base
     CHURCH
     CI
     CITIC
+    CITY
     CK
     CL
     CLAIMS
@@ -175,6 +177,7 @@ class CertificateContent < ActiveRecord::Base
     DANCE
     DATING
     DE
+    DEALS
     DEGREE
     DEMOCRAT
     DENTAL
@@ -241,6 +244,7 @@ class CertificateContent < ActiveRecord::Base
     GB
     GD
     GE
+    GENT
     GF
     GG
     GH
@@ -327,16 +331,19 @@ class CertificateContent < ActiveRecord::Base
     KOELN
     KP
     KR
+    KRD
     KRED
     KW
     KY
     KZ
     LA
+    LACAIXA
     LAND
     LAWYER
     LB
     LC
     LEASE
+    LGBT
     LI
     LIFE
     LIGHTING
@@ -366,6 +373,7 @@ class CertificateContent < ActiveRecord::Base
     ME
     MEDIA
     MEET
+    MELBOURNE
     MENU
     MG
     MH
@@ -406,6 +414,7 @@ class CertificateContent < ActiveRecord::Base
     NEUSTAR
     NF
     NG
+    NGO
     NHK
     NI
     NINJA
@@ -413,11 +422,14 @@ class CertificateContent < ActiveRecord::Base
     NO
     NP
     NR
+    NRA
+    NRW
     NU
     NYC
     NZ
     OKINAWA
     OM
+    ONG
     ONL
     ORG
     ORGANIC
@@ -445,6 +457,7 @@ class CertificateContent < ActiveRecord::Base
     PN
     POST
     PR
+    PRAXI
     PRESS
     PRO
     PRODUCTIONS
@@ -484,6 +497,7 @@ class CertificateContent < ActiveRecord::Base
     SAARLAND
     SB
     SC
+    SCB
     SCHMIDT
     SCHULE
     SCOT
@@ -510,6 +524,7 @@ class CertificateContent < ActiveRecord::Base
     SOLUTIONS
     SOY
     SPACE
+    SPIEGEL
     SR
     ST
     SU
@@ -591,8 +606,10 @@ class CertificateContent < ActiveRecord::Base
     WEBSITE
     WED
     WF
+    WHOSWHO
     WIEN
     WIKI
+    WILLIAMHILL
     WORKS
     WS
     WTC
@@ -665,6 +682,7 @@ class CertificateContent < ActiveRecord::Base
     XXX
     XYZ
     YACHTS
+    YANDEX
     YE
     YOKOHAMA
     YT
