@@ -83,7 +83,7 @@ jQuery(function($) {
           return ( n.indexOf('*.')==0);
         }).filter(Boolean);
         if((domains.length - wildcard_domains.length) > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>){
-          num_domains_buy = domains.length-<%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
+          num_domains_buy = domains.length - wildcard_domains.length - <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
           domains_cost = durations[duration_index-1][1]*num_domains_buy;
         }
         <%ratio = ("* "+@certificate_order.duration_remaining.to_s) if @certificate_order.signed_certificates.try(:last)%>

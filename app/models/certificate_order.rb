@@ -64,9 +64,10 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :search_with_csr, lambda {|term, options|
-    cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)
+    cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
+      CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
     {:conditions => ["csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%'], :joins => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
+      '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
       merge(options)
   }
 
@@ -994,13 +995,25 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # Removes any certificate_contents that were not processed, except the last one
-  def remove_orphaned_certificate_contents
-    cc_count = certificate_contents.count
-    return false if cc_count <= 1
+  def orphaned_certificate_contents(options={})
+    cc_count = self.certificate_contents.count
+    return nil if cc_count <= 1
+    ccs = []
     certificate_contents.each_with_index do |cc, i|
       next if i == cc_count-1 # ignore the most recent certificate_content
-      cc.destroy if cc.csr.blank? || cc.csr.signed_certificate.blank?
+      if (cc.csr.blank? || cc.csr.signed_certificate.blank?)
+        if options[:remove]
+          cc.destroy
+        else
+          ccs << cc
+        end
+      end
     end
+    ccs unless options[:remove]
+  end
+
+  def self.remove_all_orphaned
+    self.find_each{|co|co.orphaned_certificate_contents remove: true}
   end
 
   # Removes the last certificate_content in the event it was a mistake
