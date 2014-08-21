@@ -59,7 +59,8 @@ jQuery(function($) {
           }
         <%if @certificate.is_ucc?-%>
           if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
-            $("textarea[name*=additional_domains]").val(data.certificate_content.csr.subject_alternative_names.join(" "));
+            additional_domains = $("textarea[name*=additional_domains]").text() + data.certificate_content.csr.subject_alternative_names;
+            $("textarea[name*=additional_domains]").val($.unique(additional_domains.split(" ")).join(" "));
             $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
           }
         <%end-%>

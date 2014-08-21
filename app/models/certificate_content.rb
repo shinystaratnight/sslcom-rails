@@ -96,6 +96,7 @@ class CertificateContent < ActiveRecord::Base
     BM
     BMW
     BN
+    BNPPARIBAS
     BO
     BOUTIQUE
     BR
@@ -117,6 +118,7 @@ class CertificateContent < ActiveRecord::Base
     CANCERRESEARCH
     CAPETOWN
     CAPITAL
+    CARAVAN
     CARDS
     CARE
     CAREER
@@ -128,6 +130,7 @@ class CertificateContent < ActiveRecord::Base
     CD
     CENTER
     CEO
+    CERN
     CF
     CG
     CH
@@ -141,6 +144,7 @@ class CertificateContent < ActiveRecord::Base
     CL
     CLAIMS
     CLEANING
+    CLICK
     CLINIC
     CLOTHING
     CLUB
@@ -173,6 +177,7 @@ class CertificateContent < ActiveRecord::Base
     CW
     CX
     CY
+    CYMRU
     CZ
     DANCE
     DATING
@@ -184,6 +189,7 @@ class CertificateContent < ActiveRecord::Base
     DENTIST
     DESI
     DIAMONDS
+    DIET
     DIGITAL
     DIRECT
     DIRECTORY
@@ -250,6 +256,7 @@ class CertificateContent < ActiveRecord::Base
     GH
     GI
     GIFT
+    GIFTS
     GIVES
     GL
     GLASS
@@ -277,6 +284,8 @@ class CertificateContent < ActiveRecord::Base
     GY
     HAMBURG
     HAUS
+    HEALTHCARE
+    HELP
     HIPHOP
     HIV
     HK
@@ -287,7 +296,9 @@ class CertificateContent < ActiveRecord::Base
     HOMES
     HORSE
     HOST
+    HOSTING
     HOUSE
+    HOW
     HR
     HT
     HU
@@ -357,6 +368,7 @@ class CertificateContent < ActiveRecord::Base
     LR
     LS
     LT
+    LTDA
     LU
     LUXE
     LUXURY
@@ -431,6 +443,7 @@ class CertificateContent < ActiveRecord::Base
     OM
     ONG
     ONL
+    OOO
     ORG
     ORGANIC
     OVH
@@ -462,6 +475,7 @@ class CertificateContent < ActiveRecord::Base
     PRO
     PRODUCTIONS
     PROPERTIES
+    PROPERTY
     PS
     PT
     PUB
@@ -471,6 +485,7 @@ class CertificateContent < ActiveRecord::Base
     QPON
     QUEBEC
     RE
+    REALTOR
     RECIPES
     RED
     REHAB
@@ -482,6 +497,7 @@ class CertificateContent < ActiveRecord::Base
     REPORT
     REPUBLICAN
     REST
+    RESTAURANT
     REVIEWS
     RICH
     RIO
@@ -495,8 +511,10 @@ class CertificateContent < ActiveRecord::Base
     RYUKYU
     SA
     SAARLAND
+    SARL
     SB
     SC
+    SCA
     SCB
     SCHMIDT
     SCHULE
@@ -539,6 +557,7 @@ class CertificateContent < ActiveRecord::Base
     SY
     SYSTEMS
     SZ
+    TATAR
     TATTOO
     TAX
     TC
@@ -560,6 +579,7 @@ class CertificateContent < ActiveRecord::Base
     TODAY
     TOKYO
     TOOLS
+    TOP
     TOWN
     TOYS
     TP
@@ -576,6 +596,7 @@ class CertificateContent < ActiveRecord::Base
     UK
     UNIVERSITY
     UNO
+    UOL
     US
     UY
     UZ
@@ -600,6 +621,7 @@ class CertificateContent < ActiveRecord::Base
     VOTO
     VOYAGE
     VU
+    WALES
     WANG
     WATCH
     WEBCAM
@@ -614,6 +636,7 @@ class CertificateContent < ActiveRecord::Base
     WS
     WTC
     WTF
+    XN--1QQW23A
     XN--3BST00M
     XN--3DS443G
     XN--3E0B707E
@@ -674,6 +697,7 @@ class CertificateContent < ActiveRecord::Base
     XN--UNUP4Y
     XN--WGBH1C
     XN--WGBL6A
+    XN--XHQ521B
     XN--XKC2AL3HYE2A
     XN--XKC2DL3A5EE0H
     XN--YFRO4I67O
@@ -913,6 +937,7 @@ class CertificateContent < ActiveRecord::Base
   def csr_validation
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_free = certificate_order.certificate.is_free?
+    is_ucc = certificate_order.certificate.is_ucc?
     invalid_chars_msg = "domain has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
     if csr.common_name.blank?
@@ -922,18 +947,18 @@ class CertificateContent < ActiveRecord::Base
       asterisk_found = (csr.common_name=~/^\*\./)==0
       if is_wildcard && !asterisk_found
         errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
-      elsif !is_wildcard && asterisk_found
+      elsif !is_ucc && !is_wildcard && asterisk_found
         errors.add(:signing_request,
           "cannot begin with *. since it is not a wildcard")
-      elsif is_free && csr.is_intranet?
+      elsif csr.is_intranet?
         errors.add(:signing_request,
-          "was determined to be for an intranet or internal site. These can only be issued as High Assurance or EV certs..")
+          "was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
       elsif is_free && csr.is_ip_address?
         errors.add(:signing_request,
           "was determined to be for an ip address. These can only be issued as High Assurance or EV certs.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
-        domain_validation_regex(is_wildcard, csr.read_attribute(:common_name).gsub(/\x00/, ''))
+        domain_validation_regex(is_wildcard || is_ucc, csr.read_attribute(:common_name).gsub(/\x00/, ''))
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength.blank? || (csr.strength < MIN_KEY_SIZE)
