@@ -1,3 +1,5 @@
+require 'open-uri'
+
 class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy],
@@ -6,9 +8,12 @@ class CertificatesController < ApplicationController
 
   def index
     unless current_user
-      require 'open-uri'
-      page_string = Net::HTTP.get(URI.parse('http://localhost/certificates'))
-      render text: page_string
+      page_string = ""
+      open('http://localhost/certificates') do |f|
+        page_string = f.read
+      end
+      #page_string = Net::HTTP.get(URI.parse('http://localhost/certificates'))
+      render text: page_string, layout: nil
     else
       @certificates =
           if Rails.env.development?
