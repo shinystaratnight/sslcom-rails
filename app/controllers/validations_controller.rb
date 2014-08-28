@@ -148,7 +148,7 @@ class ValidationsController < ApplicationController
             @created_releases << create_with_attachment(LocalFile.new(fpath))
             i+=1
           rescue Errno::ENOENT, Errno::EISDIR
-            error = "Invalid contents: zip entries with directories not allowed".l
+            error = "Invalid contents: zip entries with directories not allowed"
             break
           ensure
             if (File.exists?(fpath))

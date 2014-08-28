@@ -5,14 +5,20 @@ class CertificatesController < ApplicationController
   before_filter :find_certificate, only: [:show, :buy]
 
   def index
-    @certificates =
-      if Rails.env.development?
-        @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-      else
-        Rails.cache.fetch(@tier.blank? ? "tier_nil" : "tier_#{@tier}", expires_in: 30.days) do
+    unless current_user
+      require 'open-uri'
+      page_string = Net::HTTP.get(URI.parse('http://localhost/certificates'))
+      render text: page_string
+    else
+      @certificates =
+          if Rails.env.development?
             @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-        end
-      end
+          else
+            Rails.cache.fetch(@tier.blank? ? "tier_nil" : "tier_#{@tier}", expires_in: 30.days) do
+              @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
+            end
+          end
+    end
   end
 
   def single_domain
