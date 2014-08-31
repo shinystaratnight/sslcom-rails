@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
     u.status='enabled'
   }
 
-  default_scope :order => 'users.created_at DESC'
+  default_scope where{status << ['disabled']}.order(:created_at.desc)
 
   def active?
     active

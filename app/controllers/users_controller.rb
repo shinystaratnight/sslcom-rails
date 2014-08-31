@@ -30,7 +30,7 @@ class UsersController < ApplicationController
     p = {:page => params[:page]}
     p.merge!({:conditions=>["login #{SQL_LIKE} ? OR email #{SQL_LIKE} ?",
       '%'+@search+'%', '%'+@search+'%']}) if @search = params[:search]
-    @users = User.paginate(p)
+    @users = User.unscoped.paginate(p)
     respond_to do |format|
       format.html { render :action => :index }
       format.xml  { render :xml => @users }
@@ -184,7 +184,7 @@ class UsersController < ApplicationController
 
   def find_user
     if params[:id]
-      @user=User.find(params[:id])
+      @user=User.unscoped.find(params[:id])
     end
   end
 
