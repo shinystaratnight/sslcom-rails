@@ -1,5 +1,3 @@
-require 'open-uri'
-
 class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy],
@@ -7,23 +5,14 @@ class CertificatesController < ApplicationController
   before_filter :find_certificate, only: [:show, :buy]
 
   def index
-    unless current_user
-      page_string = ""
-      open('http://localhost/certificates') do |f|
-        page_string = f.read
-      end
-      #page_string = Net::HTTP.get(URI.parse('http://localhost/certificates'))
-      render text: page_string, layout: nil
-    else
-      @certificates =
-          if Rails.env.development?
+    @certificates =
+      if Rails.env.development?
+        @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
+      else
+        Rails.cache.fetch(@tier.blank? ? "tier_nil" : "tier_#{@tier}", expires_in: 30.days) do
             @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-          else
-            Rails.cache.fetch(@tier.blank? ? "tier_nil" : "tier_#{@tier}", expires_in: 30.days) do
-              @tier.blank? ? Certificate.root_products : Certificate.tiered_products(@tier)
-            end
-          end
-    end
+        end
+      end
   end
 
   def single_domain
