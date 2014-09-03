@@ -1,12 +1,17 @@
 !!!
 %html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
-    -cache("head_06202014"+params.to_s, expires_in: 1.year) do
+    -cache("head_08042014"+params.to_s, expires_in: 1.year) do
       :javascript
         var _sf_startpt=(new Date()).getTime()
       %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
       %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
       %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
+      -if current_page?(certificates_path)
+        / begin Convert Experiments code
+        :javascript
+          var _conv_host = (("https:" == document.location.protocol) ? "https://d9jmv9u00p0mv.cloudfront.net" : "http://cdn-1.convertexperiments.com");document.write(decodeURIComponent("%3Cscript src='" + _conv_host + "/js/10012988-10012489.js' type='text/javascript'%3E%3C/script%3E"));
+        / end Convert Experiments code
       -if @meta
         -@meta.each do |key|
           %meta{:name=>key[0], :content=>key[1]}

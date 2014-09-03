@@ -12,12 +12,14 @@
         %th(scope="col") Savings
     -tier.certificates.public.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten.each_with_index do |item, i|
       -compare_item = compare_tier.find{|c|c.serial==item.serial.slice(/.+(?=\dtr)/)}
+      -next if item.description =~ /server\slicense/
       %tr(class="#{(i.odd?) ? 'alt' : ''}")
         %td=item.certificate.description["abbr"]
         %td=item.description
         %td
           -unless item.certificate.product_root=='free'
-            %span(style="color: red; text-decoration: line-through;")=compare_item.price.format
+            -unless tier.label == "1"
+              %span(style="color: red; text-decoration: line-through;")=compare_item.price.format
           =item.price.format
         -unless tier.label == "1"
           %td
