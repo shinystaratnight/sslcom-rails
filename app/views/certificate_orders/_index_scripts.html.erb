@@ -24,7 +24,7 @@ jQuery(function($) {
         $(this).parents().filter('tr').find('.expand').text('collapse');
       }
     });
-    $('textarea').click(function(){
+    $('textarea[name*=body]').click(function(){
       $(this).select();
     });
   });
