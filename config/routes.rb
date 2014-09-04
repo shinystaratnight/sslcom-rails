@@ -115,6 +115,7 @@ SslCom::Application.routes.draw do
       get :reprocess
       get :auto_renew
       post :start_over
+      put :admin_update
     end
 
     resource :validation do

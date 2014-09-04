@@ -19,12 +19,12 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over]
+                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over, :admin_update]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
-    :renew, :reprocess, :require=>[:create, :update, :delete]
+    :renew, :reprocess, :admin_update, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
   #cache_sweeper :certificate_order_sweeper
@@ -355,6 +355,16 @@ class CertificateOrdersController < ApplicationController
     @cc.csr=Csr.new(body: params[:csr])
     @cc.valid?
     rescue
+  end
+
+  def admin_update
+    respond_to do |format|
+      if @certificate_order.update_attributes(params[:certificate_order])
+        format.js { render :json=>@certificate_order.to_json}
+      else
+        format.js { render :json=>@certificate_order.errors.to_json}
+      end
+    end
   end
 
   private

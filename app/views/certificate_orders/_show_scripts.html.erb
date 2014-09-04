@@ -93,6 +93,9 @@ jQuery(function($) {
         }
       }
     });
+    $('#certificate_order_notes').keyup(function(){
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>
