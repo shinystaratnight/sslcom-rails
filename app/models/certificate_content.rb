@@ -938,6 +938,7 @@ class CertificateContent < ActiveRecord::Base
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
+    is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "domain has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
     if csr.common_name.blank?
@@ -947,9 +948,9 @@ class CertificateContent < ActiveRecord::Base
       asterisk_found = (csr.common_name=~/^\*\./)==0
       if is_wildcard && !asterisk_found
         errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
-      elsif !is_ucc && !is_wildcard && asterisk_found
+      elsif ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
         errors.add(:signing_request,
-          "cannot begin with *. since it is not a wildcard")
+          "cannot begin with *. since the order does not allow wildcards")
       elsif csr.is_intranet?
         errors.add(:signing_request,
           "was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
@@ -958,7 +959,7 @@ class CertificateContent < ActiveRecord::Base
           "was determined to be for an ip address. These can only be issued as High Assurance or EV certs.")
       end
       errors.add(:signing_request, invalid_chars_msg) unless
-        domain_validation_regex(is_wildcard || is_ucc, csr.read_attribute(:common_name).gsub(/\x00/, ''))
+        domain_validation_regex(is_wildcard || (is_ucc && !is_premium_ssl), csr.read_attribute(:common_name).gsub(/\x00/, ''))
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
           csr.strength.blank? || (csr.strength < MIN_KEY_SIZE)
@@ -968,6 +969,7 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  # This validates each domain entry in the CN and SAN fields
   def domain_validation_regex(is_wildcard, domain)
     invalid_chars = "[^\\s\\n\\w\\.\\x00\\-#{'\\*' if is_wildcard}]"
     domain.index(Regexp.new(invalid_chars))==nil and

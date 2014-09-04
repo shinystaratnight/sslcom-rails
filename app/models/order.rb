@@ -34,7 +34,7 @@ class Order < ActiveRecord::Base
 #  default_scope includes(:line_items).where({line_items:
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back']}.order(:created_at.desc).uniq
+  default_scope includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.order(:created_at.desc).uniq
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder)}.
@@ -136,11 +136,6 @@ class Order < ActiveRecord::Base
   def final_amount
     Money.new(amount.cents)-discount_amount
   end
-  
-  # TODO: Should this do more?
-  def cancel!
-    update_attribute :canceled_at, Time.now
-  end
 
   include Workflow
   workflow_column :state
@@ -161,6 +156,10 @@ class Order < ActiveRecord::Base
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
         line_items.each {|li|li.sellable.refund!} if complete
       end
+      event :cancel, transitions_to: :canceled do |complete=true|
+        line_items.each {|li|li.sellable.cancel!} if complete
+        update_attribute :canceled_at, Time.now
+      end
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable.charge_back!} if complete
       end
@@ -177,8 +176,14 @@ class Order < ActiveRecord::Base
 
     end
 
-    state :payment_not_required
+    state :payment_not_required do
+      event :cancel, transitions_to: :canceled do |complete=true|
+        line_items.each {|li|li.sellable.cancel!} if complete
+        update_attribute :canceled_at, Time.now
+      end
+    end
 
+    state :canceled
   end
 
   ## BEGIN acts_as_state_machine

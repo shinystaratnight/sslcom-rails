@@ -1,5 +1,5 @@
 -csr=co.csr
--if current_user.is_admin?
+-if current_user && current_user.is_admin?
   %li
     %strong admin functions
   -u = co.ssl_account.users.last
