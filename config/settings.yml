@@ -68,8 +68,8 @@ recaptcha_pub_key: 6Lch9QYAAAAAAMKfJMXiclR-6EuiZRBr8o98dHdF
 recaptcha_priv_key: 6Lch9QYAAAAAAAlWpfQKWpn7eTkc3f2FWhv4fVIG
 # uncomment these keys if you turn captcha on for commenting or signup
 studio_fee_rate: .3
-affiliate_cookie_days: 90
-cart_cookie_days: 90
+affiliate_cookie_days: 30
+cart_cookie_days: 30
 reserved_logins: ['administrator', 'sysadmin', 'admin', 'support', 'sales', 'info', 'eroslife', 'systemadmin', 'moderator', 'operator']
 exclude_amex: true
 number_of_captured_frames: 20
