@@ -98,6 +98,7 @@ class CertificateContent < ActiveRecord::Base
     BN
     BNPPARIBAS
     BO
+    BOO
     BOUTIQUE
     BR
     BRUSSELS
@@ -105,6 +106,7 @@ class CertificateContent < ActiveRecord::Base
     BT
     BUILD
     BUILDERS
+    BUSINESS
     BUZZ
     BV
     BW
@@ -179,8 +181,10 @@ class CertificateContent < ActiveRecord::Base
     CY
     CYMRU
     CZ
+    DAD
     DANCE
     DATING
+    DAY
     DE
     DEALS
     DEGREE
@@ -202,6 +206,7 @@ class CertificateContent < ActiveRecord::Base
     DOMAINS
     DURBAN
     DZ
+    EAT
     EC
     EDU
     EDUCATION
@@ -214,6 +219,7 @@ class CertificateContent < ActiveRecord::Base
     EQUIPMENT
     ER
     ES
+    ESQ
     ESTATE
     ET
     EU
@@ -240,6 +246,7 @@ class CertificateContent < ActiveRecord::Base
     FOO
     FOUNDATION
     FR
+    FRL
     FROGANS
     FUND
     FURNITURE
@@ -248,6 +255,7 @@ class CertificateContent < ActiveRecord::Base
     GAL
     GALLERY
     GB
+    GBIZ
     GD
     GE
     GENT
@@ -263,7 +271,9 @@ class CertificateContent < ActiveRecord::Base
     GLOBAL
     GLOBO
     GM
+    GMAIL
     GMO
+    GMX
     GN
     GOP
     GOV
@@ -286,6 +296,7 @@ class CertificateContent < ActiveRecord::Base
     HAUS
     HEALTHCARE
     HELP
+    HERE
     HIPHOP
     HIV
     HK
@@ -306,10 +317,12 @@ class CertificateContent < ActiveRecord::Base
     IE
     IL
     IM
+    IMMO
     IMMOBILIEN
     IN
     INDUSTRIES
     INFO
+    ING
     INK
     INSTITUTE
     INSURE
@@ -386,6 +399,7 @@ class CertificateContent < ActiveRecord::Base
     MEDIA
     MEET
     MELBOURNE
+    MEME
     MENU
     MG
     MH
@@ -404,6 +418,7 @@ class CertificateContent < ActiveRecord::Base
     MORTGAGE
     MOSCOW
     MOTORCYCLES
+    MOV
     MP
     MQ
     MR
@@ -423,7 +438,9 @@ class CertificateContent < ActiveRecord::Base
     NC
     NE
     NET
+    NETWORK
     NEUSTAR
+    NEW
     NF
     NG
     NGO
@@ -446,6 +463,7 @@ class CertificateContent < ActiveRecord::Base
     OOO
     ORG
     ORGANIC
+    OTSUKA
     OVH
     PA
     PARIS
@@ -455,6 +473,7 @@ class CertificateContent < ActiveRecord::Base
     PF
     PG
     PH
+    PHARMACY
     PHOTO
     PHOTOGRAPHY
     PHOTOS
@@ -462,6 +481,7 @@ class CertificateContent < ActiveRecord::Base
     PICS
     PICTURES
     PINK
+    PIZZA
     PK
     PL
     PLACE
@@ -473,6 +493,7 @@ class CertificateContent < ActiveRecord::Base
     PRAXI
     PRESS
     PRO
+    PROD
     PRODUCTIONS
     PROPERTIES
     PROPERTY
@@ -505,6 +526,7 @@ class CertificateContent < ActiveRecord::Base
     ROCKS
     RODEO
     RS
+    RSVP
     RU
     RUHR
     RW
@@ -695,6 +717,7 @@ class CertificateContent < ActiveRecord::Base
     XN--S9BRJ9C
     XN--SES554G
     XN--UNUP4Y
+    XN--VHQUV
     XN--WGBH1C
     XN--WGBL6A
     XN--XHQ521B
@@ -709,6 +732,7 @@ class CertificateContent < ActiveRecord::Base
     YANDEX
     YE
     YOKOHAMA
+    YOUTUBE
     YT
     ZA
     ZM

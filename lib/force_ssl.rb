@@ -5,7 +5,7 @@ class ForceSSL
 
   def call(env)
     env["HTTP_ACCEPT"] = "text/html" if env["HTTP_ACCEPT"] == "text/*"
-    if env['HTTPS'] == 'on' || env['HTTP_X_FORWARDED_PROTO'] == 'https' || other_exception(env)
+    if env['HTTPS'] == 'on' || env['HTTP_X_FORWARDED_PROTO'] == 'https'# || other_exception(env)
       @app.call(env)
     else
       req = Rack::Request.new(env)

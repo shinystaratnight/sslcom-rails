@@ -85,6 +85,7 @@ require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
 require "#{Rails.root}/lib/subdomain-fu.rb"
+require "#{Rails.root}/lib/force_ssl.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3
