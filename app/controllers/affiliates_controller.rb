@@ -42,7 +42,7 @@ class AffiliatesController < ApplicationController
       cookies[:ref] = {:value=>request.url, :path => "/", :expires => Settings.
           cart_cookie_days.to_i.days.from_now}
     end
-    if id==21
+    if id=="21"
       redirect_to "https://www.ssl.com/affiliate/program.php?id=101&url=#{request.url.gsub(/\/code\/\w+\/?$/,"")}"
     else
       redirect_to request.url.gsub(/\/code\/\w+\/?$/,"")
