@@ -44,6 +44,8 @@ class AffiliatesController < ApplicationController
     end
     if id=="21"
       redirect_to "https://www.ssl.com/affiliate/program.php?id=101&url=#{request.url.gsub(/\/code\/\w+\/?$/,"")}"
+    elsif id=="35"
+      redirect_to "https://www.ssl.com/affiliate/program.php?id=102&url=#{request.url.gsub(/\/code\/\w+\/?$/,"")}"
     else
       redirect_to request.url.gsub(/\/code\/\w+\/?$/,"")
     end
