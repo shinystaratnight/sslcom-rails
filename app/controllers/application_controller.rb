@@ -58,12 +58,13 @@ class ApplicationController < ActionController::Base
         order.ext_affiliate_id="72198"
       end
     else
-      if affiliate_program == "idevaffiliate"
-        order.ext_affiliate_name="idevaffiliate"
-        order.ext_affiliate_id="72198"
-      else
-        order.ext_affiliate_name="shareasale"
-        order.ext_affiliate_id="50573"
+      case affiliate_program
+        when "idevaffiliate"
+          order.ext_affiliate_name="idevaffiliate"
+          order.ext_affiliate_id="72198"
+        when "shareasale"
+          order.ext_affiliate_name="shareasale"
+          order.ext_affiliate_id="50573"
       end
       order.ext_affiliate_credited=false
       order.save validate: false

@@ -69,7 +69,7 @@ recaptcha_priv_key: 6Lch9QYAAAAAAAlWpfQKWpn7eTkc3f2FWhv4fVIG
 # uncomment these keys if you turn captcha on for commenting or signup
 studio_fee_rate: .3
 affiliate_cookie_days: 30
-affiliate_program: "idevaffiliate"
+affiliate_program: "shareasale"
 cart_cookie_days: 30
 reserved_logins: ['administrator', 'sysadmin', 'admin', 'support', 'sales', 'info', 'eroslife', 'systemadmin', 'moderator', 'operator']
 exclude_amex: true
