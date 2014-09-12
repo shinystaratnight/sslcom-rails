@@ -4,6 +4,6 @@
 .order_container
   #completed_order_results
     =render partial: 'orders/order_report'
-=render partial: "orders/adwords_conversion" if !@order.ext_affiliate_credited? #must appear before shareasale since ext_affiliate_credited is toggled there
-=shareasale
+=render partial: "orders/adwords_conversion" if !@order.ext_affiliate_credited? #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
+=confirm_affiliate_sale
 

@@ -119,10 +119,15 @@ module OrdersHelper
     current_order.amount.to_s.to_i<=0
   end
   
-  def shareasale
-    if @order.ext_affiliate_name=="shareasale" && !@order.ext_affiliate_credited?
+  def confirm_affiliate_sale
+    if !@order.ext_affiliate_credited?
       @order.toggle! :ext_affiliate_credited
-      "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
+      if @order.ext_affiliate_name=="shareasale"
+        "<img src=\"https://shareasale.com/sale.cfm?amount=#{@order.final_amount.to_s}&tracking=#{@order.reference_number}&transtype=sale&merchantID=#{@order.ext_affiliate_id}\" width=\"1\" height=\"1\">".html_safe
+      else
+        "<img border=\"0\" src=\"https://www.ssl.com/affiliate/program.php?profile=#{@order.ext_affiliate_id}&idev_saleamt=#{@order.final_amount.to_s}&idev_ordernum=#{@order.reference_number}&coupon_code=springspecial\" width=\"1\" height=\"1\">".html_safe
+      end
+
     end
   end
   

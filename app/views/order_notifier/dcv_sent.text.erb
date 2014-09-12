@@ -6,7 +6,11 @@ Dear Customer,
 
 An SSL.com certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
 
-Please respond to the email validation request sent to: <%=@last_sent.email_address%>. DO NOT REPLY TO THIS EMAIL. Another email is being sent so please be on lookout for that email.
+Please respond to the email validation request sent to: <%=@last_sent.email_address%>. It will be sent from comodo.com, our ssl vetting partner.
+Note that SSL.com and Comodo are entirely separate companies so all inquiries must be directed to SSL.com.
+
+PLEASE DO NOT REPLY TO THIS EMAIL. As mentioned previously, another email is being sent to <%=@last_sent.email_address%> so please be on lookout for that email.
+
 If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
 
 <%=render(:partial=>"support_contact")%>

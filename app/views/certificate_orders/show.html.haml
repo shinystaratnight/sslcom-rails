@@ -270,13 +270,13 @@
                           .certificate_details_box
                             %ul
                               =render partial: 'download', locals: {co: @certificate_order}
-                  -if current_user.is_admin?
-                    %tr
-                      %td(colspan="5")
-                        .notes_box
-                          =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
-                            %ul
-                              %li
-                                %strong notes from SSL team
-                              %li
-                                =f.text_area :notes, cols: 40, rows: 10
+                -if current_user.is_admin?
+                  %tr
+                    %td(colspan="5")
+                      .notes_box
+                        =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
+                          %ul
+                            %li
+                              %strong notes from SSL team
+                            %li
+                              =f.text_area :notes, cols: 40, rows: 10
