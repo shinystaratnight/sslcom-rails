@@ -25,15 +25,15 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-set :domain, '54.204.18.222' #WP
-#set :domain, '184.73.226.63' #production
+#set :domain, '54.204.18.222' #WP
+set :domain, '184.73.226.63' #production
 #set :domain, 'staging2.ssl.com' #development
 
 #set :application, "sws-test.sslpki.com" # test api
 #set :application, "sws.sslpki.com" # api
 #set :domain, '174.129.43.244' # sws.sslpki.com api
 
-#set :deploy_via, :copy
+#set :deploy_via, :copy                                                                         d
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"
 #set :copy_compression, :zip

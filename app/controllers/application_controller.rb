@@ -53,12 +53,12 @@ class ApplicationController < ActionController::Base
         li.aff_url = cookies[:ref] unless cookies[:ref].blank?
       }
       Affiliate.find(cookies[:aid]).line_items << order.line_items
-      if affiliate_program == "idevaffiliate"
+      if Settings.affiliate_program == "idevaffiliate"
         order.ext_affiliate_name="idevaffiliate"
         order.ext_affiliate_id="72198"
       end
     else
-      case affiliate_program
+      case Settings.affiliate_program
         when "idevaffiliate"
           order.ext_affiliate_name="idevaffiliate"
           order.ext_affiliate_id="72198"
