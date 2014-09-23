@@ -48,7 +48,7 @@ production_private_location: "private/"
 csr_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 
-installation_support_pages: "http://info.ssl.com/default.aspx?cNode=2T0V6X&pNodes=8P3K3M"
+installation_support_pages: "http://info.ssl.com"
 
 comodo_api_username: 'likx2m7j'
 comodo_api_password: 'Jimi14Kimi14'
