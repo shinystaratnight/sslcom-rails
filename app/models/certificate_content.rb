@@ -115,6 +115,7 @@ class CertificateContent < ActiveRecord::Base
     BZH
     CA
     CAB
+    CAL
     CAMERA
     CAMP
     CANCERRESEARCH
@@ -136,8 +137,10 @@ class CertificateContent < ActiveRecord::Base
     CF
     CG
     CH
+    CHANNEL
     CHEAP
     CHRISTMAS
+    CHROME
     CHURCH
     CI
     CITIC
@@ -241,6 +244,7 @@ class CertificateContent < ActiveRecord::Base
     FK
     FLIGHTS
     FLORIST
+    FLY
     FM
     FO
     FOO
@@ -268,6 +272,7 @@ class CertificateContent < ActiveRecord::Base
     GIVES
     GL
     GLASS
+    GLE
     GLOBAL
     GLOBO
     GM
@@ -275,6 +280,7 @@ class CertificateContent < ActiveRecord::Base
     GMO
     GMX
     GN
+    GOOGLE
     GOP
     GOV
     GP
@@ -441,6 +447,7 @@ class CertificateContent < ActiveRecord::Base
     NETWORK
     NEUSTAR
     NEW
+    NEXUS
     NF
     NG
     NGO
@@ -495,6 +502,7 @@ class CertificateContent < ActiveRecord::Base
     PRO
     PROD
     PRODUCTIONS
+    PROF
     PROPERTIES
     PROPERTY
     PS
@@ -654,7 +662,9 @@ class CertificateContent < ActiveRecord::Base
     WIEN
     WIKI
     WILLIAMHILL
+    WME
     WORKS
+    WORLD
     WS
     WTC
     WTF
@@ -735,6 +745,7 @@ class CertificateContent < ActiveRecord::Base
     YOUTUBE
     YT
     ZA
+    ZIP
     ZM
     ZONE
     ZW
