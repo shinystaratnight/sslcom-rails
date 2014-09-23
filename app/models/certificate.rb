@@ -102,6 +102,11 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
+  # :dir - the directory under the bundles
+  # :labels - the file names of the component ca chain certs
+  # :contents - the bundle name and component files from :labels
+  # after configuring a ca file set, run Certificate.generate_ca_certificates on the set to create the bundles
+
   BUNDLES = {comodo: {SHA1_2012: {
                         "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
                         "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
