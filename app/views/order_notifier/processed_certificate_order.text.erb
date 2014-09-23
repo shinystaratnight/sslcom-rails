@@ -19,9 +19,16 @@ Attached to this email you should find a .zip file containing:
 <%elsif @certificate_order.is_apache?-%>
     * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
     * Your Intermediate Certificates - <%=SignedCertificate::APACHE_BUNDLE%>
+<%elsif @certificate_order.is_amazon_balancer?-%>
+    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
+    * Your Intermediate Certificates - <%=SignedCertificate::AMAZON_BUNDLE%>
 <%else-%>
   <%@certificate_order.bundled_cert_names.each do |cc|%>
+  <%if @certificate_order.ca == CertificateOrder::CA_CERTIFICATES[:SSLcomSHA2] -%>
+    * <%=Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels][cc]%> - <%=cc%>
+  <%else-%>
     * <%=Certificate::COMODO_BUNDLES[cc]%> - <%=cc%>
+  <%end-%>
   <%end-%>
     * Your Certificate (<%=@signed_certificate.file_type%>) - <%=@signed_certificate.friendly_common_name%><%=@signed_certificate.file_extension%>
 <%end-%>

@@ -26,7 +26,7 @@
                               %ul
                                 %li
                                   %span.validation_attention contacts are required but are missing
-                      -elsif current_user && current_user.is_admin?
+                      -elsif current_user.try("is_admin?")
                         %li.rules_methods_block(class="admin_approve_#{i}" style='color:red')
                           =form_for v, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                             =hidden_field_tag 'certificate_order', co.id
@@ -125,7 +125,7 @@
                           =link_to image_tag('preview.png', :class=>'blue_icon'), h.document_url(:preview), :rel=>'prettyPhoto'
                           =link_to image_tag('download.png', :class=>'blue_icon'), h.document_url
                           %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20,false), edit_certificate_order_validation_url(co)
-                          -unless current_user.is_admin? || h.satisfies_validation_methods.blank?
+                          -unless current_user.try("is_admin?") || h.satisfies_validation_methods.blank?
                             -methods=h.satisfies_validation_methods.split(", ")
                             %dl
                               %dt document type:

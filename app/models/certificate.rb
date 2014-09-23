@@ -102,6 +102,92 @@ class Certificate < ActiveRecord::Base
                     "EntrustSecureServerCA.crt"=>"Root CA Certificate",
                     "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"}
 
+  BUNDLES = {comodo: {SHA1_2012: {
+                        "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                        "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                        "EssentialSSLCA_2.crt"=>"Intermediate CA Certificate",
+                        "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
+                        "ComodoUTNSGCCA.crt"=>"Intermediate CA Certificate",
+                        "ssl_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_addtrust_ca_bundle.txt"=>"SSL.com CA Bundle",
+                        "sslcom_free_ca_bundle.txt"=>"Free SSL.com CA Bundle",
+                        "sslcom_high_assurance_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_ev_ca_bundle.txt"=>"EV SSL.com CA Bundle",
+                        "SSLcomHighAssuranceCA.crt"=>"High Assurance SSL.com CA Bundle",
+                        "free_ssl_ca_bundle.txt"=>"Free SSL.com CA Bundle",
+                        "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
+                        "ssl_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_addtrust_ca_bundle_amazon.txt"=>"SSL.com CA Bundle",
+                        "sslcom_free_ca_bundle_amazon.txt"=>"Free SSL.com CA Bundle",
+                        "sslcom_high_assurance_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_ev_ca_bundle.txt_amazon"=>"EV SSL.com CA Bundle",
+                        "free_ssl_ca_bundle.txt_amazon"=>"Free SSL.com CA Bundle",
+                        "trial_ssl_ca_bundle.txt_amazon"=>"Trial SSL.com CA Bundle",
+                        "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                        "SSLcomPremiumEVCA.crt"=>"Intermediate CA Certificate",
+                        "SSLcomAddTrustSSLCA.crt"=>"Intermediate CA Certificate",
+                        "SSLcomFreeSSLCA.crt"=>"Intermediate CA Certificate",
+                        "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate",
+                        "EntrustSecureServerCA.crt"=>"Root CA Certificate",
+                        "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"},
+                      sha1_sslcom_2014: {
+                        "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                        "UTNAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                        "EssentialSSLCA_2.crt"=>"Intermediate CA Certificate",
+                        "UTNAddTrustSGCCA.crt"=>"Intermediate CA Certificate",
+                        "ComodoUTNSGCCA.crt"=>"Intermediate CA Certificate",
+                        "ssl_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_addtrust_ca_bundle.txt"=>"SSL.com CA Bundle",
+                        "sslcom_free_ca_bundle.txt"=>"Free SSL.com CA Bundle",
+                        "sslcom_high_assurance_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_ev_ca_bundle.txt"=>"EV SSL.com CA Bundle",
+                        "SSLcomHighAssuranceCA.crt"=>"High Assurance SSL.com CA Bundle",
+                        "free_ssl_ca_bundle.txt"=>"Free SSL.com CA Bundle",
+                        "trial_ssl_ca_bundle.txt"=>"Trial SSL.com CA Bundle",
+                        "ssl_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_addtrust_ca_bundle_amazon.txt"=>"SSL.com CA Bundle",
+                        "sslcom_free_ca_bundle_amazon.txt"=>"Free SSL.com CA Bundle",
+                        "sslcom_high_assurance_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                        "sslcom_ev_ca_bundle.txt_amazon"=>"EV SSL.com CA Bundle",
+                        "free_ssl_ca_bundle.txt_amazon"=>"Free SSL.com CA Bundle",
+                        "trial_ssl_ca_bundle.txt_amazon"=>"Trial SSL.com CA Bundle",
+                        "COMODOAddTrustServerCA.crt"=>"Intermediate CA Certificate",
+                        "SSLcomPremiumEVCA_1.crt"=>"Intermediate CA Certificate",
+                        "SSLcomAddTrustSSLCA.crt"=>"Intermediate CA Certificate",
+                        "SSLcomFreeSSLCA.crt"=>"Intermediate CA Certificate",
+                        "COMODOExtendedValidationSecureServerCA.crt"=>"Intermediate CA Certificate",
+                        "EntrustSecureServerCA.crt"=>"Root CA Certificate",
+                        "USERTrustLegacySecureServerCA.crt"=>"Intermediate CA Certificate"},
+                      sha2_sslcom_2014: {
+                        dir: "sha2_sslcom_2014",
+                        labels: {
+                          "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
+                          "USERTrustRSAAddTrustCA.crt"=>"Intermediate CA Certificate",
+                          "USERTrustRSACertificationAuthority.crt"=>"Intermediate CA Certificate",
+                          "SSLcomClientAuthenticationandEmailCA_2.crt"=>"Intermediate CA Certificate",
+                          "SSLcomPremiumEVCA_2.crt"=>"Intermediate CA Certificate",
+                          "SSLcomDVCA_2.crt"=>"Intermediate CA Certificate",
+                          "SSLcomHighAssuranceCA_2.crt"=>"Intermediate CA Certificate",
+                          "SSLcomObjectCA_2.crt"=>"Intermediate CA Certificate",
+                          "ssl_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                          "sslcom_addtrust_ca_bundle.txt"=>"SSL.com CA Bundle",
+                          "sslcom_high_assurance_ca_bundle.txt"=>"High Assurance SSL.com CA Bundle",
+                          "sslcom_ev_ca_bundle.txt"=>"EV SSL.com CA Bundle",
+                          "ssl_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                          "sslcom_addtrust_ca_bundle_amazon.txt"=>"SSL.com CA Bundle",
+                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
+                          "sslcom_ev_ca_bundle.txt_amazon"=>"EV SSL.com CA Bundle"},
+                        contents: {
+                          "ssl_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomHighAssuranceCA_2.crt),
+                          "ssl_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_addtrust_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomDVCA_2.crt),
+                          "sslcom_addtrust_ca_bundle_amazon.txt"=>%w(SSLcomDVCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_high_assurance_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomHighAssuranceCA_2.crt),
+                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_ev_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomPremiumEVCA_2.crt),
+                          "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt)}}}}
+
+
   scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
   scope :for_sale, where{(product != 'mssl') & (serial =~ "%sslcom%")}
@@ -440,6 +526,22 @@ class Certificate < ActiveRecord::Base
       c.description.merge!(certificate_type: "Enterprise EV UCC")
       c.title = "Enterprise EV Multi-domain UCC SSL"
       c.save
+    end
+  end
+
+  # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}
+  def self.generate_ca_certificates(options)
+    dir=Settings.intermediate_certs_path+options[:bundles][:dir]+"/"
+    options[:bundles][:contents].each do |k,v|
+      certfile="#{dir}#{k}"
+      File.open(certfile, 'wb') do |f|
+        tmp=""
+        v.each do |file_name|
+          file=File.new("#{dir}"+file_name.strip, "r")
+          tmp << file.readlines.join("")
+        end
+        f.write tmp
+      end
     end
   end
 end

@@ -159,6 +159,8 @@ class CertificateOrder < ActiveRecord::Base
   REPROCESS_REQUESTED = :reprocess_requested
   CONTACTS_PROVIDED = :contacts_provided
 
+  CA_CERTIFICATES = {SSLcomSHA2: "SSLcomSHA2"}
+
   STATUS = {CSR_SUBMITTED=>'info required',
             INFO_PROVIDED=> 'contacts required',
             REPROCESS_REQUESTED => 'csr required',
@@ -179,6 +181,7 @@ class CertificateOrder < ActiveRecord::Base
   # end
 
   before_create do |co|
+    co.ca = CA_CERTIFICATES[:SSLcomSHA2]
     co.is_expired=false
     co.ref='co-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
     v     =co.create_validation
@@ -726,50 +729,82 @@ class CertificateOrder < ActiveRecord::Base
 
   # depending on the server software type we will bundle different root and intermediate certs
   # override is a target server software other than the default one for this order
-  def bundled_cert_names(override=nil)
-    if is_open_ssl?
-      #attach bundle
-      Certificate::COMODO_BUNDLES.select do |k,v|
-        if certificate.serial=~/256sslcom/
+  def bundled_cert_names(override={})
+    if self.ca == CA_CERTIFICATES[:SSLcomSHA2]
+      if is_open_ssl?
+        #attach bundle
+        Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels].select do |k,v|
           if certificate.is_ev?
-            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
-          #elsif certificate.is_free?
-          #  k=="sslcom_free_ca_bundle.txt"
+            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
           elsif certificate.is_essential_ssl?
-            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
           else
-            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
           end
-        elsif certificate.comodo_product_id==342
-          k=="free_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
-        elsif certificate.comodo_product_id==43
-          k=="trial_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+        end.map{|k,v|k}
+      else
+        if certificate.is_ev?
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
+        elsif certificate.is_essential_ssl?
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
         else
-          k=="ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
         end
-      end.map{|k,v|k}
+      end
     else
-      Certificate::COMODO_BUNDLES.select do |k,v|
-        if certificate.serial=~/256sslcom/
-          if certificate.is_ev?
-            %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
-          elsif certificate.is_essential_ssl?
-            %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
+      if is_open_ssl?
+        #attach bundle
+        Certificate::COMODO_BUNDLES.select do |k,v|
+          if certificate.serial=~/256sslcom/
+            if certificate.is_ev?
+              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              #elsif certificate.is_free?
+              #  k=="sslcom_free_ca_bundle.txt"
+            elsif certificate.is_essential_ssl?
+              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            else
+              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            end
+          elsif certificate.comodo_product_id==342
+            k=="free_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+          elsif certificate.comodo_product_id==43
+            k=="trial_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+          else
+            k=="ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+          end
+        end.map{|k,v|k}
+      else
+        Certificate::COMODO_BUNDLES.select do |k,v|
+          if certificate.serial=~/256sslcom/
+            if certificate.is_ev?
+              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+            elsif certificate.is_essential_ssl?
+              %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
+            else
+              %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+            end
+          elsif [342, 343].include? certificate.comodo_product_id
+            %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
+          elsif certificate.comodo_product_id==337 #also maybe 410 (evucc) we'll get there when we place that order
+            %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+          elsif certificate.comodo_product_id==361
+            %w(EntrustSecureServerCA.crt USERTrustLegacySecureServerCA.crt).include? k
           else
             %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
           end
-        elsif [342, 343].include? certificate.comodo_product_id
-          %w(UTNAddTrustSGCCA.crt EssentialSSLCA_2.crt ComodoUTNSGCCA.crt AddTrustExternalCARoot.crt).include? k
-        elsif certificate.comodo_product_id==337 #also maybe 410 (evucc) we'll get there when we place that order
-          %w(COMODOExtendedValidationSecureServerCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
-        elsif certificate.comodo_product_id==361
-          %w(EntrustSecureServerCA.crt USERTrustLegacySecureServerCA.crt).include? k
-        else
-          %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
-        end
-      end.map{|k,v|k}
+        end.map{|k,v|k}
+      end
     end
   end
+
+  def bundled_cert_dir
+    if self.ca == CA_CERTIFICATES[:SSLcomSHA2]
+      Settings.intermediate_certs_path+Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:dir]+"/"
+    else
+      Settings.intermediate_certs_path
+    end
+  end
+
 
   def description_with_tier
     return description if certificate.reseller_tier.blank?
@@ -856,7 +891,8 @@ class CertificateOrder < ActiveRecord::Base
   def options_for_ca
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
-        if csr.certificate_content.preferred_reprocessing? || csr.sent_success
+        update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
+        if true #csr.certificate_content.preferred_reprocessing? || csr.sent_success
           #assume reprocess, will need to look at ucc more carefully
           options.merge!(
             'orderNumber' => external_order_number,
@@ -1024,7 +1060,7 @@ class CertificateOrder < ActiveRecord::Base
   # Get the most recent order_number as the one
   def external_order_number
     all_csrs = certificate_contents.map(&:csr)
-    sent_success_map = all_csrs.map(&:sent_success)
+    sent_success_map = all_csrs.map {|c|c.sent_success(true)}
     sent_success_map.flatten.compact.uniq.first.order_number if
         all_csrs && !sent_success_map.blank? &&
         sent_success_map.flatten.compact.uniq.first
@@ -1169,7 +1205,16 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def ssl_com_order(options)
-    if certificate.serial=~/256sslcom/
+    if [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
+      ca_certificate_id = if certificate.is_ev?
+                            "508" #ev
+                            # elsif is_ov?
+                            #   "507" #ov
+                          else
+                            "506" #dv
+                          end
+      options.merge!('caCertificateID' => ca_certificate_id)
+    elsif certificate.serial=~/256sslcom/
       prod_code = if certificate.is_ev?
                     403
                   elsif certificate.is_essential_ssl?

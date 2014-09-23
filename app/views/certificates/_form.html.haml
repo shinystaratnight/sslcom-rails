@@ -28,6 +28,7 @@
         %li
           for Microsoft Windows try the
           =link_to "SSLTools Manager", "http://www.ssltools.com/manager"
+          or visit this #{link_to "How-To Guide", "https://www.youtube.com/watch?v=4jC2FNvEouU"}
         %li
           for Apache, Nginx, or other OpenSSL platform try the
           =link_to "OpenSSL CSR Tool", "http://tools.ssl.com"
@@ -59,7 +60,6 @@
           %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
           -unless @certificate.is_free?
             %li Or, it MUST represent the name of your server (i.e. localhost or bizserver)
-          %li Or, it MUST represent an IP address (i.e. 208.113.41.231)
         -else
           %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
       .clearfix

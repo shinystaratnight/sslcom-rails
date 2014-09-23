@@ -138,6 +138,7 @@ SslCom::Application.routes.draw do
         get :whm_zip
         get :nginx
         get :apache_zip
+        get :amazon_zip
       end
     end
     collection do
@@ -240,5 +241,5 @@ SslCom::Application.routes.draw do
   #get ':id'=>'surls#show', id: /[0-9a-z]+/i
 
   match '/:controller(/:action(/:id))'
-  match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
+  #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 end

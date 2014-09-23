@@ -56,7 +56,7 @@ class ComodoApi
   end
 
   def self.resend_dcv(dcv)
-    options = {'dcvEmailAddress' => dcv.email_address, 'orderNumber'=> dcv.csr.sent_success.order_number}.
+    options = {'dcvEmailAddress' => dcv.email_address, 'orderNumber'=> dcv.csr.sent_success(true).order_number}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = RESEND_DCV_URL
     url = URI.parse(host)

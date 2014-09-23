@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140716180357) do
+ActiveRecord::Schema.define(:version => 20140916204604) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(:version => 20140716180357) do
     t.boolean  "is_test"
     t.string   "auto_renew"
     t.string   "auto_renew_status"
+    t.string   "ca"
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"

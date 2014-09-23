@@ -33,7 +33,7 @@ set :domain, '184.73.226.63' #production
 #set :application, "sws.sslpki.com" # api
 #set :domain, '174.129.43.244' # sws.sslpki.com api
 
-#set :deploy_via, :copy                                                                         d
+#set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"
 #set :copy_compression, :zip

@@ -29,8 +29,10 @@ class SignedCertificate < ActiveRecord::Base
   NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
   OTHER_INSTALL_LINK = "http://info.ssl.com/?cNode=2T0V6X&pNodes=8P3K3M"
   APACHE_INSTALL_LINK = "http://info.ssl.com/article.aspx?id=10022"
+  AMAZON_INSTALL_LINK = "http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/US_UpdatingLoadBalancerSSL.html"
 
   APACHE_BUNDLE = "ca-bundle-client.crt"
+  AMAZON_BUNDLE = "ca-chain-amazon.crt"
 
 
   after_initialize do
@@ -202,7 +204,7 @@ class SignedCertificate < ActiveRecord::Base
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
       co.bundled_cert_names.each do |file_name|
-        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        file=File.new(co.bundled_cert_dir+file_name.strip, "r")
         zos.get_output_stream(file_name.strip) {|f|f.puts (is_windows ?
             file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       end
@@ -216,7 +218,7 @@ class SignedCertificate < ActiveRecord::Base
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows=nil), "r")
+      file=File.new(ca_bundle(is_windows: is_windows), "r")
       zos.get_output_stream(nonidn_friendly_common_name+".ca-bundle") {|f|f.puts (is_windows ?
           file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
@@ -229,8 +231,21 @@ class SignedCertificate < ActiveRecord::Base
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows=nil), "r")
+      file=File.new(ca_bundle(is_windows: is_windows), "r")
       zos.get_output_stream(APACHE_BUNDLE) {|f|f.puts (is_windows ?
+          file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
+      cert = is_windows ? body.gsub(/\n/, "\r\n") : body
+      zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
+    end
+    path
+  end
+
+  def zipped_amazon_bundle(is_windows=false)
+    co=csr.certificate_content.certificate_order
+    path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
+    ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
+      file=File.new(ca_bundle(is_windows: is_windows, server: "amazon"), "r")
+      zos.get_output_stream(AMAZON_BUNDLE) {|f|f.puts (is_windows ?
           file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
       zos.get_output_stream(nonidn_friendly_common_name+file_extension){|f| f.puts cert}
@@ -319,15 +334,15 @@ class SignedCertificate < ActiveRecord::Base
     ([self.common_name]+(self.subject_alternative_names||[])).uniq.any? {|n|CertificateContent.is_tld?(n)}
   end
 
-  def ca_bundle(is_windows=nil)
+  def ca_bundle(options={})
     tmp_file="#{Rails.root}/tmp/sc_int_#{id}.txt"
     File.open(tmp_file, 'wb') do |f|
       tmp=""
-      certificate_order.bundled_cert_names.each do |file_name|
-        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+      certificate_order.bundled_cert_names(options).each do |file_name|
+        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
-      tmp.gsub!(/\n/, "\r\n") if is_windows
+      tmp.gsub!(/\n/, "\r\n") if options[:is_windows]
       f.write tmp
     end
     tmp_file
@@ -339,7 +354,7 @@ class SignedCertificate < ActiveRecord::Base
       tmp << body+"\n"
       #be careful since depends on filename. It's convenient right now for AddTrust, Comodo, Sslcom
       certificate_order.bundled_cert_names.sort{|a,b|b<=>a}.each do |file_name|
-        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
       tmp.gsub!(/\n/, "\r\n") if is_windows
@@ -359,7 +374,7 @@ class SignedCertificate < ActiveRecord::Base
     File.open(sc_int, 'wb') do |f|
       tmp=""
       certificate_order.bundled_cert_names.each do |file_name|
-        file=File.new(Settings.intermediate_certs_path+file_name.strip, "r")
+        file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
       f.write tmp
