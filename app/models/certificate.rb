@@ -168,7 +168,7 @@ class Certificate < ActiveRecord::Base
                         labels: {
                           "AddTrustExternalCARoot.crt"=>"Root CA Certificate",
                           "USERTrustRSAAddTrustCA.crt"=>"Intermediate CA Certificate",
-                          "USERTrustRSACertificationAuthority.crt"=>"Intermediate CA Certificate",
+                          "USERTrustRSACertificationAuthority.crt"=>"Root CA Certificate",
                           "SSLcomClientAuthenticationandEmailCA_2.crt"=>"Intermediate CA Certificate",
                           "SSLcomPremiumEVCA_2.crt"=>"Intermediate CA Certificate",
                           "SSLcomDVCA_2.crt"=>"Intermediate CA Certificate",
@@ -183,14 +183,14 @@ class Certificate < ActiveRecord::Base
                           "sslcom_high_assurance_ca_bundle_amazon.txt"=>"High Assurance SSL.com CA Bundle",
                           "sslcom_ev_ca_bundle.txt_amazon"=>"EV SSL.com CA Bundle"},
                         contents: {
-                          "ssl_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomHighAssuranceCA_2.crt),
-                          "ssl_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "sslcom_addtrust_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomDVCA_2.crt),
-                          "sslcom_addtrust_ca_bundle_amazon.txt"=>%w(SSLcomDVCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "sslcom_high_assurance_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomHighAssuranceCA_2.crt),
-                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
-                          "sslcom_ev_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt USERTrustRSACertificationAuthority.crt SSLcomPremiumEVCA_2.crt),
-                          "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSACertificationAuthority.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt)}}}}
+                          "ssl_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomHighAssuranceCA_2.crt),
+                          "ssl_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_addtrust_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomDVCA_2.crt),
+                          "sslcom_addtrust_ca_bundle_amazon.txt"=>%w(SSLcomDVCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_high_assurance_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomHighAssuranceCA_2.crt),
+                          "sslcom_high_assurance_ca_bundle_amazon.txt"=>%w(SSLcomHighAssuranceCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt),
+                          "sslcom_ev_ca_bundle.txt"=>%w(AddTrustExternalCARoot.crt USERTrustRSAAddTrustCA.crt SSLcomPremiumEVCA_2.crt),
+                          "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt AddTrustExternalCARoot.crt)}}}}
 
 
   scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
