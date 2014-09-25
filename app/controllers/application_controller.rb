@@ -64,9 +64,9 @@ class ApplicationController < ActionController::Base
           order.ext_affiliate_name="shareasale"
           order.ext_affiliate_id="50573"
       end
-      order.ext_affiliate_credited=false
-      order.save validate: false
     end
+    order.ext_affiliate_credited=false
+    order.save validate: false
   end
 
   def apply_discounts(order)

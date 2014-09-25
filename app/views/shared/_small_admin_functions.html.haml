@@ -2,7 +2,7 @@
 -if current_user && current_user.is_admin?
   %li
     %strong admin functions
-  -u = co.ssl_account.users.unscoped.last
+  -u = co.ssl_account.users.unscoped{co.ssl_account.users.last}
   %li=remote_login_link(u)
   -if csr.try(:body)
     -unless co.skip_verification?
