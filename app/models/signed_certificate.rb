@@ -342,7 +342,7 @@ class SignedCertificate < ActiveRecord::Base
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
-      tmp.gsub!(/\n/, "\r\n") if options[:is_windows]
+      #tmp.gsub!(/\n/, "\r\n") if options[:is_windows]
       f.write tmp
     end
     tmp_file
@@ -357,7 +357,7 @@ class SignedCertificate < ActiveRecord::Base
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
-      tmp.gsub!(/\n/, "\r\n") if is_windows
+      #tmp.gsub!(/\n/, "\r\n") if is_windows
     end
   end
 
