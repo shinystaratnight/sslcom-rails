@@ -479,6 +479,42 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  # sslcomevucc256ssl1yrdm - initial 3 domains
+  # sslcomevucc256ssl1yradm - additional domains
+  # each column is an incremented a year and represents cost of 3 domains
+  #
+  # use root like sslcomevucc256ssl1yr
+  def self.change_domain_pricing(pvi)
+    years = 2 # 5 for standard
+    # ev ssl
+    price_adjusts={"#{pvi}dm".to_sym => [13300, 21280], # initial 3 domains
+                   "#{pvi}dm1tr".to_sym => [13300, 21280],
+                   "#{pvi}dm2tr".to_sym => [10640, 17024],
+                   "#{pvi}dm3tr".to_sym => [9975, 15960],
+                   "#{pvi}dm4tr".to_sym => [9310, 14896],
+                   "#{pvi}dm5tr".to_sym => [7980, 12768],
+                   "#{pvi}adm".to_sym => [12900, 20640], # domains after 3rd
+                   "#{pvi}adm1tr".to_sym => [12900, 20640],
+                   "#{pvi}adm2tr".to_sym => [10320, 16512],
+                   "#{pvi}adm3tr".to_sym => [9675, 15480],
+                   "#{pvi}adm4tr".to_sym => [9030, 14448],
+                   "#{pvi}adm5tr".to_sym => [7740, 12384]
+    }
+    # standard ssl
+    # price_adjusts={"#{pvi}".to_sym => [9900, 17820, 25245, 31680, 37125],
+    #                "#{pvi}1tr".to_sym => [9900, 17820, 25245, 31680, 37125],
+    #                "#{pvi}2tr".to_sym => [7920, 14256, 20196, 25344, 29700],
+    #                "#{pvi}3tr".to_sym => [7425, 13365, 18934, 23760, 27844],
+    #                "#{pvi}4tr".to_sym => [6831, 12296, 17419, 21859, 25616],
+    #                "#{pvi}5tr".to_sym => [5940, 10692, 15147, 19008, 22275]
+    # }
+    price_adjusts.each do |k,v|
+      serials=[]
+      1.upto(years){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+      serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, (v[i]).ceil)}
+    end
+  end
+
   def self.create_basic_ssl
     c=Certificate.public.find_by_product "high_assurance"
     certs = c.duplicate_tiers "basic256sslcom", "ov256ssl", "basic256ssl"

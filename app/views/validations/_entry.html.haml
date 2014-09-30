@@ -131,7 +131,7 @@
                               %dt document type:
                               -methods.each do |m|
                                 %dd=m
-                          -if current_user.is_admin?
+                          -if current_user.try("is_admin?")
                             =form_for h do |f|
                               .validation_admin_controls
                                 =hidden_field_tag :validation, co.validation.id
@@ -166,7 +166,7 @@
                       =co.notes
                     -else
                       no notes found
-                -if current_user.is_admin?
+                -if current_user.try("is_admin?")
                   %ul#send_to_ca_box
                     %li
                       %strong
