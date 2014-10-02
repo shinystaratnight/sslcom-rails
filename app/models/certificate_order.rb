@@ -744,11 +744,11 @@ class CertificateOrder < ActiveRecord::Base
         end.map{|k,v|k}
       else
         if certificate.is_ev?
-          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ev#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
         elsif certificate.is_essential_ssl?
-          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_dv#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
         else
-          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"]
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ov#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
         end
       end
     else
@@ -1092,6 +1092,28 @@ class CertificateOrder < ActiveRecord::Base
     #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
   end
 
+  def transfer_certificate_content(certificate_content)
+    self.site_seal.conditionally_activate! unless self.site_seal.conditionally_activated?
+    cc = self.certificate_content
+    if certificate_content.preferred_reprocessing?
+      self.certificate_contents << certificate_content
+      certificate_content.create_registrant(cc.registrant.attributes).save
+      cc.certificate_contacts.each do |contact|
+        certificate_content.certificate_contacts << CertificateContact.new(contact.attributes)
+      end
+      cc = self.certificate_content
+    else
+      cc.signing_request = certificate_content.signing_request
+      cc.server_software = certificate_content.server_software
+    end
+    if cc.new?
+      cc.submit_csr!
+    elsif cc.validated? || cc.pending_validation?
+      cc.pend_validation! if cc.validated?
+    end
+    cc
+  end
+
   private
 
   def fill_csr_fields(options, obj)
@@ -1204,6 +1226,7 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  # used for determining which Sub Ca certs to use
   def ssl_com_order(options)
     if [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       ca_certificate_id = if certificate.is_ev?
@@ -1225,4 +1248,5 @@ class CertificateOrder < ActiveRecord::Base
       options.merge!('caCertificateID' => prod_code.to_s)
     end
   end
+
 end

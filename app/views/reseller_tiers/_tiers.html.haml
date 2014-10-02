@@ -21,4 +21,4 @@
           %td=link_to 'click here', show_popup_reseller_tier_url(tier, :width=>730, :height=>400, :iframe=>true), :rel=>'prettyPhoto'
           %td=radio_button :reseller_tier, :id, tier.id, :id => tier.model_and_id
         -else
-          %td=link_to 'click for pricing details', reseller_tier_url(tier, subdomain: Reseller::SUBDOMAIN)
+          %td=link_to 'click for details', reseller_tier_url(tier, subdomain: Reseller::SUBDOMAIN)

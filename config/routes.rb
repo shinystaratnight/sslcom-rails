@@ -30,8 +30,12 @@ SslCom::Application.routes.draw do
   constraints DomainConstraint.new(["sws.sslpki.local","sws-test.sslpki.local","sws.sslpki.com","sws-test.sslpki.com"]) do
     match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
           :as => :api_certificate_create_v1_3
-    match '/certificates/1.4/create' => 'api_certificate_requests#create_v1_4',
-          :as => :api_certificate_create_v1_4
+    match '/certificates' => 'api_certificate_requests#create_v1_4',
+          :as => :api_certificate_create_v1_4, via: [:post]
+    match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
+          :as => :api_certificate_update_v1_4, via: [:put], ref: /[a-z0-9\-]+/
+    match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
+          :as => :api_certificate_show_v1_4, via: [:get], ref: /[a-z0-9\-]+/
     match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
           :as => :api_certificate_retrieve_v1_3
     match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
@@ -116,6 +120,7 @@ SslCom::Application.routes.draw do
     member do
       put :update_csr
       get :download
+      get :download_other
       get :renew
       get :reprocess
       get :auto_renew

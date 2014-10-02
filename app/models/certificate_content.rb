@@ -7,10 +7,6 @@ class CertificateContent < ActiveRecord::Base
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
 
-#  attr_accessible :certificate_contacts_attributes
-
-  #before_update :delete_duplicate_contacts
-
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 

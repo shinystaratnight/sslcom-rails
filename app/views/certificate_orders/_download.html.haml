@@ -32,7 +32,7 @@
 -#    =link_to co.bundle_name, server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
 %li
   =link_to image_tag('download.png', :class=>'blue_icon'), download_certificate_order_path(co)
-  =link_to "for Other platforms", download_certificate_order_path(co)
+  =link_to "for Other platforms", download_other_certificate_order_path(co)
   \-
   =link_to "instructions", SignedCertificate::OTHER_INSTALL_LINK, :target => "_blank"
 %li.category_border

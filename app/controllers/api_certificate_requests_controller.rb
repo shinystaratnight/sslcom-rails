@@ -82,6 +82,39 @@ class ApiCertificateRequestsController < ApplicationController
     error(500, 500, "server error")
   end
 
+  def update_v1_4
+    if @result.csr_obj && !@result.csr_obj.valid?
+      # we do this sloppy maneuver because the rabl template only reports errors
+      @result = @result.csr_obj
+    else
+      if @result.save
+        if @acr = @result.create_certificate_order
+          # successfully charged
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+            template = "api_certificate_requests/success_create_v1_4"
+            @result.ref = @acr.ref
+            @result.order_status = @acr.status
+            @result.order_amount = @acr.order.amount.format
+            @result.certificate_url = url_for(@acr)
+            @result.receipt_url = url_for(@acr.order)
+            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
+            @result.validation_url = certificate_order_validation_url(@acr)
+            @result.update_attribute :response, render_to_string(:template => template)
+            render(:template => template)
+          else
+            @result = @acr #so that rabl can report errors
+          end
+        end
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      end
+    end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
+  end
+
   def dcv_validate_v1_4
     if @result.save
       if @certificate_order.is_a?(CertificateOrder)
@@ -197,7 +230,7 @@ class ApiCertificateRequestsController < ApplicationController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4"
+              when "create_v1_4", "update_v1_4"
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
@@ -209,9 +242,14 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiDcvEmails
             end
     @result=klass.new(params[:api_certificate_request])
+    @result.action = params[:action]
+    @result.ref = params[:ref] if params[:ref]
     @result.test = @test
     @result.request_url = request.url
     @result.parameters = params.to_json
+  end
+
+  def find_certificate_order
     @certificate_order=@result.find_certificate_order
   end
 

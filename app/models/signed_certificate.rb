@@ -200,6 +200,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def create_signed_cert_zip_bundle(is_windows=false)
+    is_windows=false #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
@@ -215,6 +216,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def zipped_whm_bundle(is_windows=false)
+    is_windows=false #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
@@ -228,6 +230,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def zipped_apache_bundle(is_windows=false)
+    is_windows=false #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
@@ -241,6 +244,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def zipped_amazon_bundle(is_windows=false)
+    is_windows=false #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
@@ -254,6 +258,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def zipped_pkcs7(is_windows=false)
+    is_windows=false #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
@@ -373,7 +378,7 @@ class SignedCertificate < ActiveRecord::Base
     sc_int="#{Rails.root}/tmp/sc_int_#{id}.cer"
     File.open(sc_int, 'wb') do |f|
       tmp=""
-      certificate_order.bundled_cert_names.each do |file_name|
+      certificate_order.bundled_cert_names(server: "iis").each do |file_name|
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
@@ -390,7 +395,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_pkcs7
     return body if body.starts_with?(BEGIN_PKCS7_TAG)
-    File.read(pkcs7_file).gsub(/\n/, "\r\n")
+    File.read(pkcs7_file)
   end
 
   def file_extension

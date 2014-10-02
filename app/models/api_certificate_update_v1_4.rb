@@ -1,39 +1,17 @@
 require "declarative_authorization/maintenance"
 
-class ApiCertificateCreate_v1_4 < ApiCertificateRequest
+class ApiCertificateUpdate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
-  NON_EV_PERIODS = %w(365 730 1095 1461 1826)
-  EV_PERIODS = %w(365 730)
-
-  PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
-              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
-              :"107"=>"premiumssl256sslcom",
-              :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
-              :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
-
   DCV_METHODS = %w(email http_csr_hash dns https_csr_hash)
 
-  validates :account_key, :secret_key, presence: true
-  validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
+  validates :account_key, :secret_key, :ref, presence: true
   validates :csr, presence: true, unless: "ref.blank?"
-  validates :period, presence: true, format: /\d+/,
-    inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?) &&
-          c.ref.blank? && ['create_v1_4'].include?(c.action)}
-  validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
-    ['create_v1_4'].include?(c.action)}
-  validates :product, presence: true, format: {with: /\d{3}/},
-      inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
-      message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}, if:
-      lambda{|c|['create_v1_4'].include?(c.action)}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, if: "ref.blank?"
   validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -54,6 +32,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
+  validates :product, presence: true, format: {with: /\d{3}/},
+            inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
+            message: "needs to one of the following: #{ApiCertificateCreate::PRODUCTS.keys.map(&:to_s).join(', ')}"}, if: "ref.blank?"
   validate :verify_dcv_email_address, on: :create, unless: "email_address.blank?"
 
   before_validation do
@@ -74,15 +55,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     # create certificate
     # certificate_order=nil
     if self.ref
-      @certificate_order=self.find_certificate_order
-      if @certificate_order.is_a?(CertificateOrder)
-        certificate_content = @certificate_order.certificate_contents.build
-        certificate = @certificate_order.certificate
+      if self.find_certificate_order.is_a?(CertificateOrder)
+        certificate_content = @certificate_order.certificate_content
+        @certificate = @certificate_order.certificate
         csr = self.csr_obj
         csr.save
         certificate_content.csr = csr
-        certificate_content.server_software_id = server_software
-        certificate_content.submit_csr!
         certificate_content.save
         if errors.blank?
           if certificate_content.valid?
@@ -100,7 +78,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
       self
     else
-      certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
+      @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
       co_params = {duration: period, is_api_call: true}
       co_params.merge!({is_test: self.test})
       co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
@@ -116,7 +94,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       certificate_content=CertificateContent.new(
           csr: csr, server_software_id: self.server_software)
       co.certificate_contents << certificate_content
-      @certificate_order = setup_certificate_order(certificate, co)
+      @certificate_order = setup_certificate_order(@certificate, co)
       order = api_requestable.purchase(@certificate_order)
       order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
       unless self.test
@@ -270,7 +248,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     true
   end
 
-  # must belong to a list of acceptable email addresses
   def verify_dcv_email_address
     if self.dcv_methods
 

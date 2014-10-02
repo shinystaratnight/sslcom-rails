@@ -222,24 +222,8 @@ class CertificateOrdersController < ApplicationController
 
     respond_to do |format|
       if @certificate_content.valid?
-        @certificate_order.site_seal.conditionally_activate! unless
-            @certificate_order.site_seal.conditionally_activated?
-        cc = @certificate_order.certificate_content
-        if @certificate_content.preferred_reprocessing?
-          @certificate_order.certificate_contents << @certificate_content
-          @certificate_content.create_registrant(cc.registrant.attributes).save
-          cc.certificate_contacts.each do |contact|
-            @certificate_content.certificate_contacts << CertificateContact.new(contact.attributes)
-          end
-          cc = @certificate_order.certificate_content
-        else
-          cc.signing_request = @certificate_content.signing_request
-          cc.server_software = @certificate_content.server_software
-        end
-        if cc.new?
-          cc.submit_csr!
-        elsif cc.validated? || cc.pending_validation?
-          cc.pend_validation! if cc.validated?
+        cc = @certificate_order.transfer_certificate_content(@certificate_content)
+        if cc.pending_validation?
           format.html { redirect_to(@certificate_order) }
         end
         format.html { redirect_to edit_certificate_order_url(@certificate_order) }
@@ -331,6 +315,17 @@ class CertificateOrdersController < ApplicationController
   end
 
   def download
+    t=File.new(@certificate_order.certificate_content.csr.signed_certificate.
+      create_signed_cert_zip_bundle(is_client_windows?), "r")
+    # End of the block  automatically closes the file.
+    # Send it using the right mime type, with a download window and some nice file name.
+    send_file t.path, :type => 'application/zip', :disposition => 'attachment',
+      :filename => @certificate_order.friendly_common_name+'.zip'
+    # The temp file will be deleted some time...
+    t.close
+  end
+
+  def download_other
     t=File.new(@certificate_order.certificate_content.csr.signed_certificate.
       create_signed_cert_zip_bundle(is_client_windows?), "r")
     # End of the block  automatically closes the file.

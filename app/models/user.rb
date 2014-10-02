@@ -197,4 +197,10 @@ class User < ActiveRecord::Base
       # fetch extra user info from twitter
     end
   end
+
+  private
+
+  def self.change_login(old, new)
+    User.where('login LIKE ?', old).update_all(login: new)
+  end
 end
