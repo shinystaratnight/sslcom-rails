@@ -691,7 +691,7 @@ class CertificateOrder < ActiveRecord::Base
   def status
     if certificate_content.new?
       "unused. waiting on certificate signing request (csr) from customer"
-    elsif certificate_order.expired?
+    elsif certificate_content.expired?
       'n/a'
     else
       case certificate_content.workflow_state
@@ -704,7 +704,7 @@ class CertificateOrder < ActiveRecord::Base
         when "contacts_provided"
           "waiting on validation from customer"
         when "pending_validation", "validated"
-          last_sent=certificate_order.csr.last_dcv
+          last_sent=csr.last_dcv
           if last_sent.blank?
             'validating, please wait' #assume intranet
           elsif %w(http https).include?(last_sent.try(:dcv_method))
@@ -912,7 +912,7 @@ class CertificateOrder < ActiveRecord::Base
           end
         else
           options.merge!(
-            'test' => Rails.env =~ /production/i ? (is_test ? "Y" : "N") : 'Y',
+            'test' => (Rails.env =~ /production/i || !is_test) ? "Y" : "N",
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),
@@ -936,16 +936,7 @@ class CertificateOrder < ActiveRecord::Base
           end
           #ssl.com Sub CA certs
           ssl_com_order(options)
-          if is_api_call
-            options.merge!('dcvMethod' => dcv_method) if dcv_method
-            if dcv_method.blank? || dcv_method=~/email/i
-              if dcv_email_addresses && is_ucc?
-                options.merge!('dcvEmailAddress' => dcv_email_addresses)
-              elsif dcv_email_address
-                options.merge!('dcvEmailAddresses' => dcv_email_address)
-              end
-            end
-          elsif !skip_verification?
+          if !skip_verification?
             perform_dcv(last_sent, options)
           end
           fill_csr_fields options, certificate_content.registrant
@@ -987,13 +978,18 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def perform_dcv(last_sent, options)
-    if last_sent.dcv_method=="http"
-      options.merge!('dcvMethod' => "HTTP_CSR_HASH")
-    elsif last_sent.dcv_method=="https"
-      options.merge!('dcvMethod' => "HTTPS_CSR_HASH")
-    elsif last_sent.try("is_eligible_to_send?")
-      options.merge!('dcvEmailAddress' => last_sent.email_address)
-      last_sent.send_dcv! unless last_sent.sent_dcv?
+    if certificate.is_ucc?
+      options.merge!('dcvEmailAddresses' => certificate_content.certificate_names.map(&:last_dcv_for_comodo).join(","),
+                     'domainNames' => certificate_content.certificate_names.map(&:name).join(","))
+    else
+      if last_sent.dcv_method=="http"
+        options.merge!('dcvMethod' => "HTTP_CSR_HASH")
+      elsif last_sent.dcv_method=="https"
+        options.merge!('dcvMethod' => "HTTPS_CSR_HASH")
+      elsif last_sent.try("is_eligible_to_send?")
+        options.merge!('dcvEmailAddress' => last_sent.email_address)
+        last_sent.send_dcv! unless last_sent.sent_dcv?
+      end
     end
   end
 

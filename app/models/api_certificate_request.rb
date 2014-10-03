@@ -4,16 +4,16 @@ class ApiCertificateRequest < CaApiRequest
   ORDER_STATUS = ["waiting for domain control validation",
                 "waiting for documents", "pending validation", "validated", "issued", "revoked", "canceled"]
 
-  CREATE_ACCESSORS_1_4 = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
+  CREATE_ACCESSORS_1_4 = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
       :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_email_addresses, :dcv_method, :dcv_methods, :ref]
+      :dcv_email_addresses, :dcv_method, :ref]
 
-  ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :other_domains,
+  ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
       :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,
@@ -22,7 +22,7 @@ class ApiCertificateRequest < CaApiRequest
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_email_addresses, :dcv_method, :dcv_methods, :certificate_ref]
 
-  REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :other_domains,
+  REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
       :postal_code, :country_name, :duns_number, :company_number, :registered_locality_name,

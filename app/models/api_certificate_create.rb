@@ -7,6 +7,7 @@ class ApiCertificateCreate < ApiCertificateRequest
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
+  FREE_PERIODS = %w(30 90)
 
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
               :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
@@ -73,7 +74,7 @@ class ApiCertificateCreate < ApiCertificateRequest
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
     co_params = {duration: period, is_api_call: true}
     co_params.merge!({is_test: self.test})
-    co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
+    co_params.merge!({domains: self.domains}) if(is_ucc? && self.domains)
     csr = self.csr_obj
     csr.save
     certificate_order = api_requestable.certificate_orders.build(co_params)

@@ -7,6 +7,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
+  FREE_PERIODS = %w(30 90)
 
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
               :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
@@ -21,11 +22,15 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :csr, presence: true, unless: "ref.blank?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?) &&
-          c.ref.blank? && ['create_v1_4'].include?(c.action)}
+    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || is_ov?) &&
+          !c.is_free? && c.ref.blank? && ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
     message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
+    ['create_v1_4'].include?(c.action)}
+  validates :period, presence: true, format: {with: /\d+/},
+    inclusion: {in: ApiCertificateCreate::FREE_PERIODS,
+    message: "needs to be one of the following: #{FREE_PERIODS.join(', ')}"}, if: lambda{|c|c.is_free? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :product, presence: true, format: {with: /\d{3}/},
       inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
@@ -34,17 +39,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
-  validates :organization_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.organization.blank?}
+  validates :organization_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.organization.blank?) && csr}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
-            if: lambda{|c|!c.is_dv? && c.street_address_1.blank?} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
+            if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
-            if: lambda{|c|!c.is_dv? && c.post_office_box.blank?} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.locality.blank?}
-  validates :state_or_province_name, presence: true, if: lambda{|c|!c.is_dv? || c.csr_obj.state.blank?}
-  validates :postal_code, presence: true, if: lambda{|c|!c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
+            if: lambda{|c|!c.is_dv? && c.post_office_box.blank? && csr} #|| c.parsed_field("STREET1").blank?}
+  validates :locality_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.locality.blank?) && csr}
+  validates :state_or_province_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.state.blank?) && csr}
+  validates :postal_code, presence: true, if: lambda{|c|!c.is_dv? && csr} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
-      if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?")}
+      if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?") && csr}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
@@ -77,12 +82,22 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       @certificate_order=self.find_certificate_order
       if @certificate_order.is_a?(CertificateOrder)
         certificate_content = @certificate_order.certificate_contents.build
-        certificate = @certificate_order.certificate
         csr = self.csr_obj
         csr.save
         certificate_content.csr = csr
         certificate_content.server_software_id = server_software
         certificate_content.submit_csr!
+        self.domains.each do |k,v|
+          case v
+            when /https?/, /dns/
+              certificate_content.certificate_names.create(name: k).
+                  domain_control_validations.create(dcv_method: v)
+            else
+              certificate_content.certificate_names.create(name: k).
+                  domain_control_validations.create(dcv_method: "email", email_address: v)
+          end
+        end
+        certificate_content.domains = domains.keys
         certificate_content.save
         if errors.blank?
           if certificate_content.valid?
@@ -101,9 +116,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       self
     else
       certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-      co_params = {duration: period, is_api_call: true}
-      co_params.merge!({is_test: self.test})
-      co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
+      co_params = {duration: period, is_api_call: true, is_test: self.test}
       co = api_requestable.certificate_orders.build(co_params)
       if self.csr
         # process csr
@@ -113,8 +126,15 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         # or make a certificate voucher
         co.preferred_payment_order = 'prepaid'
       end
+      domain_names = if self.domains.is_a? Hash
+                       self.domains.keys
+                     elsif self.domains.is_a? String
+                       [self.domains]
+                     else
+                       self.domains
+                     end
       certificate_content=CertificateContent.new(
-          csr: csr, server_software_id: self.server_software)
+          csr: csr, server_software_id: self.server_software, domains: domain_names)
       co.certificate_contents << certificate_content
       @certificate_order = setup_certificate_order(certificate, co)
       order = api_requestable.purchase(@certificate_order)
@@ -255,7 +275,19 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def is_dv?
+    (serial =~ /^dv/ || serial =~ /^basic/) if serial
+  end
+
+  def is_ov?
+    !is_ev? && !is_dv?
+  end
+
+  def is_free?
     serial =~ /^dv/ if serial
+  end
+
+  def is_basic?
+    serial =~ /^basic/ if serial
   end
 
   def is_wildcard?

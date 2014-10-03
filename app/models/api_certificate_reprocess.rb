@@ -79,7 +79,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
     co_params = {duration: period, is_api_call: true}
     co_params.merge!({is_test: self.test})
-    co_params.merge!({domains: self.other_domains}) if(is_ucc? && self.other_domains)
+    co_params.merge!({domains: self.domains}) if(is_ucc? && self.domains)
     certificate_order = current_user.ssl_account.certificate_orders.build(co_params)
     certificate_content=certificate_order.certificate_contents.build(
         csr: self.csr_obj, server_software_id: self.server_software)
