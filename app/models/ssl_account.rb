@@ -213,6 +213,10 @@ class SslAccount < ActiveRecord::Base
     create_api_credential if api_credential.blank?
   end
 
+  def reseller_suffix
+    reseller ? reseller.reseller_tier.label+"tr" : ""
+  end
+
   #def order_transactions
   #  oids=Order.select("orders.id").joins(:billable.type(SslAccount)).
   #      where(:billable_id=>id).map(&:id)
