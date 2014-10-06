@@ -15,7 +15,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
-  DCV_METHODS = %w(email http_csr_hash dns https_csr_hash)
+  DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
@@ -59,7 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv_email_address, on: :create, unless: "email_address.blank?"
+  validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
 
   before_validation do
     if new_record?
@@ -87,16 +87,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         certificate_content.csr = csr
         certificate_content.server_software_id = server_software
         certificate_content.submit_csr!
-        self.domains.each do |k,v|
-          case v
-            when /https?/, /dns/
-              certificate_content.certificate_names.create(name: k).
-                  domain_control_validations.create(dcv_method: v)
-            else
-              certificate_content.certificate_names.create(name: k).
-                  domain_control_validations.create(dcv_method: "email", email_address: v)
-          end
-        end
         certificate_content.domains = domains.keys
         certificate_content.save
         if errors.blank?
@@ -164,6 +154,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def setup_certificate_content(options)
     certificate_order= options[:certificate_order]
     cc = options[:certificate_content]
+    cc.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses})
     cc.registrant.destroy unless cc.registrant.blank?
     cc.create_registrant(
         company_name: self.organization_name,
@@ -304,13 +295,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # must belong to a list of acceptable email addresses
   def verify_dcv_email_address
-    if self.dcv_methods
-
-    elsif self.dcv_email_address
-      emails=ComodoApi.domain_control_email_choices(self.domain ? self.domain :
-                                                        self.csr_obj.common_name).email_address_choices
-      errors[:dcv_email_address]<< "must be one of the following: #{emails.join(", ")}" unless
-          emails.include?(self.dcv_email_address)
+    self.dcv_email_addresses = {}
+    self.domains.each do |k,v|
+      unless v =~ /https?/i || v =~ /cname/i
+        self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
+        errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
+            self.dcv_email_addresses[k].include?(v)
+      end
     end
   end
 end

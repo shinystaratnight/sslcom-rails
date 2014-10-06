@@ -214,7 +214,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def reseller_suffix
-    reseller ? reseller.reseller_tier.label+"tr" : ""
+    (reseller && reseller.reseller_tier) ? reseller.reseller_tier.label+"tr" : ""
   end
 
   #def order_transactions

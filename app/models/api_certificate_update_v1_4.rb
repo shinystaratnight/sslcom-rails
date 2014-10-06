@@ -5,7 +5,7 @@ class ApiCertificateUpdate_v1_4 < ApiCertificateRequest
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
-  DCV_METHODS = %w(email http_csr_hash dns https_csr_hash)
+  DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
 
   validates :account_key, :secret_key, :ref, presence: true
   validates :csr, presence: true, unless: "ref.blank?"

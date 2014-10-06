@@ -797,12 +797,16 @@ class CertificateContent < ActiveRecord::Base
         if send_to_ca
           unless csr.sent_success #do not send if already sent successfully
             certificate_order.apply_for_certificate
-            last_sent=csr.domain_control_validations.last_sent
-            if last_sent
-              certificate_order.receipt_recipients.uniq.each do |c|
-                OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
-              end
+            last_sent=unless certificate_order.certificate.is_ucc?
+              csr.domain_control_validations.last_sent
+            else
+              certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
             end
+              if last_sent
+                certificate_order.receipt_recipients.uniq.each do |c|
+                  OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
+                end
+              end
           end
         end
       end
@@ -868,6 +872,25 @@ class CertificateContent < ActiveRecord::Base
 
   def additional_domains
     domains.join("\ ") unless domains.blank?
+  end
+
+  def dcv_domains(options)
+    i=0
+    options[:domains].each do |k,v|
+      case v
+        when /https?/i, /cname/i
+          self.certificate_names.create(name: k).
+              domain_control_validations.create(dcv_method: v, candidate_addresses: options[:emails][k])
+          self.csr.domain_control_validations.
+              create(dcv_method: v, candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+        else
+          self.certificate_names.create(name: k).
+              domain_control_validations.create(dcv_method: "email", email_address: v, candidate_addresses: options[:emails][k])
+          self.csr.domain_control_validations.
+              create(dcv_method: "email", email_address: v, candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+      end
+      i+=1
+    end
   end
 
   def signing_request=(signing_request)

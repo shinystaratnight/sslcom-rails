@@ -1110,6 +1110,10 @@ class CertificateOrder < ActiveRecord::Base
     cc
   end
 
+  def all_domains
+    ([certificate_content.csr.common_name]+(certificate_content.domains || [])).flatten.uniq if certificate_content.csr
+  end
+
   private
 
   def fill_csr_fields(options, obj)
