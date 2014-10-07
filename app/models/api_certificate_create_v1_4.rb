@@ -51,10 +51,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?") && csr}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
-  validates :dcv_email_address, email: true, unless: lambda{|c|c.dcv_email_address.blank?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
-  validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
