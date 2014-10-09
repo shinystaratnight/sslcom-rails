@@ -52,7 +52,7 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def hash_satisfied(http_or_s)
-    satisfy!
+    satisfy! unless satisfied?
     update_attributes sent_at: DateTime.now, dcv_method: http_or_s
   end
 

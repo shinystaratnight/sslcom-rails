@@ -183,7 +183,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
       cc.provide_contacts!
-      cc.pend_validation! !certificate_order.is_test
+      cc.pend_validation! # !certificate_order.is_test
     end
   end
 
@@ -295,10 +295,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def verify_dcv_email_address
     self.dcv_email_addresses = {}
     self.domains.each do |k,v|
-      unless v =~ /https?/i || v =~ /cname/i
+      unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
         self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
-        errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
-            self.dcv_email_addresses[k].include?(v)
+        errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
+            self.dcv_email_addresses[k].include?(v["dcv"])
       end
     end
   end

@@ -12,7 +12,7 @@ Please respond to the email validation request sent to: <%=@last_sent.email_addr
 An SSL.com certificate order has been placed for the domain(s): <%=@certificate_order.all_domains.join(", ")%>
 
 Please respond to the following email validation requests:
-  <%=@last_sent.each do |ls| -%>
+  <%@last_sent.each do |ls| -%>
     <%=ls.email_address%> for <%=ls.certificate_name.name%>
   <%end -%>
 <%end -%>

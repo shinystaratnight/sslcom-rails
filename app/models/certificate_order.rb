@@ -912,7 +912,7 @@ class CertificateOrder < ActiveRecord::Base
           end
         else
           options.merge!(
-            'test' => (Rails.env =~ /production/i || !is_test) ? "Y" : "N",
+            'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),

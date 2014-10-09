@@ -46,6 +46,8 @@ class CertificateContent < ActiveRecord::Base
     AI
     AIRFORCE
     AL
+    ALLFINANZ
+    ALSACE
     AM
     AN
     AO
@@ -100,6 +102,7 @@ class CertificateContent < ActiveRecord::Base
     BRUSSELS
     BS
     BT
+    BUDAPEST
     BUILD
     BUILDERS
     BUSINESS
@@ -122,6 +125,7 @@ class CertificateContent < ActiveRecord::Base
     CARE
     CAREER
     CAREERS
+    CASA
     CASH
     CAT
     CATERING
@@ -204,6 +208,7 @@ class CertificateContent < ActiveRecord::Base
     DO
     DOMAINS
     DURBAN
+    DVAG
     DZ
     EAT
     EC
@@ -244,6 +249,7 @@ class CertificateContent < ActiveRecord::Base
     FM
     FO
     FOO
+    FORSALE
     FOUNDATION
     FR
     FRL
@@ -315,6 +321,7 @@ class CertificateContent < ActiveRecord::Base
     HR
     HT
     HU
+    IBM
     ID
     IE
     IL
@@ -491,6 +498,7 @@ class CertificateContent < ActiveRecord::Base
     PLUMBING
     PM
     PN
+    POHL
     POST
     PR
     PRAXI
@@ -614,6 +622,7 @@ class CertificateContent < ActiveRecord::Base
     TRAINING
     TRAVEL
     TT
+    TUI
     TV
     TW
     TZ
@@ -659,6 +668,7 @@ class CertificateContent < ActiveRecord::Base
     WIKI
     WILLIAMHILL
     WME
+    WORK
     WORKS
     WORLD
     WS
@@ -716,6 +726,7 @@ class CertificateContent < ActiveRecord::Base
     XN--NQV7FS00EMA
     XN--O3CW4H
     XN--OGBPF8FL
+    XN--P1ACF
     XN--P1AI
     XN--PGBS0DH
     XN--Q9JYB4C
@@ -723,6 +734,8 @@ class CertificateContent < ActiveRecord::Base
     XN--S9BRJ9C
     XN--SES554G
     XN--UNUP4Y
+    XN--VERMGENSBERATER-CTB
+    XN--VERMGENSBERATUNG-PWB
     XN--VHQUV
     XN--WGBH1C
     XN--WGBL6A
@@ -877,17 +890,17 @@ class CertificateContent < ActiveRecord::Base
   def dcv_domains(options)
     i=0
     options[:domains].each do |k,v|
-      case v
+      case v["dcv"]
         when /https?/i, /cname/i
           self.certificate_names.create(name: k).
-              domain_control_validations.create(dcv_method: v, candidate_addresses: options[:emails][k])
+              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k])
           self.csr.domain_control_validations.
-              create(dcv_method: v, candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+              create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
         else
           self.certificate_names.create(name: k).
-              domain_control_validations.create(dcv_method: "email", email_address: v, candidate_addresses: options[:emails][k])
+              domain_control_validations.create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k])
           self.csr.domain_control_validations.
-              create(dcv_method: "email", email_address: v, candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+              create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
       end
       i+=1
     end
