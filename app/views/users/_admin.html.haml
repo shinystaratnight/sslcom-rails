@@ -38,6 +38,7 @@
                             login account
                         %li username: #{user.login}
                         %li email: #{user.email}
+                        %li account number: #{user.ssl_account.acct_number}
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
             %table(cellspacing="0")

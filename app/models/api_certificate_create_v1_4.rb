@@ -93,7 +93,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               setup_certificate_content(
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
-                  ssl_account: api_requestable)
+                  ssl_account: api_requestable,
+                  contacts: self.contacts)
             end
             return @certificate_order
           else
@@ -138,7 +139,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             setup_certificate_content(
                 certificate_order: @certificate_order,
                 certificate_content: certificate_content,
-                ssl_account: api_requestable)
+                ssl_account: api_requestable,
+                contacts: self.contacts)
           end
           return @certificate_order
         else
@@ -169,7 +171,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
         c = CertificateContact.new
-        r = options[:ssl_account].reseller
+        r = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
+              Reseller.new.attributes = options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all]
+            else
+              options[:ssl_account].reseller
+            end
         CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
           c.send((field+'=').to_sym, r.send(field.to_sym))
         end

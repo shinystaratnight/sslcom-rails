@@ -916,7 +916,7 @@ class CertificateOrder < ActiveRecord::Base
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
             'csr' => CGI::escape(csr.body),
-            'prioritiseCSRValues' => 'Y',
+            'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'Y',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
@@ -960,7 +960,7 @@ class CertificateOrder < ActiveRecord::Base
         if certificate.is_ucc?
           domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
           options.merge!(
-              'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
+              # 'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
               'primaryDomainName'=>csr.common_name,
               'maxSubjectCNs'=>1
           )
@@ -1055,7 +1055,9 @@ class CertificateOrder < ActiveRecord::Base
 
   # Get the most recent order_number as the one
   def external_order_number
+    return read_attribute(:external_order_number) unless read_attribute(:external_order_number).blank?
     all_csrs = certificate_contents.map(&:csr)
+    return nil if all_csrs.blank?
     sent_success_map = all_csrs.map {|c|c.sent_success(true)}
     sent_success_map.flatten.compact.uniq.first.order_number if
         all_csrs && !sent_success_map.blank? &&

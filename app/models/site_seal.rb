@@ -99,6 +99,13 @@ class SiteSeal < ActiveRecord::Base
     ref
   end
 
+  def self.activate_all
+    SiteSeal.where{workflow_state == 'new'}.each do |ss|
+      ss.assign_attributes({workflow_state: "fully_activated"}, without_protection: true) if (ss.certificate_orders.first && (ss.certificate_orders.first.validation.approved? || ss.certificate_orders.first.validation.approved_through_override?))
+      ss.save
+    end
+  end
+
   def self.generate_options(product)
     case product
     when /ev/
