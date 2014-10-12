@@ -408,7 +408,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def skip_verification?
-    (certificate.is_ucc? && !certificate.is_ev?) || ((csr.is_intranet? || csr.is_ip_address?) if csr)
+    (csr.is_intranet? || csr.is_ip_address?) if csr
   end
 
   def order_status
@@ -892,7 +892,7 @@ class CertificateOrder < ActiveRecord::Base
     {}.tap do |options|
       certificate_content.csr.tap do |csr|
         update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
-        if csr.certificate_content.preferred_reprocessing? || csr.sent_success
+        if csr.certificate_content.preferred_reprocessing? || csr.sent_success || external_order_number
           #assume reprocess, will need to look at ucc more carefully
           options.merge!(
             'orderNumber' => external_order_number,
@@ -905,9 +905,8 @@ class CertificateOrder < ActiveRecord::Base
             'countryName'=>csr.country
           )
           ssl_com_order(options)
-          #TODO build facility for multi domain validation support
           last_sent = csr.domain_control_validations.last_method
-          if !skip_verification? && !last_sent.blank?
+          if !skip_verification? # && !last_sent.blank?
             perform_dcv(last_sent, options)
           end
         else
@@ -979,8 +978,14 @@ class CertificateOrder < ActiveRecord::Base
 
   def perform_dcv(last_sent, options)
     if certificate.is_ucc?
-      options.merge!('dcvEmailAddresses' => certificate_content.certificate_names.map(&:last_dcv_for_comodo).join(","),
-                     'domainNames' => certificate_content.certificate_names.map(&:name).join(","))
+      domains_for_comodo = certificate_content.certificate_names.map(&:name)
+      dcv_methods_for_comodo = certificate_content.certificate_names.map(&:last_dcv_for_comodo)
+      unless domains_for_comodo.include? csr.common_name
+        domains_for_comodo << csr.common_name
+        dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
+      end
+      options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(","),
+                     'domainNames' => domains_for_comodo.join(","))
     else
       if last_sent.dcv_method=="http"
         options.merge!('dcvMethod' => "HTTP_CSR_HASH")

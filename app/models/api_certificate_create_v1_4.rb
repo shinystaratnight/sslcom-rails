@@ -16,6 +16,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
   DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
+  DEFAULT_DCV_METHOD = "http_csr_hash"
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
@@ -58,6 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
+  validate :validate_contacts, unless: "contacts.blank?"
 
   before_validation do
     if new_record?
@@ -172,10 +174,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       CertificateContent::CONTACT_ROLES.each do |role|
         c = CertificateContact.new
         r = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
-              Reseller.new.attributes = options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all]
+              Reseller.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
             else
               options[:ssl_account].reseller
             end
+        errors[:contacts] = r.errors unless r.valid?
         CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
           c.send((field+'=').to_sym, r.send(field.to_sym))
         end
@@ -307,5 +310,23 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             self.dcv_email_addresses[k].include?(v["dcv"])
       end
     end
+  end
+
+  def validate_contacts
+    CertificateContent::CONTACT_ROLES.each do |role|
+      if contacts && (contacts[role] || contacts[:all])
+        attrs = contacts[role] ? contacts[role] : contacts[:all]
+        extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
+        if !extra.empty?
+          errors[:contacts] << "The following parameters are invalid: #{extra.join(", ")}"
+        elsif Country.find_by_name_caps(attrs[:country].upcase).blank?
+          errors[:contacts] << "The 'country' parameter is invalid."
+        else
+          r = Reseller.new(attrs)
+          errors[:contacts] << r.errors unless r.valid?
+        end
+      end
+    end
+    return false if errors[:contacts]
   end
 end

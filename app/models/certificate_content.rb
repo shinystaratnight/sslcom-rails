@@ -892,12 +892,12 @@ class CertificateContent < ActiveRecord::Base
     options[:domains].each do |k,v|
       case v["dcv"]
         when /https?/i, /cname/i
-          self.certificate_names.create(name: k).
+          self.certificate_names.find_by_name(k).
               domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k])
           self.csr.domain_control_validations.
               create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
         else
-          self.certificate_names.create(name: k).
+          self.certificate_names.find_by_name(k).
               domain_control_validations.create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k])
           self.csr.domain_control_validations.
               create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
