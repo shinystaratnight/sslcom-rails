@@ -313,17 +313,21 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_contacts
+    errors[:contacts] = {}
     CertificateContent::CONTACT_ROLES.each do |role|
       if contacts && (contacts[role] || contacts[:all])
-        attrs = contacts[role] ? contacts[role] : contacts[:all]
+        attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts[:all],:all]
         extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
         if !extra.empty?
-          errors[:contacts] << "The following parameters are invalid: #{extra.join(", ")}"
-        elsif Country.find_by_name_caps(attrs[:country].upcase).blank?
-          errors[:contacts] << "The 'country' parameter is invalid."
-        else
-          r = Reseller.new(attrs)
-          errors[:contacts] << r.errors unless r.valid?
+          msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
+          errors[:contacts].last.merge!(msg)
+        elsif !CertificateContact.new(attrs.merge({roles: role})).valid?
+          r = CertificateContact.new(attrs.merge({roles: role}))
+          r.valid?
+          errors[:contacts].last.merge!(c_role.to_sym => r.errors)
+        else Country.find_by_name_caps(attrs[:country].upcase).blank?
+          msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
+          errors[:contacts].last.merge!(msg)
         end
       end
     end
