@@ -24,7 +24,7 @@ class SignedCertificate < ActiveRecord::Base
   BEGIN_PKCS7_TAG="-----BEGIN PKCS7-----"
   END_PKCS7_TAG="-----END PKCS7-----"
 
-  IIS_INSTALL_LINK = "https://support.ssl.com/Knowledgebase/Article/View/7/8/how-to-install-an-ssl-certificate-in-iis-7"
+  IIS_INSTALL_LINK = "https://info.ssl.com/howto-install-an-ssl-certificate-on-iis-7"
   CPANEL_INSTALL_LINK = "http://docs.cpanel.net/twiki/bin/view/AllDocumentation/WHMDocs/InstallCert"
   NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
   OTHER_INSTALL_LINK = "http://info.ssl.com/"

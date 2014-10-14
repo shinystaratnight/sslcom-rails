@@ -214,6 +214,12 @@ class Certificate < ActiveRecord::Base
     self.amount = amount.gsub(/\./,"").to_i
   end
 
+  def api_product_code
+    ApiCertificateCreate_v1_4::PRODUCTS.find{|k,v|
+      serial =~ Regexp.new(v)
+    }[0].to_s
+  end
+
   def items_by_duration
     product_variant_groups.duration.map(&:product_variant_items).
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}

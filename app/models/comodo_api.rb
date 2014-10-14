@@ -73,7 +73,7 @@ class ComodoApi
   end
 
   def self.collect_ssl(certificate_order)
-    options = {'queryType' => 2, "showExtStatus"=>"Y",
+    options = {'queryType' => 2, "showExtStatus"=>"Y", "showMDCDomainDetail"=>"Y",
                'orderNumber'=> certificate_order.external_order_number_for_extract}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = COLLECT_SSL_URL

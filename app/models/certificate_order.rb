@@ -540,6 +540,37 @@ class CertificateOrder < ActiveRecord::Base
     ref
   end
 
+  def to_api_string(action="update")
+    cc = certificate_content
+    r = cc.registrant
+    api_domains = ""
+    cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
+    <<-EOS
+      curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
+      \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
+\\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
+\\"server_software\\" : \\"#{cc.server_software_id}\\", \\"organization_name\\" : \\"#{r.company_name}\\",
+\\"organization_unit_name\\" : \\"#{r.department}\\",
+\\"post_office_box\\" : \\"#{r.po_box}\\",
+\\"street_address_1\\" : \\"#{r.address1}\\",
+\\"street_address_2\\" : \\"#{r.address2}\\",
+\\"street_address_3\\" : \\"#{r.address3}\\",
+\\"locality_name\\" : \\"#{r.city}\\",
+\\"state_or_province_name\\" : \\"#{r.state}\\",
+\\"postal_code\\" : \\"#{r.postal_code}\\",
+\\"country_name\\" :  \\"#{r.country}\\",
+\\"domains\\":{#{api_domains}}},
+\\"contacts\\":{\\"all\\":{\\"first_name\\" : \\"Eric\\",\\"last_name\\":
+\\"Miles\\", \\"address1\\" : \\"60 Revere Dr\\", \\"address2\\" : \\"Suite 201\\", \\"city\\" : \\"Northbrook\\",
+\\"state\\" : \\"IL\\", \\"country\\" : \\"US\\", \\"vbn\\" : \\"US\\", \\"postal_code\\" : \\"60062\\", \\"email\\" :
+\\"ericm@dvsweb.com\\", \\"phone\\" : \\"8476648859\\"},\\"administrative\\":{\\"first_name\\" : \\"Eric\\",
+\\"last_name\\": \\"Miles\\", \\"address1\\" : \\"60 Revere Dr\\", \\"address2\\" : \\"Suite 201\\", \\"city\\" :
+\\"Northbrook\\", \\"state\\" : \\"IL\\", \\"country\\" : \\"US\\", \\"vbn\\" : \\"US\\", \\"postal_code\\" :
+\\"60062\\", \\"email\\" : \\"ericm@dvsweb.com\\", \\"phone\\" : \\"8476648859\\"}}, \\"csr\\" :
+\\"#{certificate_content.csr.body.gsub("\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+    EOS
+  end
+
   def add_renewal(ren)
     unless ren.blank?
       self.renewal_id=CertificateOrder.find_by_ref(ren).id

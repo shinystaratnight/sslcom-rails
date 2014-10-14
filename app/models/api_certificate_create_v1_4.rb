@@ -305,9 +305,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self.dcv_email_addresses = {}
     self.domains.each do |k,v|
       unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
-        self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
-        errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
-            self.dcv_email_addresses[k].include?(v["dcv"])
+        unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
+          errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
+        else
+          self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
+          errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
+              self.dcv_email_addresses[k].include?(v["dcv"])
+        end
       end
     end
   end

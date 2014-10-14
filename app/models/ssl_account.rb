@@ -249,6 +249,10 @@ class SslAccount < ActiveRecord::Base
     funded_account.update_attribute :cents, funded_account.cents+=cents
   end
 
+  def self.api_credentials_for_all
+    self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
+  end
+
   private
 
   SETTINGS_SECTIONS.each do |item|
