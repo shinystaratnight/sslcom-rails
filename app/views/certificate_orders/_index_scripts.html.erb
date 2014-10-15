@@ -27,6 +27,9 @@ jQuery(function($) {
     $('textarea[name*=body]').click(function(){
       $(this).select();
     });
+    $('form[id^=edit_certificate_order] textarea').keyup(function(){
+      $(this).parents().filter('form').ajaxSubmit();
+    });
   });
 });
 </script>

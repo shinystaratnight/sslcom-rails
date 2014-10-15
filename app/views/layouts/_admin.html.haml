@@ -3,19 +3,45 @@
     %table#at_a_glance_header
       %tbody
         %tr
-          %th.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
-          %th.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
-          %th.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
-          %th.certificate_status=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
+          %th.validations
+            %table
+              %tr
+                %td.validations=link_to "NEED MORE INFO", incomplete_certificate_orders_path
+              %tr
+                %td.validations=link_to CertificateOrder.unvalidated.count, incomplete_certificate_orders_path
+          %th.certificate_status
+            %table
+              %tr
+                %td.certificate_status=link_to "IN PROGRESS", pending_certificate_orders_path
+              %tr
+                %td.certificate_status=link_to CertificateOrder.pending.count, pending_certificate_orders_path
+          %th.certificate_status
+            %table
+              %tr
+                %td.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
+              %tr
+                %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
+          %th.certificate_status{rowspan: 5}
+            %table
+              %tr
+                %td=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
+              %tr
+                %td=link_to "FILTER BY EV", filter_by_certificate_orders_path("ev")
+              %tr
+                %td=link_to "FILTER BY UCC", filter_by_certificate_orders_path("ucc")
+              %tr
+                %td=link_to "FILTER BY PREMIUM", filter_by_certificate_orders_path("premium")
+              %tr
+                %td=link_to "FILTER BY WILDCARD", filter_by_certificate_orders_path("wildcard")
           -unless current_user.ssl_account.funded_account.blank?
             %th AVAILABLE FOR USE
           -if show_short_links?
             %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
           %th=link_to 'Logout', logout_url
         %tr#info
-          %td.validations=link_to CertificateOrder.unvalidated.count, incomplete_certificate_orders_path
-          %td.certificate_status=link_to CertificateOrder.pending.count, pending_certificate_orders_path
-          %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
+          %td
+          %td
+          %td
           %td
           -unless current_user.ssl_account.funded_account.blank?
             %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false

@@ -22,7 +22,7 @@ class CertificateOrdersController < ApplicationController
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over, :admin_update]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
-  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
+  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :admin_update, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -268,6 +268,19 @@ class CertificateOrdersController < ApplicationController
       CertificateOrder.unscoped{CertificateOrder.order_by_csr} :
         current_user.ssl_account.certificate_orders.unscoped{
           current_user.ssl_account.certificate_orders.order_by_csr}).paginate(p)
+
+    respond_to do |format|
+      format.html { render :action=>:index}
+      format.xml  { render :xml => @certificate_orders }
+    end
+  end
+
+  def filter_by
+    p = {:page => params[:page]}
+    @certificate_orders = (current_user.is_admin? ?
+      CertificateOrder.unscoped{CertificateOrder.filter_by(params[:id])} :
+        current_user.ssl_account.certificate_orders.unscoped{
+          current_user.ssl_account.certificate_orders.filter_by(params[:id])}).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

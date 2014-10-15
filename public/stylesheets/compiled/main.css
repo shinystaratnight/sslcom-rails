@@ -5413,81 +5413,93 @@ label.error {
 }
 
 /* line 4070, ../../../app/stylesheets/main.sass */
+table#at_a_glance_header {
+  margin-top: 7px;
+}
+
+/* line 4073, ../../../app/stylesheets/main.sass */
 #at_a_glance_header {
   float: right;
   color: gray;
 }
-/* line 4073, ../../../app/stylesheets/main.sass */
+/* line 4076, ../../../app/stylesheets/main.sass */
 #at_a_glance_header th, #at_a_glance_header td {
+  vertical-align: top;
   padding: 0 10px;
   text-transform: uppercase;
+  line-height: 90%;
 }
-/* line 4076, ../../../app/stylesheets/main.sass */
+/* line 4081, ../../../app/stylesheets/main.sass */
 #at_a_glance_header #info {
   font-weight: bold;
   font-size: 1.5em;
   color: white;
 }
-/* line 4080, ../../../app/stylesheets/main.sass */
+/* line 4085, ../../../app/stylesheets/main.sass */
 #at_a_glance_header .validations, #at_a_glance_header .validations a {
+  vertical-align: top;
   display: block;
   color: red;
+  line-height: 90%;
 }
-/* line 4083, ../../../app/stylesheets/main.sass */
+/* line 4090, ../../../app/stylesheets/main.sass */
 #at_a_glance_header #logout_header_link {
   text-transform: none;
   padding-left: 60px;
 }
-/* line 4086, ../../../app/stylesheets/main.sass */
+/* line 4093, ../../../app/stylesheets/main.sass */
 #at_a_glance_header th.certificate_status, #at_a_glance_header th.certificate_status a {
   color: gray;
+  vertical-align: top;
+  line-height: 90%;
 }
-/* line 4088, ../../../app/stylesheets/main.sass */
+/* line 4097, ../../../app/stylesheets/main.sass */
 #at_a_glance_header td.certificate_status a {
+  vertical-align: top;
   display: block;
   color: white;
 }
-/* line 4091, ../../../app/stylesheets/main.sass */
+/* line 4101, ../../../app/stylesheets/main.sass */
 #at_a_glance_header td:hover {
   text-decoration: underline;
 }
 
-/* line 4095, ../../../app/stylesheets/main.sass */
+/* line 4105, ../../../app/stylesheets/main.sass */
 #buy_certificate {
   float: right;
 }
 
 /* Receipt Page */
-/* line 4099, ../../../app/stylesheets/main.sass */
+/* line 4109, ../../../app/stylesheets/main.sass */
 #available_funds {
   margin: 1.5em 0 1em;
 }
 
-/* line 4102, ../../../app/stylesheets/main.sass */
+/* line 4112, ../../../app/stylesheets/main.sass */
 #available_funds_amount {
   font-size: 1.5em;
   font-weight: bold;
   margin: 0 1em;
 }
 
-/* line 4107, ../../../app/stylesheets/main.sass */
+/* line 4117, ../../../app/stylesheets/main.sass */
 #deposit_details, #order_details {
   margin: 0 0 1em;
 }
-/* line 4109, ../../../app/stylesheets/main.sass */
+/* line 4119, ../../../app/stylesheets/main.sass */
 #deposit_details div, #order_details div {
   margin: 0 0 0 1em;
   font-size: 1.4em;
   color: #666666;
   text-transform: lowercase;
 }
-/* line 4114, ../../../app/stylesheets/main.sass */
+/* line 4124, ../../../app/stylesheets/main.sass */
 #deposit_details div span, #order_details div span {
   color: black;
   text-transform: none;
 }
 
-/* line 4118, ../../../app/stylesheets/main.sass */
+/* line 4128, ../../../app/stylesheets/main.sass */
 #completed_order_results {
   margin: 2em auto 4em;
   width: 100%;
@@ -5495,31 +5507,31 @@ label.error {
   border: 1px #cccccc solid;
 }
 
-/* line 4124, ../../../app/stylesheets/main.sass */
+/* line 4134, ../../../app/stylesheets/main.sass */
 .order_results_header {
   border-bottom: 1px dashed #cccccc;
   padding: 0.5em;
 }
 
-/* line 4128, ../../../app/stylesheets/main.sass */
+/* line 4138, ../../../app/stylesheets/main.sass */
 table#line_items_receipt {
   margin: 0pt auto;
   font-size: 1.3em;
   color: black;
 }
-/* line 4132, ../../../app/stylesheets/main.sass */
+/* line 4142, ../../../app/stylesheets/main.sass */
 table#line_items_receipt td {
   padding: 2px 10px;
 }
 
-/* line 4135, ../../../app/stylesheets/main.sass */
+/* line 4145, ../../../app/stylesheets/main.sass */
 #order_amount_receipt {
   background-color: #c2fcbf;
   border: 1px solid #faf999;
 }
 
 /* ----------- Form Progress Indicator ----------- */
-/* line 4141, ../../../app/stylesheets/main.sass */
+/* line 4151, ../../../app/stylesheets/main.sass */
 #form_progress_indicator {
   border-top: 1px dashed #aaffaa;
   border-bottom: 1px dashed #aaffaa;
@@ -5534,19 +5546,19 @@ table#line_items_receipt td {
   background: -o-linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
   background: linear-gradient(#eeffee 10%, #ffffff, #eeffee 90%);
 }
-/* line 4152, ../../../app/stylesheets/main.sass */
+/* line 4162, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul, #form_progress_indicator .default_container .info_listing ul#privacy, .default_container .info_listing #form_progress_indicator ul#privacy {
   margin: 0 auto;
   padding: 0;
   list-style: none;
 }
-/* line 4157, ../../../app/stylesheets/main.sass */
+/* line 4167, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li, #form_progress_indicator .default_container .info_listing ul#privacy li, .default_container .info_listing #form_progress_indicator ul#privacy li {
   margin: 0pt 3px 0pt 0pt;
   padding: 0 2.5em;
   float: left;
 }
-/* line 4162, ../../../app/stylesheets/main.sass */
+/* line 4172, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span, #form_progress_indicator .default_container .info_listing ul#privacy li span, .default_container .info_listing #form_progress_indicator ul#privacy li span {
   margin: 0;
   padding: 0.3em 1em;
@@ -5554,24 +5566,24 @@ table#line_items_receipt td {
   font-size: 0.9em;
   font-weight: bold;
 }
-/* line 4169, ../../../app/stylesheets/main.sass */
+/* line 4179, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span strong, #form_progress_indicator .default_container .info_listing ul#privacy li span strong, .default_container .info_listing #form_progress_indicator ul#privacy li span strong {
   padding: 0pt 0.2em;
   font-size: 1.5em;
 }
-/* line 4173, ../../../app/stylesheets/main.sass */
+/* line 4183, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li span.finished, #form_progress_indicator .default_container .info_listing ul#privacy li span.finished, .default_container .info_listing #form_progress_indicator ul#privacy li span.finished {
   background-image: url("/images/sitesprite1.png");
   background-position: -10px -782px;
   background-repeat: no-repeat;
   color: #666666;
 }
-/* line 4179, ../../../app/stylesheets/main.sass */
+/* line 4189, ../../../app/stylesheets/main.sass */
 #form_progress_indicator ul li#selected {
   color: #ff3333;
 }
 
-/* line 4182, ../../../app/stylesheets/main.sass */
+/* line 4192, ../../../app/stylesheets/main.sass */
 .reseller_registration_select_tier, .reseller_registration_profile,
 .user_session_format, .reseller_tier_pricing_popup, .order_container,
 .upload_document_container, .default_container {
@@ -5579,150 +5591,150 @@ table#line_items_receipt td {
   width: 70%;
   padding: 0px;
 }
-/* line 4189, ../../../app/stylesheets/main.sass */
+/* line 4199, ../../../app/stylesheets/main.sass */
 .reseller_registration_select_tier p, .reseller_registration_profile p,
 .user_session_format p, .reseller_tier_pricing_popup p, .order_container p,
 .upload_document_container p, .default_container p {
   font-size: 1.4em;
 }
 
-/* line 4192, ../../../app/stylesheets/main.sass */
+/* line 4202, ../../../app/stylesheets/main.sass */
 .default_container {
   padding-bottom: 1em;
 }
-/* line 4195, ../../../app/stylesheets/main.sass */
+/* line 4205, ../../../app/stylesheets/main.sass */
 .default_container .info_listing {
   font-size: 1.4em;
 }
-/* line 4197, ../../../app/stylesheets/main.sass */
+/* line 4207, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul, .default_container .info_listing ul#privacy {
   list-style-type: none;
 }
-/* line 4203, ../../../app/stylesheets/main.sass */
+/* line 4213, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul#privacy li {
   margin: 0.8em 0;
 }
-/* line 4206, ../../../app/stylesheets/main.sass */
+/* line 4216, ../../../app/stylesheets/main.sass */
 .default_container .info_listing ul#privacy li:first-child, .default_container .info_listing ul#privacy li:last-child {
   margin: 0;
 }
-/* line 4209, ../../../app/stylesheets/main.sass */
+/* line 4219, ../../../app/stylesheets/main.sass */
 .default_container .info_listing dd {
   margin-bottom: 0.6em;
 }
-/* line 4212, ../../../app/stylesheets/main.sass */
+/* line 4222, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types {
   width: 100%;
   border-collapse: collapse;
 }
-/* line 4216, ../../../app/stylesheets/main.sass */
+/* line 4226, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td {
   font-size: 1.4em;
 }
-/* line 4219, ../../../app/stylesheets/main.sass */
+/* line 4229, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td .center {
   margin: 0 auto 4px;
 }
-/* line 4222, ../../../app/stylesheets/main.sass */
+/* line 4232, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink {
   background-color: pink;
 }
-/* line 4225, ../../../app/stylesheets/main.sass */
+/* line 4235, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink.seal {
   border-top: 2px red solid;
 }
-/* line 4228, ../../../app/stylesheets/main.sass */
+/* line 4238, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.pink.seal .center {
   margin: 4px 0 0 0;
 }
-/* line 4231, ../../../app/stylesheets/main.sass */
+/* line 4241, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue {
   background-color: lightblue;
 }
-/* line 4234, ../../../app/stylesheets/main.sass */
+/* line 4244, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue.seal {
   border-top: 2px blue solid;
 }
-/* line 4237, ../../../app/stylesheets/main.sass */
+/* line 4247, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_blue.seal .center {
   margin-top: 4px;
 }
-/* line 4240, ../../../app/stylesheets/main.sass */
+/* line 4250, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green {
   background-color: lightgreen;
 }
-/* line 4243, ../../../app/stylesheets/main.sass */
+/* line 4253, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green.seal {
   border-top: 2px green solid;
 }
-/* line 4246, ../../../app/stylesheets/main.sass */
+/* line 4256, ../../../app/stylesheets/main.sass */
 .default_container table.smart_seal_types td.light_green.seal .center {
   margin-top: 4px;
 }
 
-/* line 4250, ../../../app/stylesheets/main.sass */
+/* line 4260, ../../../app/stylesheets/main.sass */
 .reseller_tier_pricing_popup {
   width: 100%;
 }
 
-/* line 4253, ../../../app/stylesheets/main.sass */
+/* line 4263, ../../../app/stylesheets/main.sass */
 .upload_document_container {
   width: 80%;
 }
 
-/* line 4256, ../../../app/stylesheets/main.sass */
+/* line 4266, ../../../app/stylesheets/main.sass */
 .site_seal_docs_container {
   width: 938px;
 }
-/* line 4259, ../../../app/stylesheets/main.sass */
+/* line 4269, ../../../app/stylesheets/main.sass */
 .site_seal_docs_container p {
   font-size: 1.3em;
 }
 
-/* line 4262, ../../../app/stylesheets/main.sass */
+/* line 4272, ../../../app/stylesheets/main.sass */
 #button_container {
   width: 100%;
 }
-/* line 4266, ../../../app/stylesheets/main.sass */
+/* line 4276, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit {
   overflow: hidden;
 }
-/* line 4269, ../../../app/stylesheets/main.sass */
+/* line 4279, ../../../app/stylesheets/main.sass */
 #button_container #prev_next_submit input {
   float: right;
 }
-/* line 4272, ../../../app/stylesheets/main.sass */
+/* line 4282, ../../../app/stylesheets/main.sass */
 #button_container #auto_adjust, #button_container #prev_next_submit, #button_container #next_submit, #button_container #click_to_load, #button_container #shop_more_checkout,
 #button_container #add_items, #button_container #skip_button {
   margin: 2.5em auto 3em;
   width: 340px;
 }
-/* line 4277, ../../../app/stylesheets/main.sass */
+/* line 4287, ../../../app/stylesheets/main.sass */
 #button_container #auto_adjust input, #button_container #auto_adjust img, #button_container #prev_next_submit input, #button_container #prev_next_submit img, #button_container #next_submit input, #button_container #next_submit img, #button_container #click_to_load input, #button_container #click_to_load img, #button_container #shop_more_checkout input, #button_container #shop_more_checkout img,
 #button_container #add_items input,
 #button_container #add_items img, #button_container #skip_button input, #button_container #skip_button img {
   margin: 0 2em;
 }
-/* line 4280, ../../../app/stylesheets/main.sass */
+/* line 4290, ../../../app/stylesheets/main.sass */
 #button_container #auto_adjust {
   width: inherit;
   text-align: center;
 }
-/* line 4284, ../../../app/stylesheets/main.sass */
+/* line 4294, ../../../app/stylesheets/main.sass */
 #button_container #next_submit, #button_container #add_items {
   width: 160px;
 }
-/* line 4287, ../../../app/stylesheets/main.sass */
+/* line 4297, ../../../app/stylesheets/main.sass */
 #button_container #skip_button {
   width: 130px;
 }
-/* line 4290, ../../../app/stylesheets/main.sass */
+/* line 4300, ../../../app/stylesheets/main.sass */
 #button_container #click_to_load {
   width: 238px;
 }
 
 /* ----------- What is security code----------- */
-/* line 4295, ../../../app/stylesheets/main.sass */
+/* line 4305, ../../../app/stylesheets/main.sass */
 #what_is_security_code_link {
   font-size: 1.2em;
   padding: 0.4em;
@@ -5730,7 +5742,7 @@ table#line_items_receipt td {
   float: left;
 }
 
-/* line 4301, ../../../app/stylesheets/main.sass */
+/* line 4311, ../../../app/stylesheets/main.sass */
 #what_is_security_code {
   display: none;
   position: absolute;
@@ -5745,45 +5757,45 @@ table#line_items_receipt td {
   padding: 15px;
 }
 
-/* line 4314, ../../../app/stylesheets/main.sass */
+/* line 4324, ../../../app/stylesheets/main.sass */
 #what_is_security_code_table, #what_is_number_licenses_explain {
   font-family: Helvetica, Arial, sans-serif;
   font-size: 1.2em;
 }
 
-/* line 4318, ../../../app/stylesheets/main.sass */
+/* line 4328, ../../../app/stylesheets/main.sass */
 #what_is_number_licenses_explain {
   font-size: 1.4em;
 }
 
-/* line 4321, ../../../app/stylesheets/main.sass */
+/* line 4331, ../../../app/stylesheets/main.sass */
 #what_are_expiration_notices_link {
   vertical-align: bottom;
 }
 
-/* line 4324, ../../../app/stylesheets/main.sass */
+/* line 4334, ../../../app/stylesheets/main.sass */
 .security_code_row {
   position: relative;
   float: left;
   width: 235px;
 }
 
-/* line 4329, ../../../app/stylesheets/main.sass */
+/* line 4339, ../../../app/stylesheets/main.sass */
 #what_is_number_licenses_link, #what_are_domains_link {
   float: right;
   padding-left: 2px;
 }
-/* line 4333, ../../../app/stylesheets/main.sass */
+/* line 4343, ../../../app/stylesheets/main.sass */
 #what_is_number_licenses_link img, #what_are_domains_link img {
   vertical-align: top;
 }
 
-/* line 4336, ../../../app/stylesheets/main.sass */
+/* line 4346, ../../../app/stylesheets/main.sass */
 #domains_label_text {
   padding-bottom: 2px;
 }
 
-/* line 4339, ../../../app/stylesheets/main.sass */
+/* line 4349, ../../../app/stylesheets/main.sass */
 #current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
 #calculated_price, .displayed_csr_field {
   float: left;
@@ -5792,12 +5804,12 @@ table#line_items_receipt td {
   margin: 2px 0.6em 20px;
 }
 
-/* line 4346, ../../../app/stylesheets/main.sass */
+/* line 4356, ../../../app/stylesheets/main.sass */
 #tier_load_amount {
   margin: 0px 0.6em 20px;
 }
 
-/* line 4349, ../../../app/stylesheets/main.sass */
+/* line 4359, ../../../app/stylesheets/main.sass */
 #confirmed_validation {
   font-size: 1.3em;
   width: 30em;
@@ -5806,14 +5818,14 @@ table#line_items_receipt td {
   color: #222222;
 }
 
-/* line 4356, ../../../app/stylesheets/main.sass */
+/* line 4366, ../../../app/stylesheets/main.sass */
 #existing_credit_cards {
   width: 100%;
   margin: 0px auto;
   text-align: center;
 }
 
-/* line 4361, ../../../app/stylesheets/main.sass */
+/* line 4371, ../../../app/stylesheets/main.sass */
 #existing_credit_cards table {
   font-size: 1.4em;
   width: 80%;
@@ -5822,12 +5834,12 @@ table#line_items_receipt td {
   margin-bottom: 2em;
 }
 
-/* line 4368, ../../../app/stylesheets/main.sass */
+/* line 4378, ../../../app/stylesheets/main.sass */
 #existing_credit_cards_header {
   color: #777777;
 }
 
-/* line 4371, ../../../app/stylesheets/main.sass */
+/* line 4381, ../../../app/stylesheets/main.sass */
 .product_summary {
   margin: 20px 10px 20px;
   width: 288px;
@@ -5835,13 +5847,13 @@ table#line_items_receipt td {
   float: left;
 }
 
-/* line 4377, ../../../app/stylesheets/main.sass */
+/* line 4387, ../../../app/stylesheets/main.sass */
 .product_detail {
   width: 32%;
   float: right;
 }
 
-/* line 4382, ../../../app/stylesheets/main.sass */
+/* line 4392, ../../../app/stylesheets/main.sass */
 .product_summary .title, .product_detail .title {
   padding: 0.3em 0pt;
   font-weight: bold;
@@ -5850,76 +5862,76 @@ table#line_items_receipt td {
   background-color: #ccccff;
   color: black;
 }
-/* line 4390, ../../../app/stylesheets/main.sass */
+/* line 4400, ../../../app/stylesheets/main.sass */
 .product_summary .p_ev, .product_detail .p_ev {
   background: url(/images/get_green_bar.png) no-repeat;
 }
-/* line 4393, ../../../app/stylesheets/main.sass */
+/* line 4403, ../../../app/stylesheets/main.sass */
 .product_summary .p_body, .product_detail .p_body {
   padding: 10px 20px 20px;
 }
-/* line 4396, ../../../app/stylesheets/main.sass */
+/* line 4406, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container, .product_detail .p_body .p_image_container {
   margin: 10px auto 0pt;
   width: 128px;
 }
-/* line 4400, ../../../app/stylesheets/main.sass */
+/* line 4410, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container .p_ev_image, .product_detail .p_body .p_image_container .p_ev_image {
   height: 128px;
 }
-/* line 4402, ../../../app/stylesheets/main.sass */
+/* line 4412, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_image_container .p_ev_image img, .product_detail .p_body .p_image_container .p_ev_image img {
   border: 1px solid lime;
   margin-top: 4px;
 }
-/* line 4406, ../../../app/stylesheets/main.sass */
+/* line 4416, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_description, .product_detail .p_body .p_description {
   padding: 0pt 0.5em 1em;
   font-size: 1.3em;
   color: #333333;
 }
-/* line 4411, ../../../app/stylesheets/main.sass */
+/* line 4421, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container, .product_detail .p_body .p_points_container {
   border: 1px solid #ff9900;
   margin: 0pt auto;
   background-color: #fbfbf2;
 }
-/* line 4416, ../../../app/stylesheets/main.sass */
+/* line 4426, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points, .product_detail .p_body .p_points_container .p_points {
   padding: 1em;
   font-size: 1.2em;
 }
-/* line 4420, ../../../app/stylesheets/main.sass */
+/* line 4430, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points .check, .product_summary .p_body .p_points_container .p_points .p_point, .product_detail .p_body .p_points_container .p_points .check, .product_detail .p_body .p_points_container .p_points .p_point {
   margin: 1px 0;
   padding-left: 20px;
   height: 22px;
 }
-/* line 4425, ../../../app/stylesheets/main.sass */
+/* line 4435, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_points_container .p_points .check, .product_detail .p_body .p_points_container .p_points .check {
   background: url(/images/check_bl.png) no-repeat scroll 0 0;
 }
-/* line 4428, ../../../app/stylesheets/main.sass */
+/* line 4438, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .p_starting_at, .product_summary .p_body .reseller_p_starting_at, .product_detail .p_body .p_starting_at, .product_detail .p_body .reseller_p_starting_at {
   font-size: 1.7em;
 }
-/* line 4431, ../../../app/stylesheets/main.sass */
+/* line 4441, ../../../app/stylesheets/main.sass */
 .product_summary .p_body .reseller_p_starting_at, .product_detail .p_body .reseller_p_starting_at {
   text-align: center;
 }
 
-/* line 4434, ../../../app/stylesheets/main.sass */
+/* line 4444, ../../../app/stylesheets/main.sass */
 .p_buy_certificate, .product_description_buy_certificate {
   width: 126px;
   margin: 0 auto 1.4em;
 }
 
-/* line 4438, ../../../app/stylesheets/main.sass */
+/* line 4448, ../../../app/stylesheets/main.sass */
 .product_description_buy_certificate {
   margin: 0 auto 0.8em;
 }
 
-/* line 4441, ../../../app/stylesheets/main.sass */
+/* line 4451, ../../../app/stylesheets/main.sass */
 .price_starting_at, .get_free_ssl, .reseller_price_starting_at {
   color: #333333;
   font-size: 2.2em;
@@ -5927,22 +5939,22 @@ table#line_items_receipt td {
   width: 190px;
 }
 
-/* line 4447, ../../../app/stylesheets/main.sass */
+/* line 4457, ../../../app/stylesheets/main.sass */
 .reseller_price_starting_at {
   width: 270px;
   text-align: center;
 }
 
-/* line 4451, ../../../app/stylesheets/main.sass */
+/* line 4461, ../../../app/stylesheets/main.sass */
 .get_free_ssl {
   width: 60px;
 }
 
-/* line 4454, ../../../app/stylesheets/main.sass */
+/* line 4464, ../../../app/stylesheets/main.sass */
 h3#p_standard_or_wildcard {
   margin: 15px 0pt 0pt 10px;
 }
-/* line 4457, ../../../app/stylesheets/main.sass */
+/* line 4467, ../../../app/stylesheets/main.sass */
 .p_footer h3#p_standard_or_wildcard {
   width: 100%;
   clear: both;
@@ -5950,44 +5962,44 @@ h3#p_standard_or_wildcard {
   margin-bottom: 15px;
 }
 
-/* line 4463, ../../../app/stylesheets/main.sass */
+/* line 4473, ../../../app/stylesheets/main.sass */
 h3#certificate_crumbs {
   margin: 15px 0pt 5px 10px;
 }
 
-/* line 4466, ../../../app/stylesheets/main.sass */
+/* line 4476, ../../../app/stylesheets/main.sass */
 .see_other_certificates {
   float: right;
   font-size: 1.4em;
   width: 32%;
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
 }
-/* line 4472, ../../../app/stylesheets/main.sass */
+/* line 4482, ../../../app/stylesheets/main.sass */
 .see_other_certificates ul, .see_other_certificates .default_container .info_listing ul#privacy, .default_container .info_listing .see_other_certificates ul#privacy {
   list-style: none;
 }
-/* line 4475, ../../../app/stylesheets/main.sass */
+/* line 4485, ../../../app/stylesheets/main.sass */
 .see_other_certificates li.heading {
   color: #666666;
   font-style: italic;
 }
 
-/* line 4479, ../../../app/stylesheets/main.sass */
+/* line 4489, ../../../app/stylesheets/main.sass */
 #buy_other_certs {
   position: absolute;
   margin-top: 7em;
   font-size: 1.2em;
   width: 134px;
 }
-/* line 4485, ../../../app/stylesheets/main.sass */
+/* line 4495, ../../../app/stylesheets/main.sass */
 #buy_other_certs ul, #buy_other_certs .default_container .info_listing ul#privacy, .default_container .info_listing #buy_other_certs ul#privacy {
   padding: 0 2px 0 0;
 }
-/* line 4488, ../../../app/stylesheets/main.sass */
+/* line 4498, ../../../app/stylesheets/main.sass */
 #buy_other_certs ul li, #buy_other_certs .default_container .info_listing ul#privacy li, .default_container .info_listing #buy_other_certs ul#privacy li {
   padding: 4px 0;
 }
-/* line 4491, ../../../app/stylesheets/main.sass */
+/* line 4501, ../../../app/stylesheets/main.sass */
 #buy_other_certs li.heading {
   color: #666666;
   list-style: none;
@@ -5995,14 +6007,14 @@ h3#certificate_crumbs {
 
 /* Product Page */
 /* Product Page */
-/* line 4497, ../../../app/stylesheets/main.sass */
+/* line 4507, ../../../app/stylesheets/main.sass */
 .center_product_desc {
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
   margin: 9px 0 0;
   padding: 0.6em;
 }
 
-/* line 4502, ../../../app/stylesheets/main.sass */
+/* line 4512, ../../../app/stylesheets/main.sass */
 .right_product_desc {
   background: white url(/images/bg.gif) repeat-x scroll 0 0;
   float: right;
@@ -6011,62 +6023,62 @@ h3#certificate_crumbs {
   width: 440px;
 }
 
-/* line 4509, ../../../app/stylesheets/main.sass */
+/* line 4519, ../../../app/stylesheets/main.sass */
 .bottom_product_desc {
   padding: 1em 0;
   width: 65%;
   float: left;
   line-height: 2.2em;
 }
-/* line 4515, ../../../app/stylesheets/main.sass */
+/* line 4525, ../../../app/stylesheets/main.sass */
 .bottom_product_desc p {
   margin: 0 0 12px;
   font-size: 1.5em;
   color: black;
 }
 
-/* line 4520, ../../../app/stylesheets/main.sass */
+/* line 4530, ../../../app/stylesheets/main.sass */
 #upward_trend {
   float: right;
   margin: 10px 0 10px 10px;
   border: 2px solid #cccccc;
 }
 
-/* line 4525, ../../../app/stylesheets/main.sass */
+/* line 4535, ../../../app/stylesheets/main.sass */
 #shop_securely_with_ssl {
   float: left;
   margin: 10px 10px 0 0;
   border: 2px solid #cccccc;
 }
 
-/* line 4530, ../../../app/stylesheets/main.sass */
+/* line 4540, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot {
   margin: 0pt auto;
   width: 540px;
 }
-/* line 4534, ../../../app/stylesheets/main.sass */
+/* line 4544, ../../../app/stylesheets/main.sass */
 #ssl_reseller_certs_screenshot img {
   border: 2px solid #cccccc;
   margin: 10px auto;
 }
 
-/* line 4538, ../../../app/stylesheets/main.sass */
+/* line 4548, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today {
   margin: 15px;
   text-align: center;
 }
-/* line 4541, ../../../app/stylesheets/main.sass */
+/* line 4551, ../../../app/stylesheets/main.sass */
 #become_a_reseller_today h3 {
   color: #222222;
 }
 
-/* line 4544, ../../../app/stylesheets/main.sass */
+/* line 4554, ../../../app/stylesheets/main.sass */
 ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   margin: 0 1.5em 2em;
   font-size: 1.3em;
 }
 
-/* line 4548, ../../../app/stylesheets/main.sass */
+/* line 4558, ../../../app/stylesheets/main.sass */
 #documents_entry {
   border-bottom: 2px dotted #cccccc;
   border-top: 2px dotted #cccccc;
@@ -6074,26 +6086,26 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   padding: 0 20px;
 }
 
-/* line 4554, ../../../app/stylesheets/main.sass */
+/* line 4564, ../../../app/stylesheets/main.sass */
 #documents_list {
   float: left;
   font-size: 1.4em;
   width: 100%;
 }
-/* line 4559, ../../../app/stylesheets/main.sass */
+/* line 4569, ../../../app/stylesheets/main.sass */
 #documents_list dl {
   float: left;
   padding: 14px;
   display: inline;
 }
-/* line 4564, ../../../app/stylesheets/main.sass */
+/* line 4574, ../../../app/stylesheets/main.sass */
 #documents_list dd {
   margin: 0 0 0 98px;
   padding: 0;
   line-height: 1.5em;
   color: #666666;
 }
-/* line 4570, ../../../app/stylesheets/main.sass */
+/* line 4580, ../../../app/stylesheets/main.sass */
 #documents_list dd.title {
   margin: 0;
   padding: 0;
@@ -6101,11 +6113,11 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   letter-spacing: 1px;
   color: #627081;
 }
-/* line 4577, ../../../app/stylesheets/main.sass */
+/* line 4587, ../../../app/stylesheets/main.sass */
 #documents_list dl dd.img {
   margin: 0;
 }
-/* line 4580, ../../../app/stylesheets/main.sass */
+/* line 4590, ../../../app/stylesheets/main.sass */
 #documents_list dd.img .img_preview img {
   float: left;
   margin: 0 8px 0 0;
@@ -6115,32 +6127,32 @@ ul.docs_ul, .default_container .info_listing ul.docs_ul#privacy {
   border-right-color: #c8cdd2;
   background: white;
 }
-/* line 4589, ../../../app/stylesheets/main.sass */
+/* line 4599, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview {
   font-size: 80%;
   margin: 0 0 0 22px;
   clear: both;
   width: 7em;
 }
-/* line 4595, ../../../app/stylesheets/main.sass */
+/* line 4605, ../../../app/stylesheets/main.sass */
 #documents_list dd.preview a {
   padding: 2px 0;
 }
 
-/* line 4598, ../../../app/stylesheets/main.sass */
+/* line 4608, ../../../app/stylesheets/main.sass */
 img.blue_icon {
   vertical-align: middle;
   margin-right: 0.2em;
 }
 
-/* line 4602, ../../../app/stylesheets/main.sass */
+/* line 4612, ../../../app/stylesheets/main.sass */
 .documents_list_notes {
   color: #333333;
   padding: 14px 0;
   float: left;
 }
 
-/* line 4607, ../../../app/stylesheets/main.sass */
+/* line 4617, ../../../app/stylesheets/main.sass */
 #search_bar {
   padding: 0.5em;
   background: #eeeeff;
@@ -6152,37 +6164,37 @@ img.blue_icon {
   border: 1px solid #ccccff;
 }
 
-/* line 4618, ../../../app/stylesheets/main.sass */
+/* line 4628, ../../../app/stylesheets/main.sass */
 #validation_requirements_box ul, #validation_requirements_box .default_container .info_listing ul#privacy, .default_container .info_listing #validation_requirements_box ul#privacy {
   padding-left: 1.2em;
 }
 
-/* line 4621, ../../../app/stylesheets/main.sass */
+/* line 4631, ../../../app/stylesheets/main.sass */
 #site_seal_instructions, #site_seal_documents {
   text-align: left;
 }
 
-/* line 4626, ../../../app/stylesheets/main.sass */
+/* line 4636, ../../../app/stylesheets/main.sass */
 .subject_column.show_validation, .subject_column.center_subject {
   margin: 0pt auto;
   width: 90%;
 }
-/* line 4630, ../../../app/stylesheets/main.sass */
+/* line 4640, ../../../app/stylesheets/main.sass */
 .subject_column a {
   float: left;
 }
 
-/* line 4633, ../../../app/stylesheets/main.sass */
+/* line 4643, ../../../app/stylesheets/main.sass */
 .bordered_prod {
   border: 1px grey solid;
   padding: 1px;
 }
 
-/* line 4637, ../../../app/stylesheets/main.sass */
+/* line 4647, ../../../app/stylesheets/main.sass */
 .has_csr_container, .has_account_container, .clickable_choice {
   cursor: pointer;
 }
-/* line 4640, ../../../app/stylesheets/main.sass */
+/* line 4650, ../../../app/stylesheets/main.sass */
 .has_csr_container .what_is_this, .has_account_container .what_is_this, .clickable_choice .what_is_this {
   background-color: white;
   padding: 1px;
@@ -6190,109 +6202,109 @@ img.blue_icon {
   vertical-align: top;
 }
 
-/* line 4646, ../../../app/stylesheets/main.sass */
+/* line 4656, ../../../app/stylesheets/main.sass */
 .document_access_type {
   margin-left: 1em;
 }
 
-/* line 4649, ../../../app/stylesheets/main.sass */
+/* line 4659, ../../../app/stylesheets/main.sass */
 .doc_attribute {
   text-align: left;
   padding-left: 0.2em;
   WIDTH: 12em;
 }
 
-/* line 4654, ../../../app/stylesheets/main.sass */
+/* line 4664, ../../../app/stylesheets/main.sass */
 .public_settings {
   float: right;
   padding: 14px 0;
   color: #333333;
 }
 
-/* line 4659, ../../../app/stylesheets/main.sass */
+/* line 4669, ../../../app/stylesheets/main.sass */
 .preview_link {
   margin-right: 1em;
 }
 
-/* line 4662, ../../../app/stylesheets/main.sass */
+/* line 4672, ../../../app/stylesheets/main.sass */
 .site_seal_notes {
   margin: 0.6em 0 0 1em;
   clear: both;
 }
 
-/* line 4666, ../../../app/stylesheets/main.sass */
+/* line 4676, ../../../app/stylesheets/main.sass */
 .approved_validation_document {
   background: url(/images/bg-list.gif) no-repeat left top;
 }
-/* line 4669, ../../../app/stylesheets/main.sass */
+/* line 4679, ../../../app/stylesheets/main.sass */
 .approved_validation_document.crossout span {
   text-decoration: line-through;
 }
 
-/* line 4673, ../../../app/stylesheets/main.sass */
+/* line 4683, ../../../app/stylesheets/main.sass */
 ul.applicable_documents li, .default_container .info_listing ul.applicable_documents#privacy li, ul.applied_docs li, .default_container .info_listing ul.applied_docs#privacy li {
   padding-left: 16px;
   line-height: 1.4em;
 }
 
-/* line 4677, ../../../app/stylesheets/main.sass */
+/* line 4687, ../../../app/stylesheets/main.sass */
 .validation_admin_controls {
   margin-bottom: 2em;
 }
 
-/* line 4680, ../../../app/stylesheets/main.sass */
+/* line 4690, ../../../app/stylesheets/main.sass */
 .tree-connect {
   padding-left: 1.2em;
   background: url(/images/tree-connect.gif) no-repeat left center;
 }
 
-/* line 4684, ../../../app/stylesheets/main.sass */
+/* line 4694, ../../../app/stylesheets/main.sass */
 span.rule_name {
   background: lightyellow;
   font-weight: bold;
   text-decoration: underline;
 }
 
-/* line 4689, ../../../app/stylesheets/main.sass */
+/* line 4699, ../../../app/stylesheets/main.sass */
 .rules_methods_block, .small_section {
   padding-bottom: 1em;
 }
-/* line 4692, ../../../app/stylesheets/main.sass */
+/* line 4702, ../../../app/stylesheets/main.sass */
 .rules_methods_block li.email_customer, .small_section li.email_customer {
   padding: 0.5em;
 }
 
-/* line 4695, ../../../app/stylesheets/main.sass */
+/* line 4705, ../../../app/stylesheets/main.sass */
 ul[class^=status_history] > li, .default_container .info_listing ul[class^=status_history]#privacy > li {
   border: 1px solid #cffff9;
   background: none repeat scroll 0 0 #eefafc;
   margin: 0.2em auto;
 }
 
-/* line 4700, ../../../app/stylesheets/main.sass */
+/* line 4710, ../../../app/stylesheets/main.sass */
 #cart_items a {
   color: orange;
 }
 
-/* line 4703, ../../../app/stylesheets/main.sass */
+/* line 4713, ../../../app/stylesheets/main.sass */
 .interested_in_reselling {
   color: maroon;
 }
 
-/* line 4706, ../../../app/stylesheets/main.sass */
+/* line 4716, ../../../app/stylesheets/main.sass */
 .orig {
   text-decoration: line-through;
   color: red;
 }
 
-/* line 4710, ../../../app/stylesheets/main.sass */
+/* line 4720, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal {
   margin: 0 auto;
   text-align: center;
   float: right;
   width: 300px;
 }
-/* line 4716, ../../../app/stylesheets/main.sass */
+/* line 4726, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #container {
   font-size: 1.3em;
   padding: 0em 3em 1em;
@@ -6301,19 +6313,19 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   width: auto;
   text-align: inherit !important;
 }
-/* line 4724, ../../../app/stylesheets/main.sass */
+/* line 4734, ../../../app/stylesheets/main.sass */
 #comes_with_site_seal #description {
   text-align: left;
 }
 
-/* line 4727, ../../../app/stylesheets/main.sass */
+/* line 4737, ../../../app/stylesheets/main.sass */
 #global_footer {
   margin: 0 auto;
   padding-top: 24px;
   text-align: center;
   width: 970px;
 }
-/* line 4733, ../../../app/stylesheets/main.sass */
+/* line 4743, ../../../app/stylesheets/main.sass */
 #global_footer ul, #global_footer .default_container .info_listing ul#privacy, .default_container .info_listing #global_footer ul#privacy {
   color: white;
   float: left;
@@ -6321,7 +6333,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   margin-left: 5em;
   padding-left: 0em;
 }
-/* line 4740, ../../../app/stylesheets/main.sass */
+/* line 4750, ../../../app/stylesheets/main.sass */
 #global_footer ul li, #global_footer .default_container .info_listing ul#privacy li, .default_container .info_listing #global_footer ul#privacy li {
   color: #fda58a;
   font-family: Arial, Helvetica, sans-serif;
@@ -6331,7 +6343,7 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   padding-top: 8px;
   text-align: left;
 }
-/* line 4749, ../../../app/stylesheets/main.sass */
+/* line 4759, ../../../app/stylesheets/main.sass */
 #global_footer h4, #global_footer h4 a, #global_footer h4 a:visited, #global_footer h4 a:hover {
   color: white;
   font-family: Arial, Helvetica, sans-serif;
@@ -6342,12 +6354,12 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   text-align: left;
 }
 
-/* line 4759, ../../../app/stylesheets/main.sass */
+/* line 4769, ../../../app/stylesheets/main.sass */
 #section_box {
   padding-top: 0.35em;
 }
 
-/* line 4762, ../../../app/stylesheets/main.sass */
+/* line 4772, ../../../app/stylesheets/main.sass */
 #copyright_statement {
   clear: both;
   color: #999999;
@@ -6358,13 +6370,13 @@ ul[class^=status_history] > li, .default_container .info_listing ul[class^=statu
   width: 970px;
 }
 
-/* line 4771, ../../../app/stylesheets/main.sass */
+/* line 4781, ../../../app/stylesheets/main.sass */
 span.footer_link {
   color: #ffc2af;
   padding-left: 1em;
 }
 
-/* line 4775, ../../../app/stylesheets/main.sass */
+/* line 4785, ../../../app/stylesheets/main.sass */
 #logo_box {
   background-image: url("/images/footer_logo.png");
   background-position: left top;
@@ -6376,194 +6388,194 @@ span.footer_link {
   width: 100px;
 }
 
-/* line 4785, ../../../app/stylesheets/main.sass */
+/* line 4795, ../../../app/stylesheets/main.sass */
 #ssl_site_seal_sample {
   float: right;
   padding: 10px 0 10px 10px;
 }
 
-/* line 4789, ../../../app/stylesheets/main.sass */
+/* line 4799, ../../../app/stylesheets/main.sass */
 #sample_site_report, #sample_artifacts {
   margin-right: 10px 10px 0 0;
   float: left;
   width: 300px;
 }
-/* line 4794, ../../../app/stylesheets/main.sass */
+/* line 4804, ../../../app/stylesheets/main.sass */
 #sample_site_report img, #sample_artifacts img {
   border: 2px solid #cccccc;
 }
 
-/* line 4797, ../../../app/stylesheets/main.sass */
+/* line 4807, ../../../app/stylesheets/main.sass */
 #sample_artifacts {
   margin-left: 10px;
   float: right;
 }
 
-/* line 4801, ../../../app/stylesheets/main.sass */
+/* line 4811, ../../../app/stylesheets/main.sass */
 .contact_us_container {
   width: 330px;
   margin-top: 2.2em;
   padding-bottom: 0.4em;
 }
-/* line 4806, ../../../app/stylesheets/main.sass */
+/* line 4816, ../../../app/stylesheets/main.sass */
 .contact_us_container.no_top_margin {
   margin-top: 0;
 }
-/* line 4809, ../../../app/stylesheets/main.sass */
+/* line 4819, ../../../app/stylesheets/main.sass */
 .contact_us_container p.contact_us_header {
   color: #333333;
 }
-/* line 4812, ../../../app/stylesheets/main.sass */
+/* line 4822, ../../../app/stylesheets/main.sass */
 .contact_us_container p.description, .contact_us_container p.sub_description, .contact_us_container p.main_description {
   margin: 1em 1em 2em;
 }
-/* line 4815, ../../../app/stylesheets/main.sass */
+/* line 4825, ../../../app/stylesheets/main.sass */
 .contact_us_container p.sub_description {
   font-size: 1.3em;
   color: #222222;
 }
-/* line 4819, ../../../app/stylesheets/main.sass */
+/* line 4829, ../../../app/stylesheets/main.sass */
 .contact_us_container p.main_description {
   width: 630px;
   margin-bottom: 1em;
 }
-/* line 4823, ../../../app/stylesheets/main.sass */
+/* line 4833, ../../../app/stylesheets/main.sass */
 .contact_us_container ul, .contact_us_container .default_container .info_listing ul#privacy, .default_container .info_listing .contact_us_container ul#privacy {
   font-size: 1.4em;
 }
-/* line 4826, ../../../app/stylesheets/main.sass */
+/* line 4836, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.phone_numbers, .contact_us_container .default_container .info_listing ul.phone_numbers#privacy, .default_container .info_listing .contact_us_container ul.phone_numbers#privacy {
   list-style-type: none;
 }
-/* line 4829, ../../../app/stylesheets/main.sass */
+/* line 4839, ../../../app/stylesheets/main.sass */
 .contact_us_container ul.benefits, .contact_us_container .default_container .info_listing ul.benefits#privacy, .default_container .info_listing .contact_us_container ul.benefits#privacy {
   list-style-type: circle;
 }
 
-/* line 4832, ../../../app/stylesheets/main.sass */
+/* line 4842, ../../../app/stylesheets/main.sass */
 .contact_us_support {
   float: right;
   width: 330px;
   background: white url(/images/bg.gif) repeat-x;
 }
-/* line 4837, ../../../app/stylesheets/main.sass */
+/* line 4847, ../../../app/stylesheets/main.sass */
 .contact_us_support .support_panel {
   margin: 10px;
 }
-/* line 4840, ../../../app/stylesheets/main.sass */
+/* line 4850, ../../../app/stylesheets/main.sass */
 .contact_us_support .contact_us_container {
   width: inherit;
 }
 
-/* line 4843, ../../../app/stylesheets/main.sass */
+/* line 4853, ../../../app/stylesheets/main.sass */
 img.industry_reseller {
   border: 2px solid #cccccc;
   float: right;
   margin: 0 0 5px 10px;
 }
 
-/* line 4848, ../../../app/stylesheets/main.sass */
+/* line 4858, ../../../app/stylesheets/main.sass */
 img.industry {
   width: 75px;
   float: right;
 }
 
-/* line 4852, ../../../app/stylesheets/main.sass */
+/* line 4862, ../../../app/stylesheets/main.sass */
 .center {
   text-align: center;
   margin: 0 auto;
   float: none;
 }
 
-/* line 4856, ../../../app/stylesheets/main.sass */
+/* line 4866, ../../../app/stylesheets/main.sass */
 #other_services {
   clear: both;
   padding-top: 2em;
 }
-/* line 4860, ../../../app/stylesheets/main.sass */
+/* line 4870, ../../../app/stylesheets/main.sass */
 #other_services h2#main_description {
   font-size: 2em;
 }
-/* line 4863, ../../../app/stylesheets/main.sass */
+/* line 4873, ../../../app/stylesheets/main.sass */
 #other_services h2#sub_description {
   font-size: 1.6em;
   color: black;
 }
 
-/* line 4867, ../../../app/stylesheets/main.sass */
+/* line 4877, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 4870, ../../../app/stylesheets/main.sass */
+/* line 4880, ../../../app/stylesheets/main.sass */
 .previous_requests {
   float: left;
   font-weight: bold;
 }
 
-/* line 4874, ../../../app/stylesheets/main.sass */
+/* line 4884, ../../../app/stylesheets/main.sass */
 #sales_number_in_header img {
   margin: 2px 12px 0 0;
   float: left;
 }
 
-/* line 4878, ../../../app/stylesheets/main.sass */
+/* line 4888, ../../../app/stylesheets/main.sass */
 .api_sub_section {
   font-size: 120%;
   margin-top: 12px;
   font-weight: bold;
 }
 
-/* line 4883, ../../../app/stylesheets/main.sass */
+/* line 4893, ../../../app/stylesheets/main.sass */
 dl.listing {
   font-size: 1.4em;
 }
-/* line 4886, ../../../app/stylesheets/main.sass */
+/* line 4896, ../../../app/stylesheets/main.sass */
 dl.listing dd {
   margin-left: 1em;
 }
-/* line 4889, ../../../app/stylesheets/main.sass */
+/* line 4899, ../../../app/stylesheets/main.sass */
 dl.listing dl.last_list {
   margin-bottom: 1em;
 }
-/* line 4892, ../../../app/stylesheets/main.sass */
+/* line 4902, ../../../app/stylesheets/main.sass */
 dl.listing dt.validation_type {
   font-weight: bold;
 }
-/* line 4895, ../../../app/stylesheets/main.sass */
+/* line 4905, ../../../app/stylesheets/main.sass */
 dl.listing dt.ev_instructions {
   color: #028005;
 }
-/* line 4898, ../../../app/stylesheets/main.sass */
+/* line 4908, ../../../app/stylesheets/main.sass */
 dl.listing .green {
   color: green;
 }
 
-/* line 4901, ../../../app/stylesheets/main.sass */
+/* line 4911, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value, .api_key_or_value {
   color: black;
 }
 
-/* line 4904, ../../../app/stylesheets/main.sass */
+/* line 4914, ../../../app/stylesheets/main.sass */
 .api_key_or_value {
   font-weight: bold;
 }
 
-/* line 4907, ../../../app/stylesheets/main.sass */
+/* line 4917, ../../../app/stylesheets/main.sass */
 .optional_api_key, .optional_api_value {
   font-style: italic;
 }
 
-/* line 4910, ../../../app/stylesheets/main.sass */
+/* line 4920, ../../../app/stylesheets/main.sass */
 .api_csr_params_table {
   padding: 1em;
 }
 
-/* line 4913, ../../../app/stylesheets/main.sass */
+/* line 4923, ../../../app/stylesheets/main.sass */
 .api_csr_params {
   font-size: 0.8em;
 }
-/* line 4915, ../../../app/stylesheets/main.sass */
+/* line 4925, ../../../app/stylesheets/main.sass */
 .api_csr_params table {
   border: 1px solid black;
 }
@@ -6646,7 +6658,7 @@ dl.listing .green {
   background-color: #eeeeee;
 }
 
-/* line 4922, ../../../app/stylesheets/main.sass */
+/* line 4932, ../../../app/stylesheets/main.sass */
 ul.csr_fields, .default_container .info_listing ul.csr_fields#privacy {
   list-style: none;
   padding: 1em 0 0 0;
@@ -6658,7 +6670,7 @@ ul.csr_fields li, .default_container .info_listing ul.csr_fields#privacy li {
   margin-left: 0;
 }
 
-/* line 4926, ../../../app/stylesheets/main.sass */
+/* line 4936, ../../../app/stylesheets/main.sass */
 ul#send_to_ca_box {
   -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
   -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset;
@@ -6673,28 +6685,28 @@ ul#send_to_ca_box {
   padding-bottom: 1em;
 }
 
-/* line 4933, ../../../app/stylesheets/main.sass */
+/* line 4943, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results {
   font-size: 0.8em;
 }
-/* line 4936, ../../../app/stylesheets/main.sass */
+/* line 4946, ../../../app/stylesheets/main.sass */
 #sent_to_ca_results dd {
   text-shadow: 0 1px 3px rgba(255, 0, 0, 0.6);
 }
 
-/* line 4939, ../../../app/stylesheets/main.sass */
+/* line 4949, ../../../app/stylesheets/main.sass */
 #processing_ca {
   text-align: center;
   margin: 10px auto;
   display: none;
 }
 
-/* line 4944, ../../../app/stylesheets/main.sass */
+/* line 4954, ../../../app/stylesheets/main.sass */
 #dcv_box {
   margin-bottom: 2em;
 }
 
-/* line 4947, ../../../app/stylesheets/main.sass */
+/* line 4957, ../../../app/stylesheets/main.sass */
 .shiny_silver_button {
   color: #050505;
   padding: 10px 20px;
@@ -6716,7 +6728,7 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.2), 0px 1px 0px white;
 }
 
-/* line 4957, ../../../app/stylesheets/main.sass */
+/* line 4967, ../../../app/stylesheets/main.sass */
 .shiny_blue_button, #stylized input#upload_files, #stylized input#start_over, #surl_stylized input#upload_files, #surl_stylized input#start_over {
   color: white;
   padding: 10px 20px;
@@ -6738,60 +6750,60 @@ ul#send_to_ca_box {
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.4), 0px 1px 0px rgba(255, 255, 255, 0.3);
 }
 
-/* line 4967, ../../../app/stylesheets/main.sass */
+/* line 4977, ../../../app/stylesheets/main.sass */
 #busy_sending {
   display: none;
 }
 
-/* line 4970, ../../../app/stylesheets/main.sass */
+/* line 4980, ../../../app/stylesheets/main.sass */
 #dcv_sent_to_address {
   font-weight: bold;
 }
 
-/* line 4973, ../../../app/stylesheets/main.sass */
+/* line 4983, ../../../app/stylesheets/main.sass */
 .category_border {
   margin-bottom: 1em;
 }
 
-/* line 4976, ../../../app/stylesheets/main.sass */
+/* line 4986, ../../../app/stylesheets/main.sass */
 #subscriber_agreement textarea {
   width: 100%;
 }
 
-/* line 4979, ../../../app/stylesheets/main.sass */
+/* line 4989, ../../../app/stylesheets/main.sass */
 textarea[id^=certificate_order] {
   width: 300px;
 }
 
-/* line 4982, ../../../app/stylesheets/main.sass */
+/* line 4992, ../../../app/stylesheets/main.sass */
 #agreement {
   font-size: 1.3em;
 }
 
-/* line 4985, ../../../app/stylesheets/main.sass */
+/* line 4995, ../../../app/stylesheets/main.sass */
 .waiting_bar {
   text-align: center;
 }
 
-/* line 4988, ../../../app/stylesheets/main.sass */
+/* line 4998, ../../../app/stylesheets/main.sass */
 .close_flash_message {
   color: #6b9029;
   font-size: 0.9em;
   float: right;
   margin-right: 1em;
 }
-/* line 4994, ../../../app/stylesheets/main.sass */
+/* line 5004, ../../../app/stylesheets/main.sass */
 .close_flash_message span {
   border: 1px solid;
   padding: 0pt 0.2em;
 }
 
-/* line 4999, ../../../app/stylesheets/main.sass */
+/* line 5009, ../../../app/stylesheets/main.sass */
 #new_user_session input[type=password], #new_user_session input[type=text] {
   width: 196px;
 }
 
-/* line 5002, ../../../app/stylesheets/main.sass */
+/* line 5012, ../../../app/stylesheets/main.sass */
 .dcv_not_satisfied {
   background: #fff7f8;
   border-left: 1px solid #feb6b6;
@@ -6799,7 +6811,7 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 5008, ../../../app/stylesheets/main.sass */
+/* line 5018, ../../../app/stylesheets/main.sass */
 .dcv_satisfied {
   background: #f8fff7;
   border-left: 1px solid #d8feb6;
@@ -6807,67 +6819,67 @@ textarea[id^=certificate_order] {
   padding: 0 4px;
 }
 
-/* line 5014, ../../../app/stylesheets/main.sass */
+/* line 5024, ../../../app/stylesheets/main.sass */
 .validation_section {
   padding-bottom: 1em;
 }
 
-/* line 5017, ../../../app/stylesheets/main.sass */
+/* line 5027, ../../../app/stylesheets/main.sass */
 span#no_emails_accessible {
   font-size: 0.9em;
   color: #ff2626;
 }
 
-/* line 5021, ../../../app/stylesheets/main.sass */
+/* line 5031, ../../../app/stylesheets/main.sass */
 #social_share {
   float: left;
   margin: 0px 4px 0px 2px;
   padding-top: 2px;
 }
-/* line 5027, ../../../app/stylesheets/main.sass */
+/* line 5037, ../../../app/stylesheets/main.sass */
 #sales_number_in_header #social_share {
   margin: -4px 8em 0px 2px;
 }
 
-/* line 5030, ../../../app/stylesheets/main.sass */
+/* line 5040, ../../../app/stylesheets/main.sass */
 #logo_share {
   float: left;
   width: 180px;
 }
 
-/* line 5034, ../../../app/stylesheets/main.sass */
+/* line 5044, ../../../app/stylesheets/main.sass */
 #twitter {
   float: left;
   height: 5px;
   padding: 0 0.5em;
 }
 
-/* line 5039, ../../../app/stylesheets/main.sass */
+/* line 5049, ../../../app/stylesheets/main.sass */
 #google, #facebook {
   float: left;
   width: 60px;
   padding: 0 0.4em;
 }
 
-/* line 5044, ../../../app/stylesheets/main.sass */
+/* line 5054, ../../../app/stylesheets/main.sass */
 #logo_share #social_share {
   float: left;
 }
 
-/* line 5047, ../../../app/stylesheets/main.sass */
+/* line 5057, ../../../app/stylesheets/main.sass */
 .site_seal_footer {
   float: left;
   margin-top: 30px;
 }
 
-/* line 5052, ../../../app/stylesheets/main.sass */
+/* line 5062, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl, #surl_stylized .edit_surl, #surl_stylized .single_prompt {
   text-align: center;
   margin: 0 auto;
   text-align: left;
   font-size: 2em;
 }
-/* line 5057, ../../../app/stylesheets/main.sass */
+/* line 5067, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl label, #surl_stylized .edit_surl label, #surl_stylized .single_prompt label {
   font-size: 1.4em;
   display: block;
@@ -6876,17 +6888,17 @@ span#no_emails_accessible {
   width: 100%;
   text-align: left;
 }
-/* line 5065, ../../../app/stylesheets/main.sass */
+/* line 5075, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt, #surl_stylized .edit_surl #shorten_prompt, #surl_stylized .single_prompt #shorten_prompt {
   text-align: center;
   margin: 0 auto;
   width: 95%;
 }
-/* line 5069, ../../../app/stylesheets/main.sass */
+/* line 5079, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #shorten_prompt input[type=password], #surl_stylized #new_surl #shorten_prompt input[type=text], #surl_stylized #new_surl #shorten_prompt input[type=url], #surl_stylized #new_surl #shorten_prompt input[type=email], #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url], #surl_stylized .edit_surl #shorten_prompt input[type=email], #surl_stylized .single_prompt #shorten_prompt input[type=password], #surl_stylized .single_prompt #shorten_prompt input[type=text], #surl_stylized .single_prompt #shorten_prompt input[type=url], #surl_stylized .single_prompt #shorten_prompt input[type=email] {
   width: 300px;
 }
-/* line 5072, ../../../app/stylesheets/main.sass */
+/* line 5082, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container, #surl_stylized #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .single_prompt #advanced_options_container, #surl_stylized .single_prompt #new_surl #access_restriction_container, #surl_stylized #new_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   width: 100%;
   float: left;
@@ -6902,75 +6914,75 @@ span#no_emails_accessible {
   -o-border-radius: 10px;
   border-radius: 10px;
 }
-/* line 5083, ../../../app/stylesheets/main.sass */
+/* line 5093, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #advanced_options_container #advanced_options, #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #advanced_options_container #advanced_options, #surl_stylized .edit_surl #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #advanced_options_container #advanced_options, #surl_stylized .single_prompt #new_surl #access_restriction_container #advanced_options, #surl_stylized #new_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt .edit_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl .single_prompt #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   font-size: 0.8em;
   width: 85%;
   margin: 0pt auto;
 }
-/* line 5088, ../../../app/stylesheets/main.sass */
+/* line 5098, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .single_prompt #access_restriction_container {
   float: none;
   width: 60%;
 }
-/* line 5093, ../../../app/stylesheets/main.sass */
+/* line 5103, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container p, #surl_stylized .edit_surl #access_restriction_container p, #surl_stylized .single_prompt #access_restriction_container p {
   text-align: left;
 }
-/* line 5096, ../../../app/stylesheets/main.sass */
+/* line 5106, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options, #surl_stylized .edit_surl #access_restriction_container #advanced_options, #surl_stylized .single_prompt #access_restriction_container #advanced_options {
   width: 65%;
 }
-/* line 5099, ../../../app/stylesheets/main.sass */
+/* line 5109, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container #advanced_options label, #surl_stylized .edit_surl #access_restriction_container #advanced_options label, #surl_stylized .single_prompt #access_restriction_container #advanced_options label {
   width: 6em;
 }
-/* line 5102, ../../../app/stylesheets/main.sass */
+/* line 5112, ../../../app/stylesheets/main.sass */
 #surl_stylized #new_surl #access_restriction_container input[type=password], #surl_stylized #new_surl #access_restriction_container input[type=text], #surl_stylized #new_surl #access_restriction_container input[type=url], #surl_stylized .edit_surl #access_restriction_container input[type=password], #surl_stylized .edit_surl #access_restriction_container input[type=text], #surl_stylized .edit_surl #access_restriction_container input[type=url], #surl_stylized .single_prompt #access_restriction_container input[type=password], #surl_stylized .single_prompt #access_restriction_container input[type=text], #surl_stylized .single_prompt #access_restriction_container input[type=url] {
   width: 300px;
 }
-/* line 5105, ../../../app/stylesheets/main.sass */
+/* line 5115, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #advanced_options_container, #surl_stylized .edit_surl #new_surl #access_restriction_container, #surl_stylized #new_surl .edit_surl #access_restriction_container, #surl_stylized .edit_surl #access_restriction_container, #surl_stylized .edit_surl .single_prompt #access_restriction_container, #surl_stylized .single_prompt .edit_surl #access_restriction_container {
   width: 50%;
   float: none;
 }
-/* line 5110, ../../../app/stylesheets/main.sass */
+/* line 5120, ../../../app/stylesheets/main.sass */
 #surl_stylized .edit_surl #shorten_prompt input[type=password], #surl_stylized .edit_surl #shorten_prompt input[type=text], #surl_stylized .edit_surl #shorten_prompt input[type=url] {
   width: 750px;
 }
 
-/* line 5114, ../../../app/stylesheets/main.sass */
+/* line 5124, ../../../app/stylesheets/main.sass */
 #surl_services a {
   color: red;
 }
-/* line 5117, ../../../app/stylesheets/main.sass */
+/* line 5127, ../../../app/stylesheets/main.sass */
 #surl_services a span {
   font-weight: bold;
 }
 
-/* line 5120, ../../../app/stylesheets/main.sass */
+/* line 5130, ../../../app/stylesheets/main.sass */
 #surl_link, #surl_link_error {
   font-size: 3.5em;
   float: left;
   font-weight: bold;
 }
-/* line 5125, ../../../app/stylesheets/main.sass */
+/* line 5135, ../../../app/stylesheets/main.sass */
 #surl_link input, #surl_link_error input {
   width: 360px;
 }
 
-/* line 5128, ../../../app/stylesheets/main.sass */
+/* line 5138, ../../../app/stylesheets/main.sass */
 #surl_link_error {
   font-size: 1.5em;
   margin: 1em auto;
 }
-/* line 5132, ../../../app/stylesheets/main.sass */
+/* line 5142, ../../../app/stylesheets/main.sass */
 #surl_link_error ul, #surl_link_error .default_container .info_listing ul#privacy, .default_container .info_listing #surl_link_error ul#privacy {
   list-style-type: none;
   margin: 0;
 }
 
-/* line 5136, ../../../app/stylesheets/main.sass */
+/* line 5146, ../../../app/stylesheets/main.sass */
 #surl_instructions {
   float: left;
   display: block;
@@ -6979,7 +6991,7 @@ span#no_emails_accessible {
   display: none;
 }
 
-/* line 5143, ../../../app/stylesheets/main.sass */
+/* line 5153, ../../../app/stylesheets/main.sass */
 .old_link {
   color: black;
   font-style: italic;
@@ -6987,12 +6999,12 @@ span#no_emails_accessible {
   margin: 0.4em auto;
 }
 
-/* line 5149, ../../../app/stylesheets/main.sass */
+/* line 5159, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field {
   display: none;
   margin-left: 30px;
 }
-/* line 5153, ../../../app/stylesheets/main.sass */
+/* line 5163, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field label {
   font-size: 1em;
   font-weight: normal;
@@ -7001,13 +7013,13 @@ span#no_emails_accessible {
   width: 38%;
   color: #333333;
 }
-/* line 5161, ../../../app/stylesheets/main.sass */
+/* line 5171, ../../../app/stylesheets/main.sass */
 #surl_stylized #restriction_field input {
   width: 150px;
   font-size: 0.7em;
 }
 
-/* line 5165, ../../../app/stylesheets/main.sass */
+/* line 5175, ../../../app/stylesheets/main.sass */
 #manage_current_links, #accepted_country_codes, #restricted_country_codes, #affiliate_sales {
   background: #fcf0c4;
   background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #fffff5), color-stop(100%, #fdffb8));
@@ -7025,57 +7037,57 @@ span#no_emails_accessible {
   float: left;
   width: 100%;
 }
-/* line 5174, ../../../app/stylesheets/main.sass */
+/* line 5184, ../../../app/stylesheets/main.sass */
 #manage_current_links th, #accepted_country_codes th, #restricted_country_codes th, #affiliate_sales th {
   border: 1px solid #efc960;
   border-top: none;
 }
-/* line 5178, ../../../app/stylesheets/main.sass */
+/* line 5188, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #manage_current_links th, #accepted_country_codes td, #accepted_country_codes th, #restricted_country_codes td, #restricted_country_codes th, #affiliate_sales td, #affiliate_sales th {
   text-align: left;
   vertical-align: top;
 }
-/* line 5182, ../../../app/stylesheets/main.sass */
+/* line 5192, ../../../app/stylesheets/main.sass */
 #manage_current_links td .original_link, #manage_current_links th .original_link, #accepted_country_codes td .original_link, #accepted_country_codes th .original_link, #restricted_country_codes td .original_link, #restricted_country_codes th .original_link, #affiliate_sales td .original_link, #affiliate_sales th .original_link {
   width: 70%;
 }
-/* line 5185, ../../../app/stylesheets/main.sass */
+/* line 5195, ../../../app/stylesheets/main.sass */
 #manage_current_links td .actions, #manage_current_links th .actions, #accepted_country_codes td .actions, #accepted_country_codes th .actions, #restricted_country_codes td .actions, #restricted_country_codes th .actions, #affiliate_sales td .actions, #affiliate_sales th .actions {
   display: block;
   width: 160px;
 }
-/* line 5189, ../../../app/stylesheets/main.sass */
+/* line 5199, ../../../app/stylesheets/main.sass */
 #manage_current_links td, #accepted_country_codes td, #restricted_country_codes td, #affiliate_sales td {
   border-top: 1px solid #efc960;
 }
 
-/* line 5192, ../../../app/stylesheets/main.sass */
+/* line 5202, ../../../app/stylesheets/main.sass */
 #manage_current_links {
   display: none;
 }
 
-/* line 5195, ../../../app/stylesheets/main.sass */
+/* line 5205, ../../../app/stylesheets/main.sass */
 #affiliate_sales {
   margin-bottom: 40px;
 }
 
-/* line 5198, ../../../app/stylesheets/main.sass */
+/* line 5208, ../../../app/stylesheets/main.sass */
 #accepted_country_codes {
   margin-bottom: 1em;
 }
 
-/* line 5201, ../../../app/stylesheets/main.sass */
+/* line 5211, ../../../app/stylesheets/main.sass */
 .deleting {
   text-decoration: line-through;
 }
 
-/* line 5204, ../../../app/stylesheets/main.sass */
+/* line 5214, ../../../app/stylesheets/main.sass */
 #deleting_progress_box {
   margin: 12px 0 0px;
   display: none;
 }
 
-/* line 5208, ../../../app/stylesheets/main.sass */
+/* line 5218, ../../../app/stylesheets/main.sass */
 #back_to_links {
   display: block;
   font-size: 3em;
@@ -7083,35 +7095,35 @@ span#no_emails_accessible {
   margin: 0 auto;
 }
 
-/* line 5214, ../../../app/stylesheets/main.sass */
+/* line 5224, ../../../app/stylesheets/main.sass */
 #access_restriction_submit_button {
   margin: 0pt auto;
   width: 21%;
 }
 
-/* line 5218, ../../../app/stylesheets/main.sass */
+/* line 5228, ../../../app/stylesheets/main.sass */
 #send_verification_box {
   width: 100%;
   text-align: center;
   margin: 0 auto;
 }
-/* line 5223, ../../../app/stylesheets/main.sass */
+/* line 5233, ../../../app/stylesheets/main.sass */
 #send_verification_box #send_verification {
   float: inherit;
   width: 20%;
 }
 
-/* line 5227, ../../../app/stylesheets/main.sass */
+/* line 5237, ../../../app/stylesheets/main.sass */
 .account_type {
   float: right;
 }
 
-/* line 5230, ../../../app/stylesheets/main.sass */
+/* line 5240, ../../../app/stylesheets/main.sass */
 .adjust_status {
   float: left;
 }
 
-/* line 5233, ../../../app/stylesheets/main.sass */
+/* line 5243, ../../../app/stylesheets/main.sass */
 #http_dcv_url {
   font-style: italic;
   background-color: #eeeeee;
@@ -7119,31 +7131,31 @@ span#no_emails_accessible {
   font-size: 1.2em;
 }
 
-/* line 5239, ../../../app/stylesheets/main.sass */
+/* line 5249, ../../../app/stylesheets/main.sass */
 .pop_container {
   display: none;
 }
 
-/* line 5242, ../../../app/stylesheets/main.sass */
+/* line 5252, ../../../app/stylesheets/main.sass */
 .pop_content {
   font-size: 1.8em;
 }
 
-/* line 5245, ../../../app/stylesheets/main.sass */
+/* line 5255, ../../../app/stylesheets/main.sass */
 .ajax_info {
   text-align: left;
 }
 
-/* line 5249, ../../../app/stylesheets/main.sass */
+/* line 5259, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message {
   padding: 0;
 }
-/* line 5251, ../../../app/stylesheets/main.sass */
+/* line 5261, ../../../app/stylesheets/main.sass */
 #csr_section .flash_message.error .ajax_info {
   color: red;
 }
 
-/* line 5256, ../../../app/stylesheets/main.sass */
+/* line 5266, ../../../app/stylesheets/main.sass */
 #stylized button#apply_discount {
   -moz-box-shadow: inset 0px 1px 0px 0px white;
   -webkit-box-shadow: inset 0px 1px 0px 0px white;
@@ -7166,25 +7178,25 @@ span#no_emails_accessible {
   text-shadow: 1px 1px 0px white;
   margin: 2px;
 }
-/* line 5277, ../../../app/stylesheets/main.sass */
+/* line 5287, ../../../app/stylesheets/main.sass */
 #stylized button#apply_discount:hover {
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed));
   background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
   background-color: #dfdfdf;
 }
-/* line 5282, ../../../app/stylesheets/main.sass */
+/* line 5292, ../../../app/stylesheets/main.sass */
 #stylized button#apply_discount:active {
   position: relative;
   top: 1px;
 }
-/* line 5286, ../../../app/stylesheets/main.sass */
+/* line 5296, ../../../app/stylesheets/main.sass */
 #stylized #invalid_discount_code {
   color: red;
   background: yellow;
 }
 
-/* line 5290, ../../../app/stylesheets/main.sass */
+/* line 5300, ../../../app/stylesheets/main.sass */
 #discount_applied {
   font-size: 1.4em;
   font-style: italic;
@@ -7193,7 +7205,7 @@ span#no_emails_accessible {
   padding: 1px;
 }
 
-/* line 5298, ../../../app/stylesheets/main.sass */
+/* line 5308, ../../../app/stylesheets/main.sass */
 .ssl_action ul, .ssl_action .default_container .info_listing ul#privacy, .default_container .info_listing .ssl_action ul#privacy {
   line-height: 1.4em;
   padding: 0px;

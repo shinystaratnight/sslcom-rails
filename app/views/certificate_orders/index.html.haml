@@ -66,6 +66,14 @@
                           -unless co.is_unused_credit?
                             %li=link_to "view certificate details", co
                           %li=link_to "view order transaction", co.order
+                          -if current_user.is_admin?
+                            %li
+                              .notes_box
+                                =form_for co, :url=>admin_update_certificate_order_url(co) do |f|
+                                  %li
+                                    %strong notes from SSL team
+                                  %li
+                                    =f.text_area :notes, cols: 40, rows: 10
                       .certificate_details_box
                         %ul
                           %li

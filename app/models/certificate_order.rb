@@ -79,7 +79,12 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
+    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}}).uniq
+  }
+
+  scope :filter_by, lambda { |term|
+    order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
+        variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}.uniq
   }
 
   scope :unvalidated, where{(is_expired==false) &
@@ -545,7 +550,22 @@ class CertificateOrder < ActiveRecord::Base
     r = cc.registrant
     api_domains = ""
     cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
-    <<-EOS
+    api_contacts = ""
+    CertificateContent::CONTACT_ROLES.each do |role|
+      # contact=cc.certificate_contacts.find do |certificate_contact|
+      #   certificate_contact.roles.include?(role)
+      # end
+      # CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
+      #   c.send((field+'=').to_sym, r.send(field.to_sym))
+      #   "\\\"#{field}\\\" : \\\"#{contact.send(field.to_sym)}\\\","
+      # end
+
+      api_contacts << "\\\"#{role.to_s}{\\\":{\\\"first_name\\\" : \\\"Eric\\\",\\\"last_name\\\":
+          \\\"Miles\\\", \\\"address1\\\" : \\\"60 Revere Dr\\\", \\\"address2\\\" : \\\"Suite 201\\\", \\\"city\\\" : \\\"Northbrook\\\",
+          \\\"state\\\" : \\\"IL\\\", \\\"country\\\" : \\\"US\\\", \\\"vbn\\\" : \\\"US\\\", \\\"postal_code\\\" : \\\"60062\\\", \\\"email\\\" :
+          \\\"ericm@dvsweb.com\\\", \\\"phone\\\" : \\\"8476648859\\\"},"
+    end
+      <<-EOS
       curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
       \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
 \\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
@@ -560,13 +580,7 @@ class CertificateOrder < ActiveRecord::Base
 \\"postal_code\\" : \\"#{r.postal_code}\\",
 \\"country_name\\" :  \\"#{r.country}\\",
 \\"domains\\":{#{api_domains}}},
-\\"contacts\\":{\\"all\\":{\\"first_name\\" : \\"Eric\\",\\"last_name\\":
-\\"Miles\\", \\"address1\\" : \\"60 Revere Dr\\", \\"address2\\" : \\"Suite 201\\", \\"city\\" : \\"Northbrook\\",
-\\"state\\" : \\"IL\\", \\"country\\" : \\"US\\", \\"vbn\\" : \\"US\\", \\"postal_code\\" : \\"60062\\", \\"email\\" :
-\\"ericm@dvsweb.com\\", \\"phone\\" : \\"8476648859\\"},\\"administrative\\":{\\"first_name\\" : \\"Eric\\",
-\\"last_name\\": \\"Miles\\", \\"address1\\" : \\"60 Revere Dr\\", \\"address2\\" : \\"Suite 201\\", \\"city\\" :
-\\"Northbrook\\", \\"state\\" : \\"IL\\", \\"country\\" : \\"US\\", \\"vbn\\" : \\"US\\", \\"postal_code\\" :
-\\"60062\\", \\"email\\" : \\"ericm@dvsweb.com\\", \\"phone\\" : \\"8476648859\\"}}, \\"csr\\" :
+\\"contacts\\":{#{api_contacts}}, \\"csr\\" :
 \\"#{certificate_content.csr.body.gsub("\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
     EOS
   end

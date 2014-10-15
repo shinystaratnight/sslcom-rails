@@ -136,6 +136,8 @@ SslCom::Application.routes.draw do
     resource :site_seal
   end
 
+  get '/certificate_orders/filter_by/:id' => 'CertificateOrders#filter_by', as: :filter_by_certificate_orders
+
   resources :certificate_contents do
     resources :contacts, :only=>:index
   end
