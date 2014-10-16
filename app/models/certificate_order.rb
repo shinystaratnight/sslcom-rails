@@ -545,27 +545,36 @@ class CertificateOrder < ActiveRecord::Base
     ref
   end
 
-  def to_api_string(action="update")
-    cc = certificate_content
-    r = cc.registrant
-    api_domains = ""
-    cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
-    api_contacts = ""
-    CertificateContent::CONTACT_ROLES.each do |role|
-      # contact=cc.certificate_contacts.find do |certificate_contact|
-      #   certificate_contact.roles.include?(role)
-      # end
-      # CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
-      #   c.send((field+'=').to_sym, r.send(field.to_sym))
-      #   "\\\"#{field}\\\" : \\\"#{contact.send(field.to_sym)}\\\","
-      # end
+  def last_dcv_sent
+    return if csr.blank?
+    dcvs=csr.domain_control_validations
+    (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
+  end
 
-      api_contacts << "\\\"#{role.to_s}{\\\":{\\\"first_name\\\" : \\\"Eric\\\",\\\"last_name\\\":
-          \\\"Miles\\\", \\\"address1\\\" : \\\"60 Revere Dr\\\", \\\"address2\\\" : \\\"Suite 201\\\", \\\"city\\\" : \\\"Northbrook\\\",
-          \\\"state\\\" : \\\"IL\\\", \\\"country\\\" : \\\"US\\\", \\\"vbn\\\" : \\\"US\\\", \\\"postal_code\\\" : \\\"60062\\\", \\\"email\\\" :
-          \\\"ericm@dvsweb.com\\\", \\\"phone\\\" : \\\"8476648859\\\"},"
-    end
-      <<-EOS
+  def to_api_string(action="update")
+    case action
+      when /update/
+        cc = certificate_content
+        r = cc.registrant
+        api_domains = ""
+        if cc.domains
+          cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
+        else
+          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_sent.method_for_api}\\\"},"
+        end
+        api_contacts = ""
+        CertificateContent::CONTACT_ROLES.each do |role|
+          contact=cc.certificate_contacts.find do |certificate_contact|
+            if certificate_contact.roles.include?(role)
+              api_contacts << "\\\"#{role.to_s}{\\\":{"
+              CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
+                api_contacts << "\\\"#{field}\\\" : \\\"#{certificate_contact.send(field.to_sym)}\\\","
+              end
+              api_contacts.chop! << "},"
+            end
+          end
+        end
+        <<-EOS
       curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
       \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
 \\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
@@ -580,9 +589,11 @@ class CertificateOrder < ActiveRecord::Base
 \\"postal_code\\" : \\"#{r.postal_code}\\",
 \\"country_name\\" :  \\"#{r.country}\\",
 \\"domains\\":{#{api_domains}}},
-\\"contacts\\":{#{api_contacts}}, \\"csr\\" :
+\\"contacts\\":{#{api_contacts.chop!}}, \\"csr\\" :
 \\"#{certificate_content.csr.body.gsub("\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
-    EOS
+        EOS
+      when /create/
+    end
   end
 
   def add_renewal(ren)
@@ -1023,14 +1034,19 @@ class CertificateOrder < ActiveRecord::Base
 
   def perform_dcv(last_sent, options)
     if certificate.is_ucc?
-      domains_for_comodo = certificate_content.certificate_names.map(&:name)
-      dcv_methods_for_comodo = certificate_content.certificate_names.map(&:last_dcv_for_comodo)
-      unless domains_for_comodo.include? csr.common_name
-        domains_for_comodo << csr.common_name
-        dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
+      domains_for_comodo,dcv_methods_for_comodo=nil,nil
+      if certificate_content.certificate_names.empty?
+        domains_for_comodo = domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq
+      else
+        domains_for_comodo = certificate_content.certificate_names.map(&:name)
+        dcv_methods_for_comodo = certificate_content.certificate_names.map(&:last_dcv_for_comodo)
+        unless domains_for_comodo.include? csr.common_name
+          domains_for_comodo << csr.common_name
+          dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
+        end
       end
-      options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(","),
-                     'domainNames' => domains_for_comodo.join(","))
+      options.merge!('domainNames' => domains_for_comodo.join(","))
+      options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
     else
       if last_sent.dcv_method=="http"
         options.merge!('dcvMethod' => "HTTP_CSR_HASH")

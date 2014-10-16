@@ -163,13 +163,6 @@
                   -if cn
                     =render partial: 'certificate_orders/visit', locals: {cn: cn}
                   =render partial: 'shared/small_admin_functions', locals: {co: co}
-                  %li
-                    %strong notes
-                  %li.category_border
-                    -unless co.notes.blank?
-                      =co.notes
-                    -else
-                      no notes found
                 -if current_user.try("is_admin?")
                   %ul#send_to_ca_box
                     %li
@@ -183,4 +176,12 @@
                       %dl#sent_to_ca_results
                         =render partial: "sent_ca_result", collection: co.csr_ca_api_requests.compact.flatten, as: :ca_response
                         =render partial: "cert_ca_result", locals: {ca_response: co.ca_retrieve_certificates.first} unless co.ca_retrieve_certificates.blank?
+                  %ul
+                    %li
+                      %strong notes
+                    %li.category_border
+                      -unless co.notes.blank?
+                        =co.notes
+                      -else
+                        no notes found
 

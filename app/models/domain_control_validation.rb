@@ -66,4 +66,8 @@ class DomainControlValidation < ActiveRecord::Base
   end
   alias :is_eligible_to_send? :is_eligible_to_resend?
 
+  def method_for_api
+    dcv_method =~ /http/ ? dcv_method : email_address
+  end
+
 end

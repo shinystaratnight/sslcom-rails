@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141010141810) do
+ActiveRecord::Schema.define(:version => 20141015203833) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -227,7 +227,7 @@ ActiveRecord::Schema.define(:version => 20141010141810) do
     t.integer  "server_licenses"
     t.integer  "line_item_qty"
     t.integer  "amount"
-    t.string   "notes"
+    t.text     "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_expired"
