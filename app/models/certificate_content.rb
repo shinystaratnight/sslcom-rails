@@ -32,6 +32,7 @@ class CertificateContent < ActiveRecord::Base
       29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1, 39=>3}
   
   ICANN_TLDS = %w(
+    ABOGADO
     AC
     ACADEMY
     ACCOUNTANTS
@@ -70,6 +71,7 @@ class CertificateContent < ActiveRecord::Base
     AXA
     AZ
     BA
+    BAND
     BAR
     BARGAINS
     BAYERN
@@ -175,6 +177,7 @@ class CertificateContent < ActiveRecord::Base
     CR
     CREDIT
     CREDITCARD
+    CRS
     CRUISES
     CU
     CUISINELLA
@@ -245,6 +248,7 @@ class CertificateContent < ActiveRecord::Base
     FK
     FLIGHTS
     FLORIST
+    FLSMIDTH
     FLY
     FM
     FO
@@ -499,6 +503,7 @@ class CertificateContent < ActiveRecord::Base
     PM
     PN
     POHL
+    POKER
     POST
     PR
     PRAXI
@@ -534,6 +539,7 @@ class CertificateContent < ActiveRecord::Base
     REVIEWS
     RICH
     RIO
+    RIP
     RO
     ROCKS
     RODEO
@@ -662,6 +668,7 @@ class CertificateContent < ActiveRecord::Base
     WEBCAM
     WEBSITE
     WED
+    WEDDING
     WF
     WHOSWHO
     WIEN
@@ -750,6 +757,7 @@ class CertificateContent < ActiveRecord::Base
     YACHTS
     YANDEX
     YE
+    YOGA
     YOKOHAMA
     YOUTUBE
     YT

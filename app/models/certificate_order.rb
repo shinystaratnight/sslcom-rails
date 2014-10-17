@@ -560,13 +560,13 @@ class CertificateOrder < ActiveRecord::Base
         if cc.domains
           cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
         else
-          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_sent.method_for_api}\\\"},"
+          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_dcv_sent.method_for_api}\\\"},"
         end
         api_contacts = ""
         CertificateContent::CONTACT_ROLES.each do |role|
           contact=cc.certificate_contacts.find do |certificate_contact|
             if certificate_contact.roles.include?(role)
-              api_contacts << "\\\"#{role.to_s}{\\\":{"
+              api_contacts << "\\\"#{role.to_s}\\\":{"
               CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
                 api_contacts << "\\\"#{field}\\\" : \\\"#{certificate_contact.send(field.to_sym)}\\\","
               end

@@ -11,7 +11,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
               :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
-              :"107"=>"premiumssl256sslcom",
+              :"107"=>"premium256sslcom",
               :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
               :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
 
@@ -176,7 +176,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         r = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
               Reseller.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
             else
-              options[:ssl_account].reseller
+              options[:ssl_account].reseller #test for existence
             end
         errors[:contacts] = r.errors unless r.valid?
         CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
@@ -329,7 +329,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           r = CertificateContact.new(attrs.merge({roles: role}))
           r.valid?
           errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-        else Country.find_by_name_caps(attrs[:country].upcase).blank?
+        elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
           msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
           errors[:contacts].last.merge!(msg)
         end
