@@ -567,7 +567,7 @@ class CertificateOrder < ActiveRecord::Base
           contact=cc.certificate_contacts.find do |certificate_contact|
             if certificate_contact.roles.include?(role)
               api_contacts << "\\\"#{role.to_s}\\\":{"
-              CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
+              CertificateContent::RESELLER_FIELDS_TO_COPY+['country'].each do |field|
                 api_contacts << "\\\"#{field}\\\" : \\\"#{certificate_contact.send(field.to_sym)}\\\","
               end
               api_contacts.chop! << "},"
@@ -588,7 +588,7 @@ class CertificateOrder < ActiveRecord::Base
 \\"state_or_province_name\\" : \\"#{r.state}\\",
 \\"postal_code\\" : \\"#{r.postal_code}\\",
 \\"country_name\\" :  \\"#{r.country}\\",
-\\"domains\\":{#{api_domains}}},
+\\"domains\\":{#{api_domains.chop!}},
 \\"contacts\\":{#{api_contacts.chop!}}, \\"csr\\" :
 \\"#{certificate_content.csr.body.gsub("\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
         EOS
