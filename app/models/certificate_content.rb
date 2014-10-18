@@ -880,11 +880,15 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def domains=(domains)
-    unless domains.blank?
-      domains = domains.split(/\s+/).uniq.reject{|d|d.blank?}
+  def domains=(names)
+    unless names.blank?
+      names = names.split(/\s+/).uniq.reject{|d|d.blank?}
     end
-    write_attribute(:domains, domains)
+    write_attribute(:domains, names)
+  end
+
+  def domains
+    (read_attribute(:domains).kind_of?(Array) && read_attribute(:domains).flatten==["0"]) ? [] : read_attribute(:domains)
   end
 
   def additional_domains=(html_domains)

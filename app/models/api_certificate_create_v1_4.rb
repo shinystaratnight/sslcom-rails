@@ -81,6 +81,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if self.ref
       @certificate_order=self.find_certificate_order
       if @certificate_order.is_a?(CertificateOrder)
+        @certificate_order.external_order_number=self.ca_order_number if (self.admin_submitted && self.ca_order_number)
+        # choose the right ca_certificate_id for submit to Comodo
+        @certificate_order.ca_certificate_id = self.ca_certificate_id
+        @certificate_order.is_api_call=true
+        @certificate_order.is_test=self.test
         certificate_content = @certificate_order.certificate_contents.build
         csr = self.csr_obj
         csr.save

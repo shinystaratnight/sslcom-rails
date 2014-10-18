@@ -8,3 +8,5 @@
     -unless co.skip_verification?
       %li=link_to "view dcv url", csr.dcv_url, target: "_blank"
     %li=link_to "#{co.csr.md5_hash}.txt", http_dcv_file_csr_path(csr), target: "_blank"
+  -if co.external_order_number
+    %li ext order number: #{co.external_order_number}

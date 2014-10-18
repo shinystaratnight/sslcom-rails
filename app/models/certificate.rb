@@ -582,6 +582,10 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  def skip_verification?
+    self.is_ucc?
+  end
+
   # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}
   def self.generate_ca_certificates(options)
     dir=Settings.intermediate_certs_path+options[:bundles][:dir]+"/"

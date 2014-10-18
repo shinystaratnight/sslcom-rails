@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
 
   # the following only apply to api calls
   attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method,
-      :dcv_email_address, :dcv_email_addresses, :is_api_call
+      :dcv_email_address, :dcv_email_addresses, :is_api_call, :ca_certificate_id
 
   #will_paginate
   cattr_reader :per_page
@@ -409,11 +409,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.skip_verification?(certificate)
-    certificate.is_ucc? #certificate.skip_verification?
+    certificate.skip_verification?
   end
 
   def skip_verification?
-    (csr.is_intranet? || csr.is_ip_address?) if csr
+    self.certificate.skip_verification?
   end
 
   def order_status
@@ -556,8 +556,21 @@ class CertificateOrder < ActiveRecord::Base
       when /update/
         cc = certificate_content
         r = cc.registrant
+        registrant_params = r.blank? ? "" :
+        <<-EOS
+        \\"organization_name\\" : \\"#{r.company_name}\\",
+            \\"organization_unit_name\\" : \\"#{r.department}\\",
+            \\"post_office_box\\" : \\"#{r.po_box}\\",
+            \\"street_address_1\\" : \\"#{r.address1}\\",
+            \\"street_address_2\\" : \\"#{r.address2}\\",
+            \\"street_address_3\\" : \\"#{r.address3}\\",
+            \\"locality_name\\" : \\"#{r.city}\\",
+            \\"state_or_province_name\\" : \\"#{r.state}\\",
+            \\"postal_code\\" : \\"#{r.postal_code}\\",
+            \\"country_name\\" :  \\"#{r.country}\\",
+        EOS
         api_domains = ""
-        if cc.domains
+        unless cc.domains.blank?
           cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
         else
           api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_dcv_sent.method_for_api}\\\"},"
@@ -567,7 +580,7 @@ class CertificateOrder < ActiveRecord::Base
           contact=cc.certificate_contacts.find do |certificate_contact|
             if certificate_contact.roles.include?(role)
               api_contacts << "\\\"#{role.to_s}\\\":{"
-              CertificateContent::RESELLER_FIELDS_TO_COPY+['country'].each do |field|
+              (CertificateContent::RESELLER_FIELDS_TO_COPY+['country']).each do |field|
                 api_contacts << "\\\"#{field}\\\" : \\\"#{certificate_contact.send(field.to_sym)}\\\","
               end
               api_contacts.chop! << "},"
@@ -578,19 +591,11 @@ class CertificateOrder < ActiveRecord::Base
       curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
       \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
 \\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
-\\"server_software\\" : \\"#{cc.server_software_id}\\", \\"organization_name\\" : \\"#{r.company_name}\\",
-\\"organization_unit_name\\" : \\"#{r.department}\\",
-\\"post_office_box\\" : \\"#{r.po_box}\\",
-\\"street_address_1\\" : \\"#{r.address1}\\",
-\\"street_address_2\\" : \\"#{r.address2}\\",
-\\"street_address_3\\" : \\"#{r.address3}\\",
-\\"locality_name\\" : \\"#{r.city}\\",
-\\"state_or_province_name\\" : \\"#{r.state}\\",
-\\"postal_code\\" : \\"#{r.postal_code}\\",
-\\"country_name\\" :  \\"#{r.country}\\",
+\\"server_software\\" : \\"#{cc.server_software_id}\\",
+#{registrant_params}
 \\"domains\\":{#{api_domains.chop!}},
 \\"contacts\\":{#{api_contacts.chop!}}, \\"csr\\" :
-\\"#{certificate_content.csr.body.gsub("\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+\\"#{certificate_content.csr.body.gsub("\s?\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
         EOS
       when /create/
     end
@@ -1123,8 +1128,8 @@ class CertificateOrder < ActiveRecord::Base
   def external_order_number
     return read_attribute(:external_order_number) unless read_attribute(:external_order_number).blank?
     all_csrs = certificate_contents.map(&:csr)
-    return nil if all_csrs.blank?
-    sent_success_map = all_csrs.map {|c|c.sent_success(true)}
+    return nil if all_csrs.compact.blank?
+    sent_success_map = all_csrs.compact.map {|c|c.sent_success(true)}
     sent_success_map.flatten.compact.uniq.first.order_number if
         all_csrs && !sent_success_map.blank? &&
         sent_success_map.flatten.compact.uniq.first
@@ -1296,15 +1301,17 @@ class CertificateOrder < ActiveRecord::Base
 
   # used for determining which Sub Ca certs to use
   def ssl_com_order(options)
-    if [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
-      ca_certificate_id = if certificate.is_ev?
+    if is_api_call && self.ca_certificate_id
+      cci = self.ca_certificate_id
+    elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
+      cci = if certificate.is_ev?
                             "508" #ev
                             # elsif is_ov?
                             #   "507" #ov
                           else
                             "506" #dv
                           end
-      options.merge!('caCertificateID' => ca_certificate_id)
+      options.merge!('caCertificateID' => cci)
     elsif certificate.serial=~/256sslcom/
       prod_code = if certificate.is_ev?
                     403
