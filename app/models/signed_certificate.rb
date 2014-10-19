@@ -206,7 +206,7 @@ class SignedCertificate < ActiveRecord::Base
     co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      co.bundled_cert_names.each do |file_name|
+      co.bundled_cert_names(components: true).each do |file_name|
         file=File.new(co.bundled_cert_dir+file_name.strip, "r")
         zos.get_output_stream(file_name.strip) {|f|f.puts (is_windows ?
             file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}

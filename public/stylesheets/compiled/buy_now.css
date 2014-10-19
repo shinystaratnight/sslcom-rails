@@ -1,120 +1,122 @@
-/* line 1, ../../../app/stylesheets/buy_now.sass */
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+/* line 4, ../../../app/stylesheets/buy_now.sass */
 body[class|="page-body"] {
   background: none repeat scroll 0 0 white;
 }
 
-/* line 4, ../../../app/stylesheets/buy_now.sass */
+/* line 7, ../../../app/stylesheets/buy_now.sass */
 a {
   text-decoration: none;
 }
-/* line 6, ../../../app/stylesheets/buy_now.sass */
+/* line 9, ../../../app/stylesheets/buy_now.sass */
 a img {
   border: medium none;
 }
 
-/* line 10, ../../../app/stylesheets/buy_now.sass */
+/* line 13, ../../../app/stylesheets/buy_now.sass */
 .certificate-page h1, .certificate-page h2 {
-  font-family: Arial, Helvetica, "MS Trebuchet", sans-serif !important;
+  font-family: "Montserrat", Helvetica, Arial, "MS Trebuchet", sans-serif;
 }
 
-/* line 13, ../../../app/stylesheets/buy_now.sass */
+/* line 16, ../../../app/stylesheets/buy_now.sass */
 .bold {
   font-weight: bold;
 }
 
-/* line 16, ../../../app/stylesheets/buy_now.sass */
+/* line 19, ../../../app/stylesheets/buy_now.sass */
 .left {
   float: left;
 }
 
-/* line 19, ../../../app/stylesheets/buy_now.sass */
+/* line 22, ../../../app/stylesheets/buy_now.sass */
 .right {
   float: right;
 }
 
-/* line 22, ../../../app/stylesheets/buy_now.sass */
+/* line 25, ../../../app/stylesheets/buy_now.sass */
 .icn-compatibility, .icn-lock, .icn-shield, .icn-mobile, .icn-medical, .icn-baggage, .icn-lifeguard, .icn-box, .icn-tool, .icn-ssl {
   background: url("/images/sprite-contentlogos.jpg?1336752140") no-repeat scroll 0 0 transparent;
 }
 
-/* line 25, ../../../app/stylesheets/buy_now.sass */
+/* line 28, ../../../app/stylesheets/buy_now.sass */
 .icn-compatibility {
   background-position: 5px 5px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 30, ../../../app/stylesheets/buy_now.sass */
+/* line 33, ../../../app/stylesheets/buy_now.sass */
 .icn-lock {
   background-position: 5px -48px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 35, ../../../app/stylesheets/buy_now.sass */
+/* line 38, ../../../app/stylesheets/buy_now.sass */
 .icn-shield {
   background-position: 5px -101px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 40, ../../../app/stylesheets/buy_now.sass */
+/* line 43, ../../../app/stylesheets/buy_now.sass */
 .icn-mobile {
   background-position: 5px -154px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 45, ../../../app/stylesheets/buy_now.sass */
+/* line 48, ../../../app/stylesheets/buy_now.sass */
 .icn-medical {
   background-position: 5px -206px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 50, ../../../app/stylesheets/buy_now.sass */
+/* line 53, ../../../app/stylesheets/buy_now.sass */
 .icn-baggage {
   background-position: 5px -260px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 55, ../../../app/stylesheets/buy_now.sass */
+/* line 58, ../../../app/stylesheets/buy_now.sass */
 .icn-lifeguard {
   background-position: 5px -313px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 60, ../../../app/stylesheets/buy_now.sass */
+/* line 63, ../../../app/stylesheets/buy_now.sass */
 .icn-box {
   background-position: 5px -364px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 65, ../../../app/stylesheets/buy_now.sass */
+/* line 68, ../../../app/stylesheets/buy_now.sass */
 .icn-tool {
   background-position: 5px -418px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 70, ../../../app/stylesheets/buy_now.sass */
+/* line 73, ../../../app/stylesheets/buy_now.sass */
 .icn-ssl {
   background-position: 5px -470px;
   margin-left: -10px;
   padding: 15px 30px;
 }
 
-/* line 75, ../../../app/stylesheets/buy_now.sass */
+/* line 78, ../../../app/stylesheets/buy_now.sass */
 .divider {
   border-top: 1px solid #bababa;
   border-bottom: 1px solid white;
   margin: 6px 15px 8px;
 }
 
-/* line 80, ../../../app/stylesheets/buy_now.sass */
+/* line 83, ../../../app/stylesheets/buy_now.sass */
 .btn-buynow {
   background: url("/images/btn-buynow-sprite.png") no-repeat scroll 0 0 transparent;
   border-radius: 3px;
@@ -131,25 +133,25 @@ a img {
   font-size: 20px;
   font-weight: bold;
   text-shadow: -1px 1px 0 #6a8f29;
-  font-family: Helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   padding: 9px 0 1px 34px;
   cursor: pointer;
   line-height: 16px;
 }
-/* line 100, ../../../app/stylesheets/buy_now.sass */
+/* line 103, ../../../app/stylesheets/buy_now.sass */
 .btn-buynow.reseller {
   background: #537a21;
   padding: 9px 0 1px 0px;
 }
-/* line 103, ../../../app/stylesheets/buy_now.sass */
+/* line 106, ../../../app/stylesheets/buy_now.sass */
 .btn-buynow.reseller:hover {
   background: #537a21;
 }
-/* line 105, ../../../app/stylesheets/buy_now.sass */
+/* line 108, ../../../app/stylesheets/buy_now.sass */
 .btn-buynow:hover {
   background: url("/images/btn-buynow-sprite.png") no-repeat scroll 0 -43px transparent;
 }
-/* line 107, ../../../app/stylesheets/buy_now.sass */
+/* line 110, ../../../app/stylesheets/buy_now.sass */
 .btn-buynow:active {
   background: url("/images/btn-buynow-sprite.png") no-repeat scroll 0 -86px transparent;
   box-shadow: none;
@@ -160,7 +162,7 @@ a img {
   text-shadow: 0 -1px 0 #6a8f29;
 }
 
-/* line 116, ../../../app/stylesheets/buy_now.sass */
+/* line 119, ../../../app/stylesheets/buy_now.sass */
 .btn-wegot {
   background-color: #f78c0d;
   background-image: -moz-linear-gradient(center top, #fdb02e 1pt, #eb840e 100%);
@@ -171,7 +173,7 @@ a img {
   background-image: -webkit-linear-gradient(top, #fdb02e 3pt, #eb840e 100%);
   background-image: linear-gradient(top bottom, #fdb02e 3pt, #eb840e 100%);
   color: white;
-  font-family: Helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 18px;
   border: 1px solid #c16a03;
   border-color: #c16a03 #c16a03 #ad5c05;
@@ -180,7 +182,6 @@ a img {
   -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
   text-shadow: 0 1px 0 #777777;
-  font-family: Helvetica, arial, san-serif;
   padding: 6px 17px 5px;
   border-radius: 4px;
   -moz-border-radius: 4px;
@@ -188,7 +189,7 @@ a img {
   height: 120px;
   cursor: pointer;
 }
-/* line 142, ../../../app/stylesheets/buy_now.sass */
+/* line 144, ../../../app/stylesheets/buy_now.sass */
 .btn-wegot:hover {
   background-color: #fba927;
   background-image: none;
@@ -198,7 +199,7 @@ a img {
    *-webkit-box-shadow: 0 0 4px #999; */
   border-color: #ad5c05;
 }
-/* line 150, ../../../app/stylesheets/buy_now.sass */
+/* line 152, ../../../app/stylesheets/buy_now.sass */
 .btn-wegot:active {
   background-color: #fdb02e;
   background-image: none;
@@ -207,56 +208,56 @@ a img {
   text-shadow: 0 -1px 0 #aaaaaa;
 }
 
-/* line 157, ../../../app/stylesheets/buy_now.sass */
+/* line 159, ../../../app/stylesheets/buy_now.sass */
 .logo {
   background: url("/images/ssl-logo.png?1336815194") no-repeat scroll left 2px transparent;
   padding: 0 72px;
 }
 
-/* line 161, ../../../app/stylesheets/buy_now.sass */
+/* line 163, ../../../app/stylesheets/buy_now.sass */
 .logo-small {
   background: url("/images/ssl-logo-small.png?1336815404") no-repeat scroll 0 0 transparent;
   padding: 0 0 5px 90px;
 }
 
-/* line 165, ../../../app/stylesheets/buy_now.sass */
+/* line 167, ../../../app/stylesheets/buy_now.sass */
 .logo-smaller {
   background: url("/images/ssl-logo-smaller.png?1336817764") no-repeat scroll 0 0 transparent;
   padding: 0 0 5px 50px;
 }
 
-/* line 169, ../../../app/stylesheets/buy_now.sass */
+/* line 171, ../../../app/stylesheets/buy_now.sass */
 .section-title {
   font-weight: bold !important;
   margin-bottom: 20px !important;
 }
-/* line 172, ../../../app/stylesheets/buy_now.sass */
+/* line 174, ../../../app/stylesheets/buy_now.sass */
 .section-title span {
-  font-family: helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 26px;
   letter-spacing: -1px;
 }
-/* line 176, ../../../app/stylesheets/buy_now.sass */
+/* line 178, ../../../app/stylesheets/buy_now.sass */
 .section-title span b {
-  font-family: "arial black italic", helvetica, arial !important;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif !important;
   font-weight: bold;
   font-size: 42px;
   font-weight: 100;
   letter-spacing: -4.5px;
 }
 
-/* line 184, ../../../app/stylesheets/buy_now.sass */
+/* line 186, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1, #banner-grid .banner2, #banner-grid .banner3 {
-  font-family: Arial !important;
+  font-family: "Raleway", Arial !important;
   padding: 8px 0;
   text-align: center;
   width: 300px;
 }
-/* line 189, ../../../app/stylesheets/buy_now.sass */
+/* line 191, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1 {
   margin-left: 5px;
 }
-/* line 191, ../../../app/stylesheets/buy_now.sass */
+/* line 193, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner2 h2 {
   color: black !important;
   font-size: 35px;
@@ -264,7 +265,7 @@ a img {
   margin: 0 0 12px 0;
   padding: 0 !important;
 }
-/* line 197, ../../../app/stylesheets/buy_now.sass */
+/* line 199, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1 h2, #banner-grid .banner3 h2 {
   color: black !important;
   font-size: 35px;
@@ -272,7 +273,7 @@ a img {
   margin: 0 0 4px 0;
   padding: 0 !important;
 }
-/* line 203, ../../../app/stylesheets/buy_now.sass */
+/* line 205, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1 span, #banner-grid .banner2 span, #banner-grid .banner3 span {
   color: #777777 !important;
   font-size: 20px !important;
@@ -280,7 +281,7 @@ a img {
   padding: 0 !important;
   line-height: 16px;
 }
-/* line 209, ../../../app/stylesheets/buy_now.sass */
+/* line 211, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1 {
   background: url("/images/banner-grid-bg.jpg?1336807336") repeat scroll 0 0 #e9e9e9;
   border-bottom: 2px solid #bbbbbb;
@@ -290,11 +291,11 @@ a img {
   margin-top: 15px;
   min-height: 275px;
 }
-/* line 217, ../../../app/stylesheets/buy_now.sass */
+/* line 219, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner1.affiliate {
   border: 2px solid #7fa832;
 }
-/* line 219, ../../../app/stylesheets/buy_now.sass */
+/* line 221, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner2 {
   background: none repeat scroll 0 0 white;
   border: 3px solid #0072b2;
@@ -302,7 +303,7 @@ a img {
   min-height: 300px;
   padding: 8px;
 }
-/* line 225, ../../../app/stylesheets/buy_now.sass */
+/* line 227, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner3 {
   background: url("/images/banner-grid-bg.jpg?1336807336") repeat scroll 0 0 #e9e9e9;
   border-bottom: 2px solid #7fa832;
@@ -312,23 +313,23 @@ a img {
   margin-top: 15px;
   min-height: 275px;
 }
-/* line 234, ../../../app/stylesheets/buy_now.sass */
+/* line 236, ../../../app/stylesheets/buy_now.sass */
 #banner-grid .banner3.reseller {
   border: 2px solid #7fa832;
   box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* line 239, ../../../app/stylesheets/buy_now.sass */
+/* line 241, ../../../app/stylesheets/buy_now.sass */
 .price-block {
   margin: 2px 0 0px 5px;
   text-align: center;
   width: 280px;
 }
-/* line 243, ../../../app/stylesheets/buy_now.sass */
+/* line 245, ../../../app/stylesheets/buy_now.sass */
 .price-block div {
   display: inline;
 }
-/* line 245, ../../../app/stylesheets/buy_now.sass */
+/* line 247, ../../../app/stylesheets/buy_now.sass */
 .price-block .red {
   color: #9e0101;
   font-size: 28px !important;
@@ -336,32 +337,32 @@ a img {
   line-height: 25px;
   padding: 0 !important;
 }
-/* line 251, ../../../app/stylesheets/buy_now.sass */
+/* line 253, ../../../app/stylesheets/buy_now.sass */
 .price-block .price {
   color: #9e0101 !important;
-  font-family: Georgia, serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 30px !important;
   font-weight: bold !important;
 }
-/* line 256, ../../../app/stylesheets/buy_now.sass */
+/* line 258, ../../../app/stylesheets/buy_now.sass */
 .price-block .price-desc {
   color: #999999 !important;
   font-size: 14px !important;
   font-weight: bold !important;
   margin: 14px 0 0 -2px;
 }
-/* line 261, ../../../app/stylesheets/buy_now.sass */
+/* line 263, ../../../app/stylesheets/buy_now.sass */
 .price-block .additional-desc {
   color: black !important;
 }
 
-/* line 264, ../../../app/stylesheets/buy_now.sass */
+/* line 266, ../../../app/stylesheets/buy_now.sass */
 .price-block-special {
   text-align: center;
   /*width:280px; */
   margin: -3px 0 0 5px;
 }
-/* line 268, ../../../app/stylesheets/buy_now.sass */
+/* line 270, ../../../app/stylesheets/buy_now.sass */
 .price-block-special .red {
   display: inline !important;
   line-height: 25px;
@@ -371,83 +372,83 @@ a img {
   font-weight: bold !important;
   color: #9e0101 !important;
 }
-/* line 276, ../../../app/stylesheets/buy_now.sass */
+/* line 278, ../../../app/stylesheets/buy_now.sass */
 .price-block-special .price {
   display: inline !important;
-  font-family: Georgia, serif !important;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif !important;
   font-size: 44px !important;
   color: #9e0101 !important;
   font-weight: bold !important;
 }
-/* line 282, ../../../app/stylesheets/buy_now.sass */
+/* line 284, ../../../app/stylesheets/buy_now.sass */
 .price-block-special .price-desc {
   color: #999999 !important;
   font-size: 14px !important;
   font-weight: bold !important;
   margin: -22px 0 0 148px !important;
 }
-/* line 287, ../../../app/stylesheets/buy_now.sass */
+/* line 289, ../../../app/stylesheets/buy_now.sass */
 .price-block-special .additional-desc {
   color: black !important;
   margin-bottom: 15px !important;
 }
 
-/* line 291, ../../../app/stylesheets/buy_now.sass */
+/* line 293, ../../../app/stylesheets/buy_now.sass */
 .security_rating {
   margin-bottom: 5px;
 }
-/* line 293, ../../../app/stylesheets/buy_now.sass */
+/* line 295, ../../../app/stylesheets/buy_now.sass */
 .security_rating div {
   color: #888888;
   font-size: 11px;
   margin: -5px 0 8px;
 }
 
-/* line 298, ../../../app/stylesheets/buy_now.sass */
+/* line 300, ../../../app/stylesheets/buy_now.sass */
 .banner1 .description li div, .banner2 .description li div {
   color: #9e0101 !important;
   display: inline;
   font-weight: bold;
 }
 
-/* line 303, ../../../app/stylesheets/buy_now.sass */
+/* line 305, ../../../app/stylesheets/buy_now.sass */
 .banner3 .description li div {
   color: #9e0101 !important;
   display: inline;
   font-weight: bold;
 }
-/* line 307, ../../../app/stylesheets/buy_now.sass */
+/* line 309, ../../../app/stylesheets/buy_now.sass */
 .banner3 .description li div.green {
   color: #7caa31 !important;
   display: inline;
   font-weight: bold;
 }
 
-/* line 312, ../../../app/stylesheets/buy_now.sass */
+/* line 314, ../../../app/stylesheets/buy_now.sass */
 .banner1 .description li, .banner2 .description li, .banner3 .description li {
   color: #666666;
-  font-family: Helvetica, Arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 16px !important;
   list-style-type: none !important;
   margin: 0 0 2px -22px;
 }
 
-/* line 320, ../../../app/stylesheets/buy_now.sass */
+/* line 322, ../../../app/stylesheets/buy_now.sass */
 .banner2 .help {
   color: #999999 !important;
   letter-spacing: -1px;
   margin-top: -10px;
 }
-/* line 324, ../../../app/stylesheets/buy_now.sass */
+/* line 326, ../../../app/stylesheets/buy_now.sass */
 .banner2 .help a {
   color: #3fa8ca !important;
   font-weight: bold;
 }
-/* line 327, ../../../app/stylesheets/buy_now.sass */
+/* line 329, ../../../app/stylesheets/buy_now.sass */
 .banner2 .price-block {
   margin-left: 0 !important;
 }
-/* line 329, ../../../app/stylesheets/buy_now.sass */
+/* line 331, ../../../app/stylesheets/buy_now.sass */
 .banner2 .price-block .price {
   color: #9e0101;
   font-size: 40px !important;
@@ -455,7 +456,7 @@ a img {
   margin-top: -20px;
   padding: 0 0 0 5px !important;
 }
-/* line 335, ../../../app/stylesheets/buy_now.sass */
+/* line 337, ../../../app/stylesheets/buy_now.sass */
 .banner2 .price-block .price-desc {
   color: #9e0101;
   float: right;
@@ -466,23 +467,23 @@ a img {
   padding: 0 !important;
   width: 110px;
 }
-/* line 344, ../../../app/stylesheets/buy_now.sass */
+/* line 346, ../../../app/stylesheets/buy_now.sass */
 .banner2 .bestseal {
   margin: -16px 0 0 -16px;
   position: absolute;
 }
 
-/* line 348, ../../../app/stylesheets/buy_now.sass */
+/* line 350, ../../../app/stylesheets/buy_now.sass */
 #advertisement {
   padding: 0 70px;
   width: 800px;
 }
-/* line 351, ../../../app/stylesheets/buy_now.sass */
+/* line 353, ../../../app/stylesheets/buy_now.sass */
 #advertisement .catch-phrase {
   background: none repeat scroll 0 0 #e9e9e9;
   border: 1px solid #bbbbbb;
   color: #444444;
-  font-family: Georgia, serif !important;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif !important;
   font-size: 20px;
   margin: 30px 0 10px;
   padding: 15px 0;
@@ -493,30 +494,30 @@ a img {
   -webkit-box-shadow: 1px 1px 0 white inset, -1px -1px 0 white inset;
 }
 
-/* line 365, ../../../app/stylesheets/buy_now.sass */
+/* line 367, ../../../app/stylesheets/buy_now.sass */
 #partners {
   margin: 25px 0 32px;
 }
-/* line 367, ../../../app/stylesheets/buy_now.sass */
+/* line 369, ../../../app/stylesheets/buy_now.sass */
 #partners li {
   list-style-type: none;
 }
-/* line 369, ../../../app/stylesheets/buy_now.sass */
+/* line 371, ../../../app/stylesheets/buy_now.sass */
 #partners div {
   color: #999999;
-  font-family: Helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 16px;
   padding-top: 14px;
   margin-bottom: 14px;
 }
 
-/* line 377, ../../../app/stylesheets/buy_now.sass */
+/* line 379, ../../../app/stylesheets/buy_now.sass */
 #content .left-icon-bar {
   background: none repeat scroll 0 0 #eeeeee;
   border: 1px solid #bbbbbb;
   color: #444444;
   font-size: 19px !important;
-  font-family: Georgia, serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   padding: 10px 13px;
   text-align: center;
   line-height: 24px;
@@ -526,112 +527,112 @@ a img {
   -webkit-box-shadow: 1px 1px 0 white inset, -1px -1px 0 white inset;
   text-shadow: 0 -1px 0 white;
 }
-/* line 391, ../../../app/stylesheets/buy_now.sass */
+/* line 393, ../../../app/stylesheets/buy_now.sass */
 #content .left-icon-bar span {
-  font-family: helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 16px;
   letter-spacing: -1px;
 }
-/* line 395, ../../../app/stylesheets/buy_now.sass */
+/* line 397, ../../../app/stylesheets/buy_now.sass */
 #content .left-icon-bar span b {
   font-family: "arial black italic";
   font-size: 26px;
   letter-spacing: -2px;
   font-weight: 100;
 }
-/* line 400, ../../../app/stylesheets/buy_now.sass */
+/* line 402, ../../../app/stylesheets/buy_now.sass */
 #content #features {
   margin: 0 0 15px -40px;
   width: 320px;
 }
-/* line 403, ../../../app/stylesheets/buy_now.sass */
+/* line 405, ../../../app/stylesheets/buy_now.sass */
 #content #features li {
   background: none repeat scroll 0 0 white;
   border-bottom: 1px solid #bababa;
   border-left: 1px solid #bababa;
   border-right: 1px solid #bbbbbb;
   color: #333333;
-  font-family: Arial, Helvetica, Tahoma;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 13px;
   list-style-type: none;
   margin-top: 0;
   padding: 18px 15px;
 }
 
-/* line 415, ../../../app/stylesheets/buy_now.sass */
+/* line 417, ../../../app/stylesheets/buy_now.sass */
 .inner-content h2 {
   color: #333333 !important;
-  font-family: Georgia, serif !important;
+  font-family: "Montserrat", Helvetica, Arial, "MS Trebuchet", sans-serif !important;
   font-size: 42px !important;
   font-weight: normal !important;
   text-shadow: 0 -1px 0 white;
 }
 
-/* line 422, ../../../app/stylesheets/buy_now.sass */
+/* line 424, ../../../app/stylesheets/buy_now.sass */
 .faq-boxes {
   width: 250px !important;
 }
-/* line 423, ../../../app/stylesheets/buy_now.sass */
+/* line 425, ../../../app/stylesheets/buy_now.sass */
 .faq-boxes.affiliates {
   width: 100% !important;
 }
-/* line 426, ../../../app/stylesheets/buy_now.sass */
+/* line 428, ../../../app/stylesheets/buy_now.sass */
 .faq-boxes .title {
   color: #333333;
-  font-family: helvetica, arial, san-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 15px;
   font-weight: bold;
 }
-/* line 431, ../../../app/stylesheets/buy_now.sass */
+/* line 433, ../../../app/stylesheets/buy_now.sass */
 .faq-boxes p {
   color: #444444;
-  font-family: Georgia, serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   font-size: 13px;
   line-height: 19px;
   margin: 5px 0 22px;
 }
 
-/* line 438, ../../../app/stylesheets/buy_now.sass */
+/* line 440, ../../../app/stylesheets/buy_now.sass */
 .sidebarhome1 {
   float: left !important;
   margin: 0 40px 0 -26px !important;
   width: 320px !important;
 }
 
-/* line 443, ../../../app/stylesheets/buy_now.sass */
+/* line 445, ../../../app/stylesheets/buy_now.sass */
 .faq-boxes {
   float: left;
   margin-right: 35px;
   width: 320px;
 }
 
-/* line 448, ../../../app/stylesheets/buy_now.sass */
+/* line 450, ../../../app/stylesheets/buy_now.sass */
 .sidebarhome {
   background: none repeat scroll 0 0 transparent !important;
 }
 
-/* line 451, ../../../app/stylesheets/buy_now.sass */
+/* line 453, ../../../app/stylesheets/buy_now.sass */
 .icn-help {
   float: right;
 }
 
-/* line 454, ../../../app/stylesheets/buy_now.sass */
+/* line 456, ../../../app/stylesheets/buy_now.sass */
 #video img {
   border: solid 1px #c4c4c4;
 }
 
-/* line 457, ../../../app/stylesheets/buy_now.sass */
+/* line 459, ../../../app/stylesheets/buy_now.sass */
 #badge {
   background-color: #e4edea;
   border: solid 1px #c4c4c4;
   margin-top: -1px;
 }
-/* line 461, ../../../app/stylesheets/buy_now.sass */
+/* line 463, ../../../app/stylesheets/buy_now.sass */
 #badge img {
   border: none;
   margin: 20px 0 0 100px;
 }
-/* line 464, ../../../app/stylesheets/buy_now.sass */
+/* line 466, ../../../app/stylesheets/buy_now.sass */
 #badge p {
   font-size: 12px;
   padding: 0 10px;
@@ -639,7 +640,7 @@ a img {
   line-height: 16px;
 }
 
-/* line 470, ../../../app/stylesheets/buy_now.sass */
+/* line 472, ../../../app/stylesheets/buy_now.sass */
 .inner-content {
   float: left !important;
   margin: 0 !important;
@@ -647,12 +648,12 @@ a img {
   width: 578px !important;
 }
 
-/* line 476, ../../../app/stylesheets/buy_now.sass */
+/* line 478, ../../../app/stylesheets/buy_now.sass */
 .notes {
   clear: both !important;
   width: 570px !important;
 }
-/* line 479, ../../../app/stylesheets/buy_now.sass */
+/* line 481, ../../../app/stylesheets/buy_now.sass */
 .notes div {
   background-color: #f7f7f7;
   color: #333333;
@@ -676,7 +677,7 @@ a img {
   background-image: linear-gradient(center bottom, #dedede 10%, #ffffff 58%);
   cursor: pointer;
 }
-/* line 501, ../../../app/stylesheets/buy_now.sass */
+/* line 503, ../../../app/stylesheets/buy_now.sass */
 .notes div:hover {
   background-color: #f9f9f9;
   border-color: #999999;
@@ -687,7 +688,7 @@ a img {
   background-image: -webkit-linear-gradient(bottom, #dddddd 20%, white 58%);
   background-image: linear-gradient(center bottom, #dddddd 20%, #ffffff 58%);
 }
-/* line 510, ../../../app/stylesheets/buy_now.sass */
+/* line 512, ../../../app/stylesheets/buy_now.sass */
 .notes div:active {
   background-color: #f0f0f0;
   border-color: #999999;
@@ -699,32 +700,32 @@ a img {
   background-image: -webkit-linear-gradient(bottom, white 16%, #dedede 58%);
   background-image: linear-gradient(center bottom, #ffffff 16%, #dedede 58%);
 }
-/* line 521, ../../../app/stylesheets/buy_now.sass */
+/* line 523, ../../../app/stylesheets/buy_now.sass */
 .notes h1 {
-  font-family: Georgia, serif !important;
+  font-family: "Montserrat", Helvetica, Arial, "MS Trebuchet", sans-serif !important;
   text-align: left !important;
   font-size: 40px !important;
 }
 
-/* line 526, ../../../app/stylesheets/buy_now.sass */
+/* line 528, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes {
   float: left;
   margin-right: 35px;
   width: 250px;
 }
-/* line 530, ../../../app/stylesheets/buy_now.sass */
+/* line 532, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box {
   background: url("/images/cloud.png") no-repeat;
   height: 150px;
   margin-right: 20px;
 }
-/* line 534, ../../../app/stylesheets/buy_now.sass */
+/* line 536, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box img {
   border: 3px solid white;
   margin: 10px 15px;
   float: left;
 }
-/* line 538, ../../../app/stylesheets/buy_now.sass */
+/* line 540, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .long blockquote {
   float: left;
   font-size: 13px;
@@ -733,7 +734,7 @@ a img {
   font-style: italic;
   margin-top: -5px !important;
 }
-/* line 545, ../../../app/stylesheets/buy_now.sass */
+/* line 547, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .short blockquote {
   float: left;
   font-size: 13px;
@@ -742,49 +743,49 @@ a img {
   font-style: italic;
   font-size: 15px !important;
 }
-/* line 553, ../../../app/stylesheets/buy_now.sass */
+/* line 555, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box blockquote {
   float: left;
   font-size: 13px;
-  font-family: Georgia, serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   width: 180px;
   line-height: 20px;
   font-style: italic;
   margin-top: 12px;
 }
-/* line 561, ../../../app/stylesheets/buy_now.sass */
+/* line 563, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box div {
   position: absolute;
   margin-top: 104px;
   width: 125px !important;
 }
-/* line 565, ../../../app/stylesheets/buy_now.sass */
+/* line 567, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box div span {
   display: block;
   text-align: right;
   font-size: 12px;
   font-family: Arial;
 }
-/* line 570, ../../../app/stylesheets/buy_now.sass */
+/* line 572, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box div span.black {
   color: #323232;
 }
-/* line 572, ../../../app/stylesheets/buy_now.sass */
+/* line 574, ../../../app/stylesheets/buy_now.sass */
 .testimonial-boxes .box div span.gray {
   color: #666666;
 }
 
-/* line 575, ../../../app/stylesheets/buy_now.sass */
+/* line 577, ../../../app/stylesheets/buy_now.sass */
 .holder {
   min-height: 750px !important;
 }
 
-/* line 578, ../../../app/stylesheets/buy_now.sass */
+/* line 580, ../../../app/stylesheets/buy_now.sass */
 .inner {
   overflow: visible !important;
 }
 
-/* line 581, ../../../app/stylesheets/buy_now.sass */
+/* line 583, ../../../app/stylesheets/buy_now.sass */
 .requires_flash {
   font-size: 12px !important;
 }

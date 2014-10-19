@@ -1,3 +1,5 @@
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
 /* CSS for ssl Website */
 @font-face {
   font-family: "arial black";
@@ -11,10 +13,10 @@
   src: url(/fonts/arial-black-italic.ttf);
 }
 
-/* line 13, ../../../app/stylesheets/master.sass */
+/* line 15, ../../../app/stylesheets/master.sass */
 body {
   background: white;
-  font-family: Helvetica, Arial, "MS Trebuchet", sans-serif;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
   min-height: 100%;
   width: 100%;
   height: 100%;
@@ -24,38 +26,38 @@ body {
   overflow-x: hidden !important;
   overflow-y: scroll !important;
 }
-/* line 24, ../../../app/stylesheets/master.sass */
+/* line 26, ../../../app/stylesheets/master.sass */
 body[class|="page-body"] {
   background: white;
   /* Applies to IE 7 and most modern browsers except Opera */
 }
 
 /*MISCELLANOUS */
-/* line 30, ../../../app/stylesheets/master.sass */
+/* line 32, ../../../app/stylesheets/master.sass */
 a {
   text-decoration: none;
 }
-/* line 32, ../../../app/stylesheets/master.sass */
+/* line 34, ../../../app/stylesheets/master.sass */
 a img {
   border: none;
 }
 
-/* line 35, ../../../app/stylesheets/master.sass */
+/* line 37, ../../../app/stylesheets/master.sass */
 .bold {
   font-weight: bold;
 }
 
-/* line 38, ../../../app/stylesheets/master.sass */
+/* line 40, ../../../app/stylesheets/master.sass */
 .left {
   float: left;
 }
 
-/* line 41, ../../../app/stylesheets/master.sass */
+/* line 43, ../../../app/stylesheets/master.sass */
 .right {
   float: right;
 }
 
-/* line 44, ../../../app/stylesheets/master.sass */
+/* line 46, ../../../app/stylesheets/master.sass */
 .clear {
   height: 1%;
   clear: both;
@@ -64,12 +66,12 @@ a img {
   visibility: hidden;
 }
 
-/* line 51, ../../../app/stylesheets/master.sass */
+/* line 53, ../../../app/stylesheets/master.sass */
 .divider {
   border-bottom: 1px solid #444444;
 }
 
-/* line 54, ../../../app/stylesheets/master.sass */
+/* line 56, ../../../app/stylesheets/master.sass */
 .divider-horizontal {
   border-right: 1px solid #aaaaaa;
   padding: 0 4px;
@@ -78,36 +80,36 @@ a img {
 }
 
 /*icons */
-/* line 62, ../../../app/stylesheets/master.sass */
+/* line 64, ../../../app/stylesheets/master.sass */
 .icn_live, .icn_phone, .icn_email, .icn_support {
   background: url("/images/icon-set.png") no-repeat;
 }
 
-/* line 65, ../../../app/stylesheets/master.sass */
+/* line 67, ../../../app/stylesheets/master.sass */
 .icn_live {
   background-position: -10px 13px;
   padding: 17px 12px;
 }
 
-/* line 69, ../../../app/stylesheets/master.sass */
+/* line 71, ../../../app/stylesheets/master.sass */
 .icn_phone {
   background-position: -42px 12px;
   padding: 17px 14px;
 }
 
-/* line 73, ../../../app/stylesheets/master.sass */
+/* line 75, ../../../app/stylesheets/master.sass */
 .icn_email {
   background-position: -88px 12px;
   padding: 17px 14px;
 }
 
-/* line 77, ../../../app/stylesheets/master.sass */
+/* line 79, ../../../app/stylesheets/master.sass */
 .icn_support {
   background-position: -130px 12px;
   padding: 17px 12px;
 }
 
-/* line 81, ../../../app/stylesheets/master.sass */
+/* line 83, ../../../app/stylesheets/master.sass */
 .icn_cart {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d;
   padding: 5px 6px 4px 24px;
@@ -117,7 +119,7 @@ a img {
   font-size: 12px;
 }
 
-/* line 89, ../../../app/stylesheets/master.sass */
+/* line 91, ../../../app/stylesheets/master.sass */
 .icn_cart-filled {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d;
   padding: 5px 6px 4px 24px;
@@ -128,23 +130,23 @@ a img {
   background: url("/images/icn-cart.png") 4px 3px no-repeat #8bb43b;
 }
 
-/* line 98, ../../../app/stylesheets/master.sass */
+/* line 100, ../../../app/stylesheets/master.sass */
 .icn_cart:hover, .icn_cart-filled:hover {
   text-decoration: underline;
 }
 
-/* line 101, ../../../app/stylesheets/master.sass */
+/* line 103, ../../../app/stylesheets/master.sass */
 .content {
   margin: 0 auto !important;
   width: 960px;
 }
-/* line 105, ../../../app/stylesheets/master.sass */
+/* line 107, ../../../app/stylesheets/master.sass */
 .content li {
   font-size: 14px;
 }
 
 /*header */
-/* line 110, ../../../app/stylesheets/master.sass */
+/* line 112, ../../../app/stylesheets/master.sass */
 #header {
   text-align: left !important;
   background: #282928 100%;
@@ -153,35 +155,35 @@ a img {
   margin: 0px;
   height: 78px;
 }
-/* line 118, ../../../app/stylesheets/master.sass */
+/* line 120, ../../../app/stylesheets/master.sass */
 #header .content .logo {
   float: left;
   padding: 0px 150px 20px 0;
   margin-right: 15px;
   background: url("/images/big-logo.png") no-repeat;
 }
-/* line 123, ../../../app/stylesheets/master.sass */
+/* line 125, ../../../app/stylesheets/master.sass */
 #header .content .navigation {
   float: left;
   width: 580px;
 }
-/* line 126, ../../../app/stylesheets/master.sass */
+/* line 128, ../../../app/stylesheets/master.sass */
 #header .content .navigation .top_navigation {
   width: 580px;
   padding: 12px 0px 13px 30px;
   margin-left: 1px;
 }
-/* line 130, ../../../app/stylesheets/master.sass */
+/* line 132, ../../../app/stylesheets/master.sass */
 #header .content .navigation .bottom_navigation {
   width: 580px;
   padding: 17px 30px;
 }
 
-/* line 135, ../../../app/stylesheets/master.sass */
+/* line 137, ../../../app/stylesheets/master.sass */
 .top_navigation a {
   color: #cccccc !important;
 }
-/* line 137, ../../../app/stylesheets/master.sass */
+/* line 139, ../../../app/stylesheets/master.sass */
 .top_navigation li {
   float: right !important;
   color: #cccccc;
@@ -189,25 +191,25 @@ a img {
   padding: 0 4px;
   font-size: 12px;
 }
-/* line 138, ../../../app/stylesheets/master.sass */
+/* line 140, ../../../app/stylesheets/master.sass */
 .top_navigation li a:hover {
   color: white !important;
   text-decoration: underline;
   cursor: pointer !important;
 }
 
-/* line 149, ../../../app/stylesheets/master.sass */
+/* line 151, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-/* line 153, ../../../app/stylesheets/master.sass */
+/* line 155, ../../../app/stylesheets/master.sass */
 .bottom_navigation li {
   float: right !important;
   background: #111111;
   border-right: 1px solid #282928;
-  font-family: "arial black", arial;
+  font-family: "Raleway", Arial !important;
   font-size: 12px;
   padding: 9px 18px;
   position: relative;
@@ -216,7 +218,7 @@ a img {
   -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
-/* line 165, ../../../app/stylesheets/master.sass */
+/* line 167, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover {
   background: #232323;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
@@ -224,17 +226,17 @@ a img {
   -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
   -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
-/* line 171, ../../../app/stylesheets/master.sass */
+/* line 173, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav a {
   display: block;
   color: #dddddd;
 }
-/* line 174, ../../../app/stylesheets/master.sass */
+/* line 176, ../../../app/stylesheets/master.sass */
 .bottom_navigation ul#nav a:hover {
   display: block;
   color: white;
 }
-/* line 179, ../../../app/stylesheets/master.sass */
+/* line 181, ../../../app/stylesheets/master.sass */
 .bottom_navigation li ul {
   display: none;
   position: absolute;
@@ -243,18 +245,18 @@ a img {
   left: 0;
   margin-left: -41px;
 }
-/* line 186, ../../../app/stylesheets/master.sass */
+/* line 188, ../../../app/stylesheets/master.sass */
 .bottom_navigation li > ul {
   top: 32px;
   left: 40px;
   background: #212121;
 }
-/* line 190, ../../../app/stylesheets/master.sass */
+/* line 192, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul, .bottom_navigation li.over ul {
   display: block;
   list-style: none;
 }
-/* line 193, ../../../app/stylesheets/master.sass */
+/* line 195, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li {
   background: #232323;
   padding: 10px;
@@ -266,22 +268,22 @@ a img {
   -webkit-box-shadow: none;
   cursor: pointer;
 }
-/* line 203, ../../../app/stylesheets/master.sass */
+/* line 205, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li.divider {
   margin: 0 0 0 10px;
   padding: 0 10px;
   border-bottom: #999999 1px solid;
 }
-/* line 207, ../../../app/stylesheets/master.sass */
+/* line 209, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a {
   color: #cccccc !important;
   margin-left: 4px;
 }
-/* line 210, ../../../app/stylesheets/master.sass */
+/* line 212, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li a:hover {
   color: white !important;
 }
-/* line 212, ../../../app/stylesheets/master.sass */
+/* line 214, ../../../app/stylesheets/master.sass */
 .bottom_navigation li:hover ul li:hover {
   width: 240px !important;
   background: black !important;
@@ -289,12 +291,12 @@ a img {
 }
 
 /*content */
-/* line 219, ../../../app/stylesheets/master.sass */
+/* line 221, ../../../app/stylesheets/master.sass */
 .container {
   padding: 15px 0 0 0 !important;
 }
 
-/* line 222, ../../../app/stylesheets/master.sass */
+/* line 224, ../../../app/stylesheets/master.sass */
 #container {
   min-height: 100%;
   margin: 0;
@@ -308,7 +310,7 @@ a img {
 }
 
 /*footer */
-/* line 235, ../../../app/stylesheets/master.sass */
+/* line 237, ../../../app/stylesheets/master.sass */
 #footer {
   clear: both;
   background: #282928;
@@ -320,24 +322,24 @@ a img {
   /* important */
   text-align: left !important;
 }
-/* line 246, ../../../app/stylesheets/master.sass */
+/* line 248, ../../../app/stylesheets/master.sass */
 #footer .content .box-logo {
   width: 190px;
 }
-/* line 249, ../../../app/stylesheets/master.sass */
+/* line 251, ../../../app/stylesheets/master.sass */
 #footer .content .box .footer-like {
   padding: 0px 210px 10px 0;
 }
-/* line 251, ../../../app/stylesheets/master.sass */
+/* line 253, ../../../app/stylesheets/master.sass */
 #footer .content .box .logo-small {
   padding: 0px 210px 60px 0;
   background: url("/images/small-logo.png") no-repeat;
 }
-/* line 254, ../../../app/stylesheets/master.sass */
+/* line 256, ../../../app/stylesheets/master.sass */
 #footer .content .box-social {
   width: 210px;
 }
-/* line 256, ../../../app/stylesheets/master.sass */
+/* line 258, ../../../app/stylesheets/master.sass */
 #footer .content .box {
   width: 185px;
   background: inherit;
@@ -345,43 +347,43 @@ a img {
   margin-bottom: 0 !important;
   color: white;
 }
-/* line 262, ../../../app/stylesheets/master.sass */
+/* line 264, ../../../app/stylesheets/master.sass */
 #footer .content .box b {
   color: white !important;
 }
-/* line 264, ../../../app/stylesheets/master.sass */
+/* line 266, ../../../app/stylesheets/master.sass */
 #footer .content .box .title {
   font-size: 14px;
   margin-left: 34px;
 }
-/* line 267, ../../../app/stylesheets/master.sass */
+/* line 269, ../../../app/stylesheets/master.sass */
 #footer .content .box ul {
   margin: 12px 0 0 0 !important;
 }
-/* line 269, ../../../app/stylesheets/master.sass */
+/* line 271, ../../../app/stylesheets/master.sass */
 #footer .content .box li {
   list-style-type: none;
   padding: 4px;
 }
-/* line 272, ../../../app/stylesheets/master.sass */
+/* line 274, ../../../app/stylesheets/master.sass */
 #footer .content .box a {
   color: #dddddd;
   font-size: 12px;
   margin-left: -8px;
 }
-/* line 276, ../../../app/stylesheets/master.sass */
+/* line 278, ../../../app/stylesheets/master.sass */
 #footer .content .box a b {
   font-size: 12px;
   letter-spacing: -0.5px;
   font-weight: bold;
   font-style: italic;
 }
-/* line 281, ../../../app/stylesheets/master.sass */
+/* line 283, ../../../app/stylesheets/master.sass */
 #footer .content .box a:hover {
   color: white;
   text-decoration: underline;
 }
-/* line 284, ../../../app/stylesheets/master.sass */
+/* line 286, ../../../app/stylesheets/master.sass */
 #footer .content .copyright {
   margin: 25px 0 0 220px;
   font-size: 12px;

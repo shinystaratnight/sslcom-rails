@@ -21,7 +21,7 @@ jQuery(function($) {
         this.expanded = true;
         $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/contract.png');
         $(this).parents().filter('tr').next().show();
-        $(this).parents().filter('tr').find('.expand').text('collapse');
+        $(this).parents().filter('tr').find('.expand').text('close');
       }
     });
     $('textarea[name*=body]').click(function(){

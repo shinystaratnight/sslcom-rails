@@ -30,6 +30,8 @@ class UserSessionsController < ApplicationController
       else
         @user_session = current_user_session
       end
+      cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
+          cart_cookie_days.to_i.days.from_now}
     else
       require_no_user
       @user_session = UserSession.new(params[:user_session])
