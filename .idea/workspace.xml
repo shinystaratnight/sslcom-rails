@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" line="81" mnemonic="3" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="104" mnemonic="4" />
-    <bookmark url="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml" line="188" mnemonic="5" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="48" mnemonic="1" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="832" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" line="99" mnemonic="4" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="816" mnemonic="3" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="901" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="74" mnemonic="0" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="553" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="84" mnemonic="7" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="14" mnemonic="6" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" line="277" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" line="223" mnemonic="5" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_4.rabl" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" afterPath="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/api_certificate_request.rb" afterPath="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" afterPath="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
+    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="fixed bundle files">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" afterPath="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -31,20 +28,20 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1404754025180" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1413663295226" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1403286518023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1409153043475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1404704793006" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1412891554506" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1404704157171" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1412951349517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
@@ -52,10 +49,10 @@
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1404837677691" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1413665098390" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
@@ -63,13 +60,13 @@
     <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1403286736689" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1412178263553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL: ssl_com_rails3 Coverage Results" MODIFIED="1400454091340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
@@ -86,101 +83,98 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="api_certificate_create.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="5258">
-              <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_certificate_request.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="1452">
-              <caret line="6" column="22" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_certificate_create_v1_4.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6034483" vertical-offset="1493" max-vertical-offset="5808">
-              <caret line="79" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="csrs_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/csrs_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="902">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_certificate_retrieve.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-              <caret line="0" column="45" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="13395" max-vertical-offset="24464">
-              <caret line="617" column="54" selection-start-line="617" selection-start-column="5" selection-end-line="617" selection-end-column="5" />
+            <state vertical-scroll-proportion="-3.4615386" vertical-offset="8951" max-vertical-offset="29326">
+              <caret line="413" column="45" selection-start-line="413" selection-start-column="0" selection-end-line="413" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_helper.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <file leaf-file-name="buy.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5717" max-vertical-offset="8602">
-              <caret line="266" column="26" selection-start-line="266" selection-start-column="26" selection-end-line="266" selection-end-column="26" />
+            <state vertical-scroll-proportion="-11.870968" vertical-offset="424" max-vertical-offset="968">
+              <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <file leaf-file-name="more_info_sm_bl.gif" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/images/more_info_sm_bl.gif">
+          <provider selected="true" editor-type-id="images">
+            <state />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_certificate_detail.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="5295" max-vertical-offset="15488">
-              <caret line="253" column="52" selection-start-line="253" selection-start-column="17" selection-end-line="253" selection-end-column="52" />
+            <state vertical-scroll-proportion="-6.612903" vertical-offset="103" max-vertical-offset="528">
+              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
+      <file leaf-file-name="ca_certificate_request.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4730">
-              <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="484">
+              <caret line="8" column="120" selection-start-line="8" selection-start-column="43" selection-end-line="8" selection-end-column="43" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate_content.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <file leaf-file-name="index.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="15655" max-vertical-offset="21186">
-              <caret line="724" column="0" selection-start-line="724" selection-start-column="0" selection-end-line="724" selection-end-column="0" />
+            <state vertical-scroll-proportion="-8.5161295" vertical-offset="0" max-vertical-offset="2464">
+              <caret line="12" column="11" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="buy_now.html.haml" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.42718446" vertical-offset="1584" max-vertical-offset="6336">
+              <caret line="80" column="34" selection-start-line="80" selection-start-column="34" selection-end-line="80" selection-end-column="34" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_footer.html.haml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-4.7419353" vertical-offset="5881" max-vertical-offset="6336">
+              <caret line="274" column="15" selection-start-line="274" selection-start-column="15" selection-end-line="274" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="jquery.tooltip.css" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/stylesheets/jquery.tooltip.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+              <caret line="9" column="10" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="routes.rb" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/routes.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="264" max-vertical-offset="5786">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -203,57 +197,57 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/app/models/product_variant_item.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificates_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificates/index.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/site/wildcard-ssl-certificates.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/site/tlds.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/site_controller.rb" />
-        <option value="$PROJECT_DIR$/app/stylesheets/master.sass" />
-        <option value="$PROJECT_DIR$/app/views/site/top_level_domains_tlds.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/reseller_tiers/index.html.haml" />
-        <option value="$PROJECT_DIR$/config/environments/development.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/order.rb" />
-        <option value="$PROJECT_DIR$/app/models/billing_profile.rb" />
-        <option value="$PROJECT_DIR$/app/views/orders/_adwords_conversion.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/orders/new.html.haml" />
         <option value="$PROJECT_DIR$/config/application.rb" />
-        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb" />
-        <option value="$PROJECT_DIR$/app/views/certificates/show_evucc.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificates/show_ucc.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
+        <option value="$PROJECT_DIR$/lib/domain_constraint.rb" />
+        <option value="$PROJECT_DIR$/app/views/reseller_tiers/_tiers.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/user.rb" />
+        <option value="$PROJECT_DIR$/config/newrelic.yml" />
+        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
+        <option value="$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014/ssl_ca_bundle.txt" />
+        <option value="$PROJECT_DIR$/app/models/cert_util.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_download.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_update_v1_4.rb" />
+        <option value="$PROJECT_DIR$/app/models/email_validator.rb" />
+        <option value="$PROJECT_DIR$/app/views/order_notifier/dcv_sent.text.erb" />
         <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/csr.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20140706202544_create_entity.rb" />
-        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
-        <option value="$PROJECT_DIR$/app/models/entry.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20140706202850_add_entities_to_domain_control_validation.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20140706202544_create_certificate_names.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/app/models/site_seal.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20141010141810_add_ext_order_to_certificate_order.rb" />
+        <option value="$PROJECT_DIR$/app/views/users/_reseller.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/users/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/users/_admin.html.haml" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/app/models/comodo_api.rb" />
+        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_admin.html.haml" />
+        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/db/migrate/20141010141810_add_external_order_number_to_certificate_order.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20141015203833_change_certificate_orders_notes_type.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/_dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
+        <option value="$PROJECT_DIR$/config/initializers/session_store.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/ca_api_request.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
-        <option value="$PROJECT_DIR$/app/models/comodo_api.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
-        <option value="$PROJECT_DIR$/config/initializers/wrap_parameters.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_dcv_emails.rb" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
-        <option value="$PROJECT_DIR$/app/models/domain_name_validator.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
-        <option value="$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create_1_4.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create1_4.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
+        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/views/site/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/buy.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/site/buy_now.html.haml" />
       </list>
     </option>
   </component>
@@ -265,10 +259,10 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="24" />
-    <option name="width" value="1855" />
-    <option name="height" value="923" />
+    <option name="x" value="64" />
+    <option name="y" value="-9" />
+    <option name="width" value="1857" />
+    <option name="height" value="957" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -296,7 +290,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -325,7 +318,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
+              <option name="myItemId" value="spec" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -339,115 +332,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="db" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="db" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="migrate" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="certificates" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="views" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="api_certificate_requests" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
+              <option name="myItemId" value="spec" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
@@ -465,16 +350,45 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="controllers" />
+              <option name="myItemId" value="public" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="images" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
       <pane id="RailsProjectView" />
     </panes>
   </component>
@@ -484,28 +398,28 @@
     <property name="zeus.debugging.info.shown" value="true" />
     <property name="restartRequiresConfirmation" value="true" />
     <property name="FullScreen" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/stylesheets" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../ienergy_pdf" />
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
     <property name="options.lastSelected" value="appearance" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
     <property name="RakeTaksPopup.undocumentedIncluded" value="false" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="170" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="211" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="183" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="224" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="75" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="159" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="442" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="1166" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="51" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="274" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="71" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="293" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="75" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="298" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
-    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="673" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="895" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="RailsGeneratorsPopup.hiddenIncluded" value="false" />
   </component>
@@ -513,9 +427,9 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/views/api_certificate_requests" />
       <recent name="$PROJECT_DIR$/app/models" />
+      <recent name="$PROJECT_DIR$/public/cert_bundles/sha1_sslcom_2014" />
+      <recent name="$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014" />
       <recent name="$PROJECT_DIR$/spec/controllers" />
-      <recent name="$PROJECT_DIR$/spec/models" />
-      <recent name="$PROJECT_DIR$/spec/factories" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/config/initializers" />
@@ -525,6 +439,261 @@
   <component name="RestClientSettings">
     <option name="REQUEST_HISTORY">
       <list>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://sws.sslpki.local:3000" />
+          <option name="urlPath" value="/certificates" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://sws.sslpki.local:3000" />
+          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://sws.sslpki.local:3000" />
+          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;0000000&quot;,&quot;secret_key&quot;:&quot;0KCSAnXeSu+rFQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://sws.sslpki.com" />
+          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;0000000&quot;,&quot;secret_key&quot;:&quot;0KCSAnXeSu+rFQ==&quot;,&quot;domain_names&quot;:[&quot;google.com&quot;,&quot;web.facebook.com&quot;,&quot;web.ssl.com&quot;]}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.3/retrieve" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot;:&quot;co-5619qoh0u&quot;, &quot;query_type&quot;:&quot;order_status&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/retrieve" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot;:&quot;co-5619qoh0u&quot;, &quot;query_type&quot;:&quot;order_status&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot;:&quot;co-5619qoh0u&quot;, &quot;query_type&quot;:&quot;order_status&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;csr/ceodZvPniQ==&quot;,&quot;product&quot; : &quot;106&quot;, &quot;period&quot; : &quot;365&quot;, &quot;server_count&quot; : &quot;1&quot;, &quot;server_software&quot; : &quot;15&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_numbe&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;is_customer_validated&quot; : &quot;y&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot; : &quot;co-5a19rqvhp&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_number&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;, &quot;csr&quot; : &quot;-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot; : &quot;co-d719qol0g&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_number&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;, &quot;csr&quot; : &quot;-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot; : &quot;co-5819rqve2&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_number&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;, &quot;csr&quot; : &quot;-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot; : &quot;co-0519rqsuk&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_number&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;, &quot;csr&quot; : &quot;-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
+        <RestClientRequest>
+          <option name="httpMethod" value="POST" />
+          <option name="urlBase" value="https://www.ssl.com:3000" />
+          <option name="urlPath" value="/certificates/1.4/create" />
+          <option name="headers">
+            <list>
+              <KeyValuePair>
+                <option name="key" value="Content-Type" />
+                <option name="value" value="application/json" />
+              </KeyValuePair>
+            </list>
+          </option>
+          <option name="parametersEnabled" value="true" />
+          <option name="haveTextToSend" value="true" />
+          <option name="textToSend" value="{&quot;account_key&quot; : &quot;498180a3b961&quot;,&quot;secret_key&quot; : &quot;&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot; : &quot;co-0519rqsuk&quot;, &quot;organization_name&quot; : &quot;yoursite&quot;, &quot;street_address_1&quot; : &quot;somewhere st&quot;, &quot;locality_name&quot; : &quot;new york&quot;, &quot;state_or_province_name&quot; : &quot;new york&quot;, &quot;postal_code&quot; : &quot;77777&quot;, &quot;country_name&quot; : &quot;US&quot;, &quot;duns_number&quot; : &quot;1234567&quot;, &quot;company_number&quot; : &quot;yoursite_number&quot;, &quot;registered_country_name&quot; : &quot;US&quot;, &quot;incorporation_date&quot; : &quot;12/12/2000&quot;, &quot;dcv_email_address&quot; : &quot;admin@yoursite.com&quot;, &quot;csr&quot; : &quot;-----BEGIN CERTIFICATE REQUEST-----\nMIICvTCCAaUCAQAweDELMAkGA1UEBhMCdXMxDjAMBgNVBAgTBVRleGFzMRAwDgYD\nVQQHEwdIb3VzdG9uMRUwEwYDVQQKEwxZb3VyIENvbXBhbnkxFTATBgNVBAsTDFlv\ndXIgSVQgRGVwdDEZMBcGA1UEAxMQd3d3LnlvdXJzaXRlLmNvbTCCASIwDQYJKoZI\nhvcNAQEBBQADggEPADCCAQoCggEBAKWnrKf35qmU/tBnieUcQmf0xhntGO2YDgAO\nW9J44IAhC1IB715312J28WvoLSSZDuBxqMaLgBbcNyrRFkwbZ+sRbLsjJ24v21Dt\nLE2gMSbr9YSuH0McOBh9sf23tHd2n5rteJn5fVuxc6ak3t9mag2jjD43Blyh3ih7\nADPj0XAk0Gfn+obfmKPMpZwYEhXnJNtWKHzflzAjUjaxbMwMIrvgZcvk/BZZ184z\nYquasNmvJotvptP0RF3J0GhuiYg75BgimMq3YFxFjAnYjRRZ7p8z/DEfTkdZOPHG\nypaz4ny+l8lggyvMOgZD7yanGuVxzlBhpB90INXVDX9+yQ23XHECAwEAAaAAMA0G\nCSqGSIb3DQEBBQUAA4IBAQAwbFXORWmD9ovp4qsxozzUZAKxUTluiTIsO+bK2pXV\nHAhxVkzcVi8nFqzkeAuKRTQ9UZPMjnnjHWOKIghIpiAabSiC0E/0SPR9s3QzJWhV\nOfOpoKYoRnDUh+/SH/Otg4Wid7yKOfdPFK4J8GtnPB2i5Eih0ZOYTTIU2xSmkZ9T\n+LoB7PxOVii8Dq5Nrbbzq8x/WpJfKTackp6nWl2ILcfXM3iGBmLqXPRn5/Uvj767\nrq5mHXD2IakxBAeTci16WqQEVcow3qn1JwLyGOzXuuW/UA2/HJUE4zG+8CQIb3OL\n0Yq26QKt/i5CJv//uZcRZY8VRkPaH090QOr85UfP7Y3D\n-----END CERTIFICATE REQUEST-----&quot;}" />
+          <option name="filesToSend" value="" />
+        </RestClientRequest>
         <RestClientRequest>
           <option name="httpMethod" value="POST" />
           <option name="urlBase" value="https://www.ssl.com:3000" />
@@ -710,23 +879,6 @@
           <option name="parametersEnabled" value="true" />
           <option name="haveTextToSend" value="true" />
           <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot;:&quot;co-5619qoh0u&quot;}" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/retrieve" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Content-Type" />
-                <option name="value" value="application/json" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="haveTextToSend" value="true" />
-          <option name="textToSend" value="{&quot;account_key&quot;:&quot;498180a3b961&quot;,&quot;secret_key&quot;:&quot;csr/ceodZvPniQ==&quot;,&quot;ref&quot;:&quot;co-5619qoh0u&quot;, &quot;query_type&quot;:&quot;order_status&quot;}" />
           <option name="filesToSend" value="" />
         </RestClientRequest>
         <RestClientRequest>
@@ -1232,382 +1384,10 @@
           <option name="textToSend" value="" />
           <option name="filesToSend" value="" />
         </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://sws.sslpki.local:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="google.com" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="asd" />
-                <option name="value" value="asd" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://sws.sslpki.local:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="google.com" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails_v1_3" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="google.com" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="asd" />
-                <option name="value" value="asd" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://sws.sslpki.local:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails_v1_3" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="google.com" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="asd" />
-                <option name="value" value="asd" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://sws.sslpki.local:3000" />
-          <option name="urlPath" value="/certificates/1.3/create" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="&quot;google.com&quot;" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/create" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="&quot;google.com&quot;" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="498180a3b961" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="&quot;google.com&quot;" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="&quot;account_key&quot;" />
-                <option name="value" value="&quot;498180a3b961&quot;" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="csr/ceodZvPniQ==" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="&quot;google.com&quot;" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="0" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="0" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="&quot;google.com&quot;" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
-        <RestClientRequest>
-          <option name="httpMethod" value="POST" />
-          <option name="urlBase" value="https://www.ssl.com:3000" />
-          <option name="urlPath" value="/certificates/1.3/dcv_emails" />
-          <option name="headers">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="Accept" />
-                <option name="value" value="*/*" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="Cache-Control" />
-                <option name="value" value="no-cache" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parameters">
-            <list>
-              <KeyValuePair>
-                <option name="key" value="account_key" />
-                <option name="value" value="0" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="secret_key" />
-                <option name="value" value="0" />
-              </KeyValuePair>
-              <KeyValuePair>
-                <option name="key" value="domain_name" />
-                <option name="value" value="google.com" />
-              </KeyValuePair>
-            </list>
-          </option>
-          <option name="parametersEnabled" value="true" />
-          <option name="textToSend" value="" />
-          <option name="filesToSend" value="" />
-        </RestClientRequest>
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
+  <component name="RunManager" selected="Rails.Production: ssl_com_rails3">
     <configuration default="false" name="rails:upgrade:routes: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1651,34 +1431,6 @@
       </EXTENSION>
       <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="routes" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="db:migrate: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
-      <module name="ssl_com_rails3" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="development" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
-        <COVERAGE_PATTERN ENABLED="true">
-          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
-        </COVERAGE_PATTERN>
-      </EXTENSION>
-      <EXTENSION ID="org.jetbrains.plugins.ruby.motion.run.MotionSimulatorRunExtension" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="db:migrate" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
@@ -1925,17 +1677,16 @@
       <item index="10" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
       <item index="11" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
       <item index="12" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
-      <item index="14" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
-      <item index="15" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
+      <item index="15" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
       <item index="16" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
     </list>
     <recent_temporary>
-      <list size="4">
+      <list size="3">
         <item index="0" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
-        <item index="1" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
-        <item index="2" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
-        <item index="3" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
@@ -2081,33 +1832,290 @@
       <created>1404839401188</created>
       <updated>1404839401188</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="create v1.4 api call for create ssl">
+      <created>1404860686287</created>
+      <updated>1404860686288</updated>
+    </task>
+    <task id="LOCAL-00035" summary="create api call for dcv ssl">
+      <created>1405297779440</created>
+      <updated>1405297779440</updated>
+    </task>
+    <task id="LOCAL-00036" summary="discounts have expiration dates, and finite usage. Also discounts applied as absolute values are now capable.">
+      <created>1405536261329</created>
+      <updated>1405536261330</updated>
+    </task>
+    <task id="LOCAL-00037" summary="expired certificate orders do not appear by default">
+      <created>1405957936541</created>
+      <updated>1405957936541</updated>
+    </task>
+    <task id="LOCAL-00038" summary="api fix">
+      <created>1406144275260</created>
+      <updated>1406144275261</updated>
+    </task>
+    <task id="LOCAL-00039" summary="certificate_content add ons">
+      <created>1407342050995</created>
+      <updated>1407342050996</updated>
+    </task>
+    <task id="LOCAL-00040" summary="fixed so that credit card validation errors are displayed">
+      <created>1408395910619</created>
+      <updated>1408395910619</updated>
+    </task>
+    <task id="LOCAL-00041" summary="allow wildcard common name for ucc. Deprecate intranet names">
+      <created>1408650781008</created>
+      <updated>1408650781009</updated>
+    </task>
+    <task id="LOCAL-00042" summary="reintroduced validates customer switch in registrant">
+      <created>1408923567527</created>
+      <updated>1408923567527</updated>
+    </task>
+    <task id="LOCAL-00043" summary="/certificates go to wordpress">
+      <created>1409262332347</created>
+      <updated>1409262332351</updated>
+    </task>
+    <task id="LOCAL-00044" summary="/certificates go to wordpress engine">
+      <created>1409264603550</created>
+      <updated>1409264603551</updated>
+    </task>
+    <task id="LOCAL-00045" summary="disabled cannot log in">
+      <created>1409501647870</created>
+      <updated>1409501647870</updated>
+    </task>
+    <task id="LOCAL-00046" summary="/certificates is handled ry rails">
+      <created>1409512926820</created>
+      <updated>1409512926820</updated>
+    </task>
+    <task id="LOCAL-00047" summary="add convert.com code. remove server licenses from reseller pricing.">
+      <created>1409771713972</created>
+      <updated>1409771713972</updated>
+    </task>
+    <task id="LOCAL-00048" summary="fix order.amount">
+      <created>1409780689201</created>
+      <updated>1409780689202</updated>
+    </task>
+    <task id="LOCAL-00049" summary="premiumssl cannot have wildcardS">
+      <created>1409844894374</created>
+      <updated>1409844894374</updated>
+    </task>
+    <task id="LOCAL-00050" summary="admin notes funtion">
+      <created>1409847343852</created>
+      <updated>1409847343857</updated>
+    </task>
+    <task id="LOCAL-00051" summary="admin notes function">
+      <created>1409848213909</created>
+      <updated>1409848213909</updated>
+    </task>
+    <task id="LOCAL-00052" summary="route change for admin update of notes">
+      <created>1409858452204</created>
+      <updated>1409858452204</updated>
+    </task>
+    <task id="LOCAL-00053" summary="certificate_content add ons">
+      <created>1409859009837</created>
+      <updated>1409859009837</updated>
+    </task>
+    <task id="LOCAL-00054" summary="force ssl">
+      <created>1409951633643</created>
+      <updated>1409951633645</updated>
+    </task>
+    <task id="LOCAL-00055" summary="certificate_content add ons">
+      <created>1409954433809</created>
+      <updated>1409954433809</updated>
+    </task>
+    <task id="LOCAL-00056" summary="updated gtlds">
+      <created>1410188788346</created>
+      <updated>1410188788347</updated>
+    </task>
+    <task id="LOCAL-00057" summary="migrating to idevaffiliate">
+      <created>1410547781521</created>
+      <updated>1410547781522</updated>
+    </task>
+    <task id="LOCAL-00058" summary="certificate_content add ons">
+      <created>1410548351427</created>
+      <updated>1410548351429</updated>
+    </task>
+    <task id="LOCAL-00059" summary="migrate to idevaffiliate">
+      <created>1410558301298</created>
+      <updated>1410558301298</updated>
+    </task>
+    <task id="LOCAL-00060" summary="migrate to idevaffiliate">
+      <created>1410560557504</created>
+      <updated>1410560557505</updated>
+    </task>
+    <task id="LOCAL-00061" summary="migrate to idevaffiliate">
+      <created>1410585961937</created>
+      <updated>1410585961939</updated>
+    </task>
+    <task id="LOCAL-00062" summary="migrate to idevaffiliate">
+      <created>1410643426686</created>
+      <updated>1410643426688</updated>
+    </task>
+    <task id="LOCAL-00063" summary="SHA2 and new chain ca installed">
+      <created>1411433592064</created>
+      <updated>1411433592064</updated>
+    </task>
+    <task id="LOCAL-00064" summary="certificate_content add ons">
+      <created>1411433949498</created>
+      <updated>1411433949500</updated>
+    </task>
+    <task id="LOCAL-00065" summary="minor fixes">
+      <created>1411486330713</created>
+      <updated>1411486330715</updated>
+    </task>
+    <task id="LOCAL-00066" summary="add new SHA 2 certs">
+      <created>1411486399657</created>
+      <updated>1411486399659</updated>
+    </task>
+    <task id="LOCAL-00067" summary="removed http://crt.usertrust.com/USERTrustRSACertificationAuthority.crt from bundles">
+      <created>1411486767553</created>
+      <updated>1411486767553</updated>
+    </task>
+    <task id="LOCAL-00068" summary="certificate_content add ons">
+      <created>1411489354118</created>
+      <updated>1411489354120</updated>
+    </task>
+    <task id="LOCAL-00069" summary="updating comodo extract">
+      <created>1411504218308</created>
+      <updated>1411504218309</updated>
+    </task>
+    <task id="LOCAL-00070" summary="fixed affiliate program">
+      <created>1411681443832</created>
+      <updated>1411681443833</updated>
+    </task>
+    <task id="LOCAL-00071" summary="removed windows line break mod">
+      <created>1411686517900</created>
+      <updated>1411686517901</updated>
+    </task>
+    <task id="LOCAL-00072" summary="fixed line breaks for windows">
+      <created>1411764146550</created>
+      <updated>1411764146569</updated>
+    </task>
+    <task id="LOCAL-00073" summary="show savings on reseller tier page">
+      <created>1412099098679</created>
+      <updated>1412099098681</updated>
+    </task>
+    <task id="LOCAL-00074" summary="fixed bundle files">
+      <created>1412272874024</created>
+      <updated>1412272874025</updated>
+    </task>
+    <task id="LOCAL-00075" summary="fixed bundle files">
+      <created>1412284598624</created>
+      <updated>1412284598625</updated>
+    </task>
+    <task id="LOCAL-00076" summary="create and update voucher api calls">
+      <created>1412376101355</created>
+      <updated>1412376101355</updated>
+    </task>
+    <task id="LOCAL-00077" summary="api applies reseller tier">
+      <created>1412476541734</created>
+      <updated>1412476541735</updated>
+    </task>
+    <task id="LOCAL-00078" summary="domains api parameter validates for ucc and single domain certs">
+      <created>1412633402830</created>
+      <updated>1412633402832</updated>
+    </task>
+    <task id="LOCAL-00079" summary="windows \r\n switch for cert downloads">
+      <created>1412649353362</created>
+      <updated>1412649353362</updated>
+    </task>
+    <task id="LOCAL-00080" summary="fixed site seal activation">
+      <created>1412824718781</created>
+      <updated>1412824718782</updated>
+    </task>
+    <task id="LOCAL-00081" summary="fixed bundle files">
+      <created>1412824960998</created>
+      <updated>1412824960999</updated>
+    </task>
+    <task id="LOCAL-00082" summary="fixed bundle files">
+      <created>1412824983504</created>
+      <updated>1412824983506</updated>
+    </task>
+    <task id="LOCAL-00083" summary="add contacts to api">
+      <created>1412979071320</created>
+      <updated>1412979071321</updated>
+    </task>
+    <task id="LOCAL-00084" summary="validate contacts parameter for api">
+      <created>1413141405188</created>
+      <updated>1413141405189</updated>
+    </task>
+    <task id="LOCAL-00085" summary="contacts validated in api">
+      <created>1413166131721</created>
+      <updated>1413166131723</updated>
+    </task>
+    <task id="LOCAL-00086" summary="add api string output">
+      <created>1413313386080</created>
+      <updated>1413313386080</updated>
+    </task>
+    <task id="LOCAL-00087" summary="filter by ssl type, notes on every cert page">
+      <created>1413394236991</created>
+      <updated>1413394236992</updated>
+    </task>
+    <task id="LOCAL-00088" summary="fixed ucc resubmit bug">
+      <created>1413475221986</created>
+      <updated>1413475221986</updated>
+    </task>
+    <task id="LOCAL-00089" summary="fixed bundle files">
+      <created>1413521241631</created>
+      <updated>1413521241631</updated>
+    </task>
+    <task id="LOCAL-00090" summary="fixed bundle files">
+      <created>1413522634963</created>
+      <updated>1413522634964</updated>
+    </task>
+    <task id="LOCAL-00091" summary="fixed bundle files">
+      <created>1413666721622</created>
+      <updated>1413666721622</updated>
+    </task>
+    <task id="LOCAL-00092" summary="UI changes according to Northcutt">
+      <created>1413686333334</created>
+      <updated>1413686333335</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
+  <component name="TodoView" selected-index="2">
+    <todo-panel id="selected-file">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+    <todo-panel id="default-changelist">
+      <are-packages-shown value="false" />
+      <are-modules-shown value="false" />
+      <flatten-packages value="false" />
+      <is-autoscroll-to-source value="false" />
+    </todo-panel>
+  </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="923" extended-state="6" />
+    <frame x="64" y="-9" width="1857" height="957" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36642158" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40931374" sideWeight="0.4997227" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3884804" sideWeight="0.6705491" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.40931374" sideWeight="0.50027734" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36397058" sideWeight="0.4993113" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.52205884" sideWeight="0.572314" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41911766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3382353" sideWeight="0.6666667" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3630399" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16528009" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37619048" sideWeight="0.65224624" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18413755" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17027177" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4387255" sideWeight="0.65224624" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4117647" sideWeight="0.608985" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -2122,35 +2130,36 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="change bbb image from http:// to //" />
-    <MESSAGE value="fix html according to w3c" />
-    <MESSAGE value="allow order status change to refunded" />
-    <MESSAGE value="update goog analytics and adwords code" />
-    <MESSAGE value="updated compatibility list" />
-    <MESSAGE value="added upgrade path for trial certs" />
-    <MESSAGE value="add cc external order number change capability" />
-    <MESSAGE value="add wildcard pricing to ucc" />
-    <MESSAGE value="charging for wildcard certs. Cosmetic changes." />
-    <MESSAGE value="accommodate wildcards for UCC" />
-    <MESSAGE value="display all products on certificates page" />
-    <MESSAGE value="add tlds page" />
-    <MESSAGE value="updated adwords code" />
-    <MESSAGE value="prorated pricing for signed certificates" />
-    <MESSAGE value="add *.example.com in the ucc product page" />
-    <MESSAGE value="fix html" />
-    <MESSAGE value="adjust conversion code" />
-    <MESSAGE value="fixed checkout error specifying 2 'phantom' fields were having errors" />
-    <MESSAGE value="fixed ratio pricing for UCC" />
-    <MESSAGE value="prorated pricing now reflected by duration of certificate_order, not signed_certificate" />
-    <MESSAGE value="change wildcard description on prod page" />
-    <MESSAGE value="allow resellers who are signing up to access other pages" />
-    <MESSAGE value="Add multi domain validation support" />
-    <MESSAGE value="Add multi domain look up on the api" />
-    <MESSAGE value="fixed domain_name_validator to use gtlds" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed domain_name_validator to use gtlds" />
+    <MESSAGE value="migrating to idevaffiliate" />
+    <MESSAGE value="migrate to idevaffiliate" />
+    <MESSAGE value="SHA2 and new chain ca installed" />
+    <MESSAGE value="minor fixes" />
+    <MESSAGE value="add new SHA 2 certs" />
+    <MESSAGE value="removed http://crt.usertrust.com/USERTrustRSACertificationAuthority.crt from bundles" />
+    <MESSAGE value="certificate_content add ons" />
+    <MESSAGE value="updating comodo extract" />
+    <MESSAGE value="fixed affiliate program" />
+    <MESSAGE value="removed windows line break mod" />
+    <MESSAGE value="fixed line breaks for windows" />
+    <MESSAGE value="show savings on reseller tier page" />
+    <MESSAGE value="create and update voucher api calls" />
+    <MESSAGE value="api applies reseller tier" />
+    <MESSAGE value="domains api parameter validates for ucc and single domain certs" />
+    <MESSAGE value="windows \r\n switch for cert downloads" />
+    <MESSAGE value="fixed site seal activation" />
+    <MESSAGE value="add contacts to api" />
+    <MESSAGE value="validate contacts parameter for api" />
+    <MESSAGE value="contacts validated in api" />
+    <MESSAGE value="add api string output" />
+    <MESSAGE value="filter by ssl type, notes on every cert page" />
+    <MESSAGE value="fixed ucc resubmit bug" />
+    <MESSAGE value="fixed bundle files" />
+    <MESSAGE value="UI changes according to Northcutt" />
+    <option name="LAST_COMMIT_MESSAGE" value="UI changes according to Northcutt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2166,400 +2175,457 @@
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/reseller_tiers_controller.rb</url>
-          <line>5</line>
-          <option name="timeStamp" value="91" />
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>997</line>
+          <option name="timeStamp" value="437" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_name.rb</url>
+          <line>58</line>
+          <option name="timeStamp" value="442" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1056</line>
+          <option name="timeStamp" value="478" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1058</line>
+          <option name="timeStamp" value="479" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1060</line>
+          <option name="timeStamp" value="482" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>958</line>
+          <option name="timeStamp" value="491" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>959</line>
+          <option name="timeStamp" value="492" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1303</line>
+          <option name="timeStamp" value="495" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1304</line>
+          <option name="timeStamp" value="496" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
+          <line>1313</line>
+          <option name="timeStamp" value="497" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="146" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="506" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/ca_retrieve_certificate.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/product_variant_item.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="528">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1386">
+          <caret line="2" column="27" selection-start-line="2" selection-start-column="27" selection-end-line="2" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_api_request.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/product_variant_group.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1980">
-          <caret line="50" column="2" selection-start-line="50" selection-start-column="2" selection-end-line="50" selection-end-column="2" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="411">
+          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20130211054329_create_discount_join_tables.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_admin.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="550">
-          <caret line="18" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+        <state vertical-scroll-proportion="-3.548387" vertical-offset="66" max-vertical-offset="1672">
+          <caret line="8" column="31" selection-start-line="8" selection-start-column="31" selection-end-line="8" selection-end-column="31" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20120907225728_create_renewal_notifications.rb">
+    <entry file="file://$PROJECT_DIR$/app/stylesheets/main.sass">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="440">
-          <caret line="13" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20131206151716_add_ext_affiliate_to_orders.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="462">
-          <caret line="14" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20140706202850_add_certificate_names_to_domain_control_validation.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="418">
-          <caret line="7" column="15" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/orders/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.0" vertical-offset="183" max-vertical-offset="2002">
-          <caret line="21" column="35" selection-start-line="21" selection-start-column="35" selection-end-line="21" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20140706202544_create_certificate_names.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="440">
-          <caret line="0" column="28" selection-start-line="0" selection-start-column="28" selection-end-line="0" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1650">
-          <caret line="14" column="76" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="448">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificates_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1518">
-          <caret line="4" column="21" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/show_wildcard.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.2580647" vertical-offset="330" max-vertical-offset="1408">
-          <caret line="21" column="46" selection-start-line="21" selection-start-column="46" selection-end-line="21" selection-end-column="46" />
+        <state vertical-scroll-proportion="-2.8387096" vertical-offset="89452" max-vertical-offset="117062">
+          <caret line="4070" column="15" selection-start-line="4070" selection-start-column="15" selection-end-line="4070" selection-end-column="15" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/reseller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1188" max-vertical-offset="2112">
-          <caret line="58" column="41" selection-start-line="58" selection-start-column="7" selection-end-line="58" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/billing_profile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2469" max-vertical-offset="2970">
-          <caret line="129" column="34" selection-start-line="129" selection-start-column="3" selection-end-line="129" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6028" max-vertical-offset="7018">
-          <caret line="284" column="36" selection-start-line="284" selection-start-column="36" selection-end-line="284" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5927" max-vertical-offset="10472">
-          <caret line="278" column="43" selection-start-line="278" selection-start-column="43" selection-end-line="278" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order_transaction.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1488" max-vertical-offset="2002">
-          <caret line="44" column="8" selection-start-line="44" selection-start-column="8" selection-end-line="44" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@global/gems/actionpack-3.2.15/lib/action_controller/metal/params_wrapper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2385" max-vertical-offset="5412">
-          <caret line="116" column="83" selection-start-line="116" selection-start-column="18" selection-end-line="116" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2816">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="647" max-vertical-offset="2486">
-          <caret line="41" column="95" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environment.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
-          <caret line="10" column="34" selection-start-line="10" selection-start-column="34" selection-end-line="10" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/wrap_parameters.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="440">
-          <caret line="7" column="2" selection-start-line="0" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_dcv_emails_v1_3.rabl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="497">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="132" max-vertical-offset="6908">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_dcv_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="9" max-vertical-offset="594">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/domain_name_validator.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="20" max-vertical-offset="484">
-          <caret line="16" column="68" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="396" max-vertical-offset="4268">
-          <caret line="33" column="95" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="503" max-vertical-offset="9724">
-          <caret line="37" column="48" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_reprocess.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="349" max-vertical-offset="5104">
-          <caret line="23" column="15" selection-start-line="23" selection-start-column="15" selection-end-line="23" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/restful_api/docs_apply_v1_3.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.6451614" vertical-offset="1647" max-vertical-offset="23738">
-          <caret line="80" column="75" selection-start-line="80" selection-start-column="29" selection-end-line="80" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_dcv_emails.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
-          <caret line="9" column="45" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/v2_migration_progress.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2244">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="2112">
+          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2904" max-vertical-offset="6754">
-          <caret line="69" column="18" selection-start-line="69" selection-start-column="18" selection-end-line="69" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="4974" max-vertical-offset="6930">
+          <caret line="240" column="23" selection-start-line="240" selection-start-column="23" selection-end-line="240" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4532">
+        <state vertical-scroll-proportion="-6.064516" vertical-offset="1968" max-vertical-offset="2354">
+          <caret line="98" column="0" selection-start-line="95" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.7419355" vertical-offset="522" max-vertical-offset="902">
+          <caret line="29" column="38" selection-start-line="29" selection-start-column="38" selection-end-line="29" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20101210164349_create_ssl_docs.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="638">
+          <caret line="5" column="21" selection-start-line="5" selection-start-column="21" selection-end-line="5" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20100201220711_create_certificate_orders.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="572">
+          <caret line="11" column="21" selection-start-line="11" selection-start-column="21" selection-end-line="11" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141010141810_add_external_order_number_to_certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="418">
+          <caret line="11" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141015203833_change_certificate_orders_notes_type.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+          <caret line="4" column="2" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="132" max-vertical-offset="2882">
+          <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-9.419354" vertical-offset="148" max-vertical-offset="594">
+          <caret line="20" column="26" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/validations_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1247" max-vertical-offset="1628">
+          <caret line="62" column="13" selection-start-line="62" selection-start-column="13" selection-end-line="62" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_proof_of_dcv.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="2.1290324" vertical-offset="66" max-vertical-offset="1298">
+          <caret line="0" column="16" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr_override.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="481">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="572" max-vertical-offset="5478">
-          <caret line="31" column="75" selection-start-line="31" selection-start-column="75" selection-end-line="31" selection-end-column="75" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
-          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_4.rabl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="436">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/funded_account.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="249" max-vertical-offset="726">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="870" max-vertical-offset="5654">
-          <caret line="42" column="6" selection-start-line="42" selection-start-column="6" selection-end-line="42" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="7636" max-vertical-offset="8448">
-          <caret line="353" column="21" selection-start-line="353" selection-start-column="21" selection-end-line="353" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="436">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="15787" max-vertical-offset="21186">
-          <caret line="724" column="0" selection-start-line="724" selection-start-column="0" selection-end-line="724" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5717" max-vertical-offset="8602">
-          <caret line="266" column="26" selection-start-line="266" selection-start-column="26" selection-end-line="266" selection-end-column="26" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="13395" max-vertical-offset="24464">
-          <caret line="617" column="54" selection-start-line="617" selection-start-column="5" selection-end-line="617" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="5295" max-vertical-offset="15488">
-          <caret line="253" column="52" selection-start-line="253" selection-start-column="17" selection-end-line="253" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
-          <caret line="0" column="45" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="924" max-vertical-offset="5258">
-          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="660" max-vertical-offset="4400">
+          <caret line="36" column="105" selection-start-line="36" selection-start-column="23" selection-end-line="36" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4730">
-          <caret line="6" column="54" selection-start-line="6" selection-start-column="54" selection-end-line="6" selection-end-column="54" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="4175" max-vertical-offset="5830">
+          <caret line="196" column="13" selection-start-line="196" selection-start-column="13" selection-end-line="196" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/csrs_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="902">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="6479" max-vertical-offset="7436">
+          <caret line="299" column="0" selection-start-line="299" selection-start-column="0" selection-end-line="299" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_dcv.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="1452">
-          <caret line="6" column="22" selection-start-line="6" selection-start-column="2" selection-end-line="6" selection-end-column="22" />
+        <state vertical-scroll-proportion="-2.8709676" vertical-offset="175" max-vertical-offset="550">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6034483" vertical-offset="1493" max-vertical-offset="5808">
-          <caret line="79" column="0" selection-start-line="70" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+        <state vertical-scroll-proportion="-4.025641" vertical-offset="1779" max-vertical-offset="7722">
+          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141018184115_add_sessions_table.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="396">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/user_session.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="456">
+          <caret line="0" column="20" selection-start-line="0" selection-start-column="20" selection-end-line="0" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="308">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.548387" vertical-offset="0" max-vertical-offset="418">
+          <caret line="5" column="8" selection-start-line="5" selection-start-column="8" selection-end-line="5" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.967742" vertical-offset="0" max-vertical-offset="6468">
+          <caret line="7" column="38" selection-start-line="7" selection-start-column="27" selection-end-line="7" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.794872" vertical-offset="12683" max-vertical-offset="13398">
+          <caret line="585" column="8" selection-start-line="585" selection-start-column="8" selection-end-line="585" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5880" max-vertical-offset="8602">
+          <caret line="272" column="0" selection-start-line="272" selection-start-column="0" selection-end-line="272" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.7419353" vertical-offset="1459" max-vertical-offset="3146">
+          <caret line="73" column="44" selection-start-line="73" selection-start-column="44" selection-end-line="73" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-16.483871" vertical-offset="5627" max-vertical-offset="6336">
+          <caret line="279" column="38" selection-start-line="279" selection-start-column="38" selection-end-line="279" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.806452" vertical-offset="0" max-vertical-offset="396">
+          <caret line="11" column="15" selection-start-line="11" selection-start-column="15" selection-end-line="11" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5985" max-vertical-offset="8844">
+          <caret line="277" column="0" selection-start-line="277" selection-start-column="0" selection-end-line="277" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1477" max-vertical-offset="1892">
+          <caret line="76" column="0" selection-start-line="76" selection-start-column="0" selection-end-line="76" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-502.6154" vertical-offset="0" max-vertical-offset="23914">
+          <caret line="891" column="17" selection-start-line="891" selection-start-column="5" selection-end-line="891" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5280">
+          <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="264" max-vertical-offset="1782">
+          <caret line="22" column="84" selection-start-line="22" selection-start-column="84" selection-end-line="22" selection-end-column="115" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1122" max-vertical-offset="1980">
+          <caret line="56" column="10" selection-start-line="56" selection-start-column="10" selection-end-line="56" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5678" max-vertical-offset="6908">
+          <caret line="265" column="6" selection-start-line="265" selection-start-column="6" selection-end-line="265" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.806452" vertical-offset="2310" max-vertical-offset="4246">
+          <caret line="116" column="117" selection-start-line="116" selection-start-column="83" selection-end-line="116" selection-end-column="83" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="178" max-vertical-offset="2486">
+          <caret line="15" column="32" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="484">
+          <caret line="8" column="120" selection-start-line="8" selection-start-column="43" selection-end-line="8" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="264" max-vertical-offset="5786">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.4615386" vertical-offset="8951" max-vertical-offset="29326">
+          <caret line="413" column="45" selection-start-line="413" selection-start-column="0" selection-end-line="413" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/images/more_info_sm_bl.gif">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_certificate_detail.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.612903" vertical-offset="103" max-vertical-offset="528">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-8.5161295" vertical-offset="0" max-vertical-offset="2464">
+          <caret line="12" column="11" selection-start-line="12" selection-start-column="11" selection-end-line="12" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-11.870968" vertical-offset="424" max-vertical-offset="968">
+          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-4.7419353" vertical-offset="5881" max-vertical-offset="6336">
+          <caret line="274" column="15" selection-start-line="274" selection-start-column="15" selection-end-line="274" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/stylesheets/jquery.tooltip.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+          <caret line="9" column="10" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42718446" vertical-offset="1584" max-vertical-offset="6336">
+          <caret line="80" column="34" selection-start-line="80" selection-start-column="34" selection-end-line="80" selection-end-column="34" />
           <folding />
         </state>
       </provider>
