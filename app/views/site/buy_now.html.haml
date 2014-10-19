@@ -3,8 +3,9 @@
   .innercontainere
     .inner
       =render :partial => "shared/messages"
-      %h1.section-title
-        SSL certificates for authentication & encryption
+      -#%h1.section-title
+      -#  SSL certificates for authentication & encryption
+      %br{style: "padding-top: 15px"}
       #banner-grid
         .left.banner1
           %a(style="display:block" href="#{certificate_url("basicssl")}")
