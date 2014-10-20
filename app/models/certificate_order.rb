@@ -573,7 +573,7 @@ class CertificateOrder < ActiveRecord::Base
         unless cc.domains.blank?
           cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
         else
-          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_dcv_sent.method_for_api}\\\"},"
+          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_dcv_sent ? last_dcv_sent.method_for_api : "http_csr_hash"}\\\"},"
         end
         api_contacts = ""
         CertificateContent::CONTACT_ROLES.each do |role|
@@ -949,13 +949,13 @@ class CertificateOrder < ActiveRecord::Base
     self.preferred_v2_line_items = line_items.join('|')
   end
 
-  def options_for_ca
-    {}.tap do |options|
+  def options_for_ca(options={})
+    {}.tap do |params|
       certificate_content.csr.tap do |csr|
         update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
-        if csr.certificate_content.preferred_reprocessing? || csr.sent_success || external_order_number
+        if options[:new].blank? && (csr.certificate_content.preferred_reprocessing? || csr.sent_success || external_order_number)
           #assume reprocess, will need to look at ucc more carefully
-          options.merge!(
+          params.merge!(
             'orderNumber' => external_order_number,
             'csr' => CGI::escape(csr.body),
             'prioritiseCSRValues' => 'N',
@@ -965,13 +965,11 @@ class CertificateOrder < ActiveRecord::Base
             'foreignOrderNumber' => ref,
             'countryName'=>csr.country
           )
-          ssl_com_order(options)
+          ssl_com_order(params,options)
           last_sent = csr.domain_control_validations.last_method
-          if !skip_verification? # && !last_sent.blank?
-            perform_dcv(last_sent, options)
-          end
+          perform_dcv(last_sent, params)
         else
-          options.merge!(
+          params.merge!(
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
             'product' => mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
@@ -992,39 +990,37 @@ class CertificateOrder < ActiveRecord::Base
             # temporary for a certain customer wanting to move over a number of domains to ssl.com
             days += 60 if
                 %w(myevaluations.com gmetoolkit.com www2.myevaluations.com rm.verinform.com mygme.com my.doctorsoncall.com).find{|d|csr.common_name=~Regexp.new(d)}
-            options.merge!('days' => days.to_s)
+            params.merge!('days' => days.to_s)
           end
           #ssl.com Sub CA certs
-          ssl_com_order(options)
-          if !skip_verification?
-            perform_dcv(last_sent, options)
-          end
-          fill_csr_fields options, certificate_content.registrant
+          ssl_com_order(params,options)
+          perform_dcv(last_sent, params)
+          fill_csr_fields params, certificate_content.registrant
           unless csr.csr_override.blank?
-            fill_csr_fields options, csr.csr_override
+            fill_csr_fields params, csr.csr_override
           end
           if false #TODO make country override option
-            override_params(options) #essentialssl
+            override_params(params) #essentialssl
           end
           if certificate.is_wildcard?
-            options.merge!('servers' => server_licenses.to_s || '1')
+            params.merge!('servers' => server_licenses.to_s || '1')
           end
         end
         if certificate.is_ev?
           certificate_content.tap do |cc|
-            options.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
-            options.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
-            options.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
+            params.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
+            params.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
+            params.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
           end
         end
         if certificate.is_ucc?
           domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
-          options.merge!(
+          params.merge!(
               # 'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
               'primaryDomainName'=>csr.common_name,
               'maxSubjectCNs'=>1
           )
-          options.merge!('days' => '1095') if options['days'].to_i > 1095 #Comodo doesn't support more than 3 years
+          params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
         end
       end
     end
@@ -1300,8 +1296,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # used for determining which Sub Ca certs to use
-  def ssl_com_order(options)
-    if is_api_call && self.ca_certificate_id
+  def ssl_com_order(params, options={})
+    cci="506"
+    if options[:ca_certificate_id]
+      cci = options[:ca_certificate_id]
+    elsif is_api_call && self.ca_certificate_id
       cci = self.ca_certificate_id
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       cci = if certificate.is_ev?
@@ -1311,17 +1310,16 @@ class CertificateOrder < ActiveRecord::Base
                           else
                             "506" #dv
                           end
-      options.merge!('caCertificateID' => cci)
     elsif certificate.serial=~/256sslcom/
-      prod_code = if certificate.is_ev?
-                    403
+      cci = if certificate.is_ev?
+                    "403"
                   elsif certificate.is_essential_ssl?
-                    401
+                    "401"
                   else
-                    402
+                    "402"
                   end
-      options.merge!('caCertificateID' => prod_code.to_s)
     end
+    params.merge!('caCertificateID' => cci)
   end
 
 end

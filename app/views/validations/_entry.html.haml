@@ -109,6 +109,9 @@
                     %li
                       %strong API Reprocess Command
                     %li=co.to_api_string("update")
+                    %li
+                      %strong Comodo API New Command
+                    %li='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, ca_certificate_id: "506").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
               .certificate_details_box
                 %ul
                   %li
