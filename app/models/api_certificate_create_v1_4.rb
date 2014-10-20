@@ -159,7 +159,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def setup_certificate_content(options)
-    certificate_order= options[:certificate_order]
     cc = options[:certificate_content]
     cc.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses})
     cc.registrant.destroy unless cc.registrant.blank?

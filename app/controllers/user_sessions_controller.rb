@@ -39,6 +39,8 @@ class UserSessionsController < ApplicationController
     respond_to do |format|
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
+        cookies[:acct] = {:value=>user.ssl_account.acct_number, :path => "/", :expires => Settings.
+            cart_cookie_days.to_i.days.from_now}
         assign_ssl_links(user)
         #we'll know what tier the user is even if s/he is not logged in
         cookies.delete(:r_tier)
