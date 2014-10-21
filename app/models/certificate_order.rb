@@ -1049,7 +1049,7 @@ class CertificateOrder < ActiveRecord::Base
       options.merge!('domainNames' => domains_for_comodo.join(","))
       options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
     else
-      if last_sent.dcv_method=="http"
+      if last_sent.blank? || last_sent.dcv_method=="http"
         options.merge!('dcvMethod' => "HTTP_CSR_HASH")
       elsif last_sent.dcv_method=="https"
         options.merge!('dcvMethod' => "HTTPS_CSR_HASH")

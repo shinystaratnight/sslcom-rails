@@ -232,6 +232,11 @@ jQuery(function($) {
         $('.reason_block_'+alt).hide();
       }
     });
+    $('.selectAll').toggle(function() {
+      $(this).select();
+    }, function() {
+      $(this).unselect();
+    });
     $('select[id*=validation_history_validation_rules]').change(function(){
       //prevent other options from being selected if None is selected
       rules = $.get_selected_options(this, 'text');
