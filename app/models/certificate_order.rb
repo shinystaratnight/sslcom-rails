@@ -1180,7 +1180,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def all_domains
-    ([certificate_content.csr.common_name]+(certificate_content.domains || [])).flatten.uniq if certificate_content.csr
+    ([certificate_content.csr.common_name]+(certificate_content.domains.blank? ? [] : certificate_content.domains)).flatten.uniq if certificate_content.csr
   end
 
   private
