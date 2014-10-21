@@ -1037,7 +1037,7 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.is_ucc?
       domains_for_comodo,dcv_methods_for_comodo=nil,nil
       if certificate_content.certificate_names.empty?
-        domains_for_comodo = domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq
+        domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
       else
         domains_for_comodo = certificate_content.certificate_names.map(&:name)
         dcv_methods_for_comodo = certificate_content.certificate_names.map(&:last_dcv_for_comodo)
