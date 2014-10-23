@@ -109,7 +109,7 @@
                     %li
                       %strong API Reprocess Command
                     %li
-                      %textarea.selectAll=co.to_api_string("update")
+                      %textarea.selectAll=co.to_api_string2("update")
                     %li
                       %strong Comodo API New Command
                     %li
@@ -119,6 +119,19 @@
                         %strong Comodo API Rekey Command
                       %li
                         %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca.merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::REPLACE_SSL_URL+'\''
+                    %li product:
+                    %ul
+                      %li
+                        %dl
+                          %dt
+                          %dd "342" - free 90 day
+                          %dd "301" - basicssl
+                          %dd "343" - wildcard
+                          %dd "337" - ev
+                          %dd
+                          %dd "279" - ucc
+                          %dd "279" - premiumssl
+                          %dd "310" - evucc
                     %li caCertificateID:
                     %ul
                       %li
