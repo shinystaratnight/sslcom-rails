@@ -465,6 +465,8 @@ class ApplicationController < ActionController::Base
   def require_no_user
     if current_user
       store_location
+      cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
+          cart_cookie_days.to_i.days.from_now} if current_user.is_admin?
       flash[:notice] = "You must be logged out to access page '#{request.fullpath}'"
       redirect_to account_url
       return false

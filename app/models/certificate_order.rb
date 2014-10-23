@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
 
   # the following only apply to api calls
   attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method,
-      :dcv_email_address, :dcv_email_addresses, :is_api_call, :ca_certificate_id
+      :dcv_email_address, :dcv_email_addresses
 
   #will_paginate
   cattr_reader :per_page
@@ -517,8 +517,8 @@ class CertificateOrder < ActiveRecord::Base
     nil
   end
 
-  def apply_for_certificate
-    ComodoApi.apply_for_certificate(self)
+  def apply_for_certificate(options={})
+    ComodoApi.apply_for_certificate(self, options)
   end
 
   def retrieve_ca_cert(email_customer=false)
@@ -1358,8 +1358,6 @@ class CertificateOrder < ActiveRecord::Base
     cci="506"
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
-    elsif is_api_call && self.ca_certificate_id
-      cci = self.ca_certificate_id
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       cci = if certificate.is_ev?
                             "508" #ev

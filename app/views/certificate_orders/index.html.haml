@@ -105,7 +105,8 @@
                             %li
                               %strong validation documentation
                             -if co.description['validation_level'] == 'Class 1'
-                              %li n/a
+                              %li
+                                %em n/a
                             -else
                               -unless co.validation.validation_histories.blank?
                                 -co.validation.validation_histories.each do |vh|

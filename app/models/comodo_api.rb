@@ -12,8 +12,8 @@ class ComodoApi
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
 
-  def self.apply_for_certificate(certificate_order)
-    options = certificate_order.options_for_ca.
+  def self.apply_for_certificate(certificate_order, options={})
+    options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
     host = options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL

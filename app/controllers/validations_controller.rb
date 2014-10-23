@@ -250,7 +250,7 @@ class ValidationsController < ApplicationController
   def send_to_ca
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
     result = co.apply_for_certificate
-    co.certificate_content.pend_validation!(false) if result.order_number && !co.certificate_content.pending_validation?
+    co.certificate_content.pend_validation!(send_to_ca: false) if result.order_number && !co.certificate_content.pending_validation?
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}

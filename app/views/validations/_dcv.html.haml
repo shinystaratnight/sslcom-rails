@@ -1,10 +1,11 @@
+-csr = co.certificate_content.csr
 -last_sent = co.last_dcv_sent
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
 -if last_sent
   -if last_sent.satisfied?
     %li
       %em satisfied on #{(last_sent.responded_at || last_sent.updated_at).strftime("%b %d, %Y %R")}
-    %li.category_border
+    %li
       %em via #{last_sent.dcv_method} #{last_sent.dcv_method =~ /http/ ? "csr hash" : "to " + last_sent.email_address}
   -elsif last_sent.is_eligible_to_resend?
     %li
@@ -12,8 +13,14 @@
       %ul
         %li(class="#{satisfied(last_sent)}") on: #{last_sent.sent_at.strftime("%b %d, %Y %R")}
         %li(class="#{satisfied(last_sent)}") to: #{last_sent.email_address}
-    %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
+    %li=link_to 'resend verification email', edit_certificate_order_validation_url(co)
 -else
   %li
     %em no domain verification performed
-  %li.category_border=link_to 'perform domain verification', checkout_in_progress ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+  %li=link_to 'perform domain verification', checkout_in_progress ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+-if csr.try(:body)
+  %li Or
+  %li
+    %em csr hash file upload method:
+  %li step 1) #{link_to "download csr hash file", http_dcv_file_csr_path(csr), target: "_blank"}
+  %li.category_border step 2) #{link_to "verify uploaded csr hash file", csr.dcv_url, target: "_blank"}

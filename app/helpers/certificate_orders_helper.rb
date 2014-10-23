@@ -115,8 +115,7 @@ module CertificateOrdersHelper
     co=certificate_content.certificate_order
     if certificate_content.new?
       co.is_expired? ? 'expired' : 'waiting for csr'
-    elsif certificate_content.expired? ||
-        certificate_content.certificate_order.expired?
+    elsif certificate_content.expired?
       'expired'
     elsif certificate_content.preferred_reprocessing?
       'reprocess requested'

@@ -103,6 +103,7 @@ class UserSessionsController < ApplicationController
       cookies.delete(:r_tier)
       clear_cart
     end
+    cookies.delete(:acct)
     current_user_session.destroy
     Authorization.current_user=nil
     flash[:notice] = "Successfully logged out."
