@@ -13,6 +13,7 @@ class ComodoApi
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
 
   def self.apply_for_certificate(certificate_order, options={})
+    cc = options[:certificate_content] || certificate_order.certificate_content
     options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
@@ -22,11 +23,11 @@ class ComodoApi
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
     con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
     con.use_ssl = true
-    certificate_order.certificate_content.csr.touch
+    cc.csr.touch
     res = con.start do |http|
       http.request_post(url.path, options)
     end
-    certificate_order.certificate_content.csr.ca_certificate_requests.create(request_url: host,
+    cc.csr.ca_certificate_requests.create(request_url: host,
       parameters: options, method: "post", response: res.body, ca: "comodo")
   end
 

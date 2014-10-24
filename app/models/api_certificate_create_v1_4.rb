@@ -91,16 +91,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         certificate_content.server_software_id = server_software
         certificate_content.submit_csr!
         certificate_content.domains = domains.keys
-        certificate_content.save
         if errors.blank?
-          if certificate_content.valid?
-            if certificate_content.save
-              setup_certificate_content(
-                  certificate_order: @certificate_order,
-                  certificate_content: certificate_content,
-                  ssl_account: api_requestable,
-                  contacts: self.contacts)
-            end
+          if certificate_content.save
+            setup_certificate_content(
+                certificate_order: @certificate_order,
+                certificate_content: certificate_content,
+                ssl_account: api_requestable,
+                contacts: self.contacts)
             return @certificate_order
           else
             return certificate_content
@@ -194,7 +191,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
       cc.provide_contacts!
-      cc.pend_validation!(is_api_call: true, ca_certificate_id: (ca_certificate_id ? ca_certificate_id : nil))# send_to_ca: !certificate_order.is_test
+      cc.pend_validation!(is_api_call: true, ca_certificate_id: ca_certificate_id)# send_to_ca: !certificate_order.is_test
     end
   end
 
