@@ -105,7 +105,7 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
-                  -if current_user.try("is_admin?")
+                  -if current_user.try("is_admin?") && cc.registrant
                     %li
                       %strong API Reprocess Command
                     %li

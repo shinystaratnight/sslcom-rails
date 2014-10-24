@@ -55,7 +55,7 @@ class ApiCertificateRequestsController < ApplicationController
       @result = @result.csr_obj
     else
       if @result.save
-        if @acr = @result.create_certificate_order
+        if @acr = CertificateOrder.last # @result.create_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
@@ -67,6 +67,10 @@ class ApiCertificateRequestsController < ApplicationController
             @result.smart_seal_url = certificate_order_site_seal_url(@acr)
             @result.validation_url = certificate_order_validation_url(@acr)
             @result.update_attribute :response, render_to_string(:template => template)
+            if @result.debug
+              @result.api_request="true"
+              @result.api_response="true"
+            end
             render(:template => template)
           else
             @result = @acr #so that rabl can report errors
@@ -88,7 +92,7 @@ class ApiCertificateRequestsController < ApplicationController
       @result = @result.csr_obj
     else
       if @result.save
-        if @acr = @result.create_certificate_order
+        if @acr = CertificateOrder.last # @acr = @result.create_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
@@ -100,6 +104,10 @@ class ApiCertificateRequestsController < ApplicationController
             @result.smart_seal_url = certificate_order_site_seal_url(@acr)
             @result.validation_url = certificate_order_validation_url(@acr)
             @result.update_attribute :response, render_to_string(:template => template)
+            if JSON.parse(@result.parameters)[:debug]
+              @result.api_request="true"
+              @result.api_response="true"
+            end
             render(:template => template)
           else
             @result = @acr #so that rabl can report errors

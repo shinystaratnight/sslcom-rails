@@ -2,8 +2,8 @@ require "declarative_authorization/maintenance"
 
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
-    :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
-    :order_number, :order_amount, :order_status
+    :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
+    :api_request, :api_response, :debug
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)

@@ -606,7 +606,7 @@ class CertificateOrder < ActiveRecord::Base
       when /update/
         cc = certificate_content
         r = cc.registrant
-        registrant_params = r.blank? ? "" :
+        registrant_params = r.blank? ? {} :
         {organization_name: r.company_name,
             organization_unit_name: r.department,
             post_office_box: r.po_box,
@@ -1053,7 +1053,7 @@ class CertificateOrder < ActiveRecord::Base
           #ssl.com Sub CA certs
           ssl_com_order(params,options)
           perform_dcv(last_sent, params)
-          fill_csr_fields params, certificate_content.registrant
+          fill_csr_fields(params, certificate_content.registrant)
           unless csr.csr_override.blank?
             fill_csr_fields params, csr.csr_override
           end
