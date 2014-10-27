@@ -300,6 +300,10 @@ class Certificate < ActiveRecord::Base
     product.include?('free')
   end
 
+  def is_dv_or_basic?
+    (serial =~ /^dv/ || serial =~ /^basic/) if serial
+  end
+
   def is_free?
     product.include?('free')
   end

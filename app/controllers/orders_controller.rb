@@ -134,6 +134,8 @@ class OrdersController < ApplicationController
       @certificate_orders = @order.line_items.map(&:sellable).flatten.uniq.
           select{|cert|!cert.line_item_qty.blank?}
     end
+    cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
+        cart_cookie_days.to_i.days.from_now}
     respond_to do |format|
       if @order.line_items.count==1
         format.html { render "/funded_accounts/success", :layout=>'application'}

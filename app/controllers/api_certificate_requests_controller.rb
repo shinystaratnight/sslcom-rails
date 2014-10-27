@@ -96,18 +96,22 @@ class ApiCertificateRequestsController < ApplicationController
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
-            @result.ref = @acr.ref
+            ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+            @result.api_request=ccr.parameters
+            @result.api_response=ccr.response
+            # @result.error_code=ccr.response_error_code
+            # @result.error_message=ccr.response_error_message
+            # @result.eta=ccr.response_certificate_eta
+            # @result.order_status = ccr.response_certificate_status
             @result.order_status = @acr.status
+            @result.ref = @acr.ref
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)
             @result.smart_seal_url = certificate_order_site_seal_url(@acr)
             @result.validation_url = certificate_order_validation_url(@acr)
             @result.update_attribute :response, render_to_string(:template => template)
-            if @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") && !@acr.certificate_content.csr.ca_certificate_requests.blank?
-              @result.api_request=@acr.certificate_content.csr.ca_certificate_requests.last.parameters
-              @result.api_response=@acr.certificate_content.csr.ca_certificate_requests.last.response
-            end
+            @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
             @result = @acr #so that rabl can report errors

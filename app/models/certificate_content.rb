@@ -1023,6 +1023,8 @@ class CertificateContent < ActiveRecord::Base
           are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
+    elsif csr.is_ip_address? && !csr.is_intranet?
+      errors.add(:signing_request, 'may not have a domain name that is an Internet-accessible IP Address')
     else
       #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
       asterisk_found = (csr.common_name=~/^\*\./)==0

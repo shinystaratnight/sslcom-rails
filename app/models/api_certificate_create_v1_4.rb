@@ -3,7 +3,7 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :debug
+    :api_request, :api_response, :debug, :error_code, :error_message, :eta
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
@@ -81,7 +81,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if self.ref
       @certificate_order=self.find_certificate_order
       if @certificate_order.is_a?(CertificateOrder)
-        @certificate_order.external_order_number=self.ca_order_number if (self.admin_submitted && self.ca_order_number)
+        @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
         # choose the right ca_certificate_id for submit to Comodo
         @certificate_order.is_test=self.test
         certificate_content = @certificate_order.certificate_contents.build
