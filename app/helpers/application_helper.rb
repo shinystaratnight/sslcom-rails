@@ -382,4 +382,8 @@ module ApplicationHelper
     end
     recert
   end
+
+  def is_new_order_page?
+    current_page?(controller: :orders, action: :new)
+  end
 end

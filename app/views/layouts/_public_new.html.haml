@@ -7,103 +7,105 @@
   %script{:src => "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit", :type => "text/javascript"}
 #header
   .content
-    %a{:href => "#{root_url}"}
+    %a{:href => "#{root_url unless is_new_order_page?}"}
       .logo
     / end of logo
     .navigation
       .top_navigation
-        %ul
-          %li
-            %a{:href => "#{show_cart_orders_url}", :style => "text-decoration:none;"}
-              %span.icn_cart
-                My Cart (
-                %span#cart_count> #{cart_items_count}
-                )
-          %li
-            %span.icn_support &nbsp;
-            =link_to "Support", "https://support.ssl.com"
-          %li
-            %span.icn_email &nbsp;
-            =link_to "Email Us", contact_us_url
-          %li
-            %span.icn_phone> &nbsp;
-            1-877-SSL-SECURE
-          %li
-            %span.icn_live &nbsp;
-            %a#live_chat{:href => "#"} Live Chat
+        -unless is_new_order_page?
+          %ul
+            %li
+              %a{:href => "#{show_cart_orders_url}", :style => "text-decoration:none;"}
+                %span.icn_cart
+                  My Cart (
+                  %span#cart_count> #{cart_items_count}
+                  )
+            %li
+              %span.icn_support &nbsp;
+              =link_to "Support", "https://support.ssl.com"
+            %li
+              %span.icn_email &nbsp;
+              =link_to "Email Us", contact_us_url
+            %li
+              %span.icn_phone> &nbsp;
+              1-877-SSL-SECURE
+            %li
+              %span.icn_live &nbsp;
+              %a#live_chat{:href => "#"} Live Chat
       / end of top_navigation
       .bottom_navigation
-        %ul#nav
-          %li
-            %a(href="#{account_url}")
-              MY ACCOUNT
-            -if current_user
+        -unless is_new_order_page?
+          %ul#nav
+            %li
+              %a(href="#{account_url}")
+                MY ACCOUNT
+              -if current_user
+                %ul
+                  %li
+                    =link_to "Logout", logout_url
+            -if Settings.offer_trial
+              %li
+                %a(href="#{certificate_url("free")}") FREE TRIAL
+            %li
+              %a(href="#{affiliates_url}")
+                PARTNERS
               %ul
                 %li
-                  =link_to "Logout", logout_url
-          -if Settings.offer_trial
+                  %a{:href => "#{affiliates_url}"} Overview
+                %li
+                  %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
+                %li
+                  %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
+                %li
+                  %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Program Details
+                %li
+                  %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Pricing
+                %li
+                  %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
             %li
-              %a(href="#{certificate_url("free")}") FREE TRIAL
-          %li
-            %a(href="#{affiliates_url}")
-              PARTNERS
-            %ul
-              %li
-                %a{:href => "#{affiliates_url}"} Overview
-              %li
-                %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
-              %li
-                %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
-              %li
-                %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Program Details
-              %li
-                %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Pricing
-              %li
-                %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
-          %li
-            %a{:href => "#{certificates_url}"}
-              %div OUR CERTIFICATES
-            %ul
-              %li
-                %a{:href => "#{certificate_url('basicssl')}"}
-                  %i> SSL
-                  \.com Basic
-              %li
-                %a{:href => "#{certificate_url('premiumssl')}"}
-                  %i> SSL
-                  \.com Premium
-              %li
-                %a{:href => "#{certificate_url('ev')}"}
-                  %i> SSL
-                  \.com Enterprise EV
-              %li
-                %a{:href => "#{certificate_url('wildcard')}"}
-                  Wildcard (Unlimited Subdomains)
-              %li
-                %a{:href => "#{certificate_url('ucc')}"}
-                  Multi-Domain (SAN/UCC)
-              %li
-                %a{:href => "#{certificate_url('evucc')}"}
-                  Multi-Domain Plus (SAN/UCC EV)
-              -if Settings.offer_trial
+              %a{:href => "#{certificates_url}"}
+                %div OUR CERTIFICATES
+              %ul
                 %li
-                  %a{:href => "#{certificate_url('free')}"}
-                    Free Trial SSL
-              %li.divider
-              %li
-                %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
-                  Smart SeaL
-            -#
-              %li.divider
-              %li
-                %a{:href => "#"} SSL Selection Wizard
-                %li
-                  %a{:href => "#"} Compare SSL.com Certificates
-                %li
-                  %a{:href => "#"}
+                  %a{:href => "#{certificate_url('basicssl')}"}
                     %i> SSL
-                    \.com vs Competition
-      .clear
+                    \.com Basic
+                %li
+                  %a{:href => "#{certificate_url('premiumssl')}"}
+                    %i> SSL
+                    \.com Premium
+                %li
+                  %a{:href => "#{certificate_url('ev')}"}
+                    %i> SSL
+                    \.com Enterprise EV
+                %li
+                  %a{:href => "#{certificate_url('wildcard')}"}
+                    Wildcard (Unlimited Subdomains)
+                %li
+                  %a{:href => "#{certificate_url('ucc')}"}
+                    Multi-Domain (SAN/UCC)
+                %li
+                  %a{:href => "#{certificate_url('evucc')}"}
+                    Multi-Domain Plus (SAN/UCC EV)
+                -if Settings.offer_trial
+                  %li
+                    %a{:href => "#{certificate_url('free')}"}
+                      Free Trial SSL
+                %li.divider
+                %li
+                  %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
+                    Smart SeaL
+              -#
+                %li.divider
+                %li
+                  %a{:href => "#"} SSL Selection Wizard
+                  %li
+                    %a{:href => "#"} Compare SSL.com Certificates
+                  %li
+                    %a{:href => "#"}
+                      %i> SSL
+                      \.com vs Competition
+        .clear
 #container
   #content.content
     -if is_public_index_page? || yield(:header)=='public_wo_container'
