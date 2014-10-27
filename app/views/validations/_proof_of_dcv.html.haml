@@ -1,6 +1,6 @@
 -last_sent = co.last_dcv_sent
 #proof_of_dcv_section
-  .subheading Proof of Domain Control
+  .subheading Proof of Domain Control (Choose only ONE method)
   #dcv_box
     -if last_sent.blank?  #assume dcv_http cannot get to here is already sent
       =render partial: "dcv_choices"
