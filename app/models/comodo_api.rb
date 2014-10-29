@@ -74,9 +74,10 @@ class ComodoApi
   end
 
   def self.collect_ssl(certificate_order)
-    options = {'queryType' => 2, "showExtStatus"=>"Y", "showMDCDomainDetail"=>"Y",
-               'orderNumber'=> certificate_order.external_order_number_for_extract}.
-        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    options = {'queryType' => 2, "showExtStatus"=>"Y",
+               'orderNumber'=> certificate_order.external_order_number_for_extract}
+    options.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
+    options.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = COLLECT_SSL_URL
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)

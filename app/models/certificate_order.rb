@@ -853,7 +853,13 @@ class CertificateOrder < ActiveRecord::Base
       if is_open_ssl? && override[:components].blank?
         #attach bundle
         Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels].select do |k,v|
-          if certificate.is_ev?
+          if signed_certificate.try("is_ev?".to_sym)
+            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+          elsif signed_certificate.try("is_dv?".to_sym)
+            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+          elsif signed_certificate.try("is_ov?".to_sym)
+            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+          elsif certificate.is_ev?
             k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
           elsif certificate.is_essential_ssl?
             k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
@@ -862,7 +868,13 @@ class CertificateOrder < ActiveRecord::Base
           end
         end.map{|k,v|k}
       else
-        if certificate.is_ev?
+        if signed_certificate.try("is_ev?".to_sym)
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ev#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
+        elsif signed_certificate.try("is_dv?".to_sym)
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_dv#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
+        elsif signed_certificate.try("is_ov?".to_sym)
+          Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ov#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
+        elsif certificate.is_ev?
           Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_ev#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
         elsif certificate.is_essential_ssl?
           Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:contents]["sslcom_dv#{'_amazon' if is_amazon_balancer? || ["amazon","iis"].include?(override[:server])}.txt"]
@@ -875,7 +887,15 @@ class CertificateOrder < ActiveRecord::Base
         #attach bundle
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
-            if certificate.is_ev?
+            if signed_certificate.try("is_ev?".to_sym)
+              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              #elsif certificate.is_free?
+              #  k=="sslcom_free_ca_bundle.txt"
+            elsif signed_certificate.try("is_dv?".to_sym)
+              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            elsif signed_certificate.try("is_ov?".to_sym)
+              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            elsif certificate.is_ev?
               k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
               #elsif certificate.is_free?
               #  k=="sslcom_free_ca_bundle.txt"
@@ -895,9 +915,9 @@ class CertificateOrder < ActiveRecord::Base
       else
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
-            if certificate.is_ev?
+            if signed_certificate.try("is_ev?".to_sym) || certificate.is_ev?
               %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
-            elsif certificate.is_essential_ssl?
+            elsif signed_certificate.try("is_dv?".to_sym) || certificate.is_essential_ssl?
               %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
             else
               %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
