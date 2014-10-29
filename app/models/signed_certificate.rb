@@ -465,7 +465,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def self.decode_all
-    self.for_each {|sc|sc.decode}
+    self.find_each {|s|s.update_attribute :decoded, s.decode}
   end
 
   private

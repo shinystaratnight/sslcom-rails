@@ -23,12 +23,9 @@ class ValidationsController < ApplicationController
   end
 
   def new
-    if @certificate_order.skip_verification?
-      checkout={}
-      if @certificate_order.certificate_content.contacts_provided?
-        @certificate_order.certificate_content.pend_validation!
-        checkout={checkout: "true"}
-      end
+    if @certificate_order.skip_verification? && @certificate_order.certificate_content.contacts_provided?
+      @certificate_order.certificate_content.pend_validation!
+      checkout={checkout: "true"}
       respond_to do |format|
         format.html { redirect_to certificate_order_path(@certificate_order, checkout)}
       end
