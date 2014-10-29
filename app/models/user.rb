@@ -15,7 +15,10 @@ class User < ActiveRecord::Base
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status
   attr_readonly :login unless MIGRATING_FROM_LEGACY
+  validates :email, email: true
+
   acts_as_authentic do |c|
+    c.validate_email_field = false
     c.session_ids = [nil, :shadow],
     c.transition_from_crypto_providers = LegacySslMd5,
     c.validates_length_of_password_field_options =

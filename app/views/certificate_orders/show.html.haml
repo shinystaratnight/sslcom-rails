@@ -258,6 +258,7 @@
                                 #{check_box_tag "email_customer", true, true}notify customer?
                               =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
                               =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                              %textarea.selectAll=sc.decoded
                               #temporary_signed_certificate.hidden[csr]
                                 =text_area_tag :tmp_signed_certificate, sc.try(:body)
                         .certificate_details_box

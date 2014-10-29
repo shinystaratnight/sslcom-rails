@@ -42,6 +42,7 @@ class SignedCertificate < ActiveRecord::Base
 
   after_create do |s|
     s.csr.certificate_content.issue!
+    s.update_attribute :decoded, s.decode
   end
 
   after_save do |s|
@@ -414,6 +415,55 @@ class SignedCertificate < ActiveRecord::Base
     body.starts_with?(BEGIN_PKCS7_TAG) ? 'PKCS#7' : 'X.509'
   end
 
+  def decode
+    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+    File.open(sc_pem, 'wb') do |f|
+      f.write body+"\n"
+    end
+    CertUtil.decode_certificate sc_pem
+  end
+
+  def is_dv?
+    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com DV CA/ ||
+        decoded =~ /Domain Control Validated/ ||
+        decoded =~ /EssentialSSL/
+  end
+
+  def is_ov?
+    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com OV CA/
+  end
+
+  def is_ev?
+    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com EV CA/  ||
+        decoded =~ /SSL.com Premium EV CA/
+  end
+
+  def is_SHA2?
+    decoded =~ /sha256WithRSAEncryption/
+  end
+
+  def is_SHA1?
+    decoded =~ /sha1WithRSAEncryption/
+  end
+
+  def signature_algorithm
+    if is_SHA2?
+      "SHA1"
+    else
+      "SHA2"
+    end
+  end
+
+  def validation_type
+    if is_dv?
+      "dv"
+    elsif is_ev?
+      "ev"
+    elsif is_ov?
+      "ov"
+    end
+  end
+
   private
 
   def proper_certificate?
@@ -453,6 +503,6 @@ class SignedCertificate < ActiveRecord::Base
       end
     end
     cert
-  end  
+  end
 end
 

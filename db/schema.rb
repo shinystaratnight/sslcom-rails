@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141018184115) do
+ActiveRecord::Schema.define(:version => 20141028161640) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -806,6 +806,7 @@ ActiveRecord::Schema.define(:version => 20141018184115) do
     t.text     "subject_alternative_names"
     t.integer  "strength"
     t.integer  "certificate_lookup_id"
+    t.text     "decoded"
   end
 
   add_index "signed_certificates", ["csr_id"], :name => "index_signed_certificates_on_csr_id"
