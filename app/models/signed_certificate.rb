@@ -464,6 +464,10 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def self.decode_all
+    self.for_each {|sc|sc.decode}
+  end
+
   private
 
   def proper_certificate?
