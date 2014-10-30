@@ -420,7 +420,11 @@ class SignedCertificate < ActiveRecord::Base
     File.open(sc_pem, 'wb') do |f|
       f.write body+"\n"
     end
-    CertUtil.decode_certificate sc_pem
+    if self.file_type=='PKCS#7'
+      CertUtil.decode_certificate sc_pem, "pkcs7"
+    else
+      CertUtil.decode_certificate sc_pem, "x509"
+    end
   end
 
   def is_dv?
@@ -465,7 +469,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def self.decode_all
-    self.find_each {|s|s.update_attribute :decoded, s.decode}
+    self.find_each {|s|s.update_column :decoded, s.decode}
   end
 
   private

@@ -883,7 +883,7 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
     else
-      if is_open_ssl?
+      if is_open_ssl? && override[:components].blank?
         #attach bundle
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
@@ -915,9 +915,15 @@ class CertificateOrder < ActiveRecord::Base
       else
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
-            if signed_certificate.try("is_ev?".to_sym) || certificate.is_ev?
+            if signed_certificate.try("is_ev?".to_sym)
               %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
-            elsif signed_certificate.try("is_dv?".to_sym) || certificate.is_essential_ssl?
+            elsif signed_certificate.try("is_dv?".to_sym)
+              %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
+            elsif signed_certificate.try("is_ov?".to_sym)
+              %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
+            elsif certificate.is_ev?
+              %w(SSLcomPremiumEVCA.crt COMODOAddTrustServerCA.crt AddTrustExternalCARoot.crt).include? k
+            elsif certificate.is_essential_ssl?
               %w(SSLcomAddTrustSSLCA.crt AddTrustExternalCARoot.crt).include? k
             else
               %w(SSLcomHighAssuranceCA.crt AddTrustExternalCARoot.crt).include? k
