@@ -66,8 +66,8 @@ class CertificateOrder < ActiveRecord::Base
   scope :search_with_csr, lambda {|term, options|
     cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
       CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
-    {:conditions => ["csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
+    {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
       merge(options)
   }
 
@@ -1069,11 +1069,8 @@ class CertificateOrder < ActiveRecord::Base
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
               mapped_certificate.comodo_product_id) #trial cert does not specify duration
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
-            days = (migrated_from_v2? && !preferred_v2_line_items.blank?) ? certificate_duration(:days) :
-                certificate_content.duration
+            days = certificate_duration(:days)
             # temporary for a certain customer wanting to move over a number of domains to ssl.com
-            days += 60 if
-                %w(myevaluations.com gmetoolkit.com www2.myevaluations.com rm.verinform.com mygme.com my.doctorsoncall.com).find{|d|csr.common_name=~Regexp.new(d)}
             params.merge!('days' => days.to_s)
           end
           #ssl.com Sub CA certs
