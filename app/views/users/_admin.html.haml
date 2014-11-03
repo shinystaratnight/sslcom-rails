@@ -31,15 +31,6 @@
               %tbody
                 %tr
                   %td(colspan="5")
-                    -if ac = user.ssl_account.api_credential
-                      .full_width_box
-                        %ul
-                          %li
-                            %strong
-                              api credentials
-                          %li account key: #{ac.account_key}
-                          %li secret key: #{ac.secret_key}
-                          %li=link_to 'view documentation', restful_apidocs_apply_url
                     .full_width_box
                       %ul
                         %li
@@ -50,6 +41,15 @@
                         %li account number: #{user.ssl_account.acct_number}
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
+                    -if ac = user.ssl_account.api_credential
+                      .full_width_box
+                        %ul
+                          %li
+                            %strong
+                              api credentials
+                          %li account key: #{ac.account_key}
+                          %li secret key: #{ac.secret_key}
+                          %li=link_to 'view documentation', restful_apidocs_apply_url
             %table(cellspacing="0")
               %tbody
                 %tr

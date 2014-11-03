@@ -76,7 +76,7 @@ class ComodoApi
   def self.collect_ssl(certificate_order)
     comodo_params = {'queryType' => 2, "showExtStatus"=>"Y",
                'orderNumber'=> certificate_order.external_order_number_for_extract}
-    comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
+    # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
     options = comodo_params.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = COLLECT_SSL_URL
     url = URI.parse(host)
