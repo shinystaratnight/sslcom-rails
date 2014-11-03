@@ -84,7 +84,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}.uniq
+        variantable(Certificate)}.where{sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
   }
 
   scope :unvalidated, where{(is_expired==false) &
@@ -324,7 +324,7 @@ class CertificateOrder < ActiveRecord::Base
         when 1
           365
         when 2
-          720
+          730
         when 3
           1095
         when 4

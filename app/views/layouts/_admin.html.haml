@@ -33,6 +33,8 @@
                 %td=link_to "FILTER BY PREMIUM", filter_by_certificate_orders_path("premium")
               %tr
                 %td=link_to "FILTER BY WILDCARD", filter_by_certificate_orders_path("wildcard")
+              %tr
+                %td=link_to "FILTER BY TEST", filter_by_certificate_orders_path("wildcard")
           -unless current_user.ssl_account.funded_account.blank?
             %th AVAILABLE FOR USE
           -if show_short_links?
