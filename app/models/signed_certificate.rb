@@ -398,7 +398,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def to_pkcs7
     return body if body.starts_with?(BEGIN_PKCS7_TAG)
-    File.read(pkcs7_file)
+    File.read(pkcs7_file)#.gsub(/KEAMQA=(-----END PKCS7-----)/,"DEA$1")
   end
 
   def file_extension

@@ -107,7 +107,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       self
     else
       certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym]+api_requestable.reseller_suffix)
-      co_params = {duration: period, is_api_call: true, is_test: self.test}
+      co_params = {duration: period, is_test: self.test}
       co = api_requestable.certificate_orders.build(co_params)
       if self.csr
         # process csr
@@ -191,7 +191,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
       cc.provide_contacts!
-      cc.pend_validation!(is_api_call: true, ca_certificate_id: ca_certificate_id)# send_to_ca: !certificate_order.is_test
+      cc.pend_validation!(ca_certificate_id: ca_certificate_id)# send_to_ca: !certificate_order.is_test
     end
   end
 

@@ -281,7 +281,7 @@ module ApplicationHelper
     when CertificateOrder::FULL_SIGNUP_PROCESS
       "padding: 0 #{0.9 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
-      "padding: 0 #{3.45 + (sv ? added_padding : 0.0)}em"
+      "padding: 0 #{3.30 + (sv ? added_padding : 0.0)}em"
     end
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
     render(:partial => '/shared/form_progress_indicator',

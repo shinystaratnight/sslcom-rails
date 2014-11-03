@@ -72,7 +72,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   def create_certificate_order
     # create certificate
     @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-    co_params = {duration: period, is_api_call: true}
+    co_params = {duration: period}
     co_params.merge!({is_test: self.test})
     co_params.merge!({domains: self.domains}) if(is_ucc? && self.domains)
     csr = self.csr_obj

@@ -10,7 +10,7 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
-  after_update :certificate_names_from_domains, :if => :domains_changed?
+  after_update :certificate_names_from_domains
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -194,6 +194,7 @@ class CertificateContent < ActiveRecord::Base
     DE
     DEALS
     DEGREE
+    DELIVERY
     DEMOCRAT
     DENTAL
     DENTIST
@@ -220,6 +221,8 @@ class CertificateContent < ActiveRecord::Base
     EE
     EG
     EMAIL
+    EMERCK
+    ENERGY
     ENGINEER
     ENGINEERING
     ENTERPRISES
@@ -597,6 +600,7 @@ class CertificateContent < ActiveRecord::Base
     SY
     SYSTEMS
     SZ
+    TAIPEI
     TATAR
     TATTOO
     TAX
@@ -702,6 +706,7 @@ class CertificateContent < ActiveRecord::Base
     XN--CZR694B
     XN--CZRU2D
     XN--D1ACJ3B
+    XN--D1ALF
     XN--FIQ228C5HS
     XN--FIQ64B
     XN--FIQS8S
@@ -729,6 +734,7 @@ class CertificateContent < ActiveRecord::Base
     XN--MGBERP4A5D4AR
     XN--MGBX4CD0AB
     XN--NGBC5AZD
+    XN--NODE
     XN--NQV7F
     XN--NQV7FS00EMA
     XN--O3CW4H
@@ -872,13 +878,14 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    self.domains.flatten.each do |domain|
+    cert_domains = self.domains.flatten
+    cert_domains.each do |domain|
       certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
     end
-    # delete orphaned certificate_names
-    certificate_names.map(&:name).each do |cn|
-      certificate_names.find_by_name(cn).destroy unless domains.flatten.include?(cn)
-    end
+    # # delete orphaned certificate_names
+    # certificate_names.map(&:name).each do |cn|
+    #   certificate_names.find_by_name(cn).destroy unless cert_domains.include?(cn)
+    # end
   end
 
   def domains=(names)

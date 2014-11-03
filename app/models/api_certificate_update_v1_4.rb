@@ -79,7 +79,7 @@ class ApiCertificateUpdate_v1_4 < ApiCertificateRequest
       self
     else
       @certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym])
-      co_params = {duration: period, is_api_call: true}
+      co_params = {duration: period}
       co_params.merge!({is_test: self.test})
       co_params.merge!({domains: self.domains}) if(is_ucc? && self.domains)
       co = api_requestable.certificate_orders.build(co_params)

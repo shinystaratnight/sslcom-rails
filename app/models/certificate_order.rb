@@ -79,11 +79,11 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}}).uniq
+    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
   }
 
   scope :filter_by, lambda { |term|
-    order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
+    order_by._csr.joins{sub_order_items.product_variant_item.product_variant_group.
         variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}.uniq
   }
 
@@ -551,7 +551,7 @@ class CertificateOrder < ActiveRecord::Base
     (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 
-  def to_api_string(action="update")
+  def to_api_string_old(action="update")
     case action
       when /update/
         cc = certificate_content
@@ -601,62 +601,66 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def to_api_string2(action="update")
+  def to_api_string(action="update")
+    api_contacts, api_domains, cc, registrant_params = base_api_params
     case action
       when /update/
-        cc = certificate_content
-        r = cc.registrant
-        registrant_params = r.blank? ? {} :
-        {organization_name: r.company_name,
-            organization_unit_name: r.department,
-            post_office_box: r.po_box,
-            street_address_1: r.address1,
-            street_address_2: r.address2,
-            street_address_3: r.address3,
-            locality_name: r.city,
-            state_or_province_name: r.state,
-            postal_code: r.postal_code,
-            country_name:  r.country}
-        api_domains = {}
-        unless cc.domains.blank?
-          cc.domains.flatten.each {|d| api_domains.merge!(d.to_sym => {dcv: "http_csr_hash"})}
-        else
-          api_domains.merge!(cc.csr.common_name.to_sym=>{dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
-        end
-        api_contacts = {}
-        CertificateContent::CONTACT_ROLES.each do |role|
-          contact=cc.certificate_contacts.find do |certificate_contact|
-            if certificate_contact.roles.include?(role)
-              api_contact={}
-              (CertificateContent::RESELLER_FIELDS_TO_COPY+['country']).each do |field|
-                api_contact.merge! field.to_sym => "#{certificate_contact.send(field.to_sym)}"
-              end
-              api_contacts.merge! role.to_sym => api_contact
-            end
-          end
-        end
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
         {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
          secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-         product: certificate.api_product_code,
          server_software: cc.server_software_id.to_s,
          domains: api_domains,
          contacts: api_contacts,
          csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
          "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
-#         <<-EOS
-#       curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
-#       \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
-# \\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
-# \\"server_software\\" : \\"#{cc.server_software_id}\\",
-# #{registrant_params}
-# \\"domains\\":{#{api_domains.chop!}},
-# \\"contacts\\":{#{api_contacts.chop!}}, \\"csr\\" :
-# \\"#{certificate_content.csr.body.gsub("\s?\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
-#         EOS
       when /create/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+             product: certificate.api_product_code,
+             period: certificate_duration(:days).to_s,
+             server_software: cc.server_software_id.to_s,
+             domains: api_domains,
+             contacts: api_contacts,
+             csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
+            "\" https://sws-test.sslpki.local:3000/certificates"
     end
+  end
+
+  def base_api_params
+    cc = certificate_content
+    r = cc.registrant
+    registrant_params = r.blank? ? {} :
+        {organization_name: r.company_name,
+         organization_unit_name: r.department,
+         post_office_box: r.po_box,
+         street_address_1: r.address1,
+         street_address_2: r.address2,
+         street_address_3: r.address3,
+         locality_name: r.city,
+         state_or_province_name: r.state,
+         postal_code: r.postal_code,
+         country_name: r.country}
+    api_domains = {}
+    unless cc.domains.blank?
+      cc.domains.flatten.each { |d| api_domains.merge!(d.to_sym => {dcv: "http_csr_hash"}) }
+    else
+      api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
+    end
+    api_contacts = {}
+    CertificateContent::CONTACT_ROLES.each do |role|
+      contact=cc.certificate_contacts.find do |certificate_contact|
+        if certificate_contact.roles.include?(role)
+          api_contact={}
+          (CertificateContent::RESELLER_FIELDS_TO_COPY+['country']).each do |field|
+            api_contact.merge! field.to_sym => "#{certificate_contact.send(field.to_sym)}"
+          end
+          api_contacts.merge! role.to_sym => api_contact
+        end
+      end
+    end
+    return api_contacts, api_domains, cc, registrant_params
   end
 
   def add_renewal(ren)

@@ -106,11 +106,15 @@
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
                   -if current_user.try("is_admin?") && cc.registrant
+                    %li
+                      %strong API New Command
+                    %li
+                      %textarea.selectAll=co.to_api_string("create")
                     -if co.external_order_number
                       %li
                         %strong API Reprocess Command
                       %li
-                        %textarea.selectAll=co.to_api_string2("update")
+                        %textarea.selectAll=co.to_api_string("update")
                     %li
                       %strong Comodo API New Command
                     %li
