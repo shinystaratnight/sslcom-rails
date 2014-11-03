@@ -265,9 +265,9 @@ class CertificateOrdersController < ApplicationController
   def order_by_csr
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.unscoped{CertificateOrder.order_by_csr.not_test} :
+      CertificateOrder.unscoped{CertificateOrder.unscoped.order_by_csr.not_test} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.order_by_csr.not_test}).uniq.paginate(p)
+          current_user.ssl_account.certificate_orders.unscoped.order_by_csr.not_test}).uniq.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

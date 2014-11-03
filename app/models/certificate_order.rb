@@ -45,8 +45,10 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.joins(:certificate_contents).includes(:certificate_contents).
-    order(:created_at.desc).readonly(false)
+  scope :unordered, where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.joins(:certificate_contents).includes(:certificate_contents).
+    readonly(false)
+
+  default_scope unordered.order(:created_at.desc)
 
   scope :not_test, where{(is_test == nil) | (is_test==false)}
 
@@ -79,7 +81,7 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
+    unordered.joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}}).uniq
   }
 
   scope :filter_by, lambda { |term|
