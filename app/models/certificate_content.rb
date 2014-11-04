@@ -878,14 +878,16 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    cert_domains = self.domains.flatten
-    cert_domains.each do |domain|
-      certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
+    unless self.domains.blank?
+      cert_domains = self.domains.flatten
+      cert_domains.each do |domain|
+        certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
+      end
+      # # delete orphaned certificate_names
+      # certificate_names.map(&:name).each do |cn|
+      #   certificate_names.find_by_name(cn).destroy unless cert_domains.include?(cn)
+      # end
     end
-    # # delete orphaned certificate_names
-    # certificate_names.map(&:name).each do |cn|
-    #   certificate_names.find_by_name(cn).destroy unless cert_domains.include?(cn)
-    # end
   end
 
   def domains=(names)
@@ -913,14 +915,18 @@ class CertificateContent < ActiveRecord::Base
       case v["dcv"]
         when /https?/i, /cname/i
           self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k])
+              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
+                failure_action: v["failure_action"])
           self.csr.domain_control_validations.
-              create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+              create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
+                failure_action: v["failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
         else
           self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k])
+              domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
+                failure_action: v["failure_action"], candidate_addresses: options[:emails][k])
           self.csr.domain_control_validations.
-              create(dcv_method: "email", email_address: v["dcv"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+              create(dcv_method: "email", email_address: v["dcv"],
+                failure_action: v["failure_action"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
       end
       i+=1
     end

@@ -7,6 +7,7 @@ class DomainControlValidation < ActiveRecord::Base
   validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
   IS_INVALID  = "is an invalid email address choice"
+  FAILURE_ACTION = %w(ignore reject)
 
   include Workflow
   workflow do

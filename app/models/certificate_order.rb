@@ -1122,16 +1122,14 @@ class CertificateOrder < ActiveRecord::Base
 
   def perform_dcv(last_sent, options)
     if certificate.is_ucc?
-      domains_for_comodo,dcv_methods_for_comodo=nil,nil
-      if certificate_content.certificate_names.empty?
-        domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
-      else
-        domains_for_comodo = certificate_content.certificate_names.map(&:name)
-        dcv_methods_for_comodo = certificate_content.certificate_names.map(&:last_dcv_for_comodo)
-        unless domains_for_comodo.include? csr.common_name
-          domains_for_comodo << csr.common_name
-          dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
-        end
+      domains_for_comodo,dcv_methods_for_comodo=nil,[]
+      domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
+      domains_for_comodo.each do |d|
+        dcv_methods_for_comodo << certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
+      end
+      unless domains_for_comodo.include? csr.common_name
+        domains_for_comodo << csr.common_name
+        dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
       end
       options.merge!('domainNames' => domains_for_comodo.join(","))
       options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?

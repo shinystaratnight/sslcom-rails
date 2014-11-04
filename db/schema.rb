@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141028161640) do
+ActiveRecord::Schema.define(:version => 20141103202452) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -423,6 +423,7 @@ ActiveRecord::Schema.define(:version => 20141028161640) do
     t.string   "workflow_state"
     t.string   "dcv_method"
     t.integer  "certificate_name_id"
+    t.string   "failure_action"
   end
 
   create_table "duplicate_v2_users", :force => true do |t|
