@@ -1125,8 +1125,10 @@ class CertificateOrder < ActiveRecord::Base
       domains_for_comodo,dcv_methods_for_comodo=nil,[]
       domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
       domains_for_comodo.each do |d|
-        last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
-        dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD : last)
+        if certificate_content.certificate_names.find_by_name(d)
+          last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
+          dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD : last)
+        end
       end
       unless domains_for_comodo.include? csr.common_name
         domains_for_comodo << csr.common_name
