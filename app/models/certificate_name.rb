@@ -56,12 +56,12 @@ class CertificateName < ActiveRecord::Base
 
   def last_dcv_for_comodo
     case domain_control_validations.last.try(:dcv_method)
-      when /https?/i
+      when /https?/i, ""
         "HTTPCSRHASH"
       when /cname/i
         "CNAMECSRHASH"
       else
-        domain_control_validations.last_sent
+        domain_control_validations.last.email_address
     end
   end
 

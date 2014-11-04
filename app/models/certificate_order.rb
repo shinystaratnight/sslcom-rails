@@ -1057,7 +1057,7 @@ class CertificateOrder < ActiveRecord::Base
           )
           ssl_com_order(params,options)
           last_sent = csr.domain_control_validations.last_method
-          perform_dcv(last_sent, params)
+          build_comodo_dcv(last_sent, params)
         else
           params.merge!(
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
@@ -1081,7 +1081,7 @@ class CertificateOrder < ActiveRecord::Base
           end
           #ssl.com Sub CA certs
           ssl_com_order(params,options)
-          perform_dcv(last_sent, params)
+          build_comodo_dcv(last_sent, params)
           fill_csr_fields(params, certificate_content.registrant)
           unless csr.csr_override.blank?
             fill_csr_fields params, csr.csr_override
@@ -1120,12 +1120,13 @@ class CertificateOrder < ActiveRecord::Base
     # options.merge!('caCertificateID' => 401) #essentialssl
   end
 
-  def perform_dcv(last_sent, options)
+  def build_comodo_dcv(last_sent, options)
     if certificate.is_ucc?
       domains_for_comodo,dcv_methods_for_comodo=nil,[]
       domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
       domains_for_comodo.each do |d|
-        dcv_methods_for_comodo << certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
+        last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
+        dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD : last)
       end
       unless domains_for_comodo.include? csr.common_name
         domains_for_comodo << csr.common_name

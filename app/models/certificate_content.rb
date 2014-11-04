@@ -878,6 +878,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
+    certificate_names.create(name: csr.common_name)
     unless self.domains.blank?
       cert_domains = self.domains.flatten
       cert_domains.each do |domain|
