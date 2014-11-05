@@ -322,18 +322,7 @@ class CertificateOrder < ActiveRecord::Base
       years =~ /^(\d+)/
       $1
     elsif unit==:days
-      case years.gsub(/[^\d]+/,"").to_i
-        when 1
-          365
-        when 2
-          730
-        when 3
-          1095
-        when 4
-          1460
-        when 5
-          1825
-      end
+      years.gsub(/[^\d]+/,"").to_i * 365
     else
       years
     end
