@@ -17,7 +17,7 @@ class ComodoApi
     comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
-    host = options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
+    host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
