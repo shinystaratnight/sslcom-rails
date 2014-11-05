@@ -46,23 +46,21 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.joins(:certificate_contents).includes(:certificate_contents).
-    readonly(false)
+    order(:created_at.desc).readonly(false)
 
-  scope :ordered, order(:created_at.desc)
-
-  scope :not_test, ordered.where{(is_test == nil) | (is_test==false)}
+  scope :not_test, where{(is_test == nil) | (is_test==false)}
 
   scope :search, lambda {|term, options|
-    {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.ordered.merge(options)
+    {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
 
   scope :search_signed_certificates, lambda {|term|
-    ordered.joins{certificate_contents.csr.signed_certificates}.
+    joins{certificate_contents.csr.signed_certificates}.
       where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
   }
 
   scope :search_csr, lambda {|term|
-    ordered.joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
+    joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
   }
 
   scope :search_with_csr, lambda {|term, options|
@@ -76,17 +74,17 @@ class CertificateOrder < ActiveRecord::Base
   scope :reprocessing, lambda {
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-    ordered.joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
+    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
         order(:certificate_contents=>{:csr=>:updated_at.desc})
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}}).uniq
+    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
   }
 
   scope :filter_by, lambda { |term|
     order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
+        variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
   }
 
   scope :unvalidated, where{(is_expired==false) &
@@ -103,7 +101,7 @@ class CertificateOrder < ActiveRecord::Base
   scope :has_csr, where{(workflow_state=='paid') &
     (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
 
-  scope :credits, ordered.where({:workflow_state=>'paid'} & {is_expired: false} &
+  scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})
 
   #new certificate orders are the ones still in the shopping cart
@@ -111,7 +109,7 @@ class CertificateOrder < ActiveRecord::Base
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).ordered.where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
+    (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
   }
 
   scope :unrenewed, not_new.where(:renewal_id=>nil)
@@ -122,13 +120,13 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :free, not_new.where(:amount => 0)
 
-  scope :unused_credits, ordered.where({:workflow_state=>'paid'} & {is_expired: false} &
+  scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
-  scope :unused_purchased_credits, ordered.where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
+  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
-  scope :unused_free_credits, ordered.where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
+  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
   scope :range, lambda{|start, finish|
