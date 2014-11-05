@@ -14,7 +14,7 @@ class ComodoApi
 
   def self.apply_for_certificate(certificate_order, options={})
     cc = options[:certificate_content] || certificate_order.certificate_content
-    options = certificate_order.options_for_ca(options).
+    comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
     host = options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
@@ -24,11 +24,13 @@ class ComodoApi
     con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
     con.use_ssl = true
     cc.csr.touch
-    res = con.start do |http|
-      http.request_post(url.path, options)
-    end
+    res = unless [false,"false"].include? options[:send_to_ca]
+            con.start do |http|
+              http.request_post(url.path, comodo_options)
+            end
+          end
     cc.csr.ca_certificate_requests.create(request_url: host,
-      parameters: options, method: "post", response: res.body, ca: "comodo")
+      parameters: comodo_options, method: "post", response: res.try(:body), ca: "comodo")
   end
 
   def self.domain_control_email_choices(obj_or_domain)

@@ -553,56 +553,6 @@ class CertificateOrder < ActiveRecord::Base
     (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 
-  def to_api_string_old(action="update")
-    case action
-      when /update/
-        cc = certificate_content
-        r = cc.registrant
-        registrant_params = r.blank? ? "" :
-        <<-EOS
-        \\"organization_name\\" : \\"#{r.company_name}\\",
-            \\"organization_unit_name\\" : \\"#{r.department}\\",
-            \\"post_office_box\\" : \\"#{r.po_box}\\",
-            \\"street_address_1\\" : \\"#{r.address1}\\",
-            \\"street_address_2\\" : \\"#{r.address2}\\",
-            \\"street_address_3\\" : \\"#{r.address3}\\",
-            \\"locality_name\\" : \\"#{r.city}\\",
-            \\"state_or_province_name\\" : \\"#{r.state}\\",
-            \\"postal_code\\" : \\"#{r.postal_code}\\",
-            \\"country_name\\" :  \\"#{r.country}\\",
-        EOS
-        api_domains = ""
-        unless cc.domains.blank?
-          cc.domains.flatten.each {|d| api_domains << "\\\"#{d}\\\":{\\\"dcv\\\" : \\\"http_csr_hash\\\"},"}
-        else
-          api_domains << "\\\"#{cc.csr.common_name}\\\":{\\\"dcv\\\" : \\\"#{last_dcv_sent ? last_dcv_sent.method_for_api : "http_csr_hash"}\\\"},"
-        end
-        api_contacts = ""
-        CertificateContent::CONTACT_ROLES.each do |role|
-          contact=cc.certificate_contacts.find do |certificate_contact|
-            if certificate_contact.roles.include?(role)
-              api_contacts << "\\\"#{role.to_s}\\\":{"
-              (CertificateContent::RESELLER_FIELDS_TO_COPY+['country']).each do |field|
-                api_contacts << "\\\"#{field}\\\" : \\\"#{certificate_contact.send(field.to_sym)}\\\","
-              end
-              api_contacts.chop! << "},"
-            end
-          end
-        end
-        <<-EOS
-      curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "{\\"account_key\\" :
-      \\"#{ssl_account.api_credential.account_key if ssl_account.api_credential}\\",\\"secret_key\\" :
-\\"#{ssl_account.api_credential.secret_key if ssl_account.api_credential}\\",\\"product\\" : \\"#{certificate.api_product_code}\\",
-\\"server_software\\" : \\"#{cc.server_software_id}\\",
-#{registrant_params}
-\\"domains\\":{#{api_domains.chop!}},
-\\"contacts\\":{#{api_contacts.chop!}}, \\"csr\\" :
-\\"#{certificate_content.csr.body.gsub("\s?\n","\\n")}\\"}" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
-        EOS
-      when /create/
-    end
-  end
-
   def to_api_string(action="update")
     api_contacts, api_domains, cc, registrant_params = base_api_params
     case action
@@ -1057,7 +1007,7 @@ class CertificateOrder < ActiveRecord::Base
           )
           ssl_com_order(params,options)
           last_sent = csr.domain_control_validations.last_method
-          build_comodo_dcv(last_sent, params)
+          build_comodo_dcv(last_sent, params, options)
         else
           params.merge!(
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
@@ -1081,7 +1031,7 @@ class CertificateOrder < ActiveRecord::Base
           end
           #ssl.com Sub CA certs
           ssl_com_order(params,options)
-          build_comodo_dcv(last_sent, params)
+          build_comodo_dcv(last_sent, params, options)
           fill_csr_fields(params, certificate_content.registrant)
           unless csr.csr_override.blank?
             fill_csr_fields params, csr.csr_override
@@ -1120,10 +1070,11 @@ class CertificateOrder < ActiveRecord::Base
     # options.merge!('caCertificateID' => 401) #essentialssl
   end
 
-  def build_comodo_dcv(last_sent, options)
+  def build_comodo_dcv(last_sent, params, options={})
     if certificate.is_ucc?
       domains_for_comodo,dcv_methods_for_comodo=nil,[]
-      domains_for_comodo = domains.blank? ? [csr.common_name] : ([csr.common_name]+domains).uniq
+      new_domains = (options[:certificate_content] ? options[:certificate_content].domains : domains)
+      domains_for_comodo = new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains).uniq
       domains_for_comodo.each do |d|
         if certificate_content.certificate_names.find_by_name(d)
           last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
@@ -1134,15 +1085,15 @@ class CertificateOrder < ActiveRecord::Base
         domains_for_comodo << csr.common_name
         dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
       end
-      options.merge!('domainNames' => domains_for_comodo.join(","))
-      options.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
+      params.merge!('domainNames' => domains_for_comodo.join(","))
+      params.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
     else
       if last_sent.blank? || last_sent.dcv_method=="http"
-        options.merge!('dcvMethod' => "HTTP_CSR_HASH")
+        params.merge!('dcvMethod' => "HTTP_CSR_HASH")
       elsif last_sent.dcv_method=="https"
-        options.merge!('dcvMethod' => "HTTPS_CSR_HASH")
+        params.merge!('dcvMethod' => "HTTPS_CSR_HASH")
       elsif last_sent.try("is_eligible_to_send?")
-        options.merge!('dcvEmailAddress' => last_sent.email_address)
+        params.merge!('dcvEmailAddress' => last_sent.email_address)
         last_sent.send_dcv! unless last_sent.sent_dcv?
       end
     end

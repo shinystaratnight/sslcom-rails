@@ -3,7 +3,7 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :debug, :error_code, :error_message, :eta
+    :api_request, :api_response, :debug, :error_code, :error_message, :eta, :send_to_ca
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
@@ -191,7 +191,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
       cc.provide_contacts!
-      cc.pend_validation!(ca_certificate_id: ca_certificate_id)# send_to_ca: !certificate_order.is_test
+      cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
     end
   end
 

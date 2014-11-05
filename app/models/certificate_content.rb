@@ -821,20 +821,18 @@ class CertificateContent < ActiveRecord::Base
     state :contacts_provided do
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        unless options[:send_to_ca]==false
-          unless csr.sent_success #do not send if already sent successfully
-            options[:certificate_content]=self
-            certificate_order.apply_for_certificate(options)
-            last_sent=unless certificate_order.certificate.is_ucc?
-              csr.domain_control_validations.last_sent
-            else
-              certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
+        unless csr.sent_success #do not send if already sent successfully
+          options[:certificate_content]=self
+          certificate_order.apply_for_certificate(options)
+          last_sent=unless certificate_order.certificate.is_ucc?
+            csr.domain_control_validations.last_sent
+          else
+            certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
+          end
+          if last_sent
+            certificate_order.receipt_recipients.uniq.each do |c|
+              OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
             end
-              if last_sent
-                certificate_order.receipt_recipients.uniq.each do |c|
-                  OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
-                end
-              end
           end
         end
       end
