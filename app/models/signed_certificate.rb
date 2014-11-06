@@ -397,8 +397,9 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def to_pkcs7
-    return body if body.starts_with?(BEGIN_PKCS7_TAG)
-    File.read(pkcs7_file)#.gsub(/KEAMQA=$/,"DEA").gsub(/ShADEA$/,"QxAA==").gsub(/oQAxAA==$/,"MQA=")
+    BEGIN_PKCS7_TAG+"\n"+ComodoApi.collect_ssl(certificate_order, {format: "pkcs7"}).certificate+END_PKCS7_TAG #temporary fix
+    # return body if body.starts_with?(BEGIN_PKCS7_TAG)
+    # File.read(pkcs7_file) # TODO need to fix some bug. ending characters not matching comodo's certs
   end
 
   def file_extension

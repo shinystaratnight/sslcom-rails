@@ -40,14 +40,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
-  validates :organization_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.organization.blank?) && csr}
+  validates :organization_name, presence: true, if: lambda{|c| csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
             if: lambda{|c|!c.is_dv? && c.post_office_box.blank? && csr} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.locality.blank?) && csr}
-  validates :state_or_province_name, presence: true, if: lambda{|c|(!c.is_dv? || c.csr_obj.state.blank?) && csr}
-  validates :postal_code, presence: true, if: lambda{|c|!c.is_dv? && csr} #|| c.parsed_field("POSTAL_CODE").blank?}
+  validates :locality_name, presence: true, if: lambda{|c| csr && (!c.is_dv? || c.csr_obj.locality.blank?)}
+  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? || c.csr_obj.state.blank?)}
+  validates :postal_code, presence: true, if: lambda{|c|csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
       if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?") && csr}
@@ -137,7 +137,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if errors.blank?
         if certificate_content.valid? &&
             apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
-          if certificate_content.save && csr
+          if csr && certificate_content.save
             setup_certificate_content(
                 certificate_order: @certificate_order,
                 certificate_content: certificate_content,

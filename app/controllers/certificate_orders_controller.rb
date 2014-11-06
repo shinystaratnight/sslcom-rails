@@ -280,7 +280,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.filter_by(params[:id])} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.filter_by(params[:id])}).uniq.paginate(p)
+          current_user.ssl_account.certificate_orders.filter_by(params[:id])}).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
