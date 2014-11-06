@@ -41,6 +41,13 @@ You can also find your <%=@certificate_order.certificate.description["certificat
 
 If you would like your certificate in various other formats or for other server platforms, you can download it from here <%=certificate_order_url(@certificate_order)%>. Please follow the appropriate installation instructions found at <%=SignedCertificate::OTHER_INSTALL_LINK%>.
 
+Other available formats:
+<%formats = certificate_formats(@certificate_order)
+  formats.each do |k,v|%>
+For <%=v[0]%>, please visit <%=v[1]%> (Instructions for <%=v[0]%> can be found here: <%=v[2]%>)
+
+<%end%>
+
 When you have installed your SSL.com Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services.
 
 Get your secure Smart SeaL by visiting the following url - <%=certificate_order_site_seal_url(@certificate_order)%>.

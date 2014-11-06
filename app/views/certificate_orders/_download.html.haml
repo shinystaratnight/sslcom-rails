@@ -1,4 +1,4 @@
--cc=co.certificate_content
+-formats = certificate_formats(co)
 %li
   %strong download certificate
 %li.category_border
@@ -6,41 +6,9 @@
     %tr
       %td format
       %td instructions
-    %tr
-      %td
-        =link_to "Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::IIS_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "WHM/cpanel", whm_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::CPANEL_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "Apache", apache_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::APACHE_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "Amazon", amazon_zip_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::AMAZON_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "Nginx", nginx_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::NGINX_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "V8+Node.js", nginx_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
-      %td
-        =link_to "click", SignedCertificate::V8_NODEJS_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "Other platforms", download_certificate_order_path(co)
-      %td
-        =link_to "click", SignedCertificate::OTHER_INSTALL_LINK, :target => "_blank"
-    %tr
-      %td
-        =link_to "Intermediate certificates (ca chain bundle)", server_bundle_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+    -formats.each do |k,v|
+      %tr
+        %td
+          =link_to v[0], v[1]
+        %td
+          =link_to "click", v[2], :target => "_blank"

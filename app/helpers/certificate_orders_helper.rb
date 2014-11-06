@@ -177,4 +177,16 @@ module CertificateOrdersHelper
         gsub /[Cc]ertificate$/, ''
     end
   end
+
+  def certificate_formats(certificate_order)
+    csr, sc = certificate_order.csr, certificate_order.signed_certificate
+    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(csr, sc), SignedCertificate::IIS_INSTALL_LINK],
+     cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
+     apache: ["Apache", apache_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
+     amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
+     nginx: ["Nginx", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
+     v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+     other: ["Other platforms", download_certificate_order_url(certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
+     bundle: ["Intermediate certificates (ca chain bundle)", server_bundle_csr_signed_certificate_url(csr, sc), ""]}
+  end
 end
