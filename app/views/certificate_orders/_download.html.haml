@@ -33,6 +33,11 @@
         =link_to "click", SignedCertificate::NGINX_INSTALL_LINK, :target => "_blank"
     %tr
       %td
+        =link_to "V8+Node.js", nginx_csr_signed_certificate_path(cc.csr, cc.csr.signed_certificate)
+      %td
+        =link_to "click", SignedCertificate::V8_NODEJS_INSTALL_LINK, :target => "_blank"
+    %tr
+      %td
         =link_to "Other platforms", download_certificate_order_path(co)
       %td
         =link_to "click", SignedCertificate::OTHER_INSTALL_LINK, :target => "_blank"
