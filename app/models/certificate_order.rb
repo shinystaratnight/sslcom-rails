@@ -1079,10 +1079,6 @@ class CertificateOrder < ActiveRecord::Base
           dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD : last)
         end
       end
-      unless domains_for_comodo.include? csr.common_name
-        domains_for_comodo << csr.common_name
-        dcv_methods_for_comodo << ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD
-      end
       params.merge!('domainNames' => domains_for_comodo.join(","))
       params.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
     else
