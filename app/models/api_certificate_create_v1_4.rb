@@ -76,81 +76,79 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def create_certificate_order
-    # create certificate
-    # certificate_order=nil
-    if self.ref
-      @certificate_order=self.find_certificate_order
-      if @certificate_order.is_a?(CertificateOrder)
-        @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
-        # choose the right ca_certificate_id for submit to Comodo
-        @certificate_order.is_test=self.test
-        certificate_content = @certificate_order.certificate_contents.build
-        csr = self.csr_obj
-        csr.save
-        certificate_content.csr = csr
-        certificate_content.server_software_id = server_software
-        certificate_content.submit_csr!
-        certificate_content.domains = domains.keys
-        if errors.blank?
-          if certificate_content.save
-            setup_certificate_content(
-                certificate_order: @certificate_order,
-                certificate_content: certificate_content,
-                ssl_account: api_requestable,
-                contacts: self.contacts)
-            return @certificate_order
-          else
-            return certificate_content
-          end
-        end
-      end
-      self
+    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym]+api_requestable.reseller_suffix)
+    co_params = {duration: period, is_test: self.test}
+    co = api_requestable.certificate_orders.build(co_params)
+    if self.csr
+      # process csr
+      csr = self.csr_obj
+      csr.save
     else
-      certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym]+api_requestable.reseller_suffix)
-      co_params = {duration: period, is_test: self.test}
-      co = api_requestable.certificate_orders.build(co_params)
-      if self.csr
-        # process csr
-        csr = self.csr_obj
-        csr.save
+      # or make a certificate voucher
+      co.preferred_payment_order = 'prepaid'
+    end
+    domain_names = if self.domains.is_a? Hash
+                     self.domains.keys
+                   elsif self.domains.is_a? String
+                     [self.domains]
+                   else
+                     self.domains
+                   end
+    certificate_content=CertificateContent.new(
+        csr: csr, server_software_id: self.server_software, domains: domain_names)
+    co.certificate_contents << certificate_content
+    @certificate_order = setup_certificate_order(certificate, co)
+    order = api_requestable.purchase(@certificate_order)
+    order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
+    unless self.test
+      errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
+          (order.amount.cents > api_requestable.funded_account.amount.cents)
+    end
+    if errors.blank?
+      if certificate_content.valid? &&
+          apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
+        if csr && certificate_content.save
+          setup_certificate_content(
+              certificate_order: @certificate_order,
+              certificate_content: certificate_content,
+              ssl_account: api_requestable,
+              contacts: self.contacts)
+        end
+        return @certificate_order
       else
-        # or make a certificate voucher
-        co.preferred_payment_order = 'prepaid'
+        return certificate_content
       end
-      domain_names = if self.domains.is_a? Hash
-                       self.domains.keys
-                     elsif self.domains.is_a? String
-                       [self.domains]
-                     else
-                       self.domains
-                     end
-      certificate_content=CertificateContent.new(
-          csr: csr, server_software_id: self.server_software, domains: domain_names)
-      co.certificate_contents << certificate_content
-      @certificate_order = setup_certificate_order(certificate, co)
-      order = api_requestable.purchase(@certificate_order)
-      order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-      unless self.test
-        errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-            (order.amount.cents > api_requestable.funded_account.amount.cents)
-      end
+    end
+    self
+  end
+
+  def update_certificate_order
+    @certificate_order=self.find_certificate_order
+    if @certificate_order.is_a?(CertificateOrder)
+      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      # choose the right ca_certificate_id for submit to Comodo
+      @certificate_order.is_test=self.test
+      certificate_content = @certificate_order.certificate_contents.build
+      csr = self.csr_obj
+      csr.save
+      certificate_content.csr = csr
+      certificate_content.server_software_id = server_software
+      certificate_content.submit_csr!
+      certificate_content.domains = domains.keys
       if errors.blank?
-        if certificate_content.valid? &&
-            apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
-          if csr && certificate_content.save
-            setup_certificate_content(
-                certificate_order: @certificate_order,
-                certificate_content: certificate_content,
-                ssl_account: api_requestable,
-                contacts: self.contacts)
-          end
+        if certificate_content.save
+          setup_certificate_content(
+              certificate_order: @certificate_order,
+              certificate_content: certificate_content,
+              ssl_account: api_requestable,
+              contacts: self.contacts)
           return @certificate_order
         else
           return certificate_content
         end
       end
-      self
     end
+    self
   end
 
   def setup_certificate_content(options)

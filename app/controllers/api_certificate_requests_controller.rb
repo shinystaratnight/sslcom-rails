@@ -59,6 +59,9 @@ class ApiCertificateRequestsController < ApplicationController
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
+            ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+            @result.api_request=ccr.parameters
+            @result.api_response=ccr.response
             @result.ref = @acr.ref
             @result.order_status = @acr.status
             @result.order_amount = @acr.order.amount.format
@@ -67,10 +70,7 @@ class ApiCertificateRequestsController < ApplicationController
             @result.smart_seal_url = certificate_order_site_seal_url(@acr)
             @result.validation_url = certificate_order_validation_url(@acr)
             @result.update_attribute :response, render_to_string(:template => template)
-            if @result.debug
-              @result.api_request="true"
-              @result.api_response="true"
-            end
+            @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
             @result = @acr #so that rabl can report errors
@@ -92,7 +92,7 @@ class ApiCertificateRequestsController < ApplicationController
       @result = @result.csr_obj
     else
       if @result.save
-        if @acr = @result.create_certificate_order
+        if @acr = @result.update_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/success_create_v1_4"
@@ -140,6 +140,21 @@ class ApiCertificateRequestsController < ApplicationController
       end
     end
     render action: :create_v1_3
+  end
+
+  def show_v1_4
+    if @result.save && @certificate_order.is_a?(CertificateOrder)
+      template = "api_certificate_requests/show_v1_4"
+      @result.order_status = @certificate_order.status
+      @result.update_attribute :response, render_to_string(:template => template)
+      render(:template => template) and return
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
   end
 
   def reprocess_v1_3
@@ -246,7 +261,7 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
-              when "retrieve_v1_3"
+              when "retrieve_v1_3", "show_v1_4"
                 ApiCertificateRetrieve
               when "dcv_email_resend_v1_3"
                 ApiDcvEmailResend

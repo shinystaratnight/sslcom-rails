@@ -575,6 +575,11 @@ class CertificateOrder < ActiveRecord::Base
              contacts: api_contacts,
              csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
             "\" https://sws-test.sslpki.local:3000/certificates"
+      when /show/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+            to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
     end
   end
 
