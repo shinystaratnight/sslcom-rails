@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :order_status
+    attributes :order_status, :certificates
   end
 end
