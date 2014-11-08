@@ -95,7 +95,7 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.update_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            template = "api_certificate_requests/success_create_v1_4"
+            template = "api_certificate_requests/update_v1_4"
             ccr = @acr.certificate_content.csr.ca_certificate_requests.last
             @result.api_request=ccr.parameters
             @result.api_response=ccr.response
@@ -145,15 +145,13 @@ class ApiCertificateRequestsController < ApplicationController
   def show_v1_4
     if @result.save
       @acr = @result.find_certificate_order
-      if @acr.is_a?(CertificateOrder)
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
         @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
           response_encoding: @result.response_encoding) if @acr.signed_certificate
         @result.update_attribute :response, render_to_string(:template => template)
         render(:template => template) and return
-      else
-        @result = @acr #so that rabl can report errors
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"

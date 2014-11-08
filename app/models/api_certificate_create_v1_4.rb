@@ -169,24 +169,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if cc.csr_submitted?
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
-        c = CertificateContact.new
-        r = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
-              Reseller.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
+        c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
+              CertificateContact.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
             else
-              options[:ssl_account].reseller #test for existence
+              CertificateContact.new.attributes.merge! options[:ssl_account].reseller.attributes #test for existence
             end
-        errors[:contacts] = r.errors unless r.valid?
-        CertificateContent::RESELLER_FIELDS_TO_COPY.each do |field|
-          c.send((field+'=').to_sym, r.send(field.to_sym))
-        end
-        c.company_name = r.organization
-        c.country = Country.find_by_name_caps(r.country.upcase).iso1_code if
-            Country.find_by_name_caps(r.country.upcase)
         c.clear_roles
         c.add_role! role
-        cc.certificate_contacts << c
-        cc.update_attribute(role+"_checkbox", true) unless
-          role==CertificateContent::ADMINISTRATIVE_ROLE
+        unless c.valid?
+          errors[:contacts] << {role.to_sym => c.errors}
+        else
+          cc.certificate_contacts << c
+          cc.update_attribute(role+"_checkbox", true) unless
+              role==CertificateContent::ADMINISTRATIVE_ROLE
+        end
       end
       cc.provide_contacts!
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
@@ -334,6 +330,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       end
     end
+
+    # CertificateContent::CONTACT_ROLES.each do |role|
+    #   c = CertificateContact.new
+    #   r = if contacts && (contacts[role] || contacts[:all])
+    #         Reseller.new(contacts[role] ? contacts[role] : contacts[:all])
+    #       else
+    #         options[:ssl_account].reseller #test for existence
+    #       end
+    #   errors[:contacts]<<{role.to_sym => r.errors} unless r.valid?
+    # end
+    #
     return false if errors[:contacts]
   end
 end
