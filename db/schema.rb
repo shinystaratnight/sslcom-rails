@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141103202452) do
+ActiveRecord::Schema.define(:version => 20141110172807) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -122,6 +122,9 @@ ActiveRecord::Schema.define(:version => 20141103202452) do
     t.string   "notes"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "encrypted_card_number"
+    t.string   "encrypted_card_number_salt"
+    t.string   "encrypted_card_number_iv"
   end
 
   add_index "billing_profiles", ["ssl_account_id"], :name => "index_billing_profile_on_ssl_account_id"

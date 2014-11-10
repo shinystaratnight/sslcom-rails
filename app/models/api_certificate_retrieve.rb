@@ -1,5 +1,5 @@
 class ApiCertificateRetrieve < ApiCertificateRequest
-  QUERY_TYPE = %w(order_status end_certificate all_certificates ca_bundle)
+  QUERY_TYPE = %w(order_status_only end_certificate all_certificates ca_bundle)
   RESPONSE_TYPE = %w(zip netscape pkcs7 individually)
   RESPONSE_ENCODING = %w(base64 binary)
 
@@ -22,7 +22,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
 
   def initialize(attributes = {})
     super
-    self.query_type ||= "all_certificates"
+    self.query_type ||= "order_status_only"
     self.response_type ||= "individually"
     self.response_encoding ||= "base64"
   end

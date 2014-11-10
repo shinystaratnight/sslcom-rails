@@ -149,7 +149,8 @@ class ApiCertificateRequestsController < ApplicationController
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
         @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
-          response_encoding: @result.response_encoding) if @acr.signed_certificate
+          response_encoding: @result.response_encoding) if (@acr.signed_certificate &&
+          @result.query_type!="order_status_only")
         @result.update_attribute :response, render_to_string(:template => template)
         render(:template => template) and return
       end

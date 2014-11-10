@@ -46,6 +46,7 @@ gem 'request_exception_handler'
 gem 'rvm-capistrano'
 gem 'newrelic_rpm'
 gem 'dalli'
+gem 'attr_encrypted'
 
 
 # Deploy with Capistrano

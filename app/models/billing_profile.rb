@@ -1,10 +1,11 @@
 class BillingProfile < ActiveRecord::Base  
   belongs_to  :ssl_account
   has_many    :orders
-  include Encryption, ActiveMerchant::Billing::CreditCardMethods
+  include ActiveMerchant::Billing::CreditCardMethods
 
   cattr_accessor :password
   attr_accessor :number
+  attr_encrypted :card_number, :key => 'v1X&3az00c!F', :mode => :per_attribute_iv_and_salt
 
   ALL_COLUMNS = %w(description first_name last_name address_1 address_2
     postal_code city state country phone company credit_card card_number
@@ -36,15 +37,7 @@ class BillingProfile < ActiveRecord::Base
   def to_xml(options = {})
     super options.merge(:except => [:data, :salt])
   end
-  
-  def encrypt_number
-    self.data = encrypt(card_number, password, salt)
-  end
-  
-  def decrypt_number
-    self.card_number = decrypt(data, password, salt)
-  end
-  
+
   def full_name
     first_name + " " + last_name
   end
@@ -106,18 +99,22 @@ class BillingProfile < ActiveRecord::Base
     end
   end
 
+  def self.nullify_card_number_field
+    self.find_each{|bp|bp.update_column(:card_number, nil)}
+  end
+
+  def self.encrypt_all_card_numbers
+    self.find_each{|bp|bp.update_attribute(:card_number, bp.read_attribute(:card_number)) if
+        bp.encrypted_card_number.blank?}
+  end
+
   private
-  
-  before_create :store_last_digits, :generate_salt, :encrypt_number
-  
+
+  before_create :store_last_digits
+
   def store_last_digits
     self.last_digits = self.class.last_digits(card_number)
   end
-  
-  def generate_salt
-    self.salt = [rand(2**64 - 1)].pack("Q" )
-  end
-  
   
   def validate
     errors.add(:expiration_year, "is invalid" ) unless valid_expiry_year?(expiration_year)
