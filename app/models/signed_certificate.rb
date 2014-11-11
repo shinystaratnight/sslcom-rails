@@ -397,6 +397,17 @@ class SignedCertificate < ActiveRecord::Base
     sc_pkcs7
   end
 
+  def to_pem
+    return body unless file_type=="PKCS#7"
+    sc_pkcs7="#{Rails.root}/tmp/sc_pkcs7_#{id}.cer"
+    File.open(sc_pkcs7, 'wb') do |f|
+      f.write body+"\n"
+    end
+    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+    ::CertUtil.pkcs7_to_pem(sc_pem, sc_pkcs7)
+    sc_pem
+  end
+
   def to_pkcs7
     (BEGIN_PKCS7_TAG+"\n"+ComodoApi.collect_ssl(certificate_order, {response_type: "pkcs7"}).certificate+END_PKCS7_TAG).gsub(/\n/, "\r\n") #temporary fix
     # return body if body.starts_with?(BEGIN_PKCS7_TAG)
@@ -440,7 +451,8 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_ov?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com OV CA/
+    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com OV CA/ ||
+        decoded =~ /High Assurance CA/
   end
 
   def is_ev?

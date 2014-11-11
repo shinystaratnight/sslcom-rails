@@ -187,7 +187,7 @@ SslCom::Application.routes.draw do
 
   resources :orders do
     collection do
-      get :checkout, action: "new", as: :checkout
+      get :checkout, action: "new", as: :checkout # this shows the discount code prompt
       get :show_cart
       get :search
       get :visitor_trackings

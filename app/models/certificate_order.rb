@@ -1077,7 +1077,7 @@ class CertificateOrder < ActiveRecord::Base
     if certificate.is_ucc?
       domains_for_comodo,dcv_methods_for_comodo=nil,[]
       new_domains = (options[:certificate_content] ? options[:certificate_content].domains : domains)
-      domains_for_comodo = new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains).uniq
+      domains_for_comodo = (new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains)).flatten.uniq
       domains_for_comodo.each do |d|
         if certificate_content.certificate_names.find_by_name(d)
           last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo

@@ -3,7 +3,10 @@
 -content_for :title, title
 =order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
-  %h3=title
+  %h3
+    =title
+    %span(style="float:right; font-size:.6em")
+      =link_to "advanced options", checkout_orders_url
   %p
     -if current_user.blank?
       Please fill out the required fields below to complete your account registration.
