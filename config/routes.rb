@@ -187,6 +187,7 @@ SslCom::Application.routes.draw do
 
   resources :orders do
     collection do
+      get :checkout, action: "new", as: :checkout
       get :show_cart
       get :search
       get :visitor_trackings
