@@ -114,7 +114,7 @@ class SiteSealsController < ApplicationController
   private
 
   def notify_customer
-    @co.processed_recipients.each do |c|
+    @co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
       if @site_seal.fully_activated?
         OrderNotifier.site_seal_approve(c, @co).deliver
       else

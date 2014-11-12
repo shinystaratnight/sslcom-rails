@@ -287,7 +287,7 @@ class SignedCertificate < ActiveRecord::Base
         end
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-    co.processed_recipients.each do |c|
+    co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
       OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
       OrderNotifier.site_seal_approve(c, co).deliver
     end

@@ -31,7 +31,7 @@
       \#{@certificate_order.receipt_recipients.join(", ")}.
     %p
       Once processing is completed, your certificate order will be sent to:
-      \#{@certificate_order.processed_recipients.join(", ")}.
+      \#{@certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.join(", ")}.
   -if is_receipt?
     %h3=title
   -if @certificate_order

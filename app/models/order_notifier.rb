@@ -118,7 +118,13 @@ class OrderNotifier < ActionMailer::Base
     @subject    += "#{Settings.community_name} User information"
   end
 
-  
+  def api_executed(rendered)
+    @rendered = rendered
+    mail  subject: "SSL.com api command executed",
+          from: "noreply@ssl.com",
+          to:    "api@ssl.com"
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"
@@ -138,5 +144,5 @@ class OrderNotifier < ActionMailer::Base
     @contact=contact
     @certificate_order=certificate_order
   end
-  
+
 end

@@ -18,7 +18,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def notify
-
+    OrderNotifier.api_executed(@rendered).deliver if (@result.errors.blank? && @rendered)
   end
 
   def create_v1_3
@@ -153,10 +153,17 @@ class ApiCertificateRequestsController < ApplicationController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
-        @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
-          response_encoding: @result.response_encoding) if (@acr.signed_certificate &&
-          @result.query_type!="order_status_only")
-        @result.update_attribute :response, render_to_string(:template => template)
+        if (@acr.signed_certificate && @result.query_type!="order_status_only")
+          @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
+            response_encoding: @result.response_encoding)
+          @result.common_name = @acr.signed_certificate.common_name
+          @result.subject_alternative_names = @acr.signed_certificate.subject_alternative_names
+          @result.effective_date = @acr.signed_certificate.effective_date
+          @result.expiration_date = @acr.signed_certificate.expiration_date
+          @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
+        end
+        @rendered=render_to_string(:template => template)
+        @result.update_attribute :response, @rendered
         render(:template => template) and return
       end
     else

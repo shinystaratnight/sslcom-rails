@@ -530,7 +530,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def self.retrieve_ca_certs(start, finish)
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
-    #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents whch contain the external_order_number
+    #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
   end
 
@@ -578,7 +578,9 @@ class CertificateOrder < ActiveRecord::Base
       when /show/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+             query_type: ("all_certificates" unless signed_certificate.blank?),
+             response_type: ("individually" unless signed_certificate.blank?)}.
             to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
     end
   end
