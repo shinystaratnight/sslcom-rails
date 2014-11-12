@@ -1,6 +1,7 @@
 class ApiCertificateRequestsController < ApplicationController
   before_filter :set_test, :record_parameters
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
+  after_filter :notify
 
   wrap_parameters ApiCertificateRequest, include:
       [*(ApiCertificateRequest::ACCESSORS+
@@ -14,6 +15,10 @@ class ApiCertificateRequestsController < ApplicationController
 
   rescue_from MultiJson::DecodeError do |exception|
     render :text => exception.to_s, :status => 422
+  end
+
+  def notify
+
   end
 
   def create_v1_3

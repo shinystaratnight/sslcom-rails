@@ -78,10 +78,10 @@ class ComodoApi
   end
 
   def self.collect_ssl(certificate_order, options={})
-    comodo_params = {'queryType' => 2, "showExtStatus"=>"Y", "responseType"=>"3",
+    comodo_params = {'queryType' => 2, "showExtStatus"=>"Y",
                'orderNumber'=> certificate_order.external_order_number_for_extract}
-    comodo_params.reverse_merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]]) if options[:response_type]
-    comodo_params.reverse_merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]],
+    comodo_params.merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]]) if options[:response_type]
+    comodo_params.merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]],
        "responseEncoding"=>RESPONSE_ENCODING[options[:response_encoding]].to_i) if ["zip","pkcs7"].include?(options[:response_type]) &&
         options[:response_encoding]=="binary"
     # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
