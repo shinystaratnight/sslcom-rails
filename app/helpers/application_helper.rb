@@ -384,6 +384,6 @@ module ApplicationHelper
   end
 
   def is_new_order_page?
-    current_page?(controller: :orders, action: :new)
+    current_page?(new_order_path) || current_page?(checkout_orders_path)
   end
 end

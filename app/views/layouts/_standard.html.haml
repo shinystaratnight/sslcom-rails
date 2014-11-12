@@ -1,31 +1,42 @@
 #header
-  .inner
-    %table#at_a_glance_header
-      %tbody
-        %tr
-          %th.validations=link_to "INCOMPLETE ORDERS", incomplete_certificate_orders_path
-          %th.certificate_status=link_to "SSL CERTS PROCESSING", pending_certificate_orders_path
-          -unless current_user.ssl_account.funded_account.blank?
-            %th.certificate_status=link_to "AVAILABLE FOR USE", allocate_funds_url
-          -if current_user.ssl_account.has_credits?
-            %th.certificate_status=link_to "AVAILABLE CREDITS", credits_certificate_orders_path
-          %th.certificate_status=link_to "ITEMS IN CART", show_cart_orders_url
-          -if show_short_links?
-            %th.certificate_status=link_to "SHORTEN LINKS", root_url(subdomain: "links")
-          %th=link_to 'Logout', logout_url
-        %tr#info
-          %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
-          %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, pending_certificate_orders_path
-          -unless current_user.ssl_account.funded_account.blank?
-            %td.certificate_status=link_to current_user.ssl_account.funded_account.amount(true).format(:with_currency=>false), credits_certificate_orders_path
-          -if current_user.ssl_account.has_credits?
-            %td.certificate_status=link_to current_user.ssl_account.certificate_orders.unused_credits.count, credits_certificate_orders_path
-          %td.certificate_status#cart_items_qty=link_to cart_items_count, show_cart_orders_url
-          %td
-    %span.logo=link_to "", root_url
+  -unless is_new_order_page?
+    .inner
+      %table#at_a_glance_header
+        %tbody
+          %tr
+            %th.validations=link_to "INCOMPLETE ORDERS", incomplete_certificate_orders_path
+            %th.certificate_status=link_to "SSL CERTS PROCESSING", pending_certificate_orders_path
+            -unless current_user.ssl_account.funded_account.blank?
+              %th.certificate_status=link_to "AVAILABLE FOR USE", allocate_funds_url
+            -if current_user.ssl_account.has_credits?
+              %th.certificate_status=link_to "AVAILABLE CREDITS", credits_certificate_orders_path
+            %th.certificate_status=link_to "ITEMS IN CART", show_cart_orders_url
+            -if show_short_links?
+              %th.certificate_status=link_to "SHORTEN LINKS", root_url(subdomain: "links")
+            %th=link_to 'Logout', logout_url
+          %tr#info
+            %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
+            %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, pending_certificate_orders_path
+            -unless current_user.ssl_account.funded_account.blank?
+              %td.certificate_status=link_to current_user.ssl_account.funded_account.amount(true).format(:with_currency=>false), credits_certificate_orders_path
+            -if current_user.ssl_account.has_credits?
+              %td.certificate_status=link_to current_user.ssl_account.certificate_orders.unused_credits.count, credits_certificate_orders_path
+            %td.certificate_status#cart_items_qty=link_to cart_items_count, show_cart_orders_url
+            %td
+      %span.logo=link_to("", root_url) unless is_new_order_page?
+  -else
+    .content
+      .logo
+      .navigation
+        .top_navigation
+          %ul{style: "float:left;"}
+            %li
+              %span.icn_live &nbsp;
+              %a#live_chat{:href => "#"} Live Chat
 #content
   .containerp
-    =render :partial=>"layouts/standard_menu"
+    -unless is_new_order_page?
+      =render :partial=>"layouts/standard_menu"
     .inner
       =render :partial => "shared/messages"
       =yield
