@@ -1,6 +1,8 @@
 SSL Deposit Confirmation #<%=@deposit.reference_number%>
 
+<%if @ssl_account.reseller -%>
 Dear <%="#{@ssl_account.reseller.first_name} #{@ssl_account.reseller.last_name}"%>,
+<%end -%>
 
 The following deposit has been posted to your SSL account:
 
