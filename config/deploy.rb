@@ -26,9 +26,9 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP
-set :domain, '184.73.226.63' #production
+# set :domain, '184.73.226.63' #production
 #set :domain, 'staging2.ssl.com' #development
-# set :domain, '54.83.39.189' # comodo extractor
+set :domain, '54.83.39.189' # comodo extractor
 
 # set :application, "sws-test.sslpki.com" # test api
 # set :application, "sws.sslpki.com" # api

@@ -123,15 +123,15 @@
                               none
                     .certificate_details_box
                       %ul
+                        -if co.signed_certificate
+                          =render partial: 'download', locals: {co: @certificate_order}
                         -unless @cc.csr.blank? || hide_validation?(co)
                           %li
                             %strong domain validation
                           =render partial: 'validations/dcv', locals: {co: @certificate_order}
-                          %li
-                            %strong validation documentation
-                          -if @certificate_order.certificate.is_dv?
-                            %li n/a
-                          -else
+                          -unless @certificate_order.certificate.is_dv?
+                            %li
+                              %strong validation documentation
                             -unless @certificate_order.validation.validation_histories.blank?
                               -@certificate_order.validation.validation_histories.each do |vh|
                                 %li
@@ -268,10 +268,6 @@
                               %strong server software
                             %li
                               #{c.server_software.title}
-                        -if sc && current
-                          .certificate_details_box
-                            %ul
-                              =render partial: 'download', locals: {co: @certificate_order}
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")
