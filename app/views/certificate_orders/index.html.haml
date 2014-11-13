@@ -98,6 +98,8 @@
                                 =link_to 'create/edit contacts', certificate_content_contacts_url(cc)
                       .certificate_details_box
                         %ul
+                          -if co.signed_certificate
+                            =render partial: 'download', locals: {co: co}
                           -unless cc.csr.blank? || hide_validation?(co)
                             %li
                               %strong domain validation
@@ -133,6 +135,4 @@
                               %strong server software
                             %li.category_border
                               #{cc.server_software.title}
-                          -if cc.csr && cc.csr.signed_certificate
-                            =render partial: 'download', locals: {co: co}
                           =render partial: 'shared/small_admin_functions', locals: {co: co}

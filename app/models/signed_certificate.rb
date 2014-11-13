@@ -461,18 +461,18 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_SHA2?
-    decoded =~ /sha256WithRSAEncryption/
+    decoded =~ /sha2/
   end
 
   def is_SHA1?
-    decoded =~ /sha1WithRSAEncryption/
+    decoded =~ /sha1/
   end
 
   def signature_algorithm
     if is_SHA2?
-      "SHA1"
-    else
       "SHA2"
+    else
+      "SHA1"
     end
   end
 

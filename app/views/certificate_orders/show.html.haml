@@ -52,37 +52,57 @@
                             %em waiting for csr
                         -else
                           -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
-                          -unless fields.organization.blank?
+                          -unless @cc.csr.signed_certificate
+                            -unless fields.organization.blank?
+                              %li
+                                organization:
+                                %span.organization
+                                  \#{fields.organization}
+                            -unless (ou=fields.organization_unit).blank?
+                              %li
+                                department:
+                                %div.department
+                                  -unless ou.is_a? Array
+                                    \#{fields.organization_unit}
+                                  -else
+                                    %ul
+                                      -ou.each do |u|
+                                        %li
+                                          =u
+                            -unless fields.locality.blank?
+                              %li
+                                city:
+                                %span.city
+                                  \#{fields.locality}
+                            -unless fields.state.blank?
+                              %li
+                                state:
+                                %span.state
+                                  \#{fields.state}
+                            -unless fields.country.blank?
+                              %li
+                                country:
+                                %span.country
+                                  \#{fields.country}
+                          -else
+                            -#%li
+                            -#  expires:
+                            -#  %span.country
+                            -#    \#{fields.expiration_date.strftime("%b %d, %Y")}
+                            -#%li
+                            -#  remaining days:
+                            -#  %span.country
+                            -#    \#{fields.remaining_days(true)}
                             %li
-                              organization:
-                              %span.organization
-                                \#{fields.organization}
-                          -unless (ou=fields.organization_unit).blank?
-                            %li
-                              department:
-                              %div.department
-                                -unless ou.is_a? Array
-                                  \#{fields.organization_unit}
-                                -else
-                                  %ul
-                                    -ou.each do |u|
-                                      %li
-                                        =u
-                          -unless fields.locality.blank?
-                            %li
-                              city:
-                              %span.city
-                                \#{fields.locality}
-                          -unless fields.state.blank?
-                            %li
-                              state:
-                              %span.state
-                                \#{fields.state}
-                          -unless fields.country.blank?
-                            %li
-                              country:
+                              algorithm:
                               %span.country
-                                \#{fields.country}
+                                \#{fields.signature_algorithm}
+                                -if fields.is_SHA1?
+                                  =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
+                            %li
+                              decoded:
+                              %span.country
+                                %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
                         %li=link_to "view order transaction", @certificate_order.order
                     .certificate_details_box
                       %ul
@@ -124,11 +144,11 @@
                     .certificate_details_box
                       %ul
                         -if co.signed_certificate
-                          =render partial: 'download', locals: {co: @certificate_order}
+                          =render partial: 'download', locals: {co: co}
                         -unless @cc.csr.blank? || hide_validation?(co)
                           %li
                             %strong domain validation
-                          =render partial: 'validations/dcv', locals: {co: @certificate_order}
+                          =render partial: 'validations/dcv', locals: {co: co}
                           -unless @certificate_order.certificate.is_dv?
                             %li
                               %strong validation documentation
