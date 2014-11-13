@@ -37,19 +37,12 @@ class ComodoApi
 
   def self.domain_control_email_choices(obj_or_domain)
     is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(CertificateName)) ? true : false
-    options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
+    comodo_options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"
-    url = URI.parse(host)
-    con = Net::HTTP.new(url.host, 443)
-    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
-    con.use_ssl = true
-    res = con.start do |http|
-      http.request_post(url.path, options)
-    end
+    res = send_comodo(host, comodo_options)
     attr = {request_url: host,
-      parameters: options, method: "post", response: res.body, ca: "comodo"}
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo"}
     if is_a_obj
       dcv=obj_or_domain.ca_dcv_requests.create(attr)
       obj_or_domain.domain_control_validations.create(
@@ -61,9 +54,16 @@ class ComodoApi
   end
 
   def self.resend_dcv(dcv)
-    options = {'dcvEmailAddress' => dcv.email_address, 'orderNumber'=> dcv.csr.sent_success(true).order_number}.
+    comodo_options = {'dcvEmailAddress' => dcv.email_address, 'orderNumber'=> dcv.csr.sent_success(true).order_number}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = RESEND_DCV_URL
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: dcv.csr}
+    CaDcvResendRequest.create(attr)
+  end
+
+  def self.send_comodo(host, options={})
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
@@ -72,32 +72,26 @@ class ComodoApi
     res = con.start do |http|
       http.request_post(url.path, options)
     end
-    attr = {request_url: host,
-      parameters: options, method: "post", response: res.body, ca: "comodo", api_requestable: dcv.csr}
-    CaDcvResendRequest.create(attr)
   end
 
   def self.collect_ssl(certificate_order, options={})
-    comodo_params = {'queryType' => 2, "showExtStatus"=>"Y",
-               'orderNumber'=> certificate_order.external_order_number_for_extract}
-    comodo_params.merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]]) if options[:response_type]
-    comodo_params.merge!("queryType"=>1, "responseType"=>RESPONSE_TYPE[options[:response_type]],
-       "responseEncoding"=>RESPONSE_ENCODING[options[:response_encoding]].to_i) if ["zip","pkcs7"].include?(options[:response_type]) &&
-        options[:response_encoding]=="binary"
-    # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
-    comodo_options = comodo_params.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    comodo_options = params_collect(certificate_order, options)
     host = COLLECT_SSL_URL
-    url = URI.parse(host)
-    con = Net::HTTP.new(url.host, 443)
-    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
-    con.use_ssl = true
-    res = con.start do |http|
-      http.request_post(url.path, comodo_options)
-    end
+    res = send_comodo(host, comodo_options)
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
     CaRetrieveCertificate.create(attr)
+  end
+
+  def self.params_collect(certificate_order, options={})
+    comodo_params = {'queryType' => 2, "showExtStatus" => "Y",
+                     'baseOrderNumber' => certificate_order.external_order_number}
+    comodo_params.merge!("queryType" => 1, "responseType" => RESPONSE_TYPE[options[:response_type]]) if options[:response_type]
+    comodo_params.merge!("queryType" => 1, "responseType" => RESPONSE_TYPE[options[:response_type]],
+                         "responseEncoding" => RESPONSE_ENCODING[options[:response_encoding]].to_i) if ["zip", "pkcs7"].include?(options[:response_type]) &&
+        options[:response_encoding]=="binary"
+    # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
+    comodo_options = comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
 #  def self.test

@@ -1179,14 +1179,6 @@ class CertificateOrder < ActiveRecord::Base
         all_csrs && !sent_success_map.blank?
   end
 
-  def external_order_number_for_extract
-    unless certificate.is_ucc?
-      external_order_number
-    else
-      external_order_number + (sent_success_count > 1 ? "repl##{sent_success_count-1}" : "")
-    end
-  end
-
   # Get the most recent certificate_id (useful for UCC replacements)
   def external_certificate_id
     all_csrs = certificate_contents.map(&:csr)

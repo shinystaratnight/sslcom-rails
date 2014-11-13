@@ -149,6 +149,10 @@
                         %strong Comodo API Rekey Command
                       %li
                         %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca.merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::REPLACE_SSL_URL+'\''
+                      %li
+                        %strong Comodo API Retrieve Command
+                      %li
+                        %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
                     %li product:
                     %ul
                       %li
