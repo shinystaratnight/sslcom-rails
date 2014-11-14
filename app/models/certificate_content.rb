@@ -970,7 +970,7 @@ class CertificateContent < ActiveRecord::Base
   def expiring?
     if csr.try(:signed_certificate)
       ed=csr.signed_certificate.expiration_date
-      ed < Settings.expiring_threshold.days.from_now
+      ed < Settings.expiring_threshold.days.from_now unless ed.blank?
     end
   end
 

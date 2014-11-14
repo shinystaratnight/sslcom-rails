@@ -165,6 +165,10 @@ class ApplicationController < ActionController::Base
     @certificate_orders=[]
     return @certificate_orders if certs.blank?
     limit=free_qty_limit
+    build_certificate_order(certs, limit, @certificate_orders)
+  end
+
+  def build_certificate_order(certs, limit, certificate_orders)
     certs.each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
       certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
@@ -174,12 +178,12 @@ class ApplicationController < ActionController::Base
         qty=c[ShoppingCart::QUANTITY].to_i
       end
       certificate_order = CertificateOrder.new(
-        :server_licenses=>c[ShoppingCart::LICENSES],
-        :duration=>c[ShoppingCart::DURATION],
-        :quantity=>qty)
+          :server_licenses => c[ShoppingCart::LICENSES],
+          :duration => c[ShoppingCart::DURATION],
+          :quantity => qty)
       certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
-      certificate_order.certificate_contents.build :domains=>
-        c[ShoppingCart::DOMAINS]
+      certificate_order.certificate_contents.build :domains =>
+                                                       c[ShoppingCart::DOMAINS]
       unless current_user.blank?
         current_user.ssl_account.clear_new_certificate_orders
         certificate_order.ssl_account=current_user.ssl_account
@@ -187,9 +191,8 @@ class ApplicationController < ActionController::Base
       end
       #adjusting duration to reflect number of days validity
       certificate_order = setup_certificate_order(certificate, certificate_order)
-      @certificate_orders << certificate_order if certificate_order.valid?
+      certificate_orders << certificate_order if certificate_order.valid?
     end
-    @certificate_orders
   end
 
   def old_certificates_from_cookie
