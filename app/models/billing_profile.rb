@@ -7,16 +7,15 @@ class BillingProfile < ActiveRecord::Base
   attr_accessor :number
   attr_encrypted :card_number, :key => 'v1X&3az00c!F', :mode => :per_attribute_iv_and_salt
 
-  ALL_COLUMNS = %w(description first_name last_name address_1 address_2
-    postal_code city state country phone company credit_card card_number
+  ALL_COLUMNS = %w(description first_name last_name company address_1 address_2
+    postal_code city state country phone vat credit_card card_number
     expiration_month expiration_year security_code last_digits data salt notes
     created_at updated_at)
-  EXCLUDED_COLUMNS = %w(created_at updated_at description
-    notes last_digits data salt company)
+  EXCLUDED_COLUMNS = %w(created_at updated_at description notes last_digits data salt)
   EXTENDED_FIELDS = %w(address_1 address_2)
   CREDIT_CARD_COLUMNS = %w(credit_card card_number security_code expiration_year expiration_month)
   BILLING_INFORMATION_COLUMNS = ALL_COLUMNS - EXCLUDED_COLUMNS - CREDIT_CARD_COLUMNS
-  REQUIRED_COLUMNS = BILLING_INFORMATION_COLUMNS + CREDIT_CARD_COLUMNS - %w{address_2 company}
+  REQUIRED_COLUMNS = BILLING_INFORMATION_COLUMNS + CREDIT_CARD_COLUMNS - %w{address_2 company vat}
   TOP_COUNTRIES = ["United States", "United Kingdom", "Canada"]
   CREDIT_CARDS = ["Visa", "Master Card", "Discover", "American Express"]
   AMERICAN = "United States"

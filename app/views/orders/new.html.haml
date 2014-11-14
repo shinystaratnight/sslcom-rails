@@ -8,10 +8,9 @@
     %span(style="float:right; font-size:.6em")
       =link_to "advanced options", checkout_orders_url
   %p
-    -if current_user.blank?
-      Please fill out the required fields below to complete your account registration.
+    Please fill out the (*) required fields #{current_user.blank? ? "below to complete your account registration." : "below."}
     -if current_order.amount.to_s.to_i > 0
-      This charge will appear as SSL Corporation on your credit card statement.
+      This charge will appear as SSL.com on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
   =form_for *url_to_new_order do |f|
     -if @certificate_order
