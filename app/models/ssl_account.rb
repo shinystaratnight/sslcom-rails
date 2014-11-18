@@ -255,6 +255,7 @@ class SslAccount < ActiveRecord::Base
 
   private
 
+  # creates dev db from production
   def pred_dev_db
     # Obfuscate IDs
     SslAccount.for_each{|s|s.acct_number='a'+SecureRandom.hex(1)+
@@ -276,13 +277,14 @@ class SslAccount < ActiveRecord::Base
     Order.for_each{|o|
       o.reference_number = ""+i.to_s
       o.save
-      i+=1
-    }
+      i+=1}
     # obfuscate credit card numbers
     BillingProfile.for_each{|bp|
       bp.card_number="4222222222222"
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
+      bp.address1 = "123 Houston St"
+      bp.company = "Company Inc"
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,

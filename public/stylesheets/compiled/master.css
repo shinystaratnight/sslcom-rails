@@ -176,7 +176,7 @@ a img {
 /* line 132, ../../../app/stylesheets/master.sass */
 #header .content .navigation .bottom_navigation {
   width: 580px;
-  padding: 17px 30px;
+  padding: 17px 30px 0px;
 }
 
 /* line 137, ../../../app/stylesheets/master.sass */
