@@ -648,45 +648,6 @@ class CertificateOrder < ActiveRecord::Base
     renewal_attempts.blank? ? true : renewal_attempts.last.created_at < RENEWAL_DATE_CUTOFF
   end
 
-  def setup_certificate_order(certificate, certificate_order)
-    duration = certificate.duration_in_days(certificate_order.duration)
-    certificate_order.certificate_content.duration = duration
-    if certificate.is_ucc? || certificate.is_wildcard?
-      psl = certificate.items_by_server_licenses.find { |item|
-        item.value==duration.to_s }
-      so  = SubOrderItem.new(:product_variant_item=>psl,
-       :quantity            =>certificate_order.server_licenses.to_i,
-       :amount              =>psl.amount*certificate_order.server_licenses.to_i)
-      certificate_order.sub_order_items << so
-      if certificate.is_ucc?
-        pd                 = certificate.items_by_domains.find_all { |item|
-          item.value==duration.to_s }
-        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
-        so                 = SubOrderItem.new(:product_variant_item=>pd[0],
-                                              :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
-                                              :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
-        certificate_order.sub_order_items << so
-        if additional_domains > 0
-          so = SubOrderItem.new(:product_variant_item=>pd[1],
-                                :quantity            =>additional_domains,
-                                :amount              =>pd[1].amount*additional_domains)
-          certificate_order.sub_order_items << so
-        end
-      end
-    end
-    unless certificate.is_ucc?
-      pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
-      so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
-                             :amount              =>pvi.amount)
-      certificate_order.sub_order_items << so
-    end
-    certificate_order.amount = certificate_order.
-        sub_order_items.map(&:amount).sum
-    certificate_order.certificate_contents[0].
-        certificate_order    = certificate_order
-    certificate_order
-  end
-
   def validation_methods
     validation.validation_rules.map(&:applicable_validation_methods).
       flatten.uniq
@@ -1260,7 +1221,7 @@ class CertificateOrder < ActiveRecord::Base
       new_cert = self.dup
       new_cert.certificate_contents.build
       new_cert.duration=1 #only renew 1 year at a time
-      co = setup_certificate_order(renewal_certificate, new_cert)
+      co = Order.setup_certificate_order(certificate: renewal_certificate, certificate_order: new_cert)
       co.parent = self
       reorder=ssl_account.purchase co
       reorder.cents = co.attributes_before_type_cast["amount"].to_f

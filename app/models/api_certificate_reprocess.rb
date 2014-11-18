@@ -84,7 +84,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
     certificate_content=certificate_order.certificate_contents.build(
         csr: self.csr_obj, server_software_id: self.server_software)
     certificate_content.certificate_order = certificate_order
-    @certificate_order = setup_certificate_order(@certificate, certificate_order)
+    @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)
     order = current_user.ssl_account.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test

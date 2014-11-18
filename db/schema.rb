@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141113233608) do
+ActiveRecord::Schema.define(:version => 20141114192523) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -465,6 +465,27 @@ ActiveRecord::Schema.define(:version => 20141113233608) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "status"
+  end
+
+  create_table "invoices", :force => true do |t|
+    t.integer  "ssl_account_id"
+    t.string   "description"
+    t.string   "company"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "address_1"
+    t.string   "address_2"
+    t.string   "country"
+    t.string   "city"
+    t.string   "state"
+    t.string   "postal_code"
+    t.string   "phone"
+    t.string   "fax"
+    t.string   "vat"
+    t.string   "tax"
+    t.string   "notes"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "legacy_v2_user_mappings", :force => true do |t|

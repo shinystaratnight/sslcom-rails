@@ -281,6 +281,8 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate
               when "retrieve_v1_3", "show_v1_4"
                 ApiCertificateRetrieve
+              when "quote"
+                ApiCertificateQuote
               when "dcv_email_resend_v1_3"
                 ApiDcvEmailResend
               when "dcv_emails_v1_3", "dcv_revoke_v1_3"

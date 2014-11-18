@@ -101,57 +101,6 @@ class ApplicationController < ActionController::Base
       :expires => Settings.cart_cookie_days.to_i.days.from_now}
   end
 
-  def setup_certificate_order(certificate, certificate_order)
-    duration = certificate.duration_in_days(certificate_order.duration)
-    certificate_order.certificate_content.duration = duration
-    if certificate.is_ucc? || certificate.is_wildcard?
-      psl = certificate.items_by_server_licenses.find { |item|
-        item.value==duration.to_s }
-      so  = SubOrderItem.new(:product_variant_item=>psl,
-       :quantity            =>certificate_order.server_licenses.to_i,
-       :amount              =>psl.amount*certificate_order.server_licenses.to_i)
-      certificate_order.sub_order_items << so
-      if certificate.is_ucc?
-        pd                 = certificate.items_by_domains.find_all { |item|
-          item.value==duration.to_s }
-        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
-        so                 = SubOrderItem.new(:product_variant_item=>pd[0],
-                                              :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
-                                              :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
-        certificate_order.sub_order_items << so
-        # calculate wildcards by subtracting their total from additional_domains
-        wildcards = 0
-        if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
-          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
-          additional_domains -= wildcards
-        end
-        if additional_domains > 0
-          so = SubOrderItem.new(:product_variant_item=>pd[1],
-                                :quantity            =>additional_domains,
-                                :amount              =>pd[1].amount*additional_domains)
-          certificate_order.sub_order_items << so
-        end
-        if wildcards > 0
-          so = SubOrderItem.new(:product_variant_item=>pd[2],
-                                :quantity            =>wildcards,
-                                :amount              =>pd[2].amount*wildcards)
-          certificate_order.sub_order_items << so
-        end
-      end
-    end
-    unless certificate.is_ucc?
-      pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
-      so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
-                             :amount              =>pvi.amount)
-      certificate_order.sub_order_items << so
-    end
-    certificate_order.amount = certificate_order.
-        sub_order_items.map(&:amount).sum
-    certificate_order.certificate_contents[0].
-        certificate_order    = certificate_order
-    certificate_order
-  end
-
   def free_qty_limit
     qty=current_user ?
         Certificate::FREE_CERTS_CART_LIMIT - current_user.ssl_account.certificate_orders.unused_free_credits.count :
@@ -165,34 +114,8 @@ class ApplicationController < ActionController::Base
     @certificate_orders=[]
     return @certificate_orders if certs.blank?
     limit=free_qty_limit
-    build_certificate_order(certs, limit, @certificate_orders)
-  end
-
-  def build_certificate_order(certs, limit, certificate_orders)
-    certs.each do |c|
-      next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
-      certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
-      if certificate.is_free?
-        qty=c[ShoppingCart::QUANTITY].to_i > limit ? limit : c[ShoppingCart::QUANTITY].to_i
-      else
-        qty=c[ShoppingCart::QUANTITY].to_i
-      end
-      certificate_order = CertificateOrder.new(
-          :server_licenses => c[ShoppingCart::LICENSES],
-          :duration => c[ShoppingCart::DURATION],
-          :quantity => qty)
-      certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
-      certificate_order.certificate_contents.build :domains =>
-                                                       c[ShoppingCart::DOMAINS]
-      unless current_user.blank?
-        current_user.ssl_account.clear_new_certificate_orders
-        certificate_order.ssl_account=current_user.ssl_account
-        next unless current_user.ssl_account.can_buy?(certificate)
-      end
-      #adjusting duration to reflect number of days validity
-      certificate_order = setup_certificate_order(certificate, certificate_order)
-      certificate_orders << certificate_order if certificate_order.valid?
-    end
+    Order.certificates_order(certificates: certs, max_free: limit,
+                             certificate_orders: @certificate_orders, current: current_user)
   end
 
   def old_certificates_from_cookie

@@ -94,7 +94,7 @@ class ApiCertificateUpdate_v1_4 < ApiCertificateRequest
       certificate_content=CertificateContent.new(
           csr: csr, server_software_id: self.server_software)
       co.certificate_contents << certificate_content
-      @certificate_order = setup_certificate_order(@certificate, co)
+      @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: co)
       order = api_requestable.purchase(@certificate_order)
       order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
       unless self.test

@@ -47,7 +47,7 @@ gem 'rvm-capistrano'
 gem 'newrelic_rpm'
 gem 'dalli'
 gem 'attr_encrypted'
-
+gem 'zeus'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'

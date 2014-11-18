@@ -255,6 +255,44 @@ class SslAccount < ActiveRecord::Base
 
   private
 
+  def pred_dev_db
+    # Obfuscate IDs
+    SslAccount.for_each{|s|s.acct_number='a'+SecureRandom.hex(1)+
+        '-'+Time.now.to_i.to_s(32); s.save}
+    i=10000
+    User.for_each {|u|
+      u.login = i
+      u.email = "test@#{i.to_s}.com"
+      u.save
+      i+=1
+    }
+    i=10000
+    CertificateOrder.for_each{|co|
+      co.ref = "co-"+i.to_s
+      co.save
+      i+=1
+    }
+    i=10000
+    Order.for_each{|o|
+      o.reference_number = ""+i.to_s
+      o.save
+      i+=1
+    }
+    # obfuscate credit card numbers
+    BillingProfile.for_each{|bp|
+      bp.card_number="4222222222222"
+      bp.first_name = "Bob"
+      bp.last_name = "Spongepants"
+      bp.save}
+    # delete visitor tracking IDs,
+    # scramble user and contact e-mail addresses,
+    # scramble usernames,
+    # set the password to a single password,
+    # set the credit card numbers to the single credit card number ,
+    # scramble the Komodo IDs,
+    # scramble domain names
+  end
+
   SETTINGS_SECTIONS.each do |item|
     define_method("#{item}_recipients_format") do
       emails=[]

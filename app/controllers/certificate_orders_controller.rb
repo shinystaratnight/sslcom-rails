@@ -146,7 +146,7 @@ class CertificateOrdersController < ApplicationController
     certificate_order = CertificateOrder.new(params[:certificate_order])
     @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
     determine_eligibility_to_buy(@certificate, certificate_order)
-    @certificate_order = setup_certificate_order(@certificate, certificate_order)
+    @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)
     respond_to do |format|
       if @certificate_order.save
         if is_reseller? && (current_order.amount.cents >
@@ -359,7 +359,7 @@ class CertificateOrdersController < ApplicationController
     c=Certificate.for_sale.find_by_product(params[:certificate])
     co=CertificateOrder.new(duration: 1)
     @cc=co.certificate_contents.build(certificate_order: co, ajax_check_csr: true)
-    co=setup_certificate_order(c,co)
+    co=Order.setup_certificate_order(certificate: c, certificate_order: co)
     @cc.csr=Csr.new(body: params[:csr])
     @cc.valid?
     rescue
