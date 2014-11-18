@@ -585,6 +585,12 @@ class CertificateOrder < ActiveRecord::Base
              query_type: ("all_certificates" unless signed_certificate.blank?),
              response_type: ("individually" unless signed_certificate.blank?)}.
             to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+      when /dcv_emails/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+             merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name}).
+            to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificates/validations/email"
     end
   end
 

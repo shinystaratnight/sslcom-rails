@@ -219,10 +219,10 @@ class ApiCertificateRequestsController < ApplicationController
   def dcv_emails_v1_3
     if @result.save
       @result.email_addresses={}
-      if @result.domain_name
-        @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
+      if @result.domain
+        @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain).email_address_choices
       else
-        @result.domain_names.each do |domain|
+        @result.domains.each do |domain|
           @result.email_addresses.merge! domain=>ComodoApi.domain_control_email_choices(domain).email_address_choices
         end
       end
