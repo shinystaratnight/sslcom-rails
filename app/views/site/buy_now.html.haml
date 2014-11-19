@@ -10,7 +10,7 @@
         .left.banner1
           %a(style="display:block")
             %h2 Basic SSL
-            %span Excellent value ssl certificate
+            %span Affordable, high value ssl certificate
             .price-block
               .price $49
               .price-desc /yr
@@ -128,6 +128,10 @@
           %a.btn-wegot{:href => "#{wildcard_or_ucc_certificates_url}", :title => ""}
             We've got those too
             %b{:style => "text-shadow: none;"} →
+      #trust-badges{style: "text-align: center"}
+        =render 'site_seal'
+        %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
+          %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
       #partners
         %div Trusted by leading brands
         %img{:alt => "partners", :src => "images/sprite-partners.jpg"}
@@ -150,13 +154,13 @@
             Padlock symbol & "https" domain
           %li
             %span.icn-shield
-            256-bit & 128-bit https AES encryption
+            256-bit SHA2 https AES encryption
           %li
             %span.icn-mobile
             Mobile device support
           %li
             %span.icn-medical
-            Satifies HIPAA & PCI compliance
+            Satisfies HIPAA & PCI compliance
           %li
             %span.icn-baggage
             Free lifetime certificate reissues
