@@ -255,8 +255,25 @@ class SslAccount < ActiveRecord::Base
 
   private
 
-  # creates dev db from production
-  def pred_dev_db
+  # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
+  def make_dev_db
+    SentReminder.delete_all
+    TrackedUrl.delete_all
+    Tracking.delete_all
+    VisitorToken.delete_all
+    CaApiRequest.delete_all
+    # Obfuscate IDs
+    i=10000
+    ApiCredential.for_each{|a|
+      a.account_key=i
+      a.secret_key=i
+      a.save
+      i+=1}
+    i=10000
+    SiteSeal.for_each{|s|
+      s.ref=i
+      s.save
+      i+=1}
     # Obfuscate IDs
     i=10000
     SslAccount.for_each{|s|
@@ -310,7 +327,7 @@ class SslAccount < ActiveRecord::Base
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,
-    [CertificateContact, Registrant, Reseller].each { |klass| klass.for_each{|c|
+    [Contact, Reseller].each { |klass| klass.for_each{|c|
       c.first_name = "Bob"
       c.last_name = "Spongepants#{c.id}"
       c.email = "bob@spongepants#{c.id}.com"
