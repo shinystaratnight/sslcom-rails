@@ -258,11 +258,15 @@ class SslAccount < ActiveRecord::Base
   # creates dev db from production
   def pred_dev_db
     # Obfuscate IDs
-    SslAccount.for_each{|s|s.acct_number='a'+SecureRandom.hex(1)+
-        '-'+Time.now.to_i.to_s(32); s.save}
     i=10000
+    SslAccount.for_each{|s|
+      s.acct_number=i
+      s.save
+      i+=1}
+    i=10000
+    # scramble usernames, emails
     User.for_each {|u|
-      u.login = i
+      u.change_login(u.login, i)
       u.email = "test@#{i.to_s}.com"
       u.save
       i+=1
@@ -270,6 +274,22 @@ class SslAccount < ActiveRecord::Base
     i=10000
     CertificateOrder.for_each{|co|
       co.ref = "co-"+i.to_s
+      co.external_order_number = "000000"
+      co.save
+      i+=1
+    }
+    i=10000
+    SignedCertificate.for_each{|sc|
+      sc.organization = i.to_s
+      co.save
+      i+=1
+    }
+    i=10000
+    Csr.for_each{|c|
+      c.organization = i.to_s
+      c.organization_unit = i.to_s
+      c.state = i.to_s
+      c.locality = i.to_s
       co.save
       i+=1
     }
@@ -284,13 +304,25 @@ class SslAccount < ActiveRecord::Base
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
       bp.address1 = "123 Houston St"
+      bp.address2 = "Ste 100"
       bp.company = "Company Inc"
+      bp.phone = "123456789"
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,
-    # scramble usernames,
-    # set the password to a single password,
-    # set the credit card numbers to the single credit card number ,
+    [CertificateContact, Registrant, Reseller].each { |klass| klass.for_each{|c|
+      c.first_name = "Bob"
+      c.last_name = "Spongepants#{c.id}"
+      c.email = "bob@spongepants#{c.id}.com"
+      c.try("company_name=", "Widgets#{c.id} Inc")
+      c.try("organization=", "Widgets#{c.id} Inc")
+      c.try("website=", "www.widge#{c.id}.com")
+      c.address1 = "123 Houston St"
+      c.address2 = "Ste #{c.id}"
+      c.phone = "#{c.id}"
+      c.fax = "#{c.id}"
+      c.save}}
+
     # scramble the Komodo IDs,
     # scramble domain names
   end
