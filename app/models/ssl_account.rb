@@ -256,67 +256,64 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def make_dev_db
-    SentReminder.delete_all
-    TrackedUrl.delete_all
-    Tracking.delete_all
-    VisitorToken.delete_all
-    CaApiRequest.delete_all
-    # Obfuscate IDs
+  def self.make_dev_db
+    # SentReminder.delete_all
+    # TrackedUrl.delete_all
+    # Tracking.delete_all
+    # VisitorToken.delete_all
+    # CaApiRequest.delete_all
+    # # Obfuscate IDs
+    # i=100000
+    # ApiCredential.find_each{|a|
+    #   a.account_key=i
+    #   a.secret_key=i
+    #   a.save
+    #   i+=1}
+    # i=10000
+    # SiteSeal.find_each{|s|
+    #   s.ref=i
+    #   s.save
+    #   i+=1}
+    # # Obfuscate IDs
+    # i=10000
+    # SslAccount.find_each{|s|
+    #   s.acct_number=i
+    #   s.save
+    #   i+=1}
+    # i=10000
+    # # scramble usernames, emails
+    # User.find_each {|u|
+    #   User.change_login u.login, i
+    #   u.email = "test@#{i.to_s}.com"
+    #   u.save
+    #   i+=1
+    # }
+    # i=10000
+    # CertificateOrder.find_each{|co|
+    #   co.ref = "co-"+i.to_s
+    #   co.external_order_number = "000000"
+    #   co.save
+    #   i+=1
+    # }
+    # i=10000
+    # SignedCertificate.find_each{|sc|
+    #   sc.update_column :organization, (i+=1).to_s
+    # }
     i=10000
-    ApiCredential.for_each{|a|
-      a.account_key=i
-      a.secret_key=i
-      a.save
-      i+=1}
-    i=10000
-    SiteSeal.for_each{|s|
-      s.ref=i
-      s.save
-      i+=1}
-    # Obfuscate IDs
-    i=10000
-    SslAccount.for_each{|s|
-      s.acct_number=i
-      s.save
-      i+=1}
-    i=10000
-    # scramble usernames, emails
-    User.for_each {|u|
-      u.change_login(u.login, i)
-      u.email = "test@#{i.to_s}.com"
-      u.save
-      i+=1
-    }
-    i=10000
-    CertificateOrder.for_each{|co|
-      co.ref = "co-"+i.to_s
-      co.external_order_number = "000000"
-      co.save
-      i+=1
-    }
-    i=10000
-    SignedCertificate.for_each{|sc|
-      sc.organization = i.to_s
-      co.save
-      i+=1
-    }
-    i=10000
-    Csr.for_each{|c|
+    Csr.find_each{|c|
       c.organization = i.to_s
       c.organization_unit = i.to_s
       c.state = i.to_s
       c.locality = i.to_s
-      co.save
+      c.save
       i+=1
     }
     i=10000
-    Order.for_each{|o|
-      o.reference_number = ""+i.to_s
-      o.save
-      i+=1}
+    Order.find_each{|o|
+      o.reference_number = (i+=1).to_s
+    }
     # obfuscate credit card numbers
-    BillingProfile.for_each{|bp|
+    BillingProfile.find_each{|bp|
       bp.card_number="4222222222222"
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
@@ -327,7 +324,7 @@ class SslAccount < ActiveRecord::Base
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,
-    [Contact, Reseller].each { |klass| klass.for_each{|c|
+    [Contact, Reseller].each { |klass| klass.find_each{|c|
       c.first_name = "Bob"
       c.last_name = "Spongepants#{c.id}"
       c.email = "bob@spongepants#{c.id}.com"
