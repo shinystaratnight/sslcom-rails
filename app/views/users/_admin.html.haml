@@ -11,8 +11,9 @@
     functions. And that's just the beginning....
 #dashboard
   %table(cellspacing="0")
-    %caption
-      ssl account information for #{user.login} (last logged in #{user.last_login_at.strftime("%b %d, %Y")})
+    -unless user.last_login_at.blank?
+      %caption
+        ssl account information for #{user.login} (last logged in #{user.last_login_at.strftime("%b %d, %Y")})
     %tr.heading_row
       %tr.expanded
         %td(colspan="5")

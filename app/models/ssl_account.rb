@@ -256,49 +256,60 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.make_dev_db
-    # SentReminder.delete_all
-    # TrackedUrl.delete_all
-    # Tracking.delete_all
-    # VisitorToken.delete_all
-    # CaApiRequest.delete_all
-    # # Obfuscate IDs
-    # i=100000
-    # ApiCredential.find_each{|a|
-    #   a.account_key=i
-    #   a.secret_key=i
-    #   a.save
-    #   i+=1}
-    # i=10000
-    # SiteSeal.find_each{|s|
-    #   s.ref=i
-    #   s.save
-    #   i+=1}
-    # # Obfuscate IDs
-    # i=10000
-    # SslAccount.find_each{|s|
-    #   s.acct_number=i
-    #   s.save
-    #   i+=1}
-    # i=10000
-    # # scramble usernames, emails
-    # User.find_each {|u|
-    #   User.change_login u.login, i
-    #   u.email = "test@#{i.to_s}.com"
-    #   u.save
-    #   i+=1
-    # }
-    # i=10000
-    # CertificateOrder.find_each{|co|
-    #   co.ref = "co-"+i.to_s
-    #   co.external_order_number = "000000"
-    #   co.save
-    #   i+=1
-    # }
-    # i=10000
-    # SignedCertificate.find_each{|sc|
-    #   sc.update_column :organization, (i+=1).to_s
-    # }
+  def self.make_dev_db(from=nil)
+    SentReminder.delete_all
+    TrackedUrl.delete_all
+    Tracking.delete_all
+    VisitorToken.delete_all
+    CaApiRequest.delete_all
+    # ActiveRecord::Base.connection.tables.map do |model|
+    #   unless %w(auto_renewals delayed_job).include?(model)
+    #     begin
+    #       klass = model.capitalize.singularize.camelize.constantize
+    #       klass.where{created_at > from.days.ago}.delete_all
+    #     rescue
+    #
+    #     end
+    #   end
+    # end
+    # Obfuscate IDs
+    i=100000
+    ApiCredential.find_each{|a|
+      a.account_key=i
+      a.secret_key=i
+      a.save
+      i+=1}
+    i=10000
+    SiteSeal.find_each{|s|
+      s.ref=i
+      s.save
+      i+=1}
+    # Obfuscate IDs
+    i=10000
+    SslAccount.find_each{|s|
+      s.acct_number=i
+      s.save
+      i+=1}
+    i=10000
+    # scramble usernames, emails
+    User.find_each {|u|
+      User.change_login u.login, i
+      u.email = "test@#{i.to_s}.com"
+      u.password = i.to_s
+      u.save
+      i+=1
+    }
+    i=10000
+    CertificateOrder.find_each{|co|
+      co.ref = "co-"+i.to_s
+      co.external_order_number = "000000"
+      co.save
+      i+=1
+    }
+    i=10000
+    SignedCertificate.find_each{|sc|
+      sc.update_column :organization, (i+=1).to_s
+    }
     i=10000
     Csr.find_each{|c|
       c.organization = i.to_s
@@ -310,15 +321,15 @@ class SslAccount < ActiveRecord::Base
     }
     i=10000
     Order.find_each{|o|
-      o.reference_number = (i+=1).to_s
+      o.update_column :reference_number, (i+=1).to_s
     }
     # obfuscate credit card numbers
     BillingProfile.find_each{|bp|
       bp.card_number="4222222222222"
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
-      bp.address1 = "123 Houston St"
-      bp.address2 = "Ste 100"
+      bp.address_1 = "123 Houston St"
+      bp.address_2 = "Ste 100"
       bp.company = "Company Inc"
       bp.phone = "123456789"
       bp.save}
@@ -328,17 +339,15 @@ class SslAccount < ActiveRecord::Base
       c.first_name = "Bob"
       c.last_name = "Spongepants#{c.id}"
       c.email = "bob@spongepants#{c.id}.com"
-      c.try("company_name=", "Widgets#{c.id} Inc")
-      c.try("organization=", "Widgets#{c.id} Inc")
-      c.try("website=", "www.widge#{c.id}.com")
+      c.company_name="Widgets#{c.id} Inc" if klass.method_defined? :company_name
+      c.company="Widgets#{c.id} Inc" if klass.method_defined? :company
+      c.organization="Widgets#{c.id} Inc" if klass.method_defined? :organization
+      c.website="www.widge#{c.id}.com" if klass.method_defined? :website
       c.address1 = "123 Houston St"
       c.address2 = "Ste #{c.id}"
       c.phone = "#{c.id}"
       c.fax = "#{c.id}"
-      c.save}}
-
-    # scramble the Komodo IDs,
-    # scramble domain names
+      c.save validate: false}}
   end
 
   SETTINGS_SECTIONS.each do |item|

@@ -203,7 +203,15 @@ class User < ActiveRecord::Base
 
   private
 
+  def self.make_admin(username)
+    u=User.find_by_login(username)
+    sysadmin=Role.find_by_name("sysadmin")
+    u.roles << Role.find_by_name("sysadmin") unless u.roles.include?(sysadmin)
+    u.roles.delete(Role.find_by_name("customer"))
+  end
+
   def self.change_login(old, new)
+    #requires SQL statement to change login
     User.where('login LIKE ?', old).update_all(login: new)
   end
 end

@@ -35,8 +35,8 @@
                 %td=link_to "FILTER BY WILDCARD", filter_by_certificate_orders_path("wildcard")
               %tr
                 %td=link_to "FILTER BY TEST", filter_by_certificate_orders_path("wildcard")
-          -unless current_user.ssl_account.funded_account.blank?
-            %th AVAILABLE FOR USE
+          -#-unless current_user.ssl_account.funded_account.blank?
+          -#  %th AVAILABLE FOR USE
           -if show_short_links?
             %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
           %th=link_to 'Logout', logout_url
@@ -45,8 +45,8 @@
           %td
           %td
           %td
-          -unless current_user.ssl_account.funded_account.blank?
-            %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
+          -#-unless current_user.ssl_account.funded_account.blank?
+          -#  %td=current_user.ssl_account.funded_account.amount(true).format :with_currency=>false
           %td
     %span.logo=link_to "", root_url
 #content
