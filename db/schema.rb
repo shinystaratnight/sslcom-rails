@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141114192523) do
+ActiveRecord::Schema.define(:version => 20141130203217) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -142,6 +142,7 @@ ActiveRecord::Schema.define(:version => 20141114192523) do
     t.string   "ca"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "raw_request"
   end
 
   create_table "certificate_api_requests", :force => true do |t|

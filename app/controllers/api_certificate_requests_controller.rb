@@ -296,6 +296,7 @@ class ApiCertificateRequestsController < ApplicationController
     @result.test = @test
     @result.request_url = request.url
     @result.parameters = params.to_json
+    @result.raw_request = request.raw_post
   end
 
   def find_certificate_order

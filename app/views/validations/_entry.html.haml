@@ -105,6 +105,11 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
+                  -if current_user.try("is_admin?")
+                    %li
+                      %strong Calls To SSL.com API
+                    %li
+                      %textarea.selectAll=co.ssl_account.api_certificate_requests_string
                   -if current_user.try("is_admin?") && cc.registrant
                     %li
                       %strong SSL.com API New Command

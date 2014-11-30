@@ -21,9 +21,9 @@ module Rails
         :SSLEnable => true,
         :SSLVerifyClient => OpenSSL::SSL::VERIFY_PEER,
         :SSLPrivateKey => OpenSSL::PKey::RSA.new(
-               File.open(File.expand_path('../../config/ssl/www_ssl_com.key', __FILE__)).read),
+               File.open(File.expand_path('../../config/ssl/www_ssl_com_11102014.key', __FILE__)).read),
         :SSLCertificate => OpenSSL::X509::Certificate.new(
-               File.open(File.expand_path('../../config/ssl/www_ssl_com.crt', __FILE__)).read),
+               File.open(File.expand_path('../../config/ssl/www_ssl_com_11102014.crt', __FILE__)).read),
         :SSLCertName => [["CN", WEBrick::Utils::getservername]]
       })
     end

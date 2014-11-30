@@ -50,6 +50,8 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :not_test, where{(is_test == nil) | (is_test==false)}
 
+  scope :test, where{is_test==true}
+
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }

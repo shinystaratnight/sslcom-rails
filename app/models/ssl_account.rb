@@ -245,6 +245,15 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  def api_certificate_requests_string
+    acr=api_certificate_requests.last
+    if acr
+      'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '+
+          acr.parameters.to_json + " " +acr.request_url
+    end
+  end
+
+
   def adjust_funds(cents)
     funded_account.update_attribute :cents, funded_account.cents+=cents
   end

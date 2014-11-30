@@ -262,6 +262,18 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  def test_orders
+    p = {:page => params[:page]}
+    @certificate_orders = (current_user.is_admin? ?
+      CertificateOrder.test :
+        current_user.ssl_account.certificate_orders.test).paginate(p)
+
+    respond_to do |format|
+      format.html { render :action=>:index}
+      format.xml  { render :xml => @certificate_orders }
+    end
+  end
+
   def order_by_csr
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?

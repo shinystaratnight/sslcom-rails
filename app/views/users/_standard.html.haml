@@ -76,15 +76,15 @@
                           %li=link_to 'become an referral link partner', new_affiliate_url
                         -unless current_user.ssl_account.is_registered_reseller?
                           %li=link_to 'upgrade to reseller', new_reseller_url
-                    -#-if ac = user.ssl_account.api_credential
-                    -#  .half_width_box
-                    -#    %ul
-                    -#      %li
-                    -#        %strong
-                    -#          api credentials
-                    -#      %li account key: #{ac.account_key}
-                    -#      %li secret key: #{ac.secret_key}
-                    -#      %li=link_to 'view documentation', restful_apidocs_apply_url
+                    -if((ac = user.ssl_account.api_credential) && current_user.is_admin?)
+                      .half_width_box
+                        %ul
+                          %li
+                            %strong
+                              api credentials
+                          %li account key: #{ac.account_key}
+                          %li secret key: #{ac.secret_key}
+                          %li=link_to 'view documentation', restful_apidocs_apply_url
                     .half_width_box
                       %ul
                         %li
