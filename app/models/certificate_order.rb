@@ -45,12 +45,12 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.joins(:certificate_contents).includes(:certificate_contents).
-    order(:created_at.desc).readonly(false)
+  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
+                    joins(:certificate_contents).includes(:certificate_contents).order(:created_at.desc).readonly(false)
 
   scope :not_test, where{(is_test == nil) | (is_test==false)}
 
-  scope :test, where{is_test==true}
+  scope :is_test, where{is_test==true}
 
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -93,17 +93,17 @@ class CertificateOrder < ActiveRecord::Base
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
       order(:certificate_contents=>:updated_at)
 
-  scope :incomplete, where{(is_expired==false) &
+  scope :incomplete, not_test.where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
       order(:certificate_contents=>:updated_at)
 
-  scope :pending, where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
+  scope :pending, not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
       order(:certificate_contents=>:updated_at)
 
-  scope :has_csr, where{(workflow_state=='paid') &
+  scope :has_csr, not_test.where{(workflow_state=='paid') &
     (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
 
-  scope :credits, where({:workflow_state=>'paid'} & {is_expired: false} &
+  scope :credits, not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})
 
   #new certificate orders are the ones still in the shopping cart

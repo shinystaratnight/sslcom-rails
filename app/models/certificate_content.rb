@@ -51,6 +51,7 @@ class CertificateContent < ActiveRecord::Base
     ALSACE
     AM
     AN
+    ANDROID
     AO
     AQ
     AR
@@ -92,6 +93,7 @@ class CertificateContent < ActiveRecord::Base
     BJ
     BLACK
     BLACKFRIDAY
+    BLOOMBERG
     BLUE
     BM
     BMW
@@ -158,6 +160,7 @@ class CertificateContent < ActiveRecord::Base
     CM
     CN
     CO
+    COACH
     CODES
     COFFEE
     COLLEGE
@@ -177,6 +180,7 @@ class CertificateContent < ActiveRecord::Base
     CR
     CREDIT
     CREDITCARD
+    CRICKET
     CRS
     CRUISES
     CU
@@ -235,6 +239,7 @@ class CertificateContent < ActiveRecord::Base
     EU
     EUS
     EVENTS
+    EVERBANK
     EXCHANGE
     EXPERT
     EXPOSED
@@ -244,6 +249,7 @@ class CertificateContent < ActiveRecord::Base
     FI
     FINANCE
     FINANCIAL
+    FIRMDALE
     FISH
     FISHING
     FITNESS
@@ -382,7 +388,9 @@ class CertificateContent < ActiveRecord::Base
     LAWYER
     LB
     LC
+    LDS
     LEASE
+    LEGAL
     LGBT
     LI
     LIFE
@@ -404,6 +412,7 @@ class CertificateContent < ActiveRecord::Base
     LV
     LY
     MA
+    MADRID
     MAISON
     MANAGEMENT
     MANGO
@@ -416,6 +425,7 @@ class CertificateContent < ActiveRecord::Base
     MEET
     MELBOURNE
     MEME
+    MEMORIAL
     MENU
     MG
     MH
@@ -431,6 +441,8 @@ class CertificateContent < ActiveRecord::Base
     MODA
     MOE
     MONASH
+    MONEY
+    MORMON
     MORTGAGE
     MOSCOW
     MOTORCYCLES
@@ -486,6 +498,7 @@ class CertificateContent < ActiveRecord::Base
     PARIS
     PARTNERS
     PARTS
+    PARTY
     PE
     PF
     PG
@@ -532,6 +545,7 @@ class CertificateContent < ActiveRecord::Base
     REHAB
     REISE
     REISEN
+    REIT
     REN
     RENTALS
     REPAIR
@@ -561,6 +575,7 @@ class CertificateContent < ActiveRecord::Base
     SCB
     SCHMIDT
     SCHULE
+    SCIENCE
     SCOT
     SD
     SE
@@ -598,6 +613,7 @@ class CertificateContent < ActiveRecord::Base
     SV
     SX
     SY
+    SYDNEY
     SYSTEMS
     SZ
     TAIPEI
@@ -690,6 +706,7 @@ class CertificateContent < ActiveRecord::Base
     XN--3DS443G
     XN--3E0B707E
     XN--45BRJ9C
+    XN--45Q11C
     XN--4GBRIM
     XN--55QW42G
     XN--55QX5D
@@ -711,6 +728,7 @@ class CertificateContent < ActiveRecord::Base
     XN--FIQ64B
     XN--FIQS8S
     XN--FIQZ9S
+    XN--FLW351E
     XN--FPCRJ9C3D
     XN--FZC2C9E2C
     XN--GECRJ9C
@@ -743,6 +761,7 @@ class CertificateContent < ActiveRecord::Base
     XN--P1AI
     XN--PGBS0DH
     XN--Q9JYB4C
+    XN--QCKA1PMC
     XN--RHQV96G
     XN--S9BRJ9C
     XN--SES554G
@@ -891,7 +910,7 @@ class CertificateContent < ActiveRecord::Base
 
   def domains=(names)
     unless names.blank?
-      names = names.split(/\s+/).uniq.reject{|d|d.blank?}
+      names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}
     end
     write_attribute(:domains, names)
   end

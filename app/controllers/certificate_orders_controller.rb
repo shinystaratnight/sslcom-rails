@@ -22,7 +22,8 @@ class CertificateOrdersController < ApplicationController
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over, :admin_update]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
-  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by, :require=>:read
+  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
+                   :filter_by_scope, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :admin_update, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -262,11 +263,11 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
-  def test_orders
+  def filter_by_scope
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.test :
-        current_user.ssl_account.certificate_orders.test).paginate(p)
+      CertificateOrder.send(params[:scope].to_sym) :
+        current_user.ssl_account.certificate_orders.send(params[:scope].to_sym)).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
