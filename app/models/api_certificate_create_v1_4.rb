@@ -135,7 +135,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       certificate_content.csr = csr
       certificate_content.server_software_id = server_software
       certificate_content.submit_csr!
-      certificate_content.domains = domains.keys
+      certificate_content.domains = domains.keys unless domains.blank?
       if errors.blank?
         if certificate_content.save
           setup_certificate_content(

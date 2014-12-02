@@ -85,6 +85,7 @@ class SslAccount < ActiveRecord::Base
     self.preferred_reminder_notice_triggers = "1", ReminderTrigger.find(4)
     self.preferred_reminder_notice_triggers = "-30", ReminderTrigger.find(5)
     generate_funded_account
+    create_api_credential if api_credential.blank?
   end
 
   def self.human_attribute_name(attr, options={})
@@ -210,7 +211,6 @@ class SslAccount < ActiveRecord::Base
     self.preferred_confirmation_include_cert_admin=false
     self.preferred_confirmation_include_cert_bill=false
     self.save
-    create_api_credential if api_credential.blank?
   end
 
   def reseller_suffix
@@ -249,10 +249,9 @@ class SslAccount < ActiveRecord::Base
     acr=api_certificate_requests.last
     if acr
       'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '+
-          acr.parameters.to_json + " " +acr.request_url
+          acr.raw_request.to_json + " " +acr.request_url
     end
   end
-
 
   def adjust_funds(cents)
     funded_account.update_attribute :cents, funded_account.cents+=cents

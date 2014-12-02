@@ -143,6 +143,7 @@ ActiveRecord::Schema.define(:version => 20141130203217) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "raw_request"
+    t.text     "request_method"
   end
 
   create_table "certificate_api_requests", :force => true do |t|
