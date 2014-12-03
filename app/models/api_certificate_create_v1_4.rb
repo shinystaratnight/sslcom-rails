@@ -59,7 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
-  validate :validate_contacts, unless: "contacts.blank?"
+  validate :validate_contacts, if: "api_requestable.reseller.blank?"
 
   before_validation do
     if new_record?
@@ -97,8 +97,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     certificate_content=CertificateContent.new(
         csr: csr, server_software_id: self.server_software, domains: domain_names)
     co.certificate_contents << certificate_content
-    @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: co,
-                                                       duration: self.period)
+    @certificate_order = Order.setup_certificate_order(certificate: certificate, certificate_order: co,
+                                                       duration: self.period.to_i/365)
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test
@@ -141,7 +141,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           setup_certificate_content(
               certificate_order: @certificate_order,
               certificate_content: certificate_content,
-              ssl_account: api_requestable,
               contacts: self.contacts)
           return @certificate_order
         else
@@ -173,7 +172,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
               CertificateContact.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
             else
-              CertificateContact.new.attributes.merge! options[:ssl_account].reseller.attributes #test for existence
+              attributes = api_requestable.reseller.attributes.select do |attr, value|
+                (CertificateContact.column_names-%w(id created_at)).include?(attr.to_s)
+              end
+              contact = CertificateContact.new
+              contact.assign_attributes(attributes, :without_protection => true)
+              contact
             end
         c.clear_roles
         c.add_role! role
@@ -262,24 +266,32 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def validate_contacts
-    errors[:contacts] = {}
-    CertificateContent::CONTACT_ROLES.each do |role|
-      if contacts && (contacts[role] || contacts[:all])
-        attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts[:all],:all]
-        extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
-        if !extra.empty?
-          msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
-          errors[:contacts].last.merge!(msg)
-        elsif !CertificateContact.new(attrs.merge({roles: role})).valid?
-          r = CertificateContact.new(attrs.merge({roles: role}))
-          r.valid?
-          errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-        elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
-          msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
+    if contacts
+      errors[:contacts] = {}
+      CertificateContent::CONTACT_ROLES.each do |role|
+        if (contacts[role] || contacts[:all])
+          attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts[:all],:all]
+          extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
+          if !extra.empty?
+            msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
+            errors[:contacts].last.merge!(msg)
+          elsif !CertificateContact.new(attrs.merge({roles: role})).valid?
+            r = CertificateContact.new(attrs.merge({roles: role}))
+            r.valid?
+            errors[:contacts].last.merge!(c_role.to_sym => r.errors)
+          elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
+            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
+            errors[:contacts].last.merge!(msg)
+          end
+        else
+          msg = {role.to_sym => "contact information missing"}
           errors[:contacts].last.merge!(msg)
         end
       end
+    else
+      errors[:contacts] << "parameter required"
     end
+
 
     # CertificateContent::CONTACT_ROLES.each do |role|
     #   c = CertificateContact.new

@@ -177,6 +177,9 @@ class Order < ActiveRecord::Base
     end
 
     state :payment_not_required do
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable.refund!} if complete
+      end
       event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete
         update_attribute :canceled_at, Time.now
