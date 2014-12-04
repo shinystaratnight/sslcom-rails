@@ -9,11 +9,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   EV_PERIODS = %w(365 730)
   FREE_PERIODS = %w(30 90)
 
-  PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
-              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
-              :"107"=>"premium256sslcom",
-              :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
-              :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
+  PRODUCTS = {"100"=> "evucc256sslcom", "101"=>"ucc256sslcom", "102"=>"ev256sslcom",
+              "103"=>"ov256sslcom", "104"=>"dv256sslcom", "105"=>"wc256sslcom", "106"=>"basic256sslcom",
+              "107"=>"premium256sslcom",
+              "204"=> "evucc256sslcom", "202"=>"ucc256sslcom", "203"=>"ev256sslcom",
+              "200"=>"basic256sslcom", "201"=>"wc256sslcom"}
 
   DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
   DEFAULT_DCV_METHOD = "http_csr_hash"
@@ -59,9 +59,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
-  validate :validate_contacts, if: "api_requestable.reseller.blank?"
+  validate :validate_contacts, if: "api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
+    self.period = period.to_s unless period.blank?
+    self.product = product.to_s unless product.blank?
     if new_record?
       if self.csr # a single domain validation
         self.dcv_method ||= "http_csr_hash"
@@ -76,7 +78,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def create_certificate_order
-    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_sym]+api_requestable.reseller_suffix)
+    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.reseller_suffix)
     co_params = {duration: period, is_test: self.test}
     co = api_requestable.certificate_orders.build(co_params)
     if self.csr
@@ -212,7 +214,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def serial
-    PRODUCTS[self.product.to_sym] if product
+    PRODUCTS[self.product.to_s] if product
   end
 
   def is_ev?
