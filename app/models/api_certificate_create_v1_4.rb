@@ -59,6 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
+  validate :verify_csr_hashes, on: :create, unless: "domains.blank?"
   validate :validate_contacts, if: "api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
@@ -267,6 +268,24 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
   end
 
+  # must belong to a list of acceptable email addresses
+  def verify_csr_hashes
+    self.domains.each do |k,v|
+      unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
+        unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
+          errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
+        else
+          self.dcv_email_addresses[k]=[]
+          # self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
+          # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
+          #     self.dcv_email_addresses[k].include?(v["dcv"])
+        end
+      end
+      v["failure_action"] ||= "ignore"
+    end
+    false
+  end
+
   def validate_contacts
     if contacts
       errors[:contacts] = {}
@@ -293,18 +312,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     else
       errors[:contacts] << "parameter required"
     end
-
-
-    # CertificateContent::CONTACT_ROLES.each do |role|
-    #   c = CertificateContact.new
-    #   r = if contacts && (contacts[role] || contacts[:all])
-    #         Reseller.new(contacts[role] ? contacts[role] : contacts[:all])
-    #       else
-    #         options[:ssl_account].reseller #test for existence
-    #       end
-    #   errors[:contacts]<<{role.to_sym => r.errors} unless r.valid?
-    # end
-    #
     return false if errors[:contacts]
   end
 end
