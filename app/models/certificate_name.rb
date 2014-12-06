@@ -77,13 +77,19 @@ class CertificateName < ActiveRecord::Base
     "#{sha1_hash}\ncomodoca.com"
   end
 
-  def dcv_verified?
-    retries=2
+  def dcv_verified?(options={})
+    # if blank then try both
+    if options[:http_or_s].blank?
+      http_or_s = "http"
+      retries=2
+    else
+      http_or_s = options[:http_or_s] # either 'http' or 'https'
+      retries=1
+    end
     begin
       timeout(Surl::TIMEOUT_DURATION) do
-        http_or_s = "http"
         if retries<2
-          http_or_s = "https"
+          http_or_s = "https" if options[:http_or_s].blank?
           uri = URI.parse(dcv_url(true))
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true

@@ -58,8 +58,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv_email_address, on: :create, unless: "domains.blank?"
-  validate :verify_csr_hashes, on: :create, unless: "domains.blank?"
+  validate :verify_dcv, on: :create, unless: "domains.blank?"
   validate :validate_contacts, if: "api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
@@ -251,7 +250,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   # must belong to a list of acceptable email addresses
-  def verify_dcv_email_address
+  def verify_dcv
     self.dcv_email_addresses = {}
     self.domains.each do |k,v|
       unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
@@ -263,27 +262,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
           #     self.dcv_email_addresses[k].include?(v["dcv"])
         end
-      end
-      v["failure_action"] ||= "ignore"
-    end
-  end
-
-  # must belong to a list of acceptable email addresses
-  def verify_csr_hashes
-    self.domains.each do |k,v|
-      unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
-        unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
-          errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
-        else
-          self.dcv_email_addresses[k]=[]
-          # self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
-          # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
-          #     self.dcv_email_addresses[k].include?(v["dcv"])
+      else
+        if v["dcv"] =~ /https?/i
+          cn = CertificateName.new(name: k)
+          unless cn.dcv_verified?(http_or_s: v["dcv"])
+            if false #(override || gen_override)
+              self.domains.delete k
+            else
+              errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} csr hash not found at #{cn.dcv_url}."
+            end
+          end
         end
       end
       v["failure_action"] ||= "ignore"
     end
-    false
   end
 
   def validate_contacts
