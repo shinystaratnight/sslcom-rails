@@ -483,54 +483,55 @@ class Order < ActiveRecord::Base
   end
 
   def self.setup_certificate_order(options)
-    duration = options[:certificate].duration_in_days(options[:duration] || options[:certificate_order].duration)
-    options[:certificate_order].certificate_content.duration = duration
-    if options[:certificate].is_ucc? || options[:certificate].is_wildcard?
-      psl = options[:certificate].items_by_server_licenses.find { |item|
+    certificate, certificate_order = options[:certificate], options[:certificate_order]
+    duration = certificate.duration_in_days(options[:duration] || certificate_order.duration)
+    certificate_order.certificate_content.duration = duration
+    if certificate.is_ucc? || certificate.is_wildcard?
+      psl = certificate.items_by_server_licenses.find { |item|
         item.value==duration.to_s }
       so  = SubOrderItem.new(:product_variant_item=>psl,
-                             :quantity            => options[:certificate_order].server_licenses.to_i,
-                             :amount              =>psl.amount*options[:certificate_order].server_licenses.to_i)
-      options[:certificate_order].sub_order_items << so
-      if options[:certificate].is_ucc?
-        pd                 = options[:certificate].items_by_domains.find_all { |item|
+                             :quantity            =>certificate_order.server_licenses.to_i,
+                             :amount              =>psl.amount*certificate_order.server_licenses.to_i)
+      certificate_order.sub_order_items << so
+      if certificate.is_ucc?
+        pd                 = certificate.items_by_domains.find_all { |item|
           item.value==duration.to_s }
-        additional_domains = (options[:certificate_order].domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
+        additional_domains = (certificate_order.domains.try(:size) || 0) - Certificate::UCC_INITIAL_DOMAINS_BLOCK
         so                 = SubOrderItem.new(:product_variant_item=>pd[0],
                                               :quantity            =>Certificate::UCC_INITIAL_DOMAINS_BLOCK,
                                               :amount              =>pd[0].amount*Certificate::UCC_INITIAL_DOMAINS_BLOCK)
-        options[:certificate_order].sub_order_items << so
+        certificate_order.sub_order_items << so
         # calculate wildcards by subtracting their total from additional_domains
         wildcards = 0
-        if options[:certificate].allow_wildcard_ucc? and !options[:certificate_order].domains.blank?
-          wildcards = options[:certificate_order].domains.find_all{|d|d =~ /^\*\./}.count
+        if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
+          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
           additional_domains -= wildcards
         end
         if additional_domains > 0
           so = SubOrderItem.new(:product_variant_item=>pd[1],
                                 :quantity            =>additional_domains,
                                 :amount              =>pd[1].amount*additional_domains)
-          options[:certificate_order].sub_order_items << so
+          certificate_order.sub_order_items << so
         end
         if wildcards > 0
           so = SubOrderItem.new(:product_variant_item=>pd[2],
                                 :quantity            =>wildcards,
                                 :amount              =>pd[2].amount*wildcards)
-          options[:certificate_order].sub_order_items << so
+          certificate_order.sub_order_items << so
         end
       end
     end
-    unless options[:certificate].is_ucc?
-      pvi = options[:certificate].items_by_duration.find { |item| item.value==duration.to_s }
+    unless certificate.is_ucc?
+      pvi = certificate.items_by_duration.find { |item| item.value==duration.to_s }
       so  = SubOrderItem.new(:product_variant_item=>pvi, :quantity=>1,
                              :amount              =>pvi.amount)
-      options[:certificate_order].sub_order_items << so
+      certificate_order.sub_order_items << so
     end
-    options[:certificate_order].amount = options[:certificate_order].
+    certificate_order.amount = certificate_order.
         sub_order_items.map(&:amount).sum
-    options[:certificate_order].certificate_contents[0].
-        certificate_order    = options[:certificate_order]
-    options[:certificate_order]
+    certificate_order.certificate_contents[0].
+        certificate_order    = certificate_order
+    certificate_order
   end
 
 

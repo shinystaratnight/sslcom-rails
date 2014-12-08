@@ -6,6 +6,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
+
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
 
@@ -75,6 +76,19 @@ class DomainControlValidation < ActiveRecord::Base
         "https_csr_hash"
       when "email"
         email_address
+    end
+  end
+
+  def verify_http_csr_hash(k)
+    begin
+      found=Thread.new { certificate_name.dcv_verified? }.join(10)
+    rescue StandardError => e
+    ensure
+      unless found.try(:value)
+        if  (failure_action=="remove")
+          self.domains.delete k
+        end
+      end
     end
   end
 

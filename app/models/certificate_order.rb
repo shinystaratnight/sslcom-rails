@@ -509,8 +509,8 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def order
-    orders.last
+  def order(reload=nil)
+    orders(reload).last
   end
 
   def validation_histories

@@ -18,6 +18,8 @@ class CertificateName < ActiveRecord::Base
       where{dcv_method >> ['http','https','email']}.last
     end
   end
+  attr_accessor :csr
+  # attr_accessible :csr
 
   def is_ip_address?
     name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if name
@@ -66,15 +68,19 @@ class CertificateName < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    name.gsub(/^\*\./, "").downcase
+    csr.non_wildcard_name
   end
 
   def dcv_url(secure=false)
-    "http#{'s' if secure}://#{non_wildcard_name}/#{md5_hash}.txt"
+    csr.dcv_url(secure)
   end
 
   def dcv_contents
-    "#{sha1_hash}\ncomodoca.com"
+    "#{csr.sha1_hash}\ncomodoca.com"
+  end
+
+  def csr
+    @csr || certificate_content.csr
   end
 
   def dcv_verified?(options={})
@@ -99,7 +105,7 @@ class CertificateName < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        return http_or_s if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
@@ -117,7 +123,7 @@ class CertificateName < ActiveRecord::Base
     begin
       timeout(Surl::TIMEOUT_DURATION) do
         r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
       return false

@@ -3,11 +3,12 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :debug, :error_code, :error_message, :eta, :send_to_ca
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
   FREE_PERIODS = %w(30 90)
+  DCV_FAILURE_ACTIONS = %w(remove ignore)
 
   PRODUCTS = {"100"=> "evucc256sslcom", "101"=>"ucc256sslcom", "102"=>"ev256sslcom",
               "103"=>"ov256sslcom", "104"=>"dv256sslcom", "105"=>"wc256sslcom", "106"=>"basic256sslcom",
@@ -58,7 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv, on: :create, unless: "domains.blank?"
+  validate :verify_dcv, on: :create, if: "csr && !domains.blank?"
   validate :validate_contacts, if: "api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
@@ -192,7 +193,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       end
       cc.provide_contacts!
-      cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
+      if self.debug=="true"
+        cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
+      else
+        cc.delay.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
+      end
     end
   end
 
@@ -200,12 +205,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     order = options[:order]
     funded_account = options[:ssl_account].funded_account
     funded_account.cents -= order.cents unless @certificate_order.is_test
-    if funded_account.cents >= 0 and order.line_items.size > 0
+    if order.line_items.size > 0
       funded_account.deduct_order = true
-      if order.cents > 0
-        order.save
-        order.mark_paid!
-      end
+      # order.save
+      order.mark_paid!
       Authorization::Maintenance::without_access_control do
         funded_account.save unless @certificate_order.is_test
       end
@@ -262,19 +265,27 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
           #     self.dcv_email_addresses[k].include?(v["dcv"])
         end
-      else
-        if v["dcv"] =~ /https?/i
-          cn = CertificateName.new(name: k)
-          unless cn.dcv_verified?(http_or_s: v["dcv"])
-            if false #(override || gen_override)
+      end
+      v["dcv_failure_action"] ||= "ignore"
+    end
+  end
+
+  def verify_http_csr_hash
+    self.domains.each do |k,v|
+      if v["dcv"] =~ /https?/i
+        begin
+          cn = CertificateName.new(name: k, csr: csr_obj)
+          found=Thread.new { cn.dcv_verified? }.join(10)
+        rescue StandardError => e
+        ensure
+          unless found.try(:value)
+            if  (v["dcv_failure_action"]=="remove" ||
+                (v["dcv_failure_action"].blank? && self.options && self.options["dcv_failure_action"]=="remove"))
               self.domains.delete k
-            else
-              errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} csr hash not found at #{cn.dcv_url}."
             end
           end
         end
       end
-      v["failure_action"] ||= "ignore"
     end
   end
 

@@ -48,6 +48,8 @@ gem 'newrelic_rpm'
 gem 'dalli'
 gem 'attr_encrypted'
 gem 'zeus'
+gem 'delayed_job_active_record'
+gem "daemons"
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'

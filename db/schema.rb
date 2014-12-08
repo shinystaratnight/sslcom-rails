@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141130203217) do
+ActiveRecord::Schema.define(:version => 20141208183048) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -375,6 +375,7 @@ ActiveRecord::Schema.define(:version => 20141130203217) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "queue"
   end
 
   create_table "deposits", :force => true do |t|

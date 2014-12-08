@@ -932,9 +932,10 @@ class CertificateContent < ActiveRecord::Base
     options[:domains].each do |k,v|
       case v["dcv"]
         when /https?/i, /cname/i
-          self.certificate_names.find_by_name(k).
+          dcv=self.certificate_names.find_by_name(k).
               domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
                 failure_action: v["failure_action"])
+          dcv.verify_http_csr_hash(k) if v["failure_action"]=="remove"
           self.csr.domain_control_validations.
               create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
                 failure_action: v["failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
