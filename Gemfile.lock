@@ -144,6 +144,9 @@ GEM
     delayed_job_active_record (4.0.2)
       activerecord (>= 3.0, < 4.2)
       delayed_job (>= 3.0, < 4.1)
+    delayed_job_groups_plugin (0.1.1)
+      delayed_job (>= 3.0)
+      delayed_job_active_record (>= 0.4)
     diff-lcs (1.2.5)
     dotenv (0.9.0)
     dotenv-rails (0.9.0)
@@ -415,6 +418,7 @@ DEPENDENCIES
   database_cleaner
   declarative_authorization
   delayed_job_active_record
+  delayed_job_groups_plugin
   dotenv-rails
   easy_roles
   email_spec

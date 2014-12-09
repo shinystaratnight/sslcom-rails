@@ -5,7 +5,7 @@ class CertificateName < ActiveRecord::Base
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :domain_control_validations do
+  has_many    :domain_control_validations, dependent: :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
     end
@@ -67,12 +67,12 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def non_wildcard_name
-    csr.non_wildcard_name
+  def dcv_url(secure=false)
+    "http#{'s' if secure}://#{non_wildcard_name}/#{csr.md5_hash}.txt"
   end
 
-  def dcv_url(secure=false)
-    csr.dcv_url(secure)
+  def non_wildcard_name
+    name.gsub(/^\*\./, "").downcase
   end
 
   def dcv_contents

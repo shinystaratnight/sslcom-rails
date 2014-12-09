@@ -154,9 +154,24 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self
   end
 
+  DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_email_addresses) do
+    def perform
+      cc.dcv_domains({domains: domains, emails: dcv_email_addresses,
+                            dcv_failure_action: dcv_failure_action})
+      cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
+                          send_to_ca: acc.send_to_ca || true)
+    end
+  end
+
+  PendValidationJob = Struct.new(:cc,:acc) do
+    def perform
+      cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
+                                send_to_ca: acc.send_to_ca || true)
+    end
+  end
+
   def setup_certificate_content(options)
     cc = options[:certificate_content]
-    cc.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses})
     cc.registrant.destroy unless cc.registrant.blank?
     cc.create_registrant(
         company_name: self.organization_name,
@@ -193,10 +208,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       end
       cc.provide_contacts!
+      # if debugging, we want to see response from Comodo
       if self.debug=="true"
+        cc.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses,
+                        dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
         cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
       else
-        cc.delay.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
+        job_group = Delayed::JobGroups::JobGroup.create!
+        job_group.enqueue(DomainJob.new(cc, self, self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
+                                        self.dcv_email_addresses))
+        job_group.mark_queueing_complete
       end
     end
   end

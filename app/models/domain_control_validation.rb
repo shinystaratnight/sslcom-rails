@@ -79,17 +79,8 @@ class DomainControlValidation < ActiveRecord::Base
     end
   end
 
-  def verify_http_csr_hash(k)
-    begin
-      found=Thread.new { certificate_name.dcv_verified? }.join(10)
-    rescue StandardError => e
-    ensure
-      unless found.try(:value)
-        if  (failure_action=="remove")
-          self.domains.delete k
-        end
-      end
-    end
+  def verify_http_csr_hash
+    certificate_name.dcv_verified?
   end
 
 end

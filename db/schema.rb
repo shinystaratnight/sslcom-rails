@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141208183048) do
+ActiveRecord::Schema.define(:version => 20141209154127) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -364,9 +364,18 @@ ActiveRecord::Schema.define(:version => 20141208183048) do
   add_index "csrs", ["common_name"], :name => "index_csrs_on_common_name"
   add_index "csrs", ["organization"], :name => "index_csrs_on_organization"
 
+  create_table "delayed_job_groups", :force => true do |t|
+    t.text    "on_completion_job"
+    t.text    "on_completion_job_options"
+    t.text    "on_cancellation_job"
+    t.text    "on_cancellation_job_options"
+    t.boolean "queueing_complete",           :default => false, :null => false
+    t.boolean "blocked",                     :default => false, :null => false
+  end
+
   create_table "delayed_jobs", :force => true do |t|
-    t.integer  "priority",   :default => 0
-    t.integer  "attempts",   :default => 0
+    t.integer  "priority",     :default => 0
+    t.integer  "attempts",     :default => 0
     t.text     "handler"
     t.text     "last_error"
     t.datetime "run_at"
@@ -376,7 +385,11 @@ ActiveRecord::Schema.define(:version => 20141208183048) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "queue"
+    t.boolean  "blocked",      :default => false, :null => false
+    t.integer  "job_group_id"
   end
+
+  add_index "delayed_jobs", ["job_group_id"], :name => "index_delayed_jobs_on_job_group_id"
 
   create_table "deposits", :force => true do |t|
     t.float    "amount"

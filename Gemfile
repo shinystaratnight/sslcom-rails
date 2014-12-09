@@ -50,6 +50,7 @@ gem 'attr_encrypted'
 gem 'zeus'
 gem 'delayed_job_active_record'
 gem "daemons"
+gem 'delayed_job_groups_plugin'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'
