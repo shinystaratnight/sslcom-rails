@@ -59,7 +59,7 @@ class ApiCertificateRequestsController < ApplicationController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      if @result.save
+      if @result.valid? && @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?

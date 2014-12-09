@@ -60,7 +60,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "csr && !domains.blank?"
-  validate :validate_contacts, if: "api_requestable.reseller.blank? && !csr.blank?"
+  validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
     self.period = period.to_s unless period.blank?
