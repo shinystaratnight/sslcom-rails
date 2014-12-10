@@ -163,13 +163,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
   end
 
-  PendValidationJob = Struct.new(:cc,:acc) do
-    def perform
-      cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
-                                send_to_ca: acc.send_to_ca || true)
-    end
-  end
-
   def setup_certificate_content(options)
     cc = options[:certificate_content]
     cc.registrant.destroy unless cc.registrant.blank?

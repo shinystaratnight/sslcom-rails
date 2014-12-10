@@ -103,9 +103,11 @@ class ApiCertificateRequestsController < ApplicationController
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/update_v1_4"
-            ccr = @acr.certificate_content.csr.ca_certificate_requests.last
-            @result.api_request=ccr.parameters
-            @result.api_response=ccr.response
+            if @acr.certificate_content.csr && @result.debug=="true"
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+              @result.api_request=ccr.parameters
+              @result.api_response=ccr.response
+            end
             # @result.error_code=ccr.response_error_code
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
