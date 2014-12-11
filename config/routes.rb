@@ -139,7 +139,7 @@ SslCom::Application.routes.draw do
   end
 
   get '/certificate_orders/filter_by/:id' => 'CertificateOrders#filter_by', as: :filter_by_certificate_orders
-  get '/certificate_orders/filter_by_scope/:scope' => 'CertificateOrders#filter_by_scope', as: :filter_by_scope_certificate_orders
+  get '/certificate_orders/filter_by_scope/:id' => 'CertificateOrders#filter_by_scope', as: :filter_by_scope_certificate_orders
 
   resources :certificate_contents do
     resources :contacts, :only=>:index

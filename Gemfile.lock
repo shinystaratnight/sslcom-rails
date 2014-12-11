@@ -273,6 +273,7 @@ GEM
     pry-remote (0.1.7)
       pry (~> 0.9)
       slop (~> 3.0)
+    public_suffix (1.4.6)
     rabl (0.7.9)
       activesupport (>= 2.3.14)
       multi_json (~> 1.0)
@@ -443,6 +444,7 @@ DEPENDENCIES
   paperclip
   pry-rails
   pry-remote
+  public_suffix
   rabl
   rack-ssl-enforcer
   radix62

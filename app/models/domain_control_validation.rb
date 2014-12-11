@@ -1,3 +1,5 @@
+require 'public_suffix'
+
 class DomainControlValidation < ActiveRecord::Base
   has_many :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   belongs_to :csr # only for single domain certs
@@ -9,6 +11,7 @@ class DomainControlValidation < ActiveRecord::Base
 
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
+  AUTHORITY_EMAIL_ADDRESSES = %w(admin@ administrator@ webmaster@ hostmaster@ postmaster@)
 
   include Workflow
   workflow do
@@ -45,7 +48,7 @@ class DomainControlValidation < ActiveRecord::Base
   def send_to(address)
     update_attributes email_address: address, sent_at: DateTime.now, dcv_method: "email"
     if csr.sent_success
-      ComodoApi.resend_dcv(self)
+      ComodoApi.resend_dcv(dcv: self)
       co=csr.certificate_content.certificate_order
       co.receipt_recipients.uniq.each do |c|
         OrderNotifier.dcv_sent(c, co, self).deliver!
@@ -81,6 +84,40 @@ class DomainControlValidation < ActiveRecord::Base
 
   def verify_http_csr_hash
     certificate_name.dcv_verified?
+  end
+
+  def email_address_choices
+    name = (csr.blank? ? certificate_name.name : csr.common_name)
+    DomainControlValidation.email_address_choices(name)
+  end
+
+  def self.email_address_choices(name)
+    return [] unless ::PublicSuffix.valid?(name.downcase)
+    d=::PublicSuffix.parse(name.downcase)
+    subdomains = d.trd ? d.trd.split(".") : []
+    [].tap {|s|
+      0.upto(subdomains.count) do |i|
+        s << (subdomains.slice(0,i)<<d.domain).join(".")
+      end
+    }.map do |e|
+      AUTHORITY_EMAIL_ADDRESSES.map do |ae|
+        ae+e
+      end
+    end.flatten
+  end
+
+  def comodo_email_address_choices
+    write_attribute(:candidate_addresses, ComodoApi.delay.domain_control_email_choices(certificate_name.name).email_address_choices)
+    save(validate: false)
+  end
+
+  def candidate_addresses
+    if self.candidate_addresses.blank?
+      # Thread.new{comodo_email_address_choices}.join
+      email_address_choices
+    else
+      read_attribute(:candidate_addresses)
+    end
   end
 
 end

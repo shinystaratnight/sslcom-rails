@@ -53,13 +53,15 @@ class ComodoApi
     end
   end
 
-  def self.resend_dcv(dcv)
-    comodo_options = {'dcvEmailAddress' => dcv.email_address, 'orderNumber'=> dcv.csr.sent_success(true).order_number}.
-        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+  def self.resend_dcv(options)
+    owner = options[:dcv].csr || options[:dcv].certificate_name
+    comodo_options = {'dcvEmailAddress' => options[:dcv].email_address,
+                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number}.
+                      merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     host = RESEND_DCV_URL
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: dcv.csr}
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
     CaDcvResendRequest.create(attr)
   end
 

@@ -266,8 +266,8 @@ class CertificateOrdersController < ApplicationController
   def filter_by_scope
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.send(params[:scope].to_sym) :
-        current_user.ssl_account.certificate_orders.send(params[:scope].to_sym)).paginate(p)
+      CertificateOrder.send(params[:id].to_sym) :
+        current_user.ssl_account.certificate_orders.send(params[:id].to_sym)).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

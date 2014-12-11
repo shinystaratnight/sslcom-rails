@@ -279,7 +279,7 @@ module ApplicationHelper
     when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
       "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::FULL_SIGNUP_PROCESS
-      "padding: 0 #{0.9 + (sv ? added_padding : 0.0)}em"
+      "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
       "padding: 0 #{3.30 + (sv ? added_padding : 0.0)}em"
     end

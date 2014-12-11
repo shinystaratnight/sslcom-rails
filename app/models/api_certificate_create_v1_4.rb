@@ -59,7 +59,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validate :verify_dcv, on: :create, if: "csr && !domains.blank?"
+  validate :verify_dcv, on: :create, if: "!domains.blank?"
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
@@ -132,22 +132,35 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
-      certificate_content = @certificate_order.certificate_contents.build
-      csr = self.csr_obj
-      csr.save
-      certificate_content.csr = csr
-      certificate_content.server_software_id = server_software
-      certificate_content.submit_csr!
-      certificate_content.domains = domains.keys unless domains.blank?
-      if errors.blank?
-        if certificate_content.save
-          setup_certificate_content(
-              certificate_order: @certificate_order,
-              certificate_content: certificate_content,
-              contacts: self.contacts)
-          return @certificate_order
-        else
-          return certificate_content
+      #assume updating domain validation
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation?
+        #set domains
+        #send to comodo
+        @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses})
+        self.domains.keys.each do |domain|
+          # ComodoApi.delay.resend_dcv(dcv:
+          ComodoApi.resend_dcv(dcv:
+            @certificate_order.certificate_content.certificate_names.find_by_name(domain).domain_control_validations.last)
+        end
+      else
+        certificate_content = @certificate_order.certificate_contents.build
+        csr = self.csr_obj
+        csr.save
+        certificate_content.csr = csr
+        certificate_content.server_software_id = server_software
+        certificate_content.submit_csr!
+        certificate_content.domains = domains.keys unless domains.blank?
+        if errors.blank?
+          if certificate_content.save
+            setup_certificate_content(
+                certificate_order: @certificate_order,
+                certificate_content: certificate_content,
+                contacts: self.contacts)
+            return @certificate_order
+          else
+            return certificate_content
+          end
         end
       end
     end
@@ -268,19 +281,28 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   # must belong to a list of acceptable email addresses
   def verify_dcv
-    self.dcv_email_addresses = {}
-    self.domains.each do |k,v|
-      unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
-        unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
-          errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
-        else
-          self.dcv_email_addresses[k]=[]
-          # self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
-          # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
-          #     self.dcv_email_addresses[k].include?(v["dcv"])
+    #if submitting domains, then a csr must have been submitted on this or a previous request
+    if !csr.blank? || api_requestable.certificate_content.pending_validation?
+      self.dcv_email_addresses = {}
+      self.domains.each do |k,v|
+        unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
+          unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
+            errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
+          else
+            self.dcv_email_addresses[k]=[]
+            # self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
+            # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
+            #     self.dcv_email_addresses[k].include?(v["dcv"])
+          end
         end
+        v["dcv_failure_action"] ||= "ignore"
       end
-      v["dcv_failure_action"] ||= "ignore"
+    elsif csr.blank?
+      errors[:domains] << "csr has not been submitted yet."
+    elsif !api_requestable.certificate_content.pending_validation?
+      errors[:domains] << "certificate order is not in validation stage."
+    else
+      errors[:domains] << "domain control validation failed. Please contact support@ssl.com for more information."
     end
   end
 
