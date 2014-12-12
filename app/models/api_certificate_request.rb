@@ -11,7 +11,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_email_addresses, :dcv_method, :ref, :contacts, :options]
+      :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -20,7 +20,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_email_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded, :ca_order_number, :debug]
+      :dcv_candidate_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded, :ca_order_number, :debug]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,

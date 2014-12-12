@@ -135,9 +135,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       #assume updating domain validation
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation?
         #set domains
-        #send to comodo
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
-        @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses})
+        @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
+        #send to comodo
         self.domains.keys.each do |domain|
           # ComodoApi.delay.resend_dcv(dcv:
           ComodoApi.resend_dcv(dcv:
@@ -167,9 +167,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self
   end
 
-  DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_email_addresses) do
+  DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_candidate_addresses) do
     def perform
-      cc.dcv_domains({domains: domains, emails: dcv_email_addresses,
+      cc.dcv_domains({domains: domains, emails: dcv_candidate_addresses,
                             dcv_failure_action: dcv_failure_action})
       cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
                           send_to_ca: acc.send_to_ca || true)
@@ -216,13 +216,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.provide_contacts!
       # if debugging, we want to see response from Comodo
       if self.debug=="true"
-        cc.dcv_domains({domains: self.domains, emails: self.dcv_email_addresses,
+        cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
                         dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
         cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
       else
         job_group = Delayed::JobGroups::JobGroup.create!
         job_group.enqueue(DomainJob.new(cc, self, self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
-                                        self.dcv_email_addresses))
+                                        self.dcv_candidate_addresses))
         job_group.mark_queueing_complete
       end
     end
@@ -283,16 +283,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def verify_dcv
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if !csr.blank? || api_requestable.certificate_content.pending_validation?
-      self.dcv_email_addresses = {}
+      self.dcv_candidate_addresses = {}
       self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
             errors[:domains] << "domain control validation for #{k} failed. #{v["dcv"]} is an invalid email address."
           else
-            self.dcv_email_addresses[k]=[]
-            # self.dcv_email_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
-            # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_email_addresses[k].join(", ")} are valid choices." unless
-            #     self.dcv_email_addresses[k].include?(v["dcv"])
+            self.dcv_candidate_addresses[k]=[]
+            # self.dcv_candidate_addresses[k]=ComodoApi.domain_control_email_choices(k).email_address_choices
+            # errors[:domains] << "domain control validation for #{k} failed. Invalid email address #{v["dcv"]} was submitted but only #{self.dcv_candidate_addresses[k].join(", ")} are valid choices." unless
+            #     self.dcv_candidate_addresses[k].include?(v["dcv"])
           end
         end
         v["dcv_failure_action"] ||= "ignore"

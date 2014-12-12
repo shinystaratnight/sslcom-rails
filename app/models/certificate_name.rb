@@ -19,7 +19,6 @@ class CertificateName < ActiveRecord::Base
     end
   end
   attr_accessor :csr
-  # attr_accessible :csr
 
   def is_ip_address?
     name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if name

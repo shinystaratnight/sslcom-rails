@@ -25,7 +25,7 @@ class CertificateOrder < ActiveRecord::Base
 
   # the following only apply to api calls
   attr_accessor :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :dcv_method,
-      :dcv_email_address, :dcv_email_addresses
+      :dcv_email_address, :dcv_candidate_addresses
 
   #will_paginate
   cattr_reader :per_page
@@ -568,6 +568,13 @@ class CertificateOrder < ActiveRecord::Base
          domains: api_domains,
          contacts: api_contacts,
          csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
+         "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+      when /update_dcv/
+        # registrant_params.merge!(api_domains).merge!(api_contacts)
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
+        {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+         secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+         domains: api_domains}.to_json.gsub("\"","\\\"") +
          "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
       when /create/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+

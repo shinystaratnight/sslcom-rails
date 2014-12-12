@@ -219,6 +219,47 @@ jQuery(function($) {
         }
     };
     $('form.edit_validation_ruling').ajaxForm(options);
+    $('form.update_dcv').ajaxForm({
+      dataType: 'json',
+      beforeSubmit: function(){
+        confirmed = confirm('Are you sure you want to update the domain control validation methods?');
+        if(confirmed){
+          $('#waiting_on_csr').show();
+          $('.submit_csr').attr('disabled', 'disabled');
+          submit_label = $('.submit_csr').attr('value');
+          $('.submit_csr').attr('value', 'Submitting...');
+        }
+        return confirmed;
+      },
+      success: function(data, status){
+        $('#waiting_on_csr').hide();
+        $('.submit_csr').removeAttr('disabled');
+        $('.submit_csr').attr('value', submit_label);
+        if(data.csr){
+          csr_exists=true;
+          $('textarea#tmp_csr').val($('#csr_body').val());
+          $('.common_name').text(data.csr.common_name);
+          $('.organization').text(data.csr.organization);
+          $('.department').text(data.csr.organization_unit);
+          $('.state').text(data.csr.state);
+          $('.city').text(data.csr.locality);
+          $('.country').text(data.csr.country);
+          $('#csr_submitted_on .submitted_on').text("submitted on " + Date.parse('today').toString("MMM dd, yyyy"));
+        }
+        else{
+          $('#csr_body').val($('textarea#tmp_csr').val());
+          errorArray=[];
+          i=0;
+          for (var key in data) {
+            if (data.hasOwnProperty(key)) {
+              errorArray.push(((key=="base")? "" : (key + ": ")) + data[key].join(", "));
+            }
+          }
+          errorString = errorArray.join(",\n");
+          alert("The csr was not successfully saved. The following errors were reported:\n\n"+errorString);
+        }
+      }
+    });
     $('input:checkbox[name*=publish_to_site_seal]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });

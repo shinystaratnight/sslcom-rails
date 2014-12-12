@@ -117,9 +117,13 @@
                       %textarea.selectAll=co.to_api_string("create")
                     -if co.csr
                       %li
-                        %strong SSL.com API DCV Emails Command
+                        %strong SSL.com API List DCV Emails Command
                       %li
                         %textarea.selectAll=co.to_api_string("dcv_emails")
+                      %li
+                        %strong SSL.com API Update DCV Command
+                      %li
+                        %textarea.selectAll=co.to_api_string("update_dcv")
                     -if co.external_order_number
                       %li
                         %strong SSL.com API Retrieve Command

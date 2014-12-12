@@ -6,8 +6,7 @@ class DomainControlValidation < ActiveRecord::Base
   belongs_to :certificate_name # only for UCC or multi domain certs
   serialize :candidate_addresses
 
-  validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
-
+  # validate  :email_address_check, unless: lambda{|r| r.email_address.blank?}
 
   IS_INVALID  = "is an invalid email address choice"
   FAILURE_ACTION = %w(ignore reject)
@@ -95,6 +94,7 @@ class DomainControlValidation < ActiveRecord::Base
     return [] unless ::PublicSuffix.valid?(name.downcase)
     d=::PublicSuffix.parse(name.downcase)
     subdomains = d.trd ? d.trd.split(".") : []
+    subdomains.shift if subdomains[0]=="*" #remove wildcard
     [].tap {|s|
       0.upto(subdomains.count) do |i|
         s << (subdomains.slice(0,i)<<d.domain).join(".")
@@ -107,13 +107,13 @@ class DomainControlValidation < ActiveRecord::Base
   end
 
   def comodo_email_address_choices
-    write_attribute(:candidate_addresses, ComodoApi.delay.domain_control_email_choices(certificate_name.name).email_address_choices)
+    write_attribute(:candidate_addresses, ComodoApi.domain_control_email_choices(certificate_name.name).email_address_choices)
     save(validate: false)
   end
 
   def candidate_addresses
-    if self.candidate_addresses.blank?
-      # Thread.new{comodo_email_address_choices}.join
+    if read_attribute(:candidate_addresses).blank?
+      # delay.comodo_email_address_choices
       email_address_choices
     else
       read_attribute(:candidate_addresses)
