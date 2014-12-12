@@ -169,7 +169,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_candidate_addresses) do
     def perform
-      cc.dcv_domains({domains: domains, emails: dcv_candidate_addresses,
+      cc.dcv_domains({domains: (domains || [cc.csr.common_name]), emails: dcv_candidate_addresses,
                             dcv_failure_action: dcv_failure_action})
       cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
                           send_to_ca: acc.send_to_ca || true)
