@@ -1,7 +1,7 @@
 class CreateInvoices < ActiveRecord::Migration
   def self.up
     create_table :invoices, force: true do |t|
-      t.references :ssl_account
+      t.references :order
       t.string  :description
       t.string  :company
       t.string  :first_name
