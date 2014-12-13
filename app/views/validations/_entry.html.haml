@@ -261,7 +261,7 @@
                         =image_tag 'waiting_bar_medium.gif'
                         %span processing...
                       %dl#sent_to_ca_results
-                        =render partial: "sent_ca_result", collection: co.csr_ca_api_requests.compact.flatten, as: :ca_response
+                        =render partial: "sent_ca_result", collection: co.csr_ca_api_requests.flatten.compact, as: :ca_response
                         =render partial: "cert_ca_result", locals: {ca_response: co.ca_retrieve_certificates.first} unless co.ca_retrieve_certificates.blank?
                   %ul
                     %li

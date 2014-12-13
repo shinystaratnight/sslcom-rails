@@ -24,7 +24,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :csr, presence: true, unless: "ref.blank?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || is_ov?) &&
+    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
           !c.is_free? && c.ref.blank? && ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
     inclusion: {in: ApiCertificateCreate::EV_PERIODS,
@@ -41,17 +41,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
-  validates :organization_name, presence: true, if: lambda{|c| csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
+  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
-            if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
+            if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
-            if: lambda{|c|!c.is_dv? && c.post_office_box.blank? && csr} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c| csr && (!c.is_dv? || c.csr_obj.locality.blank?)}
+            if: lambda{|c|!c.is_dv? && c.post_office_box.blank? &&c.csr} #|| c.parsed_field("STREET1").blank?}
+  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.locality.blank?)}
   validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? || c.csr_obj.state.blank?)}
-  validates :postal_code, presence: true, if: lambda{|c|csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
+  validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
-      if: lambda{|c|c.csr_obj && c.csr_obj.country.try("blank?") && csr}
+      if: lambda{|c| c.csr && c.csr_obj && c.csr_obj.country.try("blank?")}
   #validates :registered_country_name, :incorporation_date, if: lambda{|c|c.is_ev?}
   validates :dcv_method, inclusion: {in: ApiCertificateCreate::DCV_METHODS,
       message: "needs to one of the following: #{DCV_METHODS.join(', ')}"}, if: lambda{|c|c.dcv_method}
@@ -189,7 +189,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         city: self.locality_name,
         state: self.state_or_province_name,
         postal_code: self.postal_code,
-        country: self.country_name)
+        country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
@@ -214,6 +214,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         end
       end
       cc.provide_contacts!
+      options[:certificate_order].orphaned_certificate_contents remove: true
       # if debugging, we want to see response from Comodo
       if self.debug=="true"
         cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
