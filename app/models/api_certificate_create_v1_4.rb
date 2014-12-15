@@ -157,12 +157,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                 certificate_order: @certificate_order,
                 certificate_content: certificate_content,
                 contacts: self.contacts)
-            return @certificate_order
           else
             return certificate_content
           end
         end
       end
+      return @certificate_order
     end
     self
   end

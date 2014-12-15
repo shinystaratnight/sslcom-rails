@@ -63,20 +63,13 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.create_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            template = "api_certificate_requests/success_create_v1_4"
+            template = "api_certificate_requests/create_v1_4"
             if @acr.certificate_content.csr && @result.debug=="true"
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end
-            @result.ref = @acr.ref
-            @result.order_status = @acr.status
-            @result.order_amount = @acr.order(true).amount.format
-            @result.certificate_url = url_for(@acr)
-            @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
-            @result.validation_url = certificate_order_validation_url(@acr)
-            @result.update_attribute :response, render_to_string(:template => template)
+            set_result_parameters(@result, @acr, template)
             # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
@@ -91,6 +84,18 @@ class ApiCertificateRequestsController < ApplicationController
     logger.error e.message
     e.backtrace.each { |line| logger.error line }
     error(500, 500, "server error")
+  end
+
+  def set_result_parameters(result, acr, template)
+    result.ref = acr.ref
+    result.order_status = acr.status
+    result.order_amount = acr.order(true).amount.format
+    result.certificate_url = url_for(acr)
+    result.receipt_url = url_for(acr.order)
+    result.smart_seal_url = certificate_order_site_seal_url(acr)
+    result.validation_url = certificate_order_validation_url(acr)
+    result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+    result.update_attribute :response, render_to_string(:template => template)
   end
 
   def update_v1_4
@@ -112,14 +117,7 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
-            @result.order_status = @acr.status
-            @result.ref = @acr.ref
-            @result.order_amount = @acr.order.amount.format
-            @result.certificate_url = url_for(@acr)
-            @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
-            @result.validation_url = certificate_order_validation_url(@acr)
-            @result.update_attribute :response, render_to_string(:template => template)
+            set_result_parameters(@result, @acr, template)
             @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else

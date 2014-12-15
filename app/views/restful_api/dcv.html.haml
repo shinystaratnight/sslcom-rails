@@ -44,7 +44,7 @@
     This method requires a file created from the certificate signing request's (csr) hashes be viewable
     through http on port 80. SSL.com will check for the existence of this file to satisfy domain control validation.
     This file contains two hashes from the csr. The file name is the MD5 hash of the csr with a .txt extension.
-    Within this file is the SHA-1 hash of the csr followed by a newline and the word sslpki.com.
+    Within this file is the SHA-1 hash of the csr followed by a newline and the word comodoca.com.
   %p
     For instance, if the csr is created for the domain name www.yoursite.com, and the
     MD5 hash the csr is 8593532A8FA01E6CEBB0B7E85E510D0F, and the SHA-1 hash for the
@@ -52,7 +52,7 @@
   %dl.listing
     %dt
       %dd F18B0E3C464CCFE58209272A97ADC0E8C4233BF9
-      %dd sslpki.com
+      %dd comodoca.com
   %p
     And the dcv file should be publicly found at
   %dl.listing
@@ -69,13 +69,13 @@
     as a SHA-1 hash of the csr are required for this CNAME entry. The CNAME entry should look like:
   %dl.listing
     %dt
-      %dd~"<MD5 hash>.<domain> CNAME <SHA-1 hash>.sslpki.com"
+      %dd~"<MD5 hash>.<domain> CNAME <SHA-1 hash>.comodoca.com"
   %p
     Using the example csr and hashes in section "#{link_to "File lookup over HTTP", anchor: "file"}",
     the CNAME dns entry would look like:
   %dl.listing
     %dt
-      %dd 8593532A8FA01E6CEBB0B7E85E510D0F.yoursite.com CNAME F18B0E3C464CCFE58209272A97ADC0E8C4233BF9.sslpki.com
+      %dd 8593532A8FA01E6CEBB0B7E85E510D0F.yoursite.com CNAME F18B0E3C464CCFE58209272A97ADC0E8C4233BF9.comodoca.com
   %p
     Upon successful order placement, SSL.com's automated server will look for this dns entry,
     and if found, domain control validation will be satisfied.

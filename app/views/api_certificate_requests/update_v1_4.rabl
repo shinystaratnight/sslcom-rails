@@ -6,11 +6,11 @@ unless @result.errors.blank?
 else
   if @result.debug
     glue @result do
-      attributes :ref, :order_status, :order_amount, :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :api_request, :api_response
+      attributes :ref, :registrant, :order_status, :validations, :order_amount, :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :api_request, :api_response
     end
   else
     glue @result do
-      attributes :ref, :order_status, :order_amount, :certificate_url, :receipt_url, :smart_seal_url, :validation_url
+      attributes :ref, :registrant, :order_status, :validations, :order_amount, :certificate_url, :receipt_url, :smart_seal_url, :validation_url
     end
   end
 end
