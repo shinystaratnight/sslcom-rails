@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :order_status, :certificates, :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm
+    attributes :order_status, :registrant, :certificates, :common_name, :subject_alternative_names, :validations, :effective_date, :expiration_date, :algorithm
   end
 end

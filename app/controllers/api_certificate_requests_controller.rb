@@ -157,6 +157,7 @@ class ApiCertificateRequestsController < ApplicationController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
+        @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
         if (@acr.signed_certificate && @result.query_type!="order_status_only")
           @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
             response_encoding: @result.response_encoding)

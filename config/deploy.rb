@@ -30,8 +30,8 @@ default_run_options[:pty] = true
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
-set :application, "sws-test.sslpki.com" # test api
-# set :application, "sws.sslpki.com" # api
+# set :application, "sws-test.sslpki.com" # test api
+set :application, "sws.sslpki.com" # api
 set :domain, '174.129.43.244' # sws.sslpki.com api
 
 #set :deploy_via, :copy
@@ -147,11 +147,11 @@ namespace :bundler do
   end
 end
 
-after 'deploy:update_code', 'bundler:bundle_new_release'
-after "deploy:stop",    "delayed_job:stop"
-after "deploy:start",   "delayed_job:start"
-after "deploy:restart", "delayed_job:restart"
-after "deploy", "delayed_job:restart"
+# after 'deploy:update_code', 'bundler:bundle_new_release'
+# after "deploy:stop",    "delayed_job:stop"
+# after "deploy:start",   "delayed_job:start"
+# after "deploy:restart", "delayed_job:restart"
+# after "deploy", "delayed_job:restart"
 namespace :delayed_job do
   desc "Stop the delayed_job process"
   task :stop, :roles => :app do

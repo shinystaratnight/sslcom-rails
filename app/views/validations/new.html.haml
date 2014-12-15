@@ -32,6 +32,7 @@
           %th domain
           %th method
           %th description
+          %th status
         -co.certificate_content.certificate_names.each do |cn|
           -le=cn.domain_control_validations.last_emailed
           -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  ["upload text file", "add cname entry"]}
@@ -40,6 +41,7 @@
               =cn.name
             %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address)
             %td description
+            %td file upload attempted on 12-15-2015
       #upload_validations(style='width: 100%; text-align: center;')
         =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
         -#.clearfix

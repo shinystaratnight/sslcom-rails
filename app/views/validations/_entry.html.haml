@@ -124,11 +124,11 @@
                         %strong SSL.com API Update DCV Command
                       %li
                         %textarea.selectAll=co.to_api_string("update_dcv")
-                    -if co.external_order_number
                       %li
-                        %strong SSL.com API Retrieve Command
+                        %strong SSL.com API Status/Retrieve Command
                       %li
                         %textarea.selectAll=co.to_api_string("show")
+                    -if co.external_order_number
                       %li
                         %strong SSL.com API Reprocess Command
                       %li

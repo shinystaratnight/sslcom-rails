@@ -32,7 +32,7 @@ class ApiCertificateRequest < CaApiRequest
       :dcv_methods, :ref, :options]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
-    :show_validity_period, :show_domains, :show_ext_status]
+    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
@@ -70,6 +70,25 @@ class ApiCertificateRequest < CaApiRequest
       else
         self.api_requestable.certificate_orders.find_by_ref(self.ref) || (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}.")
       end
+    end
+  end
+
+  def ref
+    read_attribute(:ref) || JSON.parse(self.parameters)["ref"]
+  end
+
+  def validations
+    co = find_certificate_order
+    if co.is_a?(CertificateOrder)
+      cc = co.certificate_content
+      dcvs = {}.tap do |dcv|
+        (cc.domains || [cc.csr.common_name]).each do |domain|
+          if (cc.certificate_names.find_by_name(domain) && last = cc.certificate_names.find_by_name(domain).domain_control_validations.last)
+            dcv.merge! domain=>{"attempted_on"=>self.updated_at, "dcv_method"=>(last.email_address || last.dcv_method)}
+          end
+        end
+      end
+      dcvs.blank? ? nil : dcvs #be consistent with the api results by returning null if empty
     end
   end
 end
