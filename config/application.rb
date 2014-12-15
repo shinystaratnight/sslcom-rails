@@ -71,6 +71,16 @@ module SslCom
       only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
              %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
 
+    config.middleware.insert_before 0, "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '/certificate/*',
+                 :headers => :any,
+                 :methods => [:get, :post, :delete, :put, :options, :head],
+                 :max_age => 0
+      end
+    end
+
     # Enable the asset pipeline
     config.assets.enabled = false
 

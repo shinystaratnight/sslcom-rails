@@ -280,6 +280,8 @@ GEM
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
+    rack-cors (0.2.8)
+      rack
     rack-protection (1.3.1)
       rack
     rack-ssl (1.3.3)
@@ -446,6 +448,7 @@ DEPENDENCIES
   pry-remote
   public_suffix
   rabl
+  rack-cors
   rack-ssl-enforcer
   radix62
   rails (~> 3.2.15)

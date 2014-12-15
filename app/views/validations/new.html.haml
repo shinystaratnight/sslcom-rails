@@ -13,6 +13,7 @@
       =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
     =error_messages_for :validation, @dcv, @other_party_validation_request
   -if co.certificate.is_ucc?
+    .error{style: "display: none;"}
     %table{style: "width: 100%; border: 1px solid black; border-collapse: collapse; margin: 1em"}
       %tr
         %th format
@@ -23,7 +24,7 @@
       %tr
         %td cname
         %td create CNAME in dns and point to #{co.csr.md5_hash}.comodoca.com
-    =form_tag("http://sws-test.sslpki.local:3000/"+api_certificate_update_v1_4_path(co.ref), method: :put, class: "update_dcv") do
+    =form_tag("https://sws-test.sslpki.local:3000"+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
       =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
       =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
       %table{style: "width: 100%; border: 1px solid black; border-collapse: collapse; margin: 1em"}
@@ -37,12 +38,12 @@
           %tr
             %td
               =cn.name
-            %td=select_tag :domain_control_validation_email, grouped_options_for_select(opts, le.blank? ? nil : le.email_address)
+            %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address)
             %td description
       #upload_validations(style='width: 100%; text-align: center;')
-        =submit_tag "Submit", :id=>"upload_files", :disable_with=>"Submitting..."
-        .clearfix
-          =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+        =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
+        -#.clearfix
+        -#  =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
   -else
     #stylized.default_form
       =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do

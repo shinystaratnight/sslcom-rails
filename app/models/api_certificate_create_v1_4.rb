@@ -283,7 +283,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   # must belong to a list of acceptable email addresses
   def verify_dcv
     #if submitting domains, then a csr must have been submitted on this or a previous request
-    if !csr.blank? || api_requestable.certificate_content.pending_validation?
+    if !csr.blank? ||
+        (find_certificate_order.is_a?(CertificateOrder) && find_certificate_order.certificate_content.pending_validation?)
       self.dcv_candidate_addresses = {}
       self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i

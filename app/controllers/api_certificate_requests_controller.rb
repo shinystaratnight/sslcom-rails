@@ -292,7 +292,7 @@ class ApiCertificateRequestsController < ApplicationController
               when "dcv_emails_v1_3", "dcv_revoke_v1_3"
                 ApiDcvEmails
             end
-    @result=klass.new(params[:api_certificate_request])
+    @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_certificate_request'])
     @result.debug = params[:debug] if params[:debug]
     @result.send_to_ca = params[:send_to_ca] if params[:send_to_ca]
     @result.action = params[:action]
