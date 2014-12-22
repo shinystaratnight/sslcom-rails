@@ -152,7 +152,7 @@ class ApiCertificateUpdate_v1_4 < ApiCertificateRequest
           role==CertificateContent::ADMINISTRATIVE_ROLE
       end
       cc.provide_contacts!
-      cc.pend_validation! !certificate_order.is_test
+      cc.pend_validation! # !certificate_order.is_test
     end
   end
 

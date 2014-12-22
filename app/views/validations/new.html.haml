@@ -14,7 +14,7 @@
     =error_messages_for :validation, @dcv, @other_party_validation_request
   -if co.certificate.is_ucc?
     .error{style: "display: none;"}
-    %table{style: "width: 100%; border: 1px solid black; border-collapse: collapse; margin: 1em"}
+    %table{style: "width: 100%; border: 1px solid black; margin: 1em"}
       %tr
         %th format
         %th csr hash options
@@ -27,7 +27,7 @@
     =form_tag("https://sws-test.sslpki.local:3000"+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
       =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
       =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
-      %table{style: "width: 100%; border: 1px solid black; border-collapse: collapse; margin: 1em"}
+      %table{style: "width: 100%; border: 1px solid black; margin: 1em"}
         %thead
           %th domain
           %th method
@@ -35,7 +35,7 @@
           %th status
         -co.certificate_content.certificate_names.each do |cn|
           -le=cn.domain_control_validations.last_emailed
-          -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  ["upload text file", "add cname entry"]}
+          -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["upload text file","http_csr_hash"], ["add cname entry","cname_csr_hash"]]}
           %tr
             %td
               =cn.name

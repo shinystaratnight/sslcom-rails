@@ -12,6 +12,7 @@ class ApiCertificateRequestsController < ApplicationController
   respond_to :xml, :json
 
   TEST_SUBDOMAIN = "sws-test"
+  ORDERS_DOMAIN = "https://www.ssl.com:3000"
 
   rescue_from MultiJson::DecodeError do |exception|
     render :text => exception.to_s, :status => 422
@@ -90,10 +91,10 @@ class ApiCertificateRequestsController < ApplicationController
     result.ref = acr.ref
     result.order_status = acr.status
     result.order_amount = acr.order(true).amount.format
-    result.certificate_url = url_for(acr)
-    result.receipt_url = url_for(acr.order)
-    result.smart_seal_url = certificate_order_site_seal_url(acr)
-    result.validation_url = certificate_order_validation_url(acr)
+    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(acr)
+    result.receipt_url = ORDERS_DOMAIN+order_path(acr.order)
+    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(acr)
+    result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
     result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
     result.update_attribute :response, render_to_string(:template => template)
   end

@@ -6,12 +6,12 @@ class DomainNameValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     if value.is_a? Array
       value.each do |val|
-        record.errors[attribute] << (options[:message] || "#{val} is not a valid domain name") if
-            ((val =~ DOMAIN_NAME_FORMAT) && (val =~ GTLDS)).blank?
+        record.errors[attribute] << (options[:message] || "#{val} is not a valid domain name") unless
+            PublicSuffix.valid?(val)
       end
     else
-      record.errors[attribute] << (options[:message] || "#{value} is not a valid domain name") if
-          ((value =~ DOMAIN_NAME_FORMAT) && (value =~ GTLDS)).blank?
+      record.errors[attribute] << (options[:message] || "#{value} is not a valid domain name") unless
+          PublicSuffix.valid?(val)
     end
   end
 end

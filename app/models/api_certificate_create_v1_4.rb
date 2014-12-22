@@ -3,7 +3,7 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
@@ -21,7 +21,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
-  validates :csr, presence: true, unless: "ref.blank?"
+  validates :csr, presence: true, unless: "ref.blank? || is_processing?"
   validates :period, presence: true, format: /\d+/,
     inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
     message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
@@ -132,7 +132,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
-      #assume updating domain validation
+      #assume updating domain validation, already sent to comodo
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation?
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
@@ -144,22 +144,28 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             @certificate_order.certificate_content.certificate_names.find_by_name(domain).domain_control_validations.last)
         end
       else
-        certificate_content = @certificate_order.certificate_contents.build
-        csr = self.csr_obj
-        csr.save
-        certificate_content.csr = csr
-        certificate_content.server_software_id = server_software
-        certificate_content.submit_csr!
-        certificate_content.domains = domains.keys unless domains.blank?
-        if errors.blank?
-          if certificate_content.save
-            setup_certificate_content(
-                certificate_order: @certificate_order,
-                certificate_content: certificate_content,
-                contacts: self.contacts)
-          else
-            return certificate_content
+        if self.csr_obj
+          certificate_content = @certificate_order.certificate_contents.build
+          csr = self.csr_obj
+          csr.save
+          certificate_content.csr = csr
+          certificate_content.server_software_id = server_software
+          certificate_content.submit_csr!
+          certificate_content.domains = domains.keys unless domains.blank?
+          if errors.blank?
+            if certificate_content.save
+              setup_certificate_content(
+                  certificate_order: @certificate_order,
+                  certificate_content: certificate_content,
+                  contacts: self.contacts)
+            else
+              return certificate_content
+            end
           end
+        else
+          certificate_content = @certificate_order.certificate_content
+          certificate_content.domains = domains.keys unless domains.blank?
+          send_dcv(certificate_content)
         end
       end
       return @certificate_order
@@ -216,16 +222,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.provide_contacts!
       options[:certificate_order].orphaned_certificate_contents remove: true
       # if debugging, we want to see response from Comodo
-      if self.debug=="true"
-        cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
-                        dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
-        cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
-      else
-        job_group = Delayed::JobGroups::JobGroup.create!
-        job_group.enqueue(DomainJob.new(cc, self, self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
-                                        self.dcv_candidate_addresses))
-        job_group.mark_queueing_complete
-      end
+      send_dcv(cc)
+    end
+  end
+
+  def send_dcv(cc)
+    if self.debug=="true"
+      cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
+                      dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
+      cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true)
+    else
+      job_group = Delayed::JobGroups::JobGroup.create!
+      job_group.enqueue(DomainJob.new(cc, self, self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
+                                      self.dcv_candidate_addresses))
+      job_group.mark_queueing_complete
     end
   end
 
@@ -283,8 +293,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   # must belong to a list of acceptable email addresses
   def verify_dcv
     #if submitting domains, then a csr must have been submitted on this or a previous request
-    if !csr.blank? ||
-        (find_certificate_order.is_a?(CertificateOrder) && find_certificate_order.certificate_content.pending_validation?)
+    if !csr.blank? || is_processing?
       self.dcv_candidate_addresses = {}
       self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
@@ -354,5 +363,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       errors[:contacts] << "parameter required"
     end
     return false if errors[:contacts]
+  end
+
+  def is_processing?
+    co=@certificate_order || find_certificate_order
+    co.is_a?(CertificateOrder) && (co.certificate_content.try("contacts_provided?") ||
+        co.certificate_content.try("pending_validation?")) ? true : false
   end
 end

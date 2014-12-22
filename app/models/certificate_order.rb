@@ -12,6 +12,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_notifications
   has_many    :certificate_contents
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
+  has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
@@ -1077,10 +1078,6 @@ class CertificateOrder < ActiveRecord::Base
         last_sent.send_dcv! unless last_sent.sent_dcv?
       end
     end
-  end
-
-  def csr_ca_api_requests
-    certificate_contents.map(&:csr).flatten.compact.map(&:ca_certificate_requests)
   end
 
   # Creates a new external ca order history by deleting the old external order id and requests thus allowing us

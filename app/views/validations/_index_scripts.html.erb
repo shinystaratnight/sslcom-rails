@@ -236,7 +236,7 @@ jQuery(function($) {
 //        $('.submit_csr').removeAttr('disabled');
 //        $('.submit_csr').attr('value', submit_label);
         if(data.errors){
-          $('.error').append("The following fields have errors:</br><ul>");
+          $('.error').html("The following fields have errors:</br><ul>");
           $.each(data.errors, function(i, item) {
             // i = index
             // item = data for a particular post
@@ -245,16 +245,8 @@ jQuery(function($) {
           $('.error').append("</ul>").show();
         }
         else{
-          $('#csr_body').val($('textarea#tmp_csr').val());
-          errorArray=[];
-          i=0;
-          for (var key in data) {
-            if (data.hasOwnProperty(key)) {
-              errorArray.push(((key=="base")? "" : (key + ": ")) + data[key].join(", "));
-            }
-          }
-          errorString = errorArray.join(",\n");
-          alert("The csr was not successfully saved. The following errors were reported:\n\n"+errorString);
+//          window.location.href = data.certificate_url;
+//          alert("Validation updated.");
         }
       }
     });

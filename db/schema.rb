@@ -484,8 +484,8 @@ ActiveRecord::Schema.define(:version => 20141209154127) do
   end
 
   create_table "invoices", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "description"
+    t.integer  "order_id"
+    t.text     "description"
     t.string   "company"
     t.string   "first_name"
     t.string   "last_name"
@@ -500,8 +500,8 @@ ActiveRecord::Schema.define(:version => 20141209154127) do
     t.string   "vat"
     t.string   "tax"
     t.string   "notes"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "legacy_v2_user_mappings", :force => true do |t|

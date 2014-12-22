@@ -2,7 +2,7 @@ class CreateInvoices < ActiveRecord::Migration
   def self.up
     create_table :invoices, force: true do |t|
       t.references :order
-      t.string  :description
+      t.text  :description
       t.string  :company
       t.string  :first_name
       t.string  :last_name
@@ -25,4 +25,4 @@ class CreateInvoices < ActiveRecord::Migration
   def self.down
     drop_table :invoices
   end
-  end
+end
