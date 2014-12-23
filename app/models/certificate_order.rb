@@ -557,7 +557,8 @@ class CertificateOrder < ActiveRecord::Base
     (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 
-  def to_api_string(action="update")
+  def to_api_string(action="update", domain_override=nil)
+    domain = domain_override || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     case action
       when /update/
@@ -569,14 +570,14 @@ class CertificateOrder < ActiveRecord::Base
          domains: api_domains,
          contacts: api_contacts,
          csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
-         "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+         "\" #{domain}/certificate/#{self.ref}"
       when /update_dcv/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
         {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
          secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
          domains: api_domains}.to_json.gsub("\"","\\\"") +
-         "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+         "\" #{domain}/certificate/#{self.ref}"
       when /create/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
@@ -587,20 +588,25 @@ class CertificateOrder < ActiveRecord::Base
              domains: api_domains,
              contacts: api_contacts,
              csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
-            "\" https://sws-test.sslpki.local:3000/certificates"
+            "\" #{domain}/certificates"
       when /show/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
              query_type: ("all_certificates" unless signed_certificate.blank?),
              response_type: ("individually" unless signed_certificate.blank?)}.
-            to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificate/#{self.ref}"
+            to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}"
       when /dcv_emails/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
              merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name}).
-            to_json.gsub("\"","\\\"") + "\" https://sws-test.sslpki.local:3000/certificates/validations/email"
+            to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email"
+      when /dcv_methods/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+            to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods"
     end
   end
 

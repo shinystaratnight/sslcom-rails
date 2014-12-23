@@ -105,97 +105,99 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
-                  -if current_user.try("is_admin?")
-                    %li
-                      %strong Calls To SSL.com API
-                    %li
-                      %textarea.selectAll=co.ssl_account.api_certificate_requests_string
-                  -if current_user.try("is_admin?") && cc.registrant
-                    %li
-                      %strong SSL.com API New Command
-                    %li
-                      %textarea.selectAll=co.to_api_string("create")
-                    -if co.csr
+                  -if current_user.try("is_admin?") || co.is_test?
+                    -if current_user.try("is_admin?")
                       %li
-                        %strong SSL.com API List DCV Emails Command
+                        %strong Calls To SSL.com API
                       %li
-                        %textarea.selectAll=co.to_api_string("dcv_emails")
+                        %textarea.selectAll=co.ssl_account.api_certificate_requests_string
+                    -if cc.registrant
                       %li
-                        %strong SSL.com API Update DCV Command
+                        %strong SSL.com API New Command
                       %li
-                        %textarea.selectAll=co.to_api_string("update_dcv")
-                    -if co.external_order_number
-                      %li
-                        %strong SSL.com API Status/Retrieve Command
-                      %li
-                        %textarea.selectAll=co.to_api_string("show")
-                      %li
-                        %strong SSL.com API Reprocess Command
-                      %li
-                        %textarea.selectAll=co.to_api_string("update")
-                    %li product:
-                    %ul
-                      %li
-                        %dl
-                          %dt
-                          %dd "100" - EV UCC SSL
-                          %dd "101" - UCC SSL
-                          %dd "103" - High Assurance SSL
-                          %dd "102" - EV SSL
-                          %dd "104" - Free SSL
-                          %dd "105" - Wildcard SSL
-                          %dd "106" - Basic SSL
-                          %dd "107" - Premium SSL
-                    %li debug:
-                    %ul
-                      %li
-                        true or false
-                    %li send_to_ca:
-                    %ul
-                      %li
-                        true or false
-                    %li
-                      %strong Comodo API New Command
-                    %li
-                      %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, ca_certificate_id: "506", product: "").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
-                    -if co.external_order_number
-                      %li
-                        %strong Comodo API Rekey Command
-                      %li
-                        %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca.merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::REPLACE_SSL_URL+'\''
-                      %li
-                        %strong Comodo API Retrieve Command
-                      %li
-                        %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
-                    %li product:
-                    %ul
-                      %li
-                        %dl
-                          %dt
-                          %dd "342" - free 90 day
-                          %dd "301" - basicssl
-                          %dd "343" - wildcard
-                          %dd "337" - ev
-                          %dd
-                          %dd "279" - ucc
-                          %dd "279" - premiumssl
-                          %dd "410" - evucc
-                    %li caCertificateID:
-                    %ul
-                      %li
-                        SHA2
-                        %dl
-                          %dt
-                          %dd "508" - ev
-                          %dd "507" - ov
-                          %dd "506" - dv
-                      %li
-                        SSL.com Free CA
-                        %dl
-                          %dt
-                          %dd "403" - ev
-                          %dd "402" - ov
-                          %dd "401" - dv
+                        %textarea.selectAll=co.to_api_string("create")
+                      -if co.csr
+                        %li
+                          %strong SSL.com API List DCV Methods Command
+                        %li
+                          %textarea.selectAll=co.to_api_string("dcv_methods")
+                        %li
+                          %strong SSL.com API Update DCV Command
+                        %li
+                          %textarea.selectAll=co.to_api_string("update_dcv")
+                      -if co.external_order_number
+                        %li
+                          %strong SSL.com API Status/Retrieve Command
+                        %li
+                          %textarea.selectAll=co.to_api_string("show")
+                        %li
+                          %strong SSL.com API Reprocess Command
+                        %li
+                          %textarea.selectAll=co.to_api_string("update")
+                      %li product:
+                      %ul
+                        %li
+                          %dl
+                            %dt
+                            %dd "100" - EV UCC SSL
+                            %dd "101" - UCC SSL
+                            %dd "103" - High Assurance SSL
+                            %dd "102" - EV SSL
+                            %dd "104" - Free SSL
+                            %dd "105" - Wildcard SSL
+                            %dd "106" - Basic SSL
+                            %dd "107" - Premium SSL
+                      -if current_user.try("is_admin?")
+                        %li debug:
+                        %ul
+                          %li
+                            true or false
+                        %li send_to_ca:
+                        %ul
+                          %li
+                            true or false
+                        %li
+                          %strong Comodo API New Command
+                        %li
+                          %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, ca_certificate_id: "506", product: "").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
+                        -if co.external_order_number
+                          %li
+                            %strong Comodo API Rekey Command
+                          %li
+                            %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca.merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::REPLACE_SSL_URL+'\''
+                          %li
+                            %strong Comodo API Retrieve Command
+                          %li
+                            %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
+                        %li product:
+                        %ul
+                          %li
+                            %dl
+                              %dt
+                              %dd "342" - free 90 day
+                              %dd "301" - basicssl
+                              %dd "343" - wildcard
+                              %dd "337" - ev
+                              %dd
+                              %dd "279" - ucc
+                              %dd "279" - premiumssl
+                              %dd "410" - evucc
+                        %li caCertificateID:
+                        %ul
+                          %li
+                            SHA2
+                            %dl
+                              %dt
+                              %dd "508" - ev
+                              %dd "507" - ov
+                              %dd "506" - dv
+                          %li
+                            SSL.com Free CA
+                            %dl
+                              %dt
+                              %dd "403" - ev
+                              %dd "402" - ov
+                              %dd "401" - dv
               .certificate_details_box
                 %ul
                   %li

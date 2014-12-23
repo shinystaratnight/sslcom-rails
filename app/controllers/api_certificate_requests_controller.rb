@@ -12,7 +12,7 @@ class ApiCertificateRequestsController < ApplicationController
   respond_to :xml, :json
 
   TEST_SUBDOMAIN = "sws-test"
-  ORDERS_DOMAIN = "https://www.ssl.com:3000"
+  ORDERS_DOMAIN = "https://www.ssl.com"
 
   rescue_from MultiJson::DecodeError do |exception|
     render :text => exception.to_s, :status => 422
