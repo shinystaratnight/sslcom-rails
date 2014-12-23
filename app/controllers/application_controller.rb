@@ -328,7 +328,7 @@ class ApplicationController < ActionController::Base
   #co - certificate order
   def hide_validation?(co)
     return false if current_user.blank?
-    (co.skip_verification? || !co.certificate_content.show_validation_view?) && !current_user.is_admin?
+    (co.skip_verification? || !co.certificate_content.show_validation_view?) # && !current_user.is_admin?
   end
 
 =begin
