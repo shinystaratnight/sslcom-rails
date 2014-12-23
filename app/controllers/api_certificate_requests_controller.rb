@@ -104,7 +104,7 @@ class ApiCertificateRequestsController < ApplicationController
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
-      if @result.save
+      if @result.save #save the api request
         if @acr = @result.update_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
@@ -223,6 +223,8 @@ class ApiCertificateRequestsController < ApplicationController
   def dcv_emails_v1_3
     if @result.save
       @result.email_addresses={}
+      @certificate_order=find_certificate_order
+      @certificate_order.is_a?(CertificateOrder)
       if @result.domain
         @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain).email_address_choices
       else
@@ -231,14 +233,47 @@ class ApiCertificateRequestsController < ApplicationController
         end
       end
       unless @result.email_addresses.blank?
-        template = "api_certificate_requests/success_dcv_emails_v1_3"
+        template = "api_certificate_requests/dcv_emails_v1_3"
         @result.update_attribute :response, render_to_string(:template => template)
         render(:template => template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
-    render action: :create_v1_3
+  end
+
+  def dcv_methods_v1_4
+    if @result.save  #save the api request
+      @acr = @result.find_certificate_order
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        template = "api_certificate_requests/dcv_methods_v1_4"
+      end
+      @result.dcv_methods={}
+      if @acr.domains
+        @result.instructions = ApiDcvMethods::INSTRUCTIONS
+        unless @acr.csr.blank?
+          @result.md5_hash = @acr.csr.md5_hash
+          @result.sha1_hash = @acr.csr.sha1_hash
+        end
+        @acr.domains.each do |domain|
+          @result.dcv_methods.merge! domain=>{}
+          @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+          unless @acr.csr.blank?
+            @result.dcv_methods[domain].merge! "http_csr_hash"=>
+                                                   {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
+                                                    "allow_https"=>"true",
+                                                    "contents"=>"#{@result.sha1_hash}\ncomodoca.com"}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha1_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha1_hash}.comodoca.com."}
+          end
+        end
+      end
+      unless @result.dcv_methods.blank?
+        @result.update_attribute :response, render_to_string(:template => template)
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
   end
 
   def dcv_email_resend_v1_3
@@ -291,6 +326,8 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiDcvEmailResend
               when "dcv_emails_v1_3", "dcv_revoke_v1_3"
                 ApiDcvEmails
+              when "dcv_methods_v1_4", "dcv_revoke_v1_3"
+                ApiDcvMethods
             end
     @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_certificate_request'])
     @result.debug = params[:debug] if params[:debug]
