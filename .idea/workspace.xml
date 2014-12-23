@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" line="0" mnemonic="8" />
-    <bookmark url="file://$PROJECT_DIR$/config/routes.rb" line="36" mnemonic="7" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" line="273" mnemonic="6" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_request.rb" line="59" mnemonic="5" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" line="313" mnemonic="1" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" line="170" mnemonic="2" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/reseller.rb" line="46" mnemonic="3" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_contact.rb" line="3" mnemonic="4" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="78" mnemonic="0" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/application_controller.rb" line="162" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/controllers/validations_controller.rb" line="2" mnemonic="3" />
+    <bookmark url="file://$PROJECT_DIR$/config/routes.rb" line="0" mnemonic="4" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate.rb" line="588" mnemonic="5" />
+    <bookmark url="file://$PROJECT_DIR$/app/views/validations/new.html.haml" line="41" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/domain_control_validation.rb" line="93" mnemonic="6" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="929" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="55" mnemonic="7" />
+    <bookmark url="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" line="221" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/csr.rb" line="283" mnemonic="9" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="fixed order_by_csr">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/validations/_entry.html.haml" afterPath="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/comodo_api.rb" afterPath="$PROJECT_DIR$/app/models/comodo_api.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
+    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="provide more info on certificate page">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/compass_library.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.generators" afterPath="$PROJECT_DIR$/.idea/.generators" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
+    <ignored path="$PROJECT_DIR$/.bundle/" />
+    <ignored path="$PROJECT_DIR$/log/" />
+    <ignored path="$PROJECT_DIR$/tmp/" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,49 +34,49 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1415836558565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1409153043475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1415641125837" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1415645205152" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController Get #show shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1400882183149" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1415894854097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_valid__ssl_com_rails3.coverage" NAME="ApiCredential is valid: ssl_com_rails3 Coverage Results" MODIFIED="1400509623757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_valid__ssl_com_rails3.coverage" NAME="ApiCredential is valid: ssl_com_rails3 Coverage Results" MODIFIED="1400509623757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1412178263553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1419288566839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1417618448919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1412178263553" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL: ssl_com_rails3 Coverage Results" MODIFIED="1400454091340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1417212221403" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1418663473049" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1409153043475" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController Get #show shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1400882183149" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="$PROJECT_DIR$" />
@@ -87,101 +90,104 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="certificate_order.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.4615383" vertical-offset="22464" max-vertical-offset="29942">
-              <caret line="1029" column="47" selection-start-line="1029" selection-start-column="47" selection-end-line="1029" selection-end-column="47" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_entry.html.haml" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-4.2580647" vertical-offset="3058" max-vertical-offset="5852">
-              <caret line="145" column="0" selection-start-line="145" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1877" max-vertical-offset="6864">
-              <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="131" max-vertical-offset="6534">
+              <caret line="14" column="2" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+              <folding>
+                <element signature="e#843#2116#0" expanded="false" />
+                <element signature="e#2120#3369#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="signed_certificate.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
+      <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="8965" max-vertical-offset="11880">
-              <caret line="417" column="0" selection-start-line="417" selection-start-column="0" selection-end-line="417" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="332" max-vertical-offset="4400">
+              <caret line="27" column="67" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="show_v1_4.rabl" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl">
+      <file leaf-file-name="routes.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="352">
-              <caret line="7" column="132" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="132" />
+            <state vertical-scroll-proportion="-7.025641" vertical-offset="606" max-vertical-offset="5918">
+              <caret line="40" column="23" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="certificate.rb" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="certificate_orders_controller.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="6124" max-vertical-offset="9130">
+              <caret line="292" column="65" selection-start-line="292" selection-start-column="51" selection-end-line="292" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_subject_column.html.haml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-7.806452" vertical-offset="66" max-vertical-offset="792">
+              <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.1706422" vertical-offset="7035" max-vertical-offset="14080">
+              <caret line="324" column="24" selection-start-line="324" selection-start-column="24" selection-end-line="324" selection-end-column="24" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_content.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="21207" max-vertical-offset="24794">
+              <caret line="972" column="6" selection-start-line="972" selection-start-column="6" selection-end-line="972" selection-end-column="6" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate_order.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="-2.64" vertical-offset="13156" max-vertical-offset="29546">
+              <caret line="607" column="97" selection-start-line="607" selection-start-column="97" selection-end-line="607" selection-end-column="97" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="certificate.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1331" max-vertical-offset="13486">
-              <caret line="67" column="2" selection-start-line="67" selection-start-column="2" selection-end-line="67" selection-end-column="2" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="12717" max-vertical-offset="13486">
+              <caret line="588" column="16" selection-start-line="588" selection-start-column="6" selection-end-line="588" selection-end-column="24" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_executed.erb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/order_notifier/api_executed.erb">
+      <file leaf-file-name="_entry.html.haml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="132">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="comodo_api.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1067" max-vertical-offset="2574">
-              <caret line="56" column="63" selection-start-line="56" selection-start-column="63" selection-end-line="56" selection-end-column="63" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ca_certificate_request.rb" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1056">
-              <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="domain_control_validation.rb" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1914">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="-6.225806" vertical-offset="2293" max-vertical-offset="6204">
+              <caret line="113" column="0" selection-start-line="109" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -202,61 +208,64 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
-    <option name="changedFiles">
+    <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/db/migrate/20141028161640_add_to_signed_certificate.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_update_v1_4.rb" />
-        <option value="$PROJECT_DIR$/app/views/users/_admin.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
+        <option value="$PROJECT_DIR$/app/helpers/site_seals_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/order.rb" />
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_admin.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20141103202452_add_to_domain_control_validation.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20141103202452_add_to_domain_control_validations.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/validations_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/comodo_api.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/signed_certificate_helper.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_download.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.text.erb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
-        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
-        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/models/domain_control_validation.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
+        <option value="$PROJECT_DIR$/config/environments/development.rb" />
+        <option value="$PROJECT_DIR$/script/rails" />
+        <option value="$PROJECT_DIR$/config/initializers/wrap_parameters.rb" />
         <option value="$PROJECT_DIR$/Gemfile" />
-        <option value="$PROJECT_DIR$/db/migrate/20141110172807_add_to_billing_profile.rb" />
-        <option value="$PROJECT_DIR$/app/models/billing_profile.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
-        <option value="$PROJECT_DIR$/app/views/billing_profiles/_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/orders/new.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/ssl_com_api.rb" />
-        <option value="$PROJECT_DIR$/app/models/cert_util.rb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/deposit_completed.text.erb" />
-        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_standard.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+        <option value="$PROJECT_DIR$/config.ru" />
+        <option value="$PROJECT_DIR$/config/application.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/site_seals_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/order_notifier.rb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/api_executed.erb" />
-        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" />
         <option value="$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/success_create_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/models/contact.rb" />
+        <option value="$PROJECT_DIR$/app/views/restful_api/dcv.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/success_update_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/site/_site_seal.html" />
+        <option value="$PROJECT_DIR$/db/migrate/20141114192523_create_invoices.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/affiliates/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/csr.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_reprocess.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_update_v1_4.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/success_dcv_emails_v1_3.rabl" />
+        <option value="$PROJECT_DIR$/app/models/domain_name_validator.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_dcv_methods.rb" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/dcv_methods_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/models/comodo_api.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
       </list>
     </option>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
   </component>
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
@@ -266,10 +275,10 @@
     <option name="CUSTOM_FILTER" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="24" />
-    <option name="width" value="1855" />
-    <option name="height" value="923" />
+    <option name="x" value="64" />
+    <option name="y" value="-9" />
+    <option name="width" value="1857" />
+    <option name="height" value="957" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -297,8 +306,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="RailsProjectView" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -397,7 +404,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="spec" />
+              <option name="myItemId" value="tmp" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -411,11 +418,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="spec" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="models" />
+              <option name="myItemId" value="db" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -429,25 +432,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemId" value="db" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="public" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cert_bundles" />
+              <option name="myItemId" value="migrate" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -487,7 +476,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="api_certificate_requests" />
+              <option name="myItemId" value="certificate_orders" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -507,6 +496,30 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="RailsProjectView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ssl_com_rails3" />
+              <option name="myItemType" value="org.jetbrains.plugins.ruby.rails.projectView.v2.nodes.RailsModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -517,7 +530,7 @@
     <property name="FullScreen" value="false" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/sslcom.jpg" />
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
-    <property name="options.lastSelected" value="editor" />
+    <property name="options.lastSelected" value="preferences.general" />
     <property name="options.splitter.main.proportions" value="0.3" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -539,12 +552,13 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="895" />
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="RailsGeneratorsPopup.hiddenIncluded" value="false" />
+    <property name="com.intellij.ide.scratch.ScratchpadManager" value="CoffeeScript" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/app/views/order_notifier" />
       <recent name="$PROJECT_DIR$/app/models" />
       <recent name="$PROJECT_DIR$/app/views/api_certificate_requests" />
+      <recent name="$PROJECT_DIR$/app/views/order_notifier" />
       <recent name="$PROJECT_DIR$/public/cert_bundles/sha1_sslcom_2014" />
       <recent name="$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014" />
     </key>
@@ -1504,7 +1518,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
+  <component name="RunManager" selected="IRB console.Rails console: ssl_com_rails3">
     <configuration default="false" name="routes: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1754,6 +1768,14 @@
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="SETTINGS_VERSION" VALUE="2" />
       <method />
     </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+      <method />
+    </configuration>
     <list size="17">
       <item index="0" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
       <item index="1" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
@@ -1788,613 +1810,1174 @@
     <task active="true" id="Default" summary="Default task">
       <changelist id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="" />
       <created>1400263287313</created>
+      <option name="number" value="Default" />
       <updated>1400263287313</updated>
     </task>
     <task id="LOCAL-00001" summary="rspec tests for api_certificate_create">
       <created>1400369763111</created>
+      <option name="number" value="00001" />
+      <option name="project" value="LOCAL" />
       <updated>1400369763111</updated>
     </task>
     <task id="LOCAL-00002" summary="rspec tests for api_certificate_create">
       <created>1400459016314</created>
+      <option name="number" value="00002" />
+      <option name="project" value="LOCAL" />
       <updated>1400459016314</updated>
     </task>
     <task id="LOCAL-00003" summary="updated improperly formatted html">
       <created>1400610022339</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
       <updated>1400610022340</updated>
     </task>
     <task id="LOCAL-00004" summary="updated improperly formatted html">
       <created>1400613087288</created>
+      <option name="number" value="00004" />
+      <option name="project" value="LOCAL" />
       <updated>1400613087289</updated>
     </task>
     <task id="LOCAL-00005" summary="updated improperly formatted html">
       <created>1400618083755</created>
+      <option name="number" value="00005" />
+      <option name="project" value="LOCAL" />
       <updated>1400618083755</updated>
     </task>
     <task id="LOCAL-00006" summary="change bbb image from http:// to //">
       <created>1400618503189</created>
+      <option name="number" value="00006" />
+      <option name="project" value="LOCAL" />
       <updated>1400618503189</updated>
     </task>
     <task id="LOCAL-00007" summary="fix html according to w3c">
       <created>1400621308248</created>
+      <option name="number" value="00007" />
+      <option name="project" value="LOCAL" />
       <updated>1400621308248</updated>
     </task>
     <task id="LOCAL-00008" summary="fix html">
       <created>1400623818991</created>
+      <option name="number" value="00008" />
+      <option name="project" value="LOCAL" />
       <updated>1400623818992</updated>
     </task>
     <task id="LOCAL-00009" summary="allow order status change to refunded">
       <created>1401383296149</created>
+      <option name="number" value="00009" />
+      <option name="project" value="LOCAL" />
       <updated>1401383296149</updated>
     </task>
     <task id="LOCAL-00010" summary="update goog analytics and adwords code">
       <created>1401770999589</created>
+      <option name="number" value="00010" />
+      <option name="project" value="LOCAL" />
       <updated>1401770999590</updated>
     </task>
     <task id="LOCAL-00011" summary="updated compatibility list">
       <created>1401911325103</created>
+      <option name="number" value="00011" />
+      <option name="project" value="LOCAL" />
       <updated>1401911325104</updated>
     </task>
     <task id="LOCAL-00012" summary="added upgrade path for trial certs">
       <created>1402092742980</created>
+      <option name="number" value="00012" />
+      <option name="project" value="LOCAL" />
       <updated>1402092742980</updated>
     </task>
     <task id="LOCAL-00013" summary="add cc external order number change capability">
       <created>1402415324431</created>
+      <option name="number" value="00013" />
+      <option name="project" value="LOCAL" />
       <updated>1402415324431</updated>
     </task>
     <task id="LOCAL-00014" summary="add wildcard pricing to ucc">
       <created>1403137850999</created>
+      <option name="number" value="00014" />
+      <option name="project" value="LOCAL" />
       <updated>1403137851000</updated>
     </task>
     <task id="LOCAL-00015" summary="charging for wildcard certs. Cosmetic changes.">
       <created>1403298606852</created>
+      <option name="number" value="00015" />
+      <option name="project" value="LOCAL" />
       <updated>1403298606853</updated>
     </task>
     <task id="LOCAL-00016" summary="accommodate wildcards for UCC">
       <created>1403537212656</created>
+      <option name="number" value="00016" />
+      <option name="project" value="LOCAL" />
       <updated>1403537212656</updated>
     </task>
     <task id="LOCAL-00017" summary="display all products on certificates page">
       <created>1403543764100</created>
+      <option name="number" value="00017" />
+      <option name="project" value="LOCAL" />
       <updated>1403543764100</updated>
     </task>
     <task id="LOCAL-00018" summary="add tlds page">
       <created>1403545587157</created>
+      <option name="number" value="00018" />
+      <option name="project" value="LOCAL" />
       <updated>1403545587157</updated>
     </task>
     <task id="LOCAL-00019" summary="updated adwords code">
       <created>1403547120011</created>
+      <option name="number" value="00019" />
+      <option name="project" value="LOCAL" />
       <updated>1403547120012</updated>
     </task>
     <task id="LOCAL-00020" summary="prorated pricing for signed certificates">
       <created>1403559156034</created>
+      <option name="number" value="00020" />
+      <option name="project" value="LOCAL" />
       <updated>1403559156034</updated>
     </task>
     <task id="LOCAL-00021" summary="add *.example.com in the ucc product page">
       <created>1403559559943</created>
+      <option name="number" value="00021" />
+      <option name="project" value="LOCAL" />
       <updated>1403559559944</updated>
     </task>
     <task id="LOCAL-00022" summary="fix html">
       <created>1403559688570</created>
+      <option name="number" value="00022" />
+      <option name="project" value="LOCAL" />
       <updated>1403559688571</updated>
     </task>
     <task id="LOCAL-00023" summary="adjust conversion code">
       <created>1403561196491</created>
+      <option name="number" value="00023" />
+      <option name="project" value="LOCAL" />
       <updated>1403561196491</updated>
     </task>
     <task id="LOCAL-00024" summary="adjust conversion code">
       <created>1403635921031</created>
+      <option name="number" value="00024" />
+      <option name="project" value="LOCAL" />
       <updated>1403635921031</updated>
     </task>
     <task id="LOCAL-00025" summary="adjust conversion code">
       <created>1403813317193</created>
+      <option name="number" value="00025" />
+      <option name="project" value="LOCAL" />
       <updated>1403813317194</updated>
     </task>
     <task id="LOCAL-00026" summary="fixed checkout error specifying 2 'phantom' fields were having errors">
       <created>1403821926368</created>
+      <option name="number" value="00026" />
+      <option name="project" value="LOCAL" />
       <updated>1403821926369</updated>
     </task>
     <task id="LOCAL-00027" summary="fixed ratio pricing for UCC">
       <created>1403908880322</created>
+      <option name="number" value="00027" />
+      <option name="project" value="LOCAL" />
       <updated>1403908880323</updated>
     </task>
     <task id="LOCAL-00028" summary="prorated pricing now reflected by duration of certificate_order, not signed_certificate">
       <created>1404165283435</created>
+      <option name="number" value="00028" />
+      <option name="project" value="LOCAL" />
       <updated>1404165283435</updated>
     </task>
     <task id="LOCAL-00029" summary="change wildcard description on prod page">
       <created>1404230486036</created>
+      <option name="number" value="00029" />
+      <option name="project" value="LOCAL" />
       <updated>1404230486037</updated>
     </task>
     <task id="LOCAL-00030" summary="allow resellers who are signing up to access other pages">
       <created>1404339449223</created>
+      <option name="number" value="00030" />
+      <option name="project" value="LOCAL" />
       <updated>1404339449223</updated>
     </task>
     <task id="LOCAL-00031" summary="Add multi domain validation support">
       <created>1404748170308</created>
+      <option name="number" value="00031" />
+      <option name="project" value="LOCAL" />
       <updated>1404748170308</updated>
     </task>
     <task id="LOCAL-00032" summary="Add multi domain look up on the api">
       <created>1404835902999</created>
+      <option name="number" value="00032" />
+      <option name="project" value="LOCAL" />
       <updated>1404835902999</updated>
     </task>
     <task id="LOCAL-00033" summary="fixed domain_name_validator to use gtlds">
       <created>1404839401188</created>
+      <option name="number" value="00033" />
+      <option name="project" value="LOCAL" />
       <updated>1404839401188</updated>
     </task>
     <task id="LOCAL-00034" summary="create v1.4 api call for create ssl">
       <created>1404860686287</created>
+      <option name="number" value="00034" />
+      <option name="project" value="LOCAL" />
       <updated>1404860686288</updated>
     </task>
     <task id="LOCAL-00035" summary="create api call for dcv ssl">
       <created>1405297779440</created>
+      <option name="number" value="00035" />
+      <option name="project" value="LOCAL" />
       <updated>1405297779440</updated>
     </task>
     <task id="LOCAL-00036" summary="discounts have expiration dates, and finite usage. Also discounts applied as absolute values are now capable.">
       <created>1405536261329</created>
+      <option name="number" value="00036" />
+      <option name="project" value="LOCAL" />
       <updated>1405536261330</updated>
     </task>
     <task id="LOCAL-00037" summary="expired certificate orders do not appear by default">
       <created>1405957936541</created>
+      <option name="number" value="00037" />
+      <option name="project" value="LOCAL" />
       <updated>1405957936541</updated>
     </task>
     <task id="LOCAL-00038" summary="api fix">
       <created>1406144275260</created>
+      <option name="number" value="00038" />
+      <option name="project" value="LOCAL" />
       <updated>1406144275261</updated>
     </task>
     <task id="LOCAL-00039" summary="certificate_content add ons">
       <created>1407342050995</created>
+      <option name="number" value="00039" />
+      <option name="project" value="LOCAL" />
       <updated>1407342050996</updated>
     </task>
     <task id="LOCAL-00040" summary="fixed so that credit card validation errors are displayed">
       <created>1408395910619</created>
+      <option name="number" value="00040" />
+      <option name="project" value="LOCAL" />
       <updated>1408395910619</updated>
     </task>
     <task id="LOCAL-00041" summary="allow wildcard common name for ucc. Deprecate intranet names">
       <created>1408650781008</created>
+      <option name="number" value="00041" />
+      <option name="project" value="LOCAL" />
       <updated>1408650781009</updated>
     </task>
     <task id="LOCAL-00042" summary="reintroduced validates customer switch in registrant">
       <created>1408923567527</created>
+      <option name="number" value="00042" />
+      <option name="project" value="LOCAL" />
       <updated>1408923567527</updated>
     </task>
     <task id="LOCAL-00043" summary="/certificates go to wordpress">
       <created>1409262332347</created>
+      <option name="number" value="00043" />
+      <option name="project" value="LOCAL" />
       <updated>1409262332351</updated>
     </task>
     <task id="LOCAL-00044" summary="/certificates go to wordpress engine">
       <created>1409264603550</created>
+      <option name="number" value="00044" />
+      <option name="project" value="LOCAL" />
       <updated>1409264603551</updated>
     </task>
     <task id="LOCAL-00045" summary="disabled cannot log in">
       <created>1409501647870</created>
+      <option name="number" value="00045" />
+      <option name="project" value="LOCAL" />
       <updated>1409501647870</updated>
     </task>
     <task id="LOCAL-00046" summary="/certificates is handled ry rails">
       <created>1409512926820</created>
+      <option name="number" value="00046" />
+      <option name="project" value="LOCAL" />
       <updated>1409512926820</updated>
     </task>
     <task id="LOCAL-00047" summary="add convert.com code. remove server licenses from reseller pricing.">
       <created>1409771713972</created>
+      <option name="number" value="00047" />
+      <option name="project" value="LOCAL" />
       <updated>1409771713972</updated>
     </task>
     <task id="LOCAL-00048" summary="fix order.amount">
       <created>1409780689201</created>
+      <option name="number" value="00048" />
+      <option name="project" value="LOCAL" />
       <updated>1409780689202</updated>
     </task>
     <task id="LOCAL-00049" summary="premiumssl cannot have wildcardS">
       <created>1409844894374</created>
+      <option name="number" value="00049" />
+      <option name="project" value="LOCAL" />
       <updated>1409844894374</updated>
     </task>
     <task id="LOCAL-00050" summary="admin notes funtion">
       <created>1409847343852</created>
+      <option name="number" value="00050" />
+      <option name="project" value="LOCAL" />
       <updated>1409847343857</updated>
     </task>
     <task id="LOCAL-00051" summary="admin notes function">
       <created>1409848213909</created>
+      <option name="number" value="00051" />
+      <option name="project" value="LOCAL" />
       <updated>1409848213909</updated>
     </task>
     <task id="LOCAL-00052" summary="route change for admin update of notes">
       <created>1409858452204</created>
+      <option name="number" value="00052" />
+      <option name="project" value="LOCAL" />
       <updated>1409858452204</updated>
     </task>
     <task id="LOCAL-00053" summary="certificate_content add ons">
       <created>1409859009837</created>
+      <option name="number" value="00053" />
+      <option name="project" value="LOCAL" />
       <updated>1409859009837</updated>
     </task>
     <task id="LOCAL-00054" summary="force ssl">
       <created>1409951633643</created>
+      <option name="number" value="00054" />
+      <option name="project" value="LOCAL" />
       <updated>1409951633645</updated>
     </task>
     <task id="LOCAL-00055" summary="certificate_content add ons">
       <created>1409954433809</created>
+      <option name="number" value="00055" />
+      <option name="project" value="LOCAL" />
       <updated>1409954433809</updated>
     </task>
     <task id="LOCAL-00056" summary="updated gtlds">
       <created>1410188788346</created>
+      <option name="number" value="00056" />
+      <option name="project" value="LOCAL" />
       <updated>1410188788347</updated>
     </task>
     <task id="LOCAL-00057" summary="migrating to idevaffiliate">
       <created>1410547781521</created>
+      <option name="number" value="00057" />
+      <option name="project" value="LOCAL" />
       <updated>1410547781522</updated>
     </task>
     <task id="LOCAL-00058" summary="certificate_content add ons">
       <created>1410548351427</created>
+      <option name="number" value="00058" />
+      <option name="project" value="LOCAL" />
       <updated>1410548351429</updated>
     </task>
     <task id="LOCAL-00059" summary="migrate to idevaffiliate">
       <created>1410558301298</created>
+      <option name="number" value="00059" />
+      <option name="project" value="LOCAL" />
       <updated>1410558301298</updated>
     </task>
     <task id="LOCAL-00060" summary="migrate to idevaffiliate">
       <created>1410560557504</created>
+      <option name="number" value="00060" />
+      <option name="project" value="LOCAL" />
       <updated>1410560557505</updated>
     </task>
     <task id="LOCAL-00061" summary="migrate to idevaffiliate">
       <created>1410585961937</created>
+      <option name="number" value="00061" />
+      <option name="project" value="LOCAL" />
       <updated>1410585961939</updated>
     </task>
     <task id="LOCAL-00062" summary="migrate to idevaffiliate">
       <created>1410643426686</created>
+      <option name="number" value="00062" />
+      <option name="project" value="LOCAL" />
       <updated>1410643426688</updated>
     </task>
     <task id="LOCAL-00063" summary="SHA2 and new chain ca installed">
       <created>1411433592064</created>
+      <option name="number" value="00063" />
+      <option name="project" value="LOCAL" />
       <updated>1411433592064</updated>
     </task>
     <task id="LOCAL-00064" summary="certificate_content add ons">
       <created>1411433949498</created>
+      <option name="number" value="00064" />
+      <option name="project" value="LOCAL" />
       <updated>1411433949500</updated>
     </task>
     <task id="LOCAL-00065" summary="minor fixes">
       <created>1411486330713</created>
+      <option name="number" value="00065" />
+      <option name="project" value="LOCAL" />
       <updated>1411486330715</updated>
     </task>
     <task id="LOCAL-00066" summary="add new SHA 2 certs">
       <created>1411486399657</created>
+      <option name="number" value="00066" />
+      <option name="project" value="LOCAL" />
       <updated>1411486399659</updated>
     </task>
     <task id="LOCAL-00067" summary="removed http://crt.usertrust.com/USERTrustRSACertificationAuthority.crt from bundles">
       <created>1411486767553</created>
+      <option name="number" value="00067" />
+      <option name="project" value="LOCAL" />
       <updated>1411486767553</updated>
     </task>
     <task id="LOCAL-00068" summary="certificate_content add ons">
       <created>1411489354118</created>
+      <option name="number" value="00068" />
+      <option name="project" value="LOCAL" />
       <updated>1411489354120</updated>
     </task>
     <task id="LOCAL-00069" summary="updating comodo extract">
       <created>1411504218308</created>
+      <option name="number" value="00069" />
+      <option name="project" value="LOCAL" />
       <updated>1411504218309</updated>
     </task>
     <task id="LOCAL-00070" summary="fixed affiliate program">
       <created>1411681443832</created>
+      <option name="number" value="00070" />
+      <option name="project" value="LOCAL" />
       <updated>1411681443833</updated>
     </task>
     <task id="LOCAL-00071" summary="removed windows line break mod">
       <created>1411686517900</created>
+      <option name="number" value="00071" />
+      <option name="project" value="LOCAL" />
       <updated>1411686517901</updated>
     </task>
     <task id="LOCAL-00072" summary="fixed line breaks for windows">
       <created>1411764146550</created>
+      <option name="number" value="00072" />
+      <option name="project" value="LOCAL" />
       <updated>1411764146569</updated>
     </task>
     <task id="LOCAL-00073" summary="show savings on reseller tier page">
       <created>1412099098679</created>
+      <option name="number" value="00073" />
+      <option name="project" value="LOCAL" />
       <updated>1412099098681</updated>
     </task>
     <task id="LOCAL-00074" summary="fixed bundle files">
       <created>1412272874024</created>
+      <option name="number" value="00074" />
+      <option name="project" value="LOCAL" />
       <updated>1412272874025</updated>
     </task>
     <task id="LOCAL-00075" summary="fixed bundle files">
       <created>1412284598624</created>
+      <option name="number" value="00075" />
+      <option name="project" value="LOCAL" />
       <updated>1412284598625</updated>
     </task>
     <task id="LOCAL-00076" summary="create and update voucher api calls">
       <created>1412376101355</created>
+      <option name="number" value="00076" />
+      <option name="project" value="LOCAL" />
       <updated>1412376101355</updated>
     </task>
     <task id="LOCAL-00077" summary="api applies reseller tier">
       <created>1412476541734</created>
+      <option name="number" value="00077" />
+      <option name="project" value="LOCAL" />
       <updated>1412476541735</updated>
     </task>
     <task id="LOCAL-00078" summary="domains api parameter validates for ucc and single domain certs">
       <created>1412633402830</created>
+      <option name="number" value="00078" />
+      <option name="project" value="LOCAL" />
       <updated>1412633402832</updated>
     </task>
     <task id="LOCAL-00079" summary="windows \r\n switch for cert downloads">
       <created>1412649353362</created>
+      <option name="number" value="00079" />
+      <option name="project" value="LOCAL" />
       <updated>1412649353362</updated>
     </task>
     <task id="LOCAL-00080" summary="fixed site seal activation">
       <created>1412824718781</created>
+      <option name="number" value="00080" />
+      <option name="project" value="LOCAL" />
       <updated>1412824718782</updated>
     </task>
     <task id="LOCAL-00081" summary="fixed bundle files">
       <created>1412824960998</created>
+      <option name="number" value="00081" />
+      <option name="project" value="LOCAL" />
       <updated>1412824960999</updated>
     </task>
     <task id="LOCAL-00082" summary="fixed bundle files">
       <created>1412824983504</created>
+      <option name="number" value="00082" />
+      <option name="project" value="LOCAL" />
       <updated>1412824983506</updated>
     </task>
     <task id="LOCAL-00083" summary="add contacts to api">
       <created>1412979071320</created>
+      <option name="number" value="00083" />
+      <option name="project" value="LOCAL" />
       <updated>1412979071321</updated>
     </task>
     <task id="LOCAL-00084" summary="validate contacts parameter for api">
       <created>1413141405188</created>
+      <option name="number" value="00084" />
+      <option name="project" value="LOCAL" />
       <updated>1413141405189</updated>
     </task>
     <task id="LOCAL-00085" summary="contacts validated in api">
       <created>1413166131721</created>
+      <option name="number" value="00085" />
+      <option name="project" value="LOCAL" />
       <updated>1413166131723</updated>
     </task>
     <task id="LOCAL-00086" summary="add api string output">
       <created>1413313386080</created>
+      <option name="number" value="00086" />
+      <option name="project" value="LOCAL" />
       <updated>1413313386080</updated>
     </task>
     <task id="LOCAL-00087" summary="filter by ssl type, notes on every cert page">
       <created>1413394236991</created>
+      <option name="number" value="00087" />
+      <option name="project" value="LOCAL" />
       <updated>1413394236992</updated>
     </task>
     <task id="LOCAL-00088" summary="fixed ucc resubmit bug">
       <created>1413475221986</created>
+      <option name="number" value="00088" />
+      <option name="project" value="LOCAL" />
       <updated>1413475221986</updated>
     </task>
     <task id="LOCAL-00089" summary="fixed bundle files">
       <created>1413521241631</created>
+      <option name="number" value="00089" />
+      <option name="project" value="LOCAL" />
       <updated>1413521241631</updated>
     </task>
     <task id="LOCAL-00090" summary="fixed bundle files">
       <created>1413522634963</created>
+      <option name="number" value="00090" />
+      <option name="project" value="LOCAL" />
       <updated>1413522634964</updated>
     </task>
     <task id="LOCAL-00091" summary="fixed bundle files">
       <created>1413666721622</created>
+      <option name="number" value="00091" />
+      <option name="project" value="LOCAL" />
       <updated>1413666721622</updated>
     </task>
     <task id="LOCAL-00092" summary="UI changes according to Northcutt">
       <created>1413686333334</created>
+      <option name="number" value="00092" />
+      <option name="project" value="LOCAL" />
       <updated>1413686333335</updated>
     </task>
     <task id="LOCAL-00093" summary="front page blocks unclickable">
       <created>1413691135976</created>
+      <option name="number" value="00093" />
+      <option name="project" value="LOCAL" />
       <updated>1413691135976</updated>
     </task>
     <task id="LOCAL-00094" summary="font changes due to northcutt advice, OTHER platform now send component certs">
       <created>1413757030595</created>
+      <option name="number" value="00094" />
+      <option name="project" value="LOCAL" />
       <updated>1413757030595</updated>
     </task>
     <task id="LOCAL-00095" summary="font changes due to northcutt advice, OTHER platform now send component certs">
       <created>1413757369435</created>
+      <option name="number" value="00095" />
+      <option name="project" value="LOCAL" />
       <updated>1413757369451</updated>
     </task>
     <task id="LOCAL-00096" summary="save ssl_account.acct_number in cookie for php apps authentication">
       <created>1413817451562</created>
+      <option name="number" value="00096" />
+      <option name="project" value="LOCAL" />
       <updated>1413817451562</updated>
     </task>
     <task id="LOCAL-00097" summary="comodo api command string for essential">
       <created>1413846461802</created>
+      <option name="number" value="00097" />
+      <option name="project" value="LOCAL" />
       <updated>1413846461802</updated>
     </task>
     <task id="LOCAL-00098" summary="comodo api command output">
       <created>1413857904625</created>
+      <option name="number" value="00098" />
+      <option name="project" value="LOCAL" />
       <updated>1413857904626</updated>
     </task>
     <task id="LOCAL-00099" summary="api scripts are in clickable textarea inputs">
       <created>1413907954903</created>
+      <option name="number" value="00099" />
+      <option name="project" value="LOCAL" />
       <updated>1413907954903</updated>
     </task>
     <task id="LOCAL-00100" summary="show Comodo api string for reprocess">
       <created>1413929700886</created>
+      <option name="number" value="00100" />
+      <option name="project" value="LOCAL" />
       <updated>1413929700886</updated>
     </task>
     <task id="LOCAL-00101" summary="save ssl_account.acct_number in cookie for php apps authentication">
       <created>1413934658181</created>
+      <option name="number" value="00101" />
+      <option name="project" value="LOCAL" />
       <updated>1413934658181</updated>
     </task>
     <task id="LOCAL-00102" summary="renewing now includes all domains&#10;">
       <created>1414070293775</created>
+      <option name="number" value="00102" />
+      <option name="project" value="LOCAL" />
       <updated>1414070293776</updated>
     </task>
     <task id="LOCAL-00103" summary="save ssl_account.acct_number in cookie for php apps authentication">
       <created>1414087193184</created>
+      <option name="number" value="00103" />
+      <option name="project" value="LOCAL" />
       <updated>1414087193185</updated>
     </task>
     <task id="LOCAL-00104" summary="add invoice link">
       <created>1414102838271</created>
+      <option name="number" value="00104" />
+      <option name="project" value="LOCAL" />
       <updated>1414102838271</updated>
     </task>
     <task id="LOCAL-00105" summary="launch invoice app. Affiliate sales will vbe credited to shareasale and inhouse">
       <created>1414161680571</created>
+      <option name="number" value="00105" />
+      <option name="project" value="LOCAL" />
       <updated>1414161680572</updated>
     </task>
     <task id="LOCAL-00106" summary="removed documents prompt">
       <created>1414187571312</created>
+      <option name="number" value="00106" />
+      <option name="project" value="LOCAL" />
       <updated>1414187571313</updated>
     </task>
     <task id="LOCAL-00107" summary="removed documents prompt">
       <created>1414446496887</created>
+      <option name="number" value="00107" />
+      <option name="project" value="LOCAL" />
       <updated>1414446496888</updated>
     </task>
     <task id="LOCAL-00108" summary="remove all external links on new order except for live chat">
       <created>1414448094758</created>
+      <option name="number" value="00108" />
+      <option name="project" value="LOCAL" />
       <updated>1414448094758</updated>
     </task>
     <task id="LOCAL-00109" summary="removed external links on order page">
       <created>1414448433784</created>
+      <option name="number" value="00109" />
+      <option name="project" value="LOCAL" />
       <updated>1414448433786</updated>
     </task>
     <task id="LOCAL-00110" summary="cleared up validation page&#10;">
       <created>1414449150911</created>
+      <option name="number" value="00110" />
+      <option name="project" value="LOCAL" />
       <updated>1414449150911</updated>
     </task>
     <task id="LOCAL-00111" summary="decode ssl certificate upon create">
       <created>1414598333113</created>
+      <option name="number" value="00111" />
+      <option name="project" value="LOCAL" />
       <updated>1414598333113</updated>
     </task>
     <task id="LOCAL-00112" summary="fixes">
       <created>1414615333986</created>
+      <option name="number" value="00112" />
+      <option name="project" value="LOCAL" />
       <updated>1414615333986</updated>
     </task>
     <task id="LOCAL-00113" summary="fixes">
       <created>1414620967640</created>
+      <option name="number" value="00113" />
+      <option name="project" value="LOCAL" />
       <updated>1414620967641</updated>
     </task>
     <task id="LOCAL-00114" summary="fixes">
       <created>1414623996516</created>
+      <option name="number" value="00114" />
+      <option name="project" value="LOCAL" />
       <updated>1414623996516</updated>
     </task>
     <task id="LOCAL-00115" summary="fixes">
       <created>1414638660925</created>
+      <option name="number" value="00115" />
+      <option name="project" value="LOCAL" />
       <updated>1414638660925</updated>
     </task>
     <task id="LOCAL-00116" summary="pkcs7 decode capable. Cert validation type auto detected">
       <created>1414684937220</created>
+      <option name="number" value="00116" />
+      <option name="project" value="LOCAL" />
       <updated>1414684937221</updated>
     </task>
     <task id="LOCAL-00117" summary="search now looks at domains in multi domains. remove product_id from api. Removed deprecated code to find duration during api submit to comodo">
       <created>1414776932887</created>
+      <option name="number" value="00117" />
+      <option name="project" value="LOCAL" />
       <updated>1414776932888</updated>
     </task>
     <task id="LOCAL-00118" summary="fixes">
       <created>1414794894703</created>
+      <option name="number" value="00118" />
+      <option name="project" value="LOCAL" />
       <updated>1414794894703</updated>
     </task>
     <task id="LOCAL-00119" summary="fixes">
       <created>1414981020318</created>
+      <option name="number" value="00119" />
+      <option name="project" value="LOCAL" />
       <updated>1414981020319</updated>
     </task>
     <task id="LOCAL-00120" summary="fixes">
       <created>1414982009080</created>
+      <option name="number" value="00120" />
+      <option name="project" value="LOCAL" />
       <updated>1414982009081</updated>
     </task>
     <task id="LOCAL-00121" summary="remove showMDCDomainDetail">
       <created>1414983612882</created>
+      <option name="number" value="00121" />
+      <option name="project" value="LOCAL" />
       <updated>1414983612884</updated>
     </task>
     <task id="LOCAL-00122" summary="fixes">
       <created>1414983867034</created>
+      <option name="number" value="00122" />
+      <option name="project" value="LOCAL" />
       <updated>1414983867034</updated>
     </task>
     <task id="LOCAL-00123" summary="change from 720 days to 730 days for 2 year cert">
       <created>1415029421332</created>
+      <option name="number" value="00123" />
+      <option name="project" value="LOCAL" />
       <updated>1415029421333</updated>
     </task>
     <task id="LOCAL-00124" summary="fixed csr ordering">
       <created>1415045230387</created>
+      <option name="number" value="00124" />
+      <option name="project" value="LOCAL" />
       <updated>1415045230388</updated>
     </task>
     <task id="LOCAL-00125" summary="fixed certificate.dcv_domains">
       <created>1415113085504</created>
+      <option name="number" value="00125" />
+      <option name="project" value="LOCAL" />
       <updated>1415113085505</updated>
     </task>
     <task id="LOCAL-00126" summary="ucc fixes">
       <created>1415125530995</created>
+      <option name="number" value="00126" />
+      <option name="project" value="LOCAL" />
       <updated>1415125530995</updated>
     </task>
     <task id="LOCAL-00127" summary="fixes">
       <created>1415125701123</created>
+      <option name="number" value="00127" />
+      <option name="project" value="LOCAL" />
       <updated>1415125701124</updated>
     </task>
     <task id="LOCAL-00128" summary="fixes">
       <created>1415127078212</created>
+      <option name="number" value="00128" />
+      <option name="project" value="LOCAL" />
       <updated>1415127078212</updated>
     </task>
     <task id="LOCAL-00129" summary="api fix">
       <created>1415133286800</created>
+      <option name="number" value="00129" />
+      <option name="project" value="LOCAL" />
       <updated>1415133286800</updated>
     </task>
     <task id="LOCAL-00130" summary="api fix">
       <created>1415206003882</created>
+      <option name="number" value="00130" />
+      <option name="project" value="LOCAL" />
       <updated>1415206003882</updated>
     </task>
     <task id="LOCAL-00131" summary="fix days parameter">
       <created>1415210535831</created>
+      <option name="number" value="00131" />
+      <option name="project" value="LOCAL" />
       <updated>1415210535832</updated>
     </task>
     <task id="LOCAL-00132" summary="fixed orderNumber parameter">
       <created>1415223062097</created>
+      <option name="number" value="00132" />
+      <option name="project" value="LOCAL" />
       <updated>1415223062097</updated>
     </task>
     <task id="LOCAL-00133" summary="fixed order_by_csr">
       <created>1415225573938</created>
+      <option name="number" value="00133" />
+      <option name="project" value="LOCAL" />
       <updated>1415225573938</updated>
     </task>
     <task id="LOCAL-00134" summary="fixed order_by_csr">
       <created>1415229397131</created>
+      <option name="number" value="00134" />
+      <option name="project" value="LOCAL" />
       <updated>1415229397134</updated>
     </task>
     <task id="LOCAL-00135" summary="fixed order_by_csr">
       <created>1415233126863</created>
+      <option name="number" value="00135" />
+      <option name="project" value="LOCAL" />
       <updated>1415233126863</updated>
     </task>
     <task id="LOCAL-00136" summary="pkcs7 downloaded from comodo">
       <created>1415290542744</created>
+      <option name="number" value="00136" />
+      <option name="project" value="LOCAL" />
       <updated>1415290542744</updated>
     </task>
     <task id="LOCAL-00137" summary="dl pkcs7 from comodo">
       <created>1415292158457</created>
+      <option name="number" value="00137" />
+      <option name="project" value="LOCAL" />
       <updated>1415292158457</updated>
     </task>
     <task id="LOCAL-00138" summary="multiple download formats">
       <created>1415305587444</created>
+      <option name="number" value="00138" />
+      <option name="project" value="LOCAL" />
       <updated>1415305587444</updated>
     </task>
     <task id="LOCAL-00139" summary="added additional dl formats in email">
       <created>1415315720107</created>
+      <option name="number" value="00139" />
+      <option name="project" value="LOCAL" />
       <updated>1415315720108</updated>
     </task>
     <task id="LOCAL-00140" summary="fixed domainNames api bug. Now listing different dl formats in emails">
       <created>1415374440284</created>
+      <option name="number" value="00140" />
+      <option name="project" value="LOCAL" />
       <updated>1415374440284</updated>
     </task>
     <task id="LOCAL-00141" summary="api command for show">
       <created>1415396923925</created>
+      <option name="number" value="00141" />
+      <option name="project" value="LOCAL" />
       <updated>1415396923926</updated>
     </task>
     <task id="LOCAL-00142" summary="retrieve certificate api command">
       <created>1415404158801</created>
+      <option name="number" value="00142" />
+      <option name="project" value="LOCAL" />
       <updated>1415404158801</updated>
     </task>
     <task id="LOCAL-00143" summary="fixed contacts on api submit">
       <created>1415477429893</created>
+      <option name="number" value="00143" />
+      <option name="project" value="LOCAL" />
       <updated>1415477429903</updated>
     </task>
     <task id="LOCAL-00144" summary="fixed order_by_csr">
       <created>1415644738072</created>
+      <option name="number" value="00144" />
+      <option name="project" value="LOCAL" />
       <updated>1415644738072</updated>
     </task>
     <task id="LOCAL-00145" summary="remove discount from primary checkout&#10;&#10;only show it at /orders/checkout">
       <created>1415724646946</created>
+      <option name="number" value="00145" />
+      <option name="project" value="LOCAL" />
       <updated>1415724646946</updated>
     </task>
     <task id="LOCAL-00146" summary="fixed ov intermediate certs">
       <created>1415741401489</created>
+      <option name="number" value="00146" />
+      <option name="project" value="LOCAL" />
       <updated>1415741401490</updated>
     </task>
     <task id="LOCAL-00147" summary="allow customers to pay via funded_account">
       <created>1415751157149</created>
+      <option name="number" value="00147" />
+      <option name="project" value="LOCAL" />
       <updated>1415751157149</updated>
     </task>
     <task id="LOCAL-00148" summary="removed external links (except chat) on checkout page for all users and guests">
       <created>1415806519415</created>
+      <option name="number" value="00148" />
+      <option name="project" value="LOCAL" />
       <updated>1415806519415</updated>
     </task>
     <task id="LOCAL-00149" summary="external links on checkout removed">
       <created>1415806849015</created>
+      <option name="number" value="00149" />
+      <option name="project" value="LOCAL" />
       <updated>1415806849015</updated>
     </task>
     <task id="LOCAL-00150" summary="fixed to_pkcs7">
       <created>1415817732597</created>
+      <option name="number" value="00150" />
+      <option name="project" value="LOCAL" />
       <updated>1415817732598</updated>
     </task>
     <task id="LOCAL-00151" summary="added fields to retrieve ssl api">
       <created>1415834669013</created>
+      <option name="number" value="00151" />
+      <option name="project" value="LOCAL" />
       <updated>1415834669013</updated>
     </task>
-    <option name="localTasksCounter" value="152" />
+    <task id="LOCAL-00152" summary="using baseOrderNumber to retrieve the latest cert">
+      <created>1415897340367</created>
+      <option name="number" value="00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1415897340367</updated>
+    </task>
+    <task id="LOCAL-00153" summary="reorganized the download certificate links">
+      <created>1415901677055</created>
+      <option name="number" value="00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1415901677055</updated>
+    </task>
+    <task id="LOCAL-00154" summary="provide more info on certificate page">
+      <created>1415905642181</created>
+      <option name="number" value="00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1415905642182</updated>
+    </task>
+    <task id="LOCAL-00155" summary="added vat and company on billing page">
+      <created>1415941813205</created>
+      <option name="number" value="00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1415941813206</updated>
+    </task>
+    <task id="LOCAL-00156" summary="fixed certificate_content#expiring">
+      <created>1415990260964</created>
+      <option name="number" value="00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1415990260965</updated>
+    </task>
+    <task id="LOCAL-00158" summary="consolidated build_certificate_order">
+      <created>1416270117376</created>
+      <option name="number" value="00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1416270117376</updated>
+    </task>
+    <task id="LOCAL-00159" summary="includes method to create dev db from prod db">
+      <created>1416327901961</created>
+      <option name="number" value="00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1416327901962</updated>
+    </task>
+    <task id="LOCAL-00160" summary="rename domain_name to domain in dcv_emails api call">
+      <created>1416344292140</created>
+      <option name="number" value="00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1416344292140</updated>
+    </task>
+    <task id="LOCAL-00161" summary="refactored validation dcv api">
+      <created>1416347663790</created>
+      <option name="number" value="00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1416347663790</updated>
+    </task>
+    <task id="LOCAL-00162" summary="improved css">
+      <created>1416356961714</created>
+      <option name="number" value="00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1416356961714</updated>
+    </task>
+    <task id="LOCAL-00163" summary="implement CRO changes on front page according to Northcutt">
+      <created>1416419930964</created>
+      <option name="number" value="00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1416419930964</updated>
+    </task>
+    <task id="LOCAL-00164" summary="remove ipaddress option on buy page">
+      <created>1416420998371</created>
+      <option name="number" value="00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1416420998372</updated>
+    </task>
+    <task id="LOCAL-00165" summary="removed ip address as allowed domain from buy page, remove api credentials display unless user is reseller">
+      <created>1416506887283</created>
+      <option name="number" value="00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1416506887283</updated>
+    </task>
+    <task id="LOCAL-00166" summary="add adroll">
+      <created>1416519608300</created>
+      <option name="number" value="00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1416519608301</updated>
+    </task>
+    <task id="LOCAL-00167" summary="statcounter">
+      <created>1416524279518</created>
+      <option name="number" value="00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1416524279518</updated>
+    </task>
+    <task id="LOCAL-00168" summary="statcounter code">
+      <created>1416612335175</created>
+      <option name="number" value="00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1416612335175</updated>
+    </task>
+    <task id="LOCAL-00169" summary="make admin function">
+      <created>1417029129922</created>
+      <option name="number" value="00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1417029129923</updated>
+    </task>
+    <task id="LOCAL-00170" summary="save rew request command for debugging">
+      <created>1417381942375</created>
+      <option name="number" value="00170" />
+      <option name="project" value="LOCAL" />
+      <updated>1417381942375</updated>
+    </task>
+    <task id="LOCAL-00171" summary="provide more info on certificate page">
+      <created>1417447878694</created>
+      <option name="number" value="00171" />
+      <option name="project" value="LOCAL" />
+      <updated>1417447878704</updated>
+    </task>
+    <task id="LOCAL-00172" summary="proper contacts validation for api">
+      <created>1417631513014</created>
+      <option name="number" value="00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1417631513015</updated>
+    </task>
+    <task id="LOCAL-00173" summary="fixed parameter conversion in api">
+      <created>1417703330716</created>
+      <option name="number" value="00173" />
+      <option name="project" value="LOCAL" />
+      <updated>1417703330717</updated>
+    </task>
+    <task id="LOCAL-00174" summary="href anchor for site seal">
+      <created>1417823740404</created>
+      <option name="number" value="00174" />
+      <option name="project" value="LOCAL" />
+      <updated>1417823740405</updated>
+    </task>
+    <task id="LOCAL-00175" summary="csr hash validation on api">
+      <created>1417889512393</created>
+      <option name="number" value="00175" />
+      <option name="project" value="LOCAL" />
+      <updated>1417889512393</updated>
+    </task>
+    <task id="LOCAL-00176" summary="delayed_job for api sending">
+      <created>1418074077812</created>
+      <option name="number" value="00176" />
+      <option name="project" value="LOCAL" />
+      <updated>1418074077812</updated>
+    </task>
+    <task id="LOCAL-00177" summary="api remove domains on failed dcv if requested">
+      <created>1418161234372</created>
+      <option name="number" value="00177" />
+      <option name="project" value="LOCAL" />
+      <updated>1418161234373</updated>
+    </task>
+    <task id="LOCAL-00178" summary="provide more info on certificate page">
+      <created>1418166089536</created>
+      <option name="number" value="00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1418166089537</updated>
+    </task>
+    <task id="LOCAL-00179" summary="include deplayed_job script">
+      <created>1418166194907</created>
+      <option name="number" value="00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1418166194907</updated>
+    </task>
+    <task id="LOCAL-00180" summary="dcv_failure_action now works with update api call">
+      <created>1418170797730</created>
+      <option name="number" value="00180" />
+      <option name="project" value="LOCAL" />
+      <updated>1418170797730</updated>
+    </task>
+    <task id="LOCAL-00181" summary="allow domain change via api">
+      <created>1418323442909</created>
+      <option name="number" value="00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1418323442909</updated>
+    </task>
+    <task id="LOCAL-00182" summary="self serve dcv on ucc">
+      <created>1418346417118</created>
+      <option name="number" value="00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1418346417119</updated>
+    </task>
+    <task id="LOCAL-00183" summary="change foreign key for invoices to orders">
+      <created>1418404125411</created>
+      <option name="number" value="00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1418404125411</updated>
+    </task>
+    <task id="LOCAL-00184" summary="domains parameter fix">
+      <created>1418426770233</created>
+      <option name="number" value="00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1418426770233</updated>
+    </task>
+    <task id="LOCAL-00185" summary="fixed validations on api create">
+      <created>1418438752267</created>
+      <option name="number" value="00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1418438752267</updated>
+    </task>
+    <task id="LOCAL-00186" summary="validation for ucc page">
+      <created>1418616788460</created>
+      <option name="number" value="00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1418616788461</updated>
+    </task>
+    <task id="LOCAL-00187" summary="removed /tmp/pids">
+      <created>1418646367354</created>
+      <option name="number" value="00187" />
+      <option name="project" value="LOCAL" />
+      <updated>1418646367354</updated>
+    </task>
+    <task id="LOCAL-00188" summary="return registrant info on  api calls">
+      <created>1418668741378</created>
+      <option name="number" value="00188" />
+      <option name="project" value="LOCAL" />
+      <updated>1418668741379</updated>
+    </task>
+    <task id="LOCAL-00189" summary="return registrant on api call">
+      <created>1418683817779</created>
+      <option name="number" value="00189" />
+      <option name="project" value="LOCAL" />
+      <updated>1418683817780</updated>
+    </task>
+    <task id="LOCAL-00190" summary="change invoices 'description field' to accommodate invoice app">
+      <created>1418837838182</created>
+      <option name="number" value="00190" />
+      <option name="project" value="LOCAL" />
+      <updated>1418837838182</updated>
+    </task>
+    <task id="LOCAL-00191" summary="test api enviro sends requests to comodo">
+      <created>1419288504214</created>
+      <option name="number" value="00191" />
+      <option name="project" value="LOCAL" />
+      <updated>1419288504215</updated>
+    </task>
+    <task id="LOCAL-00192" summary="added api called for querying all dcv methods given a ref number">
+      <created>1419357990935</created>
+      <option name="number" value="00192" />
+      <option name="project" value="LOCAL" />
+      <updated>1419357990937</updated>
+    </task>
+    <task id="LOCAL-00193" summary="show api commands on test orders">
+      <created>1419361901136</created>
+      <option name="number" value="00193" />
+      <option name="project" value="LOCAL" />
+      <updated>1419361901138</updated>
+    </task>
+    <task id="LOCAL-00194" summary="allow customers to see validation page. This will also allow developers to see the api commands for ssl.com for test orders">
+      <created>1419362806410</created>
+      <option name="number" value="00194" />
+      <option name="project" value="LOCAL" />
+      <updated>1419362806412</updated>
+    </task>
+    <task id="LOCAL-00195" summary="show validation page for test orders">
+      <created>1419363268921</created>
+      <option name="number" value="00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1419363268923</updated>
+    </task>
+    <option name="localTasksCounter" value="196" />
     <servers />
   </component>
   <component name="TodoView" selected-index="2">
@@ -2418,30 +3001,31 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="923" extended-state="6" />
+    <frame x="64" y="-9" width="1857" height="957" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.43014705" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3294509" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36397058" sideWeight="0.4993113" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38112745" sideWeight="0.572314" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.41911766" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2904412" sideWeight="0.53799224" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4779412" sideWeight="0.5718247" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37990198" sideWeight="0.42817527" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1885746" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2118691" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4387255" sideWeight="0.65224624" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2647059" sideWeight="0.4997227" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.4997227" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1885746" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.16916251" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5379902" sideWeight="0.65224624" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4117647" sideWeight="0.608985" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4117647" sideWeight="0.608985" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -2460,32 +3044,32 @@
     <option name="myTodoPanelSettings">
       <TodoPanelSettings />
     </option>
-    <MESSAGE value="remove showMDCDomainDetail" />
-    <MESSAGE value="change from 720 days to 730 days for 2 year cert" />
-    <MESSAGE value="fixed csr ordering" />
-    <MESSAGE value="fixed certificate.dcv_domains" />
-    <MESSAGE value="ucc fixes" />
-    <MESSAGE value="fixes" />
-    <MESSAGE value="api fix" />
-    <MESSAGE value="fix days parameter" />
-    <MESSAGE value="fixed orderNumber parameter" />
-    <MESSAGE value="pkcs7 downloaded from comodo" />
-    <MESSAGE value="dl pkcs7 from comodo" />
-    <MESSAGE value="multiple download formats" />
-    <MESSAGE value="added additional dl formats in email" />
-    <MESSAGE value="fixed domainNames api bug. Now listing different dl formats in emails" />
-    <MESSAGE value="api command for show" />
-    <MESSAGE value="retrieve certificate api command" />
-    <MESSAGE value="fixed contacts on api submit" />
-    <MESSAGE value="fixed order_by_csr" />
-    <MESSAGE value="remove discount from primary checkout&#10;&#10;only show it at /orders/checkout" />
-    <MESSAGE value="fixed ov intermediate certs" />
-    <MESSAGE value="allow customers to pay via funded_account" />
-    <MESSAGE value="removed external links (except chat) on checkout page for all users and guests" />
-    <MESSAGE value="external links on checkout removed" />
-    <MESSAGE value="fixed to_pkcs7" />
-    <MESSAGE value="added fields to retrieve ssl api" />
-    <option name="LAST_COMMIT_MESSAGE" value="added fields to retrieve ssl api" />
+    <MESSAGE value="save rew request command for debugging" />
+    <MESSAGE value="proper contacts validation for api" />
+    <MESSAGE value="fixed parameter conversion in api" />
+    <MESSAGE value="href anchor for site seal" />
+    <MESSAGE value="csr hash validation on api" />
+    <MESSAGE value="delayed_job for api sending" />
+    <MESSAGE value="api remove domains on failed dcv if requested" />
+    <MESSAGE value="provide more info on certificate page" />
+    <MESSAGE value="include deplayed_job script" />
+    <MESSAGE value="dcv_failure_action now works with update api call" />
+    <MESSAGE value="allow domain change via api" />
+    <MESSAGE value="self serve dcv on ucc" />
+    <MESSAGE value="change foreign key for invoices to orders" />
+    <MESSAGE value="domains parameter fix" />
+    <MESSAGE value="fixed validations on api create" />
+    <MESSAGE value="validation for ucc page" />
+    <MESSAGE value="removed /tmp/pids" />
+    <MESSAGE value="return registrant info on  api calls" />
+    <MESSAGE value="return registrant on api call" />
+    <MESSAGE value="change invoices 'description field' to accommodate invoice app" />
+    <MESSAGE value="test api enviro sends requests to comodo" />
+    <MESSAGE value="added api called for querying all dcv methods given a ref number" />
+    <MESSAGE value="show api commands on test orders" />
+    <MESSAGE value="allow customers to see validation page. This will also allow developers to see the api commands for ssl.com for test orders" />
+    <MESSAGE value="show validation page for test orders" />
+    <option name="LAST_COMMIT_MESSAGE" value="show validation page for test orders" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2501,120 +3085,184 @@
           <option name="timeStamp" value="18" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>319</line>
-          <option name="timeStamp" value="705" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/api_certificate_request.rb</url>
-          <line>64</line>
-          <option name="timeStamp" value="735" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/comodo_api.rb</url>
-          <line>70</line>
-          <option name="timeStamp" value="800" />
+          <url>file://$PROJECT_DIR$/app/models/signed_certificate.rb</url>
+          <line>411</line>
+          <option name="timeStamp" value="810" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1003</line>
-          <option name="timeStamp" value="801" />
+          <line>799</line>
+          <option name="timeStamp" value="814" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1032</line>
-          <option name="timeStamp" value="802" />
+          <url>file://$PROJECT_DIR$/app/controllers/password_resets_controller.rb</url>
+          <line>6</line>
+          <option name="timeStamp" value="831" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>1027</line>
-          <option name="timeStamp" value="803" />
+          <url>file://$PROJECT_DIR$/app/models/domain_control_validation.rb</url>
+          <line>42</line>
+          <option name="timeStamp" value="991" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/domain_control_validation.rb</url>
+          <line>43</line>
+          <option name="timeStamp" value="992" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/domain_control_validation.rb</url>
+          <line>58</line>
+          <option name="timeStamp" value="993" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/domain_control_validation.rb</url>
+          <line>59</line>
+          <option name="timeStamp" value="994" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/domain_control_validation.rb</url>
+          <line>36</line>
+          <option name="timeStamp" value="995" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/validations_controller.rb</url>
+          <line>105</line>
+          <option name="timeStamp" value="996" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/certificate_content.rb</url>
+          <line>932</line>
+          <option name="timeStamp" value="1120" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb</url>
+          <line>76</line>
+          <option name="timeStamp" value="1125" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="804" />
+      <option name="time" value="1133" />
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="IrbRunConfigurationType">
+        <watch expression="co.certificate_content.csr" language="ruby" />
+        <watch expression="co " language="ruby" />
+      </configuration>
+      <configuration name="RailsRunConfigurationType">
+        <watch expression="certificate_contents.map(&amp;:csr).flatten.compact.map(&amp;:ca_certificate_requests)" />
+        <watch expression="certificate_contents.map(&amp;:csr).flatten.compact.map(&amp;:ca_certificate_requests).flatten.map(&amp;:response)" language="ruby" />
+        <watch expression="acr.ref" />
+        <watch expression="@result.ref " language="ruby" />
+        <watch expression="@certificate_order " language="ruby" />
+        <watch expression="@acr.domains " language="ruby" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@rails323/gems/activemerchant-1.29.3/lib/active_merchant/billing/credit_card_methods.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/site_seals/_entry.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1948" max-vertical-offset="3278">
-          <caret line="95" column="12" selection-start-line="95" selection-start-column="12" selection-end-line="95" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/ssl_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1035" max-vertical-offset="1496">
-          <caret line="59" column="25" selection-start-line="59" selection-start-column="25" selection-end-line="59" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014/SSLcomDVCA_2.crt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="880">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014/sslcom_addtrust_ca_bundle.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1584">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/cert_bundles/sha2_sslcom_2014/sslcom_addtrust_ca_bundle_amazon.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1584">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/billing_profile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-14.589744" vertical-offset="2203" max-vertical-offset="2904">
-          <caret line="126" column="37" selection-start-line="126" selection-start-column="3" selection-end-line="126" selection-end-column="3" />
+        <state vertical-scroll-proportion="-2.8387096" vertical-offset="528" max-vertical-offset="1628">
+          <caret line="28" column="77" selection-start-line="28" selection-start-column="31" selection-end-line="28" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/activations_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/site/buy_now.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="594">
-          <caret line="6" column="36" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-13.461538" vertical-offset="1807" max-vertical-offset="8844">
-          <caret line="106" column="0" selection-start-line="106" selection-start-column="0" selection-end-line="106" selection-end-column="0" />
+        <state vertical-scroll-proportion="-5.677419" vertical-offset="2706" max-vertical-offset="6622">
+          <caret line="131" column="19" selection-start-line="131" selection-start-column="19" selection-end-line="131" selection-end-column="19" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1894" max-vertical-offset="2618">
-          <caret line="90" column="6" selection-start-line="90" selection-start-column="6" selection-end-line="90" selection-end-column="6" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2028" max-vertical-offset="2992">
+          <caret line="106" column="70" selection-start-line="106" selection-start-column="34" selection-end-line="106" selection-end-column="34" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificates/buy.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/views/site/_site_seal.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="17.935484" vertical-offset="556" max-vertical-offset="968">
+        <state vertical-scroll-proportion="-0.7096774" vertical-offset="0" max-vertical-offset="154">
+          <caret line="1" column="289" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/site/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="4.2580647" vertical-offset="132" max-vertical-offset="2464">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/site_seals/site_report.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.9487178" vertical-offset="4026" max-vertical-offset="5808">
-          <caret line="190" column="101" selection-start-line="190" selection-start-column="20" selection-end-line="190" selection-end-column="20" />
+        <state vertical-scroll-proportion="4.2580647" vertical-offset="132" max-vertical-offset="1254">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141130203217_add_to_ca_api_requests.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="440">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141015203833_change_certificate_orders_notes_type.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="385">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.0" vertical-offset="1201" max-vertical-offset="1892">
+          <caret line="56" column="99" selection-start-line="56" selection-start-column="47" selection-end-line="56" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1056" max-vertical-offset="1980">
+          <caret line="51" column="105" selection-start-line="51" selection-start-column="11" selection-end-line="51" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/affiliates/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-10.032258" vertical-offset="635" max-vertical-offset="2838">
+          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.483871" vertical-offset="5181" max-vertical-offset="10780">
+          <caret line="239" column="88" selection-start-line="239" selection-start-column="49" selection-end-line="247" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20141114192523_create_invoices.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="748">
+          <caret line="13" column="102" selection-start-line="13" selection-start-column="28" selection-end-line="13" selection-end-column="28" />
           <folding />
         </state>
       </provider>
@@ -2622,270 +3270,31 @@
     <entry file="file://$PROJECT_DIR$/app/models/cert_util.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="814">
-          <caret line="6" column="38" selection-start-line="6" selection-start-column="38" selection-end-line="6" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_retrieve_certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="73" max-vertical-offset="528">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <caret line="12" column="53" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7744">
-          <caret line="17" column="84" selection-start-line="17" selection-start-column="69" selection-end-line="17" selection-end-column="69" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3278">
+          <caret line="4" column="15" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificates_helper.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1062" max-vertical-offset="1518">
-          <caret line="59" column="16" selection-start-line="59" selection-start-column="16" selection-end-line="59" selection-end-column="16" />
+        <state vertical-scroll-proportion="-7.806452" vertical-offset="0" max-vertical-offset="396">
+          <caret line="11" column="36" selection-start-line="11" selection-start-column="36" selection-end-line="11" selection-end-column="36" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl">
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="220">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3938">
-          <caret line="26" column="62" selection-start-line="26" selection-start-column="62" selection-end-line="26" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/shopping_cart.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="528">
-          <caret line="14" column="2" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3769" max-vertical-offset="15708">
-          <caret line="179" column="28" selection-start-line="179" selection-start-column="28" selection-end-line="179" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_reseller.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-9.709678" vertical-offset="95" max-vertical-offset="770">
-          <caret line="18" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1584" max-vertical-offset="5654">
-          <caret line="13" column="30" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/settings/production.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="442">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1232">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1318" max-vertical-offset="1760">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/deposit_completed.text.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.967742" vertical-offset="0" max-vertical-offset="484">
-          <caret line="7" column="83" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="755" max-vertical-offset="7150">
-          <caret line="41" column="82" selection-start-line="41" selection-start-column="58" selection-end-line="41" selection-end-column="58" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/billing_profiles/_form.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-17.741936" vertical-offset="0" max-vertical-offset="1430">
-          <caret line="25" column="35" selection-start-line="25" selection-start-column="10" selection-end-line="25" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8261" max-vertical-offset="8690">
-          <caret line="386" column="71" selection-start-line="386" selection-start-column="71" selection-end-line="386" selection-end-column="71" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/orders/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.419354" vertical-offset="1296" max-vertical-offset="2090">
-          <caret line="75" column="57" selection-start-line="75" selection-start-column="57" selection-end-line="75" selection-end-column="57" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.806452" vertical-offset="132" max-vertical-offset="2882">
-          <caret line="17" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-5.032258" vertical-offset="1186" max-vertical-offset="1892">
-          <caret line="61" column="11" selection-start-line="61" selection-start-column="11" selection-end-line="61" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_standard.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.7096774" vertical-offset="0" max-vertical-offset="1056">
-          <caret line="1" column="2" selection-start-line="1" selection-start-column="2" selection-end-line="1" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/layouts/_footer_new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.387097" vertical-offset="0" max-vertical-offset="7150">
-          <caret line="9" column="23" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/schema.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="14703" max-vertical-offset="24112">
-          <caret line="682" column="72" selection-start-line="682" selection-start-column="36" selection-end-line="682" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/success.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.7419353" vertical-offset="579" max-vertical-offset="2112">
-          <caret line="33" column="82" selection-start-line="33" selection-start-column="82" selection-end-line="33" selection-end-column="82" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2239" max-vertical-offset="2992">
-          <caret line="116" column="62" selection-start-line="116" selection-start-column="62" selection-end-line="116" selection-end-column="62" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/user_notifier.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1760">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="6369" max-vertical-offset="7370">
-          <caret line="296" column="0" selection-start-line="296" selection-start-column="0" selection-end-line="296" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order_notifier.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="198" max-vertical-offset="3388">
-          <caret line="124" column="0" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_retrieve.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="198" max-vertical-offset="924">
-          <caret line="21" column="56" selection-start-line="21" selection-start-column="56" selection-end-line="21" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="462" max-vertical-offset="4400">
-          <caret line="32" column="75" selection-start-line="32" selection-start-column="52" selection-end-line="32" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="8965" max-vertical-offset="11880">
-          <caret line="417" column="0" selection-start-line="417" selection-start-column="0" selection-end-line="417" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1877" max-vertical-offset="6864">
-          <caret line="158" column="0" selection-start-line="158" selection-start-column="0" selection-end-line="158" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="352">
-          <caret line="7" column="132" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="132" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/order_notifier/api_executed.erb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="132">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="-0.0" vertical-offset="0" max-vertical-offset="374">
+          <caret line="0" column="16" selection-start-line="0" selection-start-column="4" selection-end-line="0" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -2893,51 +3302,277 @@
     <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1056">
-          <caret line="3" column="21" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="21" />
+          <caret line="3" column="41" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="41" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.2580647" vertical-offset="3058" max-vertical-offset="5852">
-          <caret line="145" column="0" selection-start-line="145" selection-start-column="0" selection-end-line="146" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1331" max-vertical-offset="13486">
-          <caret line="67" column="2" selection-start-line="67" selection-start-column="2" selection-end-line="67" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-4.4615383" vertical-offset="22464" max-vertical-offset="29942">
-          <caret line="1029" column="47" selection-start-line="1029" selection-start-column="47" selection-end-line="1029" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1067" max-vertical-offset="2574">
-          <caret line="56" column="63" selection-start-line="56" selection-start-column="63" selection-end-line="56" selection-end-column="63" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+          <caret line="6" column="30" selection-start-line="6" selection-start-column="7" selection-end-line="6" selection-end-column="30" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/domain_control_validation.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1914">
+        <state vertical-scroll-proportion="0.0" vertical-offset="879" max-vertical-offset="2838">
+          <caret line="48" column="11" selection-start-line="48" selection-start-column="11" selection-end-line="48" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gemfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="858" max-vertical-offset="2486">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="307" max-vertical-offset="2618">
+          <caret line="28" column="61" selection-start-line="28" selection-start-column="50" selection-end-line="28" selection-end-column="61" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_reprocess.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="2925" max-vertical-offset="5104">
+          <caret line="141" column="27" selection-start-line="141" selection-start-column="27" selection-end-line="141" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_update_v1_4.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="3211" max-vertical-offset="5874">
+          <caret line="154" column="28" selection-start-line="154" selection-start-column="28" selection-end-line="154" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/schema.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="5125" max-vertical-offset="24970">
+          <caret line="241" column="4" selection-start-line="241" selection-start-column="4" selection-end-line="241" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1473" max-vertical-offset="4444">
+          <caret line="147" column="66" selection-start-line="147" selection-start-column="66" selection-end-line="147" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="990" max-vertical-offset="2882">
+          <caret line="59" column="58" selection-start-line="59" selection-start-column="0" selection-end-line="59" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_3.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="545">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="484">
+          <caret line="11" column="18" selection-start-line="0" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/dcv_emails_v1_3.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="545">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_dcv_emails.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="330">
+          <caret line="3" column="26" selection-start-line="3" selection-start-column="26" selection-end-line="3" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/domain_validation.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="392">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/domain_name_validator.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="418">
+          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.897436" vertical-offset="2703" max-vertical-offset="8338">
+          <caret line="128" column="30" selection-start-line="128" selection-start-column="6" selection-end-line="128" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-5.8974357" vertical-offset="1244" max-vertical-offset="2200">
+          <caret line="67" column="41" selection-start-line="67" selection-start-column="41" selection-end-line="67" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_dcv_methods.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="286">
+          <caret line="0" column="19" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-3.0" vertical-offset="6219" max-vertical-offset="6908">
+          <caret line="288" column="6" selection-start-line="288" selection-start-column="6" selection-end-line="288" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/dcv_methods_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="374">
+          <caret line="11" column="68" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/show.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-12.612904" vertical-offset="49" max-vertical-offset="594">
+          <caret line="20" column="27" selection-start-line="20" selection-start-column="27" selection-end-line="20" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="373" max-vertical-offset="7370">
+          <caret line="25" column="26" selection-start-line="25" selection-start-column="26" selection-end-line="25" selection-end-column="26" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="3.7096775" vertical-offset="423" max-vertical-offset="3036">
+          <caret line="14" column="14" selection-start-line="14" selection-start-column="14" selection-end-line="14" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="12717" max-vertical-offset="13486">
+          <caret line="588" column="16" selection-start-line="588" selection-start-column="6" selection-end-line="588" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="131" max-vertical-offset="6534">
+          <caret line="14" column="2" selection-start-line="14" selection-start-column="2" selection-end-line="14" selection-end-column="2" />
+          <folding>
+            <element signature="e#843#2116#0" expanded="false" />
+            <element signature="e#2120#3369#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-6.225806" vertical-offset="2293" max-vertical-offset="6204">
+          <caret line="113" column="0" selection-start-line="109" selection-start-column="0" selection-end-line="113" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.025641" vertical-offset="606" max-vertical-offset="5918">
+          <caret line="40" column="23" selection-start-line="40" selection-start-column="23" selection-end-line="40" selection-end-column="23" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-2.64" vertical-offset="13156" max-vertical-offset="29546">
+          <caret line="607" column="97" selection-start-line="607" selection-start-column="97" selection-end-line="607" selection-end-column="97" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="332" max-vertical-offset="4400">
+          <caret line="27" column="67" selection-start-line="27" selection-start-column="34" selection-end-line="27" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="6124" max-vertical-offset="9130">
+          <caret line="292" column="65" selection-start-line="292" selection-start-column="51" selection-end-line="292" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.806452" vertical-offset="66" max-vertical-offset="792">
+          <caret line="14" column="21" selection-start-line="14" selection-start-column="21" selection-end-line="14" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="21207" max-vertical-offset="24794">
+          <caret line="972" column="6" selection-start-line="972" selection-start-column="6" selection-end-line="972" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1706422" vertical-offset="7035" max-vertical-offset="14080">
+          <caret line="324" column="24" selection-start-line="324" selection-start-column="24" selection-end-line="324" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
   </component>
 </project>
-

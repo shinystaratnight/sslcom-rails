@@ -3,6 +3,12 @@
   <component name="CompassSettings">
     <option name="compassExecutableFilePath" value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@global/gems/compass-0.12.2/bin/compass" />
     <option name="compassSupportEnabled" value="true" />
+    <option name="importPaths">
+      <list>
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.13.alpha.0/frameworks/compass/stylesheets" />
+        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.13.alpha.0/frameworks/blueprint/stylesheets" />
+      </list>
+    </option>
   </component>
   <component name="FacetManager">
     <facet type="RailsFacetType" name="Ruby on Rails">
@@ -729,7 +735,7 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
       <envs>
-        <env name="RAILS_ENV" value="production" />
+        <env name="RAILS_ENV" value="development" />
       </envs>
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
@@ -864,9 +870,13 @@
     <orderEntry type="library" scope="PROVIDED" name="crack (v0.4.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cucumber (v1.3.14, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cucumber-rails (v1.4.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="daemons (v1.1.9, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dalli (v2.6.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="database_cleaner (v1.2.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="declarative_authorization (v0.5.6, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="delayed_job (v4.0.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="delayed_job_active_record (v4.0.2, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="delayed_job_groups_plugin (v0.1.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.2.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv (v0.9.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv-rails (v0.9.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
@@ -935,9 +945,11 @@
     <orderEntry type="library" scope="PROVIDED" name="pry (v0.9.12.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pry-rails (v0.3.2, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="pry-remote (v0.1.7, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="public_suffix (v1.4.6, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rabl (v0.7.9, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack (v1.4.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-cache (v1.2, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rack-cors (v0.2.8, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-protection (v1.3.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-ssl (v1.3.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rack-ssl-enforcer (v0.2.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
@@ -988,6 +1000,7 @@
     <orderEntry type="library" scope="PROVIDED" name="xml-simple (v1.1.2, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="xpath (v2.0.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="yui-compressor (v0.9.6, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="zeus (v0.13.3, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
   </component>
   <component name="RModuleSettingsStorage">
     <LOAD_PATH number="0" />
@@ -995,4 +1008,3 @@
     <OPTIONS NAME="SPORK_SERVER_LAST_USED_TEST_FR_OPTION" VALUE=":rspec " />
   </component>
 </module>
-
