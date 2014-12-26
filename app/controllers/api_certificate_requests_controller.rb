@@ -22,6 +22,18 @@ class ApiCertificateRequestsController < ApplicationController
     OrderNotifier.api_executed(@rendered).deliver if (@result.errors.blank? && @rendered)
   end
 
+  def set_result_parameters(result, acr, template)
+    result.ref = acr.ref
+    result.order_status = acr.status
+    result.order_amount = acr.order(true).amount.format
+    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(acr)
+    result.receipt_url = ORDERS_DOMAIN+order_path(acr.order)
+    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(acr)
+    result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
+    result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+    result.update_attribute :response, render_to_string(:template => template)
+  end
+
   def create_v1_3
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
@@ -85,18 +97,6 @@ class ApiCertificateRequestsController < ApplicationController
     logger.error e.message
     e.backtrace.each { |line| logger.error line }
     error(500, 500, "server error")
-  end
-
-  def set_result_parameters(result, acr, template)
-    result.ref = acr.ref
-    result.order_status = acr.status
-    result.order_amount = acr.order(true).amount.format
-    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(acr)
-    result.receipt_url = ORDERS_DOMAIN+order_path(acr.order)
-    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(acr)
-    result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
-    result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
-    result.update_attribute :response, render_to_string(:template => template)
   end
 
   def update_v1_4

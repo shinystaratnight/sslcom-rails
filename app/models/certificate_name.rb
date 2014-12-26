@@ -62,7 +62,7 @@ class CertificateName < ActiveRecord::Base
       when /cname/i
         "CNAMECSRHASH"
       else
-        domain_control_validations.last_sent
+        domain_control_validations.last_sent.try :email_address
     end
   end
 

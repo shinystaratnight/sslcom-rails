@@ -65,6 +65,23 @@ class ComodoApi
     CaDcvResendRequest.create(attr)
   end
 
+  # this is the only way to update dcv after the order is submitted
+  def self.auto_update_dcv(options)
+    owner = options[:dcv].csr || options[:dcv].certificate_name
+    comodo_options = {'dcvEmailAddress' => options[:dcv].email_address,
+                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number}.
+        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    host = RESEND_DCV_URL
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+            parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
+    CaDcvResendRequest.create(attr)
+
+    # curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
+    # "domainName=mgardenssl1.com&newMethod=EMAIL&newDCVEmailAddress=admin@mgardenssl1.com&
+    # orderNumber=15681927&loginName=likx2m7j&loginPassword=Jimi15Kimi15" 'https://secure.comodo.net/products/!AutoUpdateDCV'
+  end
+
   def self.send_comodo(host, options={})
     url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)

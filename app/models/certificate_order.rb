@@ -610,6 +610,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def domains_and_common_name
+    certificate_content.domains_and_common_name
+  end
+
   def base_api_params
     cc = certificate_content
     r = cc.registrant
@@ -626,7 +630,10 @@ class CertificateOrder < ActiveRecord::Base
          country_name: r.country}
     api_domains = {}
     unless cc.domains.blank?
-      cc.domains.flatten.each { |d| api_domains.merge!(d.to_sym => {dcv: "http_csr_hash"}) }
+      (cc.domains.flatten+[common_name]).each { |d|
+        api_domains.merge!(d.to_sym => {dcv:
+                    cc.certificate_names.find_by_name(d).domain_control_validations.last_method.try(:method_for_api) ||
+                    ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD }) }
     else
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end
@@ -1069,7 +1076,7 @@ class CertificateOrder < ActiveRecord::Base
       domains_for_comodo.each do |d|
         if certificate_content.certificate_names.find_by_name(d)
           last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
-          dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD : last)
+          dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
         end
       end
       params.merge!('domainNames' => domains_for_comodo.join(","))

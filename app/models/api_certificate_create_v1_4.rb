@@ -18,6 +18,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
   DEFAULT_DCV_METHOD = "http_csr_hash"
+  DEFAULT_DCV_METHOD_COMODO = "HTTPCSRHASH"
 
   validates :account_key, :secret_key, presence: true
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}

@@ -1031,6 +1031,10 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def domains_and_common_name
+    domains.flatten.uniq+[certificate_order.common_name]
+  end
+
   def self.is_tld?(name)
     !!(name=~TLD_REGEX)
   end
