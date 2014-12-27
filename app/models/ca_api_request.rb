@@ -6,4 +6,8 @@ class CaApiRequest < ActiveRecord::Base
   def success?
     !!(response=~/^errorCode=0/)
   end
+
+  def parameters_to_hash
+    JSON.parse self.parameters
+  end
 end

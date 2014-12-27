@@ -119,7 +119,7 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
             set_result_parameters(@result, @acr, template)
-            @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
+            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
             @result = @acr #so that rabl can report errors

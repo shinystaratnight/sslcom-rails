@@ -55,6 +55,19 @@ class CertificateName < ActiveRecord::Base
         domain_control_validations.last_sent
   end
 
+  def last_dcv_for_comodo_auto_update_dcv
+    case domain_control_validations.last.try(:dcv_method)
+      when /https?/i, ""
+        "HTTP_CSR_HASH"
+      when /cname/i
+        "CNAME_CSR_HASH"
+      when /email/i
+        "EMAIL"
+      else
+        domain_control_validations.last_sent.try :email_address
+    end
+  end
+
   def last_dcv_for_comodo
     case domain_control_validations.last.try(:dcv_method)
       when /https?/i, ""

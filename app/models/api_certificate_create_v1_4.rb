@@ -139,11 +139,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
         #send to comodo
-        self.domains.keys.each do |domain|
-          # ComodoApi.delay.resend_dcv(dcv:
-          ComodoApi.resend_dcv(dcv:
-            @certificate_order.certificate_content.certificate_names.find_by_name(domain).domain_control_validations.last)
-        end
+        comodo_auto_update_dcv(certificate_order: @certificate_order)
       else
         if self.csr_obj
           certificate_content = @certificate_order.certificate_contents.build
@@ -172,6 +168,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       return @certificate_order
     end
     self
+  end
+
+  # this update dcv method to comodo for each domain
+  def comodo_auto_update_dcv(options={send_to_ca: true})
+    self.domains.keys.map do |domain|
+      # ComodoApi.delay.auto_update_dcv(dcv:
+      ComodoApi.auto_update_dcv(dcv:
+        options[:certificate_order].certificate_content.certificate_names.find_by_name(domain).domain_control_validations.last,
+        send_to_ca: options[:send_to_ca])
+    end
   end
 
   DomainJob = Struct.new(:cc, :acc, :dcv_failure_action, :domains, :dcv_candidate_addresses) do
@@ -370,5 +376,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     co=@certificate_order || find_certificate_order
     co.is_a?(CertificateOrder) && (co.certificate_content.try("contacts_provided?") ||
         co.certificate_content.try("pending_validation?")) ? true : false
+  end
+
+  def domains
+    @domains || parameters_to_hash["domains"]
+  end
+
+  def ref
+    @ref || parameters_to_hash["ref"]
   end
 end

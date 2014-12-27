@@ -10,6 +10,7 @@ class ComodoApi
   REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
+  AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
@@ -65,21 +66,31 @@ class ComodoApi
     CaDcvResendRequest.create(attr)
   end
 
-  # this is the only way to update dcv after the order is submitted
+  # this is the only way to update multi domain dcv after the order is submitted
   def self.auto_update_dcv(options)
-    owner = options[:dcv].csr || options[:dcv].certificate_name
-    comodo_options = {'dcvEmailAddress' => options[:dcv].email_address,
-                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number}.
+    owner = options[:dcv].certificate_name
+    comodo_options = {'newDCVEmailAddress' => owner.email,
+                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number,
+                      'domainName'=>owner.name,
+                      'newMethod'=>owner.last_dcv_for_comodo_auto_update_dcv}.
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    host = RESEND_DCV_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-            parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
-    CaDcvResendRequest.create(attr)
+    if options[:send_to_ca]
+      host = AUTO_UPDATE_URL
+      res = send_comodo(host, comodo_options)
+      attr = {request_url: host,
+              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
+      CaDcvResendRequest.create(attr)
+    else
+      comodo_options
+    end
 
     # curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
     # "domainName=mgardenssl1.com&newMethod=EMAIL&newDCVEmailAddress=admin@mgardenssl1.com&
     # orderNumber=15681927&loginName=likx2m7j&loginPassword=Jimi15Kimi15" 'https://secure.comodo.net/products/!AutoUpdateDCV'
+    # EMAIL
+    # HTTP_CSR_HASH
+    # HTTPS_CSR_HASH
+    # CNAME_CSR_HASH
   end
 
   def self.send_comodo(host, options={})
