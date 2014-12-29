@@ -67,14 +67,25 @@ class ComodoApi
   end
 
   # this is the only way to update multi domain dcv after the order is submitted
-  def self.auto_update_dcv(options)
-    owner = options[:dcv].certificate_name
-    comodo_options = {'newDCVEmailAddress' => owner.email,
-                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number,
-                      'domainName'=>owner.name,
-                      'newMethod'=>owner.last_dcv_for_comodo_auto_update_dcv}.
-        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    if options[:send_to_ca]
+  def self.auto_update_dcv(options={})
+    options[:send_to_ca]=true if options[:send_to_ca].blank?
+    if options[:dcv].certificate_name #assume ucc
+      owner = options[:dcv].certificate_name
+      order_number = owner.certificate_content.certificate_order.external_order_number
+      domain_name = owner.name
+      dcv_method=owner.last_dcv_for_comodo_auto_update_dcv
+    else #assume single domain
+      owner = options[:dcv]
+      order_number = owner.csr.certificate_content.certificate_order.external_order_number
+      domain_name = owner.csr.common_name
+      dcv_method=CertificateName.to_comodo_method(owner.dcv_method)
+    end
+    comodo_options = {'orderNumber'=> order_number,
+                      'domainName'=>domain_name,
+                      'newMethod'=>dcv_method}
+    comodo_options.merge!('newDCVEmailAddress' => options[:dcv].email_address) if (options[:dcv].dcv_method=="email")
+    comodo_options=comodo_options.merge!(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    if options[:send_to_ca] && order_number
       host = AUTO_UPDATE_URL
       res = send_comodo(host, comodo_options)
       attr = {request_url: host,

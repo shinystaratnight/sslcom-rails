@@ -587,7 +587,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def skip_verification?
-    false
+    is_ucc?
   end
 
   # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}

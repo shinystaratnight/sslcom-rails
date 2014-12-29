@@ -47,7 +47,7 @@ class DomainControlValidation < ActiveRecord::Base
   def send_to(address)
     update_attributes email_address: address, sent_at: DateTime.now, dcv_method: "email"
     if csr.sent_success
-      ComodoApi.resend_dcv(dcv: self)
+      ComodoApi.auto_update_dcv(dcv: self)
       co=csr.certificate_content.certificate_order
       co.receipt_recipients.uniq.each do |c|
         OrderNotifier.dcv_sent(c, co, self).deliver!

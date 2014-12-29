@@ -175,8 +175,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self.domains.keys.map do |domain|
       # ComodoApi.delay.auto_update_dcv(dcv:
       ComodoApi.auto_update_dcv(dcv:
-        options[:certificate_order].certificate_content.certificate_names.find_by_name(domain).domain_control_validations.last,
-        send_to_ca: options[:send_to_ca])
+        options[:certificate_order].certificate_content.certificate_names.find_by_name(domain).
+        domain_control_validations.last, send_to_ca: options[:send_to_ca])
     end
   end
 
@@ -384,5 +384,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def ref
     @ref || parameters_to_hash["ref"]
+  end
+
+  def test_update_dcv
+    a=ApiCertificateCreate_v1_4.find{|a|a.domains && (a.domains.keys.count) > 2 && a.ref && a.find_certificate_order.try(:external_order_number) && a.find_certificate_order.is_test?}
+    a.comodo_auto_update_dcv(send_to_ca: false, certificate_order: a.find_certificate_order)
   end
 end

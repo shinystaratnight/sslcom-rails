@@ -4,7 +4,7 @@ Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 Dear Customer,
 <%end -%>
 
-<%unless @certificate_order.certificate.is_ucc? -%>
+<%unless @last_sent.is_a?(Array) -%>
 An SSL.com certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
 
 Please respond to the email validation request sent to: <%=@last_sent.email_address%>.

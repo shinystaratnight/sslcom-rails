@@ -927,6 +927,10 @@ class CertificateContent < ActiveRecord::Base
     domains.join("\ ") unless domains.blank?
   end
 
+  def certificate_names_by_domains
+    domains.map{|d|certificate_names.find_by_name(d)}.compact
+  end
+
   def dcv_domains(options)
     i=0
     options[:domains].each do |k,v|
