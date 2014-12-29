@@ -91,4 +91,8 @@ class ApiCertificateRequest < CaApiRequest
       dcvs.blank? ? nil : dcvs #be consistent with the api results by returning null if empty
     end
   end
+
+  def retry
+    %x"curl -k -H 'Accept: application/json' -H 'Content-type: application/json' -X #{request_method.upcase} -d '#{parameters}' #{request_url.gsub(".com",".local:3000").gsub("http:","https:")}"
+  end
 end

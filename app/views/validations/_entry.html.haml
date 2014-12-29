@@ -113,25 +113,25 @@
                         %textarea.selectAll=co.ssl_account.api_certificate_requests_string
                     -if cc.registrant
                       %li
-                        %strong SSL.com API New Command
+                        %strong=link_to "SSL.com API New Command", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
                       %li
                         %textarea.selectAll=co.to_api_string("create")
                       -if co.csr
                         %li
-                          %strong SSL.com API List DCV Methods Command
+                          %strong=link_to "SSL.com API List DCV Methods Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("dcv_methods")
                         %li
-                          %strong SSL.com API Update DCV Command
+                          %strong=link_to "SSL.com API Update DCV Command", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("update_dcv")
                       -if co.external_order_number
                         %li
-                          %strong SSL.com API Status/Retrieve Command
+                          %strong=link_to "SSL.com API Status/Retrieve Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("show")
                         %li
-                          %strong SSL.com API Reprocess Command
+                          %strong=link_to "SSL.com API Reprocess Command", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("update")
                       %li product:
@@ -174,7 +174,7 @@
                           %li
                             %textarea.selectAll
                               -co.certificate_content.certificate_names_by_domains.each do |cn|
-                                ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.auto_update_dcv(dcv: cn.domain_control_validations.last, send_to_ca: false)+'" \''+ComodoApi::AUTO_UPDATE_URL+'\''+"\n"
+                                ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.auto_update_dcv(dcv: cn.domain_control_validations.last, send_to_ca: false)+'" \''+ComodoApi::AUTO_UPDATE_URL+'\''+"\n" if cn.domain_control_validations.last
                         %li product:
                         %ul
                           %li
