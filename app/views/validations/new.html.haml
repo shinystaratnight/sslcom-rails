@@ -12,7 +12,7 @@
     -else
       =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
     =error_messages_for :validation, @dcv, @other_party_validation_request
-  -if false #co.skip_verification?
+  -if co.certificate.is_ucc?
     .error{style: "display: none;"}
     %table{style: "width: 100%; border: 1px solid black; margin: 1em"}
       %tr
@@ -31,8 +31,8 @@
         %thead
           %th domain
           %th method
-          %th description
-          %th status
+          -#%th description
+          -#%th status
         -co.certificate_content.certificate_names.each do |cn|
           -le=cn.domain_control_validations.last_emailed
           -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["upload text file","http_csr_hash"], ["add cname entry","cname_csr_hash"]]}
@@ -40,8 +40,8 @@
             %td
               =cn.name
             %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address)
-            %td description
-            %td file upload attempted on 12-15-2015
+            -#%td description
+            -#%td file upload attempted on 12-15-2015
       #upload_validations(style='width: 100%; text-align: center;')
         =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
         -#.clearfix

@@ -33,7 +33,7 @@
       =csrf_meta_tag
       =render :partial => "shared/scripts_and_styles"
   %body
-    =render partial: "layouts/facebook"
+    =render partial: "layouts/facebook" if Rails.env=~/production/i
     -if show_short_links?
       #answers(style="text-align: center;width: 100%; background-color: orange; padding: 2px 0; font-family: sans-serif; font-size: 1.2em; font-weight: bold;")
         Have a question or solution?
