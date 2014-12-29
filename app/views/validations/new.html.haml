@@ -12,7 +12,7 @@
     -else
       =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
     =error_messages_for :validation, @dcv, @other_party_validation_request
-  -if co.skip_verification?
+  -if false #co.skip_verification?
     .error{style: "display: none;"}
     %table{style: "width: 100%; border: 1px solid black; margin: 1em"}
       %tr
