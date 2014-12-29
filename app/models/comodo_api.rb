@@ -68,7 +68,7 @@ class ComodoApi
 
   # this is the only way to update multi domain dcv after the order is submitted
   def self.auto_update_dcv(options={})
-    options[:send_to_ca]=true if options[:send_to_ca].blank?
+    options[:send_to_ca]=true unless options[:send_to_ca]==false
     if options[:dcv].certificate_name #assume ucc
       owner = options[:dcv].certificate_name
       order_number = owner.certificate_content.certificate_order.external_order_number
