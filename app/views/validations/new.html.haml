@@ -1,6 +1,7 @@
 -content_for :title, "Validation for #{@certificate_order.ref}"
 -co = @certificate_order
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
+-form_action = Rails.env=~/production/i ? "https://sws.sslpki.com" : "https://sws-test.sslpki.local:3000"
 -if checkout_in_progress
   -i=adjusted_position(5, co)
   =order_progress_indicator(i, co.certificate)

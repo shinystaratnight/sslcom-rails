@@ -13,7 +13,7 @@ class OrderNotifier < ActionMailer::Base
   def reseller_certificate_order_paid(ssl_account, certificate_order)
     @ssl_account        = ssl_account
     @certificate_order  = certificate_order.reload
-    mail  subject:       "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})",
+    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})",
           from:          Settings.from_email.orders,
           to:    certificate_order.receipt_recipients
 
@@ -30,7 +30,7 @@ class OrderNotifier < ActionMailer::Base
   def certificate_order_paid(contact, certificate_order, renewal=false)
     @renewal = renewal
     setup(contact, certificate_order)
-    mail  subject:      "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate #{@renewal ? "Renewal Processed" : "Confirmation"} For #{certificate_order.subject} (Order ##{certificate_order.ref})",
+    mail  subject:      "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate #{@renewal ? "Renewal Processed" : "Confirmation"} For #{certificate_order.subject} (Order ##{certificate_order.ref})",
           from:         Settings.from_email.orders,
           to:   contact
   end
@@ -38,7 +38,7 @@ class OrderNotifier < ActionMailer::Base
   def dcv_sent(contact, certificate_order, last_sent)
     setup(contact, certificate_order)
     @last_sent=last_sent
-    mail  subject:       "SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})",
+    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})",
           from:          Settings.from_email.orders,
           to:    contact
 
@@ -51,13 +51,13 @@ class OrderNotifier < ActionMailer::Base
     mail(
       to: contact,
       from: Settings.from_email.orders,
-      subject: "SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{certificate_order.subject}"
+      subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Attached For #{certificate_order.subject}"
     )
   end
 
   def validation_approve(contact, certificate_order)
     setup(contact, certificate_order)
-    mail  subject:       "SSL.com Certificate For #{certificate_order.subject} Has Been Approved",
+    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Been Approved",
           from:          Settings.from_email.orders,
           to:    contact.email
   end
@@ -65,20 +65,21 @@ class OrderNotifier < ActionMailer::Base
   def validation_unapprove(contact, certificate_order, validation)
     setup(contact, certificate_order)
     @validation=validation
-    mail  subject:       "SSL.com Certificate For #{certificate_order.subject} Has Not Been Approved",
+    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Not Been Approved",
           from:          Settings.from_email.orders,
           to:    contact.email
   end
 
   def site_seal_approve(contact, certificate_order)
     setup(contact, certificate_order)
-    mail  subject:    "SSL.com Smart SeaL For #{certificate_order.subject} Is Now Ready",
+    mail  subject:    "#{'(TEST) ' if certificate_order.is_test?}SSL.com Smart SeaL For #{certificate_order.subject} Is Now Ready",
           from:       Settings.from_email.orders,
           to: (contact.is_a?(Contact) ? contact.email : contact)
   end
 
   def site_seal_unapprove(contact, certificate_order)
-    abuse = certificate_order.site_seal.canceled? ? "Abuse Reported: " : ""
+    abuse = "#{'(TEST) ' if certificate_order.is_test?}" +
+        (certificate_order.site_seal.canceled? ? "Abuse Reported: " : "")
     setup(contact, certificate_order)
     mail  subject:       abuse+"SSL.com Smart SeaL For #{certificate_order.subject} Has Been Disabled",
           from:          Settings.from_email.orders,

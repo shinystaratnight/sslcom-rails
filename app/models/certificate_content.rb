@@ -927,8 +927,12 @@ class CertificateContent < ActiveRecord::Base
     domains.join("\ ") unless domains.blank?
   end
 
+  def all_domains
+    ([csr.common_name]+(domains.blank? ? [] : domains)).flatten.uniq if csr
+  end
+
   def certificate_names_by_domains
-    domains.blank? ? [] : domains.map{|d|certificate_names.find_by_name(d)}.compact
+    all_domains.map{|d|certificate_names.find_by_name(d)}.compact
   end
 
   def dcv_domains(options)
