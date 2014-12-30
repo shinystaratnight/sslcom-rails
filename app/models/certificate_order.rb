@@ -1344,7 +1344,7 @@ class CertificateOrder < ActiveRecord::Base
 
 
   def self.trial_conversions(start=30.days.ago, finish=Date.today)
-    free, nonfree, result, count = {}, {}, {}, 0
+    free, nonfree, result, stats, count = {}, {}, {}, [], 0
     CertificateOrder.range(start, finish).free.map{|co|free.merge!(co.id.to_s => co.all_domains) unless co.all_domains.blank?}
     CertificateOrder.range(start, finish).nonfree.map{|co|nonfree.merge!(co.id.to_s => co.all_domains) unless co.all_domains.blank?}
     nonfree.each do |nk,nv|
@@ -1355,12 +1355,15 @@ class CertificateOrder < ActiveRecord::Base
           co_nk = CertificateOrder.find(nk)
           result.merge!([co_fk.ref, 0.01*co_fk.amount, co_fk.created_at.strftime("%b %d, %Y")]=>
                             [co_nk.ref, 0.01*co_nk.amount, co_nk.created_at.strftime("%b %d, %Y")])
+          stats<<[co_fk.ref, 0.01*co_fk.amount, co_fk.created_at.strftime("%b %d, %Y"),
+              co_nk.ref, 0.01*co_nk.amount, co_nk.created_at.strftime("%b %d, %Y")].join("/")
           free.delete fk
           break
         end
       end
     end
-    [count, result]
+    File.open("/tmp/trial_conversions.txt", "w") { |file| file.write stats.join("\n") }
+    [count,result]
   end
 
 end
