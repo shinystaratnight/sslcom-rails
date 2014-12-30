@@ -82,11 +82,11 @@ class ApiCertificateRequest < CaApiRequest
     if co.is_a?(CertificateOrder)
       cc = co.certificate_content
       dcvs = {}.tap do |dcv|
-        (cc.domains || [cc.csr.common_name]).each do |domain|
+        (co.all_domains).each do |domain|
           if (cc.certificate_names.find_by_name(domain) && last = cc.certificate_names.find_by_name(domain).domain_control_validations.last)
             dcv.merge! domain=>{"attempted_on"=>self.updated_at, "dcv_method"=>(last.email_address || last.dcv_method)}
           end
-        end
+        end if co.all_domains
       end
       dcvs.blank? ? nil : dcvs #be consistent with the api results by returning null if empty
     end
