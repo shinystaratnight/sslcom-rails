@@ -1,6 +1,7 @@
 class Affiliate < ActiveRecord::Base
   belongs_to  :ssl_account
   has_many    :line_items
+  has_many    :certificate_orders, through: :line_items, :source => :sellable, :source_type => 'CertificateOrder'
   has_many    :orders, through: :line_items
   has_many    :visitor_tokens
   has_many    :tracked_urls, through: :visitor_tokens
@@ -90,11 +91,6 @@ class Affiliate < ActiveRecord::Base
   def display_name
     read_attribute(:display_name) || organization || "Studio"
   end
-
-  def certificate_orders
-    line_items.map(&:sellable).reject{|co|!co.is_a? CertificateOrder}
-  end
-
 
   # gives all the urls visited, even after the landed url. Too much detail for affiliates to use
   def tracked_urls_count

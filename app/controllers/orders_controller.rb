@@ -129,9 +129,9 @@ class OrdersController < ApplicationController
     if @order.description == 'Deposit'
       @deposit = @order
     elsif @order.line_items.count==1
-      @certificate_order = @order.line_items.map(&:sellable).flatten.uniq.last
+      @certificate_order = @order.certificate_orders.uniq.last
     else
-      @certificate_orders = @order.line_items.map(&:sellable).flatten.uniq.
+      @certificate_orders = @order.certificate_orders.uniq.
           select{|cert|!cert.line_item_qty.blank?}
     end
     cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.

@@ -85,6 +85,14 @@ class CertificateName < ActiveRecord::Base
     "http#{'s' if secure}://#{non_wildcard_name}/#{csr.md5_hash}.txt"
   end
 
+  def cname_origin
+    "#{csr.md5_hash}.#{non_wildcard_name}"
+  end
+
+  def cname_destination
+    "#{csr.sha1_hash}.comodoca.com"
+  end
+
   def non_wildcard_name
     name.gsub(/^\*\./, "").downcase
   end

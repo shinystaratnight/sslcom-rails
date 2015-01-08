@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
+  has_many    :certificate_orders, through: :line_items, :source => :sellable, :source_type => 'CertificateOrder'
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_and_belongs_to_many    :discounts
@@ -155,6 +156,9 @@ class Order < ActiveRecord::Base
     state :paid do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
         line_items.each {|li|li.sellable.refund!} if complete
+      end
+      event :partial_refund, transitions_to: :paid do |ref|
+        line_items.find {|li|li.sellable.ref==ref}.sellable.refund!
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete
@@ -552,7 +556,7 @@ class Order < ActiveRecord::Base
   def determine_description
     self.description ||= SSL_CERTIFICATE
     #causing issues with size of description for larger orders
-#    self.description ||= self.line_items.map(&:sellable).
+#    self.description ||= self.certificate_orders.
 #      map(&:description).join(" : ")
   end
 end

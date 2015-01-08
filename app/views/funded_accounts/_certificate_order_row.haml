@@ -5,6 +5,7 @@
       (
       %em>=cert.subject
       )
+    !="[#{@certificate_orders.select{|co|co.certificate==cert.certificate}.map{|co|link_to(co.ref, co)}.join(', ')}]" if @certificate_orders
   %td.quantity
     =cert.line_item_qty || cert.quantity || "1"
   %td.price= cert.price.format

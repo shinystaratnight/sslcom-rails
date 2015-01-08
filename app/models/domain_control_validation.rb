@@ -70,14 +70,17 @@ class DomainControlValidation < ActiveRecord::Base
   end
   alias :is_eligible_to_send? :is_eligible_to_resend?
 
-  def method_for_api
+  def method_for_api(options={http_csr_hash: "http_csr_hash", https_csr_hash: "https_csr_hash",
+                              cname_csr_hash: "cname_csr_hash", email: self.email_address})
     case dcv_method
       when "http", "http_csr_hash"
-        "http_csr_hash"
+        options[:http_csr_hash]
       when "https", "https_csr_hash"
-        "https_csr_hash"
+        options[:https_csr_hash]
+      when "cname", "cname_csr_hash"
+        options[:cname_csr_hash]
       when "email"
-        email_address
+        options[:email]
     end
   end
 
@@ -118,6 +121,17 @@ class DomainControlValidation < ActiveRecord::Base
     else
       read_attribute(:candidate_addresses)
     end
+  end
+
+  def friendly_action
+
+  end
+
+  def action_performed
+    "#{method_for_api({http_csr_hash: "scanning for #{certificate_name.dcv_url}",
+                       https_csr_hash: "scanning for #{certificate_name.dcv_url}",
+                       cname_csr_hash: "scanning for CNAME: #{certificate_name.cname_origin} -> #{certificate_name.cname_destination}",
+                       email: "sent validation to #{self.email_address}"})}"
   end
 
 end
