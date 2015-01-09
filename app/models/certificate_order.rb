@@ -631,9 +631,13 @@ class CertificateOrder < ActiveRecord::Base
     api_domains = {}
     unless cc.domains.blank?
       (cc.domains.flatten+[common_name]).each { |d|
-        api_domains.merge!(d.to_sym => {dcv:
-                    cc.certificate_names.find_by_name(d).domain_control_validations.last_method.try(:method_for_api) ||
-                    ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD }) }
+        cn=cc.certificate_names.find_by_name(d)
+        if cn
+          api_domains.merge!(d.to_sym => {dcv:
+                      cn.domain_control_validations.last_method.try(:method_for_api) ||
+                      ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
+        end
+        }
     else
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end

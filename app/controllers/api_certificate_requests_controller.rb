@@ -158,8 +158,10 @@ class ApiCertificateRequestsController < ApplicationController
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
         if (@acr.signed_certificate && @result.query_type!="order_status_only")
-          @result.certificates = @acr.signed_certificate.to_format(response_type: @result.response_type,
-            response_encoding: @result.response_encoding)
+          @result.certificates =
+              @acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
+                  response_encoding: @result.response_encoding) ||
+              @acr.signed_certificate.to_nginx
           @result.common_name = @acr.signed_certificate.common_name
           @result.subject_alternative_names = @acr.signed_certificate.subject_alternative_names
           @result.effective_date = @acr.signed_certificate.effective_date

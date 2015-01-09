@@ -1,3 +1,4 @@
+-line_item_certs=@order.certificate_orders.select{|co|co.certificate==cert.certificate}
 %tr.line_item
   %td.description
     =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
@@ -5,9 +6,9 @@
       (
       %em>=cert.subject
       )
-    !="[#{@certificate_orders.select{|co|co.certificate==cert.certificate}.map{|co|link_to(co.ref, co)}.join(', ')}]" if @certificate_orders
+    !="[#{line_item_certs.map{|co|link_to(co.ref, co)}.join(', ')}]"
   %td.quantity
-    =cert.line_item_qty || cert.quantity || "1"
+    =line_item_certs.count
   %td.price= cert.price.format
 -if cert.migrated_from_v2? && !cert.v2_line_items.empty?
   -cert.v2_line_items.each do |item|

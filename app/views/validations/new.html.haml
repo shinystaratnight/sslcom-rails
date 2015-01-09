@@ -47,8 +47,8 @@
           %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address)
           -#%td description
           %td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
-          %td=dcv.created_at
-          %td failed
+          %td=dcv.blank? ? "n/a" : dcv.created_at
+          %td unverified
     #upload_validations(style='width: 100%; text-align: center;')
       =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
       -#.clearfix
