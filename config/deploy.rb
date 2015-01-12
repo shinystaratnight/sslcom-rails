@@ -30,8 +30,8 @@ default_run_options[:pty] = true
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
-# set :application, "sws-test.sslpki.com" # test api
-set :application, "sws.sslpki.com" # api
+set :application, "sws-test.sslpki.com" # test api
+# set :application, "sws.sslpki.com" # api
 set :domain, '174.129.43.244' # sws.sslpki.com api
 
 #set :deploy_via, :copy

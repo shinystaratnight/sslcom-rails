@@ -18,6 +18,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
+  has_many    :ca_mdc_statuses, as: :api_requestable
   #has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
   #            as: :api_requestable, dependent: :destroy
 

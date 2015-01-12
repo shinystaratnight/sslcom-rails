@@ -175,6 +175,11 @@
                             %textarea.selectAll
                               -co.certificate_content.certificate_names_by_domains.each do |cn|
                                 ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.auto_update_dcv(dcv: cn.domain_control_validations.last, send_to_ca: false)+'" \''+ComodoApi::AUTO_UPDATE_URL+'\''+"\n" if cn.domain_control_validations.last
+                          -if co.certificate.is_ucc?
+                            %li
+                              %strong Comodo Multi Domain Status
+                            %li
+                              %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_domains_status(co).gsub('"', '\"')+'" \''+ComodoApi::GET_MDC_DETAILS+'\''
                         %li product:
                         %ul
                           %li

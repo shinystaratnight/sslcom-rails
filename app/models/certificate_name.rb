@@ -163,4 +163,10 @@ class CertificateName < ActiveRecord::Base
   def update_whois_lookup
     whois_lookups.create
   end
+
+  def ca_validation
+    certificate_content.certificate_order.ca_mdc_statuses.last.domain_status[name]
+  end
+
+
 end

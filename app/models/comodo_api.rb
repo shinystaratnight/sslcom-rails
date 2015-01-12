@@ -12,6 +12,7 @@ class ComodoApi
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
+  GET_MDC_DETAILS="https://secure.comodo.net/products/!GetMDCDomainDetails"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
@@ -124,6 +125,15 @@ class ComodoApi
     CaRetrieveCertificate.create(attr)
   end
 
+  def self.mdc_status(certificate_order)
+    comodo_options = params_domains_status(certificate_order)
+    host = GET_MDC_DETAILS
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    CaMdcStatus.create(attr)
+  end
+
   def self.params_collect(certificate_order, options={})
     comodo_params = {'queryType' => 2, "showExtStatus" => "Y",
                      'baseOrderNumber' => certificate_order.external_order_number}
@@ -132,7 +142,12 @@ class ComodoApi
                          "responseEncoding" => RESPONSE_ENCODING[options[:response_encoding]].to_i) if ["zip", "pkcs7"].include?(options[:response_type]) &&
         options[:response_encoding]=="binary"
     # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
-    comodo_options = comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+  end
+
+  def self.params_domains_status(certificate_order)
+    comodo_params = {'showStatusDetails' => "Y", 'orderNumber' => certificate_order.external_order_number}
+    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
 #  def self.test
