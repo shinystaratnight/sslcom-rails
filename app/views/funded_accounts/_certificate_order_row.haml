@@ -2,11 +2,9 @@
 %tr.line_item
   %td.description
     =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
-    -if cert.subject
-      (
-      %em>=cert.subject
-      )
-    !="[#{line_item_certs.map{|co|link_to(co.ref, co)}.join(', ')}]"
+    %ul
+      -line_item_certs.each do |co|
+        %li=link_to("#{co.subject} (#{co.ref})", co)
   %td.quantity
     =line_item_certs.count
   %td.price= cert.price.format

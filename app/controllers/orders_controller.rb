@@ -131,8 +131,12 @@ class OrdersController < ApplicationController
     elsif @order.line_items.count==1
       @certificate_order = @order.certificate_orders.uniq.last
     else
-      @certificate_orders = @order.certificate_orders.uniq.
-          select{|cert|!cert.line_item_qty.blank?}
+      certificates=[]
+      @certificate_orders = @order.certificate_orders.uniq.map{|co|
+        unless certificates.include?(co.certificate)
+          certificates<<co.certificate
+          co
+        end}.compact
     end
     cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
         cart_cookie_days.to_i.days.from_now}
