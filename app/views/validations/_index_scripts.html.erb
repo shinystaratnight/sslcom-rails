@@ -135,6 +135,9 @@ jQuery(function($) {
     var status_bar=null;
     $.method_type();
     $("select#domain_control_validation_email option[value='none']").remove();
+    $('input:checkbox#select_all').click(function(event) {  //on click
+      $(".check_box").prop('checked', $(this).prop('checked'));
+    });
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
@@ -235,6 +238,7 @@ jQuery(function($) {
 //        $('#waiting_on_csr').hide();
 //        $('.submit_csr').removeAttr('disabled');
 //        $('.submit_csr').attr('value', submit_label);
+          location.reload(true);
         if(data.errors){
           $('.error').html("The following fields have errors:</br><ul>");
           $.each(data.errors, function(i, item) {

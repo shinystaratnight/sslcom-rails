@@ -101,9 +101,10 @@
                           -if co.signed_certificate
                             =render partial: 'download', locals: {co: co}
                           -unless cc.csr.blank? || hide_validation?(co)
-                            %li
-                              %strong domain validation
-                            =render partial: 'validations/dcv', locals: {co: co}
+                            -if cc.pending_validation?
+                              %li
+                                %strong domain validation
+                              =render partial: 'validations/dcv', locals: {co: co}
                             %li
                               %strong validation documentation
                             -if co.description['validation_level'] == 'Class 1'

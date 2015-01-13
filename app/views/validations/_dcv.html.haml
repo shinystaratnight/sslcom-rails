@@ -17,8 +17,8 @@
 -else
   %li
     %em no domain verification performed
-  %li=link_to 'perform domain verification', checkout_in_progress ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
--if csr.try(:body) && co.signed_certificate.blank?
+  %li(class="#{'category_border' if co.certificate.is_ucc?}")=link_to 'perform domain verification', (checkout_in_progress || co.certificate.is_ucc?) ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+-if csr.try(:body) && co.signed_certificate.blank? && !co.certificate.is_ucc?
   %li Or
   %li
     %em csr hash file upload method:

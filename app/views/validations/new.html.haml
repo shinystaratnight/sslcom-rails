@@ -29,7 +29,7 @@
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
     %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
       %thead
-        %td=check_box_tag "select_all"
+        %td=check_box_tag "select_all", nil, {id: "select_all"}
         %th domain
         %th options
         -#%th description
@@ -41,14 +41,14 @@
       -co.certificate_content.certificate_names.each do |cn|
         -dcv = cn.domain_control_validations.last
         -le=cn.domain_control_validations.last_emailed
-        -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["upload csr hash text file","http_csr_hash"], ["add cname entry","cname_csr_hash"]]}
+        -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
         %tr[cn]
-          %td=check_box_tag cn
+          %td=check_box_tag cn.id, false, nil, class: "check_box"
           %td
             =cn.name
-          %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address), disabled: (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
+          %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
           -#%td description
-          %td=ds[cn.name]["method"].downcase if ds && ds[cn.name]
+          %td=ds[cn.name]["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && ds[cn.name]
           -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
           %td[cn, :status]=ds[cn.name]["status"].downcase if ds && ds[cn.name]
           %td=dcv.blank? ? "n/a" : dcv.created_at

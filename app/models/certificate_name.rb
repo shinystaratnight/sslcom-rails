@@ -61,7 +61,9 @@ class CertificateName < ActiveRecord::Base
 
   def self.to_comodo_method(dcv_method)
     case dcv_method
-      when /https?/i, ""
+      when /https/i, ""
+        "HTTPS_CSR_HASH"
+      when /http/i, ""
         "HTTP_CSR_HASH"
       when /cname/i
         "CNAME_CSR_HASH"
