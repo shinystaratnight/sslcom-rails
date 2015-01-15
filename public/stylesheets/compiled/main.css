@@ -376,7 +376,7 @@ a:hover {
 /* line 298, ../../../app/stylesheets/main.sass */
 #buy_certificate_heading h1 {
   font: bold 1.6em "Raleway", Arial !important;
-  margin: 0 0 7px;
+  margin: 15px 0 7px;
   text-align: left;
   letter-spacing: normal;
 }
@@ -391,7 +391,7 @@ a:hover {
 /* line 309, ../../../app/stylesheets/main.sass */
 #content h3 {
   font: bold 1.6em "Raleway", Arial !important;
-  margin: 0 0 7px;
+  margin: 15px 0 7px;
 }
 /* line 312, ../../../app/stylesheets/main.sass */
 #content h3 a {

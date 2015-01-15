@@ -25,6 +25,12 @@
     %tr
       %td cname
       %td create CNAME in dns and point to #{co.csr.md5_hash}.comodoca.com
+    %tr
+      %td md5 hash
+      %td.md5_hash=co.csr.md5_hash
+    %tr
+      %td sha1 hash
+      %td.sha1_hash=co.csr.sha1_hash
   =form_tag(form_action+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
@@ -42,17 +48,26 @@
       -co.certificate_content.certificate_names.each do |cn|
         -dcv = cn.domain_control_validations.last
         -le=cn.domain_control_validations.last_emailed
-        -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
+        -addresses = ComodoApi.domain_control_email_choices(cn.name).email_address_choices
+        -addresses.delete("none")
+        -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
+        -validated = (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
         %tr[cn]
           %td=check_box_tag cn.id, false, nil, class: "check_box"
           %td
             =cn.name
-          %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
+          %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name
           -#%td description
           %td=ds[cn.name]["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && ds[cn.name]
           -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
           %td[cn, :status]=ds[cn.name]["status"].downcase if ds && ds[cn.name]
           %td=dcv.blank? ? "n/a" : dcv.created_at
+        %tr
+          %td
+          %td
+          %td{colspan: "4"}
+            instructions:
+            %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
     #upload_validations(style='width: 100%; text-align: center;')
       =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
       -#.clearfix

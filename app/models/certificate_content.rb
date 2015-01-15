@@ -39,6 +39,7 @@ class CertificateContent < ActiveRecord::Base
     ACTIVE
     ACTOR
     AD
+    ADULT
     AE
     AERO
     AF
@@ -50,10 +51,12 @@ class CertificateContent < ActiveRecord::Base
     ALLFINANZ
     ALSACE
     AM
+    AMSTERDAM
     AN
     ANDROID
     AO
     AQ
+    AQUARELLE
     AR
     ARCHI
     ARMY
@@ -73,6 +76,7 @@ class CertificateContent < ActiveRecord::Base
     AZ
     BA
     BAND
+    BANK
     BAR
     BARGAINS
     BAYERN
@@ -129,6 +133,7 @@ class CertificateContent < ActiveRecord::Base
     CARE
     CAREER
     CAREERS
+    CARTIER
     CASA
     CASH
     CAT
@@ -203,6 +208,7 @@ class CertificateContent < ActiveRecord::Base
     DENTAL
     DENTIST
     DESI
+    DEV
     DIAMONDS
     DIET
     DIGITAL
@@ -214,7 +220,9 @@ class CertificateContent < ActiveRecord::Base
     DM
     DNP
     DO
+    DOCS
     DOMAINS
+    DOOSAN
     DURBAN
     DVAG
     DZ
@@ -237,6 +245,7 @@ class CertificateContent < ActiveRecord::Base
     ESTATE
     ET
     EU
+    EUROVISION
     EUS
     EVENTS
     EVERBANK
@@ -245,6 +254,7 @@ class CertificateContent < ActiveRecord::Base
     EXPOSED
     FAIL
     FARM
+    FASHION
     FEEDBACK
     FI
     FINANCE
@@ -252,11 +262,13 @@ class CertificateContent < ActiveRecord::Base
     FIRMDALE
     FISH
     FISHING
+    FIT
     FITNESS
     FJ
     FK
     FLIGHTS
     FLORIST
+    FLOWERS
     FLSMIDTH
     FLY
     FM
@@ -273,6 +285,7 @@ class CertificateContent < ActiveRecord::Base
     GA
     GAL
     GALLERY
+    GARDEN
     GB
     GBIZ
     GD
@@ -280,6 +293,7 @@ class CertificateContent < ActiveRecord::Base
     GENT
     GF
     GG
+    GGEE
     GH
     GI
     GIFT
@@ -354,8 +368,10 @@ class CertificateContent < ActiveRecord::Base
     IO
     IQ
     IR
+    IRISH
     IS
     IT
+    IWC
     JE
     JETZT
     JM
@@ -365,6 +381,7 @@ class CertificateContent < ActiveRecord::Base
     JP
     JUEGOS
     KAUFEN
+    KDDI
     KE
     KG
     KH
@@ -385,6 +402,8 @@ class CertificateContent < ActiveRecord::Base
     LA
     LACAIXA
     LAND
+    LAT
+    LATROBE
     LAWYER
     LB
     LC
@@ -393,6 +412,7 @@ class CertificateContent < ActiveRecord::Base
     LEGAL
     LGBT
     LI
+    LIDL
     LIFE
     LIGHTING
     LIMITED
@@ -492,6 +512,7 @@ class CertificateContent < ActiveRecord::Base
     OOO
     ORG
     ORGANIC
+    OSAKA
     OTSUKA
     OVH
     PA
@@ -520,6 +541,7 @@ class CertificateContent < ActiveRecord::Base
     PN
     POHL
     POKER
+    PORN
     POST
     PR
     PRAXI
@@ -568,6 +590,8 @@ class CertificateContent < ActiveRecord::Base
     RYUKYU
     SA
     SAARLAND
+    SALE
+    SAMSUNG
     SARL
     SB
     SC
@@ -575,20 +599,24 @@ class CertificateContent < ActiveRecord::Base
     SCB
     SCHMIDT
     SCHULE
+    SCHWARZ
     SCIENCE
     SCOT
     SD
     SE
     SERVICES
+    SEW
     SEXY
     SG
     SH
     SHIKSHA
     SHOES
+    SHRIRAM
     SI
     SINGLES
     SJ
     SK
+    SKY
     SL
     SM
     SN
@@ -629,6 +657,7 @@ class CertificateContent < ActiveRecord::Base
     TH
     TIENDA
     TIPS
+    TIRES
     TIROL
     TJ
     TK
@@ -647,6 +676,7 @@ class CertificateContent < ActiveRecord::Base
     TRADE
     TRAINING
     TRAVEL
+    TRUST
     TT
     TUI
     TV
@@ -672,6 +702,7 @@ class CertificateContent < ActiveRecord::Base
     VG
     VI
     VIAJES
+    VIDEO
     VILLAS
     VISION
     VLAANDEREN
@@ -721,6 +752,7 @@ class CertificateContent < ActiveRecord::Base
     XN--CG4BKI
     XN--CLCHC0EA0B2G2A9GCD
     XN--CZR694B
+    XN--CZRS0T
     XN--CZRU2D
     XN--D1ACJ3B
     XN--D1ALF
@@ -733,6 +765,7 @@ class CertificateContent < ActiveRecord::Base
     XN--FZC2C9E2C
     XN--GECRJ9C
     XN--H2BRJ9C
+    XN--HXT814E
     XN--I1B6B1A6A2E
     XN--IO0A7I
     XN--J1AMH
@@ -790,6 +823,7 @@ class CertificateContent < ActiveRecord::Base
     ZIP
     ZM
     ZONE
+    ZUERICH
     ZW
     )
 

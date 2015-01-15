@@ -140,6 +140,10 @@ class User < ActiveRecord::Base
     role_symbols.include? :sysadmin
   end
 
+  def is_super_user?
+    role_symbols.include? :super_user
+  end
+
   def is_standard?
     role_symbols.include? :customer
   end

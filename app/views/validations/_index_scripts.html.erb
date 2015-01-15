@@ -326,6 +326,37 @@ jQuery(function($) {
         }
       }
     });
+    $('select[id^=domains]').change(function(){
+      //prevent other options from being selected if None is selected
+      methods=$.get_selected_options(this, 'text');
+      if($.method_none_selected(methods)){
+        $(this).find(':selected').each(function(c, selected){
+          if($(selected).text()!='<%=Validation::NONE_SELECTED%>')
+            $(selected).attr('selected', false);
+        });
+      }
+      //get cert order index
+      instruction=$('span[alt="'+$(this).attr('name')+'"]')[0];
+      file=$(this).attr("alt")+"/"+$('.md5_hash').text()+".txt";
+      https = "https://"+file;
+      http = "http://"+file;
+      cname = $('.md5_hash').text()+"."+$(this).attr("alt")+"  "+$('.sha1_hash').text()+".comodoca.com";
+      if(/@/.test(methods[0])){
+        $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
+      }
+      else if(/https/.test(methods[0])){
+        $(instruction).html("Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>");
+      }
+      else if(/http/.test(methods[0])){
+        $(instruction).html("Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>");
+      }
+      else if(/cname/.test(methods[0])){
+        $(instruction).html("Create the following CNAME entry in your dns: "+cname);
+      }
+      $(instruction).animate({ backgroundColor: "yellow" }, 1000, null, function () {
+        $(instruction).css("backgroundColor", "white");
+      });
+    });
     $('select[id*=validation_history_satisfies_validation_methods]').change(function(){
       //prevent other options from being selected if None is selected
       methods=$.get_selected_options(this, 'text');

@@ -14,20 +14,13 @@
   %table.smart_seal_types
     %tbody
       %tr
-        %td.pink.seal
+        %td.seal(width="50%")
           .center
-            =render :partial=>'/site/smart_seal', :object=>image_tag("a_ssl_seal.gif")
-        %td.light_blue.seal
+            =render :partial=>'/site/smart_seal', :object=>image_tag("SSL_SEAL.png", width: "110px")
+        %td.seal
           .center
-            =render :partial=>'/site/smart_seal', :object=>image_tag("aa_ssl_seal.gif")
-        %td.light_green.seal
-          .center
-            =render :partial=>'/site/smart_seal', :object=>image_tag("aaa_ssl_seal.gif")
+            =render :partial=>'/site/smart_seal', :object=>image_tag("SSL_SEAL2.png", width: "110px")
       %tr
-        %td.pink
-          .center
-            -c = Certificate.public.find_by_product "free"
-            =link_to c.title, certificate_url(:id=>c.product_root)
         %td.light_blue
           .center
             -c = Certificate.public.find_by_product "premiumssl"

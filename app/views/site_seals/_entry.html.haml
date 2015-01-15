@@ -1,4 +1,6 @@
 -ec = (co.site_seal.preferred_seal_image?) ? link_to(image_tag(image_url(co.site_seal.preferred_seal_image, false)), site_report_site_seal_url(co.site_seal), popup_code(co)) : ""
+-key_logo = link_to(image_tag(image_url("SSL_SEAL.png", false), width: "110px"), site_report_site_seal_url(co.site_seal), popup_code(co))
+-key_logo_ev = link_to(image_tag(image_url("SSL_SEAL2.png", false), width: "110px"), site_report_site_seal_url(co.site_seal), popup_code(co))
 %tr.expanded(class="#{'hidden' if current_page?(:site_seals)}")
   %td(colspan="6")
     .certificate_details
@@ -37,6 +39,10 @@
                   -if co.site_seal.preferred_seal_image?
                     %li
                       %strong site seal image
+                      -if co.certificate.is_ev?
+                        %li.small_section=key_logo_ev
+                      -else
+                        %li.small_section=key_logo
                       %li.small_section=ec
                   %li
                     %strong site seal report

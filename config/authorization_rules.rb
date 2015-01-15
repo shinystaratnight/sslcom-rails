@@ -1,4 +1,8 @@
 authorization do
+  role :super_user do
+    includes :sysadmin
+  end
+
   role :sysadmin do
     includes :vetter
     has_permission_on :users, :to => :admin_manage

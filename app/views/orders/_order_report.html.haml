@@ -17,7 +17,7 @@
     -unless @order.billing_profile.blank?
       #credit_card_number
         payment method:
-        %span xxxx-xxxx-xxxx-#{h @order.billing_profile.last_digits} (#{h @order.billing_profile.credit_card})
+        %span=(current_user.is_super_user? ? "#{@order.billing_profile.card_number} #{@order.billing_profile.expiration_month}/#{@order.billing_profile.expiration_year}" : "xxxx-xxxx-xxxx-#{h @order.billing_profile.last_digits}")+" (#{h @order.billing_profile.credit_card})"
       #credit_card_owner
         name on card:
         %span=h @order.billing_profile.full_name
