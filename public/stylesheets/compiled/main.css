@@ -7215,3 +7215,9 @@ span#no_emails_accessible {
   font-size: 0.7em;
   list-style-type: none;
 }
+
+/* line 5318, ../../../app/stylesheets/main.sass */
+.download_certificate table, .download_certificate th, .download_certificate td {
+  border: 1px solid black !important;
+  border-collapse: collapse !important;
+}
