@@ -5,7 +5,7 @@
         =@certificate.description["points"].html_safe unless @certificate.description.blank?
 #comes_with_site_seal
   #container
-    =image_tag @certificate.site_seal.preferred_seal_image
+    =image_tag(image_url("ssl_seal_1#{'_ev' if @certificate.is_ev?}.png", false), width: "130px")
     #description
       Each #{@certificate.title} certificate comes with the following SSL.com
       Secured Smart SeaL logo to be displayed on secured websites.
