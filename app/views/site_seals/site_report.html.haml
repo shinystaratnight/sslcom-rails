@@ -1,4 +1,4 @@
--cache(SiteSeal::REPORT_CACHE_KEY+@site_seal.id.to_s, expires_in: 1.year) do
+-cache(SiteSeal::REPORT_CACHE_KEY+@site_seal.id.to_s, expires_in: 1.second) do
   -ss = @site_seal
   -co = ss.latest_certificate_order
   -r = co.certificate_content.registrant

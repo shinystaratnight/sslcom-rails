@@ -96,10 +96,10 @@ class SiteSealsController < ApplicationController
   end
 
   def site_report
-    unless @site_seal.is_disabled?
-      render :site_report, :layout=>"site_report"
-    else
+    if @site_seal.blank? || @site_seal.is_disabled?
       render :disabled, :layout=>"site_report"
+    else
+      render :site_report, :layout=>"site_report"
     end
   end
 

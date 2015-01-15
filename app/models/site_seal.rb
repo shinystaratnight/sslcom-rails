@@ -10,7 +10,7 @@ class SiteSeal < ActiveRecord::Base
   FREE_SEAL_IMAGE = 'free_ssl_trust_logo.gif'
   SEAL_IMAGE = 'ssl_trust_logo.gif'
 
-  REPORT_CACHE_KEY = "ssl_com_report_"
+  REPORT_CACHE_KEY = "ssl_com_report_2015_"
 
   REPORT_DIMENSIONS = 'height=500, width=400, top=100, left=100'
 
