@@ -351,11 +351,14 @@ jQuery(function($) {
         $(instruction).html("Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>");
       }
       else if(/cname/.test(methods[0])){
-        $(instruction).html("Create the following CNAME entry in your dns: "+cname);
+        $(instruction).html("Create CNAME: "+cname);
       }
       $(instruction).animate({ backgroundColor: "yellow" }, 1000, null, function () {
-        $(instruction).css("backgroundColor", "white");
+//        $(instruction).css("backgroundColor", "white");
       });
+    });
+    $('select[id^=domains]:enabled').each(function(index, value){
+      $(this).change();
     });
     $('select[id*=validation_history_satisfies_validation_methods]').change(function(){
       //prevent other options from being selected if None is selected
