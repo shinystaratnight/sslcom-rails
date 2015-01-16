@@ -156,6 +156,20 @@ class ApiCertificateRequestsController < ApplicationController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
+        if @acr.certificate.is_ucc?
+          mdc_validation = ComodoApi.mdc_status(@acr)
+          ds = mdc_validation.domain_status
+          @result.domains={}
+          @acr.certificate_content.certificate_names.each do |cn|
+            if ds && ds[cn.name]
+              dcv=cn.domain_control_validations.last
+              status = ds[cn.name]["status"]
+              validated = status=~/validated/i
+              method=ds[cn.name]["method"].downcase.gsub("%28"," ").gsub("%29"," ")
+              @result.domains.merge!({cn.name=>{"status"=>status, "method"=>method}, "attempted"=>dcv.created_at})
+            end
+          end
+        end
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
         if (@acr.signed_certificate && @result.query_type!="order_status_only")
           @result.certificates =

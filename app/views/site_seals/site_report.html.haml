@@ -9,7 +9,7 @@
     %div
       %dl
         %dt.section_header
-          report generated for site(s)
+          report generated for site#{'s' if co.display_subject=~/,/}
         %dd=co.display_subject
     -if ss.has_artifacts?
       %div
