@@ -80,11 +80,17 @@ class ApiCertificateRequest < CaApiRequest
   def validations
     co = find_certificate_order
     if co.is_a?(CertificateOrder)
+      mdc_validation = ComodoApi.mdc_status(co)
+      ds = mdc_validation.domain_status
       cc = co.certificate_content
       dcvs = {}.tap do |dcv|
         (co.all_domains).each do |domain|
           if (cc.certificate_names.find_by_name(domain) && last = cc.certificate_names.find_by_name(domain).domain_control_validations.last)
-            dcv.merge! domain=>{"attempted_on"=>self.updated_at, "dcv_method"=>(last.email_address || last.dcv_method)}
+            dcv.merge! domain=>{"attempted_on"=>last.created_at, "dcv_method"=>(last.email_address || last.dcv_method)}
+          end
+          if ds && ds[domain]
+            status = ds[domain]["status"]
+            dcv[domain].merge!("status"=>status.downcase)
           end
         end if co.all_domains
       end
