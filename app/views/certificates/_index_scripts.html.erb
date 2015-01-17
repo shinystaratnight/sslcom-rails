@@ -17,8 +17,15 @@ jQuery(function($) {
     <%end-%>
     return domains.filter(Boolean);
   };
-  $('#previous_csr').click(function(){
-    $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
+  $('#previous_csr').change(function(){
+    if($(this).is(':checked'))
+      $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
+    else
+      $('#certificate_order_certificate_contents_attributes_0_signing_request').val("");
+    $('#certificate_order_certificate_contents_attributes_0_signing_request').change();
+  });
+  $('span.use_previous_csr').click(function(){
+    $('#previous_csr').click();
   });
   $.adjust_domain_pricing = function(textArea){
       domains = $.domains(textArea);
@@ -29,7 +36,7 @@ jQuery(function($) {
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
   });
-  $("textarea[name*=signing_request]").bind("keyup", function() {
+  $("textarea[name*=signing_request]").bind("change keyup paste", function() {
     if($(this).val()==""){
       $(".flash_message").remove();
       return;

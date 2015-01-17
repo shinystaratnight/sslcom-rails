@@ -456,7 +456,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def most_recent_csr
-    certificate_contents.map(&:csr).compact.last || renewal.try(:most_recent_csr)
+    certificate_contents.map(&:csr).compact.last || parent.try(:most_recent_csr)
   end
 
   def effective_date
