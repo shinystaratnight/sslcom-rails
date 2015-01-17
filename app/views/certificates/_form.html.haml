@@ -67,6 +67,11 @@
         %label{:for=>"certificate_order_certificate_content_server_software"}
           *CSR:
           %span.label_desc certificate signing request
+          -if @certificate_order.most_recent_csr
+            %span{style: "float: right"}
+              =check_box_tag :previous_csr, false, nil
+              click to use previous csr
+              =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
       .clearfix
         %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}

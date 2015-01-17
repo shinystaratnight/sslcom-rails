@@ -455,6 +455,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.csr
   end
 
+  def most_recent_csr
+    certificate_contents.map(&:csr).compact.last || renewal.try(:most_recent_csr)
+  end
+
   def effective_date
     certificate_content.try("csr").try("signed_certificate").try("effective_date")
   end
@@ -534,6 +538,8 @@ class CertificateOrder < ActiveRecord::Base
       self.orphaned_certificate_contents remove: true
     end
   end
+
+
 
   def self.retrieve_ca_certs(start, finish)
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq

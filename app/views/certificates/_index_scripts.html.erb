@@ -17,6 +17,9 @@ jQuery(function($) {
     <%end-%>
     return domains.filter(Boolean);
   };
+  $('#previous_csr').click(function(){
+    $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
+  });
   $.adjust_domain_pricing = function(textArea){
       domains = $.domains(textArea);
       $.removeFromArray("",domains);
