@@ -68,9 +68,14 @@
           *CSR:
           %span.label_desc certificate signing request
           -if @certificate_order.most_recent_csr
+            -current_order_csr=@certificate_order.certificate_contents.map(&:csr).compact.last
             %span{style: "float: right"}
               =check_box_tag :previous_csr, false, nil
-              %span.use_previous_csr use previous csr
+              -if current_order_csr
+                %span.use_previous_csr use previous csr
+              -else #assume renewal
+                %span.use_previous_csr use from
+                =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
       .clearfix

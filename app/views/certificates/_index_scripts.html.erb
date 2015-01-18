@@ -42,7 +42,7 @@ jQuery(function($) {
       return;
     }
     $.ajax({
-      url: "<%=parse_csr_certificate_orders_url%>",
+      url: "<%=parse_csr_certificate_orders_path%>",
       data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
       type: "POST",
       success: function(data, status){
