@@ -59,7 +59,7 @@ class OrderNotifier < ActionMailer::Base
     @files=files
     setup(contact, certificate_order)
     mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}Validation Documents For #{certificate_order.subject} Has Been Uploaded",
-          from:          Settings.from_email.orders,
+          from:          Settings.from_email.no_reply,
           to:    contact
   end
 

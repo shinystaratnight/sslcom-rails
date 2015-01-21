@@ -88,6 +88,7 @@ disable_links_banner: false
 from_email:
   orders: 'orders@ssl.com'
   activations: 'noreply@ssl.com'
+  no_reply: 'noreply@ssl.com'
 
 photo:
   missing_micro: '/plugin_assets/community_engine/images/icon_missing_micro.gif'
