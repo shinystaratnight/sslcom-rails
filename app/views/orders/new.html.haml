@@ -6,7 +6,7 @@
   %h3
     =title
     %span(style="float:right; font-size:.6em")
-      =link_to "advanced options", checkout_orders_url
+      =link_to("advanced options", checkout_orders_url) if current_page?(new_order_path)
   %p
     Please fill out the (*) required fields #{current_user.blank? ? "below to complete your account registration." : "below."}
     -if current_order.amount.to_s.to_i > 0

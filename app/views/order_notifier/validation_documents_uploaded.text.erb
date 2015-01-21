@@ -1,6 +1,6 @@
 Hello,
 
-The following validation documents for <%=@certificate_order.subject%> (SSL.com order #<%=@certificate_order.order.reference_number%>) have been recently uploaded:
+The following validation documents for <%=@certificate_order.subject%> (SSL.com certificate ref# <%=@certificate_order.ref%>) have been recently uploaded:
 
 <%@files.each do |file|%>
   <%=file.original_filename%>

@@ -38,7 +38,7 @@
           %p
             If documents are required for this order, then SSL.com will verify the existence of your business, the ownership of the domain(s)
             #{co.all_domains.join(", ")}, and your employment status or authority to
-            request the SSL Certificate for #{co.subject}. Documents required from the registrant listed
+            request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
             on this whois record for #{co.subject} may include:
           -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
             -unless vr.description =~ /domain/
