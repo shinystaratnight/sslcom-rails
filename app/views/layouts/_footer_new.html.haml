@@ -11,21 +11,21 @@
       %span.title CERTIFICATES
       %ul
         %li
-          %a{:href => "#{certificate_url('basicssl')}"}
+          %a{:href => "#{certificate_path('basicssl')}"}
             %b> SSL
             \.com
             Basic
         %li
-          %a{:href => "#{certificate_url('premiumssl')}"}
+          %a{:href => "#{certificate_path('premiumssl')}"}
             %b> SSL
             \.com Premium
         %li
-          %a{:href => "#{certificate_url('ev')}"}
+          %a{:href => "#{certificate_path('ev')}"}
             %b> SSL
             \.com Enterprise EV
-        %li=link_to "Wildcard Certificate", certificate_url('wildcard')
-        %li=link_to "Multi-Domain (UCC)", certificate_url('ucc')
-        %li=link_to "Multi-Domain EV (UCC)", certificate_url('evucc')
+        %li=link_to "Wildcard Certificate", certificate_path('wildcard')
+        %li=link_to "Multi-Domain (UCC)", certificate_path('ucc')
+        %li=link_to "Multi-Domain EV (UCC)", certificate_path('evucc')
     .box
       %span.title SUPPORT
       %ul
@@ -36,27 +36,27 @@
           %a{:href => "http://www.ssltools.com"}
             %b> SSL
             \.com Tools
-        %li=link_to "Compatibility/Acceptance", browsers_url
-        %li=link_to "Country Codes", country_codes_csrs_url
-        %li=link_to "Top Level Domains (tlds)", tlds_url
-        %li=link_to "Validation Requirements", requirements_validations_url
+        %li=link_to "Compatibility/Acceptance", browsers_path
+        %li=link_to "Country Codes", country_codes_csrs_path
+        %li=link_to "Top Level Domains (tlds)", tlds_path
+        %li=link_to "Validation Requirements", requirements_validations_path
     .box
       %span.title PROGRAMS
       %ul
-        %li=link_to "Partners", affiliates_url
-        %li=link_to "RESTful API", restful_apidocs_apply_url
+        %li=link_to "Partners", affiliates_path
+        %li=link_to "RESTful API", restful_apidocs_apply_path
         -Reseller::TARGETED.each do |t|
-          %li=send :link_to, t.titleize, eval("#{t}_url")
+          %li=send :link_to, t.titleize, eval("#{t}_path")
     .box
       %span.title COMPANY
       %ul
-        %li=link_to "About SSL.com", about_url
-        %li=link_to "Contact Us", contact_us_url
+        %li=link_to "About SSL.com", about_path
+        %li=link_to "Contact Us", contact_us_path
         -# %li
           %a{:href => "#"} Jobs
-        %li=link_to "CA Repository", repository_url
-        %li=link_to "Terms of Service", terms_of_use_url
-        %li=link_to "Privacy", privacy_policy_url
+        %li=link_to "CA Repository", repository_path
+        %li=link_to "Terms of Service", terms_of_use_path
+        %li=link_to "Privacy", privacy_policy_path
         -# %li=link_to "Refund Policy", ""
 / end of content
 .clear
@@ -80,7 +80,7 @@
   %noscript
     .statcounter
       %a{:href => "http://statcounter.com/", :target => "_blank", :title => "web analytics"}
-        %img.statcounter{:alt => "web analytics", :src => "http://c.statcounter.com/10146096/0/a05875f5/1/"}
+        %img.statcounter{:alt => "web analytics", :src => "https://c.statcounter.com/10146096/0/a05875f5/1/"}
   / End of StatCounter Code for Default Guide
   / Start of StatCounter Code for Default Guide
   :javascript
@@ -96,7 +96,7 @@
   %noscript
     .statcounter
       %a{:href => "http://statcounter.com/", :target => "_blank", :title => "web stats"}
-        %img.statcounter{:alt => "web stats", :src => "http://c.statcounter.com/10147535/0/399a9d97/1/"}
+        %img.statcounter{:alt => "web stats", :src => "https://c.statcounter.com/10147535/0/399a9d97/1/"}
   / End of StatCounter Code for Default Guide
   :javascript
     adroll_adv_id = "GKW2MQRAWVFYDC4JAVRP76";
@@ -143,14 +143,14 @@
     jQuery(function($){
       $("#start_over").click(function(){
         $.ajax({
-          url: "#{start_over_certificate_order_url(@certificate_order.ref)}",
+          url: "#{start_over_certificate_order_path(@certificate_order.ref)}",
           type: "POST",
           beforeSend: function(){
             return confirm("Are you sure you want to start over with this certificate order?");
           },
           success: function(data, status){
             if(data.certificate_order.certificate_content.workflow_state=="new")
-              window.location.href = "#{edit_certificate_order_url(@certificate_order.ref)}";
+              window.location.href = "#{edit_certificate_order_path(@certificate_order.ref)}";
           }
         });
       });
@@ -189,14 +189,14 @@
     //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
     $("#cancel_reseller_signup").click(function(){
       $.ajax({
-        url: "#{cancel_reseller_signup_users_url}",
+        url: "#{cancel_reseller_signup_users_path}",
         type: "GET",
         beforeSend: function(){
           return confirm("Are you sure you want to cancel your reseller signup?");
         },
         success: function(data, status){
           if($.inArray("#{Role::CUSTOMER.to_sym}", data.user.role_symbols)>-1)
-            window.location.href = "#{account_url}";
+            window.location.href = "#{account_path}";
         }
       });
     });

@@ -7,7 +7,7 @@ include Open3
 
 class ValidationsController < ApplicationController
   before_filter :find_validation, only: [:update]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload]
+  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
   before_filter :require_user, only: [:index, :new]
   filter_access_to :all
   filter_access_to :upload, :require=>:create
@@ -182,6 +182,10 @@ class ValidationsController < ApplicationController
           files_were = (i > 1 or i==0)? "documents were" : "document was"
           flash[:notice] = "#{i.in_words.capitalize} (#{i}) #{files_were}
             successfully saved."
+          @certificate_order.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+            OrderNotifier.validation_documents_uploaded(c, @certificate_order, @files).deliver
+          end
+          OrderNotifier.validation_documents_uploaded(Settings.notify_address, @certificate_order, @files).deliver
         end
         checkout={}
         if @certificate_order.certificate_content.contacts_provided?
@@ -284,8 +288,8 @@ class ValidationsController < ApplicationController
   def notify_customer(validation_rulings)
     recips = [@co.certificate_content.administrative_contact]
     recips << @co.certificate_content.validation_contact unless
-      @co.certificate_content.validation_contact==
-      @co.certificate_content.administrative_contact
+      @co.certificate_content.validation_contact.email.downcase==
+      @co.certificate_content.administrative_contact.email.downcase
     recips.each do |c|
       if validation_rulings.all?(&:approved?)
         OrderNotifier.validation_approve(c, @co).deliver

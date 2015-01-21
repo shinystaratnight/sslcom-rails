@@ -4,7 +4,10 @@
       Please provide information about the applicant of this certificate.
     .clearfix
       %label{:for=>"common_name"}
-        *Website:
+        -if @certificate_order.certificate.is_code_signing?
+          *Subject:
+        -else
+          *Website:
         %span.label_desc the subject or common name
       .displayed_csr_field=@certificate_content.csr.common_name
     .clearfix

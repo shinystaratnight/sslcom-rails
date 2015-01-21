@@ -20,49 +20,58 @@
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|
   -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit?
     #csr_section
-      %p
-        In order to submit a Certificate Signing Request (CSR), you must first
-        generate it on the web server that will be utilizing the SSL server
-        certificate.
-      %ul(style="font-size:1.4em; margin-bottom:20px")
-        %li
-          for Microsoft Windows try the
-          =link_to "SSLTools Manager", "http://www.ssltools.com/manager"
-          or visit this #{link_to "How-To Guide", "https://www.youtube.com/watch?v=4jC2FNvEouU"}
-        %li
-          for Apache, Nginx, or other OpenSSL platform try the
+      -if @certificate.is_code_signing?
+        %p
+          In order to submit a Certificate Signing Request (CSR), you must first
+          generate it in your web browser or try using the #{link_to "SSL.com Manager", "http://www.ssltools.com/manager"}
+          if you have a Windows desktop or server available.
+        %p
+          If you will be using OpenSSL, try the
           =link_to "OpenSSL CSR Tool", "http://tools.ssl.com"
-      %p
-        For other platforms or if you need further instructions on generating a CSR,
-        =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
-        Once the CSR is ready, you may copy and paste it
-        into the text box below. Your CSR should appear similar
-        (although not identical) to:
-      %dl.cert_example
-        .sample_csr
-          %dt
-          %dd -----BEGIN NEW CERTIFICATE REQUEST-----
-          %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
-          %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
-          %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
-          %dd (more encoding...)
-          %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
-          %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
-          %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
-          %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
-          %dd -----END NEW CERTIFICATE REQUEST-----
-      %p
-        %em Note: The Common Name (CN) field in your CSR must conform to the following rules:
-      %ul.cert_reqs
-        -unless @certificate.is_wildcard?
-          -unless @certificate.allow_wildcard_ucc?
-            %li It CANNOT represent a wildcard domain name (i.e. *.domain.com)
-          %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
-          -if @certificate.is_ucc?
-            %li Or, it MUST represent the name of your server (i.e. localhost or bizserver)
-        -else
-          %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
-        %li It CANNOT not represent an ip address (i.e. 58.123.123.123 or 127.0.0.1 - #{link_to "see deprecated names", "https://info.ssl.com/new-ssl-server-rules-taking-effect-nov-1/", target: "_blank"})
+      -else
+        %p
+          In order to submit a Certificate Signing Request (CSR), you must first
+          generate it on the web server that will be utilizing the SSL server
+          certificate.
+        %ul(style="font-size:1.4em; margin-bottom:20px")
+          %li
+            for Microsoft Windows try the
+            =link_to "SSLTools Manager", "http://www.ssltools.com/manager"
+            or visit this #{link_to "How-To Guide", "https://www.youtube.com/watch?v=4jC2FNvEouU"}
+          %li
+            for Apache, Nginx, or other OpenSSL platform try the
+            =link_to "OpenSSL CSR Tool", "http://tools.ssl.com"
+        %p
+          For other platforms or if you need further instructions on generating a CSR,
+          =link_to "click here to go to the support pages.", "http://info.ssl.com/?cNode=8N8H6U&pNodes=8P3K3M", target: "_blank"
+          Once the CSR is ready, you may copy and paste it
+          into the text box below. Your CSR should appear similar
+          (although not identical) to:
+        %dl.cert_example
+          .sample_csr
+            %dt
+            %dd -----BEGIN NEW CERTIFICATE REQUEST-----
+            %dd MIICizCCAkkCAQAwgYUxCzAJBgNVBAYTAlVTMQ4wDAYDVQQIEwVUZXhhcz
+            %dd EQMA4GA1UEBxMHSG91c3RvbjEpMCcGA1UEChMgU2VjdXJlIFNvY2tldHMg
+            %dd TGFib3JhdG9yaWVzLCBMTEMxEDAOBgNVBAsTB0V4YW1wbGUxFzAVBgNVBA
+            %dd (more encoding...)
+            %dd gsPa9X3F8h82UJDqg9bZ+fPQely1JeEg1sVJW2sTaRNnAqsddPFihWHfzS
+            %dd /+5Ks5E/MYsKBV4GjjytxR3PgxWT06XFqnEt40RDTJ2wd7kQ9yGYpFpQhw
+            %dd 92SQTgt3fbz4TmbTmDU7fYw1lq2kQLx6z6oAAwCwYHKoZIzjgEAwUAAy8A
+            %dd V7VB4cjEAhRFFKjEGjuJcPUSXUMB85RYyGpSrw==
+            %dd -----END NEW CERTIFICATE REQUEST-----
+        %p
+          %em Note: The Common Name (CN) field in your CSR must conform to the following rules:
+        %ul.cert_reqs
+          -unless @certificate.is_wildcard?
+            -unless @certificate.allow_wildcard_ucc?
+              %li It CANNOT represent a wildcard domain name (i.e. *.domain.com)
+            %li It MUST represent your fully-qualified domain name (i.e. submit.domain.com)
+            -if @certificate.is_ucc?
+              %li Or, it MUST represent the name of your server (i.e. localhost or bizserver)
+          -else
+            %li It MUST represent a wildcard domain name by starting with an asterisk (i.e. *.domain.com)
+          %li It CANNOT not represent an ip address (i.e. 58.123.123.123 or 127.0.0.1 - #{link_to "see deprecated names", "https://info.ssl.com/new-ssl-server-rules-taking-effect-nov-1/", target: "_blank"})
       .clearfix
         %label{:for=>"certificate_order_certificate_content_server_software"}
           *CSR:
@@ -78,15 +87,25 @@
                 =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
-      .clearfix
-        %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
-          *Server Software:
-          %span.label_desc software used to generate csr
-        -ss=ServerSoftware.all
-        -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
-        =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
+      -if @certificate.is_code_signing?
+        =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
+      -else
+        .clearfix
+          %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
+            *Server Software:
+            %span.label_desc software used to generate csr
+          -ss=ServerSoftware.all
+          -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
+          =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
   -else
-    -if @certificate.is_wildcard?
+    -if @certificate.is_code_signing?
+      %p #{@certificate.title} Certificate Summary
+      %ul.cert_reqs
+        %li Used to secure apps by making them tamper proof
+        %li Validates the identity of the owner or author of the application to be installed
+        %li Eliminates "Untrusted App" dialogs when installing or executing the application
+        %li Prevents unauthorized bundling of app with other applications (such as malware/bloatware/spyware)
+    -elsif @certificate.is_wildcard?
       %p #{@certificate.title} Summary
       %ul.cert_reqs
         %li CAN secure any number of subdomains (no limit) for 1 single price
@@ -94,7 +113,7 @@
         %li Secures root domain as well as subdomains (ie domain.com, www.domain.com, exch01.domain.com)
         %li All entries will have the same root domain name
         %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
-        %li CAN use certificate on unlimited multiple servers concurrently 
+        %li CAN use certificate on unlimited multiple servers concurrently
       %p Example entries include:
       %ul.cert_reqs
         %li domain.com

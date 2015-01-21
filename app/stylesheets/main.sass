@@ -3797,6 +3797,7 @@ label.error
     //font-size: 1.3em
     padding: 1.5em
     padding-top: 0
+    font-size: 1.4em
 
   p.description
     padding: 0 3em 1.2em
@@ -3880,13 +3881,6 @@ label.error
     padding: 0
     margin: 0
     float: none
-
-  input#upload_files, input#start_over
-    margin: 1em
-    float: none
-    font-size: 1.8em
-    font-weight: bold
-    @extend .shiny_blue_button
 
   //the following should be able to exist outside stylized
   input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
@@ -4010,6 +4004,13 @@ label.error
 
       &.right
         width: 355px
+
+input#upload_files, input#start_over, input#validate_domains
+  margin: 1em
+  float: none
+  font-size: 1.8em
+  font-weight: bold
+  @extend .shiny_blue_button
 
 .error.warning, #errorExplanation, .errorExplanation
   border: 2px solid #c00

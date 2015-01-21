@@ -58,7 +58,7 @@ ActionController::Routing::Routes.draw do |map|
     :pending=>:get, :incomplete=>:get, :search=>:get},
     :member=>{:update_csr=>:put, :download=>:get} do
     |certificate_order|
-    certificate_order.resource :validation, :collection=>{:upload => :post}
+    certificate_order.resource :validation, :collection=>{:document_upload => :post}
     certificate_order.resource :site_seal
   end
   map.resources :certificate_contents do |cc|

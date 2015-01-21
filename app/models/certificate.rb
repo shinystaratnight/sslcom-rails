@@ -199,7 +199,7 @@ class Certificate < ActiveRecord::Base
                           "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt)}}}}
 
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (product !~ 'high_assurance%')}
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
   scope :for_sale, where{(product != 'mssl') & (serial =~ "%sslcom%")}
 
@@ -290,6 +290,14 @@ class Certificate < ActiveRecord::Base
 
   def is_ev?
     product.include?('ev')
+  end
+
+  def is_code_signing?
+    product.include?('code_signing')
+  end
+
+  def is_document_signing?
+    product.include?('document_signing')
   end
 
   def is_premium_ssl?
@@ -568,6 +576,74 @@ class Certificate < ActiveRecord::Base
       serials=[]
       1.upto(5){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
       serials.each_with_index {|s, i|ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])}
+    end
+  end
+  
+  def self.create_code_signing
+    c=Certificate.public.find_by_product "high_assurance"
+    certs = c.duplicate_tiers "codesigning256sslcom", "ov256ssl", "codesigning256ssl"
+    title = "Code Signing"
+    description={
+        "certificate_type" => title,
+                  "points" => "<div class='check'>organization validation</div>
+                               <div class='check'>results in higher sales conversion</div>
+                               <div class='check'>$150,000 USD insurance guaranty</div>
+                               <div class='check'>activates SSL Secure Site Seal</div>
+                               <div class='check'>2048 bit public key encryption</div>
+                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
+                               <div class='check'>quick issuance</div>
+                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>24 hour support</div>
+                               <div class='check'>unlimited reissuances</div>",
+        "validation_level" => "organization",
+                 "summary" => "for securing installable apps and plugins",
+                    "abbr" => title
+    }
+    certs.each do |c|
+      c.update_attributes title: title,
+                          description: description,
+                          product: c.product.gsub(/^high_assurance/, "code_signing"),
+                          icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
+    end
+    price_adjusts={sslcomcodesigning256ssl1yr: [12900, 23220, 32895, 41280, 48375, 54180, 58695, 61920, 63855, 64500], 
+                   sslcomcodesigning256ssl1yr1tr: [12900, 23220, 32895, 41280, 48375, 54180, 58695, 61920, 63855, 64500],
+                   sslcomcodesigning256ssl1yr2tr: [10320, 18576, 26316, 33024, 38700, 43344, 46956, 49536, 51084, 51600],
+                   sslcomcodesigning256ssl1yr3tr: [9675, 17415, 24671, 30960, 36281, 40635, 44021, 46440, 47891, 48375],
+                   sslcomcodesigning256ssl1yr4tr: [9030, 16254, 23026, 28896, 33862, 37926, 41086, 43344, 44698, 45150],
+                   sslcomcodesigning256ssl1yr5tr: [7740, 13932, 19737, 24768, 29025, 32508, 35217, 37152, 38313, 38700]
+    }
+    price_adjusts.each do |k,v|
+      serials=[]
+      1.upto(10){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+      serials.each_with_index {|s, i|
+        if ProductVariantItem.find_by_serial(s)
+          ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])
+        else
+          if s.last(3)=~/\d+tr/ #assume a reseller tier
+            pvg = certs.find{|c|c.serial.last(3)==s.last(3)}.product_variant_groups.last
+          else #assume non reseller
+            pvg = certs.first.product_variant_groups.last
+          end
+          pvi = pvg.product_variant_items.last
+          years = i+1
+          pvg.product_variant_items.create(serial: s, amount: v[i], title: pvi.title.gsub(/\d/,years.to_s),
+            status: pvi.status, description: pvi.description.gsub(/\d/,years.to_s),
+            text_only_description: pvi.text_only_description.gsub(/\d/,years.to_s), display_order: years.to_s,
+            item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
+        end
+      }
+    end
+  end
+
+  def self.purge(serial_snippet)
+    Certificate.where{serial=~"%#{serial_snippet}%"}.each do |c|
+      c.product_variant_groups.each do |pvg|
+        pvg.product_variant_items.each do |pvi|
+          pvi.destroy
+        end
+        pvg.destroy
+      end
+      c.destroy
     end
   end
 

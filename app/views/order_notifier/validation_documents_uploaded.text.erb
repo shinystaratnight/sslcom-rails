@@ -1,0 +1,12 @@
+Hello,
+
+The following validation documents for <%=@certificate_order.subject%> (SSL.com order #<%=@certificate_order.order.reference_number%>) have been recently uploaded:
+
+<%@files.each do |file|%>
+  <%=file.original_filename%>
+<%end%>
+
+We will promptly process these files.
+
+<%=render(:partial=>"support_contact")%>
+

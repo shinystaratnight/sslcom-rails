@@ -165,7 +165,7 @@
                             %li.category_border
                               -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
                                 -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                  -u=link_to 'upload', new_certificate_order_validation_url(co)
+                                  -u=link_to 'upload', document_upload_certificate_order_validation_url(co)
                                 -unless co.validation.validation_histories.blank?
                                   -m=link_to 'manage', edit_certificate_order_validation_url(co)
                                 -s=link_to 'status', certificate_order_validation_url(co)

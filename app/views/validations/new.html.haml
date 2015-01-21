@@ -15,6 +15,7 @@
   =error_messages_for :validation, @dcv, @other_party_validation_request
 -if co.certificate.is_ucc?
   .error{style: "display: none;"}
+  %h2 Domain Validation
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr
       %th format
@@ -58,7 +59,7 @@
             %td=check_box_tag cn.id, false, nil, class: "check_box"
             %td
               =cn.name
-            %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name
+            %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
             -#%td description
             %td=ds[cn.name]["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && ds[cn.name]
             -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
@@ -71,7 +72,7 @@
               instructions:
               %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
     #upload_validations(style='width: 100%; text-align: center;')
-      =submit_tag "Submit", :id=>"upload_files"#, :disable_with=>"Submitting..."
+      =submit_tag "Submit", :id=>"validate_domains"#, :disable_with=>"Submitting..."
       -#.clearfix
       -#  =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 -else
@@ -98,9 +99,10 @@
       -unless (co.certificate.is_dv_or_basic? && checkout_in_progress)
         #documents_upload_section
           #documents_upload_instructions
+            %h2 Documents
             %p
-              SSL must verify the existence of your business, the ownership of domain
-              #{co.subject}, and your employment status or authority to
+              If documents are required for this order, then SSL.com will verify the existence of your business, the ownership of the domain(s)
+              #{co.all_domains.join(", ")}, and your employment status or authority to
               request the SSL Certificate for #{co.subject}. Documents required from the registrant listed
               on this whois record for #{co.subject} may include:
             -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|

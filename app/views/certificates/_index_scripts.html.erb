@@ -36,48 +36,50 @@ jQuery(function($) {
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
   });
-  $("textarea[name*=signing_request]").bind("change keyup paste", function() {
-    if($(this).val()==""){
-      $(".flash_message").remove();
-      return;
-    }
-    $.ajax({
-      url: "<%=parse_csr_certificate_orders_path%>",
-      data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
-      type: "POST",
-      success: function(data, status){
+  <%unless @certificate.is_code_signing?%>
+    $("textarea[name*=signing_request]").bind("change keyup paste", function() {
+      if($(this).val()==""){
         $(".flash_message").remove();
-        var ajax_errors="";
-        if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
-          $.each(data.certificate_content.csr.errors.base, function(key, value){
-            ajax_errors+="<li>"+value+"</li>";
-          });
-        }
-        if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
-          $.each(data.certificate_content.errors.base, function(key, value){
-            ajax_errors+="<li>"+value+"</li>";
-          });
-        if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
-          $.each(data.certificate_content.errors.signing_request, function(key, value){
-            ajax_errors+="<li>signing request "+value+"</li>";
-          });
-        if(ajax_errors!="")
-          $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
-        else{
-          if((typeof data.certificate_content.csr.common_name != 'undefined')){
-            $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>certificate to be issued to: "+data.certificate_content.csr.common_name+"</span></div>");
-          }
-        <%if @certificate.is_ucc?-%>
-          if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
-            additional_domains = $("textarea[name*=additional_domains]").text() + data.certificate_content.csr.subject_alternative_names;
-            $("textarea[name*=additional_domains]").val($.unique(additional_domains.split(" ")).join(" "));
-            $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
-          }
-        <%end-%>
-        }
+        return;
       }
+      $.ajax({
+        url: "<%=parse_csr_certificate_orders_path%>",
+        data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
+        type: "POST",
+        success: function(data, status){
+          $(".flash_message").remove();
+          var ajax_errors="";
+          if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
+            $.each(data.certificate_content.csr.errors.base, function(key, value){
+              ajax_errors+="<li>"+value+"</li>";
+            });
+          }
+          if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
+            $.each(data.certificate_content.errors.base, function(key, value){
+              ajax_errors+="<li>"+value+"</li>";
+            });
+          if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
+            $.each(data.certificate_content.errors.signing_request, function(key, value){
+              ajax_errors+="<li>signing request "+value+"</li>";
+            });
+          if(ajax_errors!="")
+            $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
+          else{
+            if((typeof data.certificate_content.csr.common_name != 'undefined')){
+              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>certificate to be issued to: "+data.certificate_content.csr.common_name+"</span></div>");
+            }
+          <%if @certificate.is_ucc?-%>
+            if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
+              additional_domains = $("textarea[name*=additional_domains]").text() + data.certificate_content.csr.subject_alternative_names;
+              $("textarea[name*=additional_domains]").val($.unique(additional_domains.split(" ")).join(" "));
+              $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+            }
+          <%end-%>
+          }
+        }
+      });
     });
-  });
+  <%end%>
   $.update_order_pricing = function(){
     domains_cost = 0.0
     server_license_cost = 0.0;
