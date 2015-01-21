@@ -10,7 +10,7 @@ class ValidationsController < ApplicationController
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
   before_filter :require_user, only: [:index, :new]
   filter_access_to :all
-  filter_access_to :upload, :require=>:create
+  filter_access_to [:upload, :document_upload], :require=>:create
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
