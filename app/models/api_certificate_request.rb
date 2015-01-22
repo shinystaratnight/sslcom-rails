@@ -77,21 +77,20 @@ class ApiCertificateRequest < CaApiRequest
     read_attribute(:ref) || JSON.parse(self.parameters)["ref"]
   end
 
-  def validations
+  def validations_from_comodo #if named 'validations', it's executed twice
     co = find_certificate_order
     if co.is_a?(CertificateOrder)
       mdc_validation = ComodoApi.mdc_status(co)
       ds = mdc_validation.domain_status
       cc = co.certificate_content
+      cns = co.certificate_names.includes(:domain_control_validations)
       dcvs = {}.tap do |dcv|
         (co.all_domains).each do |domain|
-          last = co.certificate_contents.map(&:certificate_names).flatten.find_all{|cn|cn.name==domain}.map(&:domain_control_validations).flatten.compact.last
+          last = cns.find_all{|cn|cn.name==domain}.map(&:domain_control_validations).flatten.compact.last
           if (cc.certificate_names.find_by_name(domain) && !last.blank?)
-            dcv.merge! domain=>{"attempted_on"=>last.created_at, "dcv_method"=>(last.email_address || last.dcv_method)}
-            if ds && ds[domain]
-              status = ds[domain]["status"]
-              dcv[domain].merge!("status"=>status.downcase)
-            end
+            dcv.merge! domain=>{"attempted_on"=>last.created_at,
+                                "dcv_method"=>(last.email_address || last.dcv_method),
+                                "status"=>(ds && ds[domain]) ? ds[domain]["status"].downcase : "not yet available"}
           end
         end if co.all_domains
       end
