@@ -87,10 +87,10 @@ class ApiCertificateRequest < CaApiRequest
         (co.all_domains).each do |domain|
           if (cc.certificate_names.find_by_name(domain) && last = cc.certificate_names.find_by_name(domain).domain_control_validations.last)
             dcv.merge! domain=>{"attempted_on"=>last.created_at, "dcv_method"=>(last.email_address || last.dcv_method)}
-          end
-          if ds && ds[domain]
-            status = ds[domain]["status"]
-            dcv[domain].merge!("status"=>status.downcase)
+            if ds && ds[domain]
+              status = ds[domain]["status"]
+              dcv[domain].merge!("status"=>status.downcase)
+            end
           end
         end if co.all_domains
       end

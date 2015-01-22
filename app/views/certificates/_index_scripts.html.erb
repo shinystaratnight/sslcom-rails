@@ -66,7 +66,7 @@ jQuery(function($) {
             $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
           else{
             if((typeof data.certificate_content.csr.common_name != 'undefined')){
-              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>certificate to be issued to: "+data.certificate_content.csr.common_name+"</span></div>");
+              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+"</span></div>");
             }
           <%if @certificate.is_ucc?-%>
             if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){

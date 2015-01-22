@@ -338,10 +338,10 @@ jQuery(function($) {
         }
         //get cert order index
         instruction=$('span[alt="'+$(this).attr('name')+'"]')[0];
-        file=$(this).attr("alt").replace("*.", "")+"/"+$('.md5_hash').text()+".txt";
+        file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
         https = "https://"+file;
         http = "http://"+file;
-        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "")+"  "+$('.sha1_hash').text()+".comodoca.com";
+        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+"  "+$('.sha1_hash').text()+".comodoca.com";
         if(/@/.test(methods[0])){
           $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
         }
