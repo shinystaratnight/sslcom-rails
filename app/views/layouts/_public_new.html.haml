@@ -71,8 +71,11 @@
                 %li
                   %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
             %li
+              %a{:href => "#{certificate_url('code_signing')}"}
+                %div CODE SIGNING CERTIFICATES
+            %li
               %a{:href => "#{certificates_url}"}
-                %div OUR CERTIFICATES
+                %div SSL CERTIFICATES
               %ul
                 %li
                   %a{:href => "#{certificate_url('basicssl')}"}
