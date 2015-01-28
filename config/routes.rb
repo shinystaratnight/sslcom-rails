@@ -28,6 +28,8 @@ SslCom::Application.routes.draw do
 
   # api
   constraints DomainConstraint.new(["sws.sslpki.local","sws-test.sslpki.local","sws.sslpki.com","sws-test.sslpki.com"]) do
+    match '/users' => 'api_user_requests#create_v1_4',
+          :as => :api_user_create_v1_4, via: [:post]
     match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
           :as => :api_certificate_create_v1_3
     match '/certificates' => 'api_certificate_requests#create_v1_4',
