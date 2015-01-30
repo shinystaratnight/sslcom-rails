@@ -1,8 +1,9 @@
 class ApiUserRequest < CaApiRequest
   attr_accessor :test, :action, :admin_submitted
 
-  CREATE_ACCESSORS_1_4 = [:login, :email, :password, :first_name, :last_name, :phone, :organization, :address1, :address2,
-                          :address3, :po_box, :postal_code, :city, :state, :country, :account_key, :secret_key, :options]
+  CREATE_ACCESSORS_1_4 = [:login, :email, :password, :first_name, :last_name, :phone, :organization, :address1,
+                          :address2, :address3, :po_box, :postal_code, :city, :state, :country, :account_key,
+                          :secret_key, :options, :account_number]
 
   attr_accessor *(CREATE_ACCESSORS_1_4).uniq
 

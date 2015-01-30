@@ -3,6 +3,7 @@ class CertificateOrder < ActiveRecord::Base
   #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
+  has_many    :users, through: :ssl_account
   belongs_to  :validation
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
@@ -14,6 +15,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :certificate_names, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
+  has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, :through => :line_items, :include => :stored_preferences
@@ -250,20 +252,20 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    certificate_content.csr.signed_certificate if certificate_content && certificate_content.csr
+    signed_certificates.last
   end
 
-  def signed_certificates(index=nil)
-    all_csrs = certificate_contents.map(&:csr).flatten.compact
-    unless all_csrs.blank?
-      case index
-        when nil
-          all_csrs.map(&:signed_certificates).flatten
-        else
-          all_csrs.map(&:signed_certificates).flatten[index]
-      end
-    end
-  end
+  # def signed_certificates(index=nil)
+  #   all_csrs = certificate_contents.map(&:csr).flatten.compact
+  #   unless all_csrs.blank?
+  #     case index
+  #       when nil
+  #         all_csrs.map(&:signed_certificates).flatten
+  #       else
+  #         all_csrs.map(&:signed_certificates).flatten[index]
+  #     end
+  #   end
+  # end
 
   # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining(options={duration: :order})

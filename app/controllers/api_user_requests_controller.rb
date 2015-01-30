@@ -1,5 +1,6 @@
 class ApiUserRequestsController < ApplicationController
   before_filter :set_test, :record_parameters
+  # before_filter :find_user, :only => [:show_v1_4]
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
 
   wrap_parameters ApiUserRequest, include:
@@ -15,6 +16,8 @@ class ApiUserRequestsController < ApplicationController
 
   def set_result_parameters(result, aur, template)
     result.login = aur.login
+    result.email = aur.email
+    result.account_number=aur.ssl_account.acct_number
     result.status = aur.status
     result.user_url = SITE_DOMAIN+user_path(aur)
     result.update_attribute :response, render_to_string(:template => template)
@@ -44,6 +47,32 @@ class ApiUserRequestsController < ApplicationController
     error(500, 500, "server error")
   end
 
+  def show_v1_4
+    if @result.save
+      if @obj = UserSession.create(params).user
+        # successfully charged
+        if @obj.is_a?(User) && @obj.errors.empty?
+          template = "api_user_requests/show_v1_4"
+          set_result_parameters(@result, @obj, template)
+          @result.account_key=@obj.ssl_account.api_credential.account_key
+          @result.secret_key=@obj.ssl_account.api_credential.secret_key
+          @result.available_funds=Money.new(@obj.ssl_account.funded_account.cents).format
+          # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @obj.admin_submitted = true
+          render(:template => template)
+        else
+          @result = @obj #so that rabl can report errors
+        end
+      else
+        @result.errors[:login] << "#{@result.login} not found or incorrect password"
+      end
+    else
+      InvalidApiUserRequest.create parameters: params
+    end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
+  end
 
   def update_v1_4
     if @result.csr_obj && !@result.csr_obj.valid?
@@ -94,36 +123,6 @@ class ApiUserRequestsController < ApplicationController
       end
     end
     render action: :create_v1_3
-  end
-
-  def show_v1_4
-    if @result.save
-      @acr = @result.find_certificate_order
-      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        template = "api_certificate_requests/show_v1_4"
-        @result.order_status = @acr.status
-        @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
-        if (@acr.signed_certificate && @result.query_type!="order_status_only")
-          @result.certificates =
-              @acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
-                  response_encoding: @result.response_encoding) || @acr.signed_certificate.to_nginx
-          @result.common_name = @acr.signed_certificate.common_name
-          @result.subject_alternative_names = @acr.signed_certificate.subject_alternative_names
-          @result.effective_date = @acr.signed_certificate.effective_date
-          @result.expiration_date = @acr.signed_certificate.expiration_date
-          @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-        end
-        @rendered=render_to_string(:template => template)
-        @result.update_attribute :response, @rendered
-        render(:template => template) and return
-      end
-    else
-      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-    end
-  rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
   end
 
   def reprocess_v1_3
@@ -261,6 +260,8 @@ class ApiUserRequestsController < ApplicationController
     klass = case params[:action]
               when "create_v1_4", "update_v1_4"
                 ApiUserCreate_v1_4
+              when "show_v1_4"
+                ApiUserShow_v1_4
             end
     @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_user_request'])
     @result.debug = params[:debug] if params[:debug]
