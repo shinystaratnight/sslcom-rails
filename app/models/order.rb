@@ -50,7 +50,7 @@ class Order < ActiveRecord::Base
   }
 
   scope :search, lambda {|term|
-    joins{billing_profile}.where{
+    joins{billing_profile.outer}.where{
     (billing_profile.last_digits == "#{term}") | (billing_profile.first_name =~ "%#{term}%") |
     (billing_profile.last_name =~ "%#{term}%") | (billing_profile.address_1 =~ "%#{term}%") |
     (billing_profile.address_2 =~ "%#{term}%") | (billing_profile.company =~ "%#{term}%") |
