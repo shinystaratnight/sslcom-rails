@@ -130,8 +130,9 @@
             %b{:style => "text-shadow: none;"} →
       #trust-badges{style: "text-align: center"}
         =render 'site_seal'
-        %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
-          %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
+        -if Rails.env =~ /production/
+          %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
+            %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
       #partners
         %div Trusted by leading brands
         %img{:alt => "partners", :src => "images/sprite-partners.jpg"}

@@ -64,12 +64,12 @@ module CertificateOrdersHelper
           link_to 'submit csr',
             edit_certificate_order_path(certificate_order)
         when "contacts_provided"
-          link_to 'provide validation',
+          link_to 'perform validation',
             new_certificate_order_validation_path(certificate_order)
         when "pending_validation", "validated"
           last_sent=certificate_order.csr.last_dcv
           if last_sent.blank?
-            'please wait' #assume intranet
+            link_to 'perform validation', new_certificate_order_validation_path(certificate_order) # assume multi domain
           elsif %w(http https).include?(last_sent.try(:dcv_method))
             instructions="Please wait while we perform final validations.
             Normal process times should be less than several hours, but can take up to 24 hours. "
@@ -96,7 +96,7 @@ module CertificateOrdersHelper
             if certificate_order.certificate.is_free?
               "<ul><li>#{link_to 'click to upgrade', renew_certificate_order_path(certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(certificate_order)}</li></ul>".html_safe
             else
-              link_to 'reprocess', reprocess_certificate_order_path(certificate_order)
+              "<ul><li>#{link_to 'click to download', certificate_order_path(certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(certificate_order)}</li></ul>".html_safe
             end
           end
         when "canceled"

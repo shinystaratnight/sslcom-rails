@@ -1,3 +1,5 @@
+# The actual validation rule or requirement
+
 class ValidationRule < ActiveRecord::Base
   belongs_to  :parent, :foreign_key => :parent_id
   serialize   :applicable_validation_methods
@@ -13,6 +15,8 @@ class ValidationRule < ActiveRecord::Base
   DOMAIN = %w(domain validation)
 
   #methods
+  SUBSCRIBER_AGREEMENT = "subscriber agreement"
+  CERTIFICATE_REQUEST_FORM = "certificate request form"
   AUTOMATIC_DOMAIN_LOOKUP = %w(automatic\ domain\ lookup)
   MANUAL_DOMAIN_LOOKUP = %w(manual\ domain\ lookup)
   ARTICLES_OF_INCORPORATION = %w(articles\ of\ incorporation)

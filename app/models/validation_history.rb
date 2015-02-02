@@ -1,3 +1,5 @@
+# The validation document
+
 class ValidationHistory < ActiveRecord::Base
   has_many  :validation_ruling_validation_histories
   has_many  :validation_rulings, :through=>:validation_ruling_validation_histories, :as=>:validation_rulable
