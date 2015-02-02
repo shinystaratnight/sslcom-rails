@@ -12,9 +12,8 @@ module CertificateOrdersHelper
         if certificate_order.certificate.is_ucc?
           quantity = certificate_order.purchased_domains('all')
           unless certificate_order.certificate_contents.empty?
-            d=certificate_order.certificate_content.domains
-            domains = d.blank? ? "" : certificate_order.
-              certificate_content.domains.join(", ")
+            d=certificate_order.all_domains
+            domains = d.blank? ? "" : d.join(", ")
             wildcard_qty=certificate_order.purchased_domains('wildcard')
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
