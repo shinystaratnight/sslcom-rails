@@ -25,7 +25,7 @@
       %td=link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(co.csr)
     %tr
       %td cname
-      %td create CNAME in dns and point to #{co.csr.md5_hash}.comodoca.com
+      %td create CNAME in dns and point to #{co.csr.sha1_hash}.comodoca.com
     %tr
       %td md5 hash
       %td.md5_hash=co.csr.md5_hash
