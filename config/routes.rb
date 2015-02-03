@@ -205,6 +205,9 @@ SslCom::Application.routes.draw do
       get :visitor_trackings
       post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
     end
+    member do
+      get :invoice
+    end
   end
 
   resources :apis

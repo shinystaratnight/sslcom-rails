@@ -1,9 +1,10 @@
 class OrdersController < ApplicationController
+  layout false, only: [:invoice]
   include OrdersHelper
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show]
+  before_filter :find_order, :only => [:show, :invoice]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
@@ -65,6 +66,24 @@ class OrdersController < ApplicationController
     
     respond_to do |format|
       format.js { render :action => "cart_quantity.js.erb", :layout => false }
+    end
+  end
+
+  def invoice
+    if @order
+      begin
+        timeout(5) do
+          @doc=Nokogiri::HTML(open("http://invoice.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}"))
+          @doc.encoding = 'UTF-8' if @doc.encoding.blank?
+          #render(inline: doc.to_html) and return
+        end
+      rescue Exception=>e
+        print e
+      end
+    end
+
+    respond_to do |format|
+      format.html # new.html.erb
     end
   end
 
