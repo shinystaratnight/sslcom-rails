@@ -204,12 +204,12 @@ class ApplicationController < ActionController::Base
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
         (CertificateOrder.search_with_csr(params[:search], options)) :
-        current_user.ssl_account.certificate_orders.not_test.
+        current_user.ssl_account.certificate_orders.
           search_with_csr(params[:search], options)).where(workflow_state: "paid")
     else
       (current_user.is_admin? ?
         CertificateOrder.not_test.find_not_new(options) :
-        current_user.ssl_account.certificate_orders.not_test.not_new(options))
+        current_user.ssl_account.certificate_orders.not_new(options))
     end
   end
 

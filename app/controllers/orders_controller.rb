@@ -72,8 +72,8 @@ class OrdersController < ApplicationController
   def invoice
     if @order
       begin
-        timeout(5) do
-          @doc=Nokogiri::HTML(open("http://invoice.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}"))
+        timeout(10) do
+          @doc=Nokogiri::HTML(open("https://www.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}"))
           @doc.encoding = 'UTF-8' if @doc.encoding.blank?
           #render(inline: doc.to_html) and return
         end
@@ -83,7 +83,11 @@ class OrdersController < ApplicationController
     end
 
     respond_to do |format|
-      format.html # new.html.erb
+      if @doc
+        format.html # new.html.erb
+      else
+        format.html{ render status: 404}
+      end
     end
   end
 
@@ -117,9 +121,9 @@ class OrdersController < ApplicationController
     p = {:page => params[:page]}
     @orders = if @search = params[:search]
       (current_user.is_admin? ?
-        Order.not_test.search(params[:search]) :
-        current_user.ssl_account.orders.not_test.
-          search(params[:search]).not_new).paginate(p)
+        Order.unscoped{Order.not_test.search(params[:search])} :
+        current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.not_test.
+          search(params[:search]).not_new}).paginate(p)
     else
       ((current_user.is_admin? ? Order.not_test :
         current_user.ssl_account.orders.not_new.not_test).paginate(p))

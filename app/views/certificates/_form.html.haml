@@ -134,7 +134,7 @@
         %li All entries MUST have the same domain name, but can have different subdomains; for multi domain ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
         %li An entry CANNOT represent a wildcard domain name (i.e. *.domain.com); for multi domain wildcard ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
         %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
-        %li CAN use certificate on unlimited multiple servers concurrently 
+        %li CAN use certificate on unlimited multiple servers concurrently
       %p Example entries include:
       %ul.cert_reqs
         %li www.domain.com
@@ -147,24 +147,23 @@
           %li Displays your company name with a green background in the address bar
           %li Displays your company details in the SSL Certificate details
         %li CAN secure up to 2000 entries (first 3 are free, additional charge per entry after the 3rd entry)
-        %li CAN use certificate on unlimited multiple servers concurrently 
-        %li An entry CAN be a Fully Qualified Domain Name (FQDN) or simply a subdomain+domain
+        %li CAN use certificate on unlimited multiple servers concurrently
+        %li CAN change domains at anytime or specify them later without fees or costs
+        %li An entry CAN be a Fully Qualified Domain Name (FQDN)
         -unless @certificate.is_ev?
-          %li An entry CAN be a single worded server name
-          %li An entry CAN be an internal ip address (but the certificate #{link_to "will not be effective past Dec 2015", "https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf", target: "_blank"} per CAB Forum Reqs.)
+          %li An entry CAN be a single worded server name or an internal ip address (but the certificate #{link_to "will not be effective past Dec 2015", "https://cabforum.org/wp-content/uploads/Guidance-Deprecated-Internal-Names.pdf", target: "_blank"} per CAB Forum Reqs.)
         -unless @certificate.allow_wildcard_ucc?
           %li An entry CANNOT represent a wildcard domain name (i.e. *.domain.com); for multi domain wildcard ssl please see #{link_to 'UCC SSL', buy_certificate_url("ucc") }
         -else
           %li An entry CAN represent a wildcard domain name (i.e. *.domain.com, but NOT multiple levels like *.*.domain.com)
         %li CAN use on unlimited ip addresses with multiple, concurrent private keys (great for hosting and virtual hosts)
-        %li Uses the Subject Alternative Name (SAN) extension field
       %p Example entries include:
       %ul.cert_reqs
-        %li www.domain.com
-        %li lync.domain.com
-        %li any.any.domain.co.uk
+        %li domain.com
+        %li www.domain.net
         -unless @certificate.is_ev?
           %li *.example.com
+          %li *.apps.domain.co.uk
           %li www.example1.local
           %li exchange
           %li 10.10.10.10

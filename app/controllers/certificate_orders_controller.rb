@@ -278,9 +278,9 @@ class CertificateOrdersController < ApplicationController
   def order_by_csr
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.unscoped{CertificateOrder.order_by_csr} :
+      CertificateOrder.unscoped{CertificateOrder.not_test.order_by_csr} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.order_by_csr}).paginate(p)
+          current_user.ssl_account.certificate_orders.not_test.order_by_csr}).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -291,9 +291,9 @@ class CertificateOrdersController < ApplicationController
   def filter_by
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.unscoped{CertificateOrder.filter_by(params[:id])} :
+      CertificateOrder.unscoped{CertificateOrder.not_test.filter_by(params[:id])} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.filter_by(params[:id])}).paginate(p)
+          current_user.ssl_account.certificate_orders.not_test.filter_by(params[:id])}).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
