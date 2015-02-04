@@ -2,7 +2,7 @@
 #order_details
   %h3.order_results_header
     =title
-    (#{link_to "Click for invoice and downloadable pdf.", "https://www.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}"})
+    (#{link_to "Click for invoice and downloadable pdf.", invoice_order_path(@order)}"})
   #order_ref_num 
     reference number:
     %span=h @order.reference_number
