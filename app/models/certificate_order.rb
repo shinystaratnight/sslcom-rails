@@ -87,7 +87,7 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr}.order({:certificate_contents=>{:csr=>:updated_at.desc}})
+    joins{certificate_contents.csr.outer}.order({:certificate_contents=>{:csr=>:updated_at.desc}}).uniq
   }
 
   scope :filter_by, lambda { |term|
