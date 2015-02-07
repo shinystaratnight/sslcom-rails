@@ -39,22 +39,23 @@ class Order < ActiveRecord::Base
                     order(:created_at.desc).uniq
 
   scope :not_new, lambda {
-    joins{line_items.sellable(CertificateOrder)}.
+    joins{line_items.sellable(CertificateOrder).outer}.
         where{line_items.sellable(CertificateOrder).workflow_state=='paid'}
   }
 
   scope :not_test, lambda {
-    joins{line_items.sellable(CertificateOrder)}.
+    joins{line_items.sellable(CertificateOrder).outer}.
         where{(line_items.sellable(CertificateOrder).is_test==nil) |
         (line_items.sellable(CertificateOrder).is_test==false)}
   }
 
   scope :search, lambda {|term|
-    joins{billing_profile.outer}.where{
+    joins{billing_profile.outer}.joins{line_items.sellable(CertificateOrder).outer}.where{
     (billing_profile.last_digits == "#{term}") | (billing_profile.first_name =~ "%#{term}%") |
     (billing_profile.last_name =~ "%#{term}%") | (billing_profile.address_1 =~ "%#{term}%") |
     (billing_profile.address_2 =~ "%#{term}%") | (billing_profile.company =~ "%#{term}%") |
-    (billing_profile.postal_code =~ "%#{term}%") | (reference_number =~ "%#{term}%")}
+    (billing_profile.postal_code =~ "%#{term}%") | (reference_number =~ "%#{term}%") |
+    (line_items.sellable(CertificateOrder).ref=~ "%#{term}%")}
   }
 
   scope :not_free, lambda{

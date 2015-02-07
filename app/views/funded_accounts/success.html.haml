@@ -7,6 +7,7 @@
     });
 -title = ""
 -title = (@certificate_order.is_test ? "(TEST) " : "") unless @certificate_order.blank?
+-title << (@order.state=="fully_refunded" ? "(REFUNDED) " : "")
 -title += is_receipt? ? "Show Order Transaction" : "Order Was Successful"
 -content_for :title, title
 =render(:partial => 'shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 4]}) if @reseller_initial_deposit

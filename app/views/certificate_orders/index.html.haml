@@ -23,7 +23,8 @@
       %th(scope="col") Expires
       %th(scope="col") Action
     -@certificate_orders.each do |co|
-      -next if co.order.blank?
+      -order=Order.unscoped{co.order}
+      -next if order.blank?
       -cc = co.certificate_content
       -next if !co.is_unused_credit? && cc.csr.blank?
       -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
@@ -36,7 +37,7 @@
         %td.status_message(class="#{status_class(cc)}")
           #{certificate_order_status(cc)}
         %td
-          =co.order.created_at.strftime("%b %d, %Y")
+          =order.created_at.strftime("%b %d, %Y")
         %td(class="#{expires_on_class(cc)}")
           #{expires_on(cc)}
         %td.ssl_action
@@ -65,7 +66,7 @@
                               =render partial: "certificate_orders/registrant_fields", object: cc.signed_certificate
                           -unless co.is_unused_credit?
                             %li=link_to "view certificate details", co
-                          %li=link_to "view order transaction", co.order
+                          %li=link_to "view order transaction", order
                           -if current_user.is_admin?
                             %li
                               .notes_box

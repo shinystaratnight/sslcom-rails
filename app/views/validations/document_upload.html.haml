@@ -35,37 +35,71 @@
       #documents_upload_section
         #documents_upload_instructions
           %h2 Documents
-          %p
-            If documents are required for this order, then SSL.com will verify the existence of your business, the ownership of the domain(s)
-            #{co.all_domains.join(", ")}, and your employment status or authority to
-            request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
-            on this whois record for #{co.subject} may include:
-          -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
-            -unless vr.description =~ /domain/
-              %dl.listing
-                -case vr.description
-                -when /organization/
-                  %dt
-                    Any of the following official government documentation proving your right to do
-                    business:
-                  %dd
-                    %ul
-                      -vr.applicable_validation_methods.each do |m|
-                        %li=m
-                -when /ev/
-                  %dt.ev_instructions
-                    In addition to the above documentation, extended validation certificates require an
-                    authorization form signed by an authorized representative for #{co.subject}.
-                    Please fill out any of the forms below and submit it to complete the extended
-                    validation portion of this order:
-                  %dd
-                    %ul
-                      %li
-                        %dt Full EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=4"})
-                        %dd This form of the EV Request should be used when more than one individual are acting in the roles of Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.)
-                      %li
-                        %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
-                        %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
+          -if co.certificate.is_ev?
+            %p
+              SSL.com will verify the existence of your business, the ownership of the domain(s)
+              #{co.all_domains.join(", ")}, and your employment status or authority to
+              request the SSL Certificate for #{co.all_domains.join(", ")}. The following documents are required:
+            %dl.listing
+              %dd
+                %ul
+                  %li
+                    Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/22/0/ev-ssl-certificate-subscriber-agreement"}
+                  %li
+                    Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/6/0/ev-authorization-form-simple"}
+            %p
+              Lastly, please choose one of the following items to submit:
+            %dl.listing
+              %dd
+                %ul
+                  %li
+                    #{link_to "Sample Accountant Letter for EV #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/24/0/sample-accountant-letter-for-ev"}
+            %p
+              OR
+            %dl.listing
+              %dd
+                %ul
+                  %li
+                    #{link_to "Sample Letter of Opinion for EV SSL #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/23/0/sample-letter-of-opinion-for-ev-ssl"}
+            %p
+              OR
+            %dl.listing
+              %dd
+                %ul
+                  %li
+                    (for government entities) #{link_to "Sample Legal Letter for Verifying a Government Organization #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/25/0/sample-legal-letter-for-verifying-a-government-organization"}
+          -else
+            %p
+              If documents are required for this order, then SSL.com will verify the existence of your business, the ownership of the domain(s)
+              #{co.all_domains.join(", ")}, and your employment status or authority to
+              request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
+              on this whois record for #{co.subject} may include:
+            -co.validation.validation_rules.sort{|a,b|a.id<=>b.id}.each do |vr|
+              -unless vr.description =~ /domain/
+                %dl.listing
+                  -case vr.description
+                  -when /organization/
+                    %dt
+                      Any of the following official government documentation proving your right to do
+                      business:
+                    %dd
+                      %ul
+                        -vr.applicable_validation_methods.each do |m|
+                          %li=m
+                  -when /ev/
+                    %dt.ev_instructions
+                      In addition to the above documentation, extended validation certificates require an
+                      authorization form signed by an authorized representative for #{co.subject}.
+                      Please fill out any of the forms below and submit it to complete the extended
+                      validation portion of this order:
+                    %dd
+                      %ul
+                        %li
+                          %dt Full EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=4"})
+                          %dd This form of the EV Request should be used when more than one individual are acting in the roles of Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.)
+                        %li
+                          %dt Simplified EV Authorization Form (#{link_to "click here to download form #{image_tag('pdf_icon.gif')}".html_safe, "https://support.ssl.com/index.php?_m=downloads&_a=downloadfile&downloaditemid=5"})
+                          %dd This form should be used if one person is to act in all three roles, Certificate Requester, Certificate Approver and Contract (Subscriber Agreement) Signer.
           %p
             Up to 5 files can be uploaded. Zipped documents can also be uploaded, and
             they will automatically be unpacked. The following file types are accepted:

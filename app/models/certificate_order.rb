@@ -74,8 +74,9 @@ class CertificateOrder < ActiveRecord::Base
   scope :search_with_csr, lambda {|term, options|
     cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
       CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
-    {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
+    {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless
+      cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ? OR `certificate_orders`.`external_order_number` #{SQL_LIKE} ? OR `certificate_orders`.`notes` #{SQL_LIKE} ?",
+      '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
       merge(options)
   }
 

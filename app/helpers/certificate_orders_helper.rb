@@ -156,20 +156,22 @@ module CertificateOrdersHelper
     return if certificate_content.new? ||
       certificate_content.csr.signed_certificate.blank? ||
       certificate_content.csr.signed_certificate.expiration_date.blank?
-    sa = certificate_content.certificate_order.ssl_account
-    ep = certificate_content.csr.signed_certificate.expiration_date
-    if ep <= sa.preferred_reminder_notice_triggers(ReminderTrigger.find(1)).
-        to_i.days.from_now && ep > Time.now
-      'expiration_warning'
-    elsif ep <= Time.now
-      'attention'
-    else
-      ''
+    if certificate_content.certificate_order
+      sa = certificate_content.certificate_order.ssl_account
+      ep = certificate_content.csr.signed_certificate.expiration_date
+      if ep <= sa.preferred_reminder_notice_triggers(ReminderTrigger.find(1)).
+          to_i.days.from_now && ep > Time.now
+        'expiration_warning'
+      elsif ep <= Time.now
+        'attention'
+      else
+        ''
+      end
     end
   end
 
   def certificate_type(certificate_order)
-    unless certificate_order.order.preferred_migrated_from_v2
+    unless Order.unscoped{certificate_order.order}.preferred_migrated_from_v2
       certificate_order.certificate.description["certificate_type"]
     else
       certificate_order.preferred_v2_product_description.

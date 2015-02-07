@@ -125,8 +125,8 @@ class OrdersController < ApplicationController
     p = {:page => params[:page]}
     @orders = if @search = params[:search]
       (current_user.is_admin? ?
-        Order.unscoped{Order.not_test.search(params[:search])} :
-        current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.not_test.
+        Order.unscoped{Order.search(params[:search])} :
+        current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.
           search(params[:search]).not_new}).paginate(p)
     else
       ((current_user.is_admin? ? Order.not_test :
@@ -345,6 +345,6 @@ class OrdersController < ApplicationController
   end
 
   def find_order
-    @order = Order.find_by_reference_number(params[:id])
+    @order = Order.unscoped{Order.find_by_reference_number(params[:id])}
   end
 end

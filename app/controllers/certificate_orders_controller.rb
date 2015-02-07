@@ -396,7 +396,7 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.find_by_ref(params[:id])
+    @certificate_order=CertificateOrder.unscoped{CertificateOrder.find_by_ref(params[:id])}
   end
 
   def setup_registrant
