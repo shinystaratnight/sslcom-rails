@@ -82,6 +82,7 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end
+            @acr.update_column(:external_order_number, "15905665") if @acr.ssl_account.acct_number=="a79-1a7rm20"
             set_result_parameters(@result, @acr, template)
             # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
