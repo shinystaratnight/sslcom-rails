@@ -1,0 +1,10 @@
+Hello,
+
+The following validation documents for <%=@certificate_order.external_order_number%> have been recently uploaded:
+
+<%vh=@certificate_order.validation.validation_histories.last(@files.count)%>
+<%vh.each do |file|%>
+  <%=file.document_file_name%> - <%=URI.encode("https://"+Settings.actionmailer_host+file.document_url)%>
+<%end%>
+
+

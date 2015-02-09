@@ -63,6 +63,14 @@ class OrderNotifier < ActionMailer::Base
           to:    contact
   end
 
+  def validation_documents_uploaded_comodo(contact, certificate_order, files)
+    @files=files
+    setup(contact, certificate_order)
+    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}Validation Documents For #{certificate_order.external_order_number} Has Been Uploaded",
+          from:          "support@ssl.com",
+          to:    contact
+  end
+
   def validation_approve(contact, certificate_order)
     setup(contact, certificate_order)
     mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Been Approved",

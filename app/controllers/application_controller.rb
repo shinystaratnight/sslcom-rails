@@ -204,7 +204,7 @@ class ApplicationController < ActionController::Base
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
         (CertificateOrder.unscoped{CertificateOrder.search_with_csr(params[:search], options)}) :
-        current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options))
+        current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
     else
       (current_user.is_admin? ?
         CertificateOrder.not_test.find_not_new(options) :

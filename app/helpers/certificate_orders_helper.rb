@@ -112,7 +112,7 @@ module CertificateOrdersHelper
   def certificate_order_status(certificate_content=nil)
     return if certificate_content.blank?
     co=certificate_content.certificate_order
-    if certificate_content.new?
+    if co && certificate_content.new?
       co.is_expired? ? 'expired' : 'waiting for csr'
     elsif certificate_content.expired?
       'expired'

@@ -175,7 +175,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def has_only_credits?
-    certificate_orders.credits.count==certificate_orders.not_new.count
+    (certificate_orders.credits.count > 0) && (certificate_orders.credits.count==certificate_orders.not_new.count)
   end
 
   def has_credits?
