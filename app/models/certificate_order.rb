@@ -1355,7 +1355,7 @@ class CertificateOrder < ActiveRecord::Base
                     "402"
                   end
     end
-    params.merge!('caCertificateID' => cci)
+    params.merge!('caCertificateID' => cci.to_s)
   end
 
 

@@ -184,8 +184,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     def perform
       cc.dcv_domains({domains: (domains || [cc.csr.common_name]), emails: dcv_candidate_addresses,
                             dcv_failure_action: dcv_failure_action})
-      cc.pend_validation!(ca_certificate_id: acc.ca_certificate_id,
-                          send_to_ca: acc.send_to_ca || true) unless cc.pending_validation?
+      cc.pend_validation!(ca_certificate_id: acc[:ca_certificate_id],
+                          send_to_ca: acc[:send_to_ca] || true) unless cc.pending_validation?
     end
   end
 
@@ -240,7 +240,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
       job_group = Delayed::JobGroups::JobGroup.create!
-      job_group.enqueue(DomainJob.new(cc, self, self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
+      job_group.enqueue(DomainJob.new(cc, {ca_certificate_id: self.ca_certificate_id, send_to_ca: self.send_to_ca},
+                                      self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
                                       self.dcv_candidate_addresses))
       job_group.mark_queueing_complete
     end
