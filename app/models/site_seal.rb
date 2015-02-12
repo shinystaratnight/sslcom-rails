@@ -15,6 +15,7 @@ class SiteSeal < ActiveRecord::Base
   REPORT_CACHE_KEY = "ssl_com_report_2015_"
 
   REPORT_DIMENSIONS = 'height=500, width=400, top=100, left=100'
+  REPORT_ARTIFACTS_DIMENSIONS = 'height=600, width=400, top=100, left=100'
 
   FULLY_ACTIVATED = :fully_activated
   CONDITIONALLY_ACTIVATED = :conditionally_activated

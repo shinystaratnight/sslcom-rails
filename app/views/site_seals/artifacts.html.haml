@@ -19,7 +19,7 @@
     -if vh.can_publish_to_site_seal?
       %div.clearfix
         %dl
-          %dt.section_header=vh.satisfies_validation_methods.join(", ")
+          %dt.section_header=vh.satisfies_validation_methods.join(", ") unless vh.satisfies_validation_methods.blank?
           %dd.img=link_to image_tag(vh.authenticated_s3_get_url(style: :thumb)), vh.authenticated_s3_get_url(style: :preview), :class=>'img_preview', :rel=>'prettyPhoto'
           -unless vh.validation_rules.empty?
             %dd.satisfies_requirements

@@ -60,7 +60,8 @@ module SiteSealsHelper
 
   def popup_code(co)
     {style: "border: none;", onclick:
-         "window.open('#{site_report_site_seal_url(co.site_seal)}', 'site_report','#{SiteSeal::REPORT_DIMENSIONS}'); return false;",
-    onmouseover: "this.style.cursor='pointer'"}
+        "window.open('#{site_report_site_seal_url(co.site_seal)}', 'site_report','#{co.validation_histories.blank? ?
+        SiteSeal::REPORT_DIMENSIONS : SiteSeal::REPORT_ARTIFACTS_DIMENSIONS}'); return false;",
+        onmouseover: "this.style.cursor='pointer'"}
   end
 end
