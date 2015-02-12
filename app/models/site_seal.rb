@@ -1,6 +1,8 @@
 class SiteSeal < ActiveRecord::Base
   #using_access_control
   has_many  :certificate_orders
+  has_many  :validations, through: :certificate_orders
+  has_many  :validation_histories, through: :validations
   attr_protected :workflow_state
 
   EV_SEAL = 'ev'
@@ -118,7 +120,7 @@ class SiteSeal < ActiveRecord::Base
   end
 
   def certificate_order
-    certificate_orders.last
+    latest_certificate_order
   end
 
   def has_artifacts?
@@ -135,16 +137,26 @@ class SiteSeal < ActiveRecord::Base
     canceled? || deactivated? || new?
   end
 
+  def all_certificate_orders # includes renewals
+    certs=[certificate_orders.last]
+    find_renewal = ->(co){ CertificateOrder.unscoped{co.renewal} }
+    renewal = find_renewal.call(certificate_order)
+    loop do
+      if renewal
+        certs<<renewal
+        renewal = find_renewal.call(renewal)
+      else
+        break
+      end
+    end
+    certs
+  end
+
   def latest_certificate_order
+    all_certificate_orders.last
 
-    #having issues with UCC so simplify
-    certificate_order
-
-    #cn=certificate_order.common_name
-    #acct = certificate_order.ssl_account_id
-    #CertificateOrder.joins{certificate_contents.csr}.where{
-    #    (ssl_account_id=="#{acct}") &
-    #    (certificate_contents.csr.common_name == "#{cn}")}.
-    #    order("certificate_orders.created_at desc").first
+    # if want to search by domain, but may cause confusion
+    # cn=certificate_order.common_name
+    # certificate_order.ssl_account.certificate_orders.search_with_csr(cn).last
   end
 end

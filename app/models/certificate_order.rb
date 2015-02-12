@@ -5,6 +5,7 @@ class CertificateOrder < ActiveRecord::Base
   belongs_to  :ssl_account
   has_many    :users, through: :ssl_account
   belongs_to  :validation
+  has_many    :validation_histories, through: :validation
   belongs_to  :site_seal
   belongs_to  :parent, class_name: 'CertificateOrder', :foreign_key=>:renewal_id
   has_one     :renewal, class_name: 'CertificateOrder', :foreign_key=>:renewal_id,
@@ -522,12 +523,6 @@ class CertificateOrder < ActiveRecord::Base
 
   def order(reload=nil)
     orders(reload).last
-  end
-
-  def validation_histories
-    validation.validation_histories
-  rescue
-    nil
   end
 
   def apply_for_certificate(options={})

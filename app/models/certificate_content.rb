@@ -963,7 +963,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    (certificate_names.map(&:name)+[csr.common_name]+(domains.blank? ? [] : domains)).flatten.uniq if csr
+    (certificate_names.map(&:name)+[csr.try(:common_name)]+(domains.blank? ? [] : domains)).flatten.uniq.compact
   end
 
   def certificate_names_by_domains
