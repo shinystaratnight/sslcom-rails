@@ -120,7 +120,7 @@ class SiteSeal < ActiveRecord::Base
   end
 
   def certificate_order
-    latest_certificate_order
+    certificate_orders.last
   end
 
   def has_artifacts?
