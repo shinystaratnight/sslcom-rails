@@ -105,8 +105,12 @@ module CertificateOrdersHelper
   end
 
   def other_party_request(certificate_order)
-    return true if current_user.blank?
-    !(certificate_order.ssl_account==current_user.ssl_account)
+    if current_user.blank?
+      return true
+    elsif current_user.is_admin?
+      return false
+    end
+    (certificate_order.ssl_account!=current_user.ssl_account)
   end
 
   def certificate_order_status(certificate_content=nil)
