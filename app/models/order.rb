@@ -114,7 +114,7 @@ class Order < ActiveRecord::Base
   end
 
   def lead_up_to_sale
-    u = billable.users.last
+    u = billable.primary_user
     history = u.browsing_history("01/01/2000", created_at, "desc")
     history = history.compact.sort{|x,y|x[1][0]<=>y[1][0]}.last if history.count > 1
     history.shift
@@ -544,6 +544,10 @@ class Order < ActiveRecord::Base
     certificate_order.certificate_contents[0].
         certificate_order    = certificate_order
     certificate_order
+  end
+
+  def primary_user
+    billable.primary_user
   end
 
 

@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many  :other_party_requests
   has_many  :client_applications
   has_many  :tokens, :class_name => "OauthToken", :order => "authorized_at desc", :include => [:client_application]
+  has_and_belongs_to_many :user_groups
   belongs_to :ssl_account
   attr_accessor :changing_password, :admin_update
   attr_accessible :login, :email, :password, :password_confirmation,

@@ -9,7 +9,7 @@
       =c[:title]
     %h2
       information displayed is for affiliate
-      %strong #{@affiliate.ssl_account.users.last.login}
+      %strong #{@affiliate.ssl_account.primary_user.login}
     .clearfix
       -if landed_urls.empty?
         %h2

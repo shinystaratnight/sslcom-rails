@@ -35,12 +35,12 @@
       \#{@certificate_order.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.join(", ")}.
   -if is_receipt?
     %h3=title
+  -if current_user.is_admin?
+    -u=@order.billable.primary_user
+    %p
+      %em admin only:
+      =remote_login_link(u)
   -if @certificate_order
-    -if current_user.is_admin?
-      -u=@certificate_order.ssl_account.users.last
-      %p
-        %em admin only:
-        =remote_login_link(u)
     -if @certificate_order.is_unused_credit?
       %p
         \#{link_to 'Click here', edit_certificate_order_path(@certificate_order)} to finish processing this certificate order.

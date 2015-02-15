@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141209154127) do
+ActiveRecord::Schema.define(:version => 20150213193440) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -877,6 +877,7 @@ ActiveRecord::Schema.define(:version => 20141209154127) do
     t.string   "roles",       :default => "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
   end
 
   create_table "ssl_docs", :force => true do |t|
@@ -968,6 +969,23 @@ ActiveRecord::Schema.define(:version => 20141209154127) do
     t.boolean  "enforce"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "user_groups", :force => true do |t|
+    t.integer "ssl_account_id"
+    t.string  "roles",          :default => "--- []"
+    t.string  "name"
+    t.text    "description"
+    t.text    "notes"
+  end
+
+  create_table "user_groups_users", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "user_group_id"
+    t.string   "status"
+    t.string   "notes"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
   end
 
   create_table "users", :force => true do |t|

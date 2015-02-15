@@ -1,3 +1,4 @@
+- def product_description(cert)
 -cert=cart_row
 -indx=cart_row_counter
 -is_receipt ||= false
@@ -5,7 +6,7 @@
 -free_limit = free_qty_limit
 %tr.line_item(class="row_#{indx}")
   %td.description
-    =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
+    =cert.order_description
     -if cert.subject
       (
       %em>=cert.subject

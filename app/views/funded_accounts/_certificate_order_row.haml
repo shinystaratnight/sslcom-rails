@@ -1,7 +1,7 @@
 -line_item_certs=@order.certificate_orders.select{|co|co.certificate==cert.certificate}
 %tr.line_item
   %td.description
-    =cert.description_with_tier.blank? ? certificate_type(cert) : cert.description_with_tier
+    =cert.order_description
     %ul
       -line_item_certs.each do |co|
         %li=link_to("#{co.subject} (#{co.ref})", co)

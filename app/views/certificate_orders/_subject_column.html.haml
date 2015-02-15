@@ -20,7 +20,7 @@
       -if co.certificate_content.issued? && !co.certificate_content.expired?
         %span :
         =link_to 'rekey', reprocess_certificate_order_path(certificate_order)
-      -u=co.ssl_account.users.last
+      -u=co.ssl_account.primary_user
       -unless u.blank?
         -if permitted_to? :admin_manage, u
           %span :

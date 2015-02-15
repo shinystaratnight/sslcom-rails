@@ -681,4 +681,8 @@ class Certificate < ActiveRecord::Base
       end
     end
   end
+
+  def order_description
+    try(:description_with_tier) ? certificate_type(self) : description_with_tier
+  end
 end

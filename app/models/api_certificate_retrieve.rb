@@ -19,7 +19,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   validate :order_exists, if: lambda{|c|c.ref}
 
   attr_accessor :validity_period, :domains, :ext_status, :certificates, :order_status, :certificate_order,
-                :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm
+                :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm, :site_seal_code
 
   def initialize(attributes = {})
     super

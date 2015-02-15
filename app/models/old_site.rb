@@ -972,7 +972,7 @@ module OldSite
     def self.orphaned_credits
       CertificateOrder.unused_purchased_credits.
         select{|co|co.certificate_content.v2_migration_sources.blank?}.
-        select{|b|b.ssl_account.users.last.v2_migration_sources}
+        select{|b|b.ssl_account.primary_user.v2_migration_sources}
     end
 
     def self.unmigrated_old_certificates

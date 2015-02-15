@@ -17,6 +17,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
   has_many  :transactions, through: :orders
+  has_many  :user_groups
   has_many  :api_certificate_requests, as: :api_requestable, dependent: :destroy
 
   unless MIGRATING_FROM_LEGACY
@@ -111,7 +112,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def self.top_paid_users(how_many=10)
-    top_paid.last(how_many).map{|s|s.users.last}
+    top_paid.last(how_many).map{|s|s.primary_user}
 
   end
 
@@ -259,6 +260,10 @@ class SslAccount < ActiveRecord::Base
 
   def self.api_credentials_for_all
     self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
+  end
+
+  def primary_user
+    users.first
   end
 
   private
