@@ -23,7 +23,7 @@
     });
     -@order.line_items.each do |li|
       -cert = li.sellable
-      -description = cert.order_description
+      -description = row_description(cert)
       -description << " (#{cert.subject})" if cert.subject
       -qty = cert.line_item_qty || cert.quantity || "1"
       ga('ecommerce:addItem', {

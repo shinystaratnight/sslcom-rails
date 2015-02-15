@@ -1,7 +1,7 @@
 -line_item_certs=@order.certificate_orders.select{|co|co.certificate==cert.certificate}
 %tr.line_item
   %td.description
-    =cert.order_description
+    =row_description(cert)
     %ul
       -line_item_certs.each do |co|
         %li=link_to("#{co.subject} (#{co.ref})", co)

@@ -6,7 +6,7 @@
 -free_limit = free_qty_limit
 %tr.line_item(class="row_#{indx}")
   %td.description
-    =cert.order_description
+    =row_description(cert)
     -if cert.subject
       (
       %em>=cert.subject

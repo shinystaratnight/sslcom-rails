@@ -40,7 +40,8 @@ class Order < ActiveRecord::Base
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder).outer}.
-        where{line_items.sellable(CertificateOrder).workflow_state=='paid'}
+        where{line_items.sellable(CertificateOrder).workflow_state=='paid'}.
+    joins{line_items.sellable(Deposit).outer}
   }
 
   scope :not_test, lambda {

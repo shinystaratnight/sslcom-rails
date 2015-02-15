@@ -129,6 +129,10 @@ module OrdersHelper
       end
     end
   end
+
+  def row_description(cert)
+    cert.try(:description_with_tier) ? cert.description_with_tier : certificate_type(cert)
+  end
   
 =begin
   def setup_certificate_order
