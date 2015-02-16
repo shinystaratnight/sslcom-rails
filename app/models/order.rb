@@ -162,7 +162,7 @@ class Order < ActiveRecord::Base
 
     state :paid do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund!} if complete
+        line_items.each {|li|li.sellable.refund! if li.sellable.respond_to?("refund!".to_sym)} if complete
       end
       event :partial_refund, transitions_to: :paid do |ref|
         li=line_items.find {|li|li.sellable.ref==ref}
@@ -191,7 +191,7 @@ class Order < ActiveRecord::Base
 
     state :payment_not_required do
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
-        line_items.each {|li|li.sellable.refund!} if complete
+        line_items.each {|li|li.sellable.refund! if li.sellable.respond_to?("refund!".to_sym)} if complete
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete
