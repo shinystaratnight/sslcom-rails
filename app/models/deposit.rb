@@ -1,8 +1,14 @@
 class Deposit < ActiveRecord::Base
   acts_as_sellable :cents => :amount, :currency => false
+  has_many    :orders, :through => :line_items, :include => :stored_preferences
+
 
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i
+  end
+
+  def order
+    orders.last
   end
   
   protected
