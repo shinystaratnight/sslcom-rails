@@ -131,7 +131,11 @@ module OrdersHelper
   end
 
   def row_description(cert)
-    cert.respond_to?(:description_with_tier) ? cert.description_with_tier : certificate_type(cert)
+    if cert.is_a?(CertificateOrder)
+      cert.respond_to?(:description_with_tier) ? cert.description_with_tier : certificate_type(cert)
+    else
+      cert.class.name
+    end
   end
   
 =begin

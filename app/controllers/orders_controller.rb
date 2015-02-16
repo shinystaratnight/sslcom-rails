@@ -130,7 +130,7 @@ class OrdersController < ApplicationController
           search(params[:search]).not_new}).paginate(p)
     else
       ((current_user.is_admin? ? Order.not_test :
-          current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders}).paginate(p))
+        current_user.ssl_account.orders.not_test).paginate(p))
     end
 
     respond_to do |format|

@@ -24,12 +24,12 @@
     -@order.line_items.each do |li|
       -cert = li.sellable
       -description = row_description(cert)
-      -description << " (#{cert.subject})" if cert.subject
-      -qty = cert.line_item_qty || cert.quantity || "1"
+      -description << " (#{cert.subject}) - ##{cert.ref}" if(cert.is_a?(CertificateOrder) && cert.subject)
+      -qty = cert.is_a?(CertificateOrder) ? (cert.line_item_qty || cert.quantity || "1") : "1"
       ga('ecommerce:addItem', {
       'id': '#{@order.reference_number}', // Transaction ID. Required. Same as in the transaction data.
-      'name': '#{description} - ##{cert.ref}', // Product name. Required.
-      'sku': '#{cert.certificate.serial}', // Product SKU.
+      'name': '#{description}', // Product name. Required.
+      'sku': '#{cert.is_a?(CertificateOrder) ? cert.certificate.serial : cert.class.name.downcase}', // Product SKU.
       'category': 'SSL Certificate', // Product Category or variation.
       'price': '#{li.amount}', // Product price.
       'quantity': '#{qty}' // Product Quantity.
