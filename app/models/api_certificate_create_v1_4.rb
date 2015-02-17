@@ -106,8 +106,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test
-      errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-          (order.amount.cents > api_requestable.funded_account.amount.cents)
+      if credit_card
+      else
+        errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
+            (order.amount.cents > api_requestable.funded_account.amount.cents)
+      end
     end
     if errors.blank?
       if certificate_content.valid? &&
