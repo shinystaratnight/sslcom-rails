@@ -19,6 +19,8 @@ class SslAccount < ActiveRecord::Base
   has_many  :transactions, through: :orders
   has_many  :user_groups
   has_many  :api_certificate_requests, as: :api_requestable, dependent: :destroy
+  has_many  :api_certificate_create_v1_4s, as: :api_requestable, class_name: "ApiCertificateCreate_v1_4"
+  has_many  :api_certificate_retrieves, as: :api_requestable, class_name: "ApiCertificateRetrieve"
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items

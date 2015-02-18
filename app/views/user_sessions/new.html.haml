@@ -7,16 +7,19 @@
     %p
       Login to your SSL.com account to manage your SSL products and services including certificates,
       links, and monitoring and scanning apps. If you currently do not have an account,
-      #{link_to "click here to create a free ssl.com account", new_user_url}.
+      #{link_to "register for a free ssl.com account", new_user_url}.
     #stylized.default_form
       .subheading Credentials
       =render :partial => "form", :object => f
       #forgot_container
         %p#forgot_username_or_password
           Forgot username or password?
-          =link_to 'Click here.', new_password_reset_url
+          =link_to 'Remind me.', new_password_reset_url
+        %p#forgot_username_or_password
+          Not registered yet?
+          =link_to 'Create a new account.', new_password_reset_url
         %p#resend_activation
           Experiencing account activation problems?
-          =link_to 'Click here to have activation notice resent.', activation_notice_users_url
+          =link_to 'Resend activation notice.', activation_notice_users_url
     #button_container
       #next_submit=image_submit_tag "next_bl.gif", alt: "submit"

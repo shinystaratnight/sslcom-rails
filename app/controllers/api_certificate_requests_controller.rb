@@ -170,7 +170,8 @@ class ApiCertificateRequestsController < ApplicationController
           @result.effective_date = @acr.signed_certificate.effective_date
           @result.expiration_date = @acr.signed_certificate.expiration_date
           @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-          @result.site_seal_code = nil #render_to_string partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr}, layout: false
+          @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
+                                                    layout: false))
         end
         @rendered=render_to_string(:template => template)
         @result.update_attribute :response, @rendered

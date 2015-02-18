@@ -75,10 +75,10 @@ class OrdersController < ApplicationController
         timeout(10) do
           @doc=Nokogiri::HTML(open("https://www.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}",
                                    {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
+          @doc.encoding = 'UTF-8' if @doc.encoding.blank?
           @doc.css("form").first.set_attribute("action", "https://www.ssl.com/invoice/ajax/process.php?ref_num=#{
                                     @order.reference_number}")
-          @doc.at_css("script[src*='magic.js']").set_attribute("src", "/invoice/ajax/magic.js")
-          @doc.encoding = 'UTF-8' if @doc.encoding.blank?
+          @doc.at_css("script[src*='magic.js']").set_attribute("src", "/ajax/magic.js")
           #render(inline: doc.to_html) and return
         end
       rescue Exception=>e

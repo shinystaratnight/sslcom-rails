@@ -1081,7 +1081,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def build_comodo_dcv(last_sent, params, options={})
     if certificate.is_ucc?
-      domains_for_comodo,dcv_methods_for_comodo=nil,[]
+      dcv_methods_for_comodo=[]
       new_domains = (options[:certificate_content] ? options[:certificate_content].domains : domains)
       domains_for_comodo = (new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains)).flatten.uniq
       domains_for_comodo.each do |d|
