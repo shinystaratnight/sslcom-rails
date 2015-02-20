@@ -1002,7 +1002,7 @@ class CertificateOrder < ActiveRecord::Base
     {}.tap do |params|
       certificate_content.csr.tap do |csr|
         update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
-        if options[:new].blank? && (certificate_content.preferred_reprocessing? || csr.sent_success || external_order_number)
+        if options[:new].blank? && (csr.sent_success || external_order_number)
           #assume reprocess, will need to look at ucc more carefully
           params.merge!(
             'orderNumber' => external_order_number,
