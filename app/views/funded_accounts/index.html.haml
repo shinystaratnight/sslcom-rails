@@ -11,6 +11,11 @@
     #ip_address="Customer IP Address: #{request.remote_addr}"
 
     -unless @order.blank?
+      -if current_user.is_admin?
+        -u=@order.billable.primary_user
+        %p
+          %em admin only:
+          =remote_login_link(u)
       #order
         Order Details
         #order_ref_num="Reference Number: #{h @order.reference_number}"
