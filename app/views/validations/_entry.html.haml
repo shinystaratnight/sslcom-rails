@@ -105,7 +105,7 @@
                                           %li.applied_doc.tree-connect(alt="#{name}_#{i}_#{vh.id}")
                                             applied: #{name}
                           =render partial: 'validations/dcv', locals: {co: co}
-                  -if current_user.try("is_admin?") || co.is_test? || current_user.ssl_account.is_registered_reseller?
+                  -if co.is_test? || (current_user && (current_user.is_admin? || current_user.ssl_account.is_registered_reseller?))
                     %li &nbsp;
                     %li
                       %strong developer's API
