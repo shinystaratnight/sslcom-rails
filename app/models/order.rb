@@ -178,7 +178,11 @@ class Order < ActiveRecord::Base
       end
     end
 
-    state :fully_refunded
+    state :fully_refunded do
+      event :unrefund, transitions_to: :paid do |complete=true|
+        line_items.each {|li|li.sellable.unrefund! if li.sellable.respond_to?("unrefund!".to_sym)} if complete
+      end
+    end
 
     state :charged_back
 

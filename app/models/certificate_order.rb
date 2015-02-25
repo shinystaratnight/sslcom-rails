@@ -244,7 +244,10 @@ class CertificateOrder < ActiveRecord::Base
       event :refund, :transitions_to => :refunded
     end
 
-    state :refunded #only refund a canceled order
+    state :refunded do #only refund a canceled order
+      event :unrefund, :transitions_to => :paid
+    end
+
     state :charged_back
   end
 

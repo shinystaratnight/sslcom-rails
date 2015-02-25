@@ -9,11 +9,12 @@
         %li
           =link_to 'Certificate Pricing', reseller_tier_url(current_user.ssl_account.reseller.reseller_tier.id)
       %li &nbsp;
-      %li=link_to "Filter by Basic SSL", filter_by_certificate_orders_path("basic")
-      %li=link_to "Filter by EV SSL", filter_by_certificate_orders_path("ev")
-      %li=link_to "Filter by UCC SSL", filter_by_certificate_orders_path("ucc")
-      %li=link_to "Filter by Premium SSL", filter_by_certificate_orders_path("premium")
-      %li=link_to "Filter by Wildcard SSL", filter_by_certificate_orders_path("wildcard")
+      %li Filter Orders:
+      %li=link_to "Basic SSL", filter_by_certificate_orders_path("basic")
+      %li=link_to "EV SSL", filter_by_certificate_orders_path("ev")
+      %li=link_to "UCC SSL", filter_by_certificate_orders_path("ucc")
+      %li=link_to "Premium SSL", filter_by_certificate_orders_path("premium")
+      %li=link_to "Wildcard SSL", filter_by_certificate_orders_path("wildcard")
       -if current_user.ssl_account.reseller
         %li
-          =link_to 'Filter by Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")
+          =link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")

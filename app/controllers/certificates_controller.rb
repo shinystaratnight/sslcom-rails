@@ -95,7 +95,7 @@ class CertificatesController < ApplicationController
       @certificate_order.ssl_account=
         current_user.ssl_account unless current_user.blank?
       @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
-      domains = params[:renewing] ? CertificateOrder.find_by_ref(params[:renewing]).domains : []
+      domains = params[:renewing] ? CertificateOrder.unscoped.find_by_ref(params[:renewing]).domains : []
       @certificate_content = CertificateContent.new(domains: domains)
       respond_to do |format|
           format.html # buy.html.haml

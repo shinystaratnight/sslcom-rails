@@ -38,7 +38,7 @@
                 %tr.alt
                   %td reseller partner
                   %td=r.reseller_tier.label
-                  %td=r.created_at.strftime("%b %d, %Y")
+                  %td=r.created_at.strftime("%b %d, %Y") unless r.created_at.blank?
                   %td class 2
             %table(cellspacing="0")
               %tbody
