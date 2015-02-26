@@ -44,7 +44,7 @@
       %span.title PROGRAMS
       %ul
         %li=link_to "Partners", affiliates_path
-        %li=link_to "RESTful API", restful_apidocs_apply_path
+        %li=link_to "RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"
         -Reseller::TARGETED.each do |t|
           %li=send :link_to, t.titleize, eval("#{t}_path")
     .box

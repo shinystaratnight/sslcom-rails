@@ -20,6 +20,6 @@
 .default_container
   %h3 API Documentation
   %p
-    Click #{link_to "here for the current api documentation", restful_apidocs_apply_url}.
+    Click #{link_to "here for the current api documentation", "http://docs.sslcomapi.apiary.io/", target: "_new"}.
     Currently only reseller partners can access the api. To register for a free reseller account please visit the
     #{link_to "reseller registration page", new_user_url(subdomain: Reseller::SUBDOMAIN)}.

@@ -16,7 +16,7 @@
     %li=link_to "RESTful API", restful_api_url
     -Reseller::TARGETED.each do |t|
       %li=send :link_to, t.titleize, eval("#{t}_url")
-    %li=link_to "Api Documents", restful_apidocs_apply_url
+    %li=link_to "Api Documents", "http://docs.sslcomapi.apiary.io/", target: "_new"
   %ul.section_box
     %h4 Support
     %li=link_to "Resources", "https://support.ssl.com/"
