@@ -42,4 +42,5 @@ stylesheets:
     - public/stylesheets/prettyPhoto.css
   buy_now:
     - public/stylesheets/compiled/buy_now.css
-
+  ssl_seal:
+    - public/stylesheets/compiled/ssl_seal.css

@@ -146,7 +146,7 @@
         -if @certificate.is_ev?
           %li Displays your company name with a green background in the address bar
           %li Displays your company details in the SSL Certificate details
-        %li CAN secure up to 2000 entries (first 3 are free, additional charge per entry after the 3rd entry)
+        %li CAN secure up to 2000 entries (first 3 non-wildcard are free, additional charge per entry after the 3rd entry)
         %li CAN use certificate on unlimited multiple servers concurrently
         %li CAN change domains at anytime or specify them later without fees or costs
         %li An entry CAN be a Fully Qualified Domain Name (FQDN)
@@ -211,13 +211,13 @@
             $
             %span#first_domain_tier_price>
               #{first.price.format}
-            \ for first 3 domains
+            \ for first 3 non-wildcard domains
           %span.label_break
           %span.label_desc
             $
             %span#second_domain_tier_price>
               #{second.price.format}
-            \ ea domain after 3rd
+            \ ea non-wildcard domain after 3rd
           -unless @certificate.is_ev?
             %span.label_desc
               $
