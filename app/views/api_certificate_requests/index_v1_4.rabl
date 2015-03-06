@@ -4,8 +4,6 @@ unless @result.errors.blank?
     attributes :errors
   end
 else
-  collection @results
-  @results.each do |result|
-    node(result.ref.to_sym) {{order_status: result.order_status, registrant: result.registrant, certificates: result.certificates, common_name: result.common_name, subject_alternative_names: result.subject_alternative_names, validations: result.validations, effective_date: result.effective_date, expiration_date: result.expiration_date, algorithm: result.algorithm, domains: result.domains, site_seal_code: result.site_seal_code}}
-  end
+  collection @results, :object_root => false
+  attributes :ref, :order_status, :registrant, :certificates, :common_name, :domains_qty_purchased, :wildcard_qty_purchased, :subject_alternative_names, :validations, :effective_date, :expiration_date, :algorithm, :domains, :site_seal_code
 end

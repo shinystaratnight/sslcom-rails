@@ -204,6 +204,13 @@ class ApiCertificateRequestsController < ApplicationController
           result.order_status = acr.status
           result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
           result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+          if acr.certificate.is_ucc?
+            result.domains_qty_purchased = acr.purchased_domains('all').to_s
+            result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
+          else
+            result.domains_qty_purchased = "1"
+            result.wildcard_qty_purchased = acr.certificate.is_wildcard? ? "1" : "0"
+          end
           if (acr.signed_certificate && result.query_type!="order_status_only")
             result.certificates =
                 acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
