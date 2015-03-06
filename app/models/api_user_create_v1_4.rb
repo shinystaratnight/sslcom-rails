@@ -9,15 +9,17 @@ class ApiUserCreate_v1_4 < ApiUserRequest
 
   def create_user
     params={login: self.login, email: self.email, password: self.password,password_confirmation: self.password}
-    @user = User.new(params)
-    @user.create_ssl_account
-    @user.roles << Role.find_by_name(Role::CUSTOMER)
-    @user.signup!({user: params})
-    @user.activate!({user: params})
-    @user.deliver_activation_confirmation!
-    @user_session = UserSession.create(@user)
-    @current_user_session = @user_session
-    Authorization.current_user = @current_user = @user_session.record
+    @user = User.create(params)
+    if @user.errors.empty?
+      @user.create_ssl_account
+      @user.roles << Role.find_by_name(Role::CUSTOMER)
+      @user.signup!({user: params})
+      @user.activate!({user: params})
+      @user.deliver_activation_confirmation!
+      @user_session = UserSession.create(@user)
+      @current_user_session = @user_session
+      Authorization.current_user = @current_user = @user_session.record
+    end
     @user
   end
 end

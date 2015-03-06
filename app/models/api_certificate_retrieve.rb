@@ -3,7 +3,8 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   RESPONSE_TYPE = %w(zip netscape pkcs7 individually)
   RESPONSE_ENCODING = %w(base64 binary)
 
-  validates :account_key, :secret_key, :ref, presence: true
+  validates :account_key, :secret_key, presence: true
+  validates :ref, presence: true, if: lambda{|c|c.start.blank? || c.end.blank?}
   validates :query_type, presence: true,
     inclusion: {in: ApiCertificateRetrieve::QUERY_TYPE,
     message: "needs to be one of the following: #{QUERY_TYPE.join(', ')}"}
@@ -19,7 +20,8 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   validate :order_exists, if: lambda{|c|c.ref}
 
   attr_accessor :validity_period, :domains, :ext_status, :certificates, :order_status, :certificate_order,
-                :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm, :site_seal_code
+                :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm,
+                :site_seal_code, :domains_qty_purchased, :wildcard_qty_purchased
 
   def initialize(attributes = {})
     super

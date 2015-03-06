@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status
   attr_readonly :login unless MIGRATING_FROM_LEGACY
-  validates :email, email: true #,uniqueness: true #TODO look at impact on checkout
+  validates :email, email: true, uniqueness: true #TODO look at impact on checkout
 
   acts_as_authentic do |c|
     c.validate_email_field = false

@@ -32,7 +32,7 @@ class ApiCertificateRequest < CaApiRequest
       :dcv_methods, :ref, :options]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
-    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant]
+    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
@@ -73,29 +73,42 @@ class ApiCertificateRequest < CaApiRequest
     end
   end
 
-  def ref
-    read_attribute(:ref) || JSON.parse(self.parameters)["ref"]
+  def find_certificate_orders
+    if self.start && self.end
+      if self.api_requestable.users.find(&:is_admin?)
+        self.admin_submitted = true
+        if co=CertificateOrders.range(self.start, self.end)
+          co
+        else
+          errors[:certificate_orders] << "Certificate orders not found for in range #{self.start} to #{self.end}."
+        end
+      else
+        self.api_requestable.certificate_orders.range(self.start, self.end) || (errors[:certificate_orders] << "Certificate orders not found for in range #{self.start} to #{self.end}.")
+      end
+    end
   end
 
-  def validations_from_comodo #if named 'validations', it's executed twice
-    co = find_certificate_order
-    if co.is_a?(CertificateOrder)
-      mdc_validation = ComodoApi.mdc_status(co)
-      ds = mdc_validation.domain_status
-      cc = co.certificate_content
-      cns = co.certificate_names.includes(:domain_control_validations)
-      dcvs = {}.tap do |dcv|
-        (co.all_domains).each do |domain|
-          last = cns.find_all{|cn|cn.name==domain}.map(&:domain_control_validations).flatten.compact.last
-          if (cc.certificate_names.find_by_name(domain) && !last.blank?)
-            dcv.merge! domain=>{"attempted_on"=>last.created_at,
-                                "dcv_method"=>(last.email_address || last.dcv_method),
-                                "status"=>(ds && ds[domain]) ? ds[domain]["status"].downcase : "not yet available"}
-          end
-        end if co.all_domains
-      end
-      dcvs.blank? ? nil : dcvs #be consistent with the api results by returning null if empty
+  def ref
+    read_attribute(:ref) || @ref || JSON.parse(self.parameters)["ref"]
+  end
+
+  def validations_from_comodo(co) #if named 'validations', it's executed twice
+    mdc_validation = ComodoApi.mdc_status(co)
+    ds = mdc_validation.domain_status
+    cc = co.certificate_content
+    cns = co.certificate_names.includes(:domain_control_validations)
+    dcvs = {}.tap do |dcv|
+      (co.all_domains).each do |domain|
+        last = (cns.find_all{|cn|cn.name==domain}).map(&:domain_control_validations).flatten.compact.last ||
+          (co.csr.domain_control_validations.flatten.compact.last if co.csr.common_name==domain)
+        unless last.blank?
+          dcv.merge! domain=>{"attempted_on"=>last.created_at,
+                              "dcv_method"=>(last.email_address || last.dcv_method),
+                              "status"=>(ds && ds[domain]) ? ds[domain]["status"].downcase : "not yet available"}
+        end
+      end if co.all_domains
     end
+    dcvs.blank? ? nil : dcvs #be consistent with the api results by returning null if empty
   end
 
   def retry

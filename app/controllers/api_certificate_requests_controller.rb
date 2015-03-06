@@ -160,7 +160,14 @@ class ApiCertificateRequestsController < ApplicationController
         template = "api_certificate_requests/show_v1_4"
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
-        @result.validations = @result.validations_from_comodo #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+        @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+        if @acr.certificate.is_ucc?
+          @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
+          @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
+        else
+          @result.domains_qty_purchased = "1"
+          @result.wildcard_qty_purchased = @acr.certificate.is_wildcard? ? "1" : "0"
+        end
         if (@acr.signed_certificate && @result.query_type!="order_status_only")
           @result.certificates =
               @acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
@@ -172,6 +179,44 @@ class ApiCertificateRequestsController < ApplicationController
           @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
           @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
                                                     layout: false))
+        end
+        @rendered=render_to_string(:template => template)
+        @result.update_attribute :response, @rendered
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
+  end
+
+  def index_v1_4
+    if @result.save
+      @acrs = @result.find_certificate_orders
+      if @acrs.is_a?(ActiveRecord::Relation)# && @acrs.errors.empty?
+        @results=[]
+        template = "api_certificate_requests/index_v1_4"
+        @acrs.each do |acr|
+          result = ApiCertificateRetrieve.new(ref: acr.ref)
+          result.order_status = acr.status
+          result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+          result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+          if (acr.signed_certificate && result.query_type!="order_status_only")
+            result.certificates =
+                acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
+                    response_encoding: @result.response_encoding) || acr.signed_certificate.to_nginx
+            result.common_name = acr.signed_certificate.common_name
+            result.subject_alternative_names = acr.signed_certificate.subject_alternative_names
+            result.effective_date = acr.signed_certificate.effective_date
+            result.expiration_date = acr.signed_certificate.expiration_date
+            result.algorithm = acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
+            result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>acr},
+                                                      layout: false))
+          end
+          @results<<result
         end
         @rendered=render_to_string(:template => template)
         @result.update_attribute :response, @rendered
@@ -325,7 +370,7 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
-              when "retrieve_v1_3", "show_v1_4"
+              when "retrieve_v1_3", "show_v1_4", "index_v1_4"
                 ApiCertificateRetrieve
               when "quote"
                 ApiCertificateQuote

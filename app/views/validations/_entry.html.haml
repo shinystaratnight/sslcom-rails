@@ -114,6 +114,10 @@
                         %strong Calls To SSL.com API
                       %li
                         %textarea.selectAll=co.ssl_account.api_certificate_requests_string
+                    %li
+                      %strong=link_to "SSL.com API Status/Retrieve Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
+                    %li
+                      %textarea.selectAll=co.to_api_string("show")
                     -if cc.registrant
 
                       %li
@@ -130,10 +134,6 @@
                         %li
                           %textarea.selectAll=co.to_api_string("update_dcv")
                       -if co.external_order_number
-                        %li
-                          %strong=link_to "SSL.com API Status/Retrieve Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
-                        %li
-                          %textarea.selectAll=co.to_api_string("show")
                         %li
                           %strong=link_to "SSL.com API Reprocess Command", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
                         %li

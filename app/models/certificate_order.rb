@@ -801,8 +801,8 @@ class CertificateOrder < ActiveRecord::Base
           end
         when "issued"
           if certificate_content.expiring?
-            if certificate_order.renewal && certificate_order.renewal.paid?
-              "renewed. see #{certificate_order.renewal.ref} for renewal"
+            if renewal && renewal.paid?
+              "renewed. see #{renewal.ref} for renewal"
             else
               "expiring. renew soon"
             end
