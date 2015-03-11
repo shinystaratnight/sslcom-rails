@@ -15,6 +15,6 @@
       %li=link_to "UCC SSL", filter_by_certificate_orders_path("ucc")
       %li=link_to "Premium SSL", filter_by_certificate_orders_path("premium")
       %li=link_to "Wildcard SSL", filter_by_certificate_orders_path("wildcard")
-      -if current_user.ssl_account.reseller
+      -if current_user.ssl_account.reseller || current_user.is_admin?
         %li
           =link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")

@@ -274,10 +274,6 @@ class ApiUserRequestsController < ApplicationController
     @result.request_method = request.request_method
   end
 
-  def find_certificate_order
-    @certificate_order=@result.find_certificate_order
-  end
-
   def decode_error
     render :text => "JSON request could not be parsed", :status => 400
   end

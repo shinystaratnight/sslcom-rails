@@ -194,6 +194,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def index_v1_4
+    @result.end = DateTime.now if @result.end.blank?
     if @result.save
       @acrs = @result.find_certificate_orders
       if @acrs.is_a?(ActiveRecord::Relation)# && @acrs.errors.empty?

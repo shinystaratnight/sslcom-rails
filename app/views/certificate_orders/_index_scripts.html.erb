@@ -14,7 +14,7 @@ jQuery(function($) {
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
         $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/expand.png');
-        $(this).parents().filter('tr').find('.expand').text('expand');
+        $(this).parents().filter('tr').find('.expand').text('open');
         this.expanded = false;
       }
       else{

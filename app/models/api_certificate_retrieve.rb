@@ -4,7 +4,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   RESPONSE_ENCODING = %w(base64 binary)
 
   validates :account_key, :secret_key, presence: true
-  validates :ref, presence: true, if: lambda{|c|c.start.blank? || c.end.blank?}
+  validates :ref, presence: true, if: lambda{|c|c.start.blank? && c.end.blank?}
   validates :query_type, presence: true,
     inclusion: {in: ApiCertificateRetrieve::QUERY_TYPE,
     message: "needs to be one of the following: #{QUERY_TYPE.join(', ')}"}

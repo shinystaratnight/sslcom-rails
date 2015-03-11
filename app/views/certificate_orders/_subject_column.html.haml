@@ -11,7 +11,7 @@
         %a.expand open
         %span :
     -unless co.is_unused_credit?
-      =link_to "certificate", certificate_order_url(co), :title=>"view order for "+cn
+      =link_to co.certificate_content.issued? ? "download" : "details", certificate_order_url(co), :title=>"view order for "+cn
       -unless hide_validation?(co)
         %span :
         =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn

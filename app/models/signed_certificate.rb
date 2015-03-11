@@ -361,8 +361,7 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       tmp << body+"\n"
-      #be careful since depends on filename. It's convenient right now for AddTrust, Comodo, Sslcom
-      certificate_order.bundled_cert_names.sort{|a,b|b<=>a}.each do |file_name|
+      certificate_order.bundled_cert_names.reverse.each do |file_name|
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end

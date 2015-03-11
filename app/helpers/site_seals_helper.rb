@@ -64,15 +64,4 @@ module SiteSealsHelper
         SiteSeal::REPORT_DIMENSIONS : SiteSeal::REPORT_ARTIFACTS_DIMENSIONS}'); return false;",
         onmouseover: "this.style.cursor='pointer'"}
   end
-
-  def css_code(co)
-    '<label class="sslcomseallabel" for="sslcomsealreportVisible">
-    <img src="https://www.ssl.com/images/ssl_seal_1.png?1421863744" width="130px"></img>
-</label>
-<input class="sslcomsealcheckbox" id="sslcomsealreportVisible" type=checkbox></input>
-<div class="sslcomsealoverlay" id="sslcomsealoverlay">
-  <div class="sslcomsealmodal-header"><label for="sslcomsealreportVisible">X</label></div>
-  <iframe class="sslcomsealiframe" seamless src="site_report_site_seal_url(co.site_seal)"></iframe>
-</div>'
-  end
 end

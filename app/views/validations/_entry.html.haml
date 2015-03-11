@@ -115,27 +115,30 @@
                       %li
                         %textarea.selectAll=co.ssl_account.api_certificate_requests_string
                     %li
-                      %strong=link_to "SSL.com API Status/Retrieve Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
+                      %strong=link_to "Status/Retrieve", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
                     %li
                       %textarea.selectAll=co.to_api_string("show")
+                    %li
+                      %strong=link_to "List Orders", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
+                    %li
+                      %textarea.selectAll=co.to_api_string("index")
                     -if cc.registrant
-
                       %li
-                        %strong=link_to "SSL.com API New Command", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
+                        %strong=link_to "New Order", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
                       %li
                         %textarea.selectAll=co.to_api_string("create")
                       -if co.csr
                         %li
-                          %strong=link_to "SSL.com API List DCV Methods Command", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
+                          %strong=link_to "List DCV Methods", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("dcv_methods")
                         %li
-                          %strong=link_to "SSL.com API Update DCV Command", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+                          %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("update_dcv")
                       -if co.external_order_number
                         %li
-                          %strong=link_to "SSL.com API Reprocess Command", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+                          %strong=link_to "Reprocess", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
                         %li
                           %textarea.selectAll=co.to_api_string("update")
                       %li product:
