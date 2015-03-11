@@ -161,6 +161,7 @@ class ApiCertificateRequestsController < ApplicationController
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
         @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+        @result.description = @acr.description
         if @acr.certificate.is_ucc?
           @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
           @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
@@ -205,6 +206,7 @@ class ApiCertificateRequestsController < ApplicationController
           result.order_status = acr.status
           result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
           result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+          result.description = acr.description
           if acr.certificate.is_ucc?
             result.domains_qty_purchased = acr.purchased_domains('all').to_s
             result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s

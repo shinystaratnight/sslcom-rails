@@ -32,7 +32,7 @@ class ApiCertificateRequest < CaApiRequest
       :dcv_methods, :ref, :options]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
-    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end]
+    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
@@ -74,17 +74,19 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def find_certificate_orders
-    if self.start && self.end
-      if self.api_requestable.users.find(&:is_admin?)
-        self.admin_submitted = true
-        if co=CertificateOrders.range(self.start, self.end)
-          co
-        else
-          errors[:certificate_orders] << "Certificate orders not found for in range #{self.start} to #{self.end}."
-        end
-      else
-        self.api_requestable.certificate_orders.range(self.start, self.end) || (errors[:certificate_orders] << "Certificate orders not found for in range #{self.start} to #{self.end}.")
-      end
+    self.start ||= '01-01-1900'
+    self.end ||= DateTime.now
+    is_test = self.test ? "is_test" : "not_test"
+    co = if self.api_requestable.users.find(&:is_admin?)
+      self.admin_submitted = true
+      CertificateOrders.range(self.start, self.end).send(is_test)
+    else
+      self.api_requestable.certificate_orders.range(self.start, self.end).send(is_test)
+    end
+    if co
+      self.filter=="vouchers" ? co.send("unused_credits") : co
+    else
+      (errors[:certificate_orders] << "Certificate orders not found in range #{self.start} to #{self.end}.")
     end
   end
 
@@ -100,7 +102,7 @@ class ApiCertificateRequest < CaApiRequest
     dcvs = {}.tap do |dcv|
       (co.all_domains).each do |domain|
         last = (cns.find_all{|cn|cn.name==domain}).map(&:domain_control_validations).flatten.compact.last ||
-          (co.csr.domain_control_validations.flatten.compact.last if co.csr.common_name==domain)
+          (co.csr.domain_control_validations.flatten.compact.last if (co.csr && co.csr.common_name==domain))
         unless last.blank?
           dcv.merge! domain=>{"attempted_on"=>last.created_at,
                               "dcv_method"=>(last.email_address || last.dcv_method),

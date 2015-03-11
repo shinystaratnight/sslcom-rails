@@ -140,14 +140,15 @@ class CertificateOrder < ActiveRecord::Base
     {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
   scope :range, lambda{|start, finish|
-    if start.is_a? String
-      s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
-      f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
-      start = Date.strptime start, s
-      finish = Date.strptime finish, f
+    if start.is_a?(String)
+      (s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y")
+      start = Date.strptime(start, s)
+    end
+    if finish.is_a?(String)
+      (f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y")
+      finish = Date.strptime(finish, f)
     end
     where{created_at >> (start..finish)}
-
   } do
 
     def amount
