@@ -2,6 +2,14 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 .order_container
+  -if current_user.is_admin?
+    -u=@order.billable.primary_user
+    %div(style="border: solid 1px red; margin: 5px 0 10px; padding: 5px")
+      %em admin only:
+      %ul
+        %li=remote_login_link(u)
+        %li=link_to "completely cancel order", refund_order_url(@order), confirm: "Refund order #{@order.reference_number}?"
+        %li=link_to "completely cancel order and make $#{@order.amount} available to customer", refund_order_url(@order, return_funds: true), confirm: "Cancel order #{@order.reference_number} and make $#{@order.amount} available to customer again?"
   #completed_order_results
     =render partial: 'orders/order_report'
 =render partial: "orders/adwords_conversion" if !@order.ext_affiliate_credited? #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there

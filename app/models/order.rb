@@ -165,9 +165,11 @@ class Order < ActiveRecord::Base
         line_items.each {|li|li.sellable.refund! if li.sellable.respond_to?("refund!".to_sym)} if complete
       end
       event :partial_refund, transitions_to: :paid do |ref|
-        li=line_items.find {|li|li.sellable.ref==ref}
-        decrement! :cents, li.cents
-        li.sellable.refund!
+        li=line_items.find {|li|li.sellable.try(:ref)==ref}
+        if li
+          decrement! :cents, li.cents
+          li.sellable.refund!
+        end
       end
       event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete

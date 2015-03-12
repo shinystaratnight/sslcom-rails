@@ -209,6 +209,7 @@ SslCom::Application.routes.draw do
     end
     member do
       get :invoice
+      get :refund
     end
   end
 

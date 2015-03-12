@@ -4,7 +4,10 @@
     =row_description(cert)
     %ul
       -line_item_certs.each do |co|
-        %li=link_to("#{co.subject} (#{co.ref})", co)
+        %li
+          =link_to("#{co.subject} (#{co.ref})", co)
+          =link_to("[cancel]", refund_order_url(@order, partial: co.ref), confirm: "Cancel item #{co.ref}?")
+          =link_to("[credit #{cert.price.format}]", refund_order_url(@order, return_funds: true, partial: co.ref), confirm: "Cancel item #{co.ref} and make #{cert.price.format} available to customer again?")
   %td.quantity
     =line_item_certs.count
   %td.price= cert.price.format

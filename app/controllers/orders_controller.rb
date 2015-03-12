@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice]
+  before_filter :find_order, :only => [:show, :invoice, :refund]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
@@ -117,6 +117,20 @@ class OrdersController < ApplicationController
 
   def search
     index
+  end
+
+  def refund
+    unless @order.blank?
+      unless params["partial"]
+        @order.billable.funded_account.add_cents(@order.amount.cents) if params["return_funds"]
+        @order.full_refund!
+      else
+        @order.billable.funded_account.add_cents(@order.line_items.find {|li|
+          li.sellable.try(:ref)==params["partial"]}.cents) if params["return_funds"]
+        @order.partial_refund!(params["partial"])
+      end
+    end
+    redirect_to params["partial"] ? order_url(@order) : orders_url
   end
 
   # GET /orders

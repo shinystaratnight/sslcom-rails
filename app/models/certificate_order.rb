@@ -258,7 +258,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def signed_certificate
-    signed_certificates.first
+    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
   end
 
   # def signed_certificates(index=nil)

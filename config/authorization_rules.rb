@@ -101,7 +101,7 @@ end
 privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search, :admin_index]
-  privilege :manage, :includes => [:create, :read, :update, :delete]
+  privilege :manage, :includes => [:create, :read, :update, :delete, :refund]
   privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
   privilege :create, :includes => :new
   privilege :update, :includes => [:edit, :edit_update, :edit_email]
