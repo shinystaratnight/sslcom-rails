@@ -128,9 +128,11 @@ class OrdersController < ApplicationController
         @order.billable.funded_account.add_cents(@order.line_items.find {|li|
           li.sellable.try(:ref)==params["partial"]}.cents) if params["return_funds"]
         @order.partial_refund!(params["partial"])
+        #the whole order is refunded if all lineitems are refunded
+        @order.full_refund! if @order.line_items.select{|li|li.sellable.refunded?}.count==@order.line_items.count
       end
     end
-    redirect_to params["partial"] ? order_url(@order) : orders_url
+    redirect_to @order.fully_refunded? ? orders_url : order_url(@order)
   end
 
   # GET /orders

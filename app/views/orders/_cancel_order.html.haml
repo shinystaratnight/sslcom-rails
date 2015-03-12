@@ -1,0 +1,9 @@
+-if current_user.is_admin?
+  -u=@order.billable.primary_user
+  %div(style="border: solid 1px red; margin: 5px 0 10px; padding: 5px")
+    %em admin only:
+    %ul
+      %li=remote_login_link(u)
+      %li=link_to 'user dashboard', admin_show_user_path(u)
+      %li=link_to "completely cancel order", refund_order_url(@order), confirm: "Refund order #{@order.reference_number}?"
+      %li=link_to "completely cancel order and make $#{@order.amount} available to customer", refund_order_url(@order, return_funds: true), confirm: "Cancel order #{@order.reference_number} and make $#{@order.amount} available to customer again?"
