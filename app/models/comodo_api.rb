@@ -11,6 +11,7 @@ class ComodoApi
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
+  REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
   GET_MDC_DETAILS="https://secure.comodo.net/products/!GetMDCDomainDetails"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
@@ -125,6 +126,15 @@ class ComodoApi
     CaRetrieveCertificate.create(attr)
   end
 
+  def self.revoke_ssl(certificate_order)
+    comodo_options = params_revoke(certificate_order)
+    host = REVOKE_SSL_URL
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    CaRetrieveCertificate.create(attr)
+  end
+
   def self.mdc_status(certificate_order)
     comodo_options = params_domains_status(certificate_order)
     host = GET_MDC_DETAILS
@@ -147,6 +157,11 @@ class ComodoApi
 
   def self.params_domains_status(certificate_order)
     comodo_params = {'showStatusDetails' => "Y", 'orderNumber' => certificate_order.external_order_number}
+    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+  end
+
+  def self.params_revoke(certificate_order)
+    comodo_params = {'revocationReason' => "no longer needed", 'orderNumber' => certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
