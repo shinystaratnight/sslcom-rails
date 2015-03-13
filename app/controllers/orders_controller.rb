@@ -120,16 +120,32 @@ class OrdersController < ApplicationController
   end
 
   def refund
+    performed="canceled #{'partial ' if params["partial"]}order"
     unless @order.blank?
       unless params["partial"]
-        @order.billable.funded_account.add_cents(@order.amount.cents) if params["return_funds"]
+        if params["return_funds"]
+          @order.billable.funded_account.add_cents(@order.amount.cents)
+          performed << " and made $#{@order.amount} available to customer"
+        end
         @order.full_refund!
+        SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
+        @order.line_items.each{|li|
+          OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if li.sellable.try("external_order_number")
+          OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.notes =~ /DV#(\d+)/
+        }
       else
-        @order.billable.funded_account.add_cents(@order.line_items.find {|li|
-          li.sellable.try(:ref)==params["partial"]}.cents) if params["return_funds"]
-        @order.partial_refund!(params["partial"])
-        #the whole order is refunded if all lineitems are refunded
-        @order.full_refund! if @order.line_items.select{|li|li.sellable.refunded?}.count==@order.line_items.count
+        line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
+        @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
+        performed << " and made $#{line_item.amount} available to customer"
+        #at least 1 lineitem needs to remain unrefunded
+        if @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count-1)
+          @order.full_refund!
+        else
+          @order.partial_refund!(params["partial"])
+        end
+        SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
+        OrderNotifier.request_comodo_refund("refunds@ssl.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver if line_item.sellable.try("external_order_number")
+        OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if line_item.sellable.notes =~ /DV#(\d+)/
       end
     end
     redirect_to @order.fully_refunded? ? orders_url : order_url(@order)

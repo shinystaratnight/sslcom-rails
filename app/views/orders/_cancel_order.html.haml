@@ -1,9 +1,25 @@
 -if current_user.is_admin?
+  :javascript
+    function refund_reason(return_funds)
+    {
+      label="Cancel order #{@order.reference_number}";
+      if(return_funds==true)
+        label+=" and make $#{@order.amount} available to customer again";
+      var reason = prompt(label+"? Reason for refund.", '');
+      if (reason == null || reason=="")
+        return;
+      else
+        if(return_funds==true)
+          window.location = '#{refund_order_url(@order, return_funds: true)}&refund_reason='+encodeURIComponent(reason);
+        else
+          window.location = '#{refund_order_url(@order)}?refund_reason='+encodeURIComponent(reason);
+    }
   -u=@order.billable.primary_user
   %div(style="border: solid 1px red; margin: 5px 0 10px; padding: 5px")
     %em admin only:
     %ul
       %li=remote_login_link(u)
       %li=link_to 'user dashboard', admin_show_user_path(u)
-      %li=link_to "completely cancel order", refund_order_url(@order), confirm: "Refund order #{@order.reference_number}?"
-      %li=link_to "completely cancel order and make $#{@order.amount} available to customer", refund_order_url(@order, return_funds: true), confirm: "Cancel order #{@order.reference_number} and make $#{@order.amount} available to customer again?"
+      %li=link_to_function "completely cancel order", "refund_reason(false)"
+      -if @order.amount.cents > 0
+        %li=link_to_function "completely cancel order and make $#{@order.amount} available to customer", "refund_reason(true)"

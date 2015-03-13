@@ -71,6 +71,14 @@ class OrderNotifier < ActionMailer::Base
           to:    contact
   end
 
+  def request_comodo_refund(contact, external_order_number, refund_reason)
+    @refund_reason = refund_reason
+    @external_order_number = external_order_number
+    mail  subject:       "Cancel and refund #{external_order_number}",
+          from:          "support@ssl.com",
+          to:    contact
+  end
+
   def validation_approve(contact, certificate_order)
     setup(contact, certificate_order)
     mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Been Approved",
