@@ -138,14 +138,22 @@ class OrdersController < ApplicationController
         @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
         performed << " and made $#{line_item.amount} available to customer"
         #at least 1 lineitem needs to remain unrefunded
-        if @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count-1)
+        if @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
           @order.full_refund!
         else
           @order.partial_refund!(params["partial"])
         end
         SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
-        OrderNotifier.request_comodo_refund("refunds@ssl.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver if line_item.sellable.try("external_order_number")
-        OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if line_item.sellable.notes =~ /DV#(\d+)/
+        if line_item.sellable.try("external_order_number")
+          OrderNotifier.request_comodo_refund("refunds@comodo.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver
+          OrderNotifier.request_comodo_refund("support@ssl.com", line_item.sellable.external_order_number, params["refund_reason"], "norepy@ssl.com").deliver
+          ComodoApi.revoke_ssl(line_item.sellable, refund_reason: params["refund_reason"])
+        end
+        if line_item.sellable.notes =~ /DV#(\d+)/
+          OrderNotifier.request_comodo_refund("refunds@comodo.com", $1, params["refund_reason"]).deliver
+          OrderNotifier.request_comodo_refund("support@ssl.com", $1, params["refund_reason"], "norepy@ssl.com").deliver
+          ComodoApi.revoke_ssl(nil, refund_reason: params["refund_reason"], external_order_number: $1)
+        end
       end
     end
     redirect_to @order.fully_refunded? ? orders_url : order_url(@order)

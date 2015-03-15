@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email, 
     :edit_password, :update, :login_as, :admin_update, :admin_show,
-    :consolidate, :dup_info]
+    :consolidate, :dup_info, :adjust_funds]
 #  before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, attribute_check: true
@@ -88,6 +88,11 @@ class UsersController < ApplicationController
   end
 
   def dup_info
+  end
+
+  def adjust_funds
+    @user.ssl_account.funded_account.add_cents(params["amount"].to_i*100)
+    redirect_to admin_show_user_path(@user)
   end
 
   def consolidate

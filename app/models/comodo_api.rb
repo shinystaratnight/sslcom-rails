@@ -126,8 +126,8 @@ class ComodoApi
     CaRetrieveCertificate.create(attr)
   end
 
-  def self.revoke_ssl(certificate_order)
-    comodo_options = params_revoke(certificate_order)
+  def self.revoke_ssl(certificate_order,options={})
+    comodo_options = params_revoke(certificate_order, options)
     host = REVOKE_SSL_URL
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,
@@ -160,8 +160,9 @@ class ComodoApi
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
-  def self.params_revoke(certificate_order)
-    comodo_params = {'revocationReason' => "no longer needed", 'orderNumber' => certificate_order.external_order_number}
+  def self.params_revoke(certificate_order, options)
+    comodo_params = {'revocationReason' => options[:refund_reason],
+                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 

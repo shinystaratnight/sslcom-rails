@@ -68,6 +68,7 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
+                        %li available funds: $#{user.ssl_account.funded_account.amount}
                         -if permitted_to? :admin_manage, user
                           %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_users_url

@@ -88,6 +88,7 @@ SslCom::Application.routes.draw do
       get :admin_show
       get :dup_info
       post :consolidate
+      get :adjust_funds
     end
   end
 
@@ -228,22 +229,15 @@ SslCom::Application.routes.draw do
 
   match '/register/:activation_code' => 'activations#new', :as => :register
   match '/activate/:id' => 'activations#create', :as => :activate
-  match 'get_free_ssl' => 'funded_accounts#create_free_ssl',
-    :as => :create_free_ssl
-  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds',
-    :as => :allocate_funds
+  match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl
+  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
   match 'secure/allocate_funds_for_order/:id' =>
     'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds',
-    :as => :deposit_funds
-  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds',
-    :as => :confirm_funds
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds',
-    :as => :apply_funds
-  match 'users/new/affiliates' => 'users#new',
-    :as => :affiliate_signup
-  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders',
-    :as => :affiliate_orders
+  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds
+  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds
+  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
+  match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup
+  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
   match 'reseller' => 'site#reseller', :as => :reseller,

@@ -1,0 +1,11 @@
+-content_for :title, "Edit Funded Account Amount"
+.reseller_registration_profile
+  %h3 Edit Funded Account Amount
+  =form_for @funded_account do |f|
+    =f.error_messages
+    #stylized.default_form
+      .clearfix.form_input
+        = f.label :amount, "Email<span class='label_desc'>receives activation</span>".html_safe
+        = f.text_field_tag :amount, :size=>HTML_TEXT_FIELD_SIZE
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"

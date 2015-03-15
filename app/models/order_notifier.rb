@@ -71,11 +71,11 @@ class OrderNotifier < ActionMailer::Base
           to:    contact
   end
 
-  def request_comodo_refund(contact, external_order_number, refund_reason)
+  def request_comodo_refund(contact, external_order_number, refund_reason, from="support@ssl.com")
     @refund_reason = refund_reason
     @external_order_number = external_order_number
     mail  subject:       "Cancel and refund #{external_order_number}",
-          from:          "support@ssl.com",
+          from:          from,
           to:    contact
   end
 

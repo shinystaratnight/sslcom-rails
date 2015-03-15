@@ -44,14 +44,26 @@
                   %tbody
                     %tr
                       %td(colspan="6")
+                        -if current_user.is_admin?
+                          :javascript
+                            function adjust_funds_#{u.id}()
+                            {
+                              var amount = prompt("Amount to adjust (in USD)?", '');
+                              if (amount == null || amount=="")
+                                return;
+                              else
+                                window.location = '#{adjust_funds_user_url(u)}?amount='+encodeURIComponent(amount);
+                            }
                         .half_width_box
                           %ul
                             %li
                               %strong manage account
+                            %li available funds: $#{u.ssl_account.funded_account.amount}
                             %li=remote_login_link(u)
                             %li=link_to 'user dashboard', admin_show_user_path(u)
                             %li=link_to 'edit email address', edit_email_user_url(u)
                             %li=link_to 'change password', edit_password_user_url(u)
+                            %li=link_to_function "change available funds amount", "adjust_funds_#{u.id}()"
                         .half_width_box
                           .adjust_status
                             %ul
