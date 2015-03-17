@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email, 
     :edit_password, :update, :login_as, :admin_update, :admin_show,
-    :consolidate, :dup_info, :adjust_funds]
+    :consolidate, :dup_info, :adjust_funds, :change_login]
 #  before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, attribute_check: true
@@ -91,8 +91,24 @@ class UsersController < ApplicationController
   end
 
   def adjust_funds
-    @user.ssl_account.funded_account.add_cents(params["amount"].to_i*100)
+    amount=params["amount"].to_i*100
+    @user.ssl_account.funded_account.add_cents(amount)
+    SystemAudit.create(owner: current_user, target: @user.ssl_account.funded_account,
+                       notes: "amount (in USD): #{amount.to_s}",
+                       action: "FundedAccount#add_cents")
     redirect_to admin_show_user_path(@user)
+  end
+
+  def change_login
+    old=@user.login
+    @user.login=params["login"]
+    if(@user.valid?)
+      User.change_login old, params["login"]
+      SystemAudit.create(owner: current_user, target: @user,
+                         notes: "changed login from #{old} to #{params["login"]}",
+                         action: "UserController#change_login")
+    end
+    render action: :admin_show
   end
 
   def consolidate

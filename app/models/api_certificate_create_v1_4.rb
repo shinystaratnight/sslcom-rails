@@ -238,13 +238,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def send_dcv(cc)
     if self.debug=="true"
-      cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
+      cc.dcv_domains({domains: self.domains.keys, emails: self.dcv_candidate_addresses,
                       dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
       job_group = Delayed::JobGroups::JobGroup.create!
       job_group.enqueue(DomainJob.new(cc, {ca_certificate_id: self.ca_certificate_id, send_to_ca: self.send_to_ca},
-                                      self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
+                                      self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains.keys,
                                       self.dcv_candidate_addresses))
       job_group.mark_queueing_complete
     end

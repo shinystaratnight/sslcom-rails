@@ -1069,11 +1069,9 @@ class CertificateOrder < ActiveRecord::Base
           end
         end
         if certificate.is_ucc?
-          domains=certificate_content.domains.flatten unless certificate_content.domains.blank?
           params.merge!(
-              # 'domainNames'=>domains.blank? ? csr.common_name : ([csr.common_name]+domains).uniq.join(","),
-              'primaryDomainName'=>csr.common_name,
-              'maxSubjectCNs'=>1
+            'primaryDomainName'=>csr.common_name,
+            'maxSubjectCNs'=>1
           )
           params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
         end

@@ -1,3 +1,4 @@
+=error_messages_for :user
 -if @user.ssl_account.is_registered_reseller?
   =render :partial=>'reseller', :locals=>{:user=>@user}
 -elsif @user.is_standard?

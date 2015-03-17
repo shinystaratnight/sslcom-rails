@@ -120,6 +120,9 @@ class Csr < ActiveRecord::Base
   end
 
   def enclose_with_tags(csr)
+    #remve any possible private key submits
+    csr.gsub!(/-----BEGIN RSA PRIVATE KEY-----.+/,"")
+    csr.strip!
     csr.gsub!(/-+BEGIN NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+BEGIN NEW CERTIFICATE REQUEST-+/
     csr.gsub!(/-+END NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+END NEW CERTIFICATE REQUEST-+/
     unless (csr =~ Regexp.new(BEGIN_TAG))

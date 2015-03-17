@@ -89,6 +89,7 @@ SslCom::Application.routes.draw do
       get :dup_info
       post :consolidate
       get :adjust_funds
+      get :change_login
     end
   end
 
