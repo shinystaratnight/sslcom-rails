@@ -1,0 +1,495 @@
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(function($) {
+  $.domains = function(textArea){
+    textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
+      replace('_','').
+      replace(/(\s+|^)([^<%='\*' if @certificate.allow_wildcard_ucc?%>\w])/g, "$1").
+      replace(/[^\s\n\w\.\-<%='\*' if @certificate.allow_wildcard_ucc?%>]/g, "");
+    <%if @certificate.allow_wildcard_ucc?-%>
+      textArea.value = textArea.value.replace(/(\w)\*/g, "$1");
+      textArea.value = textArea.value.replace(/(\*)[^\.]/g, "$1");
+    <%end-%>
+    domains = textArea.value.split(/\s/);
+    <%if @certificate.is_premium_ssl?-%>
+      domains = domains.slice(0,3);
+      textArea.value = domains.join(' ');
+    <%end-%>
+    return domains.filter(Boolean);
+  };
+  $('#previous_csr').change(function(){
+    if($(this).is(':checked'))
+      $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
+    else
+      $('#certificate_order_certificate_contents_attributes_0_signing_request').val("");
+    $('#certificate_order_certificate_contents_attributes_0_signing_request').change();
+  });
+  $('span.use_previous_csr').click(function(){
+    $('#previous_csr').click();
+  });
+  $.adjust_domain_pricing = function(textArea){
+      domains = $.domains(textArea);
+      $.removeFromArray("",domains);
+      $('.order_amount_desc span').text((domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>) ? domains.length : <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>);
+      $.update_order_pricing();
+  };
+  $("textarea[name*=signing_request]").click(function(){
+    $(this).select();
+  });
+  <%unless @certificate.is_code_signing?%>
+    $("textarea[name*=signing_request]").bind("change keyup paste", function() {
+      if($(this).val()==""){
+        $(".flash_message").remove();
+        return;
+      }
+      $.ajax({
+        url: "<%=parse_csr_certificate_orders_path%>",
+        data: {csr: $(this).val(), certificate: "<%=@certificate.product%>"},
+        type: "POST",
+        success: function(data, status){
+          $(".flash_message").remove();
+          var ajax_errors="";
+          if((typeof data.certificate_content.csr.errors.base != 'undefined') && (data.certificate_content.csr.errors.base.length>0)){
+            $.each(data.certificate_content.csr.errors.base, function(key, value){
+              ajax_errors+="<li>"+value+"</li>";
+            });
+          }
+          if((typeof data.certificate_content.errors.base != 'undefined') && (data.certificate_content.errors.base.length>0))
+            $.each(data.certificate_content.errors.base, function(key, value){
+              ajax_errors+="<li>"+value+"</li>";
+            });
+          if((typeof data.certificate_content.errors.signing_request != 'undefined') && (data.certificate_content.errors.signing_request.length>0))
+            $.each(data.certificate_content.errors.signing_request, function(key, value){
+              ajax_errors+="<li>signing request "+value+"</li>";
+            });
+          if(ajax_errors!="")
+            $(".cert_reqs").after("<div class='flash_message error'><span><ul class='ajax_info'>"+ajax_errors+"</ul></span></div>");
+          else{
+            if((typeof data.certificate_content.csr.common_name != 'undefined')){
+              $(".cert_reqs").after("<div class='flash_message notice'><span class='ajax_info'>common name field in csr is: "+data.certificate_content.csr.common_name+"</span></div>");
+            }
+          <%if @certificate.is_ucc?-%>
+            if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
+              additional_domains = $("textarea[name*=additional_domains]").text() + data.certificate_content.csr.subject_alternative_names;
+              $("textarea[name*=additional_domains]").val($.unique(additional_domains.split(" ")).join(" "));
+              $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
+            }
+          <%end-%>
+          }
+        }
+      });
+    });
+  <%end%>
+  $.update_order_pricing = function(){
+    domains_cost = 0.0
+    server_license_cost = 0.0;
+    duration_index = <%= @certificate_order.certificate ? @certificate_order.certificate_duration(:years) : "$(':radio[name*=duration]:checked').val();".html_safe %>
+    duration_cost = durations[duration_index-1];
+    <%if @certificate.is_ucc? || @certificate.is_wildcard?%>
+      server_license_cost = licenses[duration_index-1] * $('#certificate_order_server_licenses').val();
+      included = "";
+      if(server_license_cost==0)
+        included = " (included)";
+      $('#server_license_cost_ea').text(server_license_cost.toFixed(2)+included);
+      <%if @certificate.is_ucc?%>
+        wildcard_domains = $.grep(domains, function( n, i ) {
+          return ( n.indexOf('*.')==0);
+        }).filter(Boolean);
+        if((domains.length - wildcard_domains.length) > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>){
+          num_domains_buy = domains.length - wildcard_domains.length - <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>;
+          domains_cost = durations[duration_index-1][1]*num_domains_buy;
+        }
+        <%ratio = ("* "+@certificate_order.duration_remaining.to_s) if @certificate_order.signed_certificates.try(:last)%>
+        $('#first_domain_tier_price').text((durations[duration_index-1][0]<%=ratio%>).toFixed(2));
+        $('#second_domain_tier_price').text((durations[duration_index-1][1]<%=ratio%>).toFixed(2));
+        <%unless @certificate.is_ev? or @certificate.is_premium_ssl?%>
+          domains_cost = domains_cost + durations[duration_index-1][2]*wildcard_domains.length;
+          $('#third_domain_tier_price').text((durations[duration_index-1][2]<%=ratio%>).toFixed(2));
+        <%end%>
+      <%end%>
+    <%end%>
+    $('#calculated_price').text('$'+((parseFloat(duration_cost)+
+      parseFloat(domains_cost)+parseFloat(server_license_cost)).toFixed(2))+
+      " USD");
+  };
+    var show_csr=true;
+  $.build_cart_item = function(){
+    return {"<%=ShoppingCart::PRODUCT_CODE%>" : $('#certificate_product').val() ,
+      "<%=ShoppingCart::DURATION%>" : $(':radio[name*=duration]:checked').val(),
+      <%if instance_variable_get('@'+CertificateOrder::RENEWING)-%>
+        "<%=ShoppingCart::RENEWAL_ORDER%>" : '<%=instance_variable_get('@'+CertificateOrder::RENEWING).ref%>',
+      <%end-%>
+      "<%=ShoppingCart::LICENSES%>" :
+      <%if @certificate.is_ucc? || @certificate.is_wildcard?-%>
+      $('#certificate_order_server_licenses').val()
+      <%else%>
+      "0"
+      <%end%>
+      , "<%=ShoppingCart::DOMAINS%>" :
+      <%if @certificate.is_ucc?%>
+      $.domains($('textarea[id$=domains]')[0]).join(" ")
+      <%else%>
+      "0"
+      <%end%>
+      , "<%=ShoppingCart::AFFILIATE%>" : $.get_affiliate()};
+  };
+  $.change_cart_items = function(add_or_remove){
+    add = (add_or_remove=="add") ? true : false;
+    configured = $.build_cart_item();
+    $.add_remove_cart_items(add, configured);
+  };
+
+  if ($.browser === undefined) {
+    $.browser = (function() {
+      var ua_match = function(ua) {
+                ua = ua.toLowerCase();
+                var match = /(chrome)[ \/]([\w.]+)/.exec(ua)
+                        || /(webkit)[ \/]([\w.]+)/.exec(ua)
+                        || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua)
+                        || /(msie) ([\w.]+)/.exec(ua)
+                        || ua.indexOf("compatible") < 0
+                        && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) || [];
+                return {
+                  browser: match[1] || "",
+                  version: match[2] || "0"
+                }
+              },
+              matched = ua_match(navigator.userAgent),
+              browser = {};
+      if (matched.browser) {
+        browser[matched.browser] = true;
+        browser.version = matched.version
+      }
+      if (browser.chrome) browser.webkit = true;
+      else if (browser.webkit) browser.safari = true;
+      return browser
+    })()
+  }
+  var defaultMasks = {
+    pint: /[\d]/,
+    'int': /[\d\-]/,
+    pnum: /[\d\.]/,
+    money: /[\d\.\s,]/,
+    num: /[\d\-\.]/,
+    hex: /[0-9a-f]/i,
+    email: /[a-z0-9_\.\-@]/i,
+    alpha: /[a-z_]/i,
+    alphanum: /[a-z0-9_]/i
+  };
+  var Keys = { TAB: 9, RETURN: 13, ESC: 27, BACKSPACE: 8, DELETE: 46 };
+  var SafariKeys = { 63234: 37, 3235: 39, 63232: 38, 63233: 40, 63276: 33,
+    63277: 34, 63272: 46, 63273: 36, 63275: 35 };
+  var isNavKeyPress = function(e) {
+    var k = e.keyCode;
+    k = $.browser.safari ? (SafariKeys[k] || k) : k;
+    return (k >= 33 && k <= 40)
+            || k == Keys.RETURN
+            || k == Keys.TAB
+            || k == Keys.ESC
+  };
+  var isSpecialKey = function(e) {
+    var k = e.keyCode;
+    var c = e.charCode;
+    return k == 9 || k == 13 || k == 27 || k == 16 || k == 17
+            || (k >= 18 && k <= 20)
+            || ($.browser.opera && !e.shiftKey
+            && (k == 8 || (k >= 33 && k <= 35) || (k >= 36 && k <= 39)
+            || (k >= 44 && k <= 45)))
+  };
+  var getKey = function(e) {
+    var k = e.keyCode || e.charCode;
+    return $.browser.safari ? (SafariKeys[k] || k) : k
+  };
+  var getCharCode = function(e) {
+    return e.charCode || e.keyCode || e.which
+  };
+  $.fn.filter = function(re) {
+    return this.keypress(function(e) {
+      if (e.ctrlKey || e.altKey) {
+        return
+      }
+      var k = getKey(e);
+      if ($.browser.mozilla && (isNavKeyPress(e) || k == Keys.BACKSPACE
+              || (k == Keys.DELETE && e.charCode == 0))) return;
+      var c = getCharCode(e),
+              cc = String.fromCharCode(c),
+              ok = true;
+      if (!$.browser.mozilla && (isSpecialKey(e) || !cc)) return;
+      if ($.isFunction(re)) ok = re.call(this, cc);
+      else ok = re.test(cc);
+      if (!ok) e.preventDefault();
+    });
+  };
+  $.extend($.fn.filter, {
+    defaults: {
+      masks: defaultMasks
+    },
+    version: 1.7
+  });
+
+
+  durations = new Array(<%=@certificate.num_durations%>);
+  <%c = -1%>
+  <%@certificate.num_durations.times do |i| -%>
+  <%if @certificate.is_ucc?-%>
+  durations[<%=i%>] = new Array(<%=@certificate.num_domain_tiers%>);
+  <%@certificate.num_domain_tiers.times do |j|%>
+  durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains(true)[i][j].price*((j==0)?3:1))%>;
+  <%end%>
+  <%else -%>
+  durations[<%=i%>] = <%=@certificate.items_by_duration[i].price%>;
+  <%end -%>
+  <%end -%>
+  <%if @certificate.is_ucc? || @certificate.is_wildcard?%>
+  licenses = new Array(<%=@certificate.num_durations%>);
+  <%@certificate.num_durations.times do |i| -%>
+  licenses[<%=i%>] = <%=@certificate.items_by_server_licenses[i].price%>;
+  <%end -%>
+  <%end%>
+  var duration = 0;
+
+  $('#addInput').filter(/[a-z0-9.*-]/i);
+
+  $('input[type="radio"]').click(function() { //Sets the duration
+    duration = $(":radio[name='certificate_order[duration]']:checked")
+            .index(":radio[name='certificate_order[duration]']");
+    calculate();
+  });
+
+  function isWildcard(str) {
+    var periods = str.match(/\./g); //Gets an array of all the periods
+    var wcard = str.match(/\*\./g); //Gets an array of all *.
+    if (!periods) return false; //Checks to see if there are any period
+    else if (periods.length != 2) return false; //If there aren't exactly 2 periods, the wildcard is invalid
+    if (wcard) return ((wcard.length === 1) && isValid(str)); //Check if there is a single *., and if the domain is valid
+    return false;
+  }
+
+  function isValid(str) {
+    var periods = str.match(/\./g); //Gets an array of all the periods
+    var wcards = str.match(/\*/g); //Gets an array of all the *
+    var wcardsp = /\*\./.test(str); //Gets an array of all the *.
+    if (/[a-z0-9\-]\*|\*[a-z0-9\-]/ig.test(str)) return false; //Check if there is a * not paired with a .
+    if (/\.\./.test(str)) return false; //Check for double periods
+    if (!periods) return false; //If there are no periods, it's not valid
+    else if (periods.length > 2) return false; //If there's more than 2 periods, it's not valid
+    else if (wcards)
+      if (wcards.length != 1
+              || periods.length != 2
+              || (wcards.length == 1
+              && !wcardsp)) return false; //Are more than one *., not 2 periods, or there is a * without a .
+    return ((/^(\*\.)?([a-z\d](-*[a-z\d])*)(\.([a-z\d](-*[a-z\d])*))*$/i.test(str))
+    && str != ''); //Valid domain regex, or if it's not empty
+  }
+
+  function add(target, str) {
+    if (!doesExist(str))
+      target.prepend('<div class="domain"><div class="text '
+      + ((isValid(str)) ?
+              ((isWildcard(str)) ? 'wildcard' : 'valid') : 'invalid')
+      + '" value="' + str.toLowerCase() + '">' + str.toLowerCase()
+      + '</div><div class="edit domainButton">&#9998;</div>'
+      +	'<div class="delete domainButton">X</div></div>');
+  }
+
+  $('#addInput').on('keyup', function(e) {
+    if (/^(32|13|9)$/.test(e.which) || /\s/.test($("#addInput").val())) $("#add").click();
+  });
+
+  $('#add').on('click', function(e) {
+    var t = $("#addInput");
+    if (t.val() != "") {
+      $.each(t.val().split(/\s+/), function(index, value) {
+        add($('#domains'), value);
+      });
+      t.val("");
+      calculate();
+    }
+  });
+
+  $('#domains').on('keydown', 'input.text', function(e){
+    $(this).filter(/[a-z0-9.*-]/i);
+  });
+
+  $('#domains').on('keyup', 'input.text', function(e) {
+    if (isValid($(this).val())) {
+      if (isWildcard($(this).val()))
+        $(this).addClass("wildcard")
+                .removeClass("invalid").removeClass("valid");
+      else
+        $(this).addClass("valid")
+                .removeClass("invalid").removeClass("wildcard");
+    } else
+      $(this).addClass("invalid")
+              .removeClass("wildcard").removeClass("valid");
+    if (/^(32|13|9)$/.test(e.which)) $(this).siblings(".accept").click();
+  });
+
+  $('#domains').on('click', 'div.text', function() {
+    $(this).siblings(".edit").addClass("superVisible");
+    $(this).addClass("editing");
+    $(this).text("\u2713");
+    $(this).changeElementType("input");
+    $(this).siblings(".edit").addClass("accept").removeClass("edit");
+  });
+
+  $('#domains').on('click', '.edit', function() {
+    $(this).addClass("superVisible");
+    $(this).text("\u2713");
+    $(this).addClass("accept").removeClass("edit");
+    $(this).siblings(".text").addClass("editing").changeElementType("input");
+  });
+
+  $('#domains').on('click', '.accept', function() {
+    var t = $(this).siblings(".text");
+    var txt = t.val();
+    if (txt === "") alert("Entries cannot be empty!");
+    else if (!doesExist(txt)) {
+      $(this).removeClass("superVisible");
+      t.replaceWith('<div class="text '
+      + ((isValid(txt)) ?
+              ((isWildcard(txt)) ? 'wildcard' : 'valid') : 'invalid')
+      + '" value="' + txt.toLowerCase() + '">'
+      + txt.toLowerCase() + '</div>');
+      $(this).text("\u270E");
+      $(this).removeClass("editing").removeClass("accept").addClass("edit");
+      calculate();
+    } else alert(txt + " already exists");
+  });
+
+  $('#domains').on('click', '.delete', function() {
+    $(this).parent().remove();
+    calculate();
+  });
+
+  $.fn.changeElementType = function(newType) {
+    var attrs = {};
+    $.each(this[0].attributes, function(idx, attr) {
+      attrs[attr.nodeName] = attr.nodeValue;
+    });
+    this.replaceWith(function() {
+      return $("<" + newType + "/>", attrs).append($(this).contents());
+    });
+  };
+
+  function doesExist(str) {
+    var exists = false;
+    $.each($("#domains").children(".domain").children(".text"),
+            function(index, value) {
+              if ((str === $(this).val() || str === $(this).text()) && !$(this).hasClass("editing")) exists = true;
+            });
+    return exists;
+  }
+
+  function calculate() {
+    var cost = durations[duration][0];
+    var domains = 0;
+    $.each($("#domains").children(), function(index, value) {
+      if ($(this).children(".text").hasClass("valid")) {
+        domains++;
+        if (domains > 3) cost += durations[duration][1];
+      }
+      else if ($(this).children(".text").hasClass("wildcard"))
+        cost += durations[duration][2];
+    });
+    $("#calculated_price").text(cost.toFixed(2));
+  }
+
+  calculate();
+
+  $(document).ready(function() {
+    var tags = $('input[class*=mask],textarea[class*=mask]');
+    for (var key in $.fn.filter.defaults.masks) {
+      tags.filter('.mask-' + key).filter($.fn.filter.defaults.masks[key])
+    }
+    domains = [];
+    $('textarea[id$=domains]').keyup(function () {
+      $.adjust_domain_pricing(this);
+    });
+    $(':radio[name*=duration]').click(function(){
+      duration_index = $(':radio[name*=duration]:checked').val();
+      $.update_order_pricing();
+    });
+    $('#certificate_order_server_licenses').click(function(){
+      $.update_order_pricing();
+    });
+    $("li:contains('<%=CertificateContent::NOT_VALID_ISO_CODE%>')")
+      .append(" <a href='<%=country_codes_csrs_path%>'>Please visit this link</a> for accepted country codes.");
+    var profile_id = "";
+    $('#expand_register_card').toggle(
+      function(event){
+          $('#register_card_form').fadeIn();
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
+          $(event.target).text('Click here to hide form');
+          profile_id = $(':radio[id*=funded_account_funding_source]:checked').attr("id");
+          $(':radio[id*=funded_account_funding_source]').removeAttr('checked');},
+      function(event){
+          $('#register_card_form').fadeOut();
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+          $(event.target).text('Click here to add a new credit card')
+          $(':radio[id*='+profile_id+']').attr("checked","checked")}
+      );
+    $.last_delete_clicked=function(){
+      if($('.delete_billing_profile').size() <= 1)
+        $('.funding_sources_head, #existing_credit_cards').empty();
+      $('#register_card_form').fadeIn();
+    };
+    $('#funded_account_amount').keyup(function () {
+      amount = this.value
+      this.value = this.value.replace(/((\.\d\d).*)/g, "$2").replace(/[^0-9\.]/g,'');
+      $.update_balance_after_load();
+    });
+    $('#register_card_form').click(function(){
+      $(':radio[id*=funded_account_funding_source]').removeAttr('checked');
+    });
+    $(':radio[id*=funded_account_funding_source]').click(function(){
+      $('#register_card_form').fadeOut();
+    });
+    $('.has_csr_container').click(function(){
+      $(this).siblings().filter(':radio[name*=has_csr]').click();
+    });
+    $(':radio[name*=has_csr]').click(function(){
+      if($(this).val()=="false"){
+        show_csr=false;
+        $('#csr_section').hide();
+        $('#form_progress_indicator').fadeOut();
+      }
+      else{
+        show_csr=true;
+        $('#csr_section').show();
+        $('#form_progress_indicator').fadeIn();
+      }
+    });
+    <%if !@certificate_order.is_unused_credit?%>
+    $('form').submit(function(){
+      //add to cart if csr is not ready
+      if($(':radio[name*=has_csr]').length!=0 &&
+        $(':radio[name*=has_csr]:checked').val()=="false"){
+        $('textarea[name*=signing_request]').remove();
+        $.change_cart_items("add");
+        window.location="<%=show_cart_orders_url%>";
+        return false;}
+    });
+    if($(':radio[name*=has_csr]:checked').val()=="false"){
+      show_csr=false;
+      $('#csr_section').hide();
+      $('#form_progress_indicator').hide();
+    }
+    $('.add_to_cart_button').click(function(){
+      $.change_cart_items("add");
+    });
+    $('.remove_from_cart_button').click(function(){
+      $.change_cart_items("remove");
+    });
+    <%end%>
+    <%if @certificate.is_ucc?-%>
+      $.adjust_domain_pricing($('textarea[id$=domains]')[0]);
+    <%end-%>
+    $.update_order_pricing();
+    <%unless Settings.show_csr_submit_on_buy_page%>
+      $('#has_csr_switch').hide();
+    <%end%>
+  });
+});
+
+</script>

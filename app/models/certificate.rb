@@ -293,7 +293,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_code_signing?
-    product.include?('code_signing')
+    product.include?('code_signing') || product.include?('code-signing')
   end
 
   def is_document_signing?

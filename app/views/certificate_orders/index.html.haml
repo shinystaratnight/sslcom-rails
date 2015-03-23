@@ -99,7 +99,7 @@
                                 =link_to 'create/edit contacts', certificate_content_contacts_url(cc)
                       .certificate_details_box
                         %ul
-                          -if co.csr && co.signed_certificate
+                          -if co.certificate_content.issued? && !co.certificate_content.expired?
                             =render partial: 'download', locals: {co: co}
                           -unless cc.csr.blank? || hide_validation?(co)
                             -if cc.pending_validation?

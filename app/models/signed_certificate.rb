@@ -25,11 +25,11 @@ class SignedCertificate < ActiveRecord::Base
   END_PKCS7_TAG="-----END PKCS7-----"
 
   IIS_INSTALL_LINK = "https://info.ssl.com/howto-install-an-ssl-certificate-on-iis-7"
-  CPANEL_INSTALL_LINK = "http://docs.cpanel.net/twiki/bin/view/AllDocumentation/WHMDocs/InstallCert"
+  CPANEL_INSTALL_LINK = "https://info.ssl.com/howto-install-a-certificate-on-whmcpanel/"
   NGINX_INSTALL_LINK = "http://nginx.org/en/docs/http/configuring_https_servers.html"
   V8_NODEJS_INSTALL_LINK = "http://nodejs.org/api/https.html"
-  OTHER_INSTALL_LINK = "http://info.ssl.com/"
-  APACHE_INSTALL_LINK = "http://info.ssl.com/article.aspx?id=10022"
+  OTHER_INSTALL_LINK = "https://info.ssl.com/"
+  APACHE_INSTALL_LINK = "https://info.ssl.com/how-to-install-a-certificate-on-apache-mod_ssl/"
   AMAZON_INSTALL_LINK = "http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/US_UpdatingLoadBalancerSSL.html"
 
   APACHE_BUNDLE = "ca-bundle-client.crt"

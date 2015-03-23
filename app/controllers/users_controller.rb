@@ -107,6 +107,8 @@ class UsersController < ApplicationController
       SystemAudit.create(owner: current_user, target: @user,
                          notes: "changed login from #{old} to #{params["login"]}",
                          action: "UserController#change_login")
+    else
+      @user.login=old
     end
     render action: :admin_show
   end

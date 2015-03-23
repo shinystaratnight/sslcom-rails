@@ -255,9 +255,9 @@ class Csr < ActiveRecord::Base
   def signed_certificate=(signed_certificate)
     signed_certificates << signed_certificate
   end
-  
+
   def signed_certificate
-    signed_certificates.last
+    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
   end
 
   def replace_csr(csr)

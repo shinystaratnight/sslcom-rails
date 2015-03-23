@@ -98,7 +98,7 @@ class CertificatesController < ApplicationController
       domains = params[:renewing] ? CertificateOrder.unscoped.find_by_ref(params[:renewing]).domains : []
       @certificate_content = CertificateContent.new(domains: domains)
       respond_to do |format|
-          format.html # buy.html.haml
+          format.html { render action: (@certificate.is_ucc? ? :buy : :buy)}
           format.xml  { render :xml => @certificate}
       end
     else

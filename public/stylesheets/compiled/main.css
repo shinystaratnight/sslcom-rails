@@ -7223,3 +7223,140 @@ span#no_emails_accessible {
   border: 1px solid black !important;
   border-collapse: collapse !important;
 }
+
+/* line 5323, ../../../app/stylesheets/main.sass */
+.addGroup {
+  width: 100%;
+}
+
+/* line 5326, ../../../app/stylesheets/main.sass */
+#addInput {
+  border: 0;
+  width: auto;
+  margin: 1px 0 5px 0;
+  padding: 9px 10px;
+  background: #eeeeee;
+  font-size: 16px;
+  border: solid 1px #cccccc;
+  outline: none;
+  outline-offset: 0;
+  -webkit-appearance: none;
+}
+
+/* line 5338, ../../../app/stylesheets/main.sass */
+#add {
+  cursor: pointer;
+  margin-left: -5px;
+  margin-top: 1px;
+  border: 1px solid #888888;
+  background: #888888;
+  padding: 2px 12px 6px 12px;
+  text-align: center;
+  width: 16px;
+  max-height: 18px;
+  font-size: 24px;
+  color: white;
+}
+/* line 5350, ../../../app/stylesheets/main.sass */
+#add:hover {
+  opacity: 0.7;
+}
+
+/* line 5353, ../../../app/stylesheets/main.sass */
+#domains {
+  border: 1px solid #cccccc;
+  font-family: Arial;
+  padding: 5px;
+  min-width: 235px;
+  min-height: 46px;
+  float: left;
+}
+/* line 5360, ../../../app/stylesheets/main.sass */
+#domains input {
+  outline: none;
+  outline-offset: 0;
+  -webkit-appearance: none;
+}
+
+/* line 5365, ../../../app/stylesheets/main.sass */
+.domain {
+  float: left;
+  color: white;
+  margin: 4px;
+  max-height: 38px;
+}
+/* line 5370, ../../../app/stylesheets/main.sass */
+.domain div {
+  cursor: pointer;
+  float: left;
+}
+/* line 5373, ../../../app/stylesheets/main.sass */
+.domain div:hover {
+  opacity: 0.7;
+}
+
+/* line 5376, ../../../app/stylesheets/main.sass */
+.text {
+  background: #666666;
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  float: left;
+  padding: 10px;
+  white-space: pre;
+  max-height: 18px;
+  border: 0;
+}
+
+/* line 5387, ../../../app/stylesheets/main.sass */
+.accept:hover {
+  background: darkgreen;
+}
+
+/* line 5390, ../../../app/stylesheets/main.sass */
+.edit:hover {
+  background: #ccac00;
+}
+
+/* line 5393, ../../../app/stylesheets/main.sass */
+.domainButton {
+  background: #888888;
+  padding: 10px;
+  text-align: center;
+  width: 16px;
+  max-height: 18px;
+}
+
+/* line 5400, ../../../app/stylesheets/main.sass */
+.delete:hover {
+  background: darkred;
+}
+
+/* line 5403, ../../../app/stylesheets/main.sass */
+.superVisible {
+  display: block !important;
+}
+
+/* line 5406, ../../../app/stylesheets/main.sass */
+.invalid {
+  background: darkred !important;
+}
+/* line 5408, ../../../app/stylesheets/main.sass */
+.invalid:focus {
+  background: #ae4d4d !important;
+}
+
+/* line 5411, ../../../app/stylesheets/main.sass */
+.wildcard {
+  background: steelblue !important;
+}
+/* line 5413, ../../../app/stylesheets/main.sass */
+.wildcard:focus {
+  background: #7ea8ca !important;
+}
+
+/* line 5416, ../../../app/stylesheets/main.sass */
+.new_certificate_order {
+  float: left;
+  width: 100%;
+}
