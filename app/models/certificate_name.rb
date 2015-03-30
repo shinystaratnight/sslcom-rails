@@ -83,8 +83,8 @@ class CertificateName < ActiveRecord::Base
     end
   end
 
-  def dcv_url(secure=false)
-    "http#{'s' if secure}://#{non_wildcard_name}/#{csr.md5_hash}.txt"
+  def dcv_url(secure=false, prepend="")
+    "http#{'s' if secure}://#{prepend+non_wildcard_name}/#{csr.md5_hash}.txt"
   end
 
   def cname_origin
@@ -140,6 +140,31 @@ class CertificateName < ActiveRecord::Base
       end
     rescue Exception=>e
       return false
+    end
+  end
+
+  def dcv_verify(protocol)
+    prepend=""
+    begin
+      timeout(Surl::TIMEOUT_DURATION) do
+        if protocol=="https"
+          uri = URI.parse(dcv_url(true,prepend))
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          request = Net::HTTP::Get.new(uri.request_uri)
+          r = http.request(request).body
+        else
+          r=open(dcv_url,prepend).read
+        end
+        return "true" if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+      end
+    rescue Exception=>e
+      if name=~/^\*/ && prepend.blank? #do another go round for wildcard by prepending www.
+        prepend="www."
+        retry
+      end
+      return "false"
     end
   end
 

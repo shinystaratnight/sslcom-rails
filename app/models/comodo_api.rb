@@ -74,17 +74,19 @@ class ComodoApi
     if options[:dcv].certificate_name #assume ucc
       owner = options[:dcv].certificate_name
       order_number = owner.certificate_content.certificate_order.external_order_number
+      is_ucc=owner.certificate_content.certificate_order.certificate.is_ucc?
       domain_name = owner.name
       dcv_method=owner.last_dcv_for_comodo_auto_update_dcv
     else #assume single domain
       owner = options[:dcv]
       order_number = owner.csr.certificate_content.certificate_order.external_order_number
+      is_ucc=owner.csr.certificate_content.certificate_order.certificate.is_ucc?
       domain_name = owner.csr.common_name
       dcv_method=CertificateName.to_comodo_method(owner.dcv_method)
     end
     comodo_options = {'orderNumber'=> order_number,
-                      'domainName'=>domain_name,
                       'newMethod'=>dcv_method}
+    comodo_options.merge!('domainName'=>domain_name) if (is_ucc) #domain is no necessary for single name certs
     comodo_options.merge!('newDCVEmailAddress' => options[:dcv].email_address) if (options[:dcv].dcv_method=="email")
     comodo_options=comodo_options.merge!(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     if options[:send_to_ca] && order_number

@@ -214,6 +214,26 @@ class Csr < ActiveRecord::Base
     end
   end
 
+  def dcv_verify(protocol)
+    begin
+      timeout(Surl::TIMEOUT_DURATION) do
+        if protocol=="https"
+          uri = URI.parse(dcv_url(true))
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          request = Net::HTTP::Get.new(uri.request_uri)
+          r = http.request(request).body
+        else
+          r=open(dcv_url).read
+        end
+        return "true" if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+      end
+    rescue Exception=>e
+      return "false"
+    end
+  end
+
   def fetch_public_site
     begin
       timeout(Surl::TIMEOUT_DURATION) do

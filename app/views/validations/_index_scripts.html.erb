@@ -328,6 +328,9 @@ jQuery(function($) {
     });
     <%if @certificate_order%>
       $('select[id^=domains]').change(function(){
+        var dcv_select=$(this);
+        var dt = new Date();
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
         //prevent other options from being selected if None is selected
         methods=$.get_selected_options(this, 'text');
         if($.method_none_selected(methods)){
@@ -341,22 +344,43 @@ jQuery(function($) {
         file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
         https = "https://"+file;
         http = "http://"+file;
-        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+"  "+$('.sha1_hash').text()+".comodoca.com";
+        wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
+        wwwhttps = "https://"+wwwfile;
+        wwwhttp = "http://"+wwwfile;
+        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.sha1_hash').text()+".comodoca.com";
         if(/@/.test(methods[0])){
           $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
+          $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("unvalidated").css({ background: "yellow" });
         }
         else if(/https/.test(methods[0])){
-          $(instruction).html("Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>");
+          instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+          if($(dcv_select).attr("alt").startsWith('*'))
+            instructions+=" or to this location <a href='"+wwwhttps+"' target='_new'>"+wwwhttps+"</a>";
+          $(instruction).html(instructions);
+          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=https&dcv='+
+            $(dcv_select).parents('tr').attr('id')}).done(
+                  function(data){
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css({ background: "red" });
+                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
+                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("https csr hash")});
         }
         else if(/http/.test(methods[0])){
-          $(instruction).html("Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>");
+          instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+          if($(dcv_select).attr("alt").startsWith('*'))
+            instructions+=" or to this location <a href='"+wwwhttp+"' target='_new'>"+wwwhttp+"</a>";
+          $(instruction).html(instructions);
+          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=http&dcv='+
+          $(dcv_select).parents('tr').attr('id')}).done(
+                  function(data){
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css({ background: "red" });
+                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
+                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("http csr hash")});
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
+          $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("unvalidated").css({ background: "yellow" });
         }
-        $(instruction).animate({ backgroundColor: "yellow" }, 1000, null, function () {
-  //        $(instruction).css("backgroundColor", "white");
-        });
+        $(instruction).css({ background: "yellow" });
       });
     <%end%>
     $('select[id^=domains]:enabled').each(function(index, value){

@@ -19,13 +19,14 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over, :admin_update]
+                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
+                      :change_ext_order_number, :admin_update]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
                    :filter_by_scope, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
-    :renew, :reprocess, :admin_update, :require=>[:create, :update, :delete]
+    :renew, :reprocess, :admin_update, :change_ext_order_number, :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
   #cache_sweeper :certificate_order_sweeper
@@ -236,6 +237,13 @@ class CertificateOrdersController < ApplicationController
         format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+  def change_ext_order_number
+    @certificate_order.update_column :external_order_number, params[:num]
+    SystemAudit.create(owner: current_user, target: @certificate_order,
+                       action: "changed external order number to #{params[:num]}")
+    redirect_to certificate_order_path(@certificate_order)
   end
 
   # GET /certificate_orders/credits

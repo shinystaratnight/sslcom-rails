@@ -1,4 +1,5 @@
 class CsrsController < ApplicationController
+  before_filter :find_csr, only:[:http_dcv_file, :verification_check]
   filter_access_to :all, :attribute_check=>true
   filter_access_to :country_codes, :http_dcv_file, :require=>[:create] #anyone can create read creates csrs, thus read this
 
@@ -24,12 +25,25 @@ class CsrsController < ApplicationController
   end
 
   def http_dcv_file
-    @csr=Csr.find(params[:id])
     tmp_file="#{Rails.root}/tmp/#{@csr.md5_hash}.txt"
     File.open(tmp_file, 'wb') do |f|
       f.write @csr.dcv_contents
     end
     send_file tmp_file, :type => 'text', :disposition => 'attachment',
       :filename =>@csr.md5_hash+".txt"
+  end
+
+  def verification_check
+    # http_or_s=@csr.dcv_verify(params[:protocol])
+    http_or_s=ActiveRecord::Base.find_from_model_and_id(params[:dcv]).dcv_verify(http_or_s: params[:protocol])
+    respond_to do |format|
+      format.html { render inline: http_or_s.to_s }
+    end
+  end
+
+  private
+
+  def find_csr
+    @csr=Csr.find(params[:id])
   end
 end

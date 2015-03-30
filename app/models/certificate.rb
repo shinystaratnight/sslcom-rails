@@ -292,6 +292,10 @@ class Certificate < ActiveRecord::Base
     product.include?('ev')
   end
 
+  def is_ov?
+    product.include?('high_assurance')
+  end
+
   def is_code_signing?
     product.include?('code_signing') || product.include?('code-signing')
   end

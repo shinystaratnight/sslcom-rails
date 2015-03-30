@@ -1,4 +1,3 @@
--form_action = Rails.env=~/development/i ? "https://sws-test.sslpki.local:3000" : "https://sws.sslpki.com"
 -content_for :title, "Validation for #{@certificate_order.ref}"
 -co = @certificate_order
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
@@ -13,7 +12,7 @@
   -else
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
   =error_messages_for :validation, @dcv, @other_party_validation_request
--if co.certificate.is_ucc?
+-if true #co.certificate.is_ucc?
   .error{style: "display: none;"}
   %h2 Domain Validation
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
@@ -42,35 +41,100 @@
         %th options
         -#%th description
         %th previous attempt
-        %th status
         %th attempted on
-      -mdc_validation = ComodoApi.mdc_status(co)
-      -ds = mdc_validation.domain_status
-      -co.certificate_content.certificate_names.each do |cn|
-        -if ds && ds[cn.name]
-          -validated = (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
+        %th status
+      -if co.external_order_number
+        -if @certificate_order.certificate.is_ucc?
+          -mdc_validation = ComodoApi.mdc_status(co)
+          -ds = mdc_validation.domain_status
+        -co.certificate_content.certificate_names.each do |cn|
+          -if @certificate_order.certificate.is_ucc?
+            -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
+              -name=ds[cn.name]
+              -validated = (name && name["status"]=~/validated/i)
+              -dcv = cn.domain_control_validations.last
+              -le=cn.domain_control_validations.last_emailed
+              -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
+              -addresses.delete("none")
+              -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
+              %tr[cn]
+                %td=check_box_tag cn.id, false, nil, class: "check_box"
+                %td
+                  =cn.name
+                %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+                -#%td description
+                %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
+                -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
+                %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
+                %td.status{class: cn.name}=name["status"].downcase if ds && name
+              %tr
+                %td
+                %td
+                %td{colspan: "4"}
+                  instructions:
+                  %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
+          -else
+            -validated=false
+            -last_sent = cn.last_dcv
+            -if last_sent
+              -if last_sent.satisfied?
+                -validated=true
+                %li
+                  %em satisfied on #{(last_sent.responded_at || last_sent.updated_at).strftime("%b %d, %Y %R")}
+                %li.category_border
+                  %em via #{last_sent.dcv_method} #{last_sent.dcv_method =~ /http/ ? "csr hash" : "to " + last_sent.email_address}
+              -elsif last_sent.is_eligible_to_resend?
+                %li
+                  %em automatic verification email sent:
+                  %ul
+                    %li(class="#{satisfied(last_sent)}") on: #{last_sent.sent_at.strftime("%b %d, %Y %R") if last_sent.sent_at}
+                    %li(class="#{satisfied(last_sent)}") to: #{last_sent.email_address}
+                %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
+            -else
+              %li
+                %em no domain verification performed
+              %li(class="#{'category_border' if co.certificate.is_ucc?}")=link_to 'perform domain verification', (checkout_in_progress || co.certificate.is_ucc?) ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+            -dcv = cn.domain_control_validations.last
+            -le=cn.domain_control_validations.last_emailed
+            -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
+            -addresses.delete("none")
+            -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
+            %tr[cn]
+              %td=check_box_tag cn.id, false, nil, class: "check_box"
+              %td
+                =cn.name
+              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, dcv ? dcv.dcv_method : ""),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+              -#%td description
+              %td.attempt{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.dcv_method + (last_sent.email_address ? " to #{last_sent.email_address}" : "")
+              -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
+              %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
+              %td.status{class: cn.name}=last_sent.blank? ? "n/a" : satisfied(last_sent)
+            %tr
+              %td
+              %td
+              %td{colspan: "4"}
+                instructions:
+                %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
+      -else
+        -co.certificate_content.certificate_names.each do |cn|
           -dcv = cn.domain_control_validations.last
           -le=cn.domain_control_validations.last_emailed
-          -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
-          -addresses.delete("none")
-          -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
-          -validated = (ds[cn.name] && ds[cn.name]["status"]=~/validated/i)
+          -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
           %tr[cn]
             %td=check_box_tag cn.id, false, nil, class: "check_box"
             %td
               =cn.name
-            %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds[cn.name]["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+            %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address), prompt: 'Please select a validation method', alt: cn.name
             -#%td description
-            %td=ds[cn.name]["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && ds[cn.name]
-            -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
-            %td[cn, :status]=ds[cn.name]["status"].downcase if ds && ds[cn.name]
-            %td=dcv.blank? ? "n/a" : dcv.created_at
+            %td.attempt{class: cn.name} validation not performed yet
+            %td.attempted_on{class: cn.name} n/a
+            %td.status{class: cn.name} waiting
           %tr
             %td
             %td
             %td{colspan: "4"}
               instructions:
-              %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
+              %span{alt: "domains[#{cn.name}][dcv]"} reply to an validation email
     #upload_validations(style='width: 100%; text-align: center;')
       =submit_tag "Submit", :id=>"validate_domains"#, :disable_with=>"Submitting..."
       -#.clearfix

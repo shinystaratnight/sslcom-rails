@@ -1344,8 +1344,8 @@ class CertificateOrder < ActiveRecord::Base
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       cci = if certificate.is_ev?
                             "508" #ev
-                            # elsif is_ov?
-                            #   "507" #ov
+                          # elsif certificate.is_ov?
+                          #   "507" #ov
                           else
                             "506" #dv
                           end

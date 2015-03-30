@@ -138,6 +138,7 @@ SslCom::Application.routes.draw do
       get :auto_renew
       post :start_over
       put :admin_update
+      get :change_ext_order_number
     end
 
     resource :validation do
@@ -175,6 +176,7 @@ SslCom::Application.routes.draw do
 
     member do
       get :http_dcv_file
+      get :verification_check
     end
   end
 
