@@ -34,8 +34,7 @@ class CsrsController < ApplicationController
   end
 
   def verification_check
-    # http_or_s=@csr.dcv_verify(params[:protocol])
-    http_or_s=ActiveRecord::Base.find_from_model_and_id(params[:dcv]).dcv_verify(http_or_s: params[:protocol])
+    http_or_s=ActiveRecord::Base.find_from_model_and_id(params[:dcv]).dcv_verify(params[:protocol])
     respond_to do |format|
       format.html { render inline: http_or_s.to_s }
     end

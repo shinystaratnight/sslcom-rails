@@ -363,7 +363,7 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
                   function(data){
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css({ background: "red", color:"white" });
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
                     $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
                     $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("https csr hash")});
         }
@@ -375,13 +375,18 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=http&dcv='+
           $(dcv_select).parents('tr').attr('id')}).done(
                   function(data){
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css({ background: "red", color:"white" });
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
                     $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
                     $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("http csr hash")});
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("unvalidated").css({ background: "yellow", color:"black" });
+          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=cname&dcv='+
+          $(dcv_select).parents('tr').attr('id')}).done(
+                  function(data){
+                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
+                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("cname csr hash")});
         }
         $(instruction).css({ background: "yellow" });
       });

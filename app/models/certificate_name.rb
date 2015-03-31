@@ -1,4 +1,5 @@
 # Represents a domain name or ip address to be secured by a UCC or Multi domain SSL
+require 'resolv'
 
 class CertificateName < ActiveRecord::Base
   belongs_to  :certificate_content
@@ -154,13 +155,18 @@ class CertificateName < ActiveRecord::Base
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
           r = http.request(request).body
+        elsif protocol=="cname"
+          txt = Resolv::DNS.open do |dns|
+            records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
+          end
+          return cname_destination==txt.last.name.to_s
         else
           r=open(dcv_url,prepend).read
         end
         return "true" if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
-      if name=~/^\*/ && prepend.blank? #do another go round for wildcard by prepending www.
+      if name=~/^\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
         prepend="www."
         retry
       end
