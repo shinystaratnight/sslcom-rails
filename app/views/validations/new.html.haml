@@ -47,10 +47,11 @@
         %th attempted on
         %th status
       -if co.external_order_number
+        -cns = co.certificate_content.certificate_names
         -if @certificate_order.certificate.is_ucc?
           -mdc_validation = ComodoApi.mdc_status(co)
           -ds = mdc_validation.domain_status
-        -co.certificate_content.certificate_names.each do |cn|
+        -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each do |cn|
           -if @certificate_order.certificate.is_ucc?
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]
