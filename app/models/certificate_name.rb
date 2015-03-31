@@ -161,7 +161,7 @@ class CertificateName < ActiveRecord::Base
           end
           return cname_destination==txt.last.name.to_s
         else
-          r=open(dcv_url,prepend).read
+          r=open(dcv_url(false,prepend), redirect: false).read
         end
         return "true" if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
