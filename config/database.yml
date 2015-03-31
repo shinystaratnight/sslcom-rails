@@ -30,10 +30,10 @@ development:
 <%else%>
   adapter: mysql2
   #use when remote db source
-  host: 174.129.35.108
-  database: ssl_com_production
+#  host: 174.129.35.108
+#  database: ssl_com_production
 #  else
-#  database: ssl_com_development
+  database: ssl_com_development
 <%end%>
 
 # Warning: The database defined as "test" will be erased and
