@@ -15,6 +15,9 @@
 -if true #co.certificate.is_ucc?
   .error{style: "display: none;"}
   %h2 Domain Validation
+  %h3
+    Please select the appropriate validation option for each domain and then click the 'Submit' button.
+    Only after you click 'Submit' will the actual validation be performed.
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr
       %th format
@@ -72,28 +75,10 @@
                 %td
                 %td{colspan: "4"}
                   instructions:
-                  %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
+                  %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
           -else
-            -validated=false
             -last_sent = cn.last_dcv
-            -if last_sent
-              -if last_sent.satisfied?
-                -validated=true
-                %li
-                  %em satisfied on #{(last_sent.responded_at || last_sent.updated_at).strftime("%b %d, %Y %R")}
-                %li.category_border
-                  %em via #{last_sent.dcv_method} #{last_sent.dcv_method =~ /http/ ? "csr hash" : "to " + last_sent.email_address}
-              -elsif last_sent.is_eligible_to_resend?
-                %li
-                  %em automatic verification email sent:
-                  %ul
-                    %li(class="#{satisfied(last_sent)}") on: #{last_sent.sent_at.strftime("%b %d, %Y %R") if last_sent.sent_at}
-                    %li(class="#{satisfied(last_sent)}") to: #{last_sent.email_address}
-                %li.category_border=link_to 'resend verification email', edit_certificate_order_validation_url(co)
-            -else
-              %li
-                %em no domain verification performed
-              %li(class="#{'category_border' if co.certificate.is_ucc?}")=link_to 'perform domain verification', (checkout_in_progress || co.certificate.is_ucc?) ? new_certificate_order_validation_path(co) : edit_certificate_order_validation_path(co)
+            -validated=(last_sent && last_sent.satisfied?) ? true : false
             -dcv = cn.domain_control_validations.last
             -le=cn.domain_control_validations.last_emailed
             -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
@@ -103,7 +88,7 @@
               %td=check_box_tag cn.id, false, nil, class: "check_box"
               %td
                 =cn.name
-              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, dcv ? dcv.dcv_method : ""),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, dcv.blank? ? "" : dcv.method_for_api),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
               -#%td description
               %td.attempt{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.dcv_method + (last_sent.email_address ? " to #{last_sent.email_address}" : "")
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
@@ -114,7 +99,7 @@
               %td
               %td{colspan: "4"}
                 instructions:
-                %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "reply to an validation email"}
+                %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
       -else
         -co.certificate_content.certificate_names.each do |cn|
           -dcv = cn.domain_control_validations.last
@@ -134,7 +119,7 @@
             %td
             %td{colspan: "4"}
               instructions:
-              %span{alt: "domains[#{cn.name}][dcv]"} reply to an validation email
+              %span{alt: "domains[#{cn.name}][dcv]"} please select a validation method
     #upload_validations(style='width: 100%; text-align: center;')
       =submit_tag "Submit", :id=>"validate_domains"#, :disable_with=>"Submitting..."
       -#.clearfix

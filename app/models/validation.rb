@@ -51,7 +51,7 @@ class Validation < ActiveRecord::Base
   end
 
   NONE_SELECTED="None"
-  COMODO_EMAIL_LOOKUP_THRESHHOLD=10 #the number of domains before we switch to manually generating validation addresses to reduce latency
+  COMODO_EMAIL_LOOKUP_THRESHHOLD=20 #the number of domains before we switch to manually generating validation addresses to reduce latency
 
   def last_document_uploaded_on
     return "" if validation_histories.empty?

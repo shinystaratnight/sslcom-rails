@@ -67,24 +67,7 @@ module CertificateOrdersHelper
           link_to 'perform validation',
             new_certificate_order_validation_path(certificate_order)
         when "pending_validation", "validated"
-          last_sent=certificate_order.csr.last_dcv
-          if last_sent.blank?
-            link_to 'perform validation', new_certificate_order_validation_path(certificate_order) # assume multi domain
-          elsif %w(http https).include?(last_sent.try(:dcv_method))
-            instructions="Please wait while we perform final validations.
-            Normal process times should be less than several hours, but can take up to 24 hours. "
-            instructions << "Also, be sure to leave #{certificate_order.certificate_content.csr.dcv_url}
-            on the server until the certificate is issued." if certificate_content.preferred_reprocessing?
-            link_to("please wait #{image_tag('question_mark.png', alt:
-                "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
-                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto[iframes]').html_safe+
-            content_tag(:div, content_tag(:div, content_tag(:p, instructions), :class=>"pop_content"), id: "pp-#{certificate_order.ref}", class: "pop_container")
-          else
-            link_to("response needed #{image_tag('question_mark.png', alt:
-                "next step for certificate #{certificate_order.csr.common_name} (order# #{certificate_order.ref})")}".html_safe,
-                    "#pp-#{certificate_order.ref}", :rel => 'prettyPhoto[iframes]').html_safe+
-            content_tag(:div, render(partial: "certificate_orders/validation_pop", locals: {last_sent: last_sent}), id: "pp-#{certificate_order.ref}", class: "pop_container")
-          end
+          link_to 'perform validation', new_certificate_order_validation_path(certificate_order) # assume multi domain
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
