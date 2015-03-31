@@ -32,7 +32,8 @@ class ApiCertificateRequest < CaApiRequest
       :dcv_methods, :ref, :options]
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
-    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter]
+    :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
+    :show_subscriber_agreement]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 

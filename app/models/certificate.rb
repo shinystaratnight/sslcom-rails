@@ -391,6 +391,10 @@ class Certificate < ActiveRecord::Base
     SUBSCRIBER_AGREEMENTS[product_root.to_sym]
   end
 
+  def subscriber_agreement_content
+    File.read(subscriber_agreement[:location])
+  end
+
   def duration_in_days(duration)
     if is_ucc?
       items_by_domains.select{|n|n.display_order==duration.to_i}.last.value

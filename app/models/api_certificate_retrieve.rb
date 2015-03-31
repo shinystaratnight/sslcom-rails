@@ -15,13 +15,14 @@ class ApiCertificateRetrieve < ApiCertificateRequest
     inclusion: {in: ApiCertificateRetrieve::RESPONSE_ENCODING,
     message: "needs to be one of the following: #{RESPONSE_ENCODING.join(', ')}"}, if: lambda{|c|c.response_encoding}
   validates :show_validity_period, format: /[YNyn]/, if: lambda{|c|c.show_validity_period}
+  validates :show_subscriber_agreement, format: /[YNyn]/, if: lambda{|c|c.show_subscriber_agreement}
   validates :show_domains, format: /[YNyn]/, if: lambda{|c|c.show_domains}
   validates :show_ext_status, format: /[YNyn]/, if: lambda{|c|c.show_ext_status}
   validate :order_exists, if: lambda{|c|c.ref}
 
   attr_accessor :validity_period, :domains, :ext_status, :certificates, :order_status, :certificate_order,
                 :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm,
-                :site_seal_code, :domains_qty_purchased, :wildcard_qty_purchased, :description
+                :site_seal_code, :domains_qty_purchased, :wildcard_qty_purchased, :description, :subscriber_agreement
 
   def initialize(attributes = {})
     super
