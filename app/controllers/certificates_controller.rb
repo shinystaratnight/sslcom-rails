@@ -2,7 +2,8 @@ class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy],
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  before_filter :find_certificate, only: [:show, :buy]
+  before_filter :find_certificate, only: [:show, :buy, :pricing]
+  layout false, only: [:pricing]
 
   def index
     @certificates =
@@ -64,6 +65,14 @@ class CertificatesController < ApplicationController
   # GET /certificate/buy/wildcard.xml
   def buy
     prep_purchase
+    respond_to do |format|
+      unless @certificate.blank?
+        format.html { render action: (@certificate.is_ucc? ? :buy : :buy)}
+        format.xml  { render :xml => @certificate}
+      else
+        format.html {not_found}
+      end
+    end
   end
 
   def find_tier
@@ -86,6 +95,19 @@ class CertificatesController < ApplicationController
     end
   end
 
+  def pricing
+    prep_purchase
+    respond_to do |format|
+      unless @certificate.blank?
+        format.html { render :action => "pricing"}
+        format.js { render :action => "pricing"}
+        format.xml  { render :xml => @certificate}
+      else
+        format.html {not_found}
+      end
+    end
+  end
+
   private
 
   def prep_purchase
@@ -97,12 +119,6 @@ class CertificatesController < ApplicationController
       @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
       domains = params[:renewing] ? CertificateOrder.unscoped.find_by_ref(params[:renewing]).domains : []
       @certificate_content = CertificateContent.new(domains: domains)
-      respond_to do |format|
-          format.html { render action: (@certificate.is_ucc? ? :buy : :buy)}
-          format.xml  { render :xml => @certificate}
-      end
-    else
-      not_found
     end
   end
 

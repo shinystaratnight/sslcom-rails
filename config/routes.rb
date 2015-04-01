@@ -220,6 +220,7 @@ SslCom::Application.routes.draw do
   resources :apis
   resources :billing_profiles
   match '/certificates/what_is_a_wildcard_ssl_certificate', to: "certificates#what_is_a_wildcard_ssl_certificate", as: :what_is_wildcard
+  match '/certificates/pricing.js', to: "certificates#pricing", as: :certificate_pricing
   resources :certificates do
     collection do
       get :single_domain

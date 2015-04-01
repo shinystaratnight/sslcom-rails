@@ -1,0 +1,18 @@
+durations = new Array(<%=@certificate.num_durations%>);
+<%c = -1%>
+<%@certificate.num_durations.times do |i| -%>
+  <%if @certificate.is_ucc?-%>
+    durations[<%=i%>] = new Array(<%=@certificate.num_domain_tiers%>);
+    <%@certificate.num_domain_tiers.times do |j|%>
+      durations[<%=i%>][<%=j%>] = <%=(@certificate.items_by_domains(true)[i][j].price*((j==0)?3:1))%>;
+    <%end%>
+  <%else -%>
+    durations[<%=i%>] = <%=@certificate.items_by_duration[i].price%>;
+  <%end -%>
+<%end -%>
+<%if @certificate.is_ucc? || @certificate.is_wildcard?%>
+  licenses = new Array(<%=@certificate.num_durations%>);
+  <%@certificate.num_durations.times do |i| -%>
+    licenses[<%=i%>] = <%=@certificate.items_by_server_licenses[i].price%>;
+  <%end -%>
+<%end%>

@@ -163,7 +163,7 @@ class ApiCertificateRequestsController < ApplicationController
         @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
         @result.description = @acr.description
         @result.product = @acr.certificate.api_product_code
-        @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement
+        @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement=~/[Yy]/
         if @acr.certificate.is_ucc?
           @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
           @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
