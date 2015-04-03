@@ -47,7 +47,7 @@ Other available formats:
 For <%=v[0]%>, please visit <%=v[1]%> (Instructions for <%=v[0]%> can be found here: <%=v[2]%>)
 
 <%end%>
-<%if @certificate_order.certificate_duration(:years).to_i > 3-%>
+<%if (@certificate_order.certificate_duration(:days).to_i > 3) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))-%>
 
   <%=render(:partial=>"duration_limit")%>
 <%end-%>
