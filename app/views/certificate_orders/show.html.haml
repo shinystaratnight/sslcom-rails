@@ -103,7 +103,7 @@
                               decoded:
                               %span.country
                                 %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
-                        -if (@certificate_order.certificate_duration(:days).to_i > 3) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
+                        -if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
                           %li &nbsp;
                           %li
                             %strong 39 month limit
