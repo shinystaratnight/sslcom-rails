@@ -347,6 +347,15 @@ class CertificateOrder < ActiveRecord::Base
         when 5
           1826
       end
+    elsif unit==:comodo_api
+      case years.gsub(/[^\d]+/,"").to_i
+        when 1
+          365
+        when 2
+          730
+        else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
+          1095
+      end
     else
       years
     end
@@ -595,7 +604,7 @@ class CertificateOrder < ActiveRecord::Base
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
              product: certificate.api_product_code,
-             period: certificate_duration(:days).to_s,
+             period: certificate_duration(:comodo_api).to_s,
              server_software: cc.server_software_id.to_s,
              domains: api_domains,
              contacts: api_contacts,
@@ -1044,7 +1053,7 @@ class CertificateOrder < ActiveRecord::Base
           unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
               mapped_certificate.comodo_product_id) #trial cert does not specify duration
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
-            days = certificate_duration(:days)
+            days = certificate_duration(:comodo_api)
             # temporary for a certain customer wanting to move over a number of domains to ssl.com
             params.merge!('days' => days.to_s)
           end

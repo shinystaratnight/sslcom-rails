@@ -16,18 +16,11 @@ Description:
 Order Amount: <%=@certificate_order.order.final_amount.format%>
 
 Your SSL account has been debited <%=@certificate_order.order.final_amount.format%>.
-If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
-<%if last_sent && !last_sent.satisfied?-%>
 
-Please respond the email validation request sent to: <%=last_sent.email_address%>
-<%end-%>
+Please visit <%=new_certificate_order_validation_url(@certificate_order)%> to perform domain validation on this order.
 <%if @certificate_order.certificate.is_ev?-%>
 
 <%=render(:partial=>"ev_reqs")%>
-<%elsif !@certificate_order.skip_verification?-%>
-
-The Domain Control Validation email for your SSL certificate has been sent to <%=@certificate_order.csr.domain_control_validations.last_sent%>.
-Please follow the intructions enclosed within the email to complete the Domain Control Validation phase of this ssl certificate order.
 <%end-%>
 
 <%=render(:partial=>"support_contact")%>

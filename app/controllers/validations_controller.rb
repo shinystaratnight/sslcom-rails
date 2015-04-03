@@ -303,7 +303,7 @@ class ValidationsController < ApplicationController
 
   def find_certificate_order
     @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
-    @validation = @certificate_order.validation
+    @validation = @certificate_order.validation if @certificate_order
   end
 
   # source should be a zip file.

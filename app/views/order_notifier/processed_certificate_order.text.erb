@@ -47,6 +47,10 @@ Other available formats:
 For <%=v[0]%>, please visit <%=v[1]%> (Instructions for <%=v[0]%> can be found here: <%=v[2]%>)
 
 <%end%>
+<%if @certificate_order.certificate_duration(:years) > 3-%>
+
+  <%=render(:partial=>"duration_limit")%>
+<%end-%>
 
 When you have installed your SSL.com Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services and is a proven way to increase conversions.
 
