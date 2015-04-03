@@ -103,7 +103,16 @@
                               decoded:
                               %span.country
                                 %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
-                        %li=link_to "view order transaction", @certificate_order.order
+                        -if (@certificate_order.certificate_duration(:days).to_i > 3) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
+                          %li &nbsp;
+                          %li
+                            %strong 39 month limit
+                          %li
+                            Please note that since this certificate order has a duration that exceeds the 39 month hard limit set by the CA/Browser
+                            Forum (see #{link_to "https://info.ssl.com/faq-39-month-limit-to-new-certificates-what-you-need-to-know/"}), this certificate will
+                            expire in 36 months. However, you will be notified 60 days prior to expiration to reissue this certificate free of cost.
+                            A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
+                            multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
                     .certificate_details_box
                       %ul
                         %li
