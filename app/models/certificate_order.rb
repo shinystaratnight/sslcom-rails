@@ -614,7 +614,7 @@ class CertificateOrder < ActiveRecord::Base
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             query_type: ("all_certificates" unless signed_certificate.blank?),
+             query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
              response_type: ("individually" unless signed_certificate.blank?)}.
             to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}"
       when /index/
