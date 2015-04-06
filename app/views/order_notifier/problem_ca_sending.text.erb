@@ -1,0 +1,15 @@
+Hello,
+
+There was a problem sending SSL.com order <%=@certificate_order.ref%> to <%=@ca%>
+
+Reason:
+<%ccr=@certificate_order.ca_certificate_requests.last%>
+<%ccr.request_url%>
+<%ccr.parameters%>
+<%ccr.method%>
+<%ccr.response%>
+<%ccr.ca%>
+
+Regards,
+
+SSL.com Support Team

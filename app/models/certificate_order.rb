@@ -544,16 +544,14 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    return nil unless external_order_number
-    retrieve=ComodoApi.collect_ssl(self)
-    if retrieve.response_code==2
-      csr.signed_certificates.create(body: retrieve.certificate,
-                                     email_customer: email_customer)
-      self.orphaned_certificate_contents remove: true
+    if external_order_number && ca_certificate_requests.last.success?
+      retrieve=ComodoApi.collect_ssl(self)
+      if retrieve.response_code==2
+        csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
+        self.orphaned_certificate_contents remove: true
+      end
     end
   end
-
-
 
   def self.retrieve_ca_certs(start, finish)
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq

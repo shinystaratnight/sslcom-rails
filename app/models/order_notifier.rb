@@ -79,6 +79,13 @@ class OrderNotifier < ActionMailer::Base
           to:    contact
   end
 
+  def problem_ca_sending(contact, certificate_order, from="support@ssl.com")
+    @certificate_order =  certificate_order
+    mail  subject:        "Problem sending to #{@ca} for #{@certificate_order.ref}",
+          from:           from,
+          to:             contact
+  end
+
   def validation_approve(contact, certificate_order)
     setup(contact, certificate_order)
     mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Certificate For #{certificate_order.subject} Has Been Approved",
