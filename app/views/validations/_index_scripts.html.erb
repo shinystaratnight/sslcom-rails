@@ -362,10 +362,10 @@ jQuery(function($) {
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
-                  function(data){
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
-                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("https csr hash")});
+              function(data){
+                $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
+                $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("https csr hash")});
         }
         else if(/http/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
@@ -373,11 +373,11 @@ jQuery(function($) {
             instructions+=" or to this location <a href='"+wwwhttp+"' target='_new'>"+wwwhttp+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=http&dcv='+
-          $(dcv_select).parents('tr').attr('id')}).done(
-                  function(data){
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
-                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("http csr hash")});
+            $(dcv_select).parents('tr').attr('id')}).done(
+              function(data){
+                $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
+                $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("http csr hash")});
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
