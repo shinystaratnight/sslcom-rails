@@ -468,7 +468,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def certificate_content
-    certificate_contents(true).last
+    certificate_contents.last
   end
 
   def csr
@@ -1019,70 +1019,71 @@ class CertificateOrder < ActiveRecord::Base
 
   def options_for_ca(options={})
     {}.tap do |params|
-      update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
-      if options[:new].blank? && (csr.sent_success || external_order_number)
-        #assume reprocess, will need to look at ucc more carefully
-        params.merge!(
-          'orderNumber' => external_order_number,
-          'csr' => CGI::escape(csr.body),
-          'prioritiseCSRValues' => 'N',
-          'isCustomerValidated' => 'Y',
-          'responseFormat' => 1,
-          'showCertificateID' => 'N',
-          'foreignOrderNumber' => ref,
-          'countryName'=>csr.country
-        )
-        ssl_com_order(params,options)
-        last_sent = csr.domain_control_validations.last_method
-        build_comodo_dcv(last_sent, params, options)
-      else
-        params.merge!(
-          'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
-          'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
-          'serverSoftware' => certificate_content.comodo_server_software_id.to_s,
-          'csr' => CGI::escape(csr.body),
-          'prioritiseCSRValues' => 'N',
-          'isCustomerValidated' => 'Y',
-          'responseFormat' => 1,
-          'showCertificateID' => 'N',
-          'foreignOrderNumber' => ref
-        )
-        last_sent = csr.last_dcv
-        #43 is the old comodo 30 day trial
-        unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
-            mapped_certificate.comodo_product_id) #trial cert does not specify duration
-          #look at certificate_duration for more guidance, i don't think the following is ucc safe
-          days = certificate_duration(:comodo_api)
-          # temporary for a certain customer wanting to move over a number of domains to ssl.com
-          params.merge!('days' => days.to_s)
+      cc=(options[:certificate_content] || certificate_content)
+      cc.csr.tap do |csr|
+        update_attribute(:ca, CA_CERTIFICATES[:SSLcomSHA2]) if self.ca.blank?
+        if options[:new].blank? && (csr.sent_success || external_order_number)
+          #assume reprocess, will need to look at ucc more carefully
+          params.merge!(
+            'orderNumber' => external_order_number,
+            'csr' => CGI::escape(csr.body),
+            'prioritiseCSRValues' => 'N',
+            'isCustomerValidated' => 'Y',
+            'responseFormat' => 1,
+            'showCertificateID' => 'N',
+            'foreignOrderNumber' => ref,
+            'countryName'=>csr.country
+          )
+          ssl_com_order(params,options)
+          last_sent = csr.domain_control_validations.last_method
+          build_comodo_dcv(last_sent, params, options)
+        else
+          params.merge!(
+            'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
+            'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
+            'serverSoftware' => cc.comodo_server_software_id.to_s,
+            'csr' => CGI::escape(csr.body),
+            'prioritiseCSRValues' => 'N',
+            'isCustomerValidated' => 'Y',
+            'responseFormat' => 1,
+            'showCertificateID' => 'N',
+            'foreignOrderNumber' => ref
+          )
+          last_sent = csr.last_dcv
+          #43 is the old comodo 30 day trial
+          unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
+              mapped_certificate.comodo_product_id) #trial cert does not specify duration
+            #look at certificate_duration for more guidance, i don't think the following is ucc safe
+            days = certificate_duration(:comodo_api)
+            # temporary for a certain customer wanting to move over a number of domains to ssl.com
+            params.merge!('days' => days.to_s)
+          end
+          #ssl.com Sub CA certs
+          ssl_com_order(params,options)
+          build_comodo_dcv(last_sent, params, options)
+          fill_csr_fields(params, cc.registrant)
+          unless csr.csr_override.blank?
+            fill_csr_fields params, csr.csr_override
+          end
+          if false #TODO make country override option
+            override_params(params) #essentialssl
+          end
+          if certificate.is_wildcard?
+            params.merge!('servers' => server_licenses.to_s || '1')
+          end
         end
-        #ssl.com Sub CA certs
-        ssl_com_order(params,options)
-        build_comodo_dcv(last_sent, params, options)
-        fill_csr_fields(params, certificate_content.registrant)
-        unless csr.csr_override.blank?
-          fill_csr_fields params, csr.csr_override
-        end
-        if false #TODO make country override option
-          override_params(params) #essentialssl
-        end
-        if certificate.is_wildcard?
-          params.merge!('servers' => server_licenses.to_s || '1')
-        end
-      end
-      if certificate.is_ev?
-        certificate_content.tap do |cc|
+        if certificate.is_ev?
           params.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
           params.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
           params.merge!('joiStateOrProvinceName'=>(cc.csr.csr_override || cc.registrant).state)
         end
-      end
-      if certificate.is_ucc?
-        params.merge!(
-          'primaryDomainName'=>csr.common_name,
-          'maxSubjectCNs'=>1
-        )
-        params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
+        if certificate.is_ucc?
+          params.merge!(
+            'primaryDomainName'=>csr.common_name,
+            'maxSubjectCNs'=>1
+          )
+          params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
+        end
       end
     end
   end
