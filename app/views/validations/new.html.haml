@@ -43,6 +43,7 @@
         %th domain
         %th options
         -#%th description
+        %th pre-test
         %th previous attempt
         %th attempted on
         %th status
@@ -67,6 +68,7 @@
                   =cn.name
                 %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
                 -#%td description
+                %td.pretest{class: cn.name} n/a
                 %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
                 -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
                 %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
@@ -74,7 +76,7 @@
               %tr
                 %td
                 %td
-                %td{colspan: "4"}
+                %td{colspan: "5"}
                   instructions:
                   %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
           -else
@@ -91,6 +93,7 @@
                 =cn.name
               %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, dcv.blank? ? "" : dcv.method_for_api),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
               -#%td description
+              %td.pretest{class: cn.name} n/a
               %td.attempt{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.dcv_method + (last_sent.email_address ? " to #{last_sent.email_address}" : "")
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
               %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
@@ -98,7 +101,7 @@
             %tr
               %td
               %td
-              %td{colspan: "4"}
+              %td{colspan: "5"}
                 instructions:
                 %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
       -else
@@ -108,23 +111,23 @@
           -opts = {"validation via email" => DomainControlValidation.email_address_choices(cn.name), "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
           %tr[cn]
             %td=check_box_tag cn.id, false, nil, class: "check_box"
-            %td
-              =cn.name
+            %td=cn.name
             %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address), prompt: 'Please select a validation method', alt: cn.name
             -#%td description
+            %td.pretest{class: cn.name} n/a
             %td.attempt{class: cn.name} validation not performed yet
             %td.attempted_on{class: cn.name} n/a
             %td.status{class: cn.name} waiting
           %tr
             %td
             %td
-            %td{colspan: "4"}
+            %td{colspan: "5"}
               instructions:
               %span{alt: "domains[#{cn.name}][dcv]"} please select a validation method
     #upload_validations(style='width: 100%; text-align: center;')
-      =submit_tag "Submit", :id=>"validate_domains"#, :disable_with=>"Submitting..."
-      -#.clearfix
-      -#  =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+      =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+      .clearfix
+        =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 -else
   #stylized.default_form
     =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do

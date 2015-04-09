@@ -224,16 +224,13 @@ jQuery(function($) {
     $('form.edit_validation_ruling').ajaxForm(options);
     $('form.api_certificate_request').ajaxForm({
       dataType: "json",
-//      beforeSubmit: function(){
-//        confirmed = confirm('Are you sure you want to update the domain control validation methods?');
-//        if(confirmed){
-//          $('#waiting_on_csr').show();
-//          $('.submit_csr').attr('disabled', 'disabled');
-//          submit_label = $('.submit_csr').attr('value');
-//          $('.submit_csr').attr('value', 'Submitting...');
-//        }
-//        return confirmed;
-//      },
+      beforeSubmit: function(){
+        confirmed = confirm('Proceed with validation?');
+        if(confirmed){
+          $('#waiting_bar').show();
+        }
+        return confirmed;
+      },
       success: function(data, status){
 //        $('#waiting_on_csr').hide();
 //        $('.submit_csr').removeAttr('disabled');
@@ -353,7 +350,7 @@ jQuery(function($) {
         cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.sha1_hash').text()+".comodoca.com";
         if(/@/.test(methods[0])){
           $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
-          $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("unvalidated").css({ background: "yellow", color:"black" });
+          $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
         }
         else if(/https/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
@@ -363,9 +360,8 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
               function(data){
-                $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
-                $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("https csr hash")});
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+              });
         }
         else if(/http/.test(methods[0])){
           instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
@@ -375,18 +371,16 @@ jQuery(function($) {
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
               function(data){
-                $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
-                $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("http csr hash")});
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+              });
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
           $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=cname&dcv='+
           $(dcv_select).parents('tr').attr('id')}).done(
                   function(data){
-                    $('td.status[class~="'+$(dcv_select).attr("alt")+'"]').html("pre-test "+ (data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                    $('td.attempted_on[class~="'+$(dcv_select).attr("alt")+'"]').html(time);
-                    $('td.attempt[class~="'+$(dcv_select).attr("alt")+'"]').html("cname csr hash")});
+                    $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+                  });
         }
         $(instruction).css({ background: "yellow" });
       });
