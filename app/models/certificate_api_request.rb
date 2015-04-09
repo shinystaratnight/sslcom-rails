@@ -61,24 +61,4 @@ class CertificateApiRequest < ActiveRecord::Base
     write_attribute :server_software, ServerSoftware.find(server_software)
   end
 
-  def self.apply_for_certificate(certificate)
-
-  end
-
-#  t.string :account_key, :secret_key
-#  t.boolean :test
-#  t.string :product
-#  t.integer :period, :server_count
-#  t.references :server_software
-#  t.string :other_domains
-#  t.string :common_names
-#  t.text :csr
-#  t.string :organization_name, :post_office_box, :street_address_1 , :street_address_2,
-#          :street_address_3, :locality_name, :state_or_province_name
-#  t.references :country
-#  t.string :duns_number, :company_number, :registered_locality_name, :business_category,
-#          :email_address, :contact_email_address, :ca_certificate_id
-#  t. boolean  :hide_certificate_reference
-#  t.string :external_order_number, :external_order_number_constraint
-
 end

@@ -79,7 +79,8 @@ class OrderNotifier < ActionMailer::Base
           to:    contact
   end
 
-  def problem_ca_sending(contact, certificate_order, from="support@ssl.com")
+  def problem_ca_sending(contact, certificate_order, ca, from="support@ssl.com")
+    @ca=ca
     @certificate_order =  certificate_order
     mail  subject:        "Problem sending to #{@ca} for #{@certificate_order.ref}",
           from:           from,
