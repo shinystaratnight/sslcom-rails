@@ -53,7 +53,7 @@
           -mdc_validation = ComodoApi.mdc_status(co)
           -ds = mdc_validation.domain_status
         -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each do |cn|
-          -if @certificate_order.certificate.is_ucc?
+          -if @certificate_order.certificate.is_ucc?;
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]
               -validated = (name && name["status"]=~/validated/i)
@@ -64,8 +64,7 @@
               -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
               %tr[cn]
                 %td=check_box_tag cn.id, false, nil, class: "check_box"
-                %td
-                  =cn.name
+                %td=cn.name
                 %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
                 -#%td description
                 %td.pretest{class: cn.name} n/a

@@ -51,9 +51,8 @@ class CertificateName < ActiveRecord::Base
   end
 
   def last_dcv
-    (%w(http https).include?(domain_control_validations.last.try(:dcv_method))) ?
-        domain_control_validations.last :
-        domain_control_validations.last_sent
+    (domain_control_validations.last.try(:dcv_method)=~/https?/) ?
+        domain_control_validations.last : domain_control_validations.last_sent
   end
 
   def last_dcv_for_comodo_auto_update_dcv

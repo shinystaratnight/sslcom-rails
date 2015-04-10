@@ -138,7 +138,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
       #assume updating domain validation, already sent to comodo
-      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation?
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
         #set domains
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
@@ -244,7 +244,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
     else
       job_group = Delayed::JobGroups::JobGroup.create!
-      job_group.enqueue(DomainJob.new(cc, {ca_certificate_id: self.ca_certificate_id, send_to_ca: self.send_to_ca},
+      job_group.enqueue(DomainJob.new(cc, {ca_certificate_id: self.ca_certificate_id, send_to_ca: self.send_to_ca || true},
                                       self.options.blank? ? nil : self.options['dcv_failure_action'], self.domains,
                                       self.dcv_candidate_addresses))
       job_group.mark_queueing_complete
@@ -352,8 +352,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if contacts
       errors[:contacts] = {}
       CertificateContent::CONTACT_ROLES.each do |role|
-        if (contacts[role] || contacts[:all])
-          attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts[:all],:all]
+        if (contacts[role] || contacts["all"])
+          attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts["all"],"all"]
           extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
           if !extra.empty?
             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}

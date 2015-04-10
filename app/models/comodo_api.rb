@@ -36,7 +36,11 @@ class ComodoApi
           end
     ccr=cc.csr.ca_certificate_requests.create(request_url: host,
       parameters: comodo_options, method: "post", response: res.try(:body), ca: "comodo")
-    OrderNotifier.problem_ca_sending("comodo@ssl.com", certificate_order,"comodo").deliver unless ccr.success?
+    unless ccr.success?
+      OrderNotifier.problem_ca_sending("comodo@ssl.com", certificate_order,"comodo").deliver
+    else
+      certificate_order.update_column :external_order_number, ccr.order_number
+    end
     ccr
   end
 
