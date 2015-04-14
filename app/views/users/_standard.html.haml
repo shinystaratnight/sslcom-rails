@@ -82,13 +82,11 @@
                         %li
                           %strong
                             certificates
-                        %li
-                          =link_to 'buy certificate', certificates_url
-                        %li
-                          =link_to 'view purchased certificates', certificate_orders_url
+                        %li=link_to 'buy certificate', certificates_url
+                        %li=link_to 'deposit funds', allocate_funds_url
+                        %li=link_to 'view purchased certificates', certificate_orders_url
                         -if user.ssl_account.has_credits?
-                          %li
-                            =link_to 'use certificate credits', credits_certificate_orders_url
+                          %li=link_to 'use certificate credits', credits_certificate_orders_url
                     -if(ac = user.ssl_account.api_credential)
                       .half_width_box
                         %ul

@@ -146,12 +146,12 @@ class OrdersController < ApplicationController
         SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
         if line_item.sellable.try("external_order_number")
           OrderNotifier.request_comodo_refund("refunds@comodo.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", line_item.sellable.external_order_number, params["refund_reason"], "norepy@ssl.com").deliver
+          OrderNotifier.request_comodo_refund("support@ssl.com", line_item.sellable.external_order_number, params["refund_reason"], "noreply@ssl.com").deliver
           ComodoApi.revoke_ssl(line_item.sellable, refund_reason: params["refund_reason"])
         end
         if line_item.sellable.notes =~ /DV#(\d+)/
           OrderNotifier.request_comodo_refund("refunds@comodo.com", $1, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", $1, params["refund_reason"], "norepy@ssl.com").deliver
+          OrderNotifier.request_comodo_refund("support@ssl.com", $1, params["refund_reason"], "noreply@ssl.com").deliver
           ComodoApi.revoke_ssl(nil, refund_reason: params["refund_reason"], external_order_number: $1)
         end
       end
