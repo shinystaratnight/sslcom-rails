@@ -353,6 +353,10 @@ class CertificateOrder < ActiveRecord::Base
           365
         when 2
           730
+        when 90 #trial
+          90
+        when 30 #trial
+          30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
           1095
       end
@@ -1098,7 +1102,8 @@ class CertificateOrder < ActiveRecord::Base
   def build_comodo_dcv(last_sent, params, options={})
     if certificate.is_ucc?
       dcv_methods_for_comodo=[]
-      new_domains = (options[:certificate_content] ? options[:certificate_content].domains : domains)
+      new_domains, csr = (options[:certificate_content] ?
+          [options[:certificate_content].domains, options[:certificate_content].csr] : [self.domains, self.csr])
       domains_for_comodo = (new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains)).flatten.uniq
       domains_for_comodo.each do |d|
         if certificate_content.certificate_names.find_by_name(d)
