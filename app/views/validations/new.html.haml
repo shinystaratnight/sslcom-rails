@@ -52,11 +52,14 @@
         -cns = co.certificate_content.certificate_names
         -mdc_validation = ComodoApi.mdc_status(co)
         -ds = mdc_validation.domain_status
-        -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each do |cn|
+        -count_validated,count_domain=0,0
+        -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each_with_index do |cn|
           -if @certificate_order.certificate.is_ucc?;
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]
               -validated = (name && name["status"]=~/validated/i)
+              -count_domain+=1
+              -count_validated+=1 if validated
               -dcv = cn.domain_control_validations.last
               -le=cn.domain_control_validations.last_emailed
               -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
@@ -78,10 +81,14 @@
                 %td{colspan: "5"}
                   instructions:
                   %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
+            -all_validated=true if count_domain==count_validated && count_validated>0
           -else
-            -name=ds.to_a[0][1]
-            -validated = all_validated = (name && name["status"]=~/validated/i)
             -last_sent = cn.last_dcv
+            -if ds
+              -name=ds.to_a[0][1]
+              -validated = all_validated = (name && name["status"]=~/validated/i)
+            -else
+              -validated=(last_sent && last_sent.satisfied?) ? true : false
             -dcv = cn.domain_control_validations.last
             -le=cn.domain_control_validations.last_emailed
             -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
@@ -91,10 +98,10 @@
               %td=check_box_tag cn.id, false, nil, class: "check_box"
               %td
                 =cn.name
-              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, dcv.blank? ? "" : dcv.method_for_api),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
               -#%td description
               %td.pretest{class: cn.name} n/a
-              %td.attempt{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.dcv_method + (last_sent.email_address ? " to #{last_sent.email_address}" : "")
+              %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
               %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
               %td.status{class: cn.name}=name["status"].downcase if ds && name
@@ -124,8 +131,8 @@
             %td{colspan: "5"}
               instructions:
               %span{alt: "domains[#{cn.name}][dcv]"} please select a validation method
-    -unless all_validated
-      #upload_validations(style='width: 100%; text-align: center;')
+    #upload_validations(style='width: 100%; text-align: center;')
+      -unless all_validated
         =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
         .clearfix
           =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
