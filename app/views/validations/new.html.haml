@@ -37,6 +37,7 @@
   =form_tag(form_action+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
+    -all_validated=false
     %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
       %thead
         %td=check_box_tag "select_all", nil, {id: "select_all"}
@@ -49,9 +50,8 @@
         %th status
       -if co.external_order_number
         -cns = co.certificate_content.certificate_names
-        -if @certificate_order.certificate.is_ucc?
-          -mdc_validation = ComodoApi.mdc_status(co)
-          -ds = mdc_validation.domain_status
+        -mdc_validation = ComodoApi.mdc_status(co)
+        -ds = mdc_validation.domain_status
         -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each do |cn|
           -if @certificate_order.certificate.is_ucc?;
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
@@ -79,8 +79,9 @@
                   instructions:
                   %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
           -else
+            -name=ds.to_a[0][1]
+            -validated = all_validated = (name && name["status"]=~/validated/i)
             -last_sent = cn.last_dcv
-            -validated=(last_sent && last_sent.satisfied?) ? true : false
             -dcv = cn.domain_control_validations.last
             -le=cn.domain_control_validations.last_emailed
             -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
@@ -96,7 +97,7 @@
               %td.attempt{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.dcv_method + (last_sent.email_address ? " to #{last_sent.email_address}" : "")
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
               %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
-              %td.status{class: cn.name}=last_sent.blank? ? "n/a" : satisfied(last_sent)
+              %td.status{class: cn.name}=name["status"].downcase if ds && name
             %tr
               %td
               %td
@@ -123,10 +124,11 @@
             %td{colspan: "5"}
               instructions:
               %span{alt: "domains[#{cn.name}][dcv]"} please select a validation method
-    #upload_validations(style='width: 100%; text-align: center;')
-      =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
-      .clearfix
-        =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
+    -unless all_validated
+      #upload_validations(style='width: 100%; text-align: center;')
+        =submit_tag "Validate", :id=>"validate_domains", :disable_with=>"Submitting..."
+        .clearfix
+          =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 -else
   #stylized.default_form
     =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
