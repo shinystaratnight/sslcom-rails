@@ -4,7 +4,7 @@ class CaApiRequest < ActiveRecord::Base
   default_scope order(:created_at.desc)
 
   def success?
-    !!(response=~/^errorCode=0/)
+    !!(response=~/errorCode=0/)
   end
 
   def parameters_to_hash

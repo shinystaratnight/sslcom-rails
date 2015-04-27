@@ -102,7 +102,7 @@ class ApiCertificateRequest < CaApiRequest
     cc = co.certificate_content
     cns = co.certificate_names.includes(:domain_control_validations)
     dcvs = {}.tap do |dcv|
-      (co.all_domains).each do |domain|
+      (co.certificate.is_ucc? ? co.all_domains : [co.common_name]).each do |domain|
         last = (cns.find_all{|cn|cn.name==domain}).map(&:domain_control_validations).flatten.compact.last ||
           (co.csr.domain_control_validations.flatten.compact.last if (co.csr && co.csr.common_name==domain))
         unless last.blank?

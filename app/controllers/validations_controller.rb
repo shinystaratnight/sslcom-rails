@@ -23,7 +23,7 @@ class ValidationsController < ApplicationController
   end
 
   def new
-    if @certificate_order.certificate.is_ucc? && @certificate_order.certificate_content.contacts_provided?
+    if @certificate_order.certificate_content.contacts_provided?
         @certificate_order.certificate_content.pend_validation!
     elsif @certificate_order.certificate_content.issued?
       checkout={checkout: "true"}

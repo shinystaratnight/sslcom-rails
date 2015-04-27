@@ -106,14 +106,18 @@ class CertificateOrdersController < ApplicationController
         @certificate_content = @certificate_order.certificate_content
         return render '/certificates/buy', :layout=>'application'
       end
-      csr = @certificate_order.certificate_content.csr
-      setup_registrant()
-      @registrant.company_name = csr.organization
-      @registrant.department = csr.organization_unit
-      @registrant.city = csr.locality
-      @registrant.state = csr.state
-      @registrant.email = csr.email
-      @registrant.country = csr.country
+      unless @certificate_order.certificate_content.csr_submitted?
+        redirect_to certificate_order_url(@certificate_order)
+      else
+        csr = @certificate_order.certificate_content.csr
+        setup_registrant()
+        @registrant.company_name = csr.organization
+        @registrant.department = csr.organization_unit
+        @registrant.city = csr.locality
+        @registrant.state = csr.state
+        @registrant.email = csr.email
+        @registrant.country = csr.country
+      end
     else
       not_found
     end

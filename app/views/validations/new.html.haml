@@ -51,6 +51,7 @@
       -if co.external_order_number
         -cns = co.certificate_content.certificate_names
         -mdc_validation = ComodoApi.mdc_status(co)
+        -sdc_validation = ComodoApi.collect_ssl(co)
         -ds = mdc_validation.domain_status
         -count_validated,count_domain=0,0
         -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each_with_index do |cn|
