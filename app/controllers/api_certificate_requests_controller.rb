@@ -157,6 +157,7 @@ class ApiCertificateRequestsController < ApplicationController
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         template = "api_certificate_requests/show_v1_4"
+        @result.order_date = @acr.created_at
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
         @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
@@ -204,7 +205,9 @@ class ApiCertificateRequestsController < ApplicationController
         template = "api_certificate_requests/index_v1_4"
         @acrs.each do |acr|
           result = ApiCertificateRetrieve.new(ref: acr.ref)
+          result.order_date = acr.created_at
           result.order_status = acr.status
+          result.domains = acr.domains
           result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
           result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
           result.description = acr.description

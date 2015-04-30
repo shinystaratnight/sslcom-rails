@@ -82,7 +82,7 @@
                 %td{colspan: "5"}
                   instructions:
                   %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
-            -all_validated=true if count_domain==count_validated && count_validated>0
+            -#all_validated=true if count_domain==count_validated && count_validated>0
           -else
             -last_sent = cn.last_dcv
             -if ds

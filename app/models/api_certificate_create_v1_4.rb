@@ -321,7 +321,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         v["dcv_failure_action"] ||= "ignore"
       end
     elsif csr.blank?
-      errors[:domains] << "csr has not been submitted yet."
+      # allow domains without the csr so commented out below
+      # errors[:domains] << "csr has not been submitted yet."
     elsif !api_requestable.certificate_content.pending_validation?
       errors[:domains] << "certificate order is not in validation stage."
     else
