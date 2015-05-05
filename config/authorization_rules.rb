@@ -96,6 +96,11 @@ authorization do
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
   end
+
+  role :rekey_certificate
+  role :make_payment
+  role :view_billing_info
+  role :edit_billing_info
 end
 
 privileges do

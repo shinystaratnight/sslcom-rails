@@ -264,6 +264,13 @@ class SslAccount < ActiveRecord::Base
     self.find_each{|s|s.create_api_credential if s.api_credential.blank?}
   end
 
+  # from_sa - the ssl_account to migrate from
+  # to_sa - the ssl_account to migrate to
+  def self.migrate_orders(from_sa, to_sa)
+    to_sa.orders << from_sa.orders
+    to_sa.certificate_orders << from_sa.certificate_orders
+  end
+
   def primary_user
     users.first
   end

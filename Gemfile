@@ -53,6 +53,7 @@ gem "daemons"
 gem 'delayed_job_groups_plugin'
 gem 'public_suffix'
 gem 'rack-cors', :require => 'rack/cors'
+gem 'cancan'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'

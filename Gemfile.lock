@@ -93,6 +93,7 @@ GEM
       nokogiri (>= 1.4.4)
       uuidtools (~> 2.1)
     builder (3.0.4)
+    cancan (1.6.8)
     capistrano (2.13.5)
       highline
       net-scp (>= 1.0.0)
@@ -412,6 +413,7 @@ DEPENDENCIES
   aws-s3
   aws-sdk
   builder
+  cancan
   capybara
   coffee-rails
   compass-rails
