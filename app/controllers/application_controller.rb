@@ -213,15 +213,14 @@ class ApplicationController < ActionController::Base
   end
 
   #this function should be cronned and moved to a more appropriate location
+  # flags unused certificate_orders as expired after a period of time
   def self.flag_expired_certificate_orders
     Authorization.ignore_access_control(true)
     CertificateOrder.includes({:certificate_contents=>
           {:csr=>:signed_certificates}}).find_each(batch_size: 500) {|co|
       expired =
         ['paid'].include?(co.workflow_state) &&
-        co.created_at < Settings.cert_expiration_threshold_days.to_i.days.ago &&
-        (co.certificate_content.csr.nil? ||
-        co.certificate_content.csr.try(:signed_certificate).nil?)
+        co.created_at < Settings.cert_expiration_threshold_days.to_i.days.ago && co.csrs.blank?
       co.update_attribute :is_expired, expired
     }
   end
@@ -335,6 +334,22 @@ class ApplicationController < ActionController::Base
     EnhancedResponder
   end
 =end
+
+  protected
+
+  #derive the model name from the controller. egs UsersController will return User
+  def self.permission
+    return name = self.name.gsub('Controller','').singularize.split('::').last.constantize.name rescue nil
+  end
+
+  def current_ability
+    @current_ability ||= Ability.new(current_user)
+  end
+
+  #load the permissions for the current user so that UI can be manipulated
+  def load_permissions
+    @current_permissions = current_user.permissions.collect{|i| [i.subject_class, i.action]}
+  end
 
   private
 

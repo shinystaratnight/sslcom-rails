@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150313191541) do
+ActiveRecord::Schema.define(:version => 20150505183402) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -664,6 +664,23 @@ ActiveRecord::Schema.define(:version => 20150313191541) do
   add_index "payments", ["order_id"], :name => "index_payments_on_order_id"
   add_index "payments", ["updated_at"], :name => "index_payments_on_updated_at"
 
+  create_table "permissions", :force => true do |t|
+    t.string   "name"
+    t.string   "action"
+    t.string   "subject_class"
+    t.integer  "subject_id"
+    t.text     "description"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "permissions_roles", :force => true do |t|
+    t.integer  "permission_id"
+    t.integer  "role_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
   create_table "preferences", :force => true do |t|
     t.string   "name",       :null => false
     t.integer  "owner_id",   :null => false
@@ -794,6 +811,9 @@ ActiveRecord::Schema.define(:version => 20150313191541) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "ssl_account_id"
+    t.text     "description"
+    t.string   "status"
   end
 
   create_table "sent_reminders", :force => true do |t|

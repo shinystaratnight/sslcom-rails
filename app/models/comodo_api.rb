@@ -39,7 +39,7 @@ class ComodoApi
     unless ccr.success?
       OrderNotifier.problem_ca_sending("comodo@ssl.com", certificate_order,"comodo").deliver
     else
-      certificate_order.update_column :external_order_number, ccr.order_number
+      certificate_order.update_column(:external_order_number, ccr.order_number) if ccr.order_number
     end
     ccr
   end

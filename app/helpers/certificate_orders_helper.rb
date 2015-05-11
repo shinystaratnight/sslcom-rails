@@ -48,10 +48,10 @@ module CertificateOrdersHelper
   def action(certificate_order)
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
-      certificate_order.expired? ? "n/a" :
+      certificate_order.expired? ? "expired" :
           link_to('submit csr', edit_certificate_order_path(certificate_order))
     elsif certificate_order.expired?
-      'n/a'
+      'expired'
     else
       case certificate_content.workflow_state
         when "csr_submitted"

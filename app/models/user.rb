@@ -5,6 +5,7 @@ class User < ActiveRecord::Base
   has_many  :visitor_tokens
   has_many  :surls
   has_many  :roles, :through => :assignments
+  has_many  :permissions, :through => :roles
   has_many  :legacy_v2_user_mappings, :as=>:user_mappable
   has_many  :duplicate_v2_users
   has_many  :other_party_requests
@@ -35,6 +36,10 @@ class User < ActiveRecord::Base
   }
 
   default_scope where{status << ['disabled']}.order(:created_at.desc)
+
+  def has_role?(role)
+    roles.map{|r|r.name.downcase}.include?(role.to_s)
+  end
 
   def active?
     active

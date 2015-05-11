@@ -1110,6 +1110,8 @@ class CertificateContent < ActiveRecord::Base
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     elsif csr.is_ip_address? && !csr.is_intranet?
       errors.add(:signing_request, 'may not have a domain name that is an Internet-accessible IP Address')
+    elsif csr.country=~Regexp.union(Country::BLACKLIST) || !!(csr.common_name=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
+      errors.add(:signing_request, "may not have a domain name that is a restricted tld")
     else
       unless is_code_signing
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?

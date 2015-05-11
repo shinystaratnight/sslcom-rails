@@ -1137,11 +1137,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def change_ext_ca_order(new_number)
-    if old_number = external_order_number
-      ss=certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.last
-      ss.update_attribute :response, ss.response.gsub(old_number, new_number.to_s)
-      update_column :external_order_number, new_number
-    end
+    ss=certificate_contents.map(&:csr).compact.map(&:sent_success).flatten.compact.last
+    ss.update_column :response, ss.response.gsub(external_order_number, new_number.to_s)
+    update_column :external_order_number, new_number
   end
 
   # Resets this order as if it never processed
