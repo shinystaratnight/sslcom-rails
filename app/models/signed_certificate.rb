@@ -235,10 +235,9 @@ class SignedCertificate < ActiveRecord::Base
 
   def zipped_apache_bundle(is_windows=false)
     is_windows=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
-    co=csr.certificate_content.certificate_order
     path="/tmp/"+friendly_common_name+".zip#{Time.now.to_i.to_s(32)}"
     ::Zip::ZipFile.open(path, Zip::ZipFile::CREATE) do |zos|
-      file=File.new(ca_bundle(is_windows: is_windows), "r")
+      file=File.new(ca_bundle(is_windows: is_windows, is_open_ssl: true), "r")
       zos.get_output_stream(APACHE_BUNDLE) {|f|f.puts (is_windows ?
           file.readlines.join("").gsub(/\n/, "\r\n") : file.readlines)}
       cert = is_windows ? body.gsub(/\n/, "\r\n") : body
@@ -361,7 +360,7 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       tmp << body+"\n"
-      certificate_order.bundled_cert_names.reverse.each do |file_name|
+      certificate_order.bundled_cert_names(is_open_ssl: true).reverse.each do |file_name|
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end

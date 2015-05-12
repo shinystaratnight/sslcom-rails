@@ -736,7 +736,6 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
       <envs>
         <env name="RAILS_ENV" value="development" />
-        <env name="VERSION" value="20150120172229" />
       </envs>
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
@@ -804,7 +803,9 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
+      <RunnerSettings RunnerId="RubyDebugRunner" />
       <RunnerSettings RunnerId="RubyRunner" />
+      <ConfigurationWrapper RunnerId="RubyDebugRunner" />
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
@@ -857,6 +858,7 @@
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.7.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.0.4, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v1.3.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="cancan (v1.6.8, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.13.5, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v2.2.1, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="chronic (v0.8.0, RVM: ruby-1.9.3-p327 [rails323]) [gem]" level="application" />

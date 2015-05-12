@@ -838,7 +838,7 @@ class CertificateOrder < ActiveRecord::Base
   # override is a target server software other than the default one for this order
   def bundled_cert_names(override={})
     if self.ca == CA_CERTIFICATES[:SSLcomSHA2]
-      if is_open_ssl? && override[:components].blank?
+      if (is_open_ssl? && override[:components].blank?) || override[:is_open_ssl]
         #attach bundle
         Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels].select do |k,v|
           if signed_certificate.try("is_ev?".to_sym)
