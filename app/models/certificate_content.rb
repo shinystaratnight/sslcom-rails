@@ -1110,7 +1110,7 @@ class CertificateContent < ActiveRecord::Base
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
     elsif csr.is_ip_address? && !csr.is_intranet?
       errors.add(:signing_request, 'may not have a domain name that is an Internet-accessible IP Address')
-    elsif csr.country=~Regexp.union(Country::BLACKLIST) || !!(csr.common_name=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
+    elsif csr.country=~Regexp.union(Country::BLACKLIST)
       errors.add(:signing_request, "may not have a domain name that is a restricted tld")
     else
       unless is_code_signing
@@ -1127,6 +1127,8 @@ class CertificateContent < ActiveRecord::Base
         elsif is_free && csr.is_ip_address?
           errors.add(:signing_request,
                      "for '#{csr.common_name}' was determined to be for an ip address. These have been phased out and are no longer allowed.")
+        elsif !!(csr.common_name=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
+          errors.add(:signing_request, "may not have a domain name that is a restricted tld")
         end
         errors.add(:signing_request, invalid_chars_msg) unless
             domain_validation_regex(is_wildcard || (is_ucc && !is_premium_ssl), csr.read_attribute(:common_name).gsub(/\x00/, ''))

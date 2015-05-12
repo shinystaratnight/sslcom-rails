@@ -5,7 +5,7 @@ class Ability
     # Define abilities for the passed in user here. For example:
     #
     @user = user || User.new # guest user (not logged in)
-    @user.roles.each { |role| send(role) }
+    @user.roles.each { |role| send(role.name) if Ability.method_defined?(role.name) }
       
     #   if user.admin?
     #     can :manage, :all
@@ -27,50 +27,50 @@ class Ability
     #
     # See the wiki for details: https://github.com/ryanb/cancan/wiki/Defining-Abilities
     can do |action, subject_class, subject|
-      user.permissions.find_all_by_action(aliases_for_action(action)).any? do |permission|
+      @user.permissions.find_all_by_action(aliases_for_action(action.to_s)).any? do |permission|
         permission.subject_class == subject_class.to_s &&
             (subject.nil? || permission.subject_id.nil? || permission.subject_id == subject.id)
       end
     end
-    can :manage, :all if user.has_role? :admin
+    can :manage, :all if @user.has_role? :admin
   end
 
   def certificates_requestor
-    can :create, CertificateOrder, ssl_account_id: user.ssl_account_id
-    can :delete, CertificateOrder, ssl_account_id: user.ssl_account_id
-    can :update, CertificateOrder, ssl_account_id: user.ssl_account_id
-    can :view, CertificateOrder, ssl_account_id: user.ssl_account_id
-    can :validate_certificate, CertificateOrder, ssl_account_id: user.ssl_account_id
+    can :create, CertificateOrder, ssl_account_id: @user.ssl_account_id
+    can :delete, CertificateOrder, ssl_account_id: @user.ssl_account_id
+    can :update, CertificateOrder, ssl_account_id: @user.ssl_account_id
+    can :view, CertificateOrder, ssl_account_id: @user.ssl_account_id
+    can :validate_certificate, CertificateOrder, ssl_account_id: @user.ssl_account_id
   end
 
   def certificates_approver
-    can :approve, CertificateOrder, ssl_account_id: user.ssl_account_id
+    can :approve, CertificateOrder, ssl_account_id: @user.ssl_account_id
   end
 
   def certificates_manager
     certificates_requestor
     certificates_approver
-    can :manage, CertificateOrder, ssl_account_id: user.ssl_account_id
+    can :manage, CertificateOrder, ssl_account_id: @user.ssl_account_id
   end
 
   # for technical or other ppl where prices do not have to be shown
-  def orders_prices_removed
-    can :view_priece_removed, Order, id: {user: ssl_account.order_ids}
+  def prices_restricted
+    cannot :view_price, Order, id: @user.ssl_account.order_ids
   end
 
   def orders_requestor
-    can :create, Order, id: {user: ssl_account.order_ids}
-    can :view, Order, id: {user: ssl_account.order_ids}
+    can :create, Order, id: @user.ssl_account.order_ids
+    can :view, Order, id: @user.ssl_account.order_ids
   end
 
   def orders_approver
-    can :approve, Order, id: {user: ssl_account.order_ids}
+    can :approve, Order, id: @user.ssl_account.order_ids
   end
 
   def orders_manager
     orders_requestor
     orders_approver
-    can :manage, Order, id: {user: ssl_account.order_ids}
+    can :manage, Order, id: @user.ssl_account.order_ids
   end
 
   def admin
