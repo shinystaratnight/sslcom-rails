@@ -15,6 +15,7 @@ jQuery(function($) {
       else
         $('label[for*=state]').text("State/Province");
     };
+    $('#auto_adjust input[name=next]').focus();
     $('.add_to_cart').click(function() {
       $(this).parent().effect("transfer", {
         to: "#cart a"

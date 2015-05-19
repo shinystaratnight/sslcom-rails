@@ -103,6 +103,11 @@
                               decoded:
                               %span.country
                                 %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
+                        %li.category_border
+                        %li
+                          %strong for developers
+                        %li=link_to "preformatted api strings", developer_certificate_order_path(co)
+                        %li=link_to "developer's corner", developers_certificate_orders_path
                         -if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
                           %li &nbsp;
                           %li

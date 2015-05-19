@@ -126,12 +126,14 @@ SslCom::Application.routes.draw do
       get :incomplete
       get :reprocessing
       get :search
+      get :developers
       post :parse_csr
     end
 
     member do
       put :update_csr
       get :download
+      get :developer
       get :download_other
       get :renew
       get :reprocess

@@ -1,9 +1,9 @@
--content_for :title, "SSL Reseller Dashboard"
+-content_for :title, "SSL.com Reseller Dashboard"
 -user ||= current_user
 -r = user.ssl_account.reseller
 =render(:partial => 'shared/form_progress_indicator', :locals => {options:{li_style: "margin: 0px 40px"}, :pages=>[Reseller::SIGNUP_PAGES_FREE, 3]}) if flash[:notice]==Reseller::WELCOME
 .reseller_registration_select_tier
-  %h3 SSL Reseller Dashboard
+  %h2 SSL Reseller Dashboard
   %p
     The SSL Reseller Program is designed to ease management of bulk ssl
     certificate purchases while increasing your bottom line through volume
@@ -98,6 +98,7 @@
                               api credentials
                           %li account key: #{ac.account_key}
                           %li secret key: #{ac.secret_key}
+                          %li=link_to "developer's corner", developers_certificate_orders_path
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
                     .certificate_details_box
                       %ul

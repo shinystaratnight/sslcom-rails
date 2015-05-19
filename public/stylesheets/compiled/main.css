@@ -7360,3 +7360,10 @@ span#no_emails_accessible {
   float: left;
   width: 100%;
 }
+
+/* line 5420, ../../../app/stylesheets/main.sass */
+.boxsizingBorder {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}

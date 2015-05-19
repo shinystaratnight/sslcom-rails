@@ -9,6 +9,7 @@ class ComodoApi
 
   REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
+  APPLY_CLIENT_URL="https://secure.comodo.net/products/!ApplyCustomClientCert"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
   REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
@@ -104,14 +105,6 @@ class ComodoApi
     else
       comodo_options
     end
-
-    # curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d
-    # "domainName=mgardenssl1.com&newMethod=EMAIL&newDCVEmailAddress=admin@mgardenssl1.com&
-    # orderNumber=15681927&loginName=likx2m7j&loginPassword=Jimi15Kimi15" 'https://secure.comodo.net/products/!AutoUpdateDCV'
-    # EMAIL
-    # HTTP_CSR_HASH
-    # HTTPS_CSR_HASH
-    # CNAME_CSR_HASH
   end
 
   def self.send_comodo(host, options={})
@@ -140,7 +133,16 @@ class ComodoApi
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-    CaRetrieveCertificate.create(attr)
+    CaRevokeCertificate.create(attr)
+  end
+
+  def self.apply_client(certificate_order,options={})
+    comodo_options = params_apply_client(certificate_order, options)
+    host = APPLY_CLIENT_URL
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    CaRevokeCertificate.create(attr)
   end
 
   def self.mdc_status(certificate_order)
@@ -170,6 +172,12 @@ class ComodoApi
 
   def self.params_revoke(certificate_order, options)
     comodo_params = {'revocationReason' => options[:refund_reason],
+                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
+    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+  end
+
+  def self.params_apply_client(certificate_order, options)
+    comodo_params = {'ap' => 'SecureSocketsLaboratories',
                      'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end

@@ -2,6 +2,30 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
+    $('form.create_test_order').ajaxForm({
+      dataType: "json",
+      beforeSubmit: function(){
+        confirmed = confirm('Create Test SSL Order?');
+        if(confirmed){
+          $('#waiting_bar').show();
+        }
+        return confirmed;
+      },
+      success: function(data, status){
+        if(data.errors){
+          $('.error').html("The following fields have errors:</br><ul>");
+          $.each(data.errors, function(i, item) {
+            // i = index
+            // item = data for a particular post
+            $('.error').append("<li>"+i+": "+item.toString()+"</li>");
+          });
+          $('.error').append("</ul>").show();
+        }
+        else
+          window.location.href = "<%=filter_by_scope_certificate_orders_path("is_test")%>";
+      }
+    });
+
     <%if current_user.ssl_account.is_registered_reseller?%>
     $('#next_submit').click(function(){
       if(!$('input[id$=validation]').attr('checked')){

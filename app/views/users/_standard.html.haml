@@ -1,8 +1,8 @@
--title="SSL Customer Dashboard"
+-title="SSL.com Customer Dashboard"
 -content_for :title, title
 -user ||= current_user
 .reseller_registration_select_tier
-  %h3=title
+  %h2=title
   %p
     The SSL standard account is designed to streamline your ssl.com certificate
     purchases by providing an all encompassing interface related to your ssl 
@@ -95,6 +95,7 @@
                               api credentials
                           %li account key: #{ac.account_key}
                           %li secret key: #{ac.secret_key}
+                          %li=link_to "developer's corner", developers_certificate_orders_path
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
             %table(cellspacing="0")
               %tbody

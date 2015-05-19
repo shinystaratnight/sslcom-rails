@@ -1,0 +1,150 @@
+-if co.is_test? || (current_user && (current_user.is_admin? || current_user.ssl_account.is_registered_reseller?))
+  .full_width_box
+    %ul
+      %li
+        %strong Calls To SSL.com API
+      -unless co.is_test
+        %li{style: 'color:red'}
+          WARNING! This is a live order. If you are unfamiliar with the SSL.com API, it is advised that you first create
+          and work with test orders prior to using the api on this order. Find out more about
+          =link_to "creating test orders here.", developers_certificate_orders_path
+        %li &nbsp;
+      %li
+        The api calls listed below are preformatted for cURL, but they can easily be translated into any other
+        format. Each call is tailored to this particular order. Most, if not all, of the calls will at least require the
+        account_key and secret_key parameters for authentication. Please review each call for specific parameters
+        required. For the api parameters documentation please see the #{link_to "'SSL.com API Documentation'", "http://docs.sslcomapi.apiary.io", target: "_blank"}.
+      %li &nbsp;
+      %li
+        Certain calls are available depending on the current status of this certificate order. For instance, if the
+        certificate has been issued, then the 'Reprocess/Reissue' api command will be displayed. Another example is if
+        the csr (certificate signing request) has not been submitted, then the 'Update DCV' or 'New Order w/ CSR' api
+        commands will not be displayed. If you want to create a test order,
+        be sure to visit #{link_to "the SSL.com Developer's Corner", developers_certificate_orders_path}.
+      %li &nbsp;
+      -if current_user.try("is_admin?")
+        %li
+          %strong=link_to "Latest Call Made"
+        %li
+          %textarea.selectAll{style: "width:95%;"}=co.ssl_account.api_certificate_requests_string
+      %li
+        %strong=link_to "Status#{'/Retrieve' if co.csr}", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
+      %li
+        %textarea.selectAll{style: "width:95%;"}=co.to_api_string("show")
+      %li
+        %strong=link_to "List Orders", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
+      %li
+        %textarea.selectAll{style: "width:95%;"}=co.to_api_string("index")
+      %li
+        %strong=link_to "New Order w/o CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
+      %li
+        %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create")
+      -if cc.registrant
+        -if co.csr
+          %li
+            %strong=link_to "New Order w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create_w_csr")
+          %li
+            %strong=link_to "List DCV Methods", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string("dcv_methods")
+          %li
+            %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update_dcv")
+        -if co.external_order_number
+          %li
+            %strong=link_to "Reprocess", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update")
+        %li product:
+        %ul
+          %li
+            %dl
+              %dt
+              %dd "100" - EV UCC SSL
+              %dd "101" - UCC SSL
+              %dd "103" - High Assurance SSL
+              %dd "102" - EV SSL
+              %dd "104" - Free SSL
+              %dd "105" - Wildcard SSL
+              %dd "106" - Basic SSL
+              %dd "107" - Premium SSL
+        -if current_user.try("is_admin?")
+          %li debug:
+          %ul
+            %li
+              true or false
+          %li send_to_ca:
+          %ul
+            %li
+              true or false
+-if (current_user && current_user.is_admin?)
+  .full_width_box
+    %ul
+      -if co.csr
+        %li
+          %strong Comodo API New Command
+        %li
+          %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, ca_certificate_id: "506", product: "").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
+      -if co.external_order_number
+        %li
+          %strong Comodo API Rekey Command
+        %li
+          %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca.merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::REPLACE_SSL_URL+'\''
+        %li
+          %strong Comodo API Retrieve Command
+        %li
+          %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_collect(co).gsub('"', '\"')+'" \''+ComodoApi::COLLECT_SSL_URL+'\''
+        %li
+          %strong Comodo API Update DCV Command
+        %li
+          %textarea.selectAll
+            -co.certificate_content.certificate_names_by_domains.each do |cn|
+              ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.auto_update_dcv(dcv: cn.domain_control_validations.last, send_to_ca: false)+'" \''+ComodoApi::AUTO_UPDATE_URL+'\''+"\n" if cn.domain_control_validations.last
+        -if co.certificate.is_ucc?
+          %li
+            %strong Comodo Multi Domain Status
+          %li
+            %textarea.selectAll='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.params_domains_status(co).gsub('"', '\"')+'" \''+ComodoApi::GET_MDC_DETAILS+'\''
+      %li product:
+      %ul
+        %li
+          %dl
+            %dt
+            %dd "342" - free 90 day
+            %dd "301" - basicssl
+            %dd "24"  - ov
+            %dd "343" - wildcard
+            %dd "337" - ev
+            %dd
+            %dd "279" - ucc
+            %dd "279" - premiumssl
+            %dd "410" - evucc
+      %li caCertificateID:
+      %ul
+        %li
+          SHA2
+          %dl
+            %dt
+            %dd "508" - ev
+            %dd "507" - ov
+            %dd "506" - dv
+        %li
+          SSL.com Free CA
+          %dl
+            %dt
+            %dd "403" - ev
+            %dd "402" - ov
+            %dd "401" - dv
+      %li signatureHash:
+      %ul
+        %li
+          PREFER_SHA2
+        %li
+          PREFER_SHA1
+        %li
+          REQUIRE_SHA2
+        %li
+          INFER_FROM_CSR

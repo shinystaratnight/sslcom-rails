@@ -73,9 +73,13 @@ class Ability
     can :manage, Order, id: @user.ssl_account.order_ids
   end
 
+  def developer
+    can :develop, CertificateOrder
+  end
+
   def admin
     certificates_manager
     can :manage, Bill
   end
-  
+
 end

@@ -17,8 +17,14 @@ class ApplicationController < ActionController::Base
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
+  after_filter :set_access_control_headers
 
 #  hide_action :paginated_scope
+
+  def set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Request-Method'] = '*'
+  end
 
   def permission_denied
     unless current_user

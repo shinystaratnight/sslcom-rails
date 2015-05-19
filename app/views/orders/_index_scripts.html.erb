@@ -4,6 +4,14 @@ jQuery.noConflict();
 jQuery(function($) {
   var show_new_user_section=true;
   var count = []; //used to map existing cart items with reindexed cookies
+  $(document).keypress(function (e) {
+    var key = e.which;
+    if(key == 13)  // the enter key code
+    {
+      $('#auto_adjust input[name=next]').click(); //Next button
+      return false;
+    }
+  });
   $.line_item_total = function(id){
     qty=$('span[id^=qty_'+id+']').length > 0 ? $('[id^=qty_'+id+']').text() :
       $('[id^=qty_'+id+']').val();

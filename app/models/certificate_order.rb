@@ -311,10 +311,6 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def prorated
-
-  end
-
   # unit can be :days or :years
   def certificate_duration(unit=:as_is)
     years=if migrated_from_v2? && !preferred_v2_line_items.blank?
@@ -582,6 +578,16 @@ class CertificateOrder < ActiveRecord::Base
     (%w(http https).include?(dcvs.last.try(:dcv_method))) ? dcvs.last : dcvs.last_sent
   end
 
+
+  def self.to_api_string(options={})
+    'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+        {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
+         secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+         product: options[:certificate].api_product_code,
+         period: options[:period]}.to_json.gsub("\"","\\\"") +
+        "\" https://sws-test.sslpki.com/certificates"
+  end
+
   def to_api_string(action="update", domain_override=nil)
     domain = domain_override || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
@@ -603,7 +609,7 @@ class CertificateOrder < ActiveRecord::Base
          secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
          domains: api_domains}.to_json.gsub("\"","\\\"") +
          "\" #{domain}/certificate/#{self.ref}"
-      when /create/
+      when /create_w_csr/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
@@ -613,6 +619,14 @@ class CertificateOrder < ActiveRecord::Base
              domains: api_domains,
              contacts: api_contacts,
              csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
+            "\" #{domain}/certificates"
+      when /create/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+             product: certificate.api_product_code,
+             period: certificate_duration(:comodo_api).to_s,
+             domains: api_domains}.to_json.gsub("\"","\\\"") +
             "\" #{domain}/certificates"
       when /show/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
@@ -659,7 +673,7 @@ class CertificateOrder < ActiveRecord::Base
          postal_code: r.postal_code,
          country_name: r.country}
     api_domains = {}
-    unless cc.domains.blank?
+    if !cc.domains.blank?
       (cc.domains.flatten+[common_name]).each { |d|
         cn=cc.certificate_names.find_by_name(d)
         if cn
@@ -668,7 +682,7 @@ class CertificateOrder < ActiveRecord::Base
                       ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD })
         end
         }
-    else
+    elsif cc.csr
       api_domains.merge!(cc.csr.common_name.to_sym => {dcv: "#{last_dcv_sent ? last_dcv_sent.method_for_api : 'http_csr_hash'}"})
     end
     api_contacts = {}

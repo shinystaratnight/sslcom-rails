@@ -1,0 +1,110 @@
+-c={}
+-c[:description]="The SSL.com Developer's Corner is provide resources for developers to integrate SSL.com into their processes."
+-c[:keywords]="ssl.com ssl certificate developer api"
+-c[:title] = "SSL.com Developer's Corner"
+-c.each do |k, v|
+  -content_for k, c[k]
+-user ||= current_user
+-ac = user.ssl_account.api_credential
+=render :partial => 'index_scripts'
+.reseller_registration_select_tier
+  %h2=c[:title]
+  %h3 Getting Started
+  %p
+    The SSL.com Web Services REST api is designed to allow integration of SSL.com products into your
+    processes. Using current and agile technology, the api is capable of taking advantage of modern
+    software to provide complete control in a simple and intuitive interface.
+  %p
+    From this panel, you can create test orders. Once a test order is created, preformatted and customized
+    api strings will be available that perform various life-cycle functions so that you do not have to build
+    the api calls parameter-by-parameter.
+  %p
+    There are 2 options to creating test orders on ssl.com. You can use the 1) Form Submit Method or the 2) API Call
+    Method.
+  %h3 1) Form Submit Method
+  .error{style: "display: none;"}
+  %p
+    To create a new test certificate order, simply choose the product and duration of the certificate below and click
+    the 'Create Test Order' button.
+    =form_tag "https://sws-test.sslpki.local:3000/certificates", class: "create_test_order" do |f|
+      =hidden_field_tag :account_key, ac.account_key
+      =hidden_field_tag :secret_key, ac.secret_key
+      %table#at_a_glance_header{style: "float: none"}
+        %thead
+          %td(colspan="2" )
+            %h4 Product
+          %td
+            %h4 API Parameter
+        %tr
+          %td=radio_button_tag :product, 106,'checked'
+          %td Basic SSL
+          %td 106
+        %tr
+          %td=radio_button_tag :product, 105
+          %td Wildcard SSL
+          %td 105
+        %tr
+          %td=radio_button_tag :product, 103
+          %td High Assurance SSL
+          %td 103
+        %tr
+          %td=radio_button_tag :product, 107
+          %td Premium SSL
+          %td 107
+        %tr
+          %td=radio_button_tag :product, 101
+          %td UCC/SAN SSL
+          %td 101
+        %tr
+          %td=radio_button_tag :product, 102
+          %td EV SSL
+          %td 102
+        %tr
+          %td=radio_button_tag :product, 100
+          %td EV UCC/SAN SSL
+          %td 100
+      %table#at_a_glance_header{style: "float: none"}
+        %thead
+          %td(colspan="2" )
+            %h4 Period (in days)
+          %td
+            %h4 API Parameter
+        %tr
+          %td=radio_button_tag :period, 365,'checked'
+          %td 365
+          %td 365
+        %tr
+          %td=radio_button_tag :period, 730
+          %td 730
+          %td 730
+        %tr
+          %td=radio_button_tag :period, 1095
+          %td 1095 (not valid for EV's)
+          %td 1095 (not valid for EV's)
+        %tr
+          %td=radio_button_tag :period, 1461
+          %td 1461 (not valid for EV's)
+          %td 1461 (not valid for EV's)
+        %tr
+          %td=radio_button_tag :period, 1826
+          %td 1826 (not valid for EV's)
+          %td 1826 (not valid for EV's)
+      =submit_tag "Create Test Order"
+  %h3 2) API Call Method
+  %p
+    Copy-and-paste the cURL command listed below into a console or terminal prompt (cURL must be installed in order for this
+    command to execute).
+  %p
+    To change the number of years or product type, simply change the 'period' or 'product' parameters, respectively, to
+    any of the above listed "API PARAMETER" values.
+  %p &nbsp;
+  %h4 API Create SSL Certificate Command
+  %textarea.selectAll{style: "width:95%;font-size:1.5em"}=CertificateOrder.to_api_string(ssl_account: current_user.ssl_account, period: "365", certificate: Certificate.find_by_serial(ApiCertificateCreate_v1_4::PRODUCTS['106']))
+  %h3 Where To From Here?
+  %p
+    You will still need to submit a certificate signing request (csr) to see the complete lifecycle of an ssl or digital
+    certificate. If you are using a linux platform (ie Apache, Nginx, Java, etc) please look at #{link_to "http://tools.ssl.com"}
+    for a simple command generator. For other platforms, please visit #{link_to "info.ssl.com"}.
+  %p
+    To see a list of your test orders, please visit #{link_to 'your test orders.', filter_by_scope_certificate_orders_path("is_test")}
+
