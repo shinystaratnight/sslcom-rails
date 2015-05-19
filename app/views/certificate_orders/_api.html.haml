@@ -1,3 +1,4 @@
+-api_domain = co.is_test ? "https://sws-test.sslpki.com" : "https://sws.sslpki.com"
 -#-if co.is_test? || (current_user && (current_user.is_admin? || current_user.ssl_account.is_registered_reseller?))
 .full_width_box
   %ul
@@ -30,34 +31,34 @@
     %li
       %strong=link_to "Status#{'/Retrieve' if co.csr}", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
     %li
-      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("show")
+      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("show", domain_override: api_domain)
     %li
       %strong=link_to "List Orders", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D", target: "_blank"
     %li
-      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("index")
+      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("index", domain_override: api_domain)
     %li
       %strong=link_to "New Order w/o CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
     %li
-      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create")
+      %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create", domain_override: api_domain)
     -if cc.registrant
       -if co.csr
         %li
           %strong=link_to "New Order w/ CSR", "http://docs.sslcomapi.apiary.io/#post-%2Fcertificates", target: "_blank"
         %li
-          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create_w_csr")
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("create_w_csr", domain_override: api_domain)
         %li
           %strong=link_to "List DCV Methods", "http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D", target: "_blank"
         %li
-          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("dcv_methods")
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("dcv_methods", domain_override: api_domain)
         %li
           %strong=link_to "Update DCV", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
         %li
-          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update_dcv")
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update_dcv", domain_override: api_domain)
       -if co.external_order_number
         %li
           %strong=link_to "Reprocess", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
         %li
-          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update")
+          %textarea.selectAll{style: "width:95%;"}=co.to_api_string("update", domain_override: api_domain)
       %li product:
       %ul
         %li
