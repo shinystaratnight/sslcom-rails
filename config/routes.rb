@@ -230,6 +230,7 @@ SslCom::Application.routes.draw do
     end
     member do
       get :buy
+      get :buy_renewal
     end
   end
 

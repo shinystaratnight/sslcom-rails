@@ -1,8 +1,8 @@
 class CertificatesController < ApplicationController
   before_filter :find_tier
-  before_filter :require_user, :only=>[:buy],
+  before_filter :require_user, :only=>[:buy, :buy_renewal],
     :if=>'current_subdomain==Reseller::SUBDOMAIN'
-  before_filter :find_certificate, only: [:show, :buy, :pricing]
+  before_filter :find_certificate, only: [:show, :buy, :pricing, :buy_renewal]
   layout false, only: [:pricing]
 
   def index
@@ -75,6 +75,10 @@ class CertificatesController < ApplicationController
     end
   end
 
+  def buy_renewal
+    buy
+  end
+
   def find_tier
     @tier =''
     if current_user and current_user.ssl_account.has_role?('reseller')
@@ -117,7 +121,8 @@ class CertificatesController < ApplicationController
       @certificate_order.ssl_account=
         current_user.ssl_account unless current_user.blank?
       @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
-      domains = params[:renewing] ? CertificateOrder.unscoped.find_by_ref(params[:renewing]).domains : []
+      domains = params[:renewing] ?
+          CertificateOrder.unscoped.find_by_ref(params[:renewing]).certificate_content.all_domains : []
       @certificate_content = CertificateContent.new(domains: domains)
     end
   end

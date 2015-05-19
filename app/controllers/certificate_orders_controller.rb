@@ -80,7 +80,7 @@ class CertificateOrdersController < ApplicationController
     action = CertificateOrder::RENEWING
     iv = recert(action)
     unless iv.blank?
-      redirect_to buy_certificate_url(iv.renewal_certificate,
+      redirect_to buy_renewal_certificate_url(iv.renewal_certificate,
         {action.to_sym=>params[:id]})
     else
       not_found
