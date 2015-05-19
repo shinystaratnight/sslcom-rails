@@ -8,9 +8,6 @@
       -if current_user.ssl_account.reseller
         %li
           =link_to 'Certificate Pricing', reseller_tier_url(current_user.ssl_account.reseller.reseller_tier.id)
-      -if can?(:develop, CertificateOrder) || current_user.is_admin?
-        %li
-          =link_to "Developer's Corner", developers_certificate_orders_url
       %li &nbsp;
       %li Filter Orders:
       %li=link_to "Basic SSL", filter_by_certificate_orders_path("basic")
@@ -18,6 +15,7 @@
       %li=link_to "UCC SSL", filter_by_certificate_orders_path("ucc")
       %li=link_to "Premium SSL", filter_by_certificate_orders_path("premium")
       %li=link_to "Wildcard SSL", filter_by_certificate_orders_path("wildcard")
-      -if current_user.ssl_account.reseller || current_user.is_admin?
-        %li
-          =link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")
+      %li=link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")
+      %li &nbsp;
+      -#-if can?(:develop, CertificateOrder) || current_user.is_admin?
+      %li=link_to "Developer's Corner", developers_certificate_orders_url

@@ -26,7 +26,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
                    :filter_by_scope, :require=>:read
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
-    :renew, :reprocess, :admin_update, :change_ext_order_number, :developers,
+    :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
     :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'

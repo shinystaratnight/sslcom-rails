@@ -6,6 +6,7 @@
   -content_for k, c[k]
 -user ||= current_user
 -ac = user.ssl_account.api_credential
+-form_action = Rails.env=~/development/i ? "https://sws-test.sslpki.local:3000/certificates" : "https://sws-test.sslpki.com/certificates"
 =render :partial => 'index_scripts'
 .reseller_registration_select_tier
   %h2=c[:title]
@@ -26,7 +27,7 @@
   %p
     To create a new test certificate order, simply choose the product and duration of the certificate below and click
     the 'Create Test Order' button.
-    =form_tag "https://sws-test.sslpki.local:3000/certificates", class: "create_test_order" do |f|
+    =form_tag form_action, class: "create_test_order" do |f|
       =hidden_field_tag :account_key, ac.account_key
       =hidden_field_tag :secret_key, ac.secret_key
       %table#at_a_glance_header{style: "float: none"}
