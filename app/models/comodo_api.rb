@@ -7,9 +7,11 @@ class ComodoApi
       'loginName' => Settings.comodo_api_username,
       'loginPassword' => Settings.comodo_api_password}
 
+  CODE_SIGNING_PRODUCT={"1"=>"x_PPP=1511", "2"=>"x_PPP=1512", "3"=>"x_PPP=1509"}
+  SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
   APPLY_SSL_URL="https://secure.comodo.net/products/!AutoApplySSL"
-  APPLY_CLIENT_URL="https://secure.comodo.net/products/!ApplyCustomClientCert"
+  PLACE_ORDER_URL="https://secure.comodo.net/products/!PlaceOrder"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
   REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
@@ -136,13 +138,25 @@ class ComodoApi
     CaRevokeCertificate.create(attr)
   end
 
-  def self.apply_client(certificate_order,options={})
-    comodo_options = params_apply_client(certificate_order, options)
-    host = APPLY_CLIENT_URL
+  def self.apply_apac(certificate_order,options={})
+    comodo_options = params_place_order(certificate_order, options)
+    host = PLACE_ORDER_URL
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
     CaRevokeCertificate.create(attr)
+    "title forename surname emailAddress x_PPP x_csr"
+    "title forename surname emailAddress organizationName organizationalUnitName streetAddress1 streetAddress2 streetAddress3 x_PPP x_csr localityName stateOrProvinceName postalCode countryName "
+  end
+
+  def self.apply_code_signing(certificate_order,options={})
+    comodo_options = params_place_order(certificate_order, options)
+    host = PLACE_ORDER_URL
+    res = send_comodo(host, comodo_options)
+    attr = {request_url: host,
+      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    CaRevokeCertificate.create(attr)
+    "x_contactEmailAddress x_csr x_caCertificateID x_signatureHash loginPassword loginName x_PPP x_csr"
   end
 
   def self.mdc_status(certificate_order)
@@ -176,8 +190,8 @@ class ComodoApi
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
-  def self.params_apply_client(certificate_order, options)
-    comodo_params = {'ap' => 'SecureSocketsLaboratories',
+  def self.params_place_order(certificate_order, options)
+    comodo_params = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y",
                      'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end

@@ -24,9 +24,5 @@ Your SSL account has been debited <%=@certificate_order.order.final_amount.forma
 Please respond the email validation request sent to: <%=last_sent.email_address%>.
 If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(@certificate_order)%> to change the address.
 <%end-%>
-<%if @certificate_order.certificate.is_ev?-%>
-
-<%=render(:partial=>"ev_reqs")%>
-<%end-%>
 
 <%=render(:partial=>"support_contact")%>

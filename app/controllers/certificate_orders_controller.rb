@@ -30,6 +30,7 @@ class CertificateOrdersController < ApplicationController
     :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
+  before_filter :require_user_1, :only=>[:developers]
   #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
@@ -38,6 +39,10 @@ class CertificateOrdersController < ApplicationController
 
   def search
     index
+  end
+
+  def require_user_1
+    require_user
   end
 
   # GET /certificate_orders

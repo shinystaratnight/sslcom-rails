@@ -18,9 +18,5 @@ Order Amount: <%=@certificate_order.order.final_amount.format%>
 Your SSL account has been debited <%=@certificate_order.order.final_amount.format%>.
 
 Please visit <%=new_certificate_order_validation_url(@certificate_order)%> to perform domain validation on this order.
-<%if @certificate_order.certificate.is_ev?-%>
-
-<%=render(:partial=>"ev_reqs")%>
-<%end-%>
 
 <%=render(:partial=>"support_contact")%>

@@ -580,12 +580,16 @@ class CertificateOrder < ActiveRecord::Base
 
 
   def self.to_api_string(options={})
-    'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
-        {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
-         secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
-         product: options[:certificate].api_product_code,
-         period: options[:period]}.to_json.gsub("\"","\\\"") +
-        "\" https://sws-test.sslpki.com/certificates"
+    options[:action]="create_ssl" if options[:action].blank?
+    case options[:action]
+      when /create_ssl/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
+             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             product: options[:certificate].api_product_code,
+             period: options[:period]}.to_json.gsub("\"","\\\"") +
+            "\" https://sws-test.sslpki.com/certificates"
+    end
   end
 
   def to_api_string(action="update", domain_override=nil)
