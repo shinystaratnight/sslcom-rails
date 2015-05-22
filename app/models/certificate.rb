@@ -284,6 +284,10 @@ class Certificate < ActiveRecord::Base
     product.include?('ucc') || product.include?('premiumssl')
   end
 
+  def is_client?
+    product.include?('personal') || product.include?('myssl')
+  end
+
   def is_wildcard?
     product.include?('wildcard')
   end
@@ -296,8 +300,16 @@ class Certificate < ActiveRecord::Base
     product.include?('high_assurance')
   end
 
+  def is_browser_generated_capable?
+    is_code_signing? || is_client?
+  end
+
   def is_code_signing?
     product.include?('code_signing') || product.include?('code-signing')
+  end
+
+  def is_personal?
+    product.include?('personal')
   end
 
   def is_document_signing?
@@ -640,6 +652,91 @@ class Certificate < ActiveRecord::Base
             item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
         end
       }
+    end
+  end
+
+  def self.create_email_certs
+    products=[{serial_root: "personalbasic",title: "Personal Basic",validation_type: "class 1",
+               summary: "for authenticating and encrypting email and well as client services",
+               product: "personal-basic",
+               price_adjusts:{sslcompersonalbasic256ssl1yr: [3000, 4500, 6000],
+                              sslcompersonalbasic256ssl1yr1tr: [3000, 4500, 6000],
+                              sslcompersonalbasic256ssl1yr2tr: [3000, 4500, 6000],
+                              sslcompersonalbasic256ssl1yr3tr: [3000, 4500, 6000],
+                              sslcompersonalbasic256ssl1yr4tr: [3000, 4500, 6000],
+                              sslcompersonalbasic256ssl1yr5tr: [3000, 4500, 6000]
+               }},
+              {serial_root: "personalbusiness",title: "Personal Business",validation_type: "class 2",
+               summary: "for authenticating and encrypting email and well as client services",
+               product: "personal-business",
+               price_adjusts:{sslcompersonalbusiness256ssl1yr: [9000, 12000, 15000],
+                              sslcompersonalbusiness256ssl1yr1tr: [9000, 12000, 15000],
+                              sslcompersonalbusiness256ssl1yr2tr: [9000, 12000, 15000],
+                              sslcompersonalbusiness256ssl1yr3tr: [9000, 12000, 15000],
+                              sslcompersonalbusiness256ssl1yr4tr: [9000, 12000, 15000],
+                              sslcompersonalbusiness256ssl1yr5tr: [9000, 12000, 15000]
+               }},
+              {serial_root: "personalpro",title: "Personal Pro",validation_type: "class 2",
+               summary: "for authenticating and encrypting email and well as client services",
+               product: "personal-pro",
+               price_adjusts:{sslcompersonalpro56ssl1yr: [7000, 8000, 9000],
+                              sslcompersonalpro256ssl1yr1tr: [7000, 8000, 9000],
+                              sslcompersonalpro256ssl1yr2tr: [7000, 8000, 9000],
+                              sslcompersonalpro256ssl1yr3tr: [7000, 8000, 9000],
+                              sslcompersonalpro256ssl1yr4tr: [7000, 8000, 9000],
+                              sslcompersonalpro256ssl1yr5tr: [7000, 8000, 9000]
+               }},
+              {serial_root: "personalenterprise",title: "Personal Enterprise",validation_type: "class 2",
+               summary: "for authenticating and encrypting email and well as client services",
+               product: "personal-enterprise",
+               price_adjusts:{sslcompersonalenterprise256ssl1yr: [24900, 49900, 59900],
+                              sslcompersonalenterprise256ssl1yr1tr: [24900, 49900, 59900],
+                              sslcompersonalenterprise256ssl1yr2tr: [24900, 49900, 59900],
+                              sslcompersonalenterprise256ssl1yr3tr: [24900, 49900, 59900],
+                              sslcompersonalenterprise256ssl1yr4tr: [24900, 49900, 59900],
+                              sslcompersonalenterprise256ssl1yr5tr: [24900, 49900, 59900]
+               }}]
+    products.each do |p|
+      c=Certificate.public.find_by_product "high_assurance"
+      certs = c.duplicate_tiers "#{p[:serial_root]}256sslcom", "ov256ssl", "#{p[:serial_root]}256ssl"
+      title = p[:title]
+      description={
+          "certificate_type" => title,
+          "points" => "",
+          "validation_level" => p[:validation_type],
+          "summary" => p[:summary],
+          "abbr" => title
+      }
+      certs.each do |c|
+        c.update_attributes title: title,
+                            description: description,
+                            product: c.product.gsub(/^high_assurance/, p[:product]),
+                            icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
+      end
+      certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
+      p[:price_adjusts].each do |k,v|
+        serials=[]
+        num_years=3
+        1.upto(num_years){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+        serials.each_with_index {|s, i|
+          if ProductVariantItem.find_by_serial(s)
+            ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])
+          else
+            if s.last(3)=~/\d+tr/ #assume a reseller tier
+              pvg = certs.find{|c|c.serial.last(3)==s.last(3)}.product_variant_groups.last
+            else #assume non reseller
+              pvg = certs.first.product_variant_groups.last
+            end
+            pvi = pvg.product_variant_items.last
+            years = i+1
+            pvg.product_variant_items.create(serial: s, amount: v[i], title: pvi.title.gsub(/\d/,years.to_s),
+              status: pvi.status, description: pvi.description.gsub(/\d/,years.to_s),
+              text_only_description: pvi.text_only_description.gsub(/\d/,years.to_s),
+              display_order: years.to_s,
+              item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
+          end
+        }
+      end
     end
   end
 

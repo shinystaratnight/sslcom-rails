@@ -20,7 +20,7 @@
 =f.fields_for :certificate_contents, @certificate_content do |cert_form|
   -if Settings.show_csr_submit_on_buy_page || @certificate_order.is_unused_credit?
     #csr_section
-      -if @certificate.is_code_signing?
+      -if @certificate.is_browser_generated_capable?
         %p
           In order to submit a Certificate Signing Request (CSR), you must first
           generate it in your web browser or try using the #{link_to "SSL.com Manager", "http://www.ssltools.com/manager"}
@@ -90,7 +90,7 @@
                 =link_to @certificate_order.parent.ref, @certificate_order.parent, target: "_blank"
             =text_area_tag :previous_csr_body, @certificate_order.most_recent_csr.body, style: "display: none"
         =cert_form.text_area :signing_request, :cols=>40, :rows=>10, :wrap=>'off'
-      -if @certificate.is_code_signing?
+      -if @certificate.is_browser_generated_capable?
         =cert_form.hidden_field :server_software_id, value: ServerSoftware.find(1).id
       -else
         .clearfix
@@ -101,7 +101,7 @@
           -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
           =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
   -else
-    -if @certificate.is_code_signing?
+    -if @certificate.is_browser_generated_capable?
       %p #{@certificate.title} Certificate Summary
       %ul.cert_reqs
         %li Used to secure apps by making them tamper proof

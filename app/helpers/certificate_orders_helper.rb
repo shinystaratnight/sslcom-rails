@@ -26,7 +26,7 @@ module CertificateOrdersHelper
         end
       end
     end
-    unless certificate_order.migrated_from_v2?
+    if !(certificate_order.certificate.is_client? || certificate_order.certificate.is_code_signing?)
       items << "SSL.com Secured Seal"
       items << "SSL.com daily site monitoring"
     end

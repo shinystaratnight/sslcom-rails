@@ -453,6 +453,8 @@ class CertificateOrder < ActiveRecord::Base
       else
         PREPAID_FULL_SIGNUP_PROCESS
       end
+    elsif cert.is_browser_generated_capable?
+      PREPAID_EXPRESS_SIGNUP_PROCESS
     else
       PREPAID_FULL_SIGNUP_PROCESS
     end
@@ -583,6 +585,20 @@ class CertificateOrder < ActiveRecord::Base
     options[:action]="create_ssl" if options[:action].blank?
     case options[:action]
       when /create_ssl/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
+             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             product: options[:certificate].api_product_code,
+             period: options[:period]}.to_json.gsub("\"","\\\"") +
+            "\" https://sws-test.sslpki.com/certificates"
+      when /create_code_signing/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
+             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             product: options[:certificate].api_product_code,
+             period: options[:period]}.to_json.gsub("\"","\\\"") +
+            "\" https://sws-test.sslpki.com/certificates"
+      when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",

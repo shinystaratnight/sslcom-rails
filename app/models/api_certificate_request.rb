@@ -81,9 +81,9 @@ class ApiCertificateRequest < CaApiRequest
     is_test = self.test ? "is_test" : "not_test"
     co = if self.api_requestable.users.find(&:is_admin?)
       self.admin_submitted = true
-      CertificateOrders.range(self.start, self.end).send(is_test)
+      CertificateOrder.range(self.start, self.end).send(is_test).limit(20)
     else
-      self.api_requestable.certificate_orders.range(self.start, self.end).send(is_test)
+      self.api_requestable.certificate_orders.range(self.start, self.end).send(is_test).limit(100)
     end
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co
