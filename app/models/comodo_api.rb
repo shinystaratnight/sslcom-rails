@@ -150,18 +150,20 @@ class ComodoApi
   end
 
   def self.apply_code_signing(certificate_order,options={})
-    comodo_options = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y","x_contactEmailAddress"=>,
-                     "x_csr"=>certificate_order.csr.to_api,"x_caCertificateID"=>,"x_signatureHash"=>,"loginPassword"=>,"loginName"=>,
-                     "x_PPP"=>
-                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
+    comodo_options = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y","1_contactEmailAddress"=>certificate_order.certificate_content.registrant.email,
+                     "1_csr"=>certificate_order.csr.to_api,"1_caCertificateID"=>"507","1_signatureHash"=>"PREFER_SHA2","loginPassword"=>"","loginName"=>"",
+                     "1_PPP"=> ppp_parameter(certificate_order),
+                     'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
     comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-
-    host = PLACE_ORDER_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-    CaRevokeCertificate.create(attr)
-    "x_contactEmailAddress x_csr x_caCertificateID x_signatureHash loginPassword loginName x_PPP x_csr"
+    if options[:send_to_ca] && order_number
+      host = PLACE_ORDER_URL
+      res = send_comodo(host, comodo_options)
+      attr = {request_url: host,
+              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+      CaCertificateRequest.create(attr)
+    else
+      comodo_options
+    end
   end
 
   def self.mdc_status(certificate_order)
@@ -199,6 +201,19 @@ class ComodoApi
     comodo_params = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y",
                      'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+  end
+
+  def self.ppp_parameter(certificate_order)
+    if certificate_order.certificate.is_code_signing?
+      case certificate_order.certificate_duration(:years)
+        when "1"
+          "1511"
+        when "2"
+          "1512"
+        when "3"
+          "1509"
+      end
+    end
   end
 
 #  def self.test
