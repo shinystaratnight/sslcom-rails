@@ -134,6 +134,10 @@ class Csr < ActiveRecord::Base
     csr
   end
 
+  def to_api
+    CGI::escape(body)
+  end
+
   def is_ip_address?
     common_name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if common_name
   end

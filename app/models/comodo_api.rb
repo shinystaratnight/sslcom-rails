@@ -150,7 +150,12 @@ class ComodoApi
   end
 
   def self.apply_code_signing(certificate_order,options={})
-    comodo_options = params_place_order(certificate_order, options)
+    comodo_options = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y","x_contactEmailAddress"=>,
+                     "x_csr"=>certificate_order.csr.to_api,"x_caCertificateID"=>,"x_signatureHash"=>,"loginPassword"=>,"loginName"=>,
+                     "x_PPP"=>
+                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
+    comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
+
     host = PLACE_ORDER_URL
     res = send_comodo(host, comodo_options)
     attr = {request_url: host,

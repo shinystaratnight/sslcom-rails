@@ -1064,7 +1064,7 @@ class CertificateOrder < ActiveRecord::Base
           #assume reprocess, will need to look at ucc more carefully
           params.merge!(
             'orderNumber' => external_order_number,
-            'csr' => CGI::escape(csr.body),
+            'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'Y',
             'responseFormat' => 1,
@@ -1080,7 +1080,7 @@ class CertificateOrder < ActiveRecord::Base
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
             'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
             'serverSoftware' => cc.comodo_server_software_id.to_s,
-            'csr' => CGI::escape(csr.body),
+            'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'Y',
             'responseFormat' => 1,

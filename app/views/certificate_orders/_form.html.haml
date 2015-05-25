@@ -1,6 +1,7 @@
 =f.fields_for :certificate_contents, @certificate_content do |cc|
   =cc.fields_for :registrant, @registrant do |rf|
-    %p
+    .subheading Company Details
+    %p.description
       Please provide information about the applicant of this certificate.
     .clearfix
       %label{:for=>"common_name"}
@@ -55,6 +56,30 @@
       %label{:for=>"country"}
         *Country:
       =rf.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]})
+    -if @certificate_order.certificate.is_code_signing?
+      .subheading Administrative Contact
+      %p.description
+        Please provide your contact information.
+      .clearfix
+        %label{:for=>"title"}
+          Title:
+        =rf.text_field :title
+      .clearfix
+        %label{:for=>"first_name"}
+          *First Name:
+        =rf.text_field :first_name
+      .clearfix
+        %label{:for=>"last_name"}
+          *Last Name:
+        =rf.text_field :last_name
+      .clearfix
+        %label{:for=>"email"}
+          *Email Address:
+        =rf.text_field :email
+      .clearfix
+        %label{:for=>"phone"}
+          *Phone:
+        =rf.text_field :phone
     -if current_user.ssl_account.has_role? 'reseller'
       .clearfix
         %label{:for=>"verified"}
