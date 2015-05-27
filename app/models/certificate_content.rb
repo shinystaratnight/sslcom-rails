@@ -1103,6 +1103,7 @@ class CertificateContent < ActiveRecord::Base
     is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
     is_code_signing = certificate_order.certificate.is_code_signing?
+    is_client = certificate_order.certificate.is_client?
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "domain has invalid characters. Only the following characters
           are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
@@ -1113,7 +1114,7 @@ class CertificateContent < ActiveRecord::Base
     elsif csr.country=~Regexp.union(Country::BLACKLIST)
       errors.add(:signing_request, "may not have a domain name that is a restricted tld")
     else
-      unless is_code_signing
+      unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
         asterisk_found = (csr.common_name=~/^\*\./)==0
         if is_wildcard && !asterisk_found

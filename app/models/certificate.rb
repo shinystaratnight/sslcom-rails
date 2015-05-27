@@ -285,7 +285,31 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_client?
-    product.include?('personal') || product.include?('myssl')
+    product.include?('personal')
+  end
+
+  def is_client_basic?
+    product_root=~/basic$/
+  end
+
+  def is_client_pro?
+    product_root=~/pro$/
+  end
+
+  def is_client_business?
+    product_root=~/business$/
+  end
+
+  def is_client_enterprise?
+    product_root=~/enterprise$/
+  end
+
+  def requires_company_info?
+    is_client_business? || is_client_enterprise? || is_server? || is_code_signing?
+  end
+
+  def is_server?
+    !(is_client? || is_code_signing?)
   end
 
   def is_wildcard?

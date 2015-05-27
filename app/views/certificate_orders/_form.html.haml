@@ -1,85 +1,97 @@
 =f.fields_for :certificate_contents, @certificate_content do |cc|
   =cc.fields_for :registrant, @registrant do |rf|
-    .subheading Company Details
+    .subheading
+      -if @certificate_order.certificate.is_client?
+        Certificate Contents
+      -else
+        Company Details
     %p.description
       Please provide information about the applicant of this certificate.
     .clearfix
       %label{:for=>"common_name"}
         -if @certificate_order.certificate.is_code_signing?
           *Subject:
+        -elsif @certificate_order.certificate.is_client?
+          *Email Address:
         -else
           *Website:
         %span.label_desc the subject or common name
       .displayed_csr_field=@certificate_content.csr.common_name
-    .clearfix
-      %label{:for=>"company"}
-        *Company:
-        %span.label_desc organization
-      =rf.text_field :company_name
-    .clearfix
-      %label{:for=>"department"}
-        Department:
-        %span.label_desc organization unit
-      =rf.text_field :department
-    .clearfix
-      %label{:for=>"po_box"}
-        PO Box:
-      =rf.text_field :po_box
-    .clearfix
-      %label{:for=>"address1"}
-        *Address 1:
-      =rf.text_field :address1
-    .clearfix
-      %label{:for=>"address2"}
-        Address 2:
-      =rf.text_field :address2
-    .clearfix
-      %label{:for=>"address3"}
-        Address 3:
-      =rf.text_field :address3
-    .clearfix
-      %label{:for=>"city"}
-        *City:
-        %span.label_desc city, town, or locality
-      =rf.text_field :city
-    .clearfix
-      %label{:for=>"state"}
-        *State:
-        %span.label_desc state, province, or county
-      =rf.text_field :state
-    .clearfix
-      %label{:for=>"postal_code"}
-        *Postal Code:
-        %span.label_desc postal code or zip
-      =rf.text_field :postal_code
-    .clearfix
-      %label{:for=>"country"}
-        *Country:
-      =rf.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]})
-    -if @certificate_order.certificate.is_code_signing?
-      .subheading Administrative Contact
-      %p.description
-        Please provide your contact information.
+    -if @certificate_order.certificate.requires_company_info?
       .clearfix
-        %label{:for=>"title"}
-          Title:
-        =rf.text_field :title
+        %label{:for=>"company"}
+          *Company:
+          %span.label_desc organization
+        =rf.text_field :company_name
       .clearfix
-        %label{:for=>"first_name"}
-          *First Name:
-        =rf.text_field :first_name
+        %label{:for=>"department"}
+          Department:
+          %span.label_desc organization unit
+        =rf.text_field :department
       .clearfix
-        %label{:for=>"last_name"}
-          *Last Name:
-        =rf.text_field :last_name
+        %label{:for=>"po_box"}
+          PO Box:
+        =rf.text_field :po_box
       .clearfix
-        %label{:for=>"email"}
-          *Email Address:
-        =rf.text_field :email
+        %label{:for=>"address1"}
+          *Address 1:
+        =rf.text_field :address1
       .clearfix
-        %label{:for=>"phone"}
-          *Phone:
-        =rf.text_field :phone
+        %label{:for=>"address2"}
+          Address 2:
+        =rf.text_field :address2
+      .clearfix
+        %label{:for=>"address3"}
+          Address 3:
+        =rf.text_field :address3
+      .clearfix
+        %label{:for=>"city"}
+          *City:
+          %span.label_desc city, town, or locality
+        =rf.text_field :city
+      .clearfix
+        %label{:for=>"state"}
+          *State:
+          %span.label_desc state, province, or county
+        =rf.text_field :state
+      .clearfix
+        %label{:for=>"postal_code"}
+          *Postal Code:
+          %span.label_desc postal code or zip
+        =rf.text_field :postal_code
+      .clearfix
+        %label{:for=>"country"}
+          *Country:
+        =rf.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]})
+    -if @certificate_order.certificate.is_browser_generated_capable?
+      -if @certificate_order.certificate.is_code_signing?
+        .subheading Administrative Contact
+        %p.description
+          Please provide your contact information.
+      -if @certificate_order.certificate.is_client_enterprise? || @certificate_order.certificate.is_client_business?
+        .clearfix
+          %label{:for=>"title"}
+            *Title:
+          =rf.text_field :title
+      -unless @certificate_order.certificate.is_client_basic?
+        .clearfix
+          %label{:for=>"first_name"}
+            *First Name:
+          =rf.text_field :first_name
+        .clearfix
+          %label{:for=>"last_name"}
+            *Last Name:
+          =rf.text_field :last_name
+      -if @certificate_order.certificate.is_code_signing?
+        .clearfix
+          %label{:for=>"email"}
+            *Email Address:
+          =rf.text_field :email
+      -if @certificate_order.certificate.is_code_signing? || @certificate_order.certificate.is_client_enterprise? || @certificate_order.certificate.is_client_business?
+        .clearfix
+          %label{:for=>"phone"}
+            *Phone:
+          =rf.text_field :phone
     -if current_user.ssl_account.has_role? 'reseller'
       .clearfix
         %label{:for=>"verified"}

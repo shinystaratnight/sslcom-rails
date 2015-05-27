@@ -139,23 +139,74 @@ class ComodoApi
   end
 
   def self.apply_apac(certificate_order,options={})
-    comodo_options = params_place_order(certificate_order, options)
-    host = PLACE_ORDER_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-    CaRevokeCertificate.create(attr)
-    "title forename surname emailAddress x_PPP x_csr"
-    "title forename surname emailAddress organizationName organizationalUnitName streetAddress1 streetAddress2 streetAddress3 x_PPP x_csr localityName stateOrProvinceName postalCode countryName "
+    certificate = certificate_order.certificate
+    registrant=certificate_order.certificate_content.registrant
+    comodo_options = { # basic
+        'ap' => 'SecureSocketsLaboratories',
+        "reseller" => "Y",
+        "1_PPP"=> ppp_parameter(certificate_order),
+        "emailAddress"=>certificate_order.csr.common_name}
+    comodo_options.merge!( # pro
+        "forename"=>registrant.first_name,
+        "surname"=>registrant.last_name) unless certificate.product_root=~/basic/i
+    comodo_options.merge!( # business
+        "title"=>registrant.title,
+        "organizationName"=>registrant.company_name,
+        "postOfficeBox"=>registrant.po_box,
+        "streetAddress1"=>registrant.address1,
+        "streetAddress2"=>registrant.address2,
+        "streetAddress3"=>registrant.address3,
+        "localityName"=>registrant.city,
+        "stateOrProvinceName"=>registrant.state,
+        "postalCode"=>registrant.postal_code,
+        "country"=>registrant.country,
+        "telephoneNumber"=>registrant.phone,
+        "1_csr"=>certificate_order.csr.body,
+        "1_caCertificateID"=> (certificate.is_client_enterprise? || certificate.is_client_business?) ? "504" : "510",
+        "1_signatureHash"=>"PREFER_SHA2",
+        'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
+          certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
+    comodo_options.merge!( # enterprise
+        "organizationalUnitName"=>registrant.department) if certificate.product_root=~/enterprise$/i
+    comodo_options=comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
+    if options[:send_to_ca]
+      host = PLACE_ORDER_URL
+      res = send_comodo(host, comodo_options)
+      attr = {request_url: host,
+              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+      CaCertificateRequest.create(attr)
+    else
+      comodo_options
+    end
+    # "title forename surname emailAddress x_PPP x_csr"
+    # "title forename surname emailAddress organizationName organizationalUnitName streetAddress1 streetAddress2 streetAddress3 x_PPP x_csr localityName stateOrProvinceName postalCode countryName "
   end
 
-  def self.apply_code_signing(certificate_order,options={})
-    comodo_options = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y","1_contactEmailAddress"=>certificate_order.certificate_content.registrant.email,
-                     "1_csr"=>certificate_order.csr.to_api,"1_caCertificateID"=>"507","1_signatureHash"=>"PREFER_SHA2","loginPassword"=>"","loginName"=>"",
-                     "1_PPP"=> ppp_parameter(certificate_order),
-                     'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
-    comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-    if options[:send_to_ca] && order_number
+  def self.apply_code_signing(certificate_order,options={}.reverse_merge!(send_to_ca: true))
+    registrant=certificate_order.certificate_content.registrant
+    comodo_options = {
+        'ap' => 'SecureSocketsLaboratories',
+        "reseller" => "Y",
+        "1_contactEmailAddress"=>registrant.email,
+        "organizationName"=>registrant.company_name,
+        "organizationalUnitName"=>registrant.department,
+        "postOfficeBox"=>registrant.po_box,
+        "streetAddress1"=>registrant.address1,
+        "streetAddress2"=>registrant.address2,
+        "streetAddress3"=>registrant.address3,
+        "localityName"=>registrant.city,
+        "stateOrProvinceName"=>registrant.state,
+        "postalCode"=>registrant.postal_code,
+        "country"=>registrant.country,
+        "dunsNumber"=>"",
+        "companyNumber"=>"",
+        "1_csr"=>certificate_order.csr.body,
+        "1_caCertificateID"=>"509",
+        "1_signatureHash"=>"PREFER_SHA2",
+        "1_PPP"=> ppp_parameter(certificate_order),
+        'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
+    comodo_options=comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
+    if options[:send_to_ca]
       host = PLACE_ORDER_URL
       res = send_comodo(host, comodo_options)
       attr = {request_url: host,
@@ -204,7 +255,8 @@ class ComodoApi
   end
 
   def self.ppp_parameter(certificate_order)
-    if certificate_order.certificate.is_code_signing?
+    certificate = certificate_order.certificate
+    if certificate.is_code_signing?
       case certificate_order.certificate_duration(:years)
         when "1"
           "1511"
@@ -212,6 +264,35 @@ class ComodoApi
           "1512"
         when "3"
           "1509"
+      end
+    elsif certificate.is_client?
+      if certificate.is_client_basic?
+        case certificate_order.certificate_duration(:years)
+          when "1"
+            "5029"
+          when "2"
+            "5030"
+          when "3"
+            "5031"
+        end
+      elsif certificate.is_client_pro?
+        case certificate_order.certificate_duration(:years)
+          when "1"
+            "5032"
+          when "2"
+            "5033"
+          when "3"
+            "5034"
+        end
+      elsif certificate.is_client_business? || certificate.is_client_enterprise?
+        case certificate_order.certificate_duration(:years)
+          when "1"
+            "5035"
+          when "2"
+            "5036"
+          when "3"
+            "5037"
+        end
       end
     end
   end
