@@ -145,7 +145,9 @@ class ComodoApi
         'ap' => 'SecureSocketsLaboratories',
         "reseller" => "Y",
         "1_PPP"=> ppp_parameter(certificate_order),
-        "emailAddress"=>certificate_order.csr.common_name}
+        "emailAddress"=>certificate_order.csr.common_name,
+        "loginName"=>certificate_order.ref,
+        "loginPassword"=>certificate_order.order.reference_number}
     comodo_options.merge!( # pro
         "forename"=>registrant.first_name,
         "surname"=>registrant.last_name) unless certificate.product_root=~/basic/i
@@ -162,13 +164,13 @@ class ComodoApi
         "country"=>registrant.country,
         "telephoneNumber"=>registrant.phone,
         "1_csr"=>certificate_order.csr.body,
-        "1_caCertificateID"=> (certificate.is_client_enterprise? || certificate.is_client_business?) ? "504" : "510",
+        "1_caCertificateID"=> "510",
         "1_signatureHash"=>"PREFER_SHA2",
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
           certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
     comodo_options.merge!( # enterprise
         "organizationalUnitName"=>registrant.department) if certificate.product_root=~/enterprise$/i
-    comodo_options=comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
+    comodo_options=comodo_options.map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
     if options[:send_to_ca]
       host = PLACE_ORDER_URL
       res = send_comodo(host, comodo_options)
@@ -185,6 +187,9 @@ class ComodoApi
   def self.apply_code_signing(certificate_order,options={}.reverse_merge!(send_to_ca: true))
     registrant=certificate_order.certificate_content.registrant
     comodo_options = {
+        "loginName"=>certificate_order.ref,
+        "loginPassword"=>certificate_order.order.reference_number,
+        "emailAddress"=>registrant.email,
         'ap' => 'SecureSocketsLaboratories',
         "reseller" => "Y",
         "1_contactEmailAddress"=>registrant.email,
@@ -201,11 +206,11 @@ class ComodoApi
         "dunsNumber"=>"",
         "companyNumber"=>"",
         "1_csr"=>certificate_order.csr.body,
-        "1_caCertificateID"=>"509",
+        "1_caCertificateID"=>"504",
         "1_signatureHash"=>"PREFER_SHA2",
         "1_PPP"=> ppp_parameter(certificate_order),
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
-    comodo_options=comodo_options.merge(CREDENTIALS).map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
+    comodo_options=comodo_options.map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
     if options[:send_to_ca]
       host = PLACE_ORDER_URL
       res = send_comodo(host, comodo_options)
