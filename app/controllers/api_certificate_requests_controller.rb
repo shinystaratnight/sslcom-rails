@@ -340,6 +340,52 @@ class ApiCertificateRequestsController < ApplicationController
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
+  end
+
+  def dcv_methods_csr_hash_v1_4
+    template = "api_certificate_requests/dcv_methods_v1_4"
+    if @result.save  #save the api request
+      @acr = CertificateOrder.new
+      @acr.certificate_contents.build.build_csr(body: @result.csr)
+      if @acr.csr.errors.empty?
+        @result.dcv_methods={}
+        if @acr.csr.common_name
+          @result.instructions = ApiDcvMethods::INSTRUCTIONS
+          unless @acr.csr.blank?
+            @result.md5_hash = @acr.csr.md5_hash
+            @result.sha1_hash = @acr.csr.sha1_hash
+          end
+          ([@acr.csr.common_name]+(@result.domains || [])).each do |domain|
+            @result.dcv_methods.merge! domain=>{}
+            @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
+            unless @acr.csr.blank?
+              @result.dcv_methods[domain].merge! "http_csr_hash"=>
+                 {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
+                  "allow_https"=>"true",
+                  "contents"=>"#{@result.sha1_hash}\ncomodoca.com"}
+              @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha1_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha1_hash}.comodoca.com."}
+            end
+          end
+        end
+        unless @result.dcv_methods.blank?
+          @result.update_attribute :response, render_to_string(:template => template)
+          render(:template => template) and return
+        end
+      else
+        @result=@acr.csr  #so that rabl can report errors
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render action: :dcv_methods_v1_4
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
   end
 
   def dcv_email_resend_v1_3
@@ -392,7 +438,7 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiDcvEmailResend
               when "dcv_emails_v1_3", "dcv_revoke_v1_3"
                 ApiDcvEmails
-              when "dcv_methods_v1_4", "dcv_revoke_v1_3"
+              when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4"
                 ApiDcvMethods
             end
     @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_certificate_request'])

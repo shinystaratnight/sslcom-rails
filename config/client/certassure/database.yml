@@ -24,10 +24,10 @@ development:
   socket: /var/run/mysqld/mysqld.sock
   adapter: mysql2
   #use when remote db source
-#  host: 174.129.35.108
-#  database: ssl_com_production
-  #else
-  database: ssl_com_development
+#    host: 174.129.35.108
+#    database: certassure_com_production
+#  else
+  database: certassure_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -36,7 +36,7 @@ test: &TEST
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: ssl_com_test
+  database: certassure_com_test
   pool: 5
   username: ssl_db
   password: kama2jama2
@@ -46,18 +46,8 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  database: ssl_com_production
+  database: certassure_com_production
   host: 174.129.35.108
-  pool: 5
-  username: ssl_db
-  password: kama2jama2
-  socket: /var/run/mysqld/mysqld.sock
-
-ssl_gs:
-  adapter: mysql2
-  encoding: utf8
-  reconnect: false
-  database: ssl_gs
   pool: 5
   username: ssl_db
   password: kama2jama2
@@ -65,14 +55,3 @@ ssl_gs:
 
 cucumber:
   <<: *TEST
-
-<%unless Rails.env=='test'%>
-ssl_store_mssql:
-  adapter: sqlserver
-  mode: odbc
-  encoding: utf8
-  username: sa
-  password: staticgoat
-  dsn: ssl_store_legacy
-<%end%>
-

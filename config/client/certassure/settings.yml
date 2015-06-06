@@ -1,10 +1,10 @@
 site: 'remote'
 root_subdomain: "www"
-actionmailer_host: "www.ssl.com"
-community_name: "SSL.com"
-community_tagline: "copyright 2011"
+actionmailer_host: "www.certassure.com"
+community_name: "Certassure.com"
+community_tagline: "copyright 2015"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
-support_email:  "support@ssl.com"
+support_email:  "support@certassure.com"
 meta_description: "Wildcard SSL Certificates &amp; 2048-Bit Extended Validation SSL Certificate Authentication. Strong Secure Sockets Layer Https Encryption for Network Security."
 meta_keywords: "What is SSL, Best SSL, How SSL works, Learn SSL, SSL Security, Secured SSL"
 meta_title: "SSL Digital Certificate Authority - Authentication & Encryption"
@@ -31,8 +31,8 @@ corp_address2: "Suite 503"
 corp_city: "Houston"
 corp_state: "TX"
 corp_zip: "77098"
-corp_phone_tag: "+1-SSL-Certificate (+1-775-237-8434)"
-corp_tollfree_tag: "877-SSL-Secure (877-775-7328)"
+corp_phone_tag: "1 844 SSL FIRE (1 844 775 3473)"
+corp_tollfree_tag: "1 844 SSL FIRE (1 844 775 3473)"
 corp_fax: "832-201-7706"
 mail_address1: "2617C W Holcombe Blvd"
 mail_address2: "Suite 286"
@@ -49,10 +49,10 @@ production_private_location: "private/"
 csr_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 
-installation_support_pages: "http://info.ssl.com"
+installation_support_pages: "http://info.certassure.com"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi17Kimi17'
+comodo_api_password: 'Jimi16Kimi16'
 authorize_net_key: '2s9n7LCP'
 authorize_net_transaction_id: '27PD3Czbb343hY5R'
 p_authorize_net_key: '3XzF96x5'
@@ -82,13 +82,13 @@ thumbnail_tagline_size: 32
 allow_reseller_validation: true
 sync_aid_li_and_cart: false
 browser_acceptance: "99.9%"
-notify_address: "support@ssl.com"
+notify_address: "support@certassure.com"
 disable_links_banner: false
 
 from_email:
-  orders: 'orders@ssl.com'
-  activations: 'noreply@ssl.com'
-  no_reply: 'noreply@ssl.com'
+  orders: 'orders@certassure.com'
+  activations: 'noreply@certassure.com'
+  no_reply: 'noreply@certassure.com'
 
 photo:
   missing_micro: '/plugin_assets/community_engine/images/icon_missing_micro.gif'

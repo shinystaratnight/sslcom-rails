@@ -164,7 +164,7 @@ class ComodoApi
         "country"=>registrant.country,
         "telephoneNumber"=>registrant.phone,
         "1_csr"=>certificate_order.csr.body,
-        "1_caCertificateID"=> "510",
+        "caCertificateID"=> "510",
         "1_signatureHash"=>"PREFER_SHA2",
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
           certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
@@ -206,7 +206,7 @@ class ComodoApi
         "dunsNumber"=>"",
         "companyNumber"=>"",
         "1_csr"=>certificate_order.csr.body,
-        "1_caCertificateID"=>"504",
+        "caCertificateID"=>"509",
         "1_signatureHash"=>"PREFER_SHA2",
         "1_PPP"=> ppp_parameter(certificate_order),
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
@@ -249,12 +249,6 @@ class ComodoApi
 
   def self.params_revoke(certificate_order, options)
     comodo_params = {'revocationReason' => options[:refund_reason],
-                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
-    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-  end
-
-  def self.params_place_order(certificate_order, options)
-    comodo_params = {'ap' => 'SecureSocketsLaboratories',"reseller" => "Y",
                      'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end

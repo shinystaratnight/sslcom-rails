@@ -8,6 +8,8 @@ Bundler.setup
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
+DEPLOYMENT_CLIENT="ssl.com"
+
 module SslCom
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
@@ -83,7 +85,7 @@ module SslCom
 
     # Enable the asset pipeline
     config.assets.enabled = false
-
+    self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i
   end
 end
 
@@ -115,7 +117,5 @@ SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 ActiveMerchant::Billing::CreditCard.require_verification_value=false
-
-
 
 
