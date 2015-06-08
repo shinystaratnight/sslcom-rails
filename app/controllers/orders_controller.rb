@@ -12,7 +12,7 @@ class OrdersController < ApplicationController
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
-  filter_access_to :visitor_trackings, require: [:index]
+  filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
@@ -175,6 +175,20 @@ class OrdersController < ApplicationController
 
     respond_to do |format|
       format.html { render :action => :index}
+      format.xml  { render :xml => @orders }
+    end
+  end
+
+  def filter_by_state
+    p = {:page => params[:page]}
+    states = [params[:id]]
+    @orders = (current_user.is_admin? ?
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order(:created_at.desc)} :
+        current_user.ssl_account.orders.unscoped{
+          current_user.ssl_account.orders.includes(:line_items).where{state >> [params[:state]]}.order(:created_at.desc)}).paginate(p)
+
+    respond_to do |format|
+      format.html { render :action=>:index}
       format.xml  { render :xml => @orders }
     end
   end

@@ -666,11 +666,17 @@ class CertificateOrder < ActiveRecord::Base
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
              merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name}).
             to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email"
-      when /dcv_methods/
+      when /dcv_methods_wo_csr/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
              secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
             to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods"
+      when /dcv_methods_w_csr/
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+             csr: certificate_content.csr.body}.
+            to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/csr_hash"
     end
   end
 
