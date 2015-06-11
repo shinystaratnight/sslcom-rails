@@ -1,3 +1,7 @@
+-if DEPLOYMENT_CLIENT=~/certassure/i
+  = include_stylesheets :certassure
+-else
+  = include_stylesheets :ssl_com
 = include_stylesheets :common
 = include_stylesheets :print, media: 'print'
 -if current_page?(action: "buy_now") || current_page?(root_path) || current_page?(affiliates_path) || current_page?(details_affiliates_path)

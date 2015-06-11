@@ -1,6 +1,13 @@
 <script type="text/javascript">
 jQuery.noConflict();
 jQuery(function($) {
+  $.uniqueStrings = function(list) {
+    var result = [];
+    $.each(list, function(i, e) {
+      if ($.inArray(e, result) == -1) result.push(e);
+    });
+    return result;
+  };
   $.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
       replace('_','').
@@ -70,8 +77,8 @@ jQuery(function($) {
             }
           <%if @certificate.is_ucc?-%>
             if((typeof data.certificate_content.csr.subject_alternative_names != 'undefined')){
-              additional_domains = $("textarea[name*=additional_domains]").text() + data.certificate_content.csr.subject_alternative_names;
-              $("textarea[name*=additional_domains]").val($.unique(additional_domains.split(" ")).join(" "));
+              additional_domains = $("textarea[name*=additional_domains]").text() + " " + data.certificate_content.csr.subject_alternative_names;
+              $("textarea[name*=additional_domains]").val($.uniqueStrings(additional_domains.split(/[\s,\n]+/)).join(" "));
               $.adjust_domain_pricing($("textarea[name*=additional_domains]")[0]);
             }
           <%end-%>

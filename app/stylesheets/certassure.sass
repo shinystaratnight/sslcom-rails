@@ -1,0 +1,5711 @@
+@import 'compass'
+@import url(https://fonts.googleapis.com/css?family=Montserrat)
+@import url(https://fonts.googleapis.com/css?family=Raleway)
+
+@font-face
+  font-family: 'Museo700'
+  src: url('/fonts/Museo700-Regular-webfont.eot')
+  src: local("☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  font-weight: normal
+  font-style: normal
+
+@font-face
+  font-family: 'Museo300'
+  src: url('/fonts/Museo300-Regular-webfont.eot')
+  src: local("☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  font-weight: normal
+  font-style: normal
+
+$height_buf: 270px
+
+/*---global common definitions---*/
+*
+  font-size: 100.01%
+  margin: 0
+html, body
+  height: 100%
+html
+  font-size: 62.5%
+body
+  margin: 0
+  font-family: "Raleway",Georgia,"Times New Roman",Times,serif
+  /*background: #10102f*/
+  min-width: 980px
+  color: rgb(60, 60, 60)
+
+  &.white_background_body, &.tier_pricing_body
+    background: #fff
+
+  &.tier_pricing_body
+    min-width: 700px
+    width: 700px
+
+form, fieldset
+  margin: 0
+  padding: 0
+  border: 0
+
+img
+  border: 0
+
+a
+  color: #6b9029
+  outline: none
+  text-decoration: none
+  border-bottom-style: none
+
+a:hover
+  text-decoration: none
+
+#wrapper
+  width: 100%
+  margin: 0 auto
+  min-height: 100%
+  height: auto !important
+  height: 100%
+  margin: 0 auto ($height_buf * -1)
+
+
+/* header */
+#header
+  background-color: black
+  width: 100%
+  background-image: url('/images/sitesprite2.png')
+  background-position: 0px -10px
+  background-repeat: repeat-x
+  font-family: "Raleway",Arial !important
+
+#header .logo
+  display: block
+  height: 70px
+  margin: 5px 0 0 -10px
+  background: url('/images/certassure/certlogo.png') no-repeat
+
+  a
+    height: 100%
+    display: block
+    width: 180px
+
+    span
+      visibility: hidden
+
+  &.reseller
+    background-position: -10px -10px
+    width: 240px
+
+    a
+      width: 240px
+#header.show_sales_number
+  padding-bottom: 3px
+
+#header #sales_number_in_header
+  padding: 2px 0pt 0pt 12px
+  float: left
+  color: #ccc
+  font-size: 1.2em
+
+=innercontainer($position)
+  background:
+    position: $position
+    repeat: no-repeat
+  width: 100%
+  margin: 0 auto
+  overflow: hidden
+
+
+@mixin inherit_attr
+  color: inherit
+  font_size: inherit
+
+@mixin small_page_heading
+  font: bold 1.6em "Raleway",Arial !important
+  margin: 15px 0 7px
+
+=center
+  text-align: center
+  margin: 0 auto
+
+=clearfixIE5_and_6
+  * html &
+    height: 1%
+
+=clearfixIE7
+  *:first-child_html &
+    min-height: 1px
+
+=clearfix
+  &:after
+    content: '.'
+    height: 0
+    visibility: hidden
+    display: block
+    clear: both
+  +clearfixIE5_and_6
+  +clearfixIE7
+
+.clearfix
+  +clearfix
+
+.innercontainer
+  +innercontainer("center" 325px)
+  background-image: url('/images/innercontainer_background.gif')
+
+.innercontainerb
+  +innercontainer("center" 130px)
+  background-image: url('/images/landing-background.jpg')
+
+.innercontainerc
+  +innercontainer("center" 130px)
+  background-image: url('/images/404_background.gif')
+
+.innercontainerd
+  +innercontainer("center" 400px)
+  background-image: url('/images/innercontainer_background2.gif')
+
+.innercontainere
+  +innercontainer(46% 380px)
+
+  &.shadow
+    background-image: url('/images/innercontainer_background2.gif')
+
+.inner
+  padding-bottom: 0px
+  width: 940px
+  margin: 0 auto
+  overflow: hidden
+  clear: both
+
+.innerd
+  padding-bottom: 0px
+  width: 940px
+  margin: 0 auto
+  overflow: hidden
+
+.innerb
+  width: 940px
+  margin: 0 auto
+  overflow: hidden
+
+.innerc
+  padding-bottom: 0px
+  width: 940px
+  margin: 0 auto
+  overflow: hidden
+
+.nav
+  margin-left: 0
+  margin-bottom: 4px
+  margin-right: -10px
+  margin-top: 8px
+  float: right
+  list-style: none
+  padding: 0
+  overflow: hidden
+
+.nav li
+  color: #5a5a5a
+  font-size: 1.3em
+  display: inline
+  padding: 0 10px
+  margin: 0 0 0 -2px
+  float: left
+  background:
+    image: url('/images/sitesprite1.png')
+    position: -10px -755px
+    repeat: no-repeat
+
+.nav a
+  color: #999
+  text-decoration: none
+
+.nav a:hover
+  text-decoration: none
+  color: #fff
+
+#menu
+  float: right
+  list-style: none
+  margin: 0
+  padding: 6px 0 4px
+  clear: right
+
+#menu li
+  display: inline
+  font-size: 1.4em
+  text-transform: uppercase
+  margin: 0 0 0 23px
+
+#menu a
+  color: #8bb835
+  text-decoration: none
+  border-bottom-style: none
+
+#menu a:hover
+  color: #fff
+  text-decoration: none
+
+#menu .active a
+  color: #fff
+  font-weight: bold
+
+/* content */
+#content
+  width: 100%
+
+=background_image($padding)
+  padding: $padding
+  width: 100%
+  background: #fff url('/images/bg-content.gif') repeat-x
+
+.container, .containerb, .containerl
+  +background_image(27px 0 25px)
+
+.container, .containerl
+  display: inline-block
+
+.containerc, .containerd
+  +background_image(27px 0 0 0)
+
+.containerd
+  height: 108px
+
+.containerp, .containerl
+  width: 100%
+  background-color: #fff
+  font-family: "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+
+#content h1
+  letter-spacing: -1px
+  font: 3.8em "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+  margin: 0 0 8px
+  text-align: center
+
+#content h2
+  font: 2.6em "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+  margin: 0 0 24px
+  color: #5A79A5
+  text-align: center
+
+  &.product_description
+    margin: 0 0 .8em
+
+#buy_certificate_heading
+  h1
+    @include small_page_heading
+    text-align: left
+    letter-spacing: normal
+
+  h2
+    font: 1.4em "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+    text-align: left
+    margin: 0
+    color: inherit
+
+#content h3
+  @include small_page_heading
+
+  a
+    color: #91b145
+    border-bottom-style: none
+
+    &:hover
+      color: black
+
+  a.inherit_attr
+    @include inherit_attr
+
+.container p, .containerb p, .containerl p
+  margin: 10px 0
+  font-size: 1.4em
+  line-height: 20px
+
+.leftcol
+  width: 425px
+  float: left
+  padding: 9px 0 0
+
+.leftcolb
+  width: 475px
+  float: left
+  padding: 9px 0 0
+
+.list
+  list-style: none
+  margin: 0 0 35px
+  padding: 0
+
+.listb
+  margin-left: 20px
+  margin-bottom: 25px
+  margin-right: 0
+  margin-top: 15px
+  list-style: none
+  padding: 0
+
+.listc
+  list-style: none
+  margin: 0 0 35px
+  padding: 0
+
+.listd
+  list-style: none
+  margin: 0 0 48px
+  padding: 0
+
+  &.reseller
+    margin: 0 0 28px
+
+  &.ssl_links
+    margin: 0
+
+.list li
+  margin-left: 0
+  margin-bottom: 17px
+  margin-right: 0
+  margin-top: 0
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -786px
+  background-repeat: no-repeat
+  padding: 0 0 0 23px
+  font-size: 2.0em
+
+.listb li
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 0
+  margin-top: 0
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -786px
+  background-repeat: no-repeat
+  padding: 0 0 0 23px
+  font-size: 17px
+
+.listc li
+  line-height: 24px
+  padding: 0
+  padding-left: 25px
+  margin: 0
+  margin-bottom: 17px
+  background: url('/images/list_arrow.gif') no-repeat 0 1px
+  font-size: 16px
+
+.listd li
+  margin: 0
+  margin-bottom: 15px
+  background-image: url('/images/sitesprite1.png')
+  background-position: -8px -638px
+  background-repeat: no-repeat
+  padding: 0 0 0 28px
+  font: 1.9em "Museo700"
+  color: #444
+
+.button
+  margin-right: auto
+  margin-left: auto
+  display: block
+  width: 430px
+  height: 71px
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -77px
+  background-repeat: no-repeat
+  overflow: hidden
+  text-indent: -9999px
+
+.buttonb
+  margin-right: auto
+  margin-left: auto
+  display: block
+  width: 371px
+  height: 60px
+  background: url('/images/landing-cta.gif') no-repeat
+  overflow: hidden
+  text-indent: -9999px
+
+.buttonc
+  margin-right: auto
+  margin-left: auto
+  display: block
+  width: 430px
+  height: 70px
+  background: url('/images/sitesprite1.png') -10px -75px no-repeat
+  text-indent: -9999px
+  border-bottom-style: none
+
+.buttond
+  margin-top: 15px
+  margin-right: auto
+  margin-left: auto
+  display: block
+  width: 217px
+  height: 39px
+  background: url('/images/home_demo_button.gif') no-repeat
+  overflow: hidden
+  text-indent: -9999px
+  border-bottom-style: none
+
+.small
+  background: url('/images/bg-small-button.gif') no-repeat
+  display: block
+  width: 222px
+  height: 39px
+  overflow: hidden
+  text-indent: -9999px
+  border-bottom-style: none
+
+.leftcol p
+  margin: 7px 0
+  font: 1.3em "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+  color: #808080
+  text-align: center
+
+.leftcolb p
+  margin: 7px 0
+  font: 1.3em "Montserrat",Helvetica,Arial,"MS Trebuchet",sans-serif
+  color: #808080
+  text-align: center
+
+.rightcol
+  float: right
+  width: 475px
+  padding: 9px 0 0
+
+.rightcolc
+  float: right
+  width: 435px
+  padding: 9px 0 0
+
+.rightcol p
+  margin: 7px 0
+  font: 1.3em "Raleway",Arial !important
+  color: #808080
+  text-align: center
+
+.rightcolc p
+  margin: 7px 0
+  font: 1.3em "Raleway",Arial !important
+  color: #808080
+  text-align: center
+
+.rightcol .image
+  padding-left: 21px
+  padding-bottom: 0px
+  padding-right: 0
+  padding-top: 20px
+  height: 280px
+  overflow: hidden
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -168px
+  background-repeat: no-repeat
+
+.leftcolb .image
+  padding-left: 21px
+  padding-bottom: 0px
+  padding-right: 0
+  padding-top: 20px
+  height: 280px
+  overflow: hidden
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -168px
+  background-repeat: no-repeat
+
+.rightcolb
+  padding-left: 0
+  padding-bottom: 0px
+  padding-right: 0
+  padding-top: 9px
+  float: right
+  width: 450px
+
+.image img
+  display: block
+.column .image
+  height: 352px
+  width: 451px
+  float: left
+  margin: 0 11px 0 0
+
+.holder
+  width: 100%
+  background: #e6e6e6 url('/images/bg-holder.gif') repeat-x
+  padding: 32px 0 20px
+
+.holderb
+  padding-left: 0
+  padding-bottom: 20px
+  padding-right: 0
+  padding-top: 20px
+  width: 100%
+  background: #e6e6e6 url('/images/bg-holder.gif') repeat-x
+
+.block
+  float: right
+  width: 276px
+  display: inline
+
+.banner
+  height: 1%
+  overflow: hidden
+  background: #fff
+  border: 1px solid #ccc
+  padding: 20px
+  margin: 0 0 21px
+
+.banner img
+  margin-left: 0
+  margin-bottom: 6px
+  margin-right: 25px
+  margin-top: 0
+  float: left
+  clear: left
+
+.secure
+  padding-bottom: 10px
+  font-family: "Raleway",Arial !important
+  font-weight: bold
+  text-align: center
+  font-size: 2em
+.securewide
+  background-position: 305px center
+  background-repeat: no-repeat
+  background-image: url('/images/securitybadgeslong.gif')
+  margin-bottom: 15px
+  padding-left: 15px
+  padding-bottom: 5px
+  padding-right: 320px
+  padding-top: 15px
+  border-color: #cccccc
+  border-style: solid
+  border-width: 1px
+  background-color: white
+  float: left
+  width: 280px
+.securewide p
+  margin-top: 5px
+  font-size: 1.3em
+.bannertall
+  padding-left: 20px
+  padding-bottom: 5px
+  padding-right: 20px
+  padding-top: 20px
+  height: 1%
+  overflow: hidden
+  background: #fff
+  border: 1px solid #ccc
+  margin: 0 0 21px
+
+.bannertall img
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 25px
+  margin-top: 2px
+  float: left
+
+.bannertall h3
+  text-align: center
+.bannertall p
+  font-size: 1.3em
+.bannertallb
+  padding-left: 20px
+  padding-bottom: 5px
+  padding-right: 20px
+  padding-top: 20px
+  text-align: center
+  height: 1%
+  overflow: hidden
+  background: #fff
+  border: 1px solid #ccc
+  margin: 0 0 21px
+
+.bannertallb img
+  padding-top: 10px
+  width: 100%
+  border-top-color: #cccccc
+  border-top-style: solid
+  border-top-width: 1px
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 25px
+  margin-top: 10px
+  float: left
+
+.bannertallb h3
+  font-style: normal
+  font-weight: normal
+  padding-bottom: 10px
+  border-bottom-color: #b3b3b3
+  border-bottom-style: solid
+  border-bottom-width: 1px
+  text-align: center
+  font-size: 120%
+
+.bannertallb p
+  text-align: left
+  font-size: 1.3em
+.bannerprice
+  text-align: center
+  float: right
+  width: 260px
+  padding-left: 20px
+  padding-bottom: 7px
+  padding-right: 20px
+  padding-top: 20px
+  height: 1%
+  overflow: hidden
+  background: #fff
+  border: 1px solid #ccc
+  margin: 0 0 21px
+
+.bannerprice img
+  text-align: center
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 25px
+  margin-top: 2px
+  float: left
+
+.bannerprice h3
+  text-align: center
+.bannerprice p
+  text-align: left
+  font-size: 1.3em
+.banner2
+  padding-bottom: 12px
+  padding-right: 10px
+  padding-left: 10px
+  height: 1%
+  overflow: hidden
+  background: #efefef
+  border: solid #ccc
+  border-width: 1px 0
+  text-align: center
+  font-size: 1.6em
+
+.hidden
+  display: none
+
+.holder .banner2 p
+  margin-left: 0
+  margin-bottom: 20px
+  margin-right: 0
+  margin-top: 17px
+  line-height: 24px
+
+.holderb .banner2 p
+  margin-left: 0
+  margin-bottom: 20px
+  margin-right: 0
+  margin-top: 17px
+  line-height: 24px
+
+.holder .banner2 p img
+  display: block
+  margin: 0 auto
+
+.holderb .banner2 p img
+  display: block
+  margin: 0 auto
+
+.text
+  height: 1%
+  overflow: hidden
+
+.holder p
+  line-height: 20px
+.holderb p
+  line-height: 20px
+.banner p
+  font-size: 1.3em
+  margin: 0
+
+.block blockquote, .boxes blockquote
+  margin: 0 0 18px
+  padding: 0
+  font-size: 1.4em
+  font-style: italic
+
+.boxes blockquote
+  font-size: 1.0em
+  margin: -8px 0 0
+
+.block blockquote p, .boxes blockquote p
+  margin: 0
+.block blockquote cite, .boxes blockquote cite
+  display: block
+  font-style: normal
+  font-family: "Raleway",Arial !important
+  margin: 22px 0 0
+
+.boxeswide
+  list-style: none
+  margin: 0
+  padding: 0
+  height: 1%
+
+.boxesprice
+  list-style: none
+  margin: 0
+  padding: 0
+  height: 1%
+  overflow: hidden
+
+.boxeswide li
+  padding-left: 0
+  padding-bottom: 30px
+  padding-right: 20px
+  padding-top: 0
+  float: left
+  width: 295px
+  display: inline
+
+.boxesprice li
+  background-repeat: no-repeat
+  background-image: url('/images/bg-list.gif')
+  background-position: 0 12px
+  display: inline
+  padding-left: 23px
+  padding-bottom: 15px
+  padding-right: 20px
+  padding-top: 0
+  float: left
+  width: 272px
+
+.boxeswide li.last
+  padding-left: 0
+  padding-bottom: 30px
+  padding-right: 0px
+  padding-top: 0
+  float: left
+  width: 300px
+  display: inline
+
+.boxesprice li.last
+  padding-left: 0
+  padding-bottom: 30px
+  padding-right: 0px
+  padding-top: 0
+  float: left
+  width: 300px
+  display: inline
+
+.boxeswide li p
+  margin: 7px 0 0
+  font-size: 1.4em
+
+.boxesprice li p
+  margin: 7px 0 0
+  font-size: 1.4em
+
+.boxeswide li p strong, .boxesprice li p strong
+  font-family: "Raleway",Arial !important
+.boxes
+  list-style: none
+  margin: 0
+  padding: 0
+  height: 1%
+  overflow: hidden
+
+.boxes li
+  padding-left: 0
+  padding-bottom: 30px
+  padding-right: 20px
+  padding-top: 0
+  float: left
+  width: 290px
+  display: inline
+
+  .right
+    float: right
+
+.boxes li img
+  float: left
+  margin: 0 11px 0 0
+
+.boxes li p
+  margin: 7px 0 0
+  font-size: 1.4em
+
+.boxes li p strong
+  font-family: "Raleway",Arial !important
+.sidebar
+  float: left
+  width: 238px
+  background: url('/images/bg-sidebar.gif') repeat-y
+
+.sidebar .top
+  background: url('/images/bg-sidebar-top.gif') no-repeat
+.sidebar .bottom
+  background: url('/images/bg-sidebar-bt.gif') no-repeat 0 100%
+  height: 1%
+  overflow: hidden
+  padding: 21px 0 79px
+
+.menu
+  font-family: "Raleway",Arial !important
+  list-style: none
+  margin: 0
+  padding: 0
+  background: url('/images/bg-sidebar-li.gif') no-repeat
+
+.menu li
+  height: 1%
+  overflow: hidden
+  vertical-align: top
+  background: url('/images/bg-sidebar-li.gif') no-repeat 0 100%
+  padding: 0 0 1px
+
+.menu a
+  display: block
+  text-align: right
+  margin: 0 8px 0 0
+  color: #4c4c4c
+  text-decoration: none
+  border-bottom-style: none
+
+.menu a:hover
+  text-decoration: underline
+
+.menu span
+  display: block
+  height: 1%
+  overflow: hidden
+  padding: 10px 15px
+  font-size: 1.3em
+  line-height: 15px
+  cursor: pointer
+
+.menu li.active span
+  background: url('/images/bg-sidebar-active.gif') no-repeat 100% 0
+  padding: 10px 23px 10px 15px
+
+.menu li.active a
+  background: url('/images/bg-li-active.gif') repeat-y
+  border-left: 1px solid #dbdbdb
+  margin: 0
+  border-style: none
+  color: #fff
+
+.column
+  float: right
+  width: 692px
+
+.column .text
+  padding: 0 0 17px 5px
+#content .column .text h3
+  font-size: 1.4em
+
+.ordered
+  font-family: "Raleway",Arial !important
+  list-style: none
+  margin: 0
+  padding: 0
+
+.ordered li
+  width: 188px
+  overflow: hidden
+  padding: 0 0 0 39px
+  margin: 0 0 13px -5px
+  position: relative
+
+.number1
+  float: left
+  width: 35px
+  height: 34px
+  overflow: hidden
+  margin: 0 0 0 -39px
+  font: 18px "Raleway",Arial !important
+  color: #fff
+  line-height: 34px
+  text-align: center
+  background: url('/images/bg-number1.gif') no-repeat
+  text-indent: -9999px
+
+.number2
+  float: left
+  width: 35px
+  height: 34px
+  overflow: hidden
+  margin: 0 0 0 -39px
+  font: 18px "Raleway",Arial !important
+  color: #fff
+  line-height: 34px
+  text-align: center
+  background: url('/images/bg-number2.gif') no-repeat
+  text-indent: -9999px
+
+.number3
+  float: left
+  width: 35px
+  height: 34px
+  overflow: hidden
+  margin: 0 0 0 -39px
+  font: 18px "Raleway",Arial !important
+  color: #fff
+  line-height: 34px
+  text-align: center
+  background: url('/images/bg-number3.gif') no-repeat
+  text-indent: -9999px
+
+.ordered li p
+  margin: 0 0 7px
+  font-size: 1.2em
+  line-height: 18px
+  color: #4c4c4c
+
+.info
+  border: solid #ccc
+  border-width: 1px 0
+  padding: 16px 0 8px
+  margin: 0 0 16px
+  min-height: 227px
+  height: auto !important
+  height: 220px
+
+.right-link
+  display: block
+  text-align: right
+  font: 1.4em "Raleway",Arial !important
+
+.right-link a
+  text-decoration: none
+  color: #91b145
+  border-bottom-style: none
+
+.right-link a:hover
+  text-decoration: underline
+
+.box
+  margin-bottom: 15px
+  width: 380px
+  height: 329px
+  background: url('/images/bg-box.gif') no-repeat
+  float: left
+  padding: 11px 0 0
+
+.wide
+  width: 540px
+  background: url('/images/bg-wide.gif') no-repeat
+  float: right
+
+.box-inner
+  overflow: auto
+  height: 280px
+  margin: 8px 0 0
+  padding: 0 0 0 22px
+
+.box-inner-beta
+  padding-left: 22px
+  padding-bottom: 0
+  padding-right: 22px
+  padding-top: 0
+  font-size: 12px
+  text-align: center
+  overflow: auto
+  height: 280px
+  margin: 8px 0 0
+
+.box-inner-beta p
+  line-height: 28px
+
+.boxwidetop
+  padding-bottom: 5px
+  padding-top: 10px
+  color: white
+  text-align: center
+  float: left
+  background-image: url('/images/box-wide-top.gif')
+  background-repeat: no-repeat
+  background-color: black
+  width: 940px
+
+.boxwidemiddle
+  padding-bottom: 5px
+  padding-top: 15px
+  padding-right: 25px
+  padding-left: 25px
+  text-align: left
+  float: left
+  width: 890px
+  background-color: #e6e6e6
+
+.boxwidemiddleb
+  padding-bottom: 5px
+  padding-top: 5px
+  padding-right: 25px
+  padding-left: 25px
+  text-align: left
+  float: left
+  width: 890px
+  background-color: #e6e6e6
+
+.boxwidemiddle p
+  padding: 0px
+  margin: 0px
+  font-size: 1.4em
+
+.boxwidebottom
+  margin-bottom: 10px
+  background-image: url('/images/box-wide-bottom.gif')
+  float: left
+  height: 16px
+  width: 940px
+
+.boxwidebottomb
+  background-color: #cccccc
+  background-repeat: no-repeat
+  padding-top: 15px
+  padding-bottom: 16px
+  background-position: 0 bottom
+  margin-bottom: 10px
+  background-image: url('/images/box-wide-bottom.gif')
+  float: left
+  width: 940px
+
+#content .box h3
+  color: #fff
+  text-align: center
+  margin: 0 0 28px
+  font-size: 16px
+
+.image-holder
+  border-color: #999999
+  border-width: 1px
+  border-style: solid
+  width: 337px
+  height: 194px
+  background: #fff
+
+.image-holder img
+  display: block
+.box .list
+  float: left
+  width: 157px
+  margin: 0 14px 0 0
+  display: inline
+
+.box .list li
+  font-size: 1.4em
+  background: url('/images/bg-box-list.gif') no-repeat
+  margin: 17px 0 0
+  float: left
+  width: 138px
+  padding: 0 0 0 19px
+
+.form
+  list-style: none
+  margin: 0 -33px 18px 0
+  padding: 0
+  width: 518px
+  overflow: hidden
+
+.form li
+  float: left
+  width: 226px
+  margin: 0 33px 10px 0
+  overflow: hidden
+
+.form li label
+  display: block
+  font: 1.2em "Raleway",Arial !important
+
+.txt-input
+  width: 214px
+  border: 1px solid #b3b3b3
+  padding: 5px
+  font: 1.2em "Raleway",Arial !important
+  margin: 6px 0 0
+
+.captcha
+  height: 1%
+  overflow: hidden
+  margin: 20px 0 0
+
+.captcha img
+  display: block
+.bullet
+  list-style: none
+  margin: 0
+  padding: 0
+  height: 1%
+  overflow: hidden
+
+.bullet li
+  background: url('/images/bg-bullet.gif') no-repeat 0 8px
+  padding: 0 0 0 14px
+  font-size: 1.4em
+  line-height: 18px
+  margin: 0 0 17px
+
+#content
+  .holder, .holderb
+    h2
+      font-size: 1.8em
+      color: #000
+      text-align: left
+      margin: 0 0 17px
+
+      &.right_panel
+        text-align: center
+
+        &.industries
+          margin: 0px
+
+.inner-gallery
+  margin: 0 auto
+  background: url('/images/bg-gallery-holder.gif') no-repeat 0 100%
+  width: 860px
+  padding: 0 60px
+  overflow: hidden
+
+.gallery-holder
+  width: 860px
+  overflow: hidden
+  position: relative
+
+.gallery-block
+  float: left
+  position: relative
+  left: 50%
+
+.gallery
+  margin: 0
+  margin-bottom: 10px
+  list-style: none
+  padding: 0
+  float: left
+  left: -50%
+  position: relative
+
+.gallery li
+  float: left
+  width: 140px
+  font-family: "Raleway",Arial !important
+  text-align: center
+  padding: 0 10px 11px
+  display: inline
+
+.gallery .image
+  height: 125px
+  width: 140px
+  overflow: hidden
+  padding: 15px 0 0
+  background: url('/images/bg-gallery-image.gif') no-repeat
+  margin: 0 0 5px
+  position: relative
+
+.gallery .image img
+  margin: 0 auto
+
+.btn-video
+  position: absolute
+  width: 28px
+  height: 28px
+  background: url('/images/btn-video.png') no-repeat
+  overflow: hidden
+  right: 5px
+  bottom: 5px
+  text-decoration: none
+  border-bottom-style: none
+
+.btn-video:hover
+  text-decoration: none
+
+.gallery strong
+  display: block
+  font-size: 13px
+  color: #7ea730
+  margin: 0 0 7px
+
+.gallery p
+  font-size: 1.2em
+  color: #4c4c4c
+  line-height: 17px
+  margin: 0
+
+.gallery .arrow
+  display: block
+  margin: 56px -32px -90px 132px
+  position: relative
+  width: 40px
+  height: 41px
+  z-index: 3
+
+.bordered
+  padding-bottom: 10px
+  border-bottom: 1px solid #b3b3b3
+  margin: 0 auto 23px
+
+.bordered .block
+  width: 301px
+  text-align: center
+  margin: 0
+  font: 1.3em/18px "Raleway",Arial !important
+  color: #808080
+
+.inner .block
+  width: 276px
+  text-align: center
+  margin: 0
+  font: 1.3em/18px "Raleway",Arial !important
+  color: #808080
+
+.bordered .block p
+  margin: 5px 10px
+.btn-free
+  width: 303px
+  height: 54px
+  background: url('/images/btn-free2.gif') no-repeat
+  display: block
+  overflow: hidden
+  text-indent: -9999px
+
+.btn-freeb
+  float: right
+  width: 276px
+  height: 54px
+  background: url('/images/btn-free3.gif') no-repeat
+  display: block
+  overflow: hidden
+  text-indent: -9999px
+  border-bottom-style: none
+
+.subpagecenter
+  margin-right: 20px
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 530px
+
+.subpagecenterd
+  float: right
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 770px
+
+.subpagecentere
+  float: right
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 770px
+
+.subpagecenterf
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 770px
+
+.member_title
+  padding-top: 0px
+  font-size: 1.6em
+  font-style: italic
+
+#subpagecenterb
+  margin-right: 30px
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 520px
+
+#subpagecenterc
+  margin-right: 30px
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 520px
+
+#subpagecenterc li
+  margin-bottom: 5px
+  line-height: 1.5em
+  font-size: 1.4em
+
+#subpagecenterb h3
+  margin-bottom: 10px
+  font-weight: bold
+  font-size: 2.1em
+  font-family: "Raleway",Arial !important
+
+#subpagecenterb h3 a
+  border-bottom-style: none
+  color: #91b145
+
+#subpagecenterb h3 a:hover
+  color: black
+
+#subpagecenterc h3
+  margin-bottom: 10px
+  font-weight: bold
+  font-size: 2.1em
+  font-family: "Raleway",Arial !important
+#subpagecenterb span
+  margin: 0px
+  font-size: 1.6em
+  font-weight: bold
+  font-family: "Raleway",Arial !important
+#subpagecenterc span
+  margin: 0px
+  font-size: 1.4em
+  font-family: "Raleway",Arial !important
+
+#subpagecenterc span a
+  border-bottom-style: none
+
+#subpagecenterc span a:hover
+  text-decoration: underline
+
+#subpagecenterc p span
+  margin: 0px
+  font-size: 1em
+  font-family: "Raleway",Arial !important
+#subpagerightb
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 220px
+
+#subpagerightb span
+  line-height: 1.5em
+  margin: 0px
+  font-size: 1.5em
+  font-weight: bold
+  font-family: "Raleway",Arial !important
+#subpagecenterb img
+  margin-bottom: 10px
+  margin-right: 20px
+  float: left
+
+#content .subpagecentere h3
+  font-size: 1.6em
+
+.more
+  text-align: right
+  font-family: "Raleway",Arial !important
+  font-weight: bold
+
+.more a
+  border-bottom-style: none
+  color: #91b145
+
+.more a:hover
+  color: black
+
+.back
+  text-align: left
+  font-family: "Raleway",Arial !important
+  font-weight: bold
+  float: left
+
+.back_divider
+  text-align: left
+  font-family: "Raleway",Arial !important
+  float: left
+
+.back_dividerb
+  text-align: left
+  font-family: "Raleway",Arial !important
+
+.moreb
+  font-family: "Raleway",Arial !important
+
+.followb a
+  font-size: 13px
+  font-family: "Raleway",Arial !important
+
+.subpageright
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 220px
+
+.leftnav
+  background-position: right top
+  height: 285px
+  background-repeat: no-repeat
+  background-image: url('/images/leftnav_gradient.gif')
+  margin-right: 20px
+  float: left
+  padding-right: 25px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 30px
+  width: 125px
+
+.leftnavlist
+  line-height: 1.8em
+  display: inline
+  font-size: 2em
+  text-align: right
+  font-weight: bold
+  font-family: "Raleway",Arial !important
+  list-style-type: none
+
+.leftnavlist li.active a
+  text-align: right
+  color: black
+
+.contactcenter
+  margin-bottom: 20px
+  margin-left: 60px
+  float: left
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 465px
+
+.contacttop
+  float: left
+  background-repeat: no-repeat
+  background-image: url('/images/contact_top.gif')
+  height: 17px
+  width: 464px
+
+.contactmiddle
+  padding-left: 20px
+  float: left
+  background-repeat: repeat-y
+  background-image: url('/images/contact_middle.gif')
+  width: 444px
+
+.contactbottom
+  float: left
+  background-repeat: no-repeat
+  background-image: url('/images/contact_bottom.gif')
+  height: 17px
+  width: 464px
+
+.contactright
+  background-image: url('/images/big_bull.gif')
+  background-position: 0 45px
+  background-repeat: no-repeat
+  height: 250px
+  float: right
+  padding-right: 0px
+  padding-left: 0px
+  padding-bottom: 0px
+  padding-top: 9px
+  width: 220px
+
+.contactcolumn
+  margin-right: 20px
+  float: left
+  width: 200px
+
+.contactlinks
+  padding-left: 0
+  padding-bottom: 0
+  padding-right: 0
+  padding-top: 5px
+  float: left
+
+.contactlinks a
+  background: url('/images/twitter_gray.gif') no-repeat 0 50%
+  float: left
+  padding: 0 0 0 41px
+  font: 1.4em/32px Georgia, "Times New Roman", Times, serif
+  color: #1da4d7
+  border-bottom-style: none
+
+.subpagecenter h3
+  font: bold 1.6em "Raleway",Arial !important
+  margin: 0 0 7px
+
+.subpageright h3
+  font: bold 1.6em "Raleway",Arial !important
+  margin: 0 0 7px
+
+#subpagerightb h4
+  width: 100%
+  font: bold 1.6em "Raleway",Arial !important
+
+.featured
+  padding-bottom: 5px
+  background-position: left top
+  width: 100%
+  border-bottom-color: #cccccc
+  border-bottom-style: solid
+  border-bottom-width: 1px
+  padding-left: 22px
+  background-repeat: no-repeat
+  background-image: url('/images/Document_16x16.png')
+  margin: 0 0 7px
+
+.twitterhead
+  margin-left: 0
+  margin-bottom: 7px
+  margin-right: 0
+  margin-top: 35px
+  padding-bottom: 5px
+  background-position: left top
+  width: 100%
+  border-bottom-color: #cccccc
+  border-bottom-style: solid
+  border-bottom-width: 1px
+  padding-left: 22px
+  background-repeat: no-repeat
+  background-image: url('/images/twitter_16x16.gif')
+
+/*twitter*/
+.twitter
+  font-style: normal
+  font-weight: normal
+  width: 220px
+  float: right
+
+.twitter a
+  color: #1da4d7
+  border-bottom-style: none
+
+.twitter a:hover
+  text-decoration: underline
+
+.twitterb
+  padding: 0px
+  margin: 0px
+
+.twitterb li
+  line-height: 1.4em
+  margin-bottom: 15px
+  font-size: 1.3em
+  font-family: "Raleway",Arial !important
+  display: block
+
+.twitterdate
+  font-style: italic
+  font-family: Georgia, Times New Roman, Times, serif
+
+.subpagecenter p
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 0
+  margin-top: 7px
+  line-height: 20px
+  font-size: 1.4em
+
+.subpageright p
+  margin-left: 0
+  margin-bottom: 10px
+  margin-right: 0
+  margin-top: 7px
+  line-height: 20px
+  font-size: 1.4em
+
+.contactmiddle h3
+  font: bold 1.6em "Raleway",Arial !important
+  margin: 0 0 7px
+
+.contactmiddle p
+  line-height: 18px
+  margin: 7px 0 0
+  font-size: 1.4em
+
+.blockhome
+  float: right
+  width: 275px
+  margin: 0px
+  display: inline
+
+.blockhomeb
+  clear: both
+  float: right
+  width: 300px
+  margin: 0px
+  display: inline
+
+.blockhome blockquote
+  margin: 0 0 18px
+  padding: 0
+  font-size: 1.4em
+  font-style: italic
+
+.blockhome blockquote p
+  margin: 0
+.blockhome blockquote cite
+  display: block
+  font-style: normal
+  font-family: "Raleway",Arial !important
+  margin: 22px 0 0
+
+.menuleft
+  padding-left: 0
+  padding-bottom: 0
+  padding-right: 0
+  font-family: "Raleway",Arial !important
+  list-style: none
+  margin: 0
+
+.menuleft li
+  line-height: 1.6em
+  font-weight: bold
+  font-size: 2em
+  height: 1%
+
+.menuleft a
+  text-align: right
+  margin-left: 0
+  margin-bottom: 0
+  margin-right: 0px
+  margin-top: 0
+  display: block
+  color: #7ea62f
+  border-bottom-style: none
+
+.menuleft a:hover
+  color: black
+  text-decoration: none
+
+#flickr_badge_uber_wrapper a
+  border-bottom-style: none
+
+.menuleft li.active a
+  color: black
+
+#terms
+  float: left
+  width: 940px
+  margin-left: auto
+  margin-right: auto
+  color: black
+
+#terms h1
+  margin-top: 10px
+  margin-bottom: 20px
+  font-size: 3em
+  text-align: left
+
+#terms p
+
+.mapcolumn
+  margin-right: 20px
+  float: left
+  width: 300px
+
+.mapcolumn p
+  margin-bottom: 20px
+  margin-top: -5px
+
+.mapcolumnlast
+  height: 50px
+  float: left
+  width: 300px
+
+.mapcolumnlast p
+  margin-bottom: 20px
+  margin-top: -5px
+
+.maplink a
+  color: black
+  border-bottom-style: none
+
+.maplink a:hover
+  text-decoration: underline
+
+.badge
+  margin-bottom: 25px
+  text-align: center
+  height: 65px
+  float: right
+  width: 275px
+
+.sidebarhome
+  height: 475px
+  background-repeat: no-repeat
+  padding-left: 28px
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -827px
+  float: right
+  width: 292px
+
+  img
+    border: 1px solid lightblue
+
+    &.industry
+      border: 0
+
+  .industry_programs
+    width: 287px
+
+    ul
+      font-size: 1.8em
+      list-style-type: none
+      margin: 0
+
+      li
+        width: 215px
+
+        .floater
+          float: left
+          height: 50%
+          margin-bottom: -55px
+          border-top: 1px solid #CCCCCC
+          padding-top: 4px
+
+          &.top
+            border-top: medium none
+            padding-top: 0pt
+
+          .fl_content
+            clear: both
+            height: 110px
+            position: relative
+
+            .reseller_specific_container
+              float: left
+              margin: 3px
+              width: 130px
+
+              div
+                font-size: .6em
+
+              span
+                font-size: .7em
+                font-family: "Raleway",Arial !important
+                font-weight: bold
+                display: block
+                margin: 0 0 .1em
+
+.securityheadb
+  font-size: 0.85em
+  padding-bottom: 10px
+  padding-top: 10px
+  color: white
+  text-align: center
+  background-position: 0 top
+  background-repeat: no-repeat
+  background-image: url('/images/security_top2.gif')
+  background-color: #999999
+  width: 294px
+
+.securityb
+  background-position: center bottom
+  background-repeat: no-repeat
+  background-image: url('/images/security_bottom2.gif')
+  margin-bottom: 25px
+  padding-bottom: 5px
+  text-align: center
+  float: right
+  width: 294px
+  background-color: white
+
+.securityb img
+
+.securityb p
+  font-size: 1.3em
+  margin-right: 20px
+  margin-left: 20px
+  text-align: left
+
+.securityhead
+  font-size: 0.85em
+  padding-bottom: 10px
+  padding-top: 10px
+  color: white
+  text-align: center
+  background:
+    repeat: no-repeat
+    image: url('/images/sitesprite3.png')
+    position: -303px -10px
+    color: #999999
+  width: 273px
+
+.security
+  background:
+    repeat: no-repeat
+    image: url('/images/sitesprite3.png')
+    position: -10px 268px
+  margin-bottom: 25px
+  padding-bottom: 5px
+  text-align: center
+  float: right
+  width: 273px
+  background-color: white
+
+.security img
+
+.security p
+  font-size: 1.3em
+  margin-right: 20px
+  margin-left: 20px
+  text-align: left
+
+.cards
+  text-align: right
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -481px
+  background-repeat: no-repeat
+  float: right
+  width: 273px
+  cursor: default
+
+.cards a
+  color: black
+  display: block
+  padding-bottom: 75px
+
+.cards a:hover
+  text-decoration: none
+
+.featureside
+  float: right
+  width: 293px
+
+/* footer */
+.caption
+  float: left
+  width: 692px
+
+.merchant_container_outer1
+  margin-right: 15px
+  float: left
+  width: 460px
+
+.merchant_container_outer2
+  float: left
+  width: 460px
+
+.merchant_logoa
+  margin-bottom: 10px
+  background-position: 0 bottom
+  background-image: url('/images/millennium-logo.gif')
+  background-repeat: no-repeat
+  height: 67px
+  float: left
+  width: 460px
+
+.merchant_logob
+  margin-bottom: 10px
+  background-image: url('/images/transFS.gif')
+  background-repeat: no-repeat
+  height: 67px
+  float: left
+  width: 460px
+
+.merchant_chart_outer
+  float: left
+  width: 280px
+
+.merchant_chart_inner
+  margin-bottom: 15px
+  font-size: 1.4em
+  font-family: "Raleway",Arial !important
+  float: left
+  border-color: #8bb835
+  border-style: solid
+  border-width: 1px
+  width: 280px
+
+.merchant_column_container
+  background-color: #8bb835
+  float: left
+  width: 280px
+
+.merchant_column1a
+  background-color: #8bb835
+  float: left
+  padding: 10px
+  width: 129px
+
+.merchant_column1b
+  float: left
+  padding: 10px
+  width: 129px
+
+.merchant_column2a
+  background-color: #8bb835
+  border-left-color: white
+  border-left-style: solid
+  border-left-width: 1px
+  float: left
+  padding: 10px
+  width: 110px
+
+.merchant_column2b
+  border-left-color: #8bb835
+  border-left-style: solid
+  border-left-width: 1px
+  float: left
+  padding: 10px
+  width: 110px
+
+.merchant_button a
+  display: block
+  background-repeat: no-repeat
+  background-image: url('/images/merchant_button.gif')
+  float: left
+  height: 43px
+  width: 283px
+  text-indent: -9999px
+  border-bottom-style: none
+
+.merchant_buttonb a
+  margin-top: 5px
+  margin-left: 302px
+  display: block
+  background-repeat: no-repeat
+  background-image: url('/images/merchant_buttonb.gif')
+  float: left
+  height: 43px
+  width: 283px
+  text-indent: -9999px
+  border-bottom-style: none
+
+.merchant_description
+  font-family: "Raleway",Arial !important
+  float: right
+  width: 160px
+
+.merchant_description p
+  line-height: 16px
+  font-size: 12px
+  margin: 0px
+
+.merchant_question a
+  float: right
+  display: block
+  margin-top: -1px
+  background-repeat: no-repeat
+  background-image: url('/images/question_mark.gif')
+  height: 19px
+  width: 19px
+  text-indent: -9999px
+  border-bottom-style: none
+
+.bottom_title
+  float: left
+  width: 940px
+  font-weight: bold
+  font-size: 2.6em
+  font-family: "Raleway",Arial !important
+  text-align: center
+  margin-top: 30px
+  margin-bottom: 5px
+  color: black
+
+.identity
+  background-repeat: no-repeat
+  padding-bottom: 35px
+  float: left
+  height: 106px
+  width: 273px
+  background-image: url('/images/chargify_identity.gif')
+
+#footer, .push
+  height: $height_buf
+
+#footer
+  font-size: 8px
+  width: 100%
+  background: none repeat scroll 0 0 #10102F
+  //background-image: url('/images/sitesprite2.png')
+  //background-position: 0px -101px
+  //background-repeat: repeat-x
+  font-family: "Raleway",Arial !important
+  color: #b3b3b3
+
+.links
+  float: right
+  padding: 15px 0 0
+
+.links a
+  background: url('/images/twitter.gif') no-repeat 0 50%
+  float: left
+  padding: 0 0 0 41px
+  font: 1.3em/32px "Raleway",Arial !important
+  color: #1da4d7
+
+.linksb
+  float: right
+  padding: 15px 0 0
+
+.linksb a
+  display: block
+  height: 20px
+  width: 20px
+  float: right
+  font: 1.3em/32px "Raleway",Arial !important
+  color: #1da4d7
+  text-indent: -9999px
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -650px
+  background-repeat: no-repeat
+  border-bottom-style: none
+
+#footer .inner
+  font-size: 1.25em
+  text-align: center
+  margin: auto
+
+#footer .inner p
+  margin-top: 8px
+  font-size: 130%
+#footer .logo
+  float: left
+  margin: 0 18px 0 0
+
+#footer .nav
+  float: none
+  height: 1%
+  overflow: hidden
+  margin: 0 auto
+  padding: 11px 0 0
+  width: 73%
+
+#footer .nav li
+  background-repeat: no-repeat
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -1320.5px
+
+#footer .nav a
+  color: #7ea730
+#footer .nav a:hover
+  text-decoration: underline
+#footer p
+  height: 1%
+  overflow: hidden
+  margin: 9px 0
+
+#footer p a
+  color: #b3b3b3
+  text-decoration: none
+
+#footer p span, #footer p span a
+  color: #7ea730
+.highlight
+  color: #7ea62f
+#footer p a:hover
+  text-decoration: underline
+.emphasis
+  margin-bottom: 40px
+  font-size: 1.3em
+  font-weight: bold
+.column p
+  line-height: 20px
+.badgecontainer
+  width: 133px
+  float: right
+
+.badgesmall a
+  display: block
+  margin-right: 0px
+  margin-top: 13px
+  background-repeat: no-repeat
+  background-image: url('/images/sitesprite1.png')
+  background-position: -10px -603px
+  float: left
+  height: 27px
+  width: 100px
+  overflow: hidden
+  text-indent: -9999px
+  border-bottom-style: none
+
+.badgesmall a:hover
+  background:
+    repeat: no-repeat
+    image: url('/images/TC50_small_colorb.png')
+    position: 0 0
+
+.badgesmallb a
+  background:
+    image: url('/images/sitesprite1.png')
+    position: -10px -690px
+    repeat: no-repeat
+  display: block
+  margin-right: 20px
+  margin-top: 6px
+  float: left
+  height: 47px
+  width: 104px
+  overflow: hidden
+  text-indent: -9999px
+  border-bottom-style: none
+
+.badgesmallb a:hover
+  background:
+    repeat: no-repeat
+    image: url('/images/labs_logo_colorc.png') !important
+    position: 0 0
+
+.securitybadgecontainer
+  float: left
+  width: 245px
+
+.securitybadgecontainerb
+  float: left
+  width: 255px
+
+.securitybadgecontainerinner
+  margin-top: 0px
+  padding: 0px
+  margin-left: 10px
+  float: left
+  width: 245px
+
+.securitybadgecontainerinner a
+  border-bottom-style: none
+
+.securitybadgecontainerinnerb
+  margin-top: 0px
+  padding: 0px
+  margin-left: 20px
+  float: left
+  width: 245px
+
+.securitybadgecontainerinnerb a
+  border-bottom-style: none
+
+.verisign
+  float: left
+  width: 100px
+
+.verisignb
+  float: right
+  width: 100px
+
+.authorizeb
+  margin-left: 5px
+  float: left
+  width: 130px
+
+.authorize
+  margin-left: 5px
+  margin-bottom: -5px
+  margin-top: 10px
+  width: 229px
+
+.intro
+  font-weight: bold
+  font-size: 17px
+  font-family: "Raleway",Arial !important
+
+.introb
+  line-height: 24px
+  font-size: 15px
+
+.embed_video, .go_green_with_ev_image_container,
+.digital_signature_image_container, .ssl_key_image_container,
+.free_ssl_image_container
+  z-index: 1
+  padding-left: 15px
+  padding-top: 15px
+  background-image: url('/images/video-embed-border3.gif')
+  height: 339px
+  width: 417px
+  float: left
+
+  &.center
+    margin: 0 auto
+    float: none
+
+.go_green_with_ev_image_container
+  height: 280px
+
+.digital_signature_image_container
+  height: 340px
+
+.sample_site_seal_container
+  margin: 0pt auto
+  float: left
+  width: 100%
+  text-align: center
+
+.ssl_key_image_container
+  height: 320px
+
+  img
+    border: 1px #ccc solid
+
+.free_ssl_image_container
+  height: 300px
+
+.pki_image
+  background: #ffffff url('/images/global_lock.jpg') no-repeat 0 0
+  height: 324px
+  width: 402px
+
+.go_green_with_ev_image
+  background: #ffffff url('/images/go_green_with_ev_ssl.jpg') no-repeat 0 0
+  height: 324px
+  width: 402px
+
+.landing_video
+  padding-left: 15px
+  padding-top: 15px
+  background-image: url('/images/video-embed-border2.gif')
+  float: left
+  height: 359px
+  width: 440px
+
+.landing-box1-container
+  margin-top: 25px
+  float: left
+  width: 380px
+
+.landing-box1-top
+  float: left
+  font-size: 0.85em
+  color: white
+  text-align: center
+  padding-bottom: 10px
+  padding-top: 10px
+  background-repeat: no-repeat
+  background-color: #999999
+  background-image: url('/images/landing-box1-top.gif')
+  width: 380px
+
+.landing-box1-middle
+  padding-right: 45px
+  padding-left: 30px
+  background-color: #e6e6e6
+  padding-top: 10px
+  float: left
+  width: 305px
+
+.landing-box1-bottom
+  margin-bottom: 15px
+  float: left
+  height: 8px
+  color: white
+  text-align: center
+  background-repeat: no-repeat
+  background-color: #999999
+  background-image: url('/images/landing-box1-bottom.gif')
+  width: 380px
+
+.landing-box2-container
+  margin-top: 25px
+  float: right
+  width: 540px
+
+.landing-box2-top
+  float: left
+  font-size: 0.85em
+  color: white
+  text-align: center
+  padding-bottom: 10px
+  padding-top: 10px
+  background-repeat: no-repeat
+  background-color: #999999
+  background-image: url('/images/landing-box2-top.gif')
+  width: 540px
+
+.landing-box2-middle
+  padding-left: 10px
+  background-color: #e6e6e6
+  padding-top: 10px
+  float: left
+  width: 530px
+
+.landing-box2-bottom
+  margin-bottom: 15px
+  float: left
+  height: 8px
+  color: white
+  text-align: center
+  background-repeat: no-repeat
+  background-color: #999999
+  background-image: url('/images/landing-box2-bottom.gif')
+  width: 540px
+
+.landing-cta-container
+  margin-left: 9px
+  float: left
+  width: 400px
+
+.get-started a
+  display: block
+  margin-left: 700px
+  position: absolute
+  top: 0px
+  background-repeat: no-repeat
+  background-image: url('/images/get_started_burst_blank.png')
+  height: 125px
+  width: 206px
+  overflow: hidden
+  text-align: center
+  color: #fff
+  font-size: 24px
+  padding-top: 16px
+
+.get-started a:hover
+  text-decoration: none
+
+.featuredarticles
+  margin: 0px
+  list-style: none
+  padding: 0px
+
+.featuredarticles li a
+  line-height: 20px
+  font-size: 14px
+  display: block
+  font-weight: bold
+  font-family: "Raleway",Arial !important
+  margin-bottom: 10px
+  background-position: 0px 2px
+  padding-left: 23px
+  background-image: url('/images/Arrow_right_16x16.png')
+  background-repeat: no-repeat
+  border-bottom-style: none
+  color: #91b145
+
+.featuredarticles li a:hover
+  color: black
+
+.badge-align
+  display: inline
+  width: 125px
+  padding: 0px
+  margin: 0px
+
+/* addthis styling */
+
+.at300bs.at15t_expanded, .at300bs.at15t_compact
+  background: transparent url('/images/addthis_more.gif') no-repeat scroll left center !important
+
+.addthis_default_style .at300m
+  font-size: 1.2em
+.addthis_default_style a
+  border-bottom-style: none
+
+.management_photo
+  float: left
+  width: 145px
+
+.management_photo a
+  border-bottom-style: none
+
+.management_photo a:hover
+  text-decoration: underline
+
+.management_photo img
+  padding-bottom: 0px
+  border-color: #e6e6e6
+  border-width: 7px
+  border-style: solid
+  margin-bottom: 10px
+  float: left
+  cursor: default
+
+.twitter-popup
+  margin-top: -5px
+  margin-left: -9px
+  padding-bottom: 10px
+  min-height: 107px
+  background-position: left top
+  background-repeat: no-repeat
+  padding-left: 100px
+  background-image: url('/images/twitter_bull_and_bird.gif')
+
+.twitter-popup a
+  border-bottom-style: none
+
+.twitter-popup p
+  line-height: 16px
+  font-style: italic
+  font-size: 12px
+
+.twitter-byline
+  font-size: 12px
+  font-style: normal
+  font-weight: normal
+  color: #4ca0c9
+  font-family: "Raleway",Arial !important
+
+.twitter-byline a
+  text-decoration: none
+  color: #4ca0c9
+
+.twitter-byline a:hover
+  color: black
+
+.member_description
+  float: right
+  width: 600px
+
+.member_container
+  width: 770px
+  float: left
+
+.member_break
+  height: 50px
+  width: 770px
+  float: left
+
+.member_breakb
+  height: 30px
+  width: 770px
+  float: left
+
+.resumator-job-title
+  font-size: 24px
+
+.twitter-popup ul
+  line-height: 18px
+  font-size: 14px
+  display: inline
+  list-style-type: none
+
+.quote_container_home
+  background-image: url('/images/sdfsdf')
+  margin-bottom: 20px
+  background-repeat: no-repeat
+  float: left
+  height: 135px
+  width: 273px
+  background-image: url('/images/quote_home_background.gif')
+
+.quote_logo_home
+  float: left
+  text-align: center
+  margin-top: 15px
+  height: 55px
+  width: 273px
+  overflow: hidden
+
+.quote_text_home p
+  padding-left: 0px
+  padding-bottom: 5px
+  padding-right: 0px
+  padding-top: 0px
+  line-height: 22px
+  margin: 0px
+  font-style: italic
+  font-family: Georgia, "Times New Roman", Times, serif
+  font-size: 15px
+  float: left
+  text-align: center
+  height: 60px
+  width: 273px
+
+.quote_container_hiw
+  padding-bottom: 30px
+  float: left
+  width: 605px
+
+.quote_border_hiw
+  float: left
+  background-image: url('/images/quote_border_hiw.gif')
+  background-repeat: no-repeat
+  height: 1px
+  width: 605px
+
+.quote_middle_hiw
+  padding-bottom: 20px
+  float: left
+  background-image: url('/images/quote_middle_hiw.gif')
+  background-repeat: repeat-y
+  width: 605px
+
+.quote_box_hiw
+  float: left
+  padding-right: 20px
+  width: 280px
+
+.quote_logo_hiw
+  text-align: center
+  float: left
+  margin-top: 20px
+  height: 55px
+  width: 280px
+  overflow: hidden
+
+.quote_text_hiw p
+  padding: 0px
+  margin: 0px
+  float: left
+  text-align: center
+  font-style: italic
+  line-height: 22px
+  font-size: 15px
+  font-family: Georgia, "Times New Roman", Times, serif
+  width: 280px
+
+.quote_container_features
+  padding-bottom: 30px
+  float: left
+  width: 940px
+
+.quote_border_features
+  float: left
+  background-image: url('/images/quote_border_features.gif')
+  background-repeat: no-repeat
+  height: 1px
+  width: 940px
+
+.quote_middle_features
+  padding-bottom: 20px
+  float: left
+  background-image: url('/images/quote_middle_features.gif')
+  background-repeat: repeat-y
+  width: 940px
+
+.quote_box_features
+  float: left
+  padding-right: 20px
+  width: 298px
+
+.quote_box_last_features
+  float: left
+  width: 298px
+
+.quote_logo_features
+  text-align: center
+  float: left
+  margin-top: 20px
+  height: 55px
+  width: 298px
+  overflow: hidden
+
+.quote_text_features p
+  padding: 0px
+  margin: 0px
+  float: left
+  text-align: center
+  font-style: italic
+  line-height: 22px
+  font-size: 15px
+  font-family: Georgia, "Times New Roman", Times, serif
+  width: 298px
+
+/*blog*/
+.content_container
+  background-color: #e6e6e6
+  font-family: Arial, Helvetica, sans-serif
+  font-size: 14px
+  color: #000
+  width: 939px
+  height: auto
+  margin: auto
+  padding: 0px 0
+
+.content_container div.left_content
+  width: 654px
+  height: auto
+  float: left
+
+.content_container div.left_content div.each_article_container
+  width: 640px
+  height: auto
+  float: left
+  padding-bottom: 18px
+
+.content_container div.left_content div.each_article_container div.left_column
+  width: 60px
+  height: 100px
+  float: left
+  padding-top: 17px
+
+.content_container div.left_content div.each_article_container div.left_column div.date_container
+  width: 60px
+  height: 76px
+  float: left
+  background-image: url('/images/date_bg.jpg')
+  background-repeat: no-repeat
+
+.content_container div.left_content div.each_article_container div.left_column div.date_container div.month
+  font-size: 16px
+  font-weight: bold
+  text-align: center
+  width: 100%
+  text-transform: uppercase
+  color: #fff
+  padding: 14px 0 0 0
+  line-height: 15px
+
+.content_container div.left_content div.each_article_container div.left_column div.date_container div.day
+  font-size: 34px
+  font-weight: bold
+  text-align: center
+  width: 100%
+  color: #fff
+  line-height: 34px
+
+.content_container div.left_content div.each_article_container div.right_column
+  width: 580px
+  height: auto
+  float: left
+
+.content_container div.left_content div.each_article_container div.right_column div.top
+  width: 580px
+  height: 13px
+  float: left
+  background-image: url('/images/each_article_top.jpg')
+  background-repeat: no-repeat
+  background-position: bottom
+
+.content_container div.left_content div.each_article_container div.right_column div.bottom
+  width: 580px
+  height: 13px
+  clear: both
+  background-image: url('/images/each_article_bottom.jpg')
+  background-repeat: no-repeat
+  background-position: top
+
+.content_container div.left_content div.each_article_container div.right_column div.mid
+  width: 540px
+  height: auto
+  float: left
+  padding: 3px 20px
+  background-image: url('/images/each_article_mid.jpg')
+  background-repeat: repeat-y
+
+.content_container div.left_content div.each_article_container div.right_column div.mid h3 a
+  width: 390px
+  float: left
+  font-size: 30px
+  color: #7ea730
+  text-decoration: none
+  font-weight: bold
+  padding-bottom: 5px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid h3 a:hover
+  color: #000
+
+.content_container div.left_content div.each_article_container div.right_column div.mid h4
+  width: 376px
+  float: left
+  font-size: 16px
+  color: #000000
+  text-decoration: none
+  font-weight: normal
+  font-style: italic
+  padding-bottom: 15px
+  font-family: Georgia, "Times New Roman", Times, serif
+  margin: 0px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons
+  width: auto
+  height: auto
+  float: right
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a.comments
+  width: 32px
+  height: 26px
+  padding: 4px 0 0 0
+  float: left
+  text-decoration: none
+  background-image: url('/images/comments_icon.jpg')
+  background-position: bottom
+  font-size: 12px
+  color: #ffffff
+  font-weight: bold
+  text-align: center
+  margin-left: 10px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a:hover.comments
+  background-position: top
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a.facebook
+  width: 32px
+  height: 32px
+  float: left
+  text-decoration: none
+  background-image: url('/images/facebook_icon.jpg')
+  background-position: bottom
+  margin-left: 10px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a:hover.facebook
+  background-position: top
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a.twitter
+  width: 32px
+  height: 32px
+  float: left
+  text-decoration: none
+  background-image: url('/images/twitter_icon.jpg')
+  background-position: bottom
+  margin-left: 10px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.icons a:hover.twitter
+  background-position: top
+
+.content_container div.left_content div.each_article_container div.right_column div.mid div.photo_placeholder
+  width: auto
+  height: auto
+  float: left
+  margin-bottom: 19px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid p
+  width: 100%
+  height: auto
+  float: left
+  color: #000000
+  font-size: 14px
+  font-family: Georgia, "Times New Roman", Times, serif
+  line-height: 20px
+  padding-bottom: 0px
+  margin-top: 0px
+  margin-bottom: 15px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid a.read_more
+  float: right
+  font-size: 14px
+  color: #7ea730
+  font-weight: bold
+  text-decoration: none
+  padding-bottom: 5px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid a.back
+  float: left
+  font-size: 14px
+  color: #7ea730
+  font-weight: bold
+  text-decoration: none
+  padding-bottom: 5px
+
+.content_container div.left_content div.each_article_container div.right_column div.mid a:hover.read_more
+  color: #000
+.content_container div.left_content div.each_article_container div.right_column div.mid a:hover.back
+  color: #000
+
+.content_container div.right_content
+  width: 219px
+  height: auto
+  float: right
+  padding-left: 46px
+  background-image: url('/images/right_content_bg.jpg')
+  background-repeat: no-repeat
+  background-position: left top
+
+.content_container div.right_content div.search_container
+  width: 100%
+  height: 33px
+  float: left
+  background-image: url('/images/search_textbox.jpg')
+  background-repeat: no-repeat
+  background-position: left center
+  margin-bottom: 19px
+
+.content_container div.right_content div.search_container input.search_box
+  width: 135px
+  height: auto
+  font-size: 14px
+  font-weight: bold
+  color: #000
+  padding: 0 3px 0 3px
+  margin: 9px 0 0 1px
+  border: 0
+  background: none
+  font-family: Arial, Helvetica, sans-serif
+
+.content_container div.right_content div.search_container input.search_button
+  width: 71px
+  height: 33px
+  float: right
+  background-image: url('/images/search_button.jpg')
+  background-repeat: no-repeat
+  cursor: pointer
+  border: 0
+  text-indent: -9999px
+
+
+.content_container div.right_content div.each_panel
+  width: 100%
+  height: auto
+  float: left
+  padding-bottom: 19px
+
+.content_container div.right_content div.each_panel div.top
+  width: 219px
+  height: 30px
+  padding: 8px 0 0 0
+  float: left
+  background-image: url('/images/right_each_panel_top.jpg')
+  background-repeat: no-repeat
+  background-position: bottom
+  text-align: center
+  font-size: 18px
+  color: #ffffff
+  font-weight: bold
+
+.content_container div.right_content div.each_panel div.bottom
+  width: 219px
+  height: 13px
+  clear: both
+  background-image: url('/images/right_each_panel_bottom.jpg')
+  background-repeat: no-repeat
+  background-position: top
+
+.content_container div.right_content div.each_panel div.mid
+  width: 195px
+  height: auto
+  float: left
+  padding: 13px 12px 0 12px
+  background-color: #fff
+
+.content_container div.right_content div.each_panel div.mid div.subscribe
+  width: 100%
+  height: auto
+  float: left
+
+.content_container div.right_content div.each_panel div.mid div.subscribe a
+  width: 100%
+  float: left
+  line-height: 18px
+  clear: both
+  padding-bottom: 4px
+  text-decoration: none
+  font-size: 14px
+  font-weight: bold
+  color: #7ea730
+
+.content_container div.right_content div.each_panel div.mid div.subscribe a:hover
+  color: #000
+.content_container div.right_content div.each_panel div.mid div.subscribe a span.icon
+  width: 22px
+  float: left
+  padding-right: 7px
+
+.content_container div.right_content div.each_panel div.mid ul.news
+  width: 100%
+  height: auto
+  float: left
+  list-style: none
+  margin: 0px
+  padding: 0px
+
+.content_container div.right_content div.each_panel div.mid ul.categories
+  width: 100%
+  height: auto
+  float: left
+  list-style: none
+  margin: 0px
+  padding: 0px
+
+.content_container div.right_content div.each_panel div.mid ul.nav_categories
+  width: 100%
+  height: auto
+  float: left
+  list-style: none
+  margin: 0px
+  padding: 0px
+
+.content_container div.right_content div.each_panel div.mid ul.news li
+  width: auto
+  height: auto
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.categories li
+  width: auto
+  height: auto
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.nav_categories li
+  width: auto
+  height: auto
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.news li.separator
+  width: 100%
+  height: 15px
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.categories li.separator
+  width: 100%
+  height: 10px
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.nav_categories li.separator
+  width: 100%
+  height: 10px
+  float: left
+
+.content_container div.right_content div.each_panel div.mid ul.news li a
+  width: 170px
+  height: auto
+  float: left
+  font-size: 14px
+  font-weight: bold
+  color: #7ea730
+  text-decoration: none
+  padding-left: 25px
+  padding-bottom: 10px
+  background-image: url('/images/black_arrow.jpg')
+  background-repeat: no-repeat
+  background-position: left 3px
+
+.content_container div.right_content div.each_panel div.mid ul.categories li a
+  width: 170px
+  height: auto
+  float: left
+  font-size: 14px
+  font-weight: bold
+  color: #7ea730
+  text-decoration: none
+  padding-left: 5px
+  padding-bottom: 5px
+  background-repeat: no-repeat
+  background-position: left 3px
+
+.content_container div.right_content div.each_panel div.mid ul.nav_categories li a
+  width: 170px
+  height: auto
+  float: left
+  font-size: 14px
+  font-weight: bold
+  color: #7ea730
+  text-decoration: none
+  padding-left: 5px
+  padding-bottom: 5px
+  background-repeat: no-repeat
+  background-position: left 3px
+
+.content_container div.right_content div.each_panel div.mid ul.news li a:hover
+  color: #000
+.content_container div.right_content div.each_panel div.mid ul.categories li a:hover
+  color: #000
+.content_container div.right_content div.each_panel div.mid ul.nav_categories li a:hover
+  color: #000
+
+.content_container div.right_content div.each_panel div.mid div.each_tweet
+  width: 100%
+  height: auto
+  float: left
+  font-size: 12px
+  color: #000000
+  padding-bottom: 15px
+  line-height: 18px
+
+.content_container div.right_content div.each_panel div.mid div.each_tweet a
+  color: #1da4d7
+  text-decoration: none
+
+.content_container div.right_content div.each_panel div.mid div.each_tweet a:hover
+  text-decoration: underline
+.content_container div.right_content div.each_panel div.mid a.follow_us
+  font-size: 12px
+  font-weight: bold
+  color: #1da4d7
+  float: left
+  text-decoration: none
+
+.content_container div.right_content div.each_panel div.mid a:hover.follow_us
+  text-decoration: underline
+.twitter_author
+  padding-left: 0
+  color: #4ca0c9
+  font-size: 12px
+  margin-bottom: 20px
+  float: none
+  font-weight: normal
+  font-style: normal
+
+.authors
+  font-weight: bold
+  font-family: "Raleway",Arial !important
+  padding-left: 5px
+  padding-bottom: 5px
+
+.blog_header_bull
+  margin-left: 50px
+  margin-bottom: 0
+  margin-right: auto
+  margin-top: -20px
+  height: 128px
+  padding-bottom: 0px
+  width: 247px
+  overflow: hidden
+  position: absolute
+  background: url('/images/blog_header_bull.png') no-repeat 0 -75px
+
+.blog_header
+  width: 750px
+  float: right
+
+.related_posts
+  float: left
+  border-top-color: #e6e6e6
+  border-top-style: solid
+  border-top-width: 1px
+  padding-bottom: 0px
+  margin-bottom: 10px
+  margin-top: 20px
+  padding-top: 20px
+  width: 535px
+
+.comment_container
+  float: left
+  margin-top: 0px
+
+/* landing buttons */
+
+.next_previous_container
+  float: left
+  border-top-color: #e6e6e6
+  border-top-style: solid
+  border-top-width: 1px
+  padding-bottom: 5px
+  margin-bottom: 10px
+  margin-top: 0px
+  padding-top: 30px
+  font-weight: bold
+  font-size: 14px
+  font-family: "Raleway",Arial !important
+
+.mid h5
+  font-family: "Raleway",Arial !important
+  padding-bottom: 5px
+  margin-bottom: 10px
+  margin-top: 0px
+  padding-top: 0px
+  width: 100%
+  font-weight: bold
+  font-size: 18px
+
+.input_field
+  font-family: Georgia, "Times New Roman", Times, serif
+  color: #666666
+  font-size: 14px
+  background-color: #e6e6e6
+  padding: 10px
+  width: 375px
+  border-color: #e6e6e6
+  border-width: 1px
+  border-style: solid
+
+.input_fieldb
+  font-family: Georgia, "Times New Roman", Times, serif
+  color: black
+  font-size: 14px
+  background-color: #e6e6e6
+  padding: 10px
+  width: 495px
+  border-color: #e6e6e6
+  border-width: 1px
+  border-style: solid
+  margin-bottom: 10px
+
+.input_field_short
+  font-family: Georgia, "Times New Roman", Times, serif
+  color: black
+  font-size: 14px
+  background-color: #e6e6e6
+  padding: 10px
+  width: 230px
+  border-color: #e6e6e6
+  border-width: 1px
+  border-style: solid
+  margin-bottom: 10px
+
+.select
+  margin-bottom: 15px
+  font: 14px "Raleway",Arial !important
+  margin-top: 5px
+
+.input_area
+  line-height: 18px
+  font-family: Georgia, "Times New Roman", Times, serif
+  color: #666666
+  font-size: 14px
+  background-color: #e6e6e6
+  padding: 10px
+  width: 515px
+  border-color: #e6e6e6
+  border-width: 1px
+  border-style: solid
+
+.form_namea
+  float: left
+  width: 250px
+
+.form_nameb
+  float: right
+  width: 250px
+
+.form_namec
+  float: left
+  width: 515px
+
+.comment_box
+  line-height: 18px
+  float: left
+  font-family: Georgia, "Times New Roman", Times, serif
+  color: #666666
+  font-size: 14px
+  background-color: #e6e6e6
+  padding: 10px
+  width: 515px
+  border-color: #e6e6e6
+  border-width: 1px
+  border-style: solid
+
+.comments_wrapper
+  float: left
+  border-top-color: #e6e6e6
+  border-top-style: solid
+  border-top-width: 1px
+  padding-bottom: 5px
+  margin-bottom: 10px
+  margin-top: 0px
+  padding-top: 30px
+  width: 535px
+
+.comment_form
+  float: left
+  border-top-color: #e6e6e6
+  border-top-style: solid
+  border-top-width: 1px
+  padding-bottom: 5px
+  margin-bottom: 10px
+  margin-top: 0px
+  padding-top: 25px
+  width: 535px
+
+#thankyouhidden
+  display: none
+
+.errorbox
+  float: left
+  text-align: left
+  font-size: 10px
+  font-family: "Raleway",Arial !important
+  color: red
+  margin-top: -8px
+  padding-bottom: 10px
+
+.form_label
+  font-size: 14px
+  font-family: "Raleway",Arial !important
+
+.triangle
+  margin-bottom: 5px
+  height: 16px
+  width: 535px
+  background-position: 30px
+  background-repeat: no-repeat
+  background-image: url('/images/triangle.png')
+  float: left
+
+.submit
+  border-width: 0px
+  display: block
+  height: 34px
+  width: 72px
+  background-repeat: no-repeat
+  background-image: url('/images/submit_button.gif')
+  text-indent: -9999px
+  cursor: pointer
+
+a.bu_standard
+  width: 371px
+
+  /* height: 53px */
+  margin: 10px auto 10px auto
+  padding: 13px 0 19px 0
+  text-align: center
+  background: transparent url('/images/landing-cta-blank.gif') 0 0 no-repeat
+  display: block
+
+a.bu_standard span
+  color: #FFFFFF
+  padding: 0px
+  display: block
+  font-size: 24px
+
+a.bu_standard span img
+  position: relative
+  left: 0px
+  top: 4px
+  border-width: 0px
+  padding-top: 0px
+  margin-top: 0px
+
+a.bu_standard:hover
+  text-decoration: none
+
+.bu_standard
+  width: 220px
+  /*height: 53px*/
+  margin: 10px auto 10px auto
+  padding: 17px 0 17px 0
+  text-align: center
+  background: transparent url('/images/landing-cta-blank.gif') 0 0 no-repeat
+  display: block
+
+.merchant_form_wrapper
+  width: 500px
+  background-color: white
+  margin-right: auto
+  margin-left: auto
+  padding-top: 5px
+  margin-top: 25px
+  margin-bottom: 25px
+  padding-bottom: 30px
+  border: 1px solid #a7a7a7
+
+.merchant_form_container
+  width: 515px
+  margin-right: auto
+  margin-left: auto
+
+.merchant_form_logo
+  width: 515px
+  height: 67px
+  margin-top: 25px
+  background: url('/images/millennium-logo.gif') no-repeat center
+  margin-bottom: 25px
+  margin-left: 0px
+
+.merchant_form_intro
+  font-size: 14px
+  line-height: 18px
+  width: 515px
+  margin-left: 0px
+
+.merchant_form
+  width: 515px
+  font: bold 14px/20px "Raleway",Arial !important
+  color: #86b635
+  margin-left: 0px
+
+.pagination
+  margin-right: 15px
+  float: right
+
+.bu_standard span
+  color: #FFFFFF
+  padding: 0px
+  display: block
+  font: bold 24px "Raleway",Arial !important
+
+.required_
+  padding-bottom: 5px
+  padding-top: 5px
+  width: 100%
+  border-left-style: none
+  font-weight: normal
+  font-style: normal
+  color: #40afd5
+  font-size: 12px
+
+label
+  width: 10em
+  float: left
+
+label.error
+  font-style: normal
+  font-weight: normal
+  font-size: 10px
+  float: none
+  color: red
+  padding-left: .5em
+  vertical-align: top
+
+.error
+  background-color: #ef8e8e
+
+#thankyouhidden
+  display: none
+  color: #90c53a
+  text-align: center
+  font: 14px "Raleway",Arial !important
+  margin-top: 75px
+
+//navigation for programs
+#prog_nav_container
+  width: 100%
+  background: #060511
+  padding-top: 4px
+  +clearfix
+
+#prog_nav
+  width: 900px
+  margin: 0 auto
+  padding: 0
+  list-style: none
+  background: #000
+
+#prog_nav li
+  float: left
+  margin: 0 1px 0 0
+  padding: 0
+  font: 1.4em "Raleway",Arial !important
+  letter-spacing: .15em
+
+#prog_nav a
+  float: left
+  display: block
+  margin: 0
+  padding: .3em 1em
+  color: #eee
+  text-decoration: none
+  border-bottom: none
+  background: #060511
+
+#prog_nav a:hover, #t-intro a
+  color: #333
+  background: #fff url(/images/on_bg.gif) repeat-x top left
+
+.order_amount_strong
+  font-size: 110%
+  font-weight: bold
+
+.red
+  color: red
+
+#order_details_table
+  margin: 1em auto
+  border: 1px solid #ccc
+  border-collapse: collapse
+  width: 100%
+  font-size: 1.4em
+
+  &.multiple
+
+    tr:last-child td//:first-child
+      padding-bottom: .8em
+
+  &.receipt
+    border: none
+    margin-bottom: 0px
+
+    tr#heading_row
+      border: none
+      color: #666
+
+    td, th
+      padding: 0em 1em 0.1em
+
+    th
+      font-weight: normal
+
+  tr#heading_row
+    border-bottom: 1px dashed #ccc
+
+  td, th
+    padding: 1em
+    &.description
+      text-align: left
+
+      &.subitem
+        padding: 0 0 0 2em
+        font-size: .8em
+        color: #333
+
+    &.quantity, &.center_align
+      text-align: center
+
+    &.price, &.right_align
+      text-align: right
+
+    &.total_row
+      padding-top: 1em
+      font-weight: bold
+
+  .line_item td
+    padding-bottom: 0
+
+  .remove_from_cart
+    border: 1px dashed #ccc
+    margin: 0pt 0pt 0pt 5px
+    padding: 0pt 0.3em
+
+  .remove_from_cart:hover
+    cursor: pointer
+    background: lightyellow
+
+#report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
+#dashboard, #certificate_orders, #validations
+  line-height: 1.5em
+  font-size: 1.4em
+  background: #fff
+  margin: 20px 0 5px
+  & table
+    width: 100%
+    border: 1px solid #ccf
+    background: #fff
+    border-bottom: none
+
+  & table caption
+    margin: 0
+    padding: 8px 20px
+    text-align: left
+    border: 1px solid #ccf
+    border-bottom: none
+    background: #fff
+
+  & table th, & table td
+    margin: 0
+    padding: 8px 3px
+    text-align: center
+    border-bottom: 1px solid #ccf
+
+  & table th
+    color: #888
+
+  table tr.heading_row
+    background: #cfc
+
+  & table
+    td.name, .dropdown, .validation_status_message, .status_message, .expandable
+      cursor: pointer
+
+      &.not_expandable
+        cursor: default
+
+  & table tr
+    background: #fff
+
+  & table tr.alt
+    background: #f3f3f3
+
+  & table td a
+    font-weight: bold
+
+  & table td .pagination a
+    font-weight: normal
+
+  & table td.selected
+    border-bottom: none
+
+  & table
+    .attention, .validation_attention, .alert
+      background-color: #ffcccc
+      border-left: 1px solid red
+      border-right: 1px solid red
+
+    .expiration_warning, .validation_waiting, .caution, .pending
+      background-color: lightyellow
+      border-left: 1px solid yellow
+      border-right: 1px solid yellow
+
+    .validation_approved, .good, .approved
+      border-left: 1px solid green
+      border-right: 1px solid green
+      background-color: #ccffcc
+
+  .certificate_details
+    font-size: .9em
+    margin: 0
+    color: #444
+    & table
+      width: 100%
+      border: 0px
+
+    & table caption
+      margin: 0
+      padding: 8px 20px
+      text-align: left
+      border: 1px solid #000
+      border-bottom: none
+      background: #fff
+
+    & table th, & table td
+      margin: 0
+      padding: 0
+      text-align: center
+      border: 0
+
+    & table th
+      color: #999
+
+    & table .name, & table .dropdown
+      text-align: left
+
+    & table tr.alt
+      background: #f1f1f1
+
+    & table tr.order_menu
+      background: #e0e0ff
+
+      td
+        padding: .5em 0
+        width: 25%
+
+    & table td a
+      font-weight: bold
+
+    & .doc_filename a
+      font-size: 1em
+      font-weight: normal
+
+    & dl
+      padding-left: 4.2em
+
+      dt
+        font-style: italic
+
+    & table
+      em, span
+        padding-left: 4px
+        padding-right: 4px
+
+      .validation_attention, .attention
+        background-color: #ffcccc
+        border-left: 1px solid red
+        border-right: 1px solid red
+
+      .validation_waiting, .caution, .pending
+        background-color: lightyellow
+        border-left: 1px solid yellow
+        border-right: 1px solid yellow
+
+      .validation_approved, .approved
+        border-left: 1px solid green
+        border-right: 1px solid green
+        background-color: #ccffcc
+
+    textarea
+      width: 195px
+
+  table
+    span.expand_or_view_order
+      font-weight: normal
+      float: left
+      text-align: left
+      line-height: 0.3em
+      font-size: 0.7em
+      clear: both
+
+      a, span
+        float: left
+        font-weight: bold
+        padding-right: .3em
+
+#certificate_orders
+  margin: .8em 0 .5em
+
+#certificate_listing
+  line-height: normal
+  width: 300px
+
+  table, table caption
+    border: 0
+
+    td
+      border: 0
+      text-align: left
+
+      a
+        font-weight: normal
+
+      .title
+        font-size: 1.2em
+        font-weight: bold
+
+      .summary, .starting_at, .more_info
+        color: #333333
+        float: left
+        width: 300px
+
+      .summary
+        font-style: italic
+
+      .more_info
+        margin: .3em 0 0
+
+      .starting_at
+        color: #000
+
+#report, #dashboard, #certificate_orders, #validations
+  & > table
+    float: right
+    width: 82%
+    margin-bottom: 2em
+    border-bottom: 1px solid #ccf
+    border-top: none
+
+    th, td
+      border-bottom: none
+      border-top: 1px solid #ccf
+
+    tr.expanded
+      th, td
+        border-top: none
+        padding-top: 0px
+
+#certificate_orders > table
+  width: 84%
+
+#validations > table
+  width: 100%
+
+#dashboard > table
+  float: none
+  margin: 0 auto
+  margin-bottom: 2em
+  width: 70%
+
+#reseller_tiers, #domain_pricing_popup
+  table th, table td
+    margin: 0
+    padding: 8px 10px
+
+#domain_pricing_popup
+  font-size: 1.3em
+  font-family: "Raleway",Arial !important
+  margin: 0
+
+
+/* Flexible box */
+
+.quickbox
+  background: url(/images/quickbox_bottom_bg.gif) no-repeat bottom left
+  font-size: 1.4em
+
+.quickbox .heading
+  color: #333
+  border-bottom: 1px solid #7e8dfd
+  background: url(/images/quickbox_header_bg.gif) no-repeat top left
+
+.quickbox strong
+  display: block
+  margin: 0
+  padding: 6px 0px 4px 10px
+  background: url(/images/quickbox_header_rt.gif) no-repeat top right
+
+.quickbox ul
+  margin: 0
+  padding: 14px 10px
+  list-style: none
+  background: url(/images/quickbox_bottom_rt.gif) no-repeat bottom right
+
+.quickbox li
+  margin: 0 0 6px
+  padding: 0
+
+// Dashboard
+#account_status_container
+  width: 100%
+
+#account_status
+  +clearfix
+  width: 14%
+  margin: 1.2em auto
+  float: left
+
+#at_a_glance_box
+  width: 273px
+  float: left
+
+#account_balance_box
+  width: 273px
+  float: right
+
+.certificate_details th
+  width: 16.7%
+
+.certificate_details_box, .contact_details_box, .notes_box, .full_width_box,
+.half_width_box
+  float: left
+  width: 33%
+  padding: 20px 0px
+  line-height: normal
+
+  a
+    font-size: .8em
+
+  strong
+    color: #999
+
+  textarea
+    color: #444
+
+  ul
+    list-style: none
+    margin: 0
+
+    li
+      text-align: left
+
+  .extra_box
+    padding-top: 2em
+
+.certificate_details_box ul
+  padding-left: 20px
+
+.contact_details_box
+  width: 25%
+
+.half_width_box
+  width: 50%
+
+.notes_box, .full_width_box
+  width: 100%
+
+.spacer
+  clear: both
+  height: 1px
+
+/* ----------- Specific Forms (modify label width)----------- */
+.registration_form, .deposit_funds_form, .reseller_registration_form,
+.default_form
+  margin: 3em auto
+  width: 60%
+  padding: 1.4em 0
+  label
+    width: 37%
+
+.reseller_registration_form, .deposit_funds_form, .default_form
+  width: 100%
+  label
+    width: 30%
+
+.default_form
+  margin: 2em auto
+
+
+/* ----------- Generic Form ----------- */
+#plain_form
+  font-size: 1.4em
+
+#stylized
+  border: solid 1px #ccccff
+  background: #fff url(/images/bg.gif) repeat-x
+  @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
+  @include background(linear-gradient(#DEDEDE, white 20%))
+  @include border-radius(5px)
+
+#stylized, #surl_stylized
+  p, .heading, form, button
+    border: 0
+    margin: 0
+    padding: 0
+
+  .heading
+    color: #44f
+    letter-spacing: .1em
+    font-family: Georgia, "Times New Roman", Times, serif
+    font-size: 1.5em
+    font-weight: bold
+    margin-bottom: .5em
+
+  ul.cert_reqs
+    margin: 0 1.5em 2em
+    font-size: 1.3em
+    color: red
+
+  p, dl
+    color: #333
+    //font-size: 1.3em
+    padding: 1.5em
+    padding-top: 0
+    font-size: 1.4em
+
+  p.description
+    padding: 0 3em 1.2em
+
+  dl.cert_example
+    font-family: "courier new",courier,mono
+    width: 65%
+    +center
+
+    .sample_csr
+      text-align: left
+
+  .form_input
+    margin: 0pt auto
+    text-align: center
+    width: 360px
+
+  #forgot_container, #already_have_account, #apply_deduct_instructions
+    margin: 0pt auto
+    width: 300px
+    text-align: left
+    background-color: #EBEBFE
+    @include border-radius(5px)
+
+    p
+      text-align: inherit
+
+  #forgot_username_or_password, #already_have_account, #resend_activation, #apply_deduct_instructions
+    border: none
+    padding-top: 1em
+    text-align: center
+    font-size: 1.2em
+
+  #apply_deduct_instructions
+    width: 90%
+    background-color: #ff0
+
+  #resend_activation
+    padding-top: 0
+
+  label
+    font-size: 1.4em
+    display: block
+    text-align: right
+    float: left
+    color: #222
+
+  .label_desc, .order_amount_desc, #server_license_cost_ea_desc
+    color: #666666
+    font-size: .7em
+    font-weight: normal
+    text-align: right
+    font-family: "Lucida Grande","Lucida Sans Unicode",Verdana,"Raleway",Arial !important
+
+  .label_desc, .label_break
+    display: block
+
+  .order_amount_desc, #server_license_cost_ea_desc
+    font-size: .98em
+    float: left
+    margin: 0.6em 0 0 -.5em
+
+  #server_license_cost_ea_desc
+    margin: 1em 0pt 0pt 0.5em
+
+  .label_break
+    border-bottom: 1px solid #ccc
+    margin: 0.1em auto
+    width: 1em
+
+  input, select, textarea
+    float: left
+    font-size: 1.4em
+    padding: 4px 2px
+    margin: 2px 0 20px 10px
+
+  input[type=checkbox], input[type=radio]
+    border: none
+
+  input#multi_upload, #multi_upload_F1
+    padding: 0
+    margin: 0
+    float: none
+
+  //the following should be able to exist outside stylized
+  input[type=text], input[type=url], input[type=email], input[type=password], select, textarea
+    font-size: 1.5em
+    @include text-shadow(0px 1px 0px #fff)
+    outline: none
+    @include background(linear-gradient(top,  #ddd,  #fff))
+    @include border-radius(3px)
+    border: 1px solid #717171
+    @include box-shadow(1px 1px 1px 1px #efefef)
+
+    &:focus
+      @include box-shadow(0px 0px 5px #007eff)
+
+  .field_with_errors
+    input, select, textarea
+      border: 1px solid red
+      @include box-shadow(0px 0px 5px red)
+
+  #multi_upload_wrap
+    padding-left: 20em
+
+  .MultiFile-label
+    font-size: 1.4em
+    clear: both
+
+  .show_hide_contact_form
+    font-size: 1.3em
+    margin: 10px 30px
+    background: #ECEFF5 none repeat scroll 0 0
+
+    input
+      margin: .2em
+
+  span
+    color: #333
+
+  .billing_profile_radio
+    margin: .4em 0 .4em
+
+  .radio_choices, .dcv_choices, .surl_choices
+    font-size: 1.4em
+
+  .radio_choices, .dcv_choices, .site_seal_radio_choices
+    margin: 0 0 10px 10px
+
+  .radio_choices, .dcv_choices, .surl_choices, .site_seal_radio_choices
+    float: left
+    text-align: left
+
+    .radio_w_desc, .choice_w_desc
+      width: 100%
+
+      input
+        float: left
+        margin: 4px 10px 10px 0
+
+      .save
+        color: green
+
+  .site_seal_radio_choices
+    .radio_w_desc
+      input
+        margin: 4px 4px 0 0
+
+  .dcv_email_choices
+    font-size: 1.2em
+
+  .subheading
+    -x-system-font: none
+    color: #666666
+    line-height: normal
+    margin: 10px auto
+    width: 90%
+    font-size: 1.5em
+    font-weight: bold
+    text-decoration: underline
+
+  /* Error Reporting Styles */
+  .fieldWithErrors
+    input, textarea, select, checkbox
+      padding: 3px 0 4px
+      border: 2px solid red
+
+  #register_submit, #login_submit
+    clear: both
+    width: 125px
+    height: 31px
+    margin: 1em auto
+
+    input
+      border: none
+      padding: 0
+      margin: 0
+
+  .settings_block
+    margin: 0 auto
+    width: 550px
+
+    label
+      width: 13.8em
+
+    .field_desc
+      line-height: 3em
+
+      em
+        color: #333
+
+    input
+      margin: 2px 10px 20px
+
+    .destination
+      font-size: 1.2em
+
+    .destination_block
+      float: left
+      padding: .3em 0
+
+      #reminder_email_address
+        float: left
+
+      &.right
+        width: 355px
+
+input#upload_files, input#start_over, input#validate_domains
+  margin: 1em
+  float: none
+  font-size: 1.8em
+  font-weight: bold
+  @extend .shiny_blue_button
+
+.error.warning, #errorExplanation, .errorExplanation
+  border: 2px solid #c00
+  padding-bottom: 12px
+  margin-bottom: 20px
+  background-color: #ffcccc
+
+  h2
+    font-size: 1.2em
+    text-align: left
+    font-weight: bold
+    padding: 5px 5px 5px 15px
+    background-color: #c00
+    color: #fff
+
+  p
+    color: #f00
+    margin-bottom: 0
+    padding: 0 7px
+    border: none
+
+  ul li
+    list-style: square
+    font-size: 1.2em
+    color: #f00
+
+/* Error Reporting Styles */
+.fieldWithErrors input
+  padding: 3px 0 4px
+  border: 2px solid red
+
+/* Flash Notice Style */
+.flash_message
+  cursor: pointer
+
+.notice, .warning, .error
+  width: 100%
+  border-top: 1px solid green
+  border-bottom: 1px solid green
+  padding: .5em
+  margin: 2em auto
+  text-align: center
+  background-color: #ccffcc
+
+  span
+    font-size: 1.4em
+
+.warning
+  border-top: 1px solid #fc0
+  border-bottom: 1px solid #fc0
+  background: #fff3c5
+  color: #6b5e2b
+
+.error
+  border-top: 1px solid #c00
+  border-bottom: 1px solid #c00
+  background: #fdd
+  color: #c00
+
+table#at_a_glance_header
+  margin-top: 7px
+  width: 70%
+
+#at_a_glance_header
+  float: right
+  color: #808080
+  th, td
+    vertical-align: top
+    padding: 0 10px
+    text-transform: uppercase
+    line-height: 90%
+  #info
+    font-weight: bold
+    font-size: 1.5em
+    color: #fff
+  .validations, .validations a
+    vertical-align: top
+    display: block
+    color: #f00
+    line-height: 90%
+  #logout_header_link
+    text-transform: none
+    padding-left: 60px
+  th.certificate_status, th.certificate_status a
+    color: #808080
+    vertical-align: top
+    line-height: 90%
+  td.certificate_status a
+    vertical-align: top
+    display: block
+    color: #fff
+  td:hover
+    text-decoration: underline
+
+
+#buy_certificate
+  float: right
+
+/* Receipt Page */
+#available_funds
+  margin: 1.5em 0 1em
+
+#available_funds_amount
+  font-size: 1.5em
+  font-weight: bold
+  margin: 0 1em
+
+#deposit_details, #order_details
+  margin: 0 0 1em
+  div
+    margin: 0 0 0 1em
+    font-size: 1.4em
+    color: #666
+    text-transform: lowercase
+    span
+      color: #000
+      text-transform: none
+
+#completed_order_results
+  margin: 2em auto 4em
+  width: 100%
+  clear: both
+  border: 1px #ccc solid
+
+.order_results_header
+  border-bottom: 1px dashed #CCCCCC
+  padding: .5em
+
+table#line_items_receipt
+  margin: 0pt auto
+  font-size: 1.3em
+  color: rgb(0, 0, 0)
+  td
+    padding: 2px 10px
+
+#order_amount_receipt
+  background-color: #c2fcbf
+  border: 1px solid #faf999
+
+/* ----------- Form Progress Indicator ----------- */
+
+#form_progress_indicator
+  border-top: 1px dashed #afa
+  border-bottom: 1px dashed #afa
+  margin: 2em auto 0
+  padding: .5em 1em
+  background-color: #efe
+  font-size: 1.4em
+  color: #333
+  //@include text-shadow(1px 1px 1px rgba(255,255,255,.8),  2px 2px 3px rgba(0,0,0,.4))
+  @include background(linear-gradient(#EEFFEE 10%, #FFFFFF, #EEFFEE 90%))
+
+  ul
+    margin: 0 auto
+    padding: 0
+    list-style: none
+
+    li
+      margin: 0pt 3px 0pt 0pt
+      padding: 0 2.5em
+      float: left
+
+      span
+        margin: 0
+        padding: 0.3em 1em
+        display: block
+        font-size: .9em
+        font-weight: bold
+
+        strong
+          padding: 0pt 0.2em
+          font-size: 1.5em
+
+      span.finished
+        background-image: url('/images/sitesprite1.png')
+        background-position: -10px -782px
+        background-repeat: no-repeat
+        color: #666
+
+    li#selected
+      color: #f33
+
+.reseller_registration_select_tier, .reseller_registration_profile,
+.user_session_format, .reseller_tier_pricing_popup, .order_container,
+.upload_document_container, .default_container
+  margin: 2em auto
+  width: 70%
+  padding: 0px
+
+  p
+    font-size: 1.4em
+
+.default_container
+  padding-bottom: 1em
+
+  .info_listing
+    font-size: 1.4em
+    ul
+      list-style-type: none
+
+    ul#privacy
+      @extend ul
+
+      li
+        margin: .8em 0
+
+      li:first-child, li:last-child
+        margin: 0
+
+    dd
+      margin-bottom: .6em
+
+  table.smart_seal_types
+    width: 100%
+    border-collapse: collapse
+
+    td
+      font-size: 1.4em
+
+      .center
+        margin: 0 auto 4px
+
+      &.pink
+        background-color: pink
+
+        &.seal
+          border-top: 2px red solid
+
+          .center
+            margin: 4px 0 0 0
+
+      &.light_blue
+        background-color: lightblue
+
+        &.seal
+          border-top: 2px blue solid
+
+          .center
+            margin-top: 4px
+
+      &.light_green
+        background-color: lightgreen
+
+        &.seal
+          border-top: 2px green solid
+
+          .center
+            margin-top: 4px
+
+
+.reseller_tier_pricing_popup
+  width: 100%
+
+.upload_document_container
+  width: 80%
+
+.site_seal_docs_container
+  width: 938px
+
+  p
+    font-size: 1.3em
+
+#button_container
+  width: 100%
+
+
+  #prev_next_submit
+    overflow: hidden
+
+    input
+      float: right
+
+  #auto_adjust, #prev_next_submit, #next_submit, #click_to_load,  #shop_more_checkout,
+  #add_items, #skip_button
+    margin: 2.5em auto 3em
+    width: 340px
+
+    input, img
+      margin: 0 2em
+
+  #auto_adjust
+    width: inherit
+    text-align: center
+
+  #next_submit, #add_items
+    width: 160px
+
+  #skip_button
+    width: 130px
+
+  #click_to_load
+    width: 238px
+
+/* ----------- What is security code----------- */
+
+#what_is_security_code_link
+  font-size: 1.2em
+  padding: .4em
+  display: block
+  float: left
+
+#what_is_security_code
+  display: none
+  position: absolute
+  width: 500px
+  bottom: -100px
+  left: 250px
+  background-color: #FFCC99
+  opacity: .95
+  filter: alpha(opacity=95)
+  -moz-opacity: 0.95
+  border: 2px dotted #FF6600
+  padding: 15px
+
+#what_is_security_code_table, #what_is_number_licenses_explain
+  font-family: "Raleway",Arial !important
+  font-size: 1.2em
+
+#what_is_number_licenses_explain
+  font-size: 1.4em
+
+#what_are_expiration_notices_link
+  vertical-align: bottom
+
+.security_code_row
+  position: relative
+  float: left
+  width: 235px
+
+#what_is_number_licenses_link, #what_are_domains_link
+  float: right
+  padding-left: 2px
+
+  img
+    vertical-align: top
+
+#domains_label_text
+  padding-bottom: 2px
+
+#current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
+#calculated_price, .displayed_csr_field
+  float: left
+  font-size: 1.6em
+  font-weight: bold
+  margin: 2px 0.6em 20px
+
+#tier_load_amount
+  margin: 0px 0.6em 20px
+
+#confirmed_validation
+  font-size: 1.3em
+  width: 30em
+  float: left
+  padding: 0 0 0 .5em
+  color: #222
+
+#existing_credit_cards
+  width: 100%
+  margin: 0px auto
+  text-align: center
+
+#existing_credit_cards table
+  font-size: 1.4em
+  width: 80%
+  margin: 0px auto
+  text-align: left
+  margin-bottom: 2em
+
+#existing_credit_cards_header
+  color: #777
+
+.product_summary
+  margin: 20px 10px 20px
+  width: 288px
+  border: 2px solid #CCCCFF
+  float: left
+
+.product_detail
+  width: 32%
+  float: right
+
+.product_summary, .product_detail
+  .title
+    padding: 0.3em 0pt
+    font-weight: bold
+    font-size: 1.7em
+    text-align: center
+    background-color: #CCCCFF
+    color: #000
+
+  .p_ev
+    background: url(/images/get_green_bar.png) no-repeat
+
+  .p_body
+    padding: 10px 20px 20px
+
+    .p_image_container
+      margin: 10px auto 0pt
+      width: 128px
+
+      .p_ev_image
+        height: 128px
+        img
+          border: 1px solid rgb(0, 255, 0)
+          margin-top: 4px
+
+    .p_description
+      padding: 0pt 0.5em 1em
+      font-size: 1.3em
+      color: #333
+
+    .p_points_container
+      border: 1px solid #ff9900
+      margin: 0pt auto
+      background-color: #fbfbf2
+
+      .p_points
+        padding: 1em
+        font-size: 1.2em
+
+        .check, .p_point
+          margin: 1px 0
+          padding-left: 20px
+          height: 22px
+
+        .check
+          background: url(/images/check_bl.png) no-repeat scroll 0 0
+
+    .p_starting_at, .reseller_p_starting_at
+      font-size: 1.7em
+
+    .reseller_p_starting_at
+      text-align: center
+
+.p_buy_certificate, .product_description_buy_certificate
+  width: 126px
+  margin: 0 auto 1.4em
+
+.product_description_buy_certificate
+  margin: 0 auto .8em
+
+.price_starting_at, .get_free_ssl, .reseller_price_starting_at
+  color: #333333
+  font-size: 2.2em
+  margin: 0 auto 1em
+  width: 100%
+  text-align: center
+
+.reseller_price_starting_at
+  width: 270px
+  text-align: center
+
+.get_free_ssl
+  width: 60px
+
+h3#p_standard_or_wildcard
+  margin: 15px 0pt 0pt 10px
+
+  .p_footer &
+    width: 100%
+    clear: both
+    text-align: center
+    margin-bottom: 15px
+
+h3#certificate_crumbs
+  margin: 15px 0pt 5px 10px
+
+.see_other_certificates
+  float: right
+  font-size: 1.4em
+  width: 32%
+  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+
+  ul
+    list-style: none
+
+  li.heading
+    color: #666666
+    font-style: italic
+
+#buy_other_certs
+  position: absolute
+  margin-top: 7em
+  font-size: 1.2em
+  width: 134px
+
+  ul
+    padding: 0 2px 0 0
+
+    li
+      padding: 4px 0
+
+  li.heading
+    color: #666666
+    list-style: none
+
+/* Product Page */
+/* Product Page */
+.center_product_desc
+  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+  margin: 9px 0 0
+  padding: 0.6em
+
+.right_product_desc
+  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+  float: right
+  margin: 9px 0 0
+  padding: 0.6em
+  width: 440px
+
+.bottom_product_desc
+  padding: 1em 0
+  width: 65%
+  float: left
+  line-height: 2.2em
+
+  p
+    margin: 0 0 12px
+    font-size: 1.5em
+    color: #000
+
+#upward_trend
+  float: right
+  margin: 10px 0 10px 10px
+  border: 2px solid #CCCCCC
+
+#shop_securely_with_ssl
+  float: left
+  margin: 10px 10px 0 0
+  border: 2px solid #CCCCCC
+
+#ssl_reseller_certs_screenshot
+  margin: 0pt auto
+  width: 540px
+
+  img
+    border: 2px solid #CCCCCC
+    margin: 10px auto
+
+#become_a_reseller_today
+  margin: 15px
+  text-align: center
+  h3
+    color: #222
+
+ul.docs_ul
+  margin: 0 1.5em 2em
+  font-size: 1.3em
+
+#documents_entry
+  border-bottom: 2px dotted #CCCCCC
+  border-top: 2px dotted #CCCCCC
+  margin: 0 auto
+  padding: 0 20px
+
+#documents_list
+  float: left
+  font-size: 1.4em
+  width: 100%
+
+  dl
+    float: left
+    padding: 14px
+    display: inline /* fixes IE/Win double margin bug */
+
+  dd
+    margin: 0 0 0 98px
+    padding: 0
+    line-height: 1.5em
+    color: #666
+
+    &.title
+      margin: 0
+      padding: 0
+      font-size: 110%
+      letter-spacing: 1px
+      color: #627081
+
+  dl dd.img
+    margin: 0
+
+  dd.img .img_preview img
+    float: left
+    margin: 0 8px 0 0
+    padding: 4px
+    border: 1px solid #D9E0E6
+    border-bottom-color: #C8CDD2
+    border-right-color: #C8CDD2
+    background: #fff
+
+  dd.preview
+    font-size: 80%
+    margin: 0 0 0 22px
+    clear: both
+    width: 7em
+
+    a
+      padding: 2px 0
+
+img.blue_icon
+  vertical-align: middle
+  margin-right: .2em
+
+.documents_list_notes
+  color: #333
+  padding: 14px 0
+  float: left
+
+#search_bar
+  padding: 0.5em
+  background: #eeeeff
+  text-align: center
+  margin: 0 auto
+  margin-top: 1em
+  width: 400px
+  font-size: 1.4em
+  border: 1px solid #ccf
+
+#validation_requirements_box
+  ul
+    padding-left: 1.2em
+
+#site_seal_instructions, #site_seal_documents
+  text-align: left
+
+.subject_column
+
+  &.show_validation, &.center_subject
+    margin: 0pt auto
+    width: 90%
+
+  a
+    float: left
+
+.bordered_prod
+  border: 1px grey solid
+  padding: 1px
+
+.has_csr_container, .has_account_container, .clickable_choice
+  cursor: pointer
+
+  .what_is_this
+    background-color: white
+    padding: 1px
+    border: solid 1px #6B9029
+    vertical-align: top
+
+.document_access_type
+  margin-left: 1em
+
+.doc_attribute
+  text-align: left
+  padding-left: .2em
+  WIDTH: 12em
+
+.public_settings
+  float: right
+  padding: 14px 0
+  color: #333
+
+.preview_link
+  margin-right: 1em
+
+.site_seal_notes
+  margin: 0.6em 0 0 1em
+  clear: both
+
+.approved_validation_document
+  background: url(/images/bg-list.gif) no-repeat left top
+
+  &.crossout span
+    text-decoration: line-through
+
+ul.applicable_documents, ul.applied_docs
+  li
+    padding-left: 16px
+    line-height: 1.4em
+
+.validation_admin_controls
+  margin-bottom: 2em
+
+.tree-connect
+  padding-left: 1.2em
+  background: url(/images/tree-connect.gif) no-repeat left center
+
+span.rule_name
+  background: lightyellow
+  font-weight: bold
+  text-decoration: underline
+
+.rules_methods_block, .small_section
+  padding-bottom: 1em
+
+  li.email_customer
+    padding: .5em
+
+ul[class^=status_history] > li
+  border: 1px solid #CFFFF9
+  background: none repeat scroll 0 0 #EEFAFC
+  margin: 0.2em auto
+
+#cart_items a
+  color: orange
+
+.interested_in_reselling
+  color: maroon
+
+.orig
+  text-decoration: line-through
+  color: red
+
+#comes_with_site_seal
+  margin: 0 auto
+  text-align: center
+  float: right
+  width: 300px
+
+  #container
+    font-size: 1.3em
+    padding: 0em 3em 1em
+    color: rgb(102, 102, 102)
+    background: none
+    width: auto
+    text-align: inherit !important
+
+  #description
+    text-align: left
+
+#global_footer
+  margin: 0 auto
+  padding-top: 24px
+  text-align: center
+  width: 970px
+
+  ul
+    color: white
+    float: left
+    list-style: none outside none
+    margin-left: 5em
+    padding-left: 0em
+
+    li
+      color: #FDA58A
+      font-family: "Raleway",Arial !important
+      font-size: 11px
+      margin: 0
+      padding-left: 15px
+      padding-top: 8px
+      text-align: left
+
+  h4, h4 a, h4 a:visited, h4 a:hover
+    color: #FFFFFF
+    font-family: "Raleway",Arial !important
+    font-size: 12px
+    font-weight: bold
+    margin: 0
+    padding: 0
+    text-align: left
+
+
+#section_box
+  padding-top: 0.35em
+
+#copyright_statement
+  clear: both
+  color: #999
+  font-size: 11px
+  margin: 0 auto
+  padding-top: 2.5em
+  text-align: center
+  width: 970px
+
+span.footer_link
+  color: #FFC2AF
+  padding-left: 1em
+
+#logo_box
+  background-image: url("/images/footer_logo.png")
+  background-position: left top
+  background-repeat: no-repeat
+  float: left
+  height: 30px
+  margin-right: 16px
+  text-indent: -9999px
+  width: 100px
+
+#ssl_site_seal_sample
+  float: right
+  padding: 10px 0 10px 10px
+
+#sample_site_report, #sample_artifacts
+  margin-right: 10px 10px 0 0
+  float: left
+  width: 300px
+
+  img
+    border: 2px solid #ccc
+
+#sample_artifacts
+  margin-left: 10px
+  float: right
+
+.contact_us_container
+  width: 330px
+  margin-top: 2.2em
+  padding-bottom: .4em
+
+  &.no_top_margin
+    margin-top: 0
+
+  p.contact_us_header
+    color: #333
+
+  p.description, p.sub_description, p.main_description
+    margin: 1em 1em 2em
+
+  p.sub_description
+    font-size: 1.3em
+    color: #222
+
+  p.main_description
+    width: 630px
+    margin-bottom: 1em
+
+  ul
+    font-size: 1.4em
+
+    &.phone_numbers
+      list-style-type: none
+
+    &.benefits
+      list-style-type: circle
+
+.contact_us_support
+  float: right
+  width: 330px
+  background: #fff url(/images/bg.gif) repeat-x
+
+  .support_panel
+    margin: 10px
+
+  .contact_us_container
+    width: inherit
+
+img.industry_reseller
+  border: 2px solid #CCCCCC
+  float: right
+  margin: 0 0 5px 10px
+
+img.industry
+  width: 75px
+  float: right
+
+.center
+  +center
+  float: none
+
+#other_services
+  clear: both
+  padding-top: 2em
+
+  h2#main_description
+    font-size: 2em
+
+  h2#sub_description
+    font-size: 1.6em
+    color: black
+
+.deleting
+  text-decoration: line-through
+
+.previous_requests
+  float: left
+  font-weight: bold
+
+#sales_number_in_header img
+  margin: 2px 12px 0 0
+  float: left
+
+.api_sub_section
+  font-size: 120%
+  margin-top: 12px
+  font-weight: bold
+
+dl.listing
+  font-size: 1.4em
+
+  dd
+    margin-left: 1em
+
+  dl.last_list
+    margin-bottom: 1em
+
+  dt.validation_type
+    font-weight: bold
+
+  dt.ev_instructions
+    color: #028005
+
+  .green
+    color: green
+
+.optional_api_key, .optional_api_value, .api_key_or_value
+  color: black
+
+.api_key_or_value
+  font-weight: bold
+
+.optional_api_key, .optional_api_value
+  font-style: italic
+
+.api_csr_params_table
+  padding: 1em
+
+.api_csr_params
+  font-size: .8em
+  table
+    $table-color: #fbe1dc
+    @include table-scaffolding
+    @include inner-table-borders(1px, darken($table-color, 40%))
+    @include outer-table-borders(1px)
+    @include alternating-rows-and-columns($table-color, adjust-hue($table-color, -90deg), #111111)
+
+ul.csr_fields
+  @include no-bullets
+  padding: 1em 0 0 0
+
+ul#send_to_ca_box
+  @include box-shadow(0 1px 0 rgba(0, 0, 0, 0.1), 0 1px 7px 0 rgba(0, 0, 0, 0.8) inset)
+  @include border-radius(4px)
+  margin: 1em 0
+  padding-top: 1em
+  padding-bottom: 1em
+
+#sent_to_ca_results
+  font-size: .8em
+
+  dd
+    @include text-shadow(0 1px 3px rgba(255, 0, 0, 0.6))
+
+#processing_ca
+  text-align: center
+  margin: 10px auto
+  display: none
+
+#dcv_box
+  margin-bottom: 2em
+  
+.shiny_silver_button
+  color: #050505
+  padding: 10px 20px
+  background-color: #ebebeb
+  @include background(linear-gradient(top,#ffffff 0%, #ebebeb 50%, #dbdbdb 50%, #b5b5b5))
+  @include border-radius(10px)
+  border: 1px solid #949494
+  @include box-shadow(0px 1px 3px rgba(000,000,000,0.5), inset 0px 0px 2px rgba(255,255,255,1))
+  @include text-shadow(0px -1px 0px rgba(000,000,000,0.2), 0px 1px 0px rgba(255,255,255,1))
+
+.shiny_blue_button
+  color: #ffffff
+  padding: 10px 20px
+  background-color: #79cff7
+  @include background(linear-gradient(top, #79cff7 0%, #11557a))
+  @include box-shadow(0px 1px 3px rgba(000,000,000,0.4), inset 0px 0px 2px rgba(255,255,255,0.7))
+  @include border-radius(5px)
+  border: 1px solid #00387d
+  @include text-shadow(0px -1px 0px rgba(000,000,000,0.4), 0px 1px 0px rgba(255,255,255,0.3))
+
+#busy_sending
+  display: none
+
+#dcv_sent_to_address
+  font-weight: bold
+
+.category_border
+  margin-bottom: 1em
+
+#subscriber_agreement textarea
+  width: 100%
+
+textarea[id^=certificate_order]
+  width: 300px
+
+#agreement
+  font-size: 1.3em
+
+.waiting_bar
+  text-align: center
+
+.close_flash_message
+  color: #6B9029
+  font-size: .9em
+  float: right
+  margin-right: 1em
+
+  span
+    border: 1px solid
+    padding: 0pt 0.2em
+
+#new_user_session
+  input[type=password], input[type=text]
+    width: 196px
+
+.dcv_not_satisfied
+  background: #FFF7F8
+  border-left: 1px solid #FEB6B6
+  border-right: 1px solid #FEB6B6
+  padding: 0 4px
+
+.dcv_satisfied
+  background: #F8FFF7
+  border-left: 1px solid #D8FEB6
+  border-right: 1px solid #D8FEB6
+  padding: 0 4px
+
+.validation_section
+  padding-bottom: 1em
+
+span#no_emails_accessible
+  font-size: .9em
+  color: #FF2626
+
+#social_share
+  float: left
+  margin: 0px 4px 0px 2px
+  padding-top: 2px
+  //width: 110px
+
+  #sales_number_in_header &
+    margin: -4px 8em 0px 2px
+
+#logo_share
+  float: left
+  width: 180px
+
+#twitter
+  float: left
+  height: 5px
+  padding: 0 .5em
+
+#google, #facebook
+  float: left
+  width: 60px
+  padding: 0 .4em
+
+#logo_share #social_share
+  float: left
+
+.site_seal_footer
+  float: left
+  margin-top: 30px
+
+#surl_stylized
+  #new_surl, .edit_surl, .single_prompt
+    +center
+    text-align: left
+    font-size: 2em
+
+    label
+      font-size: 1.4em
+      display: block
+      color: #222
+      font-weight: bold
+      width: 100%
+      text-align: left
+
+    #shorten_prompt
+      +center
+      width: 95%
+
+      input[type=password], input[type=text], input[type=url], input[type=email]
+        width: 300px
+
+    #advanced_options_container
+      width: 100%
+      float: left
+      margin: 0 auto 1em
+      padding: 1.3em 0
+      text-align: center
+      background-color: rgb(220, 223, 254)
+      background-color: rgba(220, 223, 254, 0.9)
+      border: 1px solid orange
+      @include border-radius(10px)
+
+      #advanced_options
+        font-size: 0.8em
+        width: 85%
+        margin: 0pt auto
+
+    #access_restriction_container
+      @extend #advanced_options_container
+      float: none
+      width: 60%
+
+      p
+        text-align: left
+
+      #advanced_options
+        width: 65%
+
+        label
+          width: 6em
+
+      input[type=password], input[type=text], input[type=url]
+        width: 300px
+
+  .edit_surl #advanced_options_container
+    width: 50%
+    float: none
+
+  .edit_surl #shorten_prompt
+    input[type=password], input[type=text], input[type=url]
+      width: 750px
+
+
+#surl_services a
+  color: red
+
+  span
+    font-weight: bold
+
+#surl_link, #surl_link_error
+  font-size: 3.5em
+  float: left
+  font-weight: bold
+
+  input
+    width: 360px
+
+#surl_link_error
+  font-size: 1.5em
+  margin: 1em auto
+
+  ul
+    list-style-type: none
+    margin: 0
+
+#surl_instructions
+  float: left
+  display: block
+  font-size: 2.4em
+  padding: .2em 0 0 1em
+  display: none
+
+.old_link
+  color: black
+  font-style: italic
+  font-size: 0.8em
+  margin: 0.4em auto
+
+#surl_stylized #restriction_field
+  display: none
+  margin-left: 30px
+
+  label
+    font-size: 1em
+    font-weight: normal
+    margin-right: 10px
+    text-align: right
+    width: 38%
+    color: #333
+
+  input
+    width: 150px
+    font-size: .7em
+
+#manage_current_links, #accepted_country_codes, #restricted_country_codes, #affiliate_sales
+  background: #fcf0c4
+  @include background(linear-gradient(top, #FFFFF5 0%, #FDFFB8))
+  @include border-radius(15px)
+  font-size: 1.5em
+  border-collapse: collapse
+  float: left
+  width: 100%
+
+  th
+    border: 1px solid #EFC960
+    border-top: none
+
+  td, th
+    text-align: left
+    vertical-align: top
+
+    .original_link
+      width: 70%
+
+    .actions
+      display: block
+      width: 160px
+
+  td
+    border-top: 1px solid #EFC960
+
+#manage_current_links
+  display: none
+
+#affiliate_sales
+  margin-bottom: 40px
+
+#accepted_country_codes
+  margin-bottom: 1em
+
+.deleting
+  text-decoration: line-through
+
+#deleting_progress_box
+  margin: 12px 0 0px
+  display: none
+
+#back_to_links
+  display: block
+  font-size: 3em
+  text-align: center
+  margin: 0 auto
+
+#access_restriction_submit_button
+  margin: 0pt auto
+  width: 21%
+
+#send_verification_box
+  width: 100%
+  text-align: center
+  margin: 0 auto
+
+  #send_verification
+    float: inherit
+    width: 20%
+
+.account_type
+  float: right
+
+.adjust_status
+  float: left
+
+#http_dcv_url
+  font-style: italic
+  background-color: #eee
+  text-align: center
+  font-size: 1.2em
+
+.pop_container
+  display: none
+
+.pop_content
+  font-size: 1.8em
+
+.ajax_info
+  text-align: left
+
+#csr_section
+  .flash_message
+    padding: 0
+    &.error .ajax_info
+      color: red
+
+#stylized
+
+  button#apply_discount
+    -moz-box-shadow: inset 0px 1px 0px 0px #ffffff
+    -webkit-box-shadow: inset 0px 1px 0px 0px #ffffff
+    box-shadow: inset 0px 1px 0px 0px #ffffff
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf))
+    background: -moz-linear-gradient(center top, #ededed 5%, #dfdfdf 100%)
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf')
+    background-color: #ededed
+    -moz-border-radius: 6px
+    -webkit-border-radius: 6px
+    border-radius: 6px
+    border: 1px solid #dcdcdc
+    display: inline-block
+    color: #777777
+    font-family: arial
+    font-size: 10px
+    font-weight: bold
+    padding: 5px
+    text-decoration: none
+    text-shadow: 1px 1px 0px #ffffff
+    margin: 2px
+    &:hover
+      background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed))
+      background: -moz-linear-gradient(center top, #dfdfdf 5%, #ededed 100%)
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed')
+      background-color: #dfdfdf
+    &:active
+      position: relative
+      top: 1px
+
+  #invalid_discount_code
+    color: red
+    background: yellow
+
+#discount_applied
+  font-size: 1.4em
+  font-style: italic
+  border: dashed 1px
+  background: yellow
+  padding: 1px
+
+.ssl_action
+  ul
+    line-height: 1.4em
+    padding: 0px
+    font-size: .7em
+    list-style-type: none
+
+.download_certificate
+  table, th, td
+    border: 1px solid black !important
+    border-collapse: collapse !important
+
+.addGroup
+  width: 100%
+
+#addInput
+  border: 0
+  width: auto
+  margin: 1px 0 5px 0
+  padding: 9px 10px
+  background: #eee
+  font-size: 16px
+  border: solid 1px #ccc
+  outline: none
+  outline-offset: 0
+  -webkit-appearance: none
+
+#add
+  cursor: pointer
+  margin-left: -5px
+  margin-top: 1px
+  border: 1px solid #888
+  background: #888
+  padding: 2px 12px 6px 12px
+  text-align: center
+  width: 16px
+  max-height: 18px
+  font-size: 24px
+  color: white
+  &:hover
+    opacity: 0.7
+
+#domains
+  border: 1px solid #ccc
+  font-family: Arial
+  padding: 5px
+  min-width: 235px
+  min-height: 46px
+  float: left
+  input
+    outline: none
+    outline-offset: 0
+    -webkit-appearance: none
+
+.domain
+  float: left
+  color: #fff
+  margin: 4px
+  max-height: 38px
+  div
+    cursor: pointer
+    float: left
+    &:hover
+      opacity: 0.7
+
+.text
+  background: #666
+  color: #fff
+  font-size: 16px
+  padding: 10px
+  float: left
+  padding: 10px
+  white-space: pre
+  max-height: 18px
+  border: 0
+
+.accept:hover
+  background: darkgreen
+
+.edit:hover
+  background: #CCAC00
+
+.domainButton
+  background: #888
+  padding: 10px
+  text-align: center
+  width: 16px
+  max-height: 18px
+
+.delete:hover
+  background: darkred
+
+.superVisible
+  display: block !important
+
+.invalid
+  background: darkred !important
+  &:focus
+    background: #AE4D4D !important
+
+.wildcard
+  background: #4682B4 !important
+  &:focus
+    background: #7EA8CA !important
+
+.new_certificate_order
+  float: left
+  width: 100%
+
+.boxsizingBorder
+  -webkit-box-sizing: border-box
+  -moz-box-sizing: border-box
+  box-sizing: border-box
+
+/* CSS for ssl Website
+@import url(https://fonts.googleapis.com/css?family=Montserrat)
+@import url(https://fonts.googleapis.com/css?family=Raleway)
+
+@font-face
+  font-family: "arial black"
+  src: url(/fonts/aria-black.eot)
+  src: url(/fonts/aria-black.ttf)
+
+@font-face
+  font-family: "arial black italic"
+  src: url(/fonts/arial-black-italic.eot)
+  src: url(/fonts/arial-black-italic.ttf)
+
+body
+  background: #fff
+  font-family: "Raleway",Georgia,"Times New Roman",Times,serif
+  min-height: 100%
+  width: 100%
+  height: 100%
+  margin-left: 0 !important
+  padding: 0
+  position: relative !important
+  overflow-x: hidden !important
+  overflow-y: scroll !important
+  &[class|="page-body"]
+    background: #fff
+/* Applies to IE 7 and most modern browsers except Opera
+
+/*MISCELLANOUS
+
+a
+  text-decoration: none
+  img
+    border: none
+
+.bold
+  font-weight: bold
+
+.left
+  float: left
+
+.right
+  float: right
+
+.clear
+  height: 1%
+  clear: both
+  content: "."
+  height: 0
+  visibility: hidden
+
+.divider
+  border-bottom: 1px solid #444
+
+.divider-horizontal
+  border-right: 1px solid #aaa
+  padding: 0 4px
+  height: 20px
+  margin: -3px 6px 0 0
+
+/*icons
+
+.icn_live, .icn_phone, .icn_email, .icn_support
+  background: url("/images/icon-set.png") no-repeat
+
+.icn_live
+  background-position: -10px 13px
+  padding: 17px 12px
+
+.icn_phone
+  background-position: -42px 12px
+  padding: 17px 14px
+
+.icn_email
+  background-position: -88px 12px
+  padding: 17px 14px
+
+.icn_support
+  background-position: -130px 12px
+  padding: 17px 12px
+
+.icn_cart
+  background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d
+  padding: 5px 6px 4px 24px
+  margin-left: 3px
+  color: #fff
+  font-weight: bold
+  font-size: 12px
+
+.icn_cart-filled
+  background: url("/images/icn-cart.png") 4px 3px no-repeat #4d4d4d
+  padding: 5px 6px 4px 24px
+  margin-left: 3px
+  color: #fff
+  font-weight: bold
+  font-size: 12px
+  background: url("/images/icn-cart.png") 4px 3px no-repeat #8bb43b
+
+.icn_cart:hover, .icn_cart-filled:hover
+  text-decoration: underline
+
+.content
+  margin: 0 auto !important
+  width: 960px
+
+  li
+    font-size: 14px
+
+/*header
+
+#header
+  text-align: left !important
+  background: #282928 100%
+  width: 100%
+  height: 100%
+  margin: 0px
+  height: 78px
+  .content
+    .logo
+      float: left
+      padding: 0px 150px 20px 0
+      margin-right: 15px
+      background: url("/images/certassure/certlogo.png") no-repeat
+    .navigation
+      float: left
+      width: 580px
+      .top_navigation
+        width: 580px
+        padding: 12px 0px 13px 30px
+        margin-left: 1px
+      .bottom_navigation
+        width: 580px
+        padding: 17px 30px 0px
+
+.top_navigation
+  a
+    color: #ccc !important
+  li
+    a:hover
+      color: #fff !important
+      text-decoration: underline
+      cursor: pointer !important
+    float: right !important
+    color: #ccc
+    list-style-type: none
+    padding: 0 4px
+    font-size: 12px
+
+.bottom_navigation
+  ul#nav
+    list-style: none
+    padding: 0
+    margin: 0
+  li
+    float: right !important
+    background: #111
+    border-right: 1px solid #282928
+    font-family: "Raleway",Arial !important
+    font-size: 12px
+    padding: 9px 18px
+    position: relative
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35)
+    &:hover
+      background: #232323
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+      -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7)
+  ul#nav a
+    display: block
+    color: #ddd
+    &:hover
+      display: block
+      color: #fff
+  li
+    span.dropdown
+    ul
+      display: none
+      position: absolute
+      width: 220px
+      top: 0
+      left: 0
+      margin-left: -41px
+    > ul
+      top: 32px
+      left: 40px
+      background: #212121
+    &:hover ul, &.over ul
+      display: block
+      list-style: none
+    &:hover ul li
+      background: #232323
+      padding: 10px
+      width: 240px !important
+      border: none
+      box-shadow: none
+      -moz-box-shadow: none
+      -ms-box-shadow: none
+      -webkit-box-shadow: none
+      cursor: pointer
+      &.divider
+        margin: 0 0 0 10px
+        padding: 0 10px
+        border-bottom: #999 1px solid
+      a
+        color: #CCC !important
+        margin-left: 4px
+        &:hover
+          color: #fff !important
+      &:hover
+        width: 240px !important
+        background: #000 !important
+        color: #fff !important
+
+/*content
+
+.container
+  padding: 15px 0 0 0 !important
+
+#container
+  min-height: 100%
+  margin: 0
+  padding: 0
+  width: 100%
+  height: auto  !important
+  /* for modern browsers
+  height: 100%
+  background: #e6e6e6
+  text-align: left !important
+
+/*footer
+
+#footer
+  clear: both
+  background: #282928
+  width: 100%
+  margin: 0px
+  height: 300px
+  padding-top: 30px
+  bottom: 0
+  /* important
+  text-align: left !important
+  .content
+    .box-logo
+      width: 190px
+    .box
+      .footer-like
+        padding: 0px 210px 10px 0
+      .logo-small
+        padding: 0px 210px 60px 0
+        background: url("/images/small-logo.png") no-repeat
+    .box-social
+      width: 210px
+    .box
+      width: 185px
+      background: inherit
+      height: auto !important
+      margin-bottom: 0 !important
+      color: #fff
+      b
+        color: #fff !important
+      .title
+        font-size: 14px
+        margin-left: 34px
+      ul
+        margin: 12px 0 0 0 !important
+      li
+        list-style-type: none
+        padding: 4px
+      a
+        color: #ddd
+        font-size: 12px
+        margin-left: -8px
+        b
+          font-size: 12px
+          letter-spacing: -0.5px
+          font-weight: bold
+          font-style: italic
+        &:hover
+          color: #fff
+          text-decoration: underline
+    .copyright
+      margin: 25px 0 0 220px
+      font-size: 12px
+      color: #fff
+
+

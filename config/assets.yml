@@ -23,9 +23,12 @@ javascripts:
     - public/javascripts/jquery.form.js
 
 stylesheets:
-  common:
+  ssl_com:
     - public/stylesheets/compiled/main.css
     - public/stylesheets/compiled/master.css
+  certassure:
+    - public/stylesheets/compiled/certassure.css
+  common:
     - public/stylesheets/jquery-ui-1.8.7.custom.css
     - public/stylesheets/jquery.tooltip.css
     - public/stylesheets/prettyPhoto.css

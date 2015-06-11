@@ -199,7 +199,7 @@ class Certificate < ActiveRecord::Base
                           "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt)}}}}
 
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%")}
+  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}
   scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
   scope :for_sale, where{(product != 'mssl') & (serial =~ "%sslcom%")}
 

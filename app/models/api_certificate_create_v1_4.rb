@@ -10,13 +10,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   FREE_PERIODS = %w(30 90)
   DCV_FAILURE_ACTIONS = %w(remove ignore)
 
-  PRODUCTS = {"100"=> "evucc256sslcom", "101"=>"ucc256sslcom", "102"=>"ev256sslcom",
-              "103"=>"ov256sslcom", "104"=>"dv256sslcom", "105"=>"wc256sslcom", "106"=>"basic256sslcom",
-              "107"=>"premium256sslcom",
-              "204"=> "evucc256sslcom", "202"=>"ucc256sslcom", "203"=>"ev256sslcom",
-              "200"=>"basic256sslcom", "201"=>"wc256sslcom", "300"=>"personalbasic256sslcom",
-              "301"=>"personalpro256sslcom", "302"=>"personalbusiness256sslcom", "303"=>"personalenterprise256sslcom",
-              "350"=>"codesigning256sslcom"}
+  PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
 
   DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
   DEFAULT_DCV_METHOD = "http_csr_hash"

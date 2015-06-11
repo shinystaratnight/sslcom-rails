@@ -1,37 +1,37 @@
 !!!
 %html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
-    -cache("head_08042014"+params.to_s, expires_in: 1.year) do
+    -#-cache("head_08042014"+params.to_s, expires_in: 1.year) do
+    :javascript
+      var _sf_startpt=(new Date()).getTime()
+    %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
+    %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
+    -if current_page?(certificates_path)
+      / begin Convert Experiments code
       :javascript
-        var _sf_startpt=(new Date()).getTime()
-      %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
-      %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
-      %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
-      -if current_page?(certificates_path)
-        / begin Convert Experiments code
-        :javascript
-          var _conv_host = (("https:" == document.location.protocol) ? "https://d9jmv9u00p0mv.cloudfront.net" : "http://cdn-1.convertexperiments.com");document.write(decodeURIComponent("%3Cscript src='" + _conv_host + "/js/10012988-10012489.js' type='text/javascript'%3E%3C/script%3E"));
-        / end Convert Experiments code
-      -if @meta
-        -@meta.each do |key|
-          %meta{:name=>key[0], :content=>key[1]}
-      %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
-      %meta{ :content => "IE=Edge,chrome=1", "http-equiv" => "X-UA-Compatible" }
-      %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
-      %meta(content="width=1115" name="viewport")
-      -#the following metas are for google+ custom message
-      %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
-      %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
-      -#the following metas are for facebook custom message
-      %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
-      %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
-      %meta(property="og:type" content="product")
-      %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
-      %meta(property="og:fb:app_id" content="175898732515690")
-      -if Settings.enable_google_translate
-        %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
-      =csrf_meta_tag
-      =render :partial => "shared/scripts_and_styles"
+        var _conv_host = (("https:" == document.location.protocol) ? "https://d9jmv9u00p0mv.cloudfront.net" : "http://cdn-1.convertexperiments.com");document.write(decodeURIComponent("%3Cscript src='" + _conv_host + "/js/10012988-10012489.js' type='text/javascript'%3E%3C/script%3E"));
+      / end Convert Experiments code
+    -if @meta
+      -@meta.each do |key|
+        %meta{:name=>key[0], :content=>key[1]}
+    %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
+    %meta{ :content => "IE=Edge,chrome=1", "http-equiv" => "X-UA-Compatible" }
+    %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
+    %meta(content="width=1115" name="viewport")
+    -#the following metas are for google+ custom message
+    %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
+    %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
+    -#the following metas are for facebook custom message
+    %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
+    %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
+    %meta(property="og:type" content="product")
+    %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
+    %meta(property="og:fb:app_id" content="175898732515690")
+    -if Settings.enable_google_translate
+      %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
+    =csrf_meta_tag
+    =render :partial => "shared/scripts_and_styles"
   %body
     =render partial: "layouts/facebook" if Rails.env=~/production/i
     -if show_short_links?

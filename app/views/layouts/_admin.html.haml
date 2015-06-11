@@ -29,8 +29,9 @@
                 %td=link_to "FILTER BY EV", filter_by_certificate_orders_path("ev")
               %tr
                 %td=link_to "FILTER BY UCC", filter_by_certificate_orders_path("ucc")
-              %tr
-                %td=link_to "FILTER BY PREMIUM", filter_by_certificate_orders_path("premium")
+              -if DEPLOYMENT_CLIENT=~/ssl\.com/i
+                %tr
+                  %td=link_to "FILTER BY PREMIUM", filter_by_certificate_orders_path("premium")
               %tr
                 %td=link_to "FILTER BY WILDCARD", filter_by_certificate_orders_path("wildcard")
               %tr
