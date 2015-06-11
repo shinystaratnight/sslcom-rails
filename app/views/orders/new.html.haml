@@ -10,7 +10,7 @@
   %p
     Please fill out the (*) required fields #{current_user.blank? ? "below to complete your account registration." : "below."}
     -if current_order.amount.to_s.to_i > 0
-      This charge will appear as SSL.com on your credit card statement.
+      This charge will appear as #{Settings.merchant_name} on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
   =form_for *url_to_new_order do |f|
     -if @certificate_order

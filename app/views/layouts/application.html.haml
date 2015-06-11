@@ -6,7 +6,7 @@
       var _sf_startpt=(new Date()).getTime()
     %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
-    %title= h(yield(:title).or_else(Settings.meta_title)) + " | SSL.com"
+    %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{Settings.community_name}"
     -if current_page?(certificates_path)
       / begin Convert Experiments code
       :javascript
@@ -20,11 +20,11 @@
     %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
     %meta(content="width=1115" name="viewport")
     -#the following metas are for google+ custom message
-    %meta(itemprop="name" content="Educating the public about SSL Certificates | SSL.com")
+    %meta(itemprop="name" content="Educating the public about SSL Certificates | #{Settings.community_name}")
     %meta(itemprop="description" content="Have questions about SSL Certificates? Post them on our Facebook wall at http://ssl.com/dM!")
     -#the following metas are for facebook custom message
-    %meta(property="og:title" content="Educating the public about SSL Certificates | SSL.com")
-    %meta(property="og:description" content="At SSL.com, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
+    %meta(property="og:title" content="Educating the public about SSL Certificates | #{Settings.community_name}")
+    %meta(property="og:description" content="At #{Settings.community_name}, our vision is to create public awareness on the importance of SSL Certificates.  Have questions?  Post them on our Facebook wall using the link above and we will do our best to respond to your comments as soon as possible.")
     %meta(property="og:type" content="product")
     %meta(property="og:image" content="/images/SSL.com-social_profile_pic.png")
     %meta(property="og:fb:app_id" content="175898732515690")
@@ -37,7 +37,7 @@
     -if show_short_links?
       #answers(style="text-align: center;width: 100%; background-color: orange; padding: 2px 0; font-family: sans-serif; font-size: 1.2em; font-weight: bold;")
         Have a question or solution?
-        =link_to "Be sure to visit the SSL.com IT Security Q&A free community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
+        =link_to "Be sure to visit the #{Settings.community_name} IT Security Q&A free community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
     #wrapper
       -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless current_subdomain==Reseller::SUBDOMAIN

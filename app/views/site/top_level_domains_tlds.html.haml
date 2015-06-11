@@ -1,5 +1,5 @@
 -c={}
--c[:description]="SSL.com issues signed certificates for the following top level domains"
+-c[:description]="#{Settings.community_name} issues signed certificates for the following top level domains"
 -c[:keywords]="ssl top-level domains tlds gtlds signed certificates"
 -c[:title] = "Acceptable Top Level Domains (tlds) for SSL Certificates"
 -c[:header] = "public"
@@ -10,7 +10,7 @@
 .default_container
   %h3 ICANN tlds listing updated on #{Date.today}
   %p
-    The following list represents all acceptable top-level domains (tlds) for use with SSL.com ssl certificates.
+    The following list represents all acceptable top-level domains (tlds) for use with #{Settings.community_name} ssl certificates.
     A tld can be found to the right of the furthest right dot in a domain name. For instance, 'info' would be the tld for
     'www.domain.info', com for 'www.ssl.com', etc.
   %table#accepted_country_codes(cellpadding="6")

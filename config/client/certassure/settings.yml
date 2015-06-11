@@ -1,8 +1,9 @@
 site: 'remote'
 root_subdomain: "www"
 actionmailer_host: "www.certassure.com"
-community_name: "Certassure.com"
+community_name: "CertAssure"
 community_tagline: "copyright 2015"
+merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
 support_email:  "support@certassure.com"
 meta_description: "Wildcard SSL Certificates &amp; 2048-Bit Extended Validation SSL Certificate Authentication. Strong Secure Sockets Layer Https Encryption for Network Security."

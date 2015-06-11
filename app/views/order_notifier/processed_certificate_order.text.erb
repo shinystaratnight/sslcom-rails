@@ -3,7 +3,7 @@
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
 <%end -%>
-Thank you for placing your order. The necessary background checks have been successfully completed and we are pleased to announce that your SSL.com <%=@certificate_order.certificate.description["certificate_type"]%> Certificate for <%=@certificate_order.subject%> has been issued.
+Thank you for placing your order. The necessary background checks have been successfully completed and we are pleased to announce that your <%=Settings.community_name%> <%=@certificate_order.certificate.description["certificate_type"]%> Certificate for <%=@certificate_order.subject%> has been issued.
 
 We strongly recommend that you follow the installation instructions at <%=Settings.installation_support_pages%> to ensure that your certificate and webserver are correctly configured.
 
@@ -56,7 +56,7 @@ For <%=v[0]%>, please visit <%=v[1]%> (Instructions for <%=v[0]%> can be found h
   <%=render(:partial=>"ev_https://info.ssl.com/faq-requirements-for-ssl-com-ev/reqs")%>
 <%end-%>
 
-When you have installed your SSL.com Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services and is a proven way to increase conversions.
+When you have installed your <%=Settings.community_name%> Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services and is a proven way to increase conversions.
 
 Get your secure Smart SeaL by visiting the following url - <%=certificate_order_site_seal_url(@certificate_order)%>.
 

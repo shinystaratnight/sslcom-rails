@@ -1,6 +1,6 @@
 Hello,
 
-There was a problem sending SSL.com order <%=@certificate_order.ref%> to <%=@ca%>
+There was a problem sending <%=Settings.community_name%> order <%=@certificate_order.ref%> to <%=@ca%>
 
 Reason:
 <%ccr=@certificate_order.ca_certificate_requests.last%>
@@ -12,4 +12,4 @@ Reason:
 
 Regards,
 
-SSL.com Support Team
+<%=Settings.community_name%> Support Team

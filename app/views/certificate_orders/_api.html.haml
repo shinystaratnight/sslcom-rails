@@ -4,10 +4,10 @@
   -if co.certificate.is_server?
     %ul
       %li
-        %strong Calls To SSL.com API
+        %strong Calls To #{Settings.community_name} API
       -unless co.is_test
         %li{style: 'color:red'}
-          WARNING! This is a live order. If you are unfamiliar with the SSL.com API, it is advised that you first create
+          WARNING! This is a live order. If you are unfamiliar with the #{Settings.community_name} API, it is advised that you first create
           and work with test orders prior to using the api on this order. Find out more about
           =link_to "creating test orders here.", developers_certificate_orders_path
         %li &nbsp;
@@ -15,14 +15,14 @@
         The api calls listed below are preformatted for cURL, but they can easily be translated into any other
         format. Each call is tailored to this particular order. Most, if not all, of the calls will at least require the
         account_key and secret_key parameters for authentication. Please review each call for specific parameters
-        required. For the api parameters documentation please see the #{link_to "'SSL.com API Documentation'", "http://docs.sslcomapi.apiary.io", target: "_blank"}.
+        required. For the api parameters documentation please see the #{link_to "'#{Settings.community_name} API Documentation'", "http://docs.sslcomapi.apiary.io", target: "_blank"}.
       %li &nbsp;
       %li
         Certain calls are available depending on the current status of this certificate order. For instance, if the
         certificate has been issued, then the 'Reprocess/Reissue' api command will be displayed. Another example is if
         the csr (certificate signing request) has not been submitted, then the 'Update DCV' or 'New Order w/ CSR' api
         commands will not be displayed. If you want to create a test order,
-        be sure to visit #{link_to "the SSL.com Developer Tools", developers_certificate_orders_path}.
+        be sure to visit #{link_to "the #{Settings.community_name} Developer Tools", developers_certificate_orders_path}.
       %li &nbsp;
       -if current_user.try("is_admin?")
         %li

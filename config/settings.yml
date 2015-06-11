@@ -2,7 +2,8 @@ site: 'remote'
 root_subdomain: "www"
 actionmailer_host: "www.ssl.com"
 community_name: "SSL.com"
-community_tagline: "copyright 2011"
+community_tagline: "copyright 2015"
+merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
 support_email:  "support@ssl.com"
 meta_description: "Wildcard SSL Certificates &amp; 2048-Bit Extended Validation SSL Certificate Authentication. Strong Secure Sockets Layer Https Encryption for Network Security."
@@ -61,9 +62,9 @@ p_authorize_net_transaction_id: '473cmgtHDd7yY49K'
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
 
-excluded_titles:
-  ["--- Personal Basic\n...\n", "--- Personal Pro\n...\n", "--- Personal Enterprise\n...\n", "--- Personal Business\n...\n",
-  "--- Premium Multi-subdomain SSL\n...\n", "Migrated SSL"] #,"--- Code Signing\n...\n"
+excluded_titles: []
+#  ["--- Personal Basic\n...\n", "--- Personal Pro\n...\n", "--- Personal Enterprise\n...\n", "--- Personal Business\n...\n",
+#  "--- Premium Multi-subdomain SSL\n...\n", "Migrated SSL"] #,"--- Code Signing\n...\n"
 
 api_product_codes:
   {100: "evucc256sslcom", 101: "ucc256sslcom", 102: "ev256sslcom",

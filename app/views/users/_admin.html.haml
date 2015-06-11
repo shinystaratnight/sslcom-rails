@@ -1,9 +1,9 @@
--content_for :title, "SSL.com System Admin Dashboard"
+-content_for :title, "#{Settings.community_name} System Admin Dashboard"
 -user ||= current_user
 .reseller_registration_select_tier
-  %h2 SSL.com System Admin Dashboard
+  %h2 #{Settings.community_name} System Admin Dashboard
   %p
-    This is THE Admin screen for SSL.com. You have ALMOST limitless powers in the SSL.com universe.
+    This is THE Admin screen for #{Settings.community_name}. You have ALMOST limitless powers in the #{Settings.community_name} universe.
     Be careful; with great powers comes great responsibilities (* all functions are audit logged).
 #dashboard
   %table(cellspacing="0")

@@ -37,7 +37,7 @@
           %h2 Documents
           -if co.certificate.is_ev?
             %p
-              SSL.com will verify the existence of your business, the ownership of the domain(s)
+              #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
               #{co.all_domains.join(", ")}, and your employment status or authority to
               request the SSL Certificate for #{co.all_domains.join(", ")}. The following documents are required:
             %dl.listing
@@ -70,7 +70,7 @@
                     (for government entities) #{link_to "Sample Legal Letter for Verifying a Government Organization #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/25/0/sample-legal-letter-for-verifying-a-government-organization"}
           -else
             %p
-              If documents are required for this order, then SSL.com will verify the existence of your business, the ownership of the domain(s)
+              If documents are required for this order, then #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
               #{co.all_domains.join(", ")}, and your employment status or authority to
               request the SSL Certificate for #{co.all_domains.join(", ")}. Documents required from the registrant listed
               on this whois record for #{co.subject} may include:

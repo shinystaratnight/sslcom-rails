@@ -310,6 +310,6 @@
                         =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
                           %ul
                             %li
-                              %strong notes from SSL team
+                              %strong notes (viewable only by #{Settings.community_name} team)
                             %li
                               =f.text_area :notes, cols: 40, rows: 10

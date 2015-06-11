@@ -1,8 +1,8 @@
 <%
-title=program="SSL.com Registrar Reseller"
-main_title="SSL.com Solutions For Registrars"
+title=program="#{Settings.community_name} Registrar Reseller"
+main_title="#{Settings.community_name} Solutions For Registrars"
 sub_title="Private label ssl certificates and build your business"
-main_image=image_tag("domains.jpg", :title=>'partner up with SSL.com',
+main_image=image_tag("domains.jpg", :title=>'partner up with #{Settings.community_name}',
   :alt=>"#{program}", :title=>"#{program}", :class=>'industry_reseller')
 
 benefits = [
@@ -19,13 +19,13 @@ summary="Take advantage of
   online ssl certificate management system. Expedite issuance and
   installation of ssl certificates by overseeing the validation process.
   Seamlessly integrate ssl.com certificates into your product line
-  by integrating with SSL.com's fully tested
+  by integrating with #{Settings.community_name}'s fully tested
   #{link_to "RESTful API", :controller=>'site', :action=>'restful_api'}."
 
 descriptions=[
   "As a hosting provider,
   your customers demand fast response times while expecting the highest value.
-  SSL.com provides all of this and more to you and your customers. Don't let ssl
+  #{Settings.community_name} provides all of this and more to you and your customers. Don't let ssl
   certificate acquisition and installation be the bottleneck.",
 
   "Once you are approved as a #{program}, you
@@ -36,7 +36,7 @@ descriptions=[
   certificate process.",
 
   "Maintaining and managing your customer's ssl.com certificates require an
-  advanced online management tool. With SSL.com's ssl certificate
+  advanced online management tool. With #{Settings.community_name}'s ssl certificate
   management portal,
   you control who receives the certificates, receipts, and
   expiration reminders (or even when the reminders are sent).
@@ -45,9 +45,9 @@ descriptions=[
 
   "In addition to advanced ssl certificate management, you get administrative
   level control capabilities over your customer's
-  #{link_to "SSL.com Smart SeaLs, Site Reports, and Smart SeaL Artifacts",
+  #{link_to "#{Settings.community_name} Smart SeaLs, Site Reports, and Smart SeaL Artifacts",
   details_site_seals_path}. As a #{program},
-  you get access to SSL.com's patent pending
+  you get access to #{Settings.community_name}'s patent pending
   automated Business Authentication Engine which makes the validation process
   for you and your customers effortless.",
 
@@ -55,8 +55,8 @@ descriptions=[
   a discounting tier to join. There are no commitments, quotas or contracts,
   and you have complete flexibility in selecting which
   #{link_to "ssl.com products", certificates_url} you want to offer. Brand
-  your own ssl certificate products through SSL.com landing pages or
-  integrate ssl certificates into your product offering through SSL.com's
+  your own ssl certificate products through #{Settings.community_name} landing pages or
+  integrate ssl certificates into your product offering through #{Settings.community_name}'s
   RESTful api."]
 %>
 <%=render :partial=>"program", :locals=>{:title=>title, :main_title=>main_title,

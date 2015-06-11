@@ -5,11 +5,11 @@ Dear Customer,
 <%end -%>
 
 <%unless @last_sent.is_a?(Array) -%>
-An SSL.com certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
+An <%=Settings.community_name%> certificate order has been placed for <%=@certificate_order.certificate_content.csr.common_name%>
 
 Please respond to the email validation request sent to: <%=@last_sent.email_address%>.
 <%else -%>
-An SSL.com certificate order has been placed for the domain(s): <%=@certificate_order.all_domains.join(", ")%>
+An <%=Settings.community_name%> certificate order has been placed for the domain(s): <%=@certificate_order.all_domains.join(", ")%>
 
 Please respond to the following email validation requests:
   <%@last_sent.each do |ls| -%>
@@ -17,7 +17,7 @@ Please respond to the following email validation requests:
   <%end -%>
 <%end -%>
 
-It will be sent from comodo.com, our ssl vetting partner. Note that SSL.com and Comodo are entirely separate companies so all inquiries must be directed to SSL.com.
+It will be sent from comodo.com, our ssl vetting partner. Note that <%=Settings.community_name%> and Comodo are entirely separate companies so all inquiries must be directed to <%=Settings.community_name%>.
 
 PLEASE DO NOT REPLY TO THIS EMAIL
 

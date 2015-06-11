@@ -1,7 +1,7 @@
 -c={}
--c[:description]="The SSL.com Developer Tools provides resources for developers to integrate SSL.com into their processes."
+-c[:description]="The #{Settings.community_name} Developer Tools provides resources for developers to integrate #{Settings.community_name} into their processes."
 -c[:keywords]="ssl.com ssl certificate developer api"
--c[:title] = "SSL.com Developer Tools"
+-c[:title] = "#{Settings.community_name} Developer Tools"
 -c.each do |k, v|
   -content_for k, c[k]
 -user ||= current_user
@@ -12,7 +12,7 @@
   %h2=c[:title]
   %h3 Getting Started
   %p
-    The SSL.com Web Services REST api is designed to allow integration of SSL.com products into your
+    The #{Settings.community_name} Web Services REST api is designed to allow integration of #{Settings.community_name} products into your
     processes. Using current and agile technology, the api is capable of taking advantage of modern
     software to provide complete control in a simple and intuitive interface.
   %p
