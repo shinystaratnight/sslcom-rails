@@ -31,7 +31,7 @@
               =link_to "Email Us", contact_us_url
             %li
               %span.icn_phone> &nbsp;
-              1-877-SSL-SECURE
+              =Settings.public_header_phone_number
             %li
               %span.icn_live &nbsp;
               %a#live_chat{:href => "#"} Live Chat
@@ -46,7 +46,7 @@
           %ul#nav
             %li
               %a(href="#{account_url}")
-                MY ACCOUNT
+                %div MY ACCOUNT
               -if current_user
                 %ul
                   %li
@@ -56,7 +56,7 @@
                 %a(href="#{certificate_url("free")}") FREE TRIAL
             %li
               %a(href="#{affiliates_url}")
-                PARTNERS
+                %div PARTNERS
               %ul
                 %li
                   %a{:href => "#{affiliates_url}"} Overview

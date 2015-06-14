@@ -20,12 +20,12 @@
       through an ssl.com certificate, you will need to acquire an ssl.com
       certificate.
       =link_to "Click here to see a list ssl.com certificate products.", certificates_path
-  -unless current_user.is_affiliate?
+  -if Settings.enable_affiliate_program==true && !current_user.is_affiliate?
     .become_reseller_title(style="margin: 10px 0 0")
       %p
         %strong.red NEW! Earn commissions through the #{Settings.community_name} Referral Link Program
       %p
-        %a(href="https://www.ssl.com/affiliate/index.php")
+        %a(href="https://#{Settings.community_domain}/affiliate/index.php")
           Click here
         to become an #{Settings.community_name} Referral Link Partner or
         =link_to "click here for more details", details_affiliates_path
@@ -74,7 +74,7 @@
                         %li=link_to 'edit email address', edit_email_users_url
                         %li=link_to 'change password', edit_password_users_url
                         -unless current_user.is_affiliate?
-                          %li=link_to 'become an referral link partner', "https://www.ssl.com/affiliate/index.php"
+                          %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
                         -unless current_user.ssl_account.is_registered_reseller?
                           %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box

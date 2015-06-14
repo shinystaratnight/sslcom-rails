@@ -26,16 +26,16 @@
               %tr
                 %td=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
               %tr
-                %td=link_to "FILTER BY EV", filter_by_certificate_orders_path("ev")
+                %td=link_to "EV ORDERS", filter_by_certificate_orders_path("ev")
               %tr
-                %td=link_to "FILTER BY UCC", filter_by_certificate_orders_path("ucc")
+                %td=link_to "UCC ORDERS", filter_by_certificate_orders_path("ucc")
               -if DEPLOYMENT_CLIENT=~/ssl\.com/i
                 %tr
-                  %td=link_to "FILTER BY PREMIUM", filter_by_certificate_orders_path("premium")
+                  %td=link_to "PREMIUM ORDERS", filter_by_certificate_orders_path("premium")
               %tr
-                %td=link_to "FILTER BY WILDCARD", filter_by_certificate_orders_path("wildcard")
+                %td=link_to "WILDCARD ORDERS", filter_by_certificate_orders_path("wildcard")
               %tr
-                %td=link_to "FILTER BY TEST", filter_by_scope_certificate_orders_path("is_test")
+                %td=link_to "TEST ORDERS", filter_by_scope_certificate_orders_path("is_test")
           -#-unless current_user.ssl_account.funded_account.blank?
           -#  %th AVAILABLE FOR USE
           -if show_short_links?

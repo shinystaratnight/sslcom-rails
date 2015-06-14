@@ -2,6 +2,7 @@ site: 'remote'
 root_subdomain: "www"
 actionmailer_host: "www.ssl.com"
 community_name: "SSL.com"
+community_domain: "www.ssl.com"
 community_tagline: "copyright 2015"
 merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
@@ -16,6 +17,7 @@ track_visitors: false
 single_server_license_only: true
 show_csr_submit_on_buy_page: false
 enable_google_translate: false
+enable_affiliate_program: true
 enable_exception_notifier: true
 offer_trial: false
 minimum_deposit_amount: 10.00
@@ -40,6 +42,7 @@ mail_address2: "Suite 286"
 mail_city: "Houston"
 mail_state: "TX"
 mail_zip: "77025-1601"
+public_header_phone_number: "1-877-SSL-SECURE"
 # Comment this out if you want to infer the locale
 # off of the http headers
 community_locale: "en"

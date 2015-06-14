@@ -1,6 +1,6 @@
 class OtherPartyRequestMailer < ActionMailer::Base
   default :from => "SSL.com Certificate Services <support@ssl.com>"
-  default_url_options[:host] = "www.ssl.com"
+  default_url_options[:host] = Settings.community_domain
 
   def request_validation(other_party_validation_request)
     @opvr = other_party_validation_request

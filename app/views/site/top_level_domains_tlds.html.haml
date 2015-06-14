@@ -8,14 +8,6 @@
 %h1=c[:title]
 %h2 SSL for ICANN top level domains in alphabetical order
 .default_container
-  %h3 ICANN tlds listing updated on #{Date.today}
-  %p
-    The following list represents all acceptable top-level domains (tlds) for use with #{Settings.community_name} ssl certificates.
-    A tld can be found to the right of the furthest right dot in a domain name. For instance, 'info' would be the tld for
-    'www.domain.info', com for 'www.ssl.com', etc.
-  %table#accepted_country_codes(cellpadding="6")
-    %thead
-      %th Top-Level Domain Name (tld)
-    -CertificateContent::ICANN_TLDS.each do |c|
-      %tr
-        %td.full_name #{c}
+  %h3
+    Please refer the #{link_to "following tlds list","http://data.iana.org/TLD/tlds-alpha-by-domain.txt", target: "blank"}
+    that are compatible tlds with #{Settings.community_name} SSL certificates.

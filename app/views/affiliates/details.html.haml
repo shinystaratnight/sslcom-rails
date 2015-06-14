@@ -77,14 +77,14 @@
             %a(name="sign_up") What's the process to becoming an Authorized #{Settings.community_name} Partner?
           %p
             Becoming an #{Settings.community_name} Referral Link Partner is quick, easy and free. Just
-            =link_to "signup here.", "https://www.ssl.com/affiliate/index.php"
+            =link_to "signup here.", "https://#{Settings.community_domain}/affiliate/index.php"
             Applications
             are normally authorized in one business day.
           %span.title
             %a(name="how") How does it work?
           %p
-            It's very simple. Any visitor that visits www.ssl.com with your code appended to the address
-            (ie www.ssl.com/code/you) belongs to you. Once they purchase an
+            It's very simple. Any visitor that visits #{Settings.community_domain} with your code appended to the address
+            (ie #{Settings.community_domain}/code/you) belongs to you. Once they purchase an
             = succeed ".com" do
               %i{:style => "font-weight:bold;"} SSL
             certificate, they become your customer.
@@ -193,6 +193,6 @@
             Partner is determined to be in breach of this agreement after investigation, their account
             will be promptly terminated.
         .notes
-          %a{:href => "https://www.ssl.com/affiliate/index.php"}
+          %a{:href => "https://#{Settings.community_domain}/affiliate/index.php"}
             %div Limited number of licenses remain for each territory. Sign up today!
       .clear

@@ -11,12 +11,12 @@
     processing status information of each certificate, run historical reports
     on your certificate purchases, and do a host of other administrative
     functions. And that's just the beginning....
-  -unless current_user.is_affiliate?
+  -if Settings.enable_affiliate_program==true && !current_user.is_affiliate?
     .become_reseller_title(style="margin: 10px 0 0")
       %p
         %strong.red NEW! Earn commissions through the #{Settings.community_name} Referral Link Program
       %p
-        %a(href="https://www.ssl.com/affiliate/index.php")
+        %a(href="https://#{Settings.community_domain}/affiliate/index.php")
           Click here
         to become an #{Settings.community_name} Referral Link Partner or
         =link_to "click here for more details", details_affiliates_path

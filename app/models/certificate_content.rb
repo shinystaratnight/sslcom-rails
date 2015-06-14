@@ -1079,7 +1079,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    !!(name=~TLD_REGEX)
+    PublicSuffix.valid?(name)
   end
 
   def self.is_intranet?(name)

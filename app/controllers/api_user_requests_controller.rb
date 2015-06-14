@@ -8,7 +8,7 @@ class ApiUserRequestsController < ApplicationController
   respond_to :xml, :json
 
   TEST_SUBDOMAIN = "sws-test"
-  SITE_DOMAIN = "https://www.ssl.com"
+  SITE_DOMAIN = "https://#{Settings.community_domain}"
 
   rescue_from MultiJson::DecodeError do |exception|
     render :text => exception.to_s, :status => 422

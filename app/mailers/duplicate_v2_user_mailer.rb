@@ -1,6 +1,6 @@
 class DuplicateV2UserMailer < ActionMailer::Base
   default :from => "SSL.com Certificate Services <no-reply@ssl.com>"
-  default_url_options[:host] = "www.ssl.com"
+  default_url_options[:host] = Settings.community_domain
 
   def duplicate_found(dup)
     @to = @opvr.email_addresses.join(", ")
