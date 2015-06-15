@@ -25,7 +25,7 @@
                   )
             %li
               %span.icn_support &nbsp;
-              =link_to "Support", "https://support.ssl.com"
+              =link_to "Support", "https://#{Settings.support_domain}"
             %li
               %span.icn_email &nbsp;
               =link_to "Email Us", contact_us_url
@@ -54,22 +54,23 @@
             -if Settings.offer_trial
               %li
                 %a(href="#{certificate_url("free")}") FREE TRIAL
-            %li
-              %a(href="#{affiliates_url}")
-                %div PARTNERS
-              %ul
-                %li
-                  %a{:href => "#{affiliates_url}"} Overview
-                %li
-                  %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
-                %li
-                  %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
-                %li
-                  %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Program Details
-                %li
-                  %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Pricing
-                %li
-                  %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
+            -if Settings.enable_affiliate_program
+              %li
+                %a(href="#{affiliates_url}")
+                  %div PARTNERS
+                %ul
+                  %li
+                    %a{:href => "#{affiliates_url}"} Overview
+                  %li
+                    %a{:href => "#{details_affiliates_url}"} Referral Link FAQ
+                  %li
+                    %a{:href => "#{affiliate_signup_url}"} Referral Link Signup
+                  %li
+                    %a{:href => "#{details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Program Details
+                  %li
+                    %a{:href => "#{reseller_tiers_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Pricing
+                  %li
+                    %a{:href => "#{new_account_url(:subdomain=>Reseller::SUBDOMAIN)}"} Reseller Sign Up
             %li
               %a{:href => "#{certificate_url('code_signing')}"}
                 %div CODE SIGNING CERTIFICATES
@@ -79,33 +80,53 @@
               %ul
                 %li
                   %a{:href => "#{certificate_url('basicssl')}"}
-                    %i> SSL
-                    \.com Basic
-                %li
-                  %a{:href => "#{certificate_url('premiumssl')}"}
-                    %i> SSL
-                    \.com Premium
+                    -if DEPLOYMENT_CLIENT=~/certassure/
+                      AssureGuard DV
+                    -else
+                      %i> SSL
+                      \.com Basic
+                -if DEPLOYMENT_CLIENT=~/ssl.com/
+                  %li
+                    %a{:href => "#{certificate_url('premiumssl')}"}
+                      %i> SSL
+                      \.com Premium
                 %li
                   %a{:href => "#{certificate_url('ev')}"}
-                    %i> SSL
-                    \.com Enterprise EV
+                    -if DEPLOYMENT_CLIENT=~/certassure/
+                      AssureGuard EV
+                    -else
+                      %i> SSL
+                      \.com Enterprise EV
                 %li
                   %a{:href => "#{certificate_url('wildcard')}"}
-                    Wildcard (Unlimited Subdomains)
+                    -if DEPLOYMENT_CLIENT=~/certassure/
+                      AssureGuard Wildcard
+                    -else
+                      Wildcard (Unlimited Subdomains)
                 %li
                   %a{:href => "#{certificate_url('ucc')}"}
-                    Multi-Domain (SAN/UCC)
+                    -if DEPLOYMENT_CLIENT=~/certassure/
+                      AssureGuard SAN/UCC
+                    -else
+                      Multi-Domain (SAN/UCC)
                 %li
                   %a{:href => "#{certificate_url('evucc')}"}
-                    Multi-Domain Plus (SAN/UCC EV)
+                    -if DEPLOYMENT_CLIENT=~/certassure/
+                      AssureGuard EV SAN/UCC
+                    -else
+                      Multi-Domain Plus (SAN/UCC EV)
                 -if Settings.offer_trial
                   %li
                     %a{:href => "#{certificate_url('free')}"}
-                      Free Trial SSL
-                %li.divider
-                %li
-                  %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
-                    Smart SeaL
+                      -if DEPLOYMENT_CLIENT=~/certassure/
+                        30 Day Trial
+                      -else
+                        Free Trial SSL
+                -if DEPLOYMENT_CLIENT=~/ssl.com/
+                  %li.divider
+                  %li
+                    %a{:href => "#{details_site_seals_url({:subdomain=>false})}"}
+                      Smart SeaL
               -#
                 %li.divider
                 %li

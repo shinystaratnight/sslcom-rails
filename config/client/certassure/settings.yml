@@ -3,6 +3,7 @@ root_subdomain: "www"
 actionmailer_host: "www.certassure.com"
 community_name: "CertAssure"
 community_domain: "www.certassure.com"
+support_domain: "support.certassure.com"
 community_tagline: "copyright 2015"
 merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
@@ -55,8 +56,14 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 
 installation_support_pages: "http://info.certassure.com"
 
-comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi16Kimi16'
+comodo_api_username: 'certassureneal'
+comodo_api_password: 'JRwtGy74'
+ca_certificate_id_ev: "552"
+ca_certificate_id_ov: "551"
+ca_certificate_id_dv: "550"
+ca_certificate_id_client: "556"
+ca_certificate_id_code_signing: "557"
+
 authorize_net_key: '2s9n7LCP'
 authorize_net_transaction_id: '27PD3Czbb343hY5R'
 p_authorize_net_key: '3XzF96x5'

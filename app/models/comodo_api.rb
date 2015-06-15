@@ -164,7 +164,7 @@ class ComodoApi
         "country"=>registrant.country,
         "telephoneNumber"=>registrant.phone,
         "1_csr"=>certificate_order.csr.body,
-        "caCertificateID"=> "510",
+        "caCertificateID"=> Settings.ca_certificate_id_client,
         "1_signatureHash"=>"PREFER_SHA2",
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
           certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
@@ -206,7 +206,7 @@ class ComodoApi
         "dunsNumber"=>"",
         "companyNumber"=>"",
         "1_csr"=>certificate_order.csr.body,
-        "caCertificateID"=>"509",
+        "caCertificateID"=>Settings.ca_certificate_id_code_signing,
         "1_signatureHash"=>"PREFER_SHA2",
         "1_PPP"=> ppp_parameter(certificate_order),
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}

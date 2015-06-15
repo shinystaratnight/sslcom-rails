@@ -3,6 +3,7 @@ root_subdomain: "www"
 actionmailer_host: "www.ssl.com"
 community_name: "SSL.com"
 community_domain: "www.ssl.com"
+support_domain: "support.ssl.com"
 community_tagline: "copyright 2015"
 merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
@@ -57,6 +58,12 @@ installation_support_pages: "http://info.ssl.com"
 
 comodo_api_username: 'likx2m7j'
 comodo_api_password: 'Jimi17Kimi17'
+ca_certificate_id_ev: "508"
+ca_certificate_id_ov: "507"
+ca_certificate_id_dv: "506"
+ca_certificate_id_client: "510"
+ca_certificate_id_code_signing: "509"
+
 authorize_net_key: '2s9n7LCP'
 authorize_net_transaction_id: '27PD3Czbb343hY5R'
 p_authorize_net_key: '3XzF96x5'

@@ -1078,7 +1078,7 @@ class CertificateOrder < ActiveRecord::Base
             'foreignOrderNumber' => ref,
             'countryName'=>csr.country
           )
-          ssl_com_order(params,options)
+          set_comodo_subca(params,options)
           last_sent = csr.domain_control_validations.last_method
           build_comodo_dcv(last_sent, params, options)
         else
@@ -1103,7 +1103,7 @@ class CertificateOrder < ActiveRecord::Base
             params.merge!('days' => days.to_s)
           end
           #ssl.com Sub CA certs
-          ssl_com_order(params,options)
+          set_comodo_subca(params,options)
           build_comodo_dcv(last_sent, params, options)
           fill_csr_fields(params, cc.registrant)
           unless csr.csr_override.blank?
@@ -1152,7 +1152,7 @@ class CertificateOrder < ActiveRecord::Base
         end
       end
       params.merge!('domainNames' => domains_for_comodo.join(","))
-      params.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) unless dcv_methods_for_comodo.blank?
+      params.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) if (dcv_methods_for_comodo && dcv_methods_for_comodo.count==domains_for_comodo.count)
     else
       if last_sent.blank? || last_sent.dcv_method=="http"
         params.merge!('dcvMethod' => "HTTP_CSR_HASH")
@@ -1388,17 +1388,17 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # used for determining which Sub Ca certs to use
-  def ssl_com_order(params, options={})
-    cci="506"
+  def set_comodo_subca(params, options={})
+    cci=Settings.ca_certificate_id_dv
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       cci = if certificate.is_ev?
-                            "508" #ev
+                            Settings.ca_certificate_id_ev #ev
                           # elsif certificate.is_ov?
-                          #   "507" #ov
+                          #   Settings.ca_certificate_id_ov #ov
                           else
-                            "506" #dv
+                            Settings.ca_certificate_id_dv #dv
                           end
     elsif certificate.serial=~/256sslcom/
       cci = if certificate.is_ev?
