@@ -1,4 +1,4 @@
--api_domain = co.is_test ? "https://sws-test.sslpki.com" : "https://sws.sslpki.com"
+-api_domain = "https://" + (co.is_test ? Settings.test_api_domain : Settings.api_domain)
 -#-if co.is_test? || (current_user && (current_user.is_admin? || current_user.ssl_account.is_registered_reseller?))
 .full_width_box
   -if co.certificate.is_server?
@@ -69,14 +69,11 @@
           %li
             %dl
               %dt
-              %dd "100" - EV UCC SSL
-              %dd "101" - UCC SSL
-              %dd "103" - High Assurance SSL
-              %dd "102" - EV SSL
-              %dd "104" - Free SSL
-              %dd "105" - Wildcard SSL
-              %dd "106" - Basic SSL
-              %dd "107" - Premium SSL
+                -serials=%w(evucc256sslcom ucc256sslcom ov256sslcom ev256sslcom dv256sslcom wc256sslcom basic256sslcom)
+                -serials << %w(premium256sslcom) if DEPLOYMENT_CLIENT=~/www.ssl.com/
+                -serials.each do |type|
+                  -c=Certificate.find_by_serial(type)
+                  %dd "#{c.api_product_code}" - #{c.title}
         -if current_user.try("is_admin?")
           %li debug:
           %ul
@@ -126,14 +123,15 @@
           %dl
             %dt
             %dd "342" - free 90 day
-            %dd "301" - basicssl
-            %dd "24"  - ov
-            %dd "343" - wildcard
-            %dd "337" - ev
+            %dd "301" - #{Certificate.find_by_serial("basic256sslcom").title}
+            %dd "24"  - #{Certificate.find_by_serial("ov256sslcom").title}
+            %dd "343" - #{Certificate.find_by_serial("wc256sslcom").title}
+            %dd "337" - #{Certificate.find_by_serial("ev256sslcom").title}
             %dd
-            %dd "279" - ucc
-            %dd "279" - premiumssl
-            %dd "410" - evucc
+            %dd "279" - #{Certificate.find_by_serial("ucc256sslcom").title}
+            -if DEPLOYMENT_CLIENT=~/www.ssl.com/
+              %dd "279" - #{Certificate.find_by_serial("premium256sslcom").title}
+            %dd "410" - #{Certificate.find_by_serial("evucc256sslcom").title}
       %li caCertificateID:
       %ul
         %li

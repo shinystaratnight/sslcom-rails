@@ -26,16 +26,16 @@
               %tr
                 %td=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
               %tr
-                %td=link_to "EV ORDERS", filter_by_certificate_orders_path("ev")
+                %td=link_to "SHOW EV ORDERS", filter_by_certificate_orders_path("ev")
               %tr
-                %td=link_to "UCC ORDERS", filter_by_certificate_orders_path("ucc")
+                %td=link_to "SHOW UCC ORDERS", filter_by_certificate_orders_path("ucc")
               -if DEPLOYMENT_CLIENT=~/ssl\.com/i
                 %tr
-                  %td=link_to "PREMIUM ORDERS", filter_by_certificate_orders_path("premium")
+                  %td=link_to "SHOW PREMIUM ORDERS", filter_by_certificate_orders_path("premium")
               %tr
-                %td=link_to "WILDCARD ORDERS", filter_by_certificate_orders_path("wildcard")
+                %td=link_to "SHOW WILDCARD ORDERS", filter_by_certificate_orders_path("wildcard")
               %tr
-                %td=link_to "TEST ORDERS", filter_by_scope_certificate_orders_path("is_test")
+                %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path("is_test")
           -#-unless current_user.ssl_account.funded_account.blank?
           -#  %th AVAILABLE FOR USE
           -if show_short_links?
@@ -60,8 +60,8 @@
           =link_to "Users", users_url
         %li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
           =link_to "Validations", validations_url
-        %li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
-          =link_to "Documents", validations_url
+        -#%li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
+        -#  =link_to "Documents", validations_url
         %li(id="#{current_page?(site_seals_url) ? 't-intro' : 'manage_site_seals'}")
           =link_to "Smart SeaLs", site_seals_url
         %li(id="#{current_page?(certificate_orders_url) ? 't-intro' : 'manage_certificate_orders'}")

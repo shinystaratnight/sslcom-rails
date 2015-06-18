@@ -149,8 +149,7 @@
             return confirm("Are you sure you want to start over with this certificate order?");
           },
           success: function(data, status){
-            if(data.certificate_order.certificate_content.workflow_state=="new")
-              window.location.href = "#{edit_certificate_order_path(@certificate_order.ref)}";
+            window.location.href = "#{edit_certificate_order_path(@certificate_order.ref)}";
           }
         });
       });

@@ -468,6 +468,38 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  def skip_verification?
+    false
+  end
+
+  # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}
+  def self.generate_ca_certificates(options)
+    dir=Settings.intermediate_certs_path+options[:bundles][:dir]+"/"
+    options[:bundles][:contents].each do |k,v|
+      certfile="#{dir}#{k}"
+      File.open(certfile, 'wb') do |f|
+        tmp=""
+        v.each do |file_name|
+          file=File.new("#{dir}"+file_name.strip, "r")
+          tmp << file.readlines.join("")
+        end
+        f.write tmp
+      end
+    end
+  end
+
+  def order_description
+    try(:description_with_tier) ? certificate_type(self) : description_with_tier
+  end
+
+  private
+
+  # renames 'product' field for certificate including the reseller tiers
+  def self.rename(oldname, newname)
+    certificates = Certificate.unscoped.where{product =~ "%#{oldname}%"}
+    certificates.each {|certificate| certificate.update_column :product, certificate.product.gsub(oldname, newname)}
+  end
+
   #deep level copying function, copies own attributes and then duplicates the sub groups and items
   def duplicate(new_serial, old_pvi_serial, new_pvi_serial)
     now=DateTime.now
@@ -791,27 +823,4 @@ class Certificate < ActiveRecord::Base
     end
   end
 
-  def skip_verification?
-    false
-  end
-
-  # options = {bundles: Certificate::BUNDLES[:comodo][:sha2_sslcom_2014]}
-  def self.generate_ca_certificates(options)
-    dir=Settings.intermediate_certs_path+options[:bundles][:dir]+"/"
-    options[:bundles][:contents].each do |k,v|
-      certfile="#{dir}#{k}"
-      File.open(certfile, 'wb') do |f|
-        tmp=""
-        v.each do |file_name|
-          file=File.new("#{dir}"+file_name.strip, "r")
-          tmp << file.readlines.join("")
-        end
-        f.write tmp
-      end
-    end
-  end
-
-  def order_description
-    try(:description_with_tier) ? certificate_type(self) : description_with_tier
-  end
 end

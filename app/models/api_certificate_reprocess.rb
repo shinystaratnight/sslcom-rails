@@ -7,11 +7,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
 
-  PRODUCTS = {:"100"=> "evucc256sslcom", :"101"=>"ucc256sslcom", :"102"=>"ev256sslcom",
-              :"103"=>"ov256sslcom", :"104"=>"dv256sslcom", :"105"=>"wc256sslcom", :"106"=>"basic256sslcom",
-              :"107"=>"premiumssl256sslcom",
-              :"204"=> "evucc256sslcom", :"202"=>"ucc256sslcom", :"203"=>"ev256sslcom",
-              :"200"=>"basic256sslcom", :"201"=>"wc256sslcom"}
+  PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
 
   validates :account_key, :secret_key, :csr, :ref, presence: true
   validates :period, presence: true, format: /\d+/,

@@ -232,11 +232,15 @@ class CertificateOrder < ActiveRecord::Base
       event :refund, :transitions_to => :refunded
       event :charge_back, :transitions_to => :charged_back
       event :start_over, transitions_to: :paid do |complete=false|
-        duration = self.certificate_content.duration
-        temp_cc=self.certificate_contents.create(duration: duration)
-        # Do not delete the last one
-        (self.certificate_contents-[temp_cc]).each do |cc|
-          cc.delete if ((cc.csr and cc.csr.signed_certificate.blank?) || complete)
+        if self.certificate_contents.count >1
+          self.certificate_contents.last.delete
+        else
+          duration = self.certificate_content.duration
+          temp_cc=self.certificate_contents.create(duration: duration)
+          # Do not delete the last one
+          (self.certificate_contents-[temp_cc]).each do |cc|
+            cc.delete if ((cc.csr or cc.csr.signed_certificate.blank?) || complete)
+          end
         end
       end
     end

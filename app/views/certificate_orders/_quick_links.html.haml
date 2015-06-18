@@ -10,11 +10,12 @@
           =link_to 'Certificate Pricing', reseller_tier_url(current_user.ssl_account.reseller.reseller_tier.id)
       %li &nbsp;
       %li Filter Orders:
-      %li=link_to "Basic SSL", filter_by_certificate_orders_path("basic")
-      %li=link_to "EV SSL", filter_by_certificate_orders_path("ev")
-      %li=link_to "UCC SSL", filter_by_certificate_orders_path("ucc")
-      %li=link_to "Premium SSL", filter_by_certificate_orders_path("premium")
-      %li=link_to "Wildcard SSL", filter_by_certificate_orders_path("wildcard")
+      %li=link_to Certificate.find_by_serial("basic256sslcom").title, filter_by_certificate_orders_path("basic")
+      %li=link_to Certificate.find_by_serial("ev256sslcom").title, filter_by_certificate_orders_path("ev")
+      %li=link_to Certificate.find_by_serial("ucc256sslcom").title, filter_by_certificate_orders_path("ucc")
+      -if DEPLOYMENT_CLIENT=~/www.ssl.com/
+        %li=link_to "Premium SSL", filter_by_certificate_orders_path("premium")
+      %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path("wildcard")
       %li=link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path("is_test")
       %li &nbsp;
       -#-if can?(:develop, CertificateOrder) || current_user.is_admin?

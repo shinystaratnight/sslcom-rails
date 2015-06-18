@@ -27,7 +27,9 @@ SslCom::Application.routes.draw do
   match 'site_checks' => 'site_checks#create', :as => :site_checks
 
   # api
-  constraints DomainConstraint.new(["sws.sslpki.local","sws-test.sslpki.local","sws.sslpki.com","sws-test.sslpki.com"]) do
+  constraints DomainConstraint.new(
+                  %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com
+                  api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)) do
     match '/users' => 'api_user_requests#create_v1_4',
           :as => :api_user_create_v1_4, via: [:post]
     match '/user/:login' => 'api_user_requests#show_v1_4',
