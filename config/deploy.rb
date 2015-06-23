@@ -31,8 +31,11 @@ default_run_options[:pty] = true
 # set :domain, '54.83.39.189' # comodo extractor
 
 # set :application, "sws-test.sslpki.com" # test api
-set :application, "sws.sslpki.com" # api
-set :domain, '174.129.43.244' # sws.sslpki.com api
+# set :application, "sws.sslpki.com" # api
+# set :domain, '174.129.43.244' # sws.sslpki.com api
+
+set :application, "certassure_com"
+set :domain, '107.21.244.70'
 
 #set :deploy_via, :copy
 #set :copy_strategy, :export
