@@ -616,6 +616,13 @@ class CertificateOrder < ActiveRecord::Base
     domain = domain_override || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     case action
+      when /update_dcv/
+        # registrant_params.merge!(api_domains).merge!(api_contacts)
+        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
+            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+             domains: api_domains}.to_json.gsub("\"","\\\"") +
+            "\" #{domain}/certificate/#{self.ref}"
       when /update/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
@@ -625,13 +632,6 @@ class CertificateOrder < ActiveRecord::Base
          domains: api_domains,
          contacts: api_contacts,
          csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
-         "\" #{domain}/certificate/#{self.ref}"
-      when /update_dcv/
-        # registrant_params.merge!(api_domains).merge!(api_contacts)
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
-        {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-         secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-         domains: api_domains}.to_json.gsub("\"","\\\"") +
          "\" #{domain}/certificate/#{self.ref}"
       when /create_w_csr/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+

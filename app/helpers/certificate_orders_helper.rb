@@ -176,6 +176,7 @@ module CertificateOrdersHelper
      amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
      nginx: ["Nginx", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
      v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+     java: ["Java/Tomcat", download_certificate_order_url(certificate_order), SignedCertificate::JAVA_INSTALL_LINK],
      other: ["Other platforms", download_certificate_order_url(certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
      bundle: ["Intermediate certificates (ca chain bundle)", server_bundle_csr_signed_certificate_url(csr, sc), ""]}
   end

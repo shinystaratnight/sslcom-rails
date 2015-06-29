@@ -237,72 +237,70 @@
                   -current = c==@certificate_order.certificate_content
                   -csr = c.csr
                   -sc = c.csr.try(:signed_certificate)
-                  -if current_user.is_admin?
-                    %tr
-                      %td(colspan="5")
-                        -if c!=@certificate_order.certificate_content
-                          %span.previous_requests previous requests
-                  -if current || current_user.is_admin?
-                    %tr
-                      %td(colspan="5")
-                        .certificate_details_box
-                          %strong certificate signing request
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
-                            -unless csr.blank?
-                              %div
-                                submitted on #{c.csr.created_at.strftime("%b %d, %Y")}
-                              =text_area_tag :csr, csr.body, :size=>"30x10"
-                            -else
-                              no certificate signing request found
+                  %tr
+                    %td(colspan="5" style="text-align: left;")
+                      %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }
+                      (server software: #{c.server_software.try :title})
+                  %tr
+                    %td(colspan="5")
+                      .certificate_details_box
+                        %strong certificate signing request
+                        -unless permitted_to?(:create, SignedCertificate.new) && current
+                          -unless csr.blank?
+                            %div
+                              submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
+                            =text_area_tag :csr, csr.body, :size=>"30x10"
                           -else
-                            #csr_submitted_on
-                              %span.submitted_on
-                                -unless csr.try(:created_at).blank?
-                                  submitted on
-                                  \#{csr.created_at.strftime("%b %d, %Y")}
-                                -else
-                                  &nbsp
-                            =form_for csr do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                              =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                              #temporary_csr.hidden[csr, :new]
-                                =text_area_tag :tmp_csr, csr.try(:body)
-                        .certificate_details_box
-                          %strong signed certificate
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
-                            -unless sc.try(:body).blank?
-                              %div
-                                submitted on #{sc.created_at.strftime("%b %d, %Y")}
-                              =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                            -else
-                              %div
-                                no signed certificate found
+                            no certificate signing request found
+                        -else
+                          #csr_submitted_on
+                            %span.submitted_on
+                              -unless csr.try(:created_at).blank?
+                                submitted on
+                                \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                              -else
+                                &nbsp
+                          =form_for csr do |f|
+                            =f.text_area :body, :cols=>30, :rows=>10
+                            .clearfix
+                            =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                            #temporary_csr.hidden[csr, :new]
+                              =text_area_tag :tmp_csr, csr.try(:body)
+                      .certificate_details_box
+                        %strong signed certificate
+                        -unless permitted_to?(:create, SignedCertificate.new) && current
+                          -unless sc.try(:body).blank?
+                            %div
+                              submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                            =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
                           -else
-                            #signed_certificate_submitted_on
-                              %span.submitted_on
-                                -unless sc.try(:created_at).blank?
-                                  submitted on
-                                  \#{sc.created_at.strftime("%b %d, %Y")}
-                                -else
-                                  &nbsp
-                            =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                                #{check_box_tag "email_customer", true, true}notify customer?
-                              =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                              -unless sc.blank?
-                                %textarea.selectAll=sc.decoded
-                              #temporary_signed_certificate.hidden[csr]
-                                =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                        .certificate_details_box
-                          %ul
-                            %li
-                              %strong server software
-                            %li
-                              #{c.server_software.try :title}
+                            %div
+                              no signed certificate found
+                        -else
+                          #signed_certificate_submitted_on
+                            %span.submitted_on
+                              -unless sc.try(:created_at).blank?
+                                submitted on
+                                \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                              -else
+                                &nbsp
+                          =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                            =f.text_area :body, :cols=>30, :rows=>10
+                            .clearfix
+                              #{check_box_tag "email_customer", true, true}notify customer?
+                            =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                            -unless sc.blank?
+                              %textarea.selectAll=sc.decoded
+                            #temporary_signed_certificate.hidden[csr]
+                              =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                      .certificate_details_box
+                        -unless sc.try(:body).blank?
+                          %strong issued domains
+                          %div
+                            includes Common Name (CN)
+                          =text_area_tag :domains, sc.subject_alternative_names.join("\n"), :size=>"30x10"
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")

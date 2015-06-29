@@ -17,17 +17,17 @@
 development:
   encoding: utf8
   #reconnect: true
+  host: 107.21.244.70
   port: 3306
   pool: 10
-  username: ssl_db
-  password: kama2jama2
+  username: certassure_db
+  password: Zounds1999
   socket: /var/run/mysqld/mysqld.sock
   adapter: mysql2
   #use when remote db source
-#    host: 174.129.35.108
-#    database: certassure_com_production
+  database: www_cert_assure_production
 #  else
-  database: certassure_development
+#  database: certassure_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
