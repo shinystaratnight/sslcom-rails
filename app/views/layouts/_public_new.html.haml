@@ -78,43 +78,11 @@
               %a{:href => "#{certificates_url}"}
                 %div SSL CERTIFICATES
               %ul
-                %li
-                  %a{:href => "#{certificate_url('basicssl')}"}
-                    -if DEPLOYMENT_CLIENT=~/certassure/
-                      AssureGuard DV
-                    -else
-                      %i> SSL
-                      \.com Basic
-                -if DEPLOYMENT_CLIENT=~/ssl.com/
+                -%w(dv premiumssl ev wildcard ucc evucc ov).each do |type|
+                  -next if type=='premiumssl' && !(DEPLOYMENT_CLIENT=~/ssl.com/)
                   %li
-                    %a{:href => "#{certificate_url('premiumssl')}"}
-                      %i> SSL
-                      \.com Premium
-                %li
-                  %a{:href => "#{certificate_url('ev')}"}
-                    -if DEPLOYMENT_CLIENT=~/certassure/
-                      AssureGuard EV
-                    -else
-                      %i> SSL
-                      \.com Enterprise EV
-                %li
-                  %a{:href => "#{certificate_url('wildcard')}"}
-                    -if DEPLOYMENT_CLIENT=~/certassure/
-                      AssureGuard Wildcard
-                    -else
-                      Wildcard (Unlimited Subdomains)
-                %li
-                  %a{:href => "#{certificate_url('ucc')}"}
-                    -if DEPLOYMENT_CLIENT=~/certassure/
-                      AssureGuard SAN/UCC
-                    -else
-                      Multi-Domain (SAN/UCC)
-                %li
-                  %a{:href => "#{certificate_url('evucc')}"}
-                    -if DEPLOYMENT_CLIENT=~/certassure/
-                      AssureGuard EV SAN/UCC
-                    -else
-                      Multi-Domain Plus (SAN/UCC EV)
+                    %a{:href => "#{certificate_url(Settings.subca_mapping.send(type).send "product")}"}
+                      =Settings.subca_mapping.send(type).send("label").html_safe
                 -if Settings.offer_trial
                   %li
                     %a{:href => "#{certificate_url('free')}"}

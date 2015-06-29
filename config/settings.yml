@@ -90,7 +90,13 @@ api_product_codes:
    350: "codesigning256sslcom"}
 
 subca_mapping:
-  dv: {product: "basicssl"}
+  dv: {product: "basicssl", label: "<i>SSL</i>.com Basic"}
+  premiumssl: {product: "premiumssl", label: "<i>SSL</i>.com Premium"}
+  ev: {product: "ev", label: "<i>SSL</i>.com Enterprise EV"}
+  ov: {product: "high_assurance", label: "<i>SSL</i>.com High Assurance"}
+  wildcard: {product: "wildcard", label: "Wildcard (Unlimited Subdomains)"}
+  ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
+  evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
 
 # The label you use for 'staff' writers (featured writer, staff, pro, etc.)
 featured_writer_label: 'Featured Writer'

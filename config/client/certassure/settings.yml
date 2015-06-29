@@ -90,12 +90,12 @@ api_product_codes:
    350: "codesigning256sslcom"}
 
 subca_mapping:
-  dv: {product: "assureguard-dv", info: "http://www.masongraphics.co.za/domain_validation.html"}
-  ov: {product: "assureguard-ov", info: "http://www.masongraphics.co.za/ov_certificate.html"}
-  ev: {product: "assureguard-ev", info: "http://www.masongraphics.co.za/ev_certificate.html"}
-  evucc: {product: "assureguard-evucc", info: "http://www.masongraphics.co.za/domain_validation.html"}
-  ucc: {product: "assureguard-ucc", info: "http://www.masongraphics.co.za/uss_san.html"}
-  wildcard: {product: "assureguard-wildcard", info: "http://www.masongraphics.co.za/wildcard_ssl.html"}
+  dv: {product: "assureguard-dv", label: "AssureGuard DV"}
+  ov: {product: "assureguard-ov", label: "AssureGuard OV", info: "http://www.masongraphics.co.za/ov_certificate.html"}
+  ev: {product: "assureguard-ev", label: "AssureGuard EV", info: "http://www.masongraphics.co.za/ev_certificate.html"}
+  evucc: {product: "assureguard-evucc", label: "AssureGuard EV SAN/UCC", info: "http://www.masongraphics.co.za/domain_validation.html"}
+  ucc: {product: "assureguard-ucc", label: "AssureGuard SAN/UCC", info: "http://www.masongraphics.co.za/uss_san.html"}
+  wildcard: {product: "assureguard-wildcard", label: "AssureGuard Wildcard", info: "http://www.masongraphics.co.za/wildcard_ssl.html"}
 
 # The label you use for 'staff' writers (featured writer, staff, pro, etc.)
 featured_writer_label: 'Featured Writer'
