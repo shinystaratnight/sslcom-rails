@@ -225,6 +225,34 @@ class Certificate < ActiveRecord::Base
         flatten.sort{|a,b|a.value.to_i <=> b.value.to_i}
   end
 
+  def pricing(certificate_order,certificate_content)
+    ratio = certificate_order.signed_certificates.try(:last) ? certificate_order.duration_remaining : 1
+    durations=[]
+    result={}
+    num_durations.times do |i|
+      durations <<
+          if is_ucc?
+            tiers=[]
+            num_domain_tiers.times do |j|
+              tiers << ((items_by_domains(true)[i][j].price*((j==0)?3:1))*ratio).format
+
+            end
+            tiers
+          else
+            (items_by_duration[i].price*ratio).format
+          end
+    end
+    result.merge!(durations: durations)
+    if is_ucc? || is_wildcard?
+      licenses=[]
+      num_durations.times do |i|
+        licenses << (items_by_server_licenses[i].price*ratio).format
+      end
+      result.merge!(licenses: licenses, domains: certificate_content.domains)
+    end
+    result
+  end
+
   # use multi_dim to return a multi dimension array of domain types
   def items_by_domains(multi_dim=false)
     if is_ucc?

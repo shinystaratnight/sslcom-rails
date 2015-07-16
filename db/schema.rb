@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150505183402) do
+ActiveRecord::Schema.define(:version => 20150629224035) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -204,6 +204,8 @@ ActiveRecord::Schema.define(:version => 20150505183402) do
     t.boolean  "technical_checkbox"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "label"
+    t.string   "ref"
   end
 
   add_index "certificate_contents", ["certificate_order_id"], :name => "index_certificate_contents_on_certificate_order_id"

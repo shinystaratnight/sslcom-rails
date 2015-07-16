@@ -147,7 +147,10 @@ class ComodoApi
         "1_PPP"=> ppp_parameter(certificate_order),
         "emailAddress"=>certificate_order.csr.common_name,
         "loginName"=>certificate_order.ref,
-        "loginPassword"=>certificate_order.order.reference_number}
+        "loginPassword"=>certificate_order.order.reference_number,
+        "1_csr"=>certificate_order.csr.body,
+        "caCertificateID"=> Settings.ca_certificate_id_client,
+        "1_signatureHash"=>"PREFER_SHA2"}
     comodo_options.merge!( # pro
         "forename"=>registrant.first_name,
         "surname"=>registrant.last_name) unless certificate.product_root=~/basic/i
@@ -163,9 +166,6 @@ class ComodoApi
         "postalCode"=>registrant.postal_code,
         "country"=>registrant.country,
         "telephoneNumber"=>registrant.phone,
-        "1_csr"=>certificate_order.csr.body,
-        "caCertificateID"=> Settings.ca_certificate_id_client,
-        "1_signatureHash"=>"PREFER_SHA2",
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
           certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
     comodo_options.merge!( # enterprise

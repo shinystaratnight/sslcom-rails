@@ -558,6 +558,9 @@ class Order < ActiveRecord::Base
     billable.primary_user
   end
 
+  def is_test?
+    certificate_orders.any?{|co|co.is_test?}
+  end
 
   private
 

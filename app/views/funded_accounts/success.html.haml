@@ -6,7 +6,7 @@
       });
     });
 -title = ""
--title = (@certificate_order.is_test ? "(TEST) " : "") unless @certificate_order.blank?
+-title = (@order.is_test ? "(TEST) " : "")
 -title << (@order.state=="fully_refunded" ? "(REFUNDED) " : "")
 -title += is_receipt? ? "Show Order Transaction" : "Order Was Successful"
 -content_for :title, title
@@ -83,5 +83,5 @@
       #available_funds
         %h3.order_results_header Available Funds in SSL Account
         #available_funds_amount=h ssl_account.funded_account.amount.format :with_currency
-=render partial: "orders/adwords_conversion" if !@order.ext_affiliate_credited? #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
+=render partial: "orders/adwords_conversion" #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
 =confirm_affiliate_sale

@@ -214,7 +214,6 @@ SslCom::Application.routes.draw do
       get :show_cart
       get :search
       get :visitor_trackings
-      get :filter_by_state
       post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
     end
     member do
@@ -222,11 +221,12 @@ SslCom::Application.routes.draw do
       get :refund
     end
   end
+  get '/orders/filter_by_state/:id' => 'Orders#filter_by_state', as: :filter_by_state_orders
 
   resources :apis
   resources :billing_profiles
   match '/certificates/what_is_a_wildcard_ssl_certificate', to: "certificates#what_is_a_wildcard_ssl_certificate", as: :what_is_wildcard
-  match '/certificates/pricing.js', to: "certificates#pricing", as: :certificate_pricing
+  match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing
   resources :certificates do
     collection do
       get :single_domain
@@ -278,4 +278,6 @@ SslCom::Application.routes.draw do
 
   match '/:controller(/:action(/:id))'
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
+
+  get "paypal_express/checkout"
 end

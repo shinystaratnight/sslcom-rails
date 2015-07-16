@@ -19,7 +19,7 @@ gem 'paperclip'
 gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
-gem "savon"
+gem "savon", '~> 2.0'
 gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
 gem 'rb-inotify', :require => false
 gem 'aws-s3'

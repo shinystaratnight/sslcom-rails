@@ -98,6 +98,10 @@ subca_mapping:
   ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
   evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
 
+paypal_express_username: "leo_api1.ssl.com"
+paypal_express_password: "KA2SXREY6FHHKPFH"
+paypal_express_signature: "Ad2XRvwnDnusHGtoRBjGAd6xMpA.A-uv-tJvkI1fNr-aeXlCc0s7KIQb"
+
 # The label you use for 'staff' writers (featured writer, staff, pro, etc.)
 featured_writer_label: 'Featured Writer'
 allow_anonymous_commenting: false

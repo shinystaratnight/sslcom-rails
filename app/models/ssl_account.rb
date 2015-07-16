@@ -273,7 +273,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def primary_user
-    users.first
+    User.unscoped{users.first}
   end
 
   private

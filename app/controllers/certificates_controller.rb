@@ -101,10 +101,12 @@ class CertificatesController < ApplicationController
 
   def pricing
     prep_purchase
+    @values=@certificate.pricing(@certificate_order, @certificate_content)
     respond_to do |format|
       unless @certificate.blank?
         format.html { render :action => "pricing"}
         format.js { render :action => "pricing"}
+        format.json { render :action => "pricing"}
         format.xml  { render :xml => @certificate}
       else
         format.html {not_found}
@@ -116,13 +118,18 @@ class CertificatesController < ApplicationController
 
   def prep_purchase
     unless @certificate.blank?
-      @certificate_order = CertificateOrder.new(:duration=>
-          (params[:id]=='free') ? 1 : 2)
+      @certificate_order =
+          if params[:renewing]
+            CertificateOrder.unscoped.find_by_ref(params[:renewing])
+          elsif params[:rekeying]
+            CertificateOrder.unscoped.find_by_ref(params[:rekeying])
+          else
+            CertificateOrder.new(:duration=>(params[:id]=='free') ? 1 : 2)
+          end
       @certificate_order.ssl_account=
         current_user.ssl_account unless current_user.blank?
       @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
-      domains = params[:renewing] ?
-          CertificateOrder.unscoped.find_by_ref(params[:renewing]).certificate_content.all_domains : []
+      domains = @certificate_order.certificate_content ? @certificate_order.certificate_content.all_domains : []
       @certificate_content = CertificateContent.new(domains: domains)
     end
   end

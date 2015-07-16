@@ -239,7 +239,7 @@
                   -sc = c.csr.try(:signed_certificate)
                   %tr
                     %td(colspan="5" style="text-align: left;")
-                      %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }
+                      %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
                       (server software: #{c.server_software.try :title})
                   %tr
                     %td(colspan="5")

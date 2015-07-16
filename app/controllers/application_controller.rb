@@ -51,28 +51,30 @@ class ApplicationController < ActionController::Base
   end
 
   def credit_affiliate(order)
-    if cookies[:aid] && Affiliate.exists?(cookies[:aid])
-      #10% for retail, 5% for enterprise and resellers
-      rate = current_user.ssl_account.is_registered_reseller? ? 0.05 : 0.2
-      order.line_items.each{|li|
-        li.affiliate_payout_rate=rate
-        li.aff_url = cookies[:ref] unless cookies[:ref].blank?
-      }
-      Affiliate.find(cookies[:aid]).line_items << order.line_items
-      order.ext_affiliate_name="idevaffiliate"
-      order.ext_affiliate_id="72198"
-    else
-      case Settings.affiliate_program
-        when "idevaffiliate"
-          order.ext_affiliate_name="idevaffiliate"
-          order.ext_affiliate_id="72198"
-        when "shareasale"
-          order.ext_affiliate_name="shareasale"
-          order.ext_affiliate_id="50573"
+    if !(order.is_test? || order.cents==0)
+      if cookies[:aid] && Affiliate.exists?(cookies[:aid])
+        #10% for retail, 5% for enterprise and resellers
+        rate = current_user.ssl_account.is_registered_reseller? ? 0.05 : 0.2
+        order.line_items.each{|li|
+          li.affiliate_payout_rate=rate
+          li.aff_url = cookies[:ref] unless cookies[:ref].blank?
+        }
+        Affiliate.find(cookies[:aid]).line_items << order.line_items
+        order.ext_affiliate_name="idevaffiliate"
+        order.ext_affiliate_id="72198"
+      else
+        case Settings.affiliate_program
+          when "idevaffiliate"
+            order.ext_affiliate_name="idevaffiliate"
+            order.ext_affiliate_id="72198"
+          when "shareasale"
+            order.ext_affiliate_name="shareasale"
+            order.ext_affiliate_id="50573"
+        end
       end
+      order.ext_affiliate_credited=false
+      order.save validate: false
     end
-    order.ext_affiliate_credited=false
-    order.save validate: false
   end
 
   def apply_discounts(order)

@@ -91,7 +91,7 @@ class UsersController < ApplicationController
   end
 
   def adjust_funds
-    amount=params["amount"].to_i*100
+    amount=params["amount"].to_f*100
     @user.ssl_account.funded_account.add_cents(amount)
     SystemAudit.create(owner: current_user, target: @user.ssl_account.funded_account,
                        notes: "amount (in USD): #{amount.to_s}",
