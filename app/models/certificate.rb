@@ -69,7 +69,7 @@ class Certificate < ActiveRecord::Base
       {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337,
        "ucc"=>361, "evucc"=>410}
   COMODO_PRODUCT_MAPPINGS_SSL_COM =
-      {"free"=> 342, "high_assurance"=>301, "wildcard"=>343, "ev"=>337,
+      {"free"=> 342, "high_assurance"=>301, "wildcard"=>343, "ev"=>301,
        "ucc"=>279, "evucc"=>410, "premiumssl"=>279, "basicssl"=>301}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
@@ -848,6 +848,39 @@ class Certificate < ActiveRecord::Base
       c.description.merge!(certificate_type: "Enterprise EV UCC")
       c.title = "Enterprise EV Multi-domain UCC SSL"
       c.save
+    end
+  end
+
+  def self.reduce_years(title="assureguard-dv%", days=1095)
+    self.where{product =~ title}.each do |c|
+      c.product_variant_items.where{value > days}.each{|pvi|pvi.delete}
+    end
+  end
+
+  # title - a specific tier of products
+  # prices - an ordered array of prices in cents USD. For ucc, use a 2 dimensional array with the structure
+  #          [[1-3 domain price, 4+ domain price, wildcard price]] in increasing order of years
+  #
+  # ie Certificate.change_prices "assureguard-ucc", [[18500,18500,49500],[31400,31500,82500],[43466,43500,116500]]
+  #    Certificate.change_prices("assureguard-evucc", [[37500,37500],[58500,58500]])
+
+  def self.change_prices(title="assureguard-dv", prices=[6800,11500,15200])
+    self.where{product == title}.each do |c|
+      if c.product_variant_items.where{item_type == "duration"}.count>0 #assume non ucc
+        c.product_variant_items.where{item_type == "duration"}.each_with_index{|pvi,i| pvi.update_column :amount, prices[i]}
+      elsif c.product_variant_items.where{item_type == "ucc_domain"}.count>0 #assume ucc
+        c.product_variant_items.where{item_type == "ucc_domain"}.each{|pvi|
+          i = pvi.value.to_i/365
+          price = if pvi.description=~/3 domains/i
+            prices[i-1][0]
+          elsif pvi.description=~/wildcard/i
+            prices[i-1][2]
+          else
+            prices[i-1][1]
+          end
+          pvi.update_column :amount, price
+        }
+      end
     end
   end
 

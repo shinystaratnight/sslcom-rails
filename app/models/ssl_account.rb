@@ -424,4 +424,10 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
+
+  def self.remove_orphans
+    ids=User.pluck :ssl_account_id
+    SslAccount.where{id << ids}.delete_all
+    Preference.where{(owner_type=="SslAccount") & (owner_id << ids)}.delete_all
+  end
 end

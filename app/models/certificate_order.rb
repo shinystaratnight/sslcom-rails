@@ -1398,7 +1398,7 @@ class CertificateOrder < ActiveRecord::Base
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
       cci = if certificate.is_ev?
-                            Settings.ca_certificate_id_ev #ev
+                            Settings.ca_certificate_id_dv #ev
                           # elsif certificate.is_ov?
                           #   Settings.ca_certificate_id_ov #ov
                           else
