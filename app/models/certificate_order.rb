@@ -1397,13 +1397,15 @@ class CertificateOrder < ActiveRecord::Base
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
-      cci = if certificate.is_ev?
-                            Settings.ca_certificate_id_dv #ev
-                          # elsif certificate.is_ov?
-                          #   Settings.ca_certificate_id_ov #ov
-                          else
-                            Settings.ca_certificate_id_dv #dv
-                          end
+      cci = if Settings.send_dv_first
+              Settings.ca_certificate_id_dv
+            elsif certificate.is_ev?
+              Settings.ca_certificate_id_ev
+            elsif certificate.is_ov?
+              Settings.ca_certificate_id_ov
+            else
+              Settings.ca_certificate_id_dv
+            end
     elsif certificate.serial=~/256sslcom/
       cci = if certificate.is_ev?
                     "403"

@@ -61,7 +61,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.certassure.com"
 
 comodo_api_username: 'certassureneal'
-comodo_api_password: 'JRwtGy74'
+comodo_api_password: '@Certassure15'
 ca_certificate_id_ev: "552"
 ca_certificate_id_ov: "551"
 ca_certificate_id_dv: "550"
@@ -96,6 +96,8 @@ subca_mapping:
   evucc: {product: "assureguard-evucc", label: "AssureGuard EV SAN/UCC", info: "http://www.masongraphics.co.za/domain_validation.html"}
   ucc: {product: "assureguard-ucc", label: "AssureGuard SAN/UCC", info: "http://www.masongraphics.co.za/uss_san.html"}
   wildcard: {product: "assureguard-wildcard", label: "AssureGuard Wildcard", info: "http://www.masongraphics.co.za/wildcard_ssl.html"}
+
+send_dv_first: true
 
 # The label you use for 'staff' writers (featured writer, staff, pro, etc.)
 featured_writer_label: 'Featured Writer'

@@ -69,8 +69,14 @@ class Certificate < ActiveRecord::Base
       {"free"=> 342, "high_assurance"=>24, "wildcard"=>35, "ev"=>337,
        "ucc"=>361, "evucc"=>410}
   COMODO_PRODUCT_MAPPINGS_SSL_COM =
-      {"free"=> 342, "high_assurance"=>301, "wildcard"=>343, "ev"=>301,
-       "ucc"=>279, "evucc"=>410, "premiumssl"=>279, "basicssl"=>301}
+      {"free"=> 342,
+       Settings.subca_mapping.ov.product=>Settings.send_dv_first ? 301 : 24,
+       Settings.subca_mapping.wildcard.product=>343,
+       Settings.subca_mapping.ev.product=> Settings.send_dv_first ? 301 : 337,
+       Settings.subca_mapping.ucc.product=>279,
+       Settings.subca_mapping.evucc.product=> Settings.send_dv_first ? 279 : 410,
+       "premiumssl"=>279,
+       Settings.subca_mapping.dv.product=>301}
 
   # ssl_ca_bundle.txt is the same as COMODOHigh-AssuranceSecureServerCA.crt
   # file_name => description (as displayed in emails)

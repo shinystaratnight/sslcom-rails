@@ -119,9 +119,7 @@ class CertificatesController < ApplicationController
   def prep_purchase
     unless @certificate.blank?
       @certificate_order =
-          if params[:renewing]
-            CertificateOrder.unscoped.find_by_ref(params[:renewing])
-          elsif params[:rekeying]
+          if params[:rekeying]
             CertificateOrder.unscoped.find_by_ref(params[:rekeying])
           else
             CertificateOrder.new(:duration=>(params[:id]=='free') ? 1 : 2)

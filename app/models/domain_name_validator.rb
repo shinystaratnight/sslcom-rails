@@ -8,7 +8,7 @@ class DomainNameValidator < ActiveModel::EachValidator
       end
     else
       record.errors[attribute] << (options[:message] || "#{value} is not a valid domain name") unless
-          PublicSuffix.valid?(val)
+          PublicSuffix.valid?(value)
     end
   end
 end
