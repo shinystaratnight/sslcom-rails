@@ -323,9 +323,9 @@ module ApplicationHelper
   # options:
   #     permitted_to? :update, user, :context => :account
   #
-  def permitted_to? (privilege, object_or_sym = nil, options = {}, &block)
-    controller.permitted_to?(privilege, object_or_sym, options, &block)
-  end
+  # def permitted_to? (privilege, object_or_sym = nil, options = {}, &block)
+  #   controller.permitted_to?(privilege, object_or_sym, options, &block)
+  # end
 
   # While permitted_to? is used for authorization in views, in some cases
   # content should only be shown to some users without being concerned

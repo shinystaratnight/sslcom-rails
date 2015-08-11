@@ -1,0 +1,8 @@
+= error_messages_for 'billing_profile'
+%h3 New Billing Profile
+#stylized.reseller_registration_form
+  =form_for @billing_profile, :url => { :action => "create" } do |form|
+    = render :partial => "form", :locals => { :form => form}
+    #button_container
+      #auto_adjust
+        =image_submit_tag "next_bl.gif", alt: "create new billing profile"

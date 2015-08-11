@@ -196,6 +196,26 @@ class ApiCertificateRequestsController < ApplicationController
     error(500, 500, "server error")
   end
 
+  def api_string_v1_4
+    if @result.save
+      @acr = @result.find_certificate_order
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
+        template = "api_certificate_requests/api_string_v1_4"
+        @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
+        @rendered=render_to_string(:template => template)
+        @result.update_attribute :response, @rendered
+        render(:template => template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+  rescue => e
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, "server error")
+  end
+
   def index_v1_4
     @result.end = DateTime.now if @result.end.blank?
     if @result.save
@@ -432,6 +452,8 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate
               when "retrieve_v1_3", "show_v1_4", "index_v1_4"
                 ApiCertificateRetrieve
+              when "api_string_v1_4"
+                ApiParameters
               when "quote"
                 ApiCertificateQuote
               when "dcv_email_resend_v1_3"
@@ -441,12 +463,12 @@ class ApiCertificateRequestsController < ApplicationController
               when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4"
                 ApiDcvMethods
             end
-    @result=klass.new(params[:api_certificate_request] || _wrap_parameters(params)['api_certificate_request'])
-    @result.debug = params[:debug] if params[:debug]
-    @result.send_to_ca = params[:send_to_ca] if params[:send_to_ca]
-    @result.action = params[:action]
-    @result.ref = params[:ref] if params[:ref]
-    @result.options = params[:options] if params[:options]
+    @result=klass.new(_wrap_parameters(params)['api_certificate_request'] || params[:api_certificate_request])
+    @result.debug ||= params[:debug] if params[:debug]
+    @result.send_to_ca ||= params[:send_to_ca] if params[:send_to_ca]
+    @result.action ||= params[:action]
+    @result.ref ||= params[:ref] if params[:ref]
+    @result.options ||= params[:options] if params[:options]
     @result.test = @test
     @result.request_url = request.url
     @result.parameters = params.to_json

@@ -27,6 +27,8 @@ class BillingProfile < ActiveRecord::Base
 
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
+  default_scope where{(status << ['disabled']) | (status == nil)}
+
   scope :success, lambda{
     joins{orders.transactions}.where{orders.transactions.success==true}
   }

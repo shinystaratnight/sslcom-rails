@@ -612,75 +612,76 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def to_api_string(action="update", domain_override=nil)
-    domain = domain_override || "https://sws-test.sslpki.com"
+  def to_api_string(options={action: "update", domain_override: nil, caller: nil})
+    domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
-    case action
+    case options[:action]
       when /update_dcv/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             domains: api_domains}.to_json.gsub("\"","\\\"") +
-            "\" #{domain}/certificate/#{self.ref}"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    domains: api_domains}
+        options[:caller].blank? ?
+          'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /update/
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                   server_software: cc.server_software_id.to_s,
+                   domains: api_domains,
+                   contacts: api_contacts,
+                   csr: certificate_content.csr.body}.merge!(registrant_params)
         # registrant_params.merge!(api_domains).merge!(api_contacts)
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
-        {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-         secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-         server_software: cc.server_software_id.to_s,
-         domains: api_domains,
-         contacts: api_contacts,
-         csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
-         "\" #{domain}/certificate/#{self.ref}"
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /create_w_csr/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             product: certificate.api_product_code,
-             period: certificate_duration(:comodo_api).to_s,
-             server_software: cc.server_software_id.to_s,
-             domains: api_domains,
-             contacts: api_contacts,
-             csr: certificate_content.csr.body}.merge!(registrant_params).to_json.gsub("\"","\\\"") +
-            "\" #{domain}/certificates"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                   product: certificate.api_product_code,
+                   period: certificate_duration(:comodo_api).to_s,
+                   server_software: cc.server_software_id.to_s,
+                   domains: api_domains,
+                   contacts: api_contacts,
+                   csr: certificate_content.csr.body}.merge!(registrant_params)
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /create/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             product: certificate.api_product_code,
-             period: certificate_duration(:comodo_api).to_s,
-             domains: api_domains}.to_json.gsub("\"","\\\"") +
-            "\" #{domain}/certificates"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    product: certificate.api_product_code,
+                    period: certificate_duration(:comodo_api).to_s,
+                    domains: api_domains}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /show/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
-             response_type: ("individually" unless signed_certificate.blank?)}.
-            to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                   query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
+                   response_type: ("individually" unless signed_certificate.blank?)}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /index/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
-            to_json.gsub("\"","\\\"") + "\" #{domain}/certificates"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /dcv_emails/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
-             merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name}).
-            to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+                    merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email" : api_params
       when /dcv_methods_wo_csr/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
-            to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods" : api_params
       when /dcv_methods_w_csr/
-        'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
-            {account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-             secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-             csr: certificate_content.csr.body}.
-            to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/csr_hash"
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    csr: certificate_content.csr.body}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/csr_hash" : api_params
     end
   end
 

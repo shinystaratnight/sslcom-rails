@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150629224035) do
+ActiveRecord::Schema.define(:version => 20150803202258) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(:version => 20150629224035) do
     t.string   "encrypted_card_number_iv"
     t.string   "vat"
     t.string   "tax"
+    t.string   "status"
   end
 
   add_index "billing_profiles", ["ssl_account_id"], :name => "index_billing_profile_on_ssl_account_id"
@@ -253,6 +254,7 @@ ActiveRecord::Schema.define(:version => 20150629224035) do
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
+  add_index "certificate_orders", ["id", "is_test"], :name => "index_certificate_orders_on_test"
   add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name => "index_certificate_orders_on_workflow_state", :unique => true
   add_index "certificate_orders", ["is_expired"], :name => "index_certificate_orders_on_is_expired"
   add_index "certificate_orders", ["ref"], :name => "index_certificate_orders_on_ref"
@@ -836,6 +838,8 @@ ActiveRecord::Schema.define(:version => 20150629224035) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], :name => "index_contacts_on_recipients_subject_trigger_value_expires_at"
 
   create_table "server_softwares", :force => true do |t|
     t.string   "title",       :null => false
