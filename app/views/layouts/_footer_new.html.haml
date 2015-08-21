@@ -1,71 +1,255 @@
-.content
-  -unless is_new_order_page?
-    -if Rails.env =~ /production/
+-unless DEPLOYMENT_CLIENT=~/certassure/i
+  .content
+    -unless is_new_order_page?
+      -if Rails.env =~ /production/
+        .box
+          =render 'site/site_seal'
+          .footer-like
+            %iframe{:allowTransparency => "true", :frameborder => "0", :scrolling => "no", :src => "//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fsslcorp&width=210&height=62&colorscheme=dark&show_faces=false&border_color&stream=false&header=false", :style => "border:none; overflow:hidden; width:210px; height:62px;"}
+          %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
+            %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-whitetxt-ssl-com-51001755.png", style: "border: 0;"}/
       .box
-        =render 'site/site_seal'
-        .footer-like
-          %iframe{:allowTransparency => "true", :frameborder => "0", :scrolling => "no", :src => "//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2Fsslcorp&width=210&height=62&colorscheme=dark&show_faces=false&border_color&stream=false&header=false", :style => "border:none; overflow:hidden; width:210px; height:62px;"}
-        %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
-          %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-whitetxt-ssl-com-51001755.png", style: "border: 0;"}/
-    .box
-      %span.title CERTIFICATES
-      %ul
-        %li
-          %a{:href => "#{certificate_path('basicssl')}"}
-            %b> SSL
-            \.com
-            Basic
-        %li
-          %a{:href => "#{certificate_path('premiumssl')}"}
-            %b> SSL
-            \.com Premium
-        %li
-          %a{:href => "#{certificate_path('ev')}"}
-            %b> SSL
-            \.com Enterprise EV
-        %li=link_to "Wildcard Certificate", certificate_path('wildcard')
-        %li=link_to "Multi-Domain (UCC)", certificate_path('ucc')
-        %li=link_to "Multi-Domain EV (UCC)", certificate_path('evucc')
-    .box
-      %span.title SUPPORT
-      %ul
-        %li=link_to "What is <b>SSL</b>?".html_safe, "http://info.ssl.com/article.aspx?id=10241"
-        %li=link_to "Knowledgebase", "https://support.ssl.com/Knowledgebase/List"
-        %li=link_to "Contact Support", "https://support.ssl.com/Tickets/Submit"
-        %li
-          %a{:href => "http://www.ssltools.com"}
-            %b> SSL
-            \.com Tools
-        %li=link_to "Compatibility/Acceptance", browsers_path
-        %li=link_to "Country Codes", country_codes_csrs_path
-        %li=link_to "Top Level Domains (tlds)", tlds_path
-        %li=link_to "Validation Requirements", requirements_validations_path
-    .box
-      %span.title PROGRAMS
-      %ul
-        %li=link_to "Partners", affiliates_path
-        %li=link_to "RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"
-        -Reseller::TARGETED.each do |t|
-          %li=send :link_to, t.titleize, eval("#{t}_path")
-    .box
-      %span.title COMPANY
-      %ul
-        %li=link_to "About #{Settings.community_name}", about_path
-        %li=link_to "Contact Us", contact_us_path
-        -# %li
-          %a{:href => "#"} Jobs
-        %li=link_to "CA Repository", repository_path
-        %li=link_to "Terms of Service", terms_of_use_path
-        %li=link_to "Privacy", privacy_policy_path
-        -# %li=link_to "Refund Policy", ""
-/ end of content
-.clear
-.content
-  .copyright
-    \© #{Time.now.year}&nbsp;
-    %b>
-      %i> SSL
-    \.com Corp. All Rights Reserved
+        %span.title CERTIFICATES
+        %ul
+          %li
+            %a{:href => "#{certificate_path('basicssl')}"}
+              %b> SSL
+              \.com
+              Basic
+          %li
+            %a{:href => "#{certificate_path('premiumssl')}"}
+              %b> SSL
+              \.com Premium
+          %li
+            %a{:href => "#{certificate_path('ev')}"}
+              %b> SSL
+              \.com Enterprise EV
+          %li=link_to "Wildcard Certificate", certificate_path('wildcard')
+          %li=link_to "Multi-Domain (UCC)", certificate_path('ucc')
+          %li=link_to "Multi-Domain EV (UCC)", certificate_path('evucc')
+      .box
+        %span.title SUPPORT
+        %ul
+          %li=link_to "What is <b>SSL</b>?".html_safe, "http://info.ssl.com/article.aspx?id=10241"
+          %li=link_to "Knowledgebase", "https://support.ssl.com/Knowledgebase/List"
+          %li=link_to "Contact Support", "https://support.ssl.com/Tickets/Submit"
+          %li
+            %a{:href => "http://www.ssltools.com"}
+              %b> SSL
+              \.com Tools
+          %li=link_to "Compatibility/Acceptance", browsers_path
+          %li=link_to "Country Codes", country_codes_csrs_path
+          %li=link_to "Top Level Domains (tlds)", tlds_path
+          %li=link_to "Validation Requirements", requirements_validations_path
+      .box
+        %span.title PROGRAMS
+        %ul
+          %li=link_to "Partners", affiliates_path
+          %li=link_to "RESTful API", "http://docs.sslcomapi.apiary.io/", target: "_new"
+          -Reseller::TARGETED.each do |t|
+            %li=send :link_to, t.titleize, eval("#{t}_path")
+      .box
+        %span.title COMPANY
+        %ul
+          %li=link_to "About #{Settings.community_name}", about_path
+          %li=link_to "Contact Us", contact_us_path
+          -# %li
+            %a{:href => "#"} Jobs
+          %li=link_to "CA Repository", repository_path
+          %li=link_to "Terms of Service", terms_of_use_path
+          %li=link_to "Privacy", privacy_policy_path
+          -# %li=link_to "Refund Policy", ""
+        / end of content
+        .clear
+  .content
+    .copyright
+      \© #{Time.now.year}&nbsp;
+      %b>
+        %i> SSL
+      \.com Corp. All Rights Reserved
+-else
+  #renew-query
+    %h2#renew-query-text Renew Product
+    %h4 Enter your reference/voucher number
+    %form
+      %input#renew-query-reference.wpcf7-form-control.wpcf7-text.wpcf7-validates-as-required{"aria-invalid" => "false", "aria-required" => "true", :type => "text", :value => "ca-"}
+        #renew-query-confirm.signup{:onclick => "renewRedirect()", :style => "margin-bottom:10px;margin-top:10px;"} RENEW
+  .et_pb_section.et_section_regular{:style => "background-color:#f5f5f5;"}
+    .et_pb_row
+      .et_pb_column.et_pb_column_1_3
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "http://www.ssltools.com/", :target => "_blank"}
+            %img{:src => "/wp-content/uploads/2015/06/ssl-toolbox.png"}
+              %br
+                SSL Certificate Toolbox
+        / .et_pb_text
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "/whitepapers"}
+            %img{:src => "/wp-content/uploads/2015/06/whitepapers.png"}
+              %br
+                Whitepaper Resources
+      / .et_pb_text
+      / .et_pb_column
+      .et_pb_column.et_pb_column_1_3
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "#"}
+            %img{:src => "/wp-content/uploads/2015/06/certificate-configuration.png"}
+              %br
+                Certificate Configuration &amp; Installation Support
+        / .et_pb_text
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "/customer-feedback"}
+            %img{:src => "/wp-content/uploads/2015/06/comments.png"}
+              %br
+                Customer Comments
+      / .et_pb_text
+      / .et_pb_column
+      .et_pb_column.et_pb_column_1_3
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "/industry-news"}
+            %img{:src => "/wp-content/uploads/2015/06/industry-news.png"}
+              %br
+                Blog, WebSecurity and Industry News
+        / .et_pb_text
+        .et_pb_text.et_pb_bg_layout_light.et_pb_text_align_center.footer-bar-item
+          %a{:href => "/request-a-demo"}
+            %img{:src => "/wp-content/uploads/2015/06/request-demo.png"}
+              %br
+                Request a Demo
+  / .et_pb_text
+  / .et_pb_column
+  / .et_pb_row
+  .et_pb_row.cert-footer-menu
+    .cert-footer-menu-col
+      %a{:href => "/ssl-certificates"} SSL Certificates
+      %a{:href => "/code-signing-certificate"} Code Signing Certificates
+      %a{:href => "/email-and-identity-certificates"} Email & Identity Certificates
+      %a{:href => "/mobile-device-certificates"} Mobile Device Management
+    .cert-footer-menu-col
+      %a{:href => "/enterprise-managed-pki"} Enterprise MKPI
+      %a{:href => "/about-certassure"} About CertAssure
+      %a{:href => "/trust-assurance"} Trust Assurance Services
+      %a{:href => "/compare-ssl"} Compare SSL Certificates
+    .cert-footer-menu-col
+      %a{:href => "/always-on-ssl"} Always-On-SSL
+      %a{:href => "/secured-seal-of-trust"} Secured Seal of Trust
+      %a{:href => "/seal-install"} Install Seal of Trust
+      %a{:href => "/ssl-corner-of-trust"} Corner Secured Seal of Trust
+    .cert-footer-menu-col
+      %a{:href => "/free-trial-ssl"} Trial SSL Certificates
+      %a{:href => "/contact"} Contact Us
+      %a{:href => "#"} Support
+    .cert-footer-email
+      %form#mc-embedded-subscribe-form.validate{:action => "//certassure.us11.list-manage.com/subscribe/post?u=e45f2ecdea9d292fd68eec4e8&amp;id=be39574f68", :method => "post", :name => "mc-embedded-subscribe-form", :novalidate => "", :target => "_blank"}
+        %p Register your email for all the latest news and special offers
+        %br
+          %input#mce-EMAIL{:name => "EMAIL", :placeholder => "email address", :required => "", :type => "email", :value => ""}
+            %div{:style => "position: absolute; left: -5000px;"}
+              %input{:name => "b_e45f2ecdea9d292fd68eec4e8_be39574f68", :tabindex => "-1", :type => "text", :value => ""}/
+            %input#mc-embedded-subscribe.signup{:name => "subscribe", :style => "border:0 solid white", :type => "submit", :value => "Subscribe"}
+  .footer-logos
+    %img.footer-image{:src => "/wp-content/uploads/2015/06/trust_ev.png"}
+      %img.footer-image{:src => "/wp-content/uploads/2015/06/ta_trust_alliance.png"}
+        %img.footer-image{:src => "/wp-content/uploads/2015/06/cab.png"}
+          %img.footer-image{:src => "/wp-content/uploads/2015/06/ca_security.png"}
+            %img.footer-image{:src => "/wp-content/uploads/2015/06/qualys.png"}
+              %img.footer-image{:src => "/wp-content/uploads/2015/07/guarantee.png"}
+  #certificate-image{:onmouseout => "document.getElementById('certificate-popup').style.display = 'none';", :onmouseover => "document.getElementById('certificate-popup').style.display = 'block';"}
+    %img{:src => "/wp-content/uploads/2015/06/trust01corner.png"}/
+  #certificate-popup
+    %img{:src => "/wp-content/uploads/2015/06/popup_graphic.png"}/
+  %footer#main-footer
+    #et-footer-nav
+      .container
+        %ul#menu-footer-menu.bottom-nav
+          %li#menu-item-880.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-880
+            %a{:href => "/wp-content/uploads/2015/07/Website-Terms-and-Conditions.pdf"} Terms and Conditions
+          %li#menu-item-881.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-881
+            %a{:href => "/wp-content/uploads/2015/07/CERTASSURE-Web-Site-Privacy-Policy.pdf", :target => "_blank"} Privacy Policy
+          %li#menu-item-923.menu-item.menu-item-type-post_type.menu-item-object-page.menu-item-923
+            %a{:href => "https://www.certassure.com/contact/"} Contact
+          %li#menu-item-882.menu-item.menu-item-type-custom.menu-item-object-custom.menu-item-882
+            %a{:href => "http://support.certassure.com"} Support
+          %li#menu-item-924.menu-item.menu-item-type-post_type.menu-item-object-page.menu-item-924
+            %a{:href => "https://www.certassure.com/industry-news/"} Industry News
+          %li#menu-item-925.menu-item.menu-item-type-post_type.menu-item-object-page.menu-item-925
+            %a{:href => "https://www.certassure.com/repository/"} Repository
+    / #et-footer-nav
+    #footer-bottom
+      .container.clearfix
+        %ul.et-social-icons
+          %li.et-social-icon.et-social-facebook
+            %a.icon{:href => "#"}
+              %span Facebook
+          %li.et-social-icon.et-social-twitter
+            %a.icon{:href => "#"}
+              %span Twitter
+          %li.et-social-icon.et-social-google-plus
+            %a.icon{:href => "#"}
+              %span Google
+          %li.et-social-icon.et-social-linkedin
+            %a.icon{:href => "https://www.linkedin.com/company/certassure‎"}
+              %span LinkedIn
+        %p#footer-info &copy; 2015 CERTASSURE INC. SSL Certificate Authority and Trust Assurance Services. All Rights Reserved
+        %br/
+        %p#footer-subinfo All trademarks displayed on this site are the exclusive property of the respective holders
+    / .container
+    / #main-footer
+    / #et-main-area
+    / #page-container
+    %script{:src => "/wp-content/uploads/2015/06/cbpFWTabs.js"}
+  :javascript
+      (function() {
+        [].slice.call( document.querySelectorAll( '.tabs' ) ).forEach( function( el ) {
+          new CBPFWTabs( el );
+        });
+
+      })();
+    %script{:src => "/wp-content/uploads/2015/07/jquery.simplemodal.js"}
+  :javascript
+      function openRenewDialog(product, baseUrl) {
+        jQuery('#renew-query-text').text('Renew ' + product);
+        jQuery('#renew-query').modal();
+      };
+
+      function renewRedirect() {
+        var url = 'https://www.certassure.com/certificate_orders/{-orderid-}/renew';
+        var ref = jQuery('#renew-query-reference').val();
+        window.location.href = url.replace('{-orderid-}', ref);
+      }
+
+      function aossl(title, body) {
+        jQuery('#aossl_header').text(title);
+        jQuery('#aossl_text').text(body);
+        jQuery('#aossl_info_box').slideDown("fast");
+      }
+
+      function aossl_off() {
+        jQuery('#aossl_info_box').hide();
+      }
+
+      function swapTab(newTab, content) {
+        jQuery('.tab-current').removeClass('tab-current');
+        jQuery(newTab).addClass('tab-current');
+        jQuery('.content-current').removeClass('content-current');
+        jQuery(content).addClass('content-current');
+      }
+    %script{:src => "https://www.certassure.com/wp-content/plugins/contact-form-7/includes/js/jquery.form.min.js?ver=3.51.0-2014.06.20", :type => "text/javascript"}
+  :javascript
+      /*  */
+      var _wpcf7 = {"loaderUrl":"https:\/\/www.certassure.com\/wp-content\/plugins\/contact-form-7\/images\/ajax-loader.gif","sending":"Sending ..."};
+      /*  */
+    %script{:src => "https://www.certassure.com/wp-content/plugins/contact-form-7/includes/js/scripts.js?ver=4.2.1", :type => "text/javascript"}
+  %script{:src => "https://www.certassure.com/wp-includes/js/comment-reply.min.js?ver=4.2.3", :type => "text/javascript"}
+  %script{:src => "https://www.certassure.com/wp-content/themes/Divi/js/jquery.fitvids.js?ver=2.3.2", :type => "text/javascript"}
+  %script{:src => "https://www.certassure.com/wp-content/themes/Divi/js/waypoints.min.js?ver=2.3.2", :type => "text/javascript"}
+  %script{:src => "https://www.certassure.com/wp-content/themes/Divi/js/jquery.magnific-popup.js?ver=2.3.2", :type => "text/javascript"}
+  :javascript
+      /*  */
+      var et_custom = {"ajaxurl":"https:\/\/www.certassure.com\/wp-admin\/admin-ajax.php","images_uri":"https:\/\/www.certassure.com\/wp-content\/themes\/Divi\/images","et_load_nonce":"9222bdd6d5","subscription_failed":"Please, check the fields below to make sure you entered the correct information.","fill":"Fill","field":"field","invalid":"Invalid email","captcha":"Captcha","prev":"Prev","previous":"Previous","next":"Next"};
+      /*  */
+    %script{:src => "https://www.certassure.com/wp-content/themes/Divi/js/custom.js?ver=2.3.2", :type => "text/javascript"}
+
 -if Rails.env=~/production/
   / Start of StatCounter Code for Default Guide
   :javascript

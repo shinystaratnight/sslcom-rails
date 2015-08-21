@@ -1,6 +1,6 @@
 class ApiCertificateRequestsController < ApplicationController
   include SiteSealsHelper
-  before_filter :set_test, :record_parameters
+  before_filter :set_test, :record_parameters, except: [:scan,:analyze]
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
   after_filter :notify
   layout false
@@ -15,16 +15,18 @@ class ApiCertificateRequestsController < ApplicationController
 
   TEST_SUBDOMAIN = "sws-test"
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
+  SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
+  ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
 
   rescue_from MultiJson::DecodeError do |exception|
     render :text => exception.to_s, :status => 422
   end
 
   def notify
-    OrderNotifier.api_executed(@rendered).deliver if (@result.errors.blank? && @rendered)
+    OrderNotifier.api_executed(@rendered).deliver if @rendered
   end
 
-  def set_result_parameters(result, acr, template)
+  def set_result_parameters(result, acr, rendered)
     result.ref = acr.ref
     result.order_status = acr.status
     result.order_amount = acr.order(true).amount.format
@@ -33,7 +35,7 @@ class ApiCertificateRequestsController < ApplicationController
     result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(acr)
     result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
     result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
-    result.update_attribute :response, render_to_string(:template => template)
+    result.update_attribute :response, rendered
   end
 
   def create_v1_3
@@ -84,7 +86,8 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end
-            set_result_parameters(@result, @acr, template)
+            @rendered=render_to_string(:template => template)
+            set_result_parameters(@result, @acr, @rendered)
             # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
@@ -120,7 +123,8 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
-            set_result_parameters(@result, @acr, template)
+            @rendered=render_to_string(:template => template)
+            set_result_parameters(@result, @acr, @rendered)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
             render(:template => template)
           else
@@ -196,12 +200,12 @@ class ApiCertificateRequestsController < ApplicationController
     error(500, 500, "server error")
   end
 
-  def api_string_v1_4
+  def api_parameters_v1_4
     if @result.save
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
-        template = "api_certificate_requests/api_string_v1_4"
+        template = "api_certificate_requests/api_parameters_v1_4"
         @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
         @rendered=render_to_string(:template => template)
         @result.update_attribute :response, @rendered
@@ -214,6 +218,32 @@ class ApiCertificateRequestsController < ApplicationController
     logger.error e.message
     e.backtrace.each { |line| logger.error line }
     error(500, 500, "server error")
+  end
+
+  def scan
+    @result=->(parameters, url) do
+      timeout(60) do
+        SCAN_COMMAND.call parameters, url
+      end
+    end
+    respond_to do |format|
+      format.html {render inline: @result.call("--curves", params[:url])}
+      format.js {render json: @result.call("--curves -j", params[:url])}
+      format.json {render json: @result.call("--curves -j", params[:url])}
+    end
+  end
+
+  def analyze
+    @result=->(parameters, url) do
+      timeout(60) do
+        ANALYZE_COMMAND.call parameters, url
+      end
+    end
+    respond_to do |format|
+      format.html {render inline: @result.call("-t", params[:url])}
+      format.js {render json: @result.call("-j -t", params[:url])}
+      format.json {render json: @result.call("-j -t", params[:url])}
+    end
   end
 
   def index_v1_4
@@ -452,7 +482,7 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate
               when "retrieve_v1_3", "show_v1_4", "index_v1_4"
                 ApiCertificateRetrieve
-              when "api_string_v1_4"
+              when "api_parameters_v1_4"
                 ApiParameters
               when "quote"
                 ApiCertificateQuote

@@ -737,6 +737,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def self.link_renewal(old, new)
+    CertificateOrder.find_by_ref(new).update_column :renewal_id, CertificateOrder.find_by_ref(old).id
+  end
+
 =begin
   Renews certificate orders and also handles the billing aspects
   Use the order's credit card, then the most recent successfully card card
