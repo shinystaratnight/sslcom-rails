@@ -77,17 +77,18 @@
                 =# link_to image_tag('question_mark.png'), '#what_is_security_code', :rel => 'prettyPhoto', :id => 'what_is_security_code_link'
             .subheading Total Amount To Charge
             =render :partial => "form", :locals => {:f => f, :object => Order.new}
-            =link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
-    -if certificate
-      #subscriber_agreement
-        %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:
-        =text_area_tag :agreement, render(file: certificate.subscriber_agreement[:location]), :size=>"106x8"
-    #button_container
-      =render partial: 'shared/prev_next_buttons'
-    .trust_seal(style="text-align: center;")
-      =render 'site/site_seal'
-      %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
-        %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
+            -#=link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
+    -if DEPLOYMENT_CLIENT=~/www.ssl.com/
+      -if certificate
+        #subscriber_agreement
+          %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:
+          =text_area_tag :agreement, render(file: certificate.subscriber_agreement[:location]), :size=>"106x8"
+      #button_container
+        =render partial: 'shared/prev_next_buttons'
+      .trust_seal(style="text-align: center;")
+        =render 'site/site_seal'
+        %a{style: "margin-left: 12px", href: "http://www.bbb.org/houston/business-reviews/internet-services/ssl-com-in-houston-tx-51001755/#bbbonlineclick", title: "SSL.Com BBB Business Review", target: '_blank'}
+          %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
     .waiting_bar.clearfix
       =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
 =render :partial => 'index_scripts'
