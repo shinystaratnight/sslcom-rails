@@ -72,6 +72,7 @@ authorize_net_key: '2s9n7LCP'
 authorize_net_transaction_id: '27PD3Czbb343hY5R'
 p_authorize_net_key: '3XzF96x5'
 p_authorize_net_transaction_id: '473cmgtHDd7yY49K'
+olark_id: '3356-178-10-2724'
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
