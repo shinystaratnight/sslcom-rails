@@ -73,7 +73,7 @@ module CertificateOrdersHelper
             if certificate_order.renewal && certificate_order.renewal.paid?
               link_to 'see renewal', certificate_order_path(certificate_order.renewal)
             else
-              link_to 'renew', renew_certificate_order_path(certificate_order)
+              "<ul><li>#{link_to 'click to renew', renew_certificate_order_path(certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(certificate_order)}</li></ul>".html_safe
             end
           else
             if certificate_order.certificate.is_free?
