@@ -19,6 +19,14 @@ $('#expand_register_card').live('click', function(){
     $(':radio[id*='+profile_id+']').attr("checked","checked");
     profile_form_hidden = true;
   }
+  if($("#funding_source_paypal").is(":checked")){
+    $('[name*=next]').hide();
+    $('[name*=paypal]').show();
+  }
+  else{
+    $('[name*=next]').show();
+    $('[name*=paypal]').hide();
+  }
 });
 $('.delete_profile').livequery(
   'ajax:beforeSend', function(){
@@ -45,12 +53,14 @@ if(profile_form_hidden == false){
   $(':radio[name*=funding_source]').removeAttr("checked");
   $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
 }
-$('.paypal_method').click(function(){
-  $('#billing_profile_details, #credit_card_details').hide();
-  $(':radio[value*=paypal]').attr('checked', 'checked');
-});
-$('.credit_card_method').click(function(){
-  $('#billing_profile_details, #credit_card_details').show();
-  $(':radio[value*=credit_card]').attr('checked', 'checked');
+$(':radio[name*=funding_source]').change(function(){
+  if($("#funding_source_paypal").is(":checked")){
+    $('[name*=next]').hide();
+    $('[name*=paypal]').show();
+  }
+  else{
+    $('[name*=next]').show();
+    $('[name*=paypal]').hide();
+  }
 });
 

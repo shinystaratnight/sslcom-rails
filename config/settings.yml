@@ -74,6 +74,16 @@ p_authorize_net_key: '3XzF96x5'
 p_authorize_net_transaction_id: '473cmgtHDd7yY49K'
 olark_id: '3356-178-10-2724'
 
+paypal_express:
+  development:
+   username: "leo-facilitator_api1.ssl.com"
+   password: "1373405411"
+   signature: "AQU0e5vuZCvSg-XJploSa.sGUDlpAJk4MS-StTGW3nR1cLoXYinXNPFz"
+  production:
+   username: "leo_api1.ssl.com"
+   password: "KA2SXREY6FHHKPFH"
+   signature: "Ad2XRvwnDnusHGtoRBjGAd6xMpA.A-uv-tJvkI1fNr-aeXlCc0s7KIQb"
+
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
 

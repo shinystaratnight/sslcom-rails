@@ -1,17 +1,6 @@
 -today = Date.today
 #credit_card_owner
   .subheading Billing Information
-  .clearfix
-    %label{:for=>"payment_method"}
-      Payment method:
-      %span.label_desc choose payment option
-    .radio_choices
-      .radio_w_desc.clearfix.paypal_method
-        =radio_button_tag :payment_method, "paypal", false
-        %span.has_account_container Paypal
-      .radio_w_desc.clearfix.credit_card_method
-        =radio_button_tag :payment_method, "credit_card", true
-        %span.has_account_container Credit Card
   #billing_profile_details
     -for column in BillingProfile::BILLING_INFORMATION_COLUMNS
       -required = BillingProfile::REQUIRED_COLUMNS.include? column

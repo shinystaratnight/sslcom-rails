@@ -6,7 +6,7 @@
       });
     });
 -title = ""
--title = (@order.is_test ? "(TEST) " : "")
+-title = (@order.is_test? ? "(TEST) " : "")
 -title << (@order.state=="fully_refunded" ? "(REFUNDED) " : "")
 -title += is_receipt? ? "Show Order Transaction" : "Order Was Successful"
 -content_for :title, title

@@ -1,3 +1,4 @@
 #auto_adjust
   =image_submit_tag "prev_bl.gif", :name=>"prev"
   =image_submit_tag "next_bl.gif", :name=>"next", alt: "submit"
+  =link_to image_tag("next_bl.gif", alt: "paypal"), {:controller => 'paypal_express', :action => 'checkout'}, style: "display: none", :name=>"paypal"
