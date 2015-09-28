@@ -2,11 +2,11 @@
   / Google Code for Sale Conversion Page
   %script{type: "text/javascript"}
     /* <![CDATA[ */
-    var google_conversion_id = "#{@order.reference_number}";
+    var google_conversion_id = 975052302;
     var google_conversion_language = "en";
     var google_conversion_format = "3";
     var google_conversion_color = "ffffff";
-    var google_conversion_label = "#{@order.reference_number}";
+    var google_conversion_label = "bHSXCPu0h2AQjrz40AM";
     var google_conversion_value = "#{@order.amount}";
     var google_remarketing_only = false;
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -36,7 +36,7 @@
       });
     ga('ecommerce:send');
     /* ]]> */
-  -#%script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
-  -#%noscript
-  -#  %div{style: "display:inline;"}
-  -#    %img{alt: "", height: "1", src: "//www.googleadservices.com/pagead/conversion/975052302/?value=#{@order.amount}&amp;label=#{@order.reference_number}&amp;guid=ON&amp;script=0", style: "border-style:none;", width: "1"}/
+  %script{src: "//www.googleadservices.com/pagead/conversion.js", type: "text/javascript"}
+  %noscript
+    %div{style: "display:inline;"}
+      %img{alt: "", height: "1", src: "//www.googleadservices.com/pagead/conversion/975052302/?value=#{@order.amount}&amp;label=#{@order.reference_number}&amp;guid=ON&amp;script=0", style: "border-style:none;", width: "1"}/

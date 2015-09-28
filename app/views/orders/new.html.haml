@@ -77,7 +77,7 @@
                 =# link_to image_tag('question_mark.png'), '#what_is_security_code', :rel => 'prettyPhoto', :id => 'what_is_security_code_link'
             .subheading Total Amount To Charge
             =render :partial => "form", :locals => {:f => f, :object => Order.new}
-            -#=link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
+            =link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
     -if certificate
       #subscriber_agreement
         %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:

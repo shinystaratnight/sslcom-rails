@@ -37,6 +37,7 @@ default_run_options[:pty] = true
 set :application, "certassure_com"
 set :domain, '107.21.244.70'
 
+
 #set :deploy_via, :copy
 #set :copy_strategy, :export
 #set :copy_remote_dir, "/tmp"

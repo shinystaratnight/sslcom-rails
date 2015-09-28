@@ -14,6 +14,22 @@ module PaypalExpressHelper
     }
   end
 
+  def get_order_info(gateway_response, cart)
+    subtotal, shipping, total = get_totals(cart)
+    {
+        shipping_address: gateway_response.address,
+        email: gateway_response.email,
+        name: gateway_response.name,
+        gateway_details: {
+            :token => gateway_response.token,
+            :payer_id => gateway_response.payer_id,
+        },
+        subtotal: subtotal,
+        shipping: shipping,
+        total: total,
+    }
+  end
+
   def get_shipping(cart)
     # define your own shipping rule based on your cart here
     # this method should return an integer
@@ -21,15 +37,29 @@ module PaypalExpressHelper
 
   def get_items(cart)
     cart.line_items.collect do |line_item|
-      product = line_item.product
+      product = line_item.sellable.certificate
 
       {
           :name => product.title,
-          :number => product.serial_number,
-          :quantity => line_item.quantity,
-          :amount => to_cents(product.price),
+          :number => product.serial,
+          :quantity => 1,
+          :amount => line_item.amount.cents,
       }
     end
+  end
+
+  def get_purchase_params(cart, request, params)
+    subtotal, shipping, total = get_totals(cart)
+    return to_cents(total), {
+        :ip => request.remote_ip,
+        :token => params[:token],
+        :payer_id => params[:payer_id],
+        :subtotal => to_cents(subtotal),
+        :shipping => to_cents(shipping),
+        :handling => 0,
+        :tax =>      0,
+        :items =>    get_items(cart),
+    }
   end
 
   def get_totals(cart)
@@ -40,6 +70,6 @@ module PaypalExpressHelper
   end
 
   def to_cents(money)
-    (money*100).round
+    (money*1).round
   end
 end

@@ -286,4 +286,6 @@ SslCom::Application.routes.draw do
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
   get "paypal_express/checkout"
+  get "paypal_express/review"
+  get "paypal_express/purchase"
 end

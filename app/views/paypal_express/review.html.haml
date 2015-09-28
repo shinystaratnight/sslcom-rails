@@ -1,0 +1,57 @@
+%h3 Paypal Order Information
+
+%h4 Your Total
+%p= "Subtotal: #{number_to_currency (@order_info[:subtotal]*0.01)}"
+%p= "Shipping: #{number_to_currency (@order_info[:shipping]*0.01)}"
+%p= "Total: #{number_to_currency (@order_info[:total]*0.01)}"
+
+%h4 Shipping Address
+%table
+  %tr
+    %td
+      ==Name
+    %td
+      = @order_info[:shipping_address]['name']
+  %tr
+    %td
+      ==Company
+    %td
+      = @order_info[:shipping_address]['company']
+  %tr
+    %td
+      == Address 1
+    %td
+      = @order_info[:shipping_address]['address1']
+  %tr
+    %td
+      ==Address 2
+    %td
+      = @order_info[:shipping_address]['address2']
+  %tr
+    %td
+      == City
+    %td
+      = @order_info[:shipping_address]['city']
+  %tr
+    %td
+      == State
+    %td
+      = @order_info[:shipping_address]['state']
+  %tr
+    %td
+      == Country
+    %td
+      = @order_info[:shipping_address]['country']
+  %tr
+    %td
+      == Zipcode
+    %td
+      = @order_info[:shipping_address]['zip']
+
+%h4 Your Email:
+= @order_info[:email]
+%h4 Your Paypal account holder name:
+= @order_info[:name]
+
+
+= link_to 'Complete Purchase', paypal_express_purchase_path(:token => @order_info[:gateway_details][:token], :payer_id => @order_info[:gateway_details][:payer_id])
