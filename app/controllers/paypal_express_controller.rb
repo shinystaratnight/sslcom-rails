@@ -4,35 +4,44 @@ class PaypalExpressController < ApplicationController
   include ActiveMerchant::Billing
   include ApplicationHelper, OrdersHelper, PaypalExpressHelper
 
+  def item_to_buy
+    params[:make_deposit] ? make_deposit : current_order
+  end
+
+  def make_deposit
+    account = current_user.ssl_account || User.new.build_ssl_account
+    account.purchase Deposit.new({amount: params[:amount],payment_method: 'paypal'})
+  end
+
   def checkout
-    total_as_cents, setup_purchase_params = get_setup_purchase_params current_order, request
+    total_as_cents, setup_purchase_params = get_setup_purchase_params item_to_buy, request
     setup_response = @gateway.setup_purchase(total_as_cents, setup_purchase_params)
     redirect_to @gateway.redirect_url_for(setup_response.token)
   end
 
   def review
     if params[:token].nil?
-      redirect_to home_url, :notice => 'Woops! Something went wrong!'
+      redirect_to root_url, :notice => 'Woops! Something went wrong!'
       return
     end
 
     gateway_response = @gateway.details_for(params[:token])
 
     unless gateway_response.success?
-      redirect_to home_url, :notice => "Sorry! Something went wrong with the Paypal purchase. Here's what Paypal said: #{gateway_response.message}"
+      redirect_to root_url, :notice => "Sorry! Something went wrong with the Paypal purchase. Here's what Paypal said: #{gateway_response.message}"
       return
     end
 
-    @order_info = get_order_info gateway_response, current_order
+    @order_info = get_order_info gateway_response, item_to_buy
   end
 
   def purchase
-    if params[:token].nil? or params[:payer_id].nil?
-      redirect_to home_url, :notice => "Sorry! Something went wrong with the Paypal purchase. Please try again later."
+    if params[:token].nil?
+      redirect_to orders_url, :notice => "Sorry! Something went wrong with the Paypal purchase. Please try again later."
       return
     end
 
-    total_as_cents, purchase_params = get_purchase_params current_order, request, params
+    total_as_cents, purchase_params = get_purchase_params @gateway.details_for(params[:token]), request, params
     purchase = @gateway.purchase total_as_cents, purchase_params
 
     if purchase.success?

@@ -3,7 +3,7 @@ module PaypalExpressHelper
     subtotal, shipping, total = get_totals(cart)
     return to_cents(total), {
         :ip => request.remote_ip,
-        :return_url => url_for(:action => 'review', :only_path => false),
+        :return_url => url_for(:action => 'purchase', :only_path => false),
         :cancel_return_url => root_url,
         :subtotal => to_cents(subtotal),
         :shipping => to_cents(shipping),
@@ -24,9 +24,9 @@ module PaypalExpressHelper
             :token => gateway_response.token,
             :payer_id => gateway_response.payer_id,
         },
-        subtotal: subtotal,
-        shipping: shipping,
-        total: total,
+        subtotal: gateway_response.params['order_total'],
+        shipping: gateway_response.params['shipping_total'],
+        total: gateway_response.params['order_total']
     }
   end
 
@@ -37,28 +37,43 @@ module PaypalExpressHelper
 
   def get_items(cart)
     cart.line_items.collect do |line_item|
-      product = line_item.sellable.certificate
-
-      {
-          :name => product.title,
-          :number => product.serial,
-          :quantity => 1,
-          :amount => line_item.amount.cents,
-      }
+      if line_item.sellable.is_a?(Deposit)
+        {
+            :name => "Deposit",
+            :number => "sslcomdeposit",
+            :quantity => 1,
+            :amount => line_item.amount.cents,
+        }
+      else
+        product = line_item.sellable.certificate
+        {
+            :name => product.title,
+            :number => product.serial,
+            :quantity => 1,
+            :amount => line_item.amount.cents,
+        }
+      end
     end
   end
 
-  def get_purchase_params(cart, request, params)
-    subtotal, shipping, total = get_totals(cart)
-    return to_cents(total), {
+  def get_purchase_params(gateway_response, request, params)
+    items = gateway_response.params['PaymentDetails']['PaymentDetailsItem']
+    items=[items] unless items.is_a?(Array)
+    new_items = items.map{|i|
+      {amount: to_cents(i['Amount'].to_f * 100),
+       name: i['Name'],
+       quantity: i['Quantity'],
+       Number: i['Number']}
+    }
+    return to_cents(gateway_response.params['order_total'].to_f * 100), {
         :ip => request.remote_ip,
-        :token => params[:token],
-        :payer_id => params[:payer_id],
-        :subtotal => to_cents(subtotal),
-        :shipping => to_cents(shipping),
+        :token => gateway_response.token,
+        :payer_id => gateway_response.payer_id,
+        :subtotal => to_cents(gateway_response.params['order_total'].to_f * 100),
+        :shipping => to_cents(gateway_response.params['shipping_total'].to_f * 100),
         :handling => 0,
         :tax =>      0,
-        :items =>    get_items(cart),
+        :items =>    new_items
     }
   end
 

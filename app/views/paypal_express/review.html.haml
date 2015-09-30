@@ -1,9 +1,9 @@
 %h3 Paypal Order Information
 
 %h4 Your Total
-%p= "Subtotal: #{number_to_currency (@order_info[:subtotal]*0.01)}"
-%p= "Shipping: #{number_to_currency (@order_info[:shipping]*0.01)}"
-%p= "Total: #{number_to_currency (@order_info[:total]*0.01)}"
+%p= "Subtotal: #{number_to_currency (@order_info[:subtotal])}"
+%p= "Shipping: #{number_to_currency (@order_info[:shipping])}"
+%p= "Total: #{number_to_currency (@order_info[:total])}"
 
 %h4 Shipping Address
 %table

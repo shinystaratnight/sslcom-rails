@@ -537,6 +537,7 @@
       if(bracket == null || bracket == "" || bracket == ".")
         bracket = 0;
       var current_balance = $.toMoneyFloat($('#current_balance').text());
+      $('[name*=paypal]').attr("href", $('[name*=paypal]').attr("href").replace(/amount=\d+/, "amount="+$('#funded_account_amount').val()*100));
       $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
     };
     $.adjust_items_in_cart();

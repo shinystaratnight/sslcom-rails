@@ -19,12 +19,12 @@ $('#expand_register_card').live('click', function(){
     $(':radio[id*='+profile_id+']').attr("checked","checked");
     profile_form_hidden = true;
   }
-  if($("#funding_source_paypal").is(":checked")){
-    $('[name*=next]').hide();
+  if($("#funding_source_paypal, #funded_account_funding_source_paypal").is(":checked")){
+    $('[name*=next],[name*=load_funds]').hide();
     $('[name*=paypal]').show();
   }
   else{
-    $('[name*=next]').show();
+    $('[name*=next],[name*=load_funds]').show();
     $('[name*=paypal]').hide();
   }
 });
@@ -54,12 +54,12 @@ if(profile_form_hidden == false){
   $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
 }
 $(':radio[name*=funding_source]').change(function(){
-  if($("#funding_source_paypal").is(":checked")){
-    $('[name*=next]').hide();
+  if($("#funding_source_paypal, #funded_account_funding_source_paypal").is(":checked")){
+    $('[name*=next],[name*=load_funds]').hide();
     $('[name*=paypal]').show();
   }
   else{
-    $('[name*=next]').show();
+    $('[name*=next],[name*=load_funds]').show();
     $('[name*=paypal]').hide();
   }
 });
