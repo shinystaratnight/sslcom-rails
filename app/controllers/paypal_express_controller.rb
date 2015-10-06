@@ -14,6 +14,16 @@ class PaypalExpressController < ApplicationController
   end
 
   def checkout
+    unless current_user
+      @user = User.new(params[:user])
+      if  @user.valid?
+        save_user
+      else
+        respond_to do |format|
+          format.html { render "orders/new" }
+        end and return
+      end
+    end
     total_as_cents, setup_purchase_params = get_setup_purchase_params item_to_buy, request
     setup_response = @gateway.setup_purchase(total_as_cents, setup_purchase_params)
     redirect_to @gateway.redirect_url_for(setup_response.token)
@@ -46,6 +56,9 @@ class PaypalExpressController < ApplicationController
 
     if purchase.success?
       # you might want to destroy your cart here if you have a shopping cart
+      if purchase_params[:items][0][:name]=~/deposit/i
+
+      end
       notice = "Thanks! Your purchase is now complete!"
     else
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"

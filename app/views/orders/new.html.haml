@@ -66,8 +66,16 @@
         -if current_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}
-              =fields_for :billing_profile, @billing_profile do |form|
-                = render :partial => "billing_profiles/form", :locals => { :form => form }
+              .subheading Payment Method
+              .paypal.clearfix
+                = label_tag "Paypal"
+                = radio_button_tag :payment_method, "paypal", false
+              .credit_card.clearfix
+                = label_tag "Credit Card"
+                = radio_button_tag :payment_method, "credit_card", true
+              #credit_card_form
+                =fields_for :billing_profile, @billing_profile do |form|
+                  = render :partial => "billing_profiles/form", :locals => { :form => form }
             -if current_page?(action: 'checkout')
               .subheading Optional Discounting
               .clearfix
@@ -76,7 +84,8 @@
                 = button_tag("click to update price", id: "apply_discount", name: "apply_discount", :type => 'button')
                 =# link_to image_tag('question_mark.png'), '#what_is_security_code', :rel => 'prettyPhoto', :id => 'what_is_security_code_link'
             .subheading Total Amount To Charge
-            =render :partial => "form", :locals => {:f => f, :object => Order.new}
+            =render :partial => "orders/form", :locals => {:f => f, :object => Order.new}
+            =link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
     -if certificate
       #subscriber_agreement
         %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:
@@ -90,4 +99,4 @@
           %img{alt: "SSL.Com BBB Business Review", src: "//seal-houston.bbb.org/seals/black-seal-200-42-blacktxt-ssl-com-51001755.png", style: "border: 0;"}/
     .waiting_bar.clearfix
       =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display: none; vertical-align: middle;')
-=render :partial => 'index_scripts'
+=render :partial => 'orders/index_scripts'

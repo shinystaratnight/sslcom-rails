@@ -387,17 +387,6 @@ class OrdersController < ApplicationController
     end
   end
 
-  def save_user
-    @user.create_ssl_account
-    @user.roles << Role.find_by_name(Role::CUSTOMER)
-    @user.signup!(params)
-    @user.activate!(params)
-    @user.deliver_activation_confirmation!
-    @user_session = UserSession.create(@user)
-    @current_user_session = @user_session
-    Authorization.current_user = @current_user = @user_session.record
-  end
-
   def find_order
     @order = Order.unscoped{Order.find_by_reference_number(params[:id])}
   end

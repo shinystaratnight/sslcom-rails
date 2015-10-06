@@ -27,6 +27,14 @@ $('#expand_register_card').live('click', function(){
     $('[name*=next],[name*=load_funds]').show();
     $('[name*=paypal]').hide();
   }
+  if($("#payment_method_paypal").is(":checked")){
+    $('#credit_card_form').hide();
+    $('form#new_order').attr("action","/paypal_express/checkout");
+  }
+  else{
+    $('#credit_card_form').show();
+    $('form#new_order').attr("action","/orders");
+  }
 });
 $('.delete_profile').livequery(
   'ajax:beforeSend', function(){
@@ -55,12 +63,22 @@ if(profile_form_hidden == false){
 }
 $(':radio[name*=funding_source]').change(function(){
   if($("#funding_source_paypal, #funded_account_funding_source_paypal").is(":checked")){
-    $('[name*=next],[name*=load_funds]').hide();
+    $('[name*=next],[name*=load_funds],#credit_card_form').hide();
     $('[name*=paypal]').show();
   }
   else{
-    $('[name*=next],[name*=load_funds]').show();
+    $('[name*=next],[name*=load_funds],#credit_card_form').show();
     $('[name*=paypal]').hide();
+  }
+});
+$(':radio[name*=payment_method]').change(function(){
+  if($("#payment_method_paypal").is(":checked")){
+    $('#credit_card_form').hide();
+    $('form#new_order').attr("action","/paypal_express/checkout");
+  }
+  else{
+    $('#credit_card_form').show();
+    $('form#new_order').attr("action","/orders");
   }
 });
 
