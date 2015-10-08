@@ -1,4 +1,4 @@
--if Rails.env == "production" && !@order.ext_affiliate_credited? && !@order.created_at < 5.minutes.ago
+-if Rails.env == "production" && !@order.ext_affiliate_credited? && @order.created_at > 5.minutes.ago
   / Google Code for Sale Conversion Page
   %script{type: "text/javascript"}
     /* <![CDATA[ */

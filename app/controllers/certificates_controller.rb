@@ -79,15 +79,6 @@ class CertificatesController < ApplicationController
     buy
   end
 
-  def find_tier
-    @tier =''
-    if current_user and current_user.ssl_account.has_role?('reseller')
-      @tier = current_user.ssl_account.reseller_tier_label + 'tr'
-    elsif cookies[:r_tier]
-      @tier = cookies[:r_tier] + 'tr'
-    end
-  end
-
   def get_certificates_list
     @certificates = Certificate.public
     unless @tier.blank?
@@ -124,8 +115,7 @@ class CertificatesController < ApplicationController
           else
             CertificateOrder.new(:duration=>(params[:id]=='free') ? 1 : 2)
           end
-      @certificate_order.ssl_account=
-        current_user.ssl_account unless current_user.blank?
+      @certificate_order.ssl_account=current_user.ssl_account unless current_user.blank?
       @certificate_order.has_csr=false #this is the single flag that hides/shows the csr prompt
       domains = @certificate_order.certificate_content ? @certificate_order.certificate_content.all_domains : []
       @certificate_content = CertificateContent.new(domains: domains)

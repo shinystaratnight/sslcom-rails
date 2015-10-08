@@ -57,7 +57,8 @@ class PaypalExpressController < ApplicationController
     if purchase.success?
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/deposit/i
-
+        account = current_user.ssl_account
+        account.purchase Deposit.new({amount: params[:amount],payment_method: 'paypal'})
       end
       notice = "Thanks! Your purchase is now complete!"
     else

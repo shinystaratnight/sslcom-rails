@@ -24,9 +24,9 @@ set :bundle_cmd, 'ruby -S bundle'
 ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
-# set :application, "ssl_com"
+set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-# set :domain, '184.73.226.63' #WP production
+set :domain, '184.73.226.63' #WP production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
@@ -34,8 +34,8 @@ default_run_options[:pty] = true
 # set :application, "sws.sslpki.com" # api
 # set :domain, '174.129.43.244' # sws.sslpki.com api
 
-set :application, "certassure_com"
-set :domain, '107.21.244.70'
+# set :application, "certassure_com"
+# set :domain, '107.21.244.70'
 
 
 #set :deploy_via, :copy

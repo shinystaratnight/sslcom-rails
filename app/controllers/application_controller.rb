@@ -57,6 +57,15 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = @current_user = @user_session.record
   end
 
+  def find_tier
+    @tier =''
+    if current_user and current_user.ssl_account.has_role?('reseller')
+      @tier = current_user.ssl_account.reseller_tier_label + 'tr'
+    elsif cookies[:r_tier]
+      @tier = cookies[:r_tier] + 'tr'
+    end
+  end
+
   def add_to_cart line_item
     session[:cart_items] << line_item.model_and_id
   end
@@ -96,8 +105,9 @@ class ApplicationController < ActionController::Base
   end
 
   def cart_contents
+    find_tier
     cart = cookies[:cart]
-    cart.blank? ? {} : JSON.parse(cookies[:cart])
+    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
   end
 
   def cart_products

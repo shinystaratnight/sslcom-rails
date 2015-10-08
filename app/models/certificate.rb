@@ -256,7 +256,7 @@ class Certificate < ActiveRecord::Base
       end
       result.merge!(licenses: licenses, domains: certificate_content.domains)
     end
-    result
+    result.merge!(product: product)
   end
 
   # use multi_dim to return a multi dimension array of domain types
