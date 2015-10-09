@@ -58,14 +58,22 @@ class PaypalExpressController < ApplicationController
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/deposit/i
         account = current_user.ssl_account
-        account.purchase Deposit.new({amount: params[:amount],payment_method: 'paypal'})
+        order=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
+        order.description = "Paypal Deposit"
+        order.deposit_mode=true
+        order.mark_paid!
+      else
+        current_user.ssl_account.orders << purchase
+        record_order_visit(purchase)
+        credit_affiliate(purchase)
+        clear_cart
       end
       notice = "Thanks! Your purchase is now complete!"
     else
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"
     end
 
-    redirect_to root_url, :notice => notice
+    redirect_to order_url(order), :notice => notice
   end
 
   private

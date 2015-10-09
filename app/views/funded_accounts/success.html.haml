@@ -70,6 +70,8 @@
               %span purchase order #{@order.po_number}
             -elsif @order.quote_number
               %span quote #{@order.quote_number}
+            -elsif @order.description =~ /paypal/i
+              %span Paypal
             -elsif current_user.ssl_account.is_registered_reseller?
               %span funded account
             -else

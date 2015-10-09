@@ -207,7 +207,7 @@ class OrdersController < ApplicationController
   # GET /orders/1.xml
   def show
     @order.receipt=true
-    if @order.description == 'Deposit'
+    if @order.description =~ /Deposit/i
       @deposit = @order
     elsif @order.line_items.count==1
       @certificate_order = @order.certificate_orders.uniq.last

@@ -54,8 +54,7 @@ class FundedAccountsController < ApplicationController
     end
     account = current_user.ssl_account
     @funded_account.ssl_account = @billing_profile.ssl_account = account
-    @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if
-      @funded_account.funding_source.blank?
+    @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
     if @funded_account.valid?
       @account_total = account.funded_account
       #if not deducting order, then it's a straight deposit since we don't deduct anything
