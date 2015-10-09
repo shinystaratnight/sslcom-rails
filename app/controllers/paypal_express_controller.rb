@@ -62,11 +62,12 @@ class PaypalExpressController < ApplicationController
         order.description = "Paypal Deposit"
         order.deposit_mode=true
         order.mark_paid!
+        account.funded_account.increment! :cents, total_as_cents
       else
-        current_user.ssl_account.orders << purchase
-        record_order_visit(purchase)
-        credit_affiliate(purchase)
-        clear_cart
+        # current_user.ssl_account.orders << purchase
+        # record_order_visit(purchase)
+        # credit_affiliate(purchase)
+        # clear_cart
       end
       notice = "Thanks! Your purchase is now complete!"
     else

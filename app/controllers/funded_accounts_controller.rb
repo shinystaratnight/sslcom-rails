@@ -19,8 +19,7 @@ class FundedAccountsController < ApplicationController
   end
 
   def allocate_funds_for_order
-    @funded_account = current_user ? current_user.ssl_account.funded_account :
-      FundedAccount.new
+    @funded_account = current_user ? current_user.ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"
     if params[:id] == "certificate"
       @certificate_order = current_user.ssl_account.certificate_orders.current
