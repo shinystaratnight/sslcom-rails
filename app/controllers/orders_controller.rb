@@ -130,7 +130,7 @@ class OrdersController < ApplicationController
         @order.full_refund!
         SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
         @order.line_items.each{|li|
-          OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if li.sellable.try("external_order_number")
+          OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if(defined? li.sellable.external_order_number)
           OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.notes =~ /DV#(\d+)/
         }
       else

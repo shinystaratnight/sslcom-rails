@@ -1,9 +1,9 @@
 module PaypalExpressHelper
-  def get_setup_purchase_params(cart, request)
+  def get_setup_purchase_params(cart, request, params)
     subtotal, shipping, total = get_totals(cart)
     return to_cents(total), {
         :ip => request.remote_ip,
-        :return_url => url_for(:action => 'purchase', :only_path => false),
+        :return_url => url_for(:action => 'purchase', :only_path => false, deduct_order: params[:deduct_order]),
         :cancel_return_url => root_url,
         :subtotal => to_cents(subtotal),
         :shipping => to_cents(shipping),

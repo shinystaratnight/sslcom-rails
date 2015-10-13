@@ -24,7 +24,7 @@ class PaypalExpressController < ApplicationController
         end and return
       end
     end
-    total_as_cents, setup_purchase_params = get_setup_purchase_params item_to_buy, request
+    total_as_cents, setup_purchase_params = get_setup_purchase_params(item_to_buy, request, params)
     setup_response = @gateway.setup_purchase(total_as_cents, setup_purchase_params)
     redirect_to @gateway.redirect_url_for(setup_response.token)
   end
@@ -58,11 +58,22 @@ class PaypalExpressController < ApplicationController
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/deposit/i
         account = current_user.ssl_account
-        order=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
-        order.description = "Paypal Deposit"
-        order.deposit_mode=true
-        order.mark_paid!
+        @deposit=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
+        @deposit.description = "Paypal Deposit"
+        @deposit.deposit_mode=true
+        @deposit.mark_paid!
         account.funded_account.increment! :cents, total_as_cents
+        if params[:deduct_order]=~/true/i
+          setup_certificate_orders
+          @order = current_order
+          if account.funded_account.cents >= @order.cents
+            account.funded_account.decrement! :cents, @order.cents
+            @order.finalize_sale(params: params, deducted_from: @deposit,
+                                 visitor_token: @visitor_token, cookies: cookies, user: current_user)
+          else
+            notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{((account.funded_account.cents - @order.cents)*0.01).to_money}"
+          end
+        end
       else
         # current_user.ssl_account.orders << purchase
         # record_order_visit(purchase)
@@ -73,8 +84,7 @@ class PaypalExpressController < ApplicationController
     else
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"
     end
-
-    redirect_to order_url(order), :notice => notice
+    redirect_to order_url(@order), :notice => notice
   end
 
   private

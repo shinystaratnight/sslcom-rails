@@ -122,6 +122,50 @@ class Order < ActiveRecord::Base
     (["Order for amount #{amount} was made on #{created_at}"]<<history).flatten
   end
 
+  def finalize_sale(options)
+    params = options[:params]
+    self.deducted_from = options[:deducted_from]
+    billable.orders << self
+    self.apply_discounts(params) #this needs to happen before the transaction but after the final incarnation of the order
+    self.update_attribute :visitor_token, options[:visitor_token] if options[:visitor_token]
+    self.mark_paid!
+    self.credit_affiliate(options[:cookies],options[:user])
+  end
+
+  def apply_discounts(params)
+    if (params[:discount_code])
+      self.temp_discounts =[]
+      self.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+    end
+  end
+
+  def credit_affiliate(cookies, current_user)
+    if !(self.is_test? || self.cents==0)
+      if cookies[:aid] && Affiliate.exists?(cookies[:aid])
+        #10% for retail, 5% for enterprise and resellers
+        rate = current_user.ssl_account.is_registered_reseller? ? 0.05 : 0.2
+        self.line_items.each{|li|
+          li.affiliate_payout_rate=rate
+          li.aff_url = cookies[:ref] unless cookies[:ref].blank?
+        }
+        Affiliate.find(cookies[:aid]).line_items << self.line_items
+        self.ext_affiliate_name="idevaffiliate"
+        self.ext_affiliate_id="72198"
+      else
+        case Settings.affiliate_program
+          when "idevaffiliate"
+            self.ext_affiliate_name="idevaffiliate"
+            self.ext_affiliate_id="72198"
+          when "shareasale"
+            self.ext_affiliate_name="shareasale"
+            self.ext_affiliate_id="50573"
+        end
+      end
+      self.ext_affiliate_credited=false
+      self.save validate: false
+    end
+  end
+
   def pay(credit_card, options = {})
     response = gateway.purchase(self.final_amount, credit_card, options_for_payment(options))
     if response.success?

@@ -101,6 +101,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  # find user with no ssl_account
+  def ssl_account_orphans
+    User.where{ssl_account_id.not_in SslAccount.all}
+  end
+
   # we need to make sure that either a password or openid gets set
   # when the user activates his account
   def has_no_credentials?
