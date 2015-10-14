@@ -17,6 +17,7 @@ class OrdersController < ApplicationController
 
   def show_cart
     certificates_from_cookie
+    setup_certificate_orders
   end  
 
   def add

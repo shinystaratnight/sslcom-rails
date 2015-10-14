@@ -60,31 +60,34 @@ class PaypalExpressController < ApplicationController
         account = current_user.ssl_account
         @deposit=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
         @deposit.description = "Paypal Deposit"
+        @deposit.notes = "#paidviapaypal#{purchase.authorization}"
         @deposit.deposit_mode=true
         @deposit.mark_paid!
         account.funded_account.increment! :cents, total_as_cents
-        if params[:deduct_order]=~/true/i
+        unless params[:deduct_order]=~/false/i
           setup_certificate_orders
-          @order = current_order
           if account.funded_account.cents >= @order.cents
             account.funded_account.decrement! :cents, @order.cents
             @order.finalize_sale(params: params, deducted_from: @deposit,
-                                 visitor_token: @visitor_token, cookies: cookies, user: current_user)
+                                 visitor_token: @visitor_token, cookies: cookies, ssl_account: current_user.ssl_account)
+            notice = "Your purchase is now complete!"
+            clear_cart
           else
             notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{((account.funded_account.cents - @order.cents)*0.01).to_money}"
           end
         end
       else
-        # current_user.ssl_account.orders << purchase
-        # record_order_visit(purchase)
-        # credit_affiliate(purchase)
-        # clear_cart
+        setup_certificate_orders
+        @order.notes = "#paidviapaypal#{purchase.authorization}"
+        @order.finalize_sale(params: params, deducted_from: @deposit,
+                             visitor_token: @visitor_token, cookies: cookies, ssl_account: current_user.ssl_account)
+        notice = "Your purchase is now complete!"
+        clear_cart
       end
-      notice = "Thanks! Your purchase is now complete!"
     else
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"
     end
-    redirect_to order_url(@order), :notice => notice
+    redirect_to orders_url, :notice => notice
   end
 
   private

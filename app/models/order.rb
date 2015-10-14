@@ -125,7 +125,7 @@ class Order < ActiveRecord::Base
   def finalize_sale(options)
     params = options[:params]
     self.deducted_from = options[:deducted_from]
-    billable.orders << self
+    options[:ssl_account].orders << self
     self.apply_discounts(params) #this needs to happen before the transaction but after the final incarnation of the order
     self.update_attribute :visitor_token, options[:visitor_token] if options[:visitor_token]
     self.mark_paid!

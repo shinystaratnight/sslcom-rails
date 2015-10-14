@@ -28,6 +28,10 @@
           %span purchase order #{@order.po_number}
         -elsif @order.quote_number
           %span quote #{@order.quote_number}
+        -elsif @order.notes =~ /#paidviapaypal(\S+)?/
+          %span paypal #{$1}
+        -elsif @order.deducted_from.try(:reference_number)
+          %span=link_to @order.deducted_from.reference_number, order_path(@order.deducted_from)
         -elsif current_user.ssl_account.is_registered_reseller?
           %span funded account
         -else
