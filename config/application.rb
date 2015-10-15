@@ -9,7 +9,7 @@ Bundler.setup
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 CLIENT_OPTIONS=["ssl.com","certassure"]
-DEPLOYMENT_CLIENT=CLIENT_OPTIONS[0]
+DEPLOYMENT_CLIENT=CLIENT_OPTIONS[1]
 
 module SslCom
   class Application < Rails::Application
