@@ -80,9 +80,9 @@ paypal_express:
    password: "1373405411"
    signature: "AQU0e5vuZCvSg-XJploSa.sGUDlpAJk4MS-StTGW3nR1cLoXYinXNPFz"
   production:
-   username: "leo_api1.ssl.com"
-   password: "KA2SXREY6FHHKPFH"
-   signature: "Ad2XRvwnDnusHGtoRBjGAd6xMpA.A-uv-tJvkI1fNr-aeXlCc0s7KIQb"
+   username: "neal-facilitator_api1.certassure.com"
+   password: "D8V4AEK5MGDGF35Q"
+   signature: "ArNcVBXHSF0WcWk3MEwFFPbyZkYIAxVQyQRWzDg87EMckBedPrWGftlF"
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
