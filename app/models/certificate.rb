@@ -468,7 +468,6 @@ class Certificate < ActiveRecord::Base
   def duration_in_days(duration)
     if is_ucc?
       index = duration.to_i
-      index += 1 unless is_premium_ssl? #remove once Aaron fixes bug
       items_by_domains.select{|n|n.display_order==index}.last.value
     else
       items_by_duration[duration.to_i-1].value

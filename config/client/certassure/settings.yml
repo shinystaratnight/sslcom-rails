@@ -84,6 +84,8 @@ paypal_express:
    password: "D8V4AEK5MGDGF35Q"
    signature: "ArNcVBXHSF0WcWk3MEwFFPbyZkYIAxVQyQRWzDg87EMckBedPrWGftlF"
 
+dv_explanation_link: "https://www.ssl.com/certificates/apidocs/dcv/"
+
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
 

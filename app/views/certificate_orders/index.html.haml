@@ -106,7 +106,7 @@
                                   -unless ct.blank?
                                     %ul
                                       %li #{ct.first_name} #{ct.last_name}
-                                      %li #{ct.email}
+                                      %li=link_to "#{ct.email}","mailto:#{ct.email}"
                                   -else
                                     none
                             -unless  cc.blank?

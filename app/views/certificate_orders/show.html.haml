@@ -201,32 +201,24 @@
                                 \#{role} contact
                             -ct = @cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
                             -unless ct.blank?
-                              %li
-                                =ct.first_name+" "+ct.last_name
+                              %li=ct.first_name+" "+ct.last_name
                               -unless ct.po_box.blank?
-                                %li
-                                  =ct.po_box
+                                %li=ct.po_box
                               -unless ct.address1.blank?
-                                %li
-                                  =ct.address1
+                                %li=ct.address1
                               -unless ct.address2.blank?
-                                %li
-                                  =ct.address2
+                                %li=ct.address2
                               -unless ct.address3.blank?
-                                %li
-                                  =ct.address3
+                                %li=ct.address3
                               -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
                               -unless csp.blank?
                                 %li= csp
                               -unless ct.country.blank?
-                                %li
-                                  =ct.country
+                                %li=ct.country
                               -unless ct.email.blank?
-                                %li
-                                  =ct.email
+                                %li=link_to "#{ct.email}","mailto:#{ct.email}"
                               -unless ct.phone.blank?
-                                %li
-                                  =ct.phone
+                                %li=ct.phone
                             -else
                               none
                             %li

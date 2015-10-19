@@ -3,26 +3,10 @@
 Dear <%=[@contact.first_name, @contact.last_name].join(" ")%>,
 
 <%end -%>
-Thank you for placing your order. The necessary background checks have been successfully completed and we are pleased to announce that your <%=Settings.community_name%> <%=@certificate_order.certificate.description["certificate_type"]%> Certificate for <%=@certificate_order.subject%> has been issued.
-
-We strongly recommend that you follow the installation instructions at <%=Settings.installation_support_pages%> to ensure that your certificate and webserver are correctly configured.
+Thank you for placing your <%=Settings.community_name%> <%=@certificate_order.certificate.description["certificate_type"]%> certificate order for <%=@certificate_order.subject%>.
 
 Attached to this email you should find a .zip file containing:
 
-<%if @certificate_order.is_iis?%>
-    * Your Certificate (.pb7) - <%=@signed_certificate.friendly_common_name%>.pb7
-<%elsif @certificate_order.is_nginx?-%>
-    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.chained.crt
-<%elsif @certificate_order.is_cpanel? or @certificate_order.is_apache?-%>
-    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
-    * Your Intermediate Certificates - <%=@signed_certificate.friendly_common_name%>.ca-bundle
-<%elsif @certificate_order.is_apache?-%>
-    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
-    * Your Intermediate Certificates - <%=SignedCertificate::APACHE_BUNDLE%>
-<%elsif @certificate_order.is_amazon_balancer?-%>
-    * Your Certificate - <%=@signed_certificate.friendly_common_name%>.crt
-    * Your Intermediate Certificates - <%=SignedCertificate::AMAZON_BUNDLE%>
-<%else-%>
   <%@certificate_order.bundled_cert_names.each do |cc|%>
   <%if @certificate_order.ca == CertificateOrder::CA_CERTIFICATES[:SSLcomSHA2] -%>
     * <%=Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels][cc]%> - <%=cc%>
@@ -31,40 +15,41 @@ Attached to this email you should find a .zip file containing:
   <%end-%>
   <%end-%>
     * Your Certificate (<%=@signed_certificate.file_type%>) - <%=@signed_certificate.friendly_common_name%><%=@signed_certificate.file_extension%>
+
+Certificate files formatted for your specific server platform can also be downloaded directly from your certificate order page. More information can be found in the link below:
+
+  https://www.ssl.com/article/certificate-order-page-information/
+
+<%if @certificate_order.certificate.is_ev? && !@signed_certificate.is_ev?-%>
+The above DV certificate serves as a placeholder so that you can begin securing your site right away.
+
+However, in order to enable your EV certificate (and display the green address bar on your site) we'll need a bit more information.
+
+Please submit the document items outlined in the link below through your SSL.com portal:
+  
+  https://info.ssl.com/faq-requirements-for-ssl-com-ev/
 <%end-%>
-
-<%if @certificate_order.has_bundle?-%>
-Your <%="#{@certificate_order.bundle_name} can be downloaded at: #{server_bundle_csr_signed_certificate_url(cc.csr, cc.csr.signed_certificate)}"%>
-<%end-%>
-
-You can also find your <%=@certificate_order.certificate.description["certificate_type"]%> SSL certificate for <%=@certificate_order.subject%> in text format at the bottom of this email.
-
-If you would like your certificate in various other formats or for other server platforms, you can download it from here <%=certificate_order_url(@certificate_order)%>. Please follow the appropriate installation instructions found at <%=SignedCertificate::OTHER_INSTALL_LINK%>.
-
-Other available formats:
-<%formats = certificate_formats(@certificate_order)
-  formats.each do |k,v|%>
-For <%=v[0]%>, please visit <%=v[1]%> (Instructions for <%=v[0]%> can be found here: <%=v[2]%>)
-
-<%end%>
 <%if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))-%>
 
   <%=render(:partial=>"duration_limit")%>
 <%end-%>
-<%if @certificate_order.certificate.is_ev? && !@signed_certificate.is_ev?-%>
 
-  <%=render(:partial=>"ev_https://info.ssl.com/faq-requirements-for-ssl-com-ev/reqs")%>
-<%end-%>
+Build more trust and transparency with your customers by displaying your SSL.com Smart SeaL. Get your FREE secure Smart SeaL by visiting the following link:
 
-When you have installed your <%=Settings.community_name%> Certificate, be sure to display the secure Smart SeaL. Promoting your secure site is the ideal way to help customers feel safe and confident in using your secure online services and is a proven way to increase conversions.
+  <%=certificate_order_site_seal_url(@certificate_order)%>.
 
-Get your secure Smart SeaL by visiting the following url - <%=certificate_order_site_seal_url(@certificate_order)%>.
 
-For Smart SeaL installation instructions, please visit https://www.youtube.com/watch?v=fwreEDeIf2U
+Again, thank you for choosing SSL.com, where we believe a safer internet is a better internet.
 
-Should you have any questions or issues you would like to discuss, please do not hesitate to contact us.
 
-<%=render(:partial=>"support_contact")%>
+Kind regards,
+
+SSL.com Support Team
+
+https://info.ssl.com/
+
+https://support.ssl.com/default_import/Tickets/Submit
+
 <%if @certificate_order.is_iis?%>
 <%=@signed_certificate.to_pkcs7%>
 <%elsif @certificate_order.is_nginx?-%>
