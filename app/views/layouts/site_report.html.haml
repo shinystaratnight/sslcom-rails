@@ -3,7 +3,7 @@
   %head
     %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
-
+    %meta{name:"ROBOTS", content:"NOINDEX, NOFOLLOW"}
     %title= h(yield(:title) || "SSL and Digital Certificates, Enterprise SSL, and Internet Security") + " | #{Settings.community_name}"
     -if @meta
       -@meta.each do |key|

@@ -7,17 +7,14 @@
     %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
     %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
     %title= h(yield(:title).or_else(Settings.meta_title)) + " | #{Settings.community_name}"
-    -if current_page?(certificates_path)
-      / begin Convert Experiments code
-      :javascript
-        var _conv_host = (("https:" == document.location.protocol) ? "https://d9jmv9u00p0mv.cloudfront.net" : "http://cdn-1.convertexperiments.com");document.write(decodeURIComponent("%3Cscript src='" + _conv_host + "/js/10012988-10012489.js' type='text/javascript'%3E%3C/script%3E"));
-      / end Convert Experiments code
     -if @meta
       -@meta.each do |key|
         %meta{:name=>key[0], :content=>key[1]}
     %meta{ :name => "description", :content => h(yield(:description).or_else(Settings.meta_description)) }
     %meta{ :content => "IE=Edge,chrome=1", "http-equiv" => "X-UA-Compatible" }
-    %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
+    -unless DEPLOYMENT_CLIENT=~/certassure/i
+      %meta{ name: "google-site-verification", content: "b65HKRyxFnyE0Qc-CUNw2qzcgkX9TzX_mQP68sfdmQc"}
+      %meta{ content: "u5-F_Ea1wBSyXQRDH-SCD9NbgIQFyGxaCJUTvo6J4v0", name: "google-site-verification"}
     %meta(content="width=1115" name="viewport")
     -#the following metas are for google+ custom message
     %meta(itemprop="name" content="Educating the public about SSL Certificates | #{Settings.community_name}")

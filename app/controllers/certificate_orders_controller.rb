@@ -29,6 +29,7 @@ class CertificateOrdersController < ApplicationController
     :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
     :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
+  filter_access_to :show,:attribute_check=>true
   before_filter :require_user, :if=>'current_subdomain==Reseller::SUBDOMAIN'
   before_filter :require_user_1, :only=>[:developers]
   #cache_sweeper :certificate_order_sweeper

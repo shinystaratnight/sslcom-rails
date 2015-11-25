@@ -286,7 +286,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    PublicSuffix.valid?(name)
+    PublicSuffix.valid?(name.downcase)
   end
 
   def self.is_intranet?(name)

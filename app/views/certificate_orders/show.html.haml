@@ -2,6 +2,7 @@
 -co = @certificate_order
 -cn = co.subject
 -@cc = co.certificate_content
+-@meta = [["ROBOTS", "NOINDEX, NOFOLLOW"]]
 =render 'index_scripts'
 =render 'show_scripts'
 -content_for :title, title
@@ -15,8 +16,7 @@
       SSL Certificate For
       %span.common_name
         #{cn}
-      -unless current_user.is_admin?
-        #buy_certificate=link_to image_tag('buy_certificate_btn.gif'), certificates_url
+      =link_to "[how do I use this page?]", "https://www.ssl.com/article/certificate-order-page-information/"
     %tr.heading_row
       %th(scope="col") Subject
       %th(scope="col") Status
@@ -292,7 +292,7 @@
                           %strong issued domains
                           %div
                             includes Common Name (CN)
-                          =text_area_tag :domains, sc.subject_alternative_names.join("\n"), :size=>"30x10"
+                          =text_area_tag :domains, sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : "", :size=>"30x10"
                 -if current_user.is_admin?
                   %tr
                     %td(colspan="5")
