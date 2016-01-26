@@ -247,10 +247,12 @@ class CertificateOrder < ActiveRecord::Base
 
     state :canceled do
       event :refund, :transitions_to => :refunded
+      event :charge_back, :transitions_to => :charged_back
     end
 
     state :refunded do #only refund a canceled order
       event :unrefund, :transitions_to => :paid
+      event :charge_back, :transitions_to => :charged_back
     end
 
     state :charged_back
@@ -1081,7 +1083,7 @@ class CertificateOrder < ActiveRecord::Base
             'orderNumber' => external_order_number,
             'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
-            'isCustomerValidated' => 'Y',
+            'isCustomerValidated' => 'N',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref,
@@ -1097,7 +1099,7 @@ class CertificateOrder < ActiveRecord::Base
             'serverSoftware' => cc.comodo_server_software_id.to_s,
             'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
-            'isCustomerValidated' => 'Y',
+            'isCustomerValidated' => 'N',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref

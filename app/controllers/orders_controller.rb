@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :refund]
+  before_filter :find_order, :only => [:show, :invoice, :refund, :change_state]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
@@ -132,6 +132,8 @@ class OrdersController < ApplicationController
         SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
         @order.line_items.each{|li|
           OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if(defined? li.sellable.external_order_number)
+          OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
+            params["refund_reason"]).deliver if(defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
           OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.notes =~ /DV#(\d+)/
         }
       else
@@ -157,7 +159,16 @@ class OrdersController < ApplicationController
         end
       end
     end
-    redirect_to @order.fully_refunded? ? orders_url : order_url(@order)
+    redirect_to order_url(@order)
+  end
+
+  def change_state
+    performed="order changed to #{params[:state]}"
+    unless @order.blank?
+      @order.send "#{params[:state]}!"
+      SystemAudit.create(owner: current_user, target: @order, action: performed)
+    end
+    redirect_to order_url(@order)
   end
 
   # GET /orders

@@ -56,6 +56,7 @@ class Order < ActiveRecord::Base
     (billing_profile.last_name =~ "%#{term}%") | (billing_profile.address_1 =~ "%#{term}%") |
     (billing_profile.address_2 =~ "%#{term}%") | (billing_profile.company =~ "%#{term}%") |
     (billing_profile.postal_code =~ "%#{term}%") | (reference_number =~ "%#{term}%") |
+    (notes =~ "%#{term}%") |
     (line_items.sellable(CertificateOrder).ref=~ "%#{term}%")}
   }
 
@@ -227,7 +228,12 @@ class Order < ActiveRecord::Base
 
     state :fully_refunded do
       event :unrefund, transitions_to: :paid do |complete=true|
-        line_items.each {|li|li.sellable.unrefund! if li.sellable.respond_to?("unrefund!".to_sym)} if complete
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+      end
+
+      event :charge_back, transitions_to: :charged_back do |complete=true|
+        line_items.each {|li|li.sellable.charge_back!} if complete
       end
     end
 
@@ -250,7 +256,11 @@ class Order < ActiveRecord::Base
       end
     end
 
-    state :canceled
+    state :canceled do
+      event :charge_back, transitions_to: :charged_back do |complete=true|
+        line_items.each {|li|li.sellable.charge_back!} if complete
+      end
+    end
   end
 
   ## BEGIN acts_as_state_machine
@@ -451,6 +461,17 @@ class Order < ActiveRecord::Base
 
   def to_param
     reference_number
+  end
+
+  def display_state
+    case self.state
+      when "fully_refunded"
+        "(REFUNDED)"
+      when "charged_back"
+        "(CHARGEBACK)"
+      else
+        ""
+    end
   end
 
   def is_deposit?

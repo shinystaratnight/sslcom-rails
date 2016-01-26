@@ -18,6 +18,7 @@ class FundedAccountsController < ApplicationController
     @reseller_initial_deposit = true if initial_reseller_deposit?
   end
 
+  # apply funds from funded_account to the purchase the order
   def allocate_funds_for_order
     @funded_account = current_user ? current_user.ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"
@@ -31,6 +32,7 @@ class FundedAccountsController < ApplicationController
     render :action => "allocate_funds"
   end
 
+  # Deposit funds into the funded_account
   def deposit_funds
     @reseller_initial_deposit = true if initial_reseller_deposit?
     @funded_account, @billing_profile = 
@@ -66,7 +68,7 @@ class FundedAccountsController < ApplicationController
           !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
             Settings.minimum_deposit_amount
     end
-    if(@funded_account.funding_source!=FundedAccount::NEW_CREDIT_CARD)
+    if(@funded_account.funding_source!=FundedAccount::NEW_CREDIT_CARD) #existing credit card
       @profile = BillingProfile.find(@funded_account.funding_source)
     else
       @profile = @billing_profile

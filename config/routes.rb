@@ -225,6 +225,7 @@ SslCom::Application.routes.draw do
     member do
       get :invoice
       get :refund
+      get :change_state
     end
   end
   get '/orders/filter_by_state/:id' => 'Orders#filter_by_state', as: :filter_by_state_orders
