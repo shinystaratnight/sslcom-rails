@@ -143,13 +143,6 @@ class Order < ActiveRecord::Base
   def credit_affiliate(cookies, current_user)
     if !(self.is_test? || self.cents==0)
       if cookies[:aid] && Affiliate.exists?(cookies[:aid])
-        #10% for retail, 5% for enterprise and resellers
-        rate = current_user.ssl_account.is_registered_reseller? ? 0.05 : 0.2
-        self.line_items.each{|li|
-          li.affiliate_payout_rate=rate
-          li.aff_url = cookies[:ref] unless cookies[:ref].blank?
-        }
-        Affiliate.find(cookies[:aid]).line_items << self.line_items
         self.ext_affiliate_name="idevaffiliate"
         self.ext_affiliate_id="72198"
       else
