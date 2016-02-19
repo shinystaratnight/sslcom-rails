@@ -96,7 +96,7 @@
             -elsif co.certificate.is_client?
               ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+ComodoApi.apply_apac(co, send_to_ca: false).gsub('"', '\"')+'" \''+ComodoApi::PLACE_ORDER_URL+'\''
             -else
-              ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, ca_certificate_id: Settings.ca_certificate_id_dv, product: "").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
+              ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+co.options_for_ca(new: true, product: "").merge(ComodoApi::CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&").gsub('"', '\"')+'" \''+ComodoApi::APPLY_SSL_URL+'\''
       -if co.external_order_number
         %li
           %strong Comodo API Rekey Command

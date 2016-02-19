@@ -54,6 +54,7 @@ gem 'delayed_job_groups_plugin'
 gem 'public_suffix'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancan'
+gem 'unscoped_associations'
 
 # Deploy with Capistrano
 #gem 'rvm-capistrano'

@@ -115,6 +115,7 @@ class CertificateOrdersController < ApplicationController
       end
       unless @certificate_order.certificate_content.csr_submitted?
         redirect_to certificate_order_url(@certificate_order)
+        # redirect_to @certificate_order.workflow_paid=='paid' ? certificate_order_url(@certificate_order) :
       else
         csr = @certificate_order.certificate_content.csr
         setup_registrant()

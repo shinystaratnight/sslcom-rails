@@ -61,7 +61,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi18Kimi18'
+comodo_api_password: 'Jimi19Kimi19'
 ca_certificate_id_ev: "508"
 ca_certificate_id_ov: "507"
 ca_certificate_id_dv: "506"
@@ -111,6 +111,8 @@ subca_mapping:
   ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
   evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
 
+send_dv_first: true
+
 paypal_express_username: "leo_api1.ssl.com"
 paypal_express_password: "KA2SXREY6FHHKPFH"
 paypal_express_signature: "Ad2XRvwnDnusHGtoRBjGAd6xMpA.A-uv-tJvkI1fNr-aeXlCc0s7KIQb"
@@ -124,7 +126,7 @@ recaptcha_priv_key: 6Lch9QYAAAAAAAlWpfQKWpn7eTkc3f2FWhv4fVIG
 # uncomment these keys if you turn captcha on for commenting or signup
 studio_fee_rate: .3
 affiliate_cookie_days: 30
-affiliate_program: "shareasale"
+affiliate_program: "idevaffiliate"
 cart_cookie_days: 30
 reserved_logins: ['administrator', 'sysadmin', 'admin', 'support', 'sales', 'info', 'eroslife', 'systemadmin', 'moderator', 'operator']
 exclude_amex: true

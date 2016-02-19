@@ -22,14 +22,14 @@ development:
   socket: /var/run/mysqld/mysqld.sock
   adapter: mysql2
   #use when remote db source
-#  username: certassure_db
-#  password: Zounds1999
-#  host: 107.21.244.70
-#  database: www_cert_assure_production
+  username: certassure_db
+  password: Zounds1999
+  host: 107.21.244.70
+  database: www_cert_assure_production
 #  else
-  username: ssl_db
-  password: kama2jama2
-  database: certassure_development
+#  username: ssl_db
+#  password: kama2jama2
+#  database: certassure_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

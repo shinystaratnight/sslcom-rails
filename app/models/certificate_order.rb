@@ -1243,6 +1243,18 @@ class CertificateOrder < ActiveRecord::Base
     #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
   end
 
+  def external_order_number_meta(options={})
+    if notes =~ /(DV|EV|OV)\#\d+/
+      if options[:external_order_number] && notes =~ /(DV|EV|OV)\##{options[:external_order_number]}/
+        return $1
+      elsif options[:validation_type] && notes =~ /#{options[:validation_type]}\#(\d+)/
+        return $1
+      else
+        return external_order_number_meta(external_order_number: external_order_number)
+      end
+    end
+  end
+
   def sent_success_count
     all_csrs = certificate_contents.map(&:csr)
     sent_success_map = all_csrs.map(&:sent_success)
@@ -1404,7 +1416,13 @@ class CertificateOrder < ActiveRecord::Base
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
-      cci = if Settings.send_dv_first
+      cci = if Settings.send_dv_first and external_order_number.blank?
+              Settings.ca_certificate_id_dv #first time needs to be DV
+            elsif external_order_number_meta=="EV"
+              Settings.ca_certificate_id_ev
+            elsif external_order_number_meta=="OV"
+              Settings.ca_certificate_id_ov
+            elsif external_order_number_meta=="DV"
               Settings.ca_certificate_id_dv
             elsif certificate.is_ev?
               Settings.ca_certificate_id_ev
