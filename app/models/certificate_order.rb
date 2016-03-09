@@ -1111,7 +1111,7 @@ class CertificateOrder < ActiveRecord::Base
             #look at certificate_duration for more guidance, i don't think the following is ucc safe
             days = certificate_duration(:comodo_api)
             # temporary for a certain customer wanting to move over a number of domains to ssl.com
-            params.merge!('days' => days.to_s)
+            params.merge!('days' => (days+SiteCheck.days_left(csr.common_name, true)).to_s)
           end
           #ssl.com Sub CA certs
           set_comodo_subca(params,options)
