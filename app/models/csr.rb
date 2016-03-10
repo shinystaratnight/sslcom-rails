@@ -328,4 +328,8 @@ class Csr < ActiveRecord::Base
   rescue
     ""
   end
+
+  def days_left
+    SiteCheck.days_left(self.non_wildcard_name, true)
+  end
 end
