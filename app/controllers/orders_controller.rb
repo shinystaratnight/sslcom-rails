@@ -16,19 +16,32 @@ class OrdersController < ApplicationController
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
-    if params[:id]
+    if params[:id] # manually overwrite owned shopping_cart in favor or url specified
       cookies[:cart] = {:value=>ShoppingCart.find_by_guid(params[:id]).content, :path => "/",
                         :expires => Settings.cart_cookie_days.to_i.days.from_now}
     else
       cart = cookies[:cart]
       guid = cookies[:cart_guid]
-      unless cookies[:cart_guid]
+      db_cart = ShoppingCart.find_by_guid(guid)
+      if current_user
+        if current_user.shopping_cart
+          guid=current_user.shopping_cart.guid
+          cookies[:cart_guid] = {:value=>guid, :path => "/",
+                                 :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
+          current_user.shopping_cart.update_attribute :content, cart
+        elsif guid
+          if db_cart # assumed db_cart is orphan and assign ownership to current_user
+            db_cart.update_attributes content: cart, user_id: current_user.id
+          end
+        else # each user should 'own' a db_cart
+          current_user.create_shopping_cart(guid: guid, content: cart.value)
+        end
+      elsif guid #assume user is not logged in
+        ShoppingCart.find_by_guid(guid).update_attribute :content, cart
+      else
         guid=UUIDTools::UUID.random_create.to_s
         cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
-        current_user.blank? ? ShoppingCart.create(guid: guid, content: cart.value) :
-            current_user.create_shopping_cart(guid: guid, content: cart.value)
-      else
-        ShoppingCart.find_by_guid(cookies[:cart_guid]).update_attribute :content, cart
+        ShoppingCart.create(guid: guid, content: cart.value)
       end
       redirect_to show_cart_orders_path(id: guid)
     end
