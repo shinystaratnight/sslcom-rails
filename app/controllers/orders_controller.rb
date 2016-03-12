@@ -16,7 +16,22 @@ class OrdersController < ApplicationController
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
-    certificates_from_cookie
+    if params[:id]
+      cookies[:cart] = {:value=>ShoppingCart.find_by_guid(params[:id]).content, :path => "/",
+                        :expires => Settings.cart_cookie_days.to_i.days.from_now}
+    else
+      cart = cookies[:cart]
+      guid = cookies[:cart_guid]
+      unless cookies[:cart_guid]
+        guid=UUIDTools::UUID.random_create.to_s
+        cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
+        current_user.blank? ? ShoppingCart.create(guid: guid, content: cart.value) :
+            current_user.create_shopping_cart(guid: guid, content: cart.value)
+      else
+        ShoppingCart.find_by_guid(cookies[:cart_guid]).update_attribute :content, cart
+      end
+      redirect_to show_cart_orders_path(id: guid)
+    end
     setup_certificate_orders
   end  
 

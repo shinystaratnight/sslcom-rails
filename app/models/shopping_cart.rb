@@ -1,12 +1,12 @@
-#represents an interface to storing cart data. We the data being stored in a
-#cookie or the db should be independent from the code
 #li - number of licenses
 #q - quantity
 #do - domains
 #pr - product code
 #rn - renewal order
 #du - duration
-module ShoppingCart
+class ShoppingCart < ActiveRecord::Base
+  belongs_to :user
+
   LICENSES = "li"
   QUANTITY = "q"
   DOMAINS = "do"
