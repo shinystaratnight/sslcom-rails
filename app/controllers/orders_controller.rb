@@ -29,15 +29,15 @@ class OrdersController < ApplicationController
           cookies[:cart_guid] = {:value=>guid, :path => "/",
                                  :expires => Settings.cart_cookie_days.to_i.days.from_now} # reset guid
           current_user.shopping_cart.update_attribute :content, cart
-        elsif guid
-          if db_cart # assumed db_cart is orphan and assign ownership to current_user
+        elsif guid && db_cart
             db_cart.update_attributes content: cart, user_id: current_user.id
-          end
         else # each user should 'own' a db_cart
+          guid=UUIDTools::UUID.random_create.to_s
+          cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
           current_user.create_shopping_cart(guid: guid, content: cart.value)
         end
-      elsif guid #assume user is not logged in
-        ShoppingCart.find_by_guid(guid).update_attribute :content, cart
+      elsif guid && db_cart #assume user is not logged in
+        db_cart.update_attribute :content, cart
       else
         guid=UUIDTools::UUID.random_create.to_s
         cookies[:cart_guid] = {:value=>guid, :path => "/", :expires => Settings.cart_cookie_days.to_i.days.from_now}
