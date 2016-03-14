@@ -513,6 +513,7 @@ class ApplicationController < ActionController::Base
 
   def clear_cart
     cookies.delete(:cart)
+    cookies.delete(:cart_guid)
     cookies.delete(:aid_li)
   end
 

@@ -22,7 +22,7 @@ class UserSessionsController < ApplicationController
         redirect_to show_cart_orders_url and return
       end
     end
-    if !current_user.blank?
+    unless current_user.blank?
       if current_user.is_admin?
         @user_session = UserSession.new(User.find_by_login params[:login])
         @user_session.id = :shadow
@@ -44,6 +44,8 @@ class UserSessionsController < ApplicationController
         assign_ssl_links(user)
         #we'll know what tier the user is even if s/he is not logged in
         cookies.delete(:r_tier)
+        cookies[:cart] = {:value=>user.shopping_cart.content, :path => "/",
+                          :expires => Settings.cart_cookie_days.to_i.days.from_now} if user.shopping_cart
         if user.ssl_account.is_registered_reseller?
           cookies[:r_tier] = {:value=>user.ssl_account.reseller.
             reseller_tier.label, :path => "/", :expires => Settings.
