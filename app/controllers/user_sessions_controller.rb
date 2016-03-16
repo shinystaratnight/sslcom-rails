@@ -103,6 +103,7 @@ class UserSessionsController < ApplicationController
   def destroy
     if current_user.is_admin?
       cookies.delete(:r_tier)
+      cookies.delete(:cart_guid)
       clear_cart
     end
     cookies.delete(:acct)

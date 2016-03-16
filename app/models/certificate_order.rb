@@ -1106,11 +1106,13 @@ class CertificateOrder < ActiveRecord::Base
           )
           last_sent = csr.last_dcv
           #43 is the old comodo 30 day trial
-          unless [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
+          #look at certificate_duration for more guidance, i don't think the following is ucc safe
+          days = certificate_duration(:comodo_api)
+          # temporary for a certain customer wanting to move over a number of domains to ssl.com
+          if [Certificate::COMODO_PRODUCT_MAPPINGS["free"], 43].include?(
               mapped_certificate.comodo_product_id) #trial cert does not specify duration
-            #look at certificate_duration for more guidance, i don't think the following is ucc safe
-            days = certificate_duration(:comodo_api)
-            # temporary for a certain customer wanting to move over a number of domains to ssl.com
+            params.merge!('days' => (days).to_s)
+          else
             params.merge!('days' => (days+csr.days_left).to_s)
           end
           #ssl.com Sub CA certs
