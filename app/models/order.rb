@@ -538,25 +538,27 @@ class Order < ActiveRecord::Base
     options[:certificates].each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
       certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
-      if certificate.is_free?
-        qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
-      else
-        qty=c[ShoppingCart::QUANTITY].to_i
+      if certificate
+        if certificate.is_free?
+          qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
+        else
+          qty=c[ShoppingCart::QUANTITY].to_i
+        end
+        certificate_order = CertificateOrder.new(
+            :server_licenses => c[ShoppingCart::LICENSES],
+            :duration => c[ShoppingCart::DURATION],
+            :quantity => qty)
+        certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
+        certificate_order.certificate_contents.build :domains => c[ShoppingCart::DOMAINS]
+        unless options[:current_user].blank?
+          options[:current_user].ssl_account.clear_new_certificate_orders
+          certificate_order.ssl_account=current_user.ssl_account
+          next unless options[:current_user].ssl_account.can_buy?(certificate)
+        end
+        #adjusting duration to reflect number of days validity
+        certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
+        options[:certificate_orders] << certificate_order if certificate_order.valid?
       end
-      certificate_order = CertificateOrder.new(
-          :server_licenses => c[ShoppingCart::LICENSES],
-          :duration => c[ShoppingCart::DURATION],
-          :quantity => qty)
-      certificate_order.add_renewal c[ShoppingCart::RENEWAL_ORDER]
-      certificate_order.certificate_contents.build :domains => c[ShoppingCart::DOMAINS]
-      unless options[:current_user].blank?
-        options[:current_user].ssl_account.clear_new_certificate_orders
-        certificate_order.ssl_account=current_user.ssl_account
-        next unless options[:current_user].ssl_account.can_buy?(certificate)
-      end
-      #adjusting duration to reflect number of days validity
-      certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
-      options[:certificate_orders] << certificate_order if certificate_order.valid?
     end
     options[:certificate_orders]
   end

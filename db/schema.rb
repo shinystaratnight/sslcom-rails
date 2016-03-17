@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160311190854) do
+ActiveRecord::Schema.define(:version => 20160316225623) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -147,10 +147,6 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
     t.text     "request_method"
   end
 
-  add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], :name => "index_ca_api_requests_on_api_requestable"
-  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], :name => "index_ca_api_requests_on_type_and_api_requestable_and_created_at"
-  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], :name => "index_ca_api_requests_on_type_and_api_requestable", :unique => true
-
   create_table "certificate_api_requests", :force => true do |t|
     t.integer  "server_software_id"
     t.integer  "country_id"
@@ -254,11 +250,10 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
   end
 
   add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
-  add_index "certificate_orders", ["id", "is_test"], :name => "index_certificate_orders_on_test"
-  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], :name => "index_certificate_orders_on_workflow_state", :unique => true
   add_index "certificate_orders", ["is_expired"], :name => "index_certificate_orders_on_is_expired"
   add_index "certificate_orders", ["ref"], :name => "index_certificate_orders_on_ref"
   add_index "certificate_orders", ["site_seal_id"], :name => "index_certificate_orders_site_seal_id"
+  add_index "certificate_orders", ["workflow_state"], :name => "index_certificate_orders_on_workflow_state"
 
   create_table "certificates", :force => true do |t|
     t.integer  "reseller_tier_id"
@@ -454,8 +449,6 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
     t.integer  "certificate_name_id"
     t.string   "failure_action"
   end
-
-  add_index "domain_control_validations", ["id", "csr_id"], :name => "index_domain_control_validations_on_id_csr_id"
 
   create_table "duplicate_v2_users", :force => true do |t|
     t.string   "login"
@@ -703,9 +696,7 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
   end
 
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], :name => "index_preferences_on_owner_and_name_and_preference", :unique => true
-  add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], :name => "index_preferences_on_owner_and_name_and_value"
-  add_index "preferences", ["id", "name", "value"], :name => "index_preferences_on_name_and_value"
-  add_index "preferences", ["id", "owner_id", "owner_type"], :name => "index_preferences_on_owner_id_and_owner_type", :unique => true
+  add_index "preferences", ["owner_id", "owner_type"], :name => "index_preferences_on_owner_id_and_owner_type"
 
   create_table "product_variant_groups", :force => true do |t|
     t.integer  "variantable_id"
@@ -735,6 +726,32 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
     t.string   "published_as"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "products", :force => true do |t|
+    t.string   "title"
+    t.string   "status"
+    t.string   "type"
+    t.string   "value"
+    t.text     "summary"
+    t.text     "text_only_summary"
+    t.text     "description"
+    t.text     "text_only_description"
+    t.string   "published_as",          :limit => 16, :default => "draft"
+    t.string   "serial"
+    t.string   "icons"
+    t.float    "amount"
+    t.text     "notes"
+    t.string   "display_order"
+    t.datetime "created_at",                                               :null => false
+    t.datetime "updated_at",                                               :null => false
+  end
+
+  create_table "products_sub_products", :force => true do |t|
+    t.integer  "product_id"
+    t.integer  "sub_product_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "receipts", :force => true do |t|
@@ -838,8 +855,6 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], :name => "index_contacts_on_recipients_subject_trigger_value_expires_at"
 
   create_table "server_softwares", :force => true do |t|
     t.string   "title",       :null => false
@@ -952,8 +967,6 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  add_index "sub_order_items", ["id", "sub_itemable_id", "sub_itemable_type"], :name => "index_sub_order_items_on_sub_itemable"
 
   create_table "surl_blacklists", :force => true do |t|
     t.string   "fingerprint"
@@ -1084,8 +1097,6 @@ ActiveRecord::Schema.define(:version => 20160311190854) do
   end
 
   add_index "users", ["email"], :name => "index_users_on_email"
-  add_index "users", ["id", "ssl_account_id", "status"], :name => "index_users_on_status_and_ssl_account_id"
-  add_index "users", ["id", "status"], :name => "index_users_on_status"
   add_index "users", ["login"], :name => "index_users_on_login"
   add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
 
