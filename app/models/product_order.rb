@@ -1,8 +1,7 @@
 class ProductOrder < ActiveRecord::Base
-  include V2MigrationProgressAddon
-  #using_access_control
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
+  belongs_to  :product
   has_many    :users, through: :ssl_account
   has_and_belongs_to_many :parent_product_orders, class_name: 'ProductOrder', association_foreign_key:
       :sub_product_order_id, join_table: 'product_orders_sub_product_orders'
@@ -15,44 +14,13 @@ class ProductOrder < ActiveRecord::Base
   #used to temporarily determine lineitem qty
   attr_accessor :quantity
   preference  :payment_order, :string, :default=>"normal"
-  preference  :certificate_chain, :string
 
   #if the customer has not used this certificate order with a period of time
   #it becomes expired and invalid
   alias_attribute  :expired, :is_expired
 
-  if Proc.new{|co|co.migrated_from_v2?}
-    preference  :v2_product_description, :string, :default=>'ssl certificate'
-    preference  :v2_line_items, :string
-  end
-
-  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-                    joins(:certificate_contents).includes(:certificate_contents).order(:created_at.desc).readonly(false)
-
-  scope :not_test, where{(is_test == nil) | (is_test==false)}
-
-  scope :is_test, where{is_test==true}
-
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
-  }
-
-  scope :search_signed_certificates, lambda {|term|
-    joins{certificate_contents.csr.signed_certificates}.
-      where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
-  }
-
-  scope :search_csr, lambda {|term|
-    joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
-  }
-
-  scope :search_with_csr, lambda {|term, options|
-    cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
-      CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
-    {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless
-      cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ? OR `certificate_orders`.`external_order_number` #{SQL_LIKE} ? OR `certificate_orders`.`notes` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
-      merge(options)
   }
 
   scope :reprocessing, lambda {
@@ -61,29 +29,6 @@ class ProductOrder < ActiveRecord::Base
     joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
         order(:certificate_contents=>{:csr=>:updated_at.desc})
   }
-
-  scope :order_by_csr, lambda {
-    joins{certificate_contents.csr.outer}.order({:certificate_contents=>{:csr=>:updated_at.desc}}) #.uniq #- breaks order by csr
-  }
-
-  scope :filter_by, lambda { |term|
-    order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
-  }
-
-  scope :unvalidated, where{(is_expired==false) &
-    (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
-
-  scope :incomplete, not_test.where{(is_expired==false) &
-    (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
-
-  scope :pending, not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)
-
-  scope :has_csr, not_test.where{(workflow_state=='paid') &
-    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
 
   scope :credits, not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})

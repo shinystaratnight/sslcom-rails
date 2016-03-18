@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160316225623) do
+ActiveRecord::Schema.define(:version => 20160318165011) do
 
   create_table "addresses", :force => true do |t|
     t.string "name"
@@ -404,6 +404,19 @@ ActiveRecord::Schema.define(:version => 20160316225623) do
     t.datetime "updated_at"
   end
 
+  create_table "discountables_sellables", :force => true do |t|
+    t.integer  "discountable_id"
+    t.string   "discountable_type"
+    t.integer  "sellable_id"
+    t.string   "sellable_type"
+    t.string   "amount"
+    t.string   "apply_as"
+    t.string   "status"
+    t.text     "notes"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
   create_table "discounts", :force => true do |t|
     t.integer  "discountable_id"
     t.string   "discountable_type"
@@ -524,6 +537,7 @@ ActiveRecord::Schema.define(:version => 20160316225623) do
     t.string  "currency"
     t.float   "affiliate_payout_rate"
     t.string  "aff_url"
+    t.integer "qty"
   end
 
   add_index "line_items", ["order_id"], :name => "index_line_items_on_order_id"
@@ -697,6 +711,26 @@ ActiveRecord::Schema.define(:version => 20160316225623) do
 
   add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], :name => "index_preferences_on_owner_and_name_and_preference", :unique => true
   add_index "preferences", ["owner_id", "owner_type"], :name => "index_preferences_on_owner_id_and_owner_type"
+
+  create_table "product_orders", :force => true do |t|
+    t.integer  "ssl_account_id"
+    t.integer  "product_id"
+    t.string   "workflow_state"
+    t.string   "ref"
+    t.string   "rebill"
+    t.string   "value"
+    t.integer  "amount"
+    t.text     "notes"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "product_orders_sub_product_orders", :force => true do |t|
+    t.integer  "product_order_id"
+    t.integer  "sub_product_order_id"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+  end
 
   create_table "product_variant_groups", :force => true do |t|
     t.integer  "variantable_id"

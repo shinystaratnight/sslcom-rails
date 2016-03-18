@@ -22,6 +22,7 @@ class CreateProducts < ActiveRecord::Migration
   end
 
   def self.down
-    drop_table  :products, :products_sub_products
+    drop_table  :products
+    drop_table  :products_sub_products
   end
 end

@@ -1,6 +1,7 @@
 class Product < ActiveRecord::Base
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
+  has_many    :product_orders
   acts_as_publishable :live, :draft, :discontinue_sell
   # belongs_to  :reseller_tier
   serialize   :icons
