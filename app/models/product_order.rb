@@ -1,3 +1,5 @@
+# This represents a purchased instance of Product
+
 class ProductOrder < ActiveRecord::Base
   acts_as_sellable :cents => :amount, :currency => false
   belongs_to  :ssl_account
@@ -22,41 +24,6 @@ class ProductOrder < ActiveRecord::Base
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
   }
-
-  scope :reprocessing, lambda {
-    cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
-        where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
-        order(:certificate_contents=>{:csr=>:updated_at.desc})
-  }
-
-  scope :credits, not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}})
-
-  #new certificate orders are the ones still in the shopping cart
-  scope :not_new, lambda {|options=nil|
-    if options && options.has_key?(:includes)
-      includes=method(:includes).call(options[:includes])
-    end
-    (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
-  }
-
-  scope :unrenewed, not_new.where(:renewal_id=>nil)
-
-  scope :renewed, not_new.where{:renewal_id != nil}
-
-  scope :nonfree, not_new.where(:amount.gt => 0)
-
-  scope :free, not_new.where(:amount => 0)
-
-  scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
-
-  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
-
-  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
 
   scope :range, lambda{|start, finish|
     if start.is_a?(String)

@@ -31,7 +31,7 @@ class SignedCertificate < ActiveRecord::Base
   JAVA_INSTALL_LINK = "https://www.ssl.com/how-to/how-to-install-a-certificate-on-java-based-web-servers/"
   OTHER_INSTALL_LINK = "https://www.ssl.com/article/intermediate-certificate-download/"
   APACHE_INSTALL_LINK = "https://info.ssl.com/how-to-install-a-certificate-on-apache-mod_ssl/"
-  AMAZON_INSTALL_LINK = "http://docs.aws.amazon.com/ElasticLoadBalancing/latest/DeveloperGuide/US_UpdatingLoadBalancerSSL.html"
+  AMAZON_INSTALL_LINK = "http://aws.amazon.com/documentation/"
 
   APACHE_BUNDLE = "ca-bundle-client.crt"
   AMAZON_BUNDLE = "ca-chain-amazon.crt"

@@ -5,12 +5,18 @@ class CreateProductOrders < ActiveRecord::Migration
       t.references  :product
       t.string      :workflow_state
       t.string      :ref
-      t.string      :rebill # what period ie nil, daily, weekly, quarterly, etc
+      t.string      :auto_renew # what period ie nil, daily, weekly, quarterly, etc
+      t.string      :auto_renew_status
+      t.boolean     :is_expired
       t.string      :value # arbitrary
       t.integer     :amount
       t.text        :notes
       t.timestamps
     end
+
+    add_index :product_orders, :ref
+    add_index :product_orders, :created_at
+    add_index :product_orders, :is_expired
 
     create_table :product_orders_sub_product_orders, force: true do |t|
       t.references  :product_order

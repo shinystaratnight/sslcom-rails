@@ -7,9 +7,11 @@ class CreateProducts < ActiveRecord::Migration
       t.string      :published_as, :limit => 16, :default => 'draft'
       t.string      :serial, :unique => true
       t.string      :icons
-      t.float       :amount
+      t.integer     :amount
+      t.integer     :duration
       t.string      :value
       t.text        :notes
+      t.string      :auto_renew # what period ie nil, daily, weekly, quarterly, etc
       t.string      :display_order
       t.timestamps
     end

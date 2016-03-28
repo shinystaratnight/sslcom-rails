@@ -409,7 +409,7 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.string   "discountable_type"
     t.integer  "sellable_id"
     t.string   "sellable_type"
-    t.string   "amount"
+    t.integer  "amount"
     t.string   "apply_as"
     t.string   "status"
     t.text     "notes"
@@ -717,13 +717,19 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.integer  "product_id"
     t.string   "workflow_state"
     t.string   "ref"
-    t.string   "rebill"
+    t.string   "auto_renew"
+    t.string   "auto_renew_status"
+    t.boolean  "is_expired"
     t.string   "value"
     t.integer  "amount"
     t.text     "notes"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
+
+  add_index "product_orders", ["created_at"], :name => "index_product_orders_on_created_at"
+  add_index "product_orders", ["is_expired"], :name => "index_product_orders_on_is_expired"
+  add_index "product_orders", ["ref"], :name => "index_product_orders_on_ref"
 
   create_table "product_orders_sub_product_orders", :force => true do |t|
     t.integer  "product_order_id"
@@ -774,8 +780,10 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.string   "published_as",          :limit => 16, :default => "draft"
     t.string   "serial"
     t.string   "icons"
-    t.float    "amount"
+    t.integer  "amount"
+    t.integer  "duration"
     t.text     "notes"
+    t.string   "auto_renew"
     t.string   "display_order"
     t.datetime "created_at",                                               :null => false
     t.datetime "updated_at",                                               :null => false

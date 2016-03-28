@@ -1,0 +1,86 @@
+---
+basic_ssl_monitoring:
+ title: Basic SSL Score Monitoring
+ icons:
+  main:
+ text_only_summary:
+  Basic SSL Score Monitoring ensures you have the necessary cipers, algorithms and SSL/TLS essentials installed with
+  daily scanning.
+ description:
+  summary:
+ text_only_description:
+  With daily scanning and notification if site's SSL Score falls below a user defined threshold, Basic SSL
+  Score Monitoring ensures you have the necessary cipers, algorithms and SSL/TLS essentials installed at all times.
+ display_order:
+  index: 1
+  all: 1
+ status: live
+ published_as: live
+ roles:
+ serial: basic-ssl-score-monitoring
+ amount: 499
+ auto_renew: monthly
+
+premium_ssl_monitoring:
+ title: Premium SSL Score Monitoring
+ icons:
+  main:
+ text_only_summary:
+  Premium SSL Score Monitoring ensures you have the necessary cipers, algorithms and SSL/TLS essentials installed
+  with hourly scanning.
+ description:
+  summary:
+ text_only_description:
+  With hourly scanning and notification with resolution and technical fix details if site's SSL Score falls below a
+  user defined threshold, Premium SSL Score Monitoring ensures you have the necessary cipers, algorithms and SSL/TLS
+  essentials installed at all times.
+ display_order:
+  index: 2
+  all: 2
+ status: live
+ published_as: live
+ roles:
+ serial: premium-ssl-score-monitoring
+ amount: 9900
+ auto_renew: monthly
+
+ssl_score_support:
+ title: SSL Score Advisor
+ icons:
+  main:
+ text_only_summary:
+  The SSL Score Advisor package provides live assistance through phone, email and/or chat with the option for
+  remote session to configure a site's SSL/TLS configuration to improve its SSL Score.
+ description:
+  summary:
+ text_only_description:
+  The SSL Score Advisor package provides live assistance through phone, email and/or chat with the option for
+  remote session to configure a site's SSL/TLS configuration to improve its SSL Score.
+ display_order:
+  index: 3
+  all: 3
+ status: live
+ published_as: live
+ roles:
+ serial: ssl-score-advisor
+ amount: 29900
+
+ssl_score_support:
+ title: Premium SSL Installation and Score Package
+ icons:
+  main:
+ text_only_summary:
+  The Premium SSL Installation and Score Package provides live installation support along with the SSL Score Advisor package.
+ description:
+  summary:
+ text_only_description:
+  The Premium SSL Installation and Score Package provides live installation support along with the SSL Score Advisor package.
+ display_order:
+  index: 4
+  all: 4
+ status: live
+ published_as: live
+ roles:
+ serial: ssl-installation-score-package
+ amount: 109900
+ duration: 365

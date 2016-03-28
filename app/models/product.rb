@@ -1,3 +1,6 @@
+# This class represents a template of an item or service that can be sold. See ProductOrder for a purchased
+# instance of Product
+
 class Product < ActiveRecord::Base
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups

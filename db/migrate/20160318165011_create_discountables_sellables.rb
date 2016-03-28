@@ -1,3 +1,6 @@
+# This is a join table that allows individuals or groups to have a discount with a particular sellable item (ie
+# ProductOrder, CertificateOrder, etc)
+
 class CreateDiscountablesSellables < ActiveRecord::Migration
   def up
     # discountable is any object that can receive a discount ie SslAccount or ResellerTier (grouping)
@@ -7,7 +10,7 @@ class CreateDiscountablesSellables < ActiveRecord::Migration
       t.string    :discountable_type
       t.integer   :sellable_id
       t.string    :sellable_type
-      t.string    :amount
+      t.integer   :amount
       t.string    :apply_as # percentage or absolute
       t.string    :status
       t.text      :notes

@@ -3,7 +3,7 @@ class ActivationsController < ApplicationController
 
   def new
     @user = User.find_using_perishable_token(params[:activation_code], 1.week) || (raise Exception)
-    raise Exception if @user.active?
+    flash[:notice] = "Your account has already been activated." if @user.active?
   end
 
   def create
