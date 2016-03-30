@@ -118,7 +118,7 @@ class ProductsController < ApplicationController
   end
 
   def find_product
-    @product = Product.find_by_serial(params[:id])
+    raise ActiveRecord::RecordNotFound unless @product = Product.find_by_serial(params[:id])
   end
 
 end

@@ -417,7 +417,7 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.unscoped{CertificateOrder.find_by_ref(params[:id])}
+    raise ActiveRecord::RecordNotFound unless @certificate_order=CertificateOrder.unscoped{CertificateOrder.find_by_ref(params[:id])}
   end
 
   def setup_registrant

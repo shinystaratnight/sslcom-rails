@@ -7,5 +7,12 @@
   #buy_certificate_heading
     %h1
       =c[:title]
-      =link_to "(click here for product details)", product_url(@product.serial)
-    =raw add_to_cart_button(@product)
+    =link_to "(click here for product details)", product_url(@product.serial)
+  %dl
+    %dt Summary:
+    %dd #{@product.text_only_summary}
+  %dl
+    %dt Full Description:
+    %dd #{@product.text_only_description}
+    %dd Pricing: #{(@product.amount * 0.01).to_money.format :with_currency}
+  =raw add_to_cart_button(@product)
