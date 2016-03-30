@@ -16,8 +16,8 @@ basic_ssl_monitoring:
   all: 1
  status: live
  published_as: live
- roles:
- serial: basic-ssl-score-monitoring
+ ref: basic-ssl-score-monitoring
+ serial: bssm
  amount: 499
  auto_renew: monthly
 
@@ -39,12 +39,12 @@ premium_ssl_monitoring:
   all: 2
  status: live
  published_as: live
- roles:
- serial: premium-ssl-score-monitoring
+ ref: premium-ssl-score-monitoring
+ serial: pssm
  amount: 9900
  auto_renew: monthly
 
-ssl_score_support:
+ssl_score_advisor:
  title: SSL Score Advisor
  icons:
   main:
@@ -61,11 +61,11 @@ ssl_score_support:
   all: 3
  status: live
  published_as: live
- roles:
- serial: ssl-score-advisor
+ ref: ssl-score-advisor
+ serial: ssa
  amount: 29900
 
-ssl_score_support:
+ssl_installation_score_package:
  title: Premium SSL Installation and Score Package
  icons:
   main:
@@ -80,7 +80,7 @@ ssl_score_support:
   all: 4
  status: live
  published_as: live
- roles:
- serial: ssl-installation-score-package
+ ref: ssl-installation-score-package
+ serial: sisp
  amount: 109900
  duration: 365

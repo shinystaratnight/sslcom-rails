@@ -45,7 +45,7 @@ class OrdersController < ApplicationController
       end
       redirect_to show_cart_orders_path(id: guid)
     end
-    setup_certificate_orders
+    setup_orders
   end  
 
   def add

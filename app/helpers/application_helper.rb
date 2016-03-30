@@ -164,7 +164,8 @@ module ApplicationHelper
             :orders, :action => :add, :id => item.model_and_id}), ({:disabled =>
             "disabled"} if cart_items.include? item )
     else
-      button_to_function("Add to cart", :id => item.model_and_id,
+      button_to_function("Add to cart", "$.add_remove_cart_items('add', {#{ShoppingCart::PRODUCT_CODE} :
+          '#{item.serial}'});$.adjust_items_in_cart();", :id => item.model_and_id,
         :class => "add_to_cart_button", :disabled => (!current_user.blank? &&
             current_user.owns_release(item))? true : false)
     end

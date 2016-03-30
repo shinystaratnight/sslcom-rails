@@ -1,5 +1,5 @@
 class PaypalExpressController < ApplicationController
-  before_filter :assigns_gateway, :setup_certificate_orders
+  before_filter :assigns_gateway, :setup_orders
 
   include ActiveMerchant::Billing
   include ApplicationHelper, OrdersHelper, PaypalExpressHelper
@@ -65,7 +65,7 @@ class PaypalExpressController < ApplicationController
         @deposit.mark_paid!
         account.funded_account.increment! :cents, total_as_cents
         unless params[:deduct_order]=~/false/i
-          setup_certificate_orders
+          setup_orders
           if account.funded_account.cents >= @order.cents
             account.funded_account.decrement! :cents, @order.cents
             @order.finalize_sale(params: params, deducted_from: @deposit,
@@ -77,7 +77,7 @@ class PaypalExpressController < ApplicationController
           end
         end
       else
-        setup_certificate_orders
+        setup_orders
         @order.notes = "#paidviapaypal#{purchase.authorization}"
         @order.finalize_sale(params: params, deducted_from: @deposit,
                              visitor_token: @visitor_token, cookies: cookies, ssl_account: current_user.ssl_account)

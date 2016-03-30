@@ -202,7 +202,7 @@ class ApplicationController < ActionController::Base
   end
 
   def build_certificate_contents(certificate_orders, order)
-    certificate_orders.each do |cert|
+    certificate_orders.select{|co|co.is_a? CertificateOrder}.each do |cert|
       cert.quantity.times do |i|
         new_cert = CertificateOrder.new(cert.attributes)
         cert.sub_order_items.each {|soi|
@@ -297,7 +297,7 @@ class ApplicationController < ActionController::Base
     Authorization.current_user = current_user
   end
 
-  def setup_certificate_orders
+  def setup_orders
     #will create @certificate_orders below
     certificates_from_cookie
     @order = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
@@ -309,7 +309,7 @@ class ApplicationController < ActionController::Base
       @certificate_order = current_user.ssl_account.certificate_orders.current
       @order = current_order
     else
-      setup_certificate_orders
+      setup_orders
     end
   end
 

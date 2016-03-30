@@ -5,6 +5,7 @@ class CreateProducts < ActiveRecord::Migration
       t.text        :summary, :text_only_summary, :description,
                     :text_only_description
       t.string      :published_as, :limit => 16, :default => 'draft'
+      t.string      :ref, :unique => true
       t.string      :serial, :unique => true
       t.string      :icons
       t.integer     :amount

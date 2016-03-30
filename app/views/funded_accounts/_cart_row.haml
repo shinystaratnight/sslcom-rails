@@ -1,26 +1,27 @@
 -cert=cart_row
 -indx=cart_row_counter
 -is_receipt ||= false
--cert_quantity = if !cert.line_item_qty.blank? ; cert.line_item_qty; elsif is_receipt ; cert.quantity; else nil; end;
--free_limit = free_qty_limit
-%tr.line_item(class="row_#{indx}")
-  %td.description
-    =row_description(cert)
-    -if cert.subject
-      (
-      %em>=cert.subject
-      )
-  -if cert_quantity
-    %td.quantity
-      %span(id="qty_#{indx}")=cert_quantity
-  -else
-    %td.quantity(style='width: 9.5em;')
-      -if cert.certificate.is_free? && free_limit<=0
-        limit reached
-      -else
-        =select_tag "qty_#{indx}", options_for_select((1..(cert.certificate.is_free? ? free_limit : 100)).to_a, cert.quantity)
-        %span.remove_from_cart(id="remove_#{indx}") remove
-  %td.center_align(id="price_#{indx}")= cert.price.format
-  -cert_quantity ||= 1
-  %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
-=render partial: "funded_accounts/row", locals: {indx: indx, cert: cert}
+-if cert.is_a? CertificateOrder
+  -cert_quantity = if !cert.line_item_qty.blank? ; cert.line_item_qty; elsif is_receipt ; cert.quantity; else nil; end;
+  -free_limit = free_qty_limit
+  %tr.line_item(class="row_#{indx}")
+    %td.description
+      =row_description(cert)
+      -if cert.subject
+        (
+        %em>=cert.subject
+        )
+    -if cert_quantity
+      %td.quantity
+        %span(id="qty_#{indx}")=cert_quantity
+    -else
+      %td.quantity(style='width: 9.5em;')
+        -if cert.certificate.is_free? && free_limit<=0
+          limit reached
+        -else
+          =select_tag "qty_#{indx}", options_for_select((1..(cert.certificate.is_free? ? free_limit : 100)).to_a, cert.quantity)
+          %span.remove_from_cart(id="remove_#{indx}") remove
+    %td.center_align(id="price_#{indx}")= cert.price.format
+    -cert_quantity ||= 1
+    %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
+  =render partial: "funded_accounts/row", locals: {indx: indx, cert: cert}

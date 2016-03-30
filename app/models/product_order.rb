@@ -83,24 +83,13 @@ class ProductOrder < ActiveRecord::Base
   # end
 
   before_create do |co|
-    co.ca = CA_CERTIFICATES[:SSLcomSHA2]
     co.is_expired=false
     co.ref='co-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
-    v     =co.create_validation
-    co.preferred_certificate_chain = co.certificate.preferred_certificate_chain
-    co.certificate.validation_rulings.each do |cvrl|
-      vrl = cvrl.dup
-      vrl.status = ValidationRuling::WAITING_FOR_DOCS
-      vrl.workflow_state = "new"
-      v.validation_rulings << vrl
-    end
-    co.site_seal=SiteSeal.create
   end
 
   after_initialize do
     if new_record?
       self.quantity ||= 1
-      self.has_csr ||= false
     end
   end
 
@@ -109,7 +98,6 @@ class ProductOrder < ActiveRecord::Base
     state :new do
       event :pay, :transitions_to => :paid do |payment|
         halt unless payment
-        post_process_csr unless is_prepaid?
       end
     end
 
@@ -144,28 +132,6 @@ class ProductOrder < ActiveRecord::Base
     state :charged_back
   end
 
-  def certificate
-    sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
-        sub_order_items[0].product_variant_item
-  end
-
-  def signed_certificate
-    signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
-  end
-
-  # def signed_certificates(index=nil)
-  #   all_csrs = certificate_contents.map(&:csr).flatten.compact
-  #   unless all_csrs.blank?
-  #     case index
-  #       when nil
-  #         all_csrs.map(&:signed_certificates).flatten
-  #       else
-  #         all_csrs.map(&:signed_certificates).flatten[index]
-  #     end
-  #   end
-  # end
-
-  # find the ratio remaining on the cert ie (today-effective_date/expiration_date-effective_date)
   def duration_remaining(options={duration: :order})
     remaining_days(options)/total_days(options)
   end

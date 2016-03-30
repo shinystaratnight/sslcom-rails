@@ -537,8 +537,7 @@ class Order < ActiveRecord::Base
   def self.certificates_order(options)
     options[:certificates].each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
-      certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
-      if certificate
+      if certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
         if certificate.is_free?
           qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
         else
@@ -558,6 +557,8 @@ class Order < ActiveRecord::Base
         #adjusting duration to reflect number of days validity
         certificate_order = setup_certificate_order(certificate: certificate, certificate_order: certificate_order)
         options[:certificate_orders] << certificate_order if certificate_order.valid?
+      elsif product = Product.find_by_serial(c[ShoppingCart::PRODUCT_CODE])
+        options[:certificate_orders] << ProductOrder.new(product: product)
       end
     end
     options[:certificate_orders]

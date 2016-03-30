@@ -778,6 +778,7 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.text     "description"
     t.text     "text_only_description"
     t.string   "published_as",          :limit => 16, :default => "draft"
+    t.string   "ref"
     t.string   "serial"
     t.string   "icons"
     t.integer  "amount"

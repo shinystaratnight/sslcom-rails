@@ -79,6 +79,8 @@ SslCom::Application.routes.draw do
     put :update_settings
   end
 
+  resources :products
+
   resources :users do
     collection do
       get :edit_password

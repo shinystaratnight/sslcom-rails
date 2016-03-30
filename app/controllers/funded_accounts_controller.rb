@@ -41,7 +41,7 @@ class FundedAccountsController < ApplicationController
     if @funded_account.order_type=='certificate'
       @certificate_order = current_user.ssl_account.certificate_orders.current
     elsif @funded_account.order_type=='order'
-      setup_certificate_orders
+      setup_orders
     end
     if params["prev.x".intern]
       if current_user.ssl_account.has_role?('new_reseller')
