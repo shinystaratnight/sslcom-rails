@@ -1009,6 +1009,7 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.integer  "amount"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "product_id"
   end
 
   create_table "surl_blacklists", :force => true do |t|

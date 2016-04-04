@@ -25,3 +25,12 @@
     -cert_quantity ||= 1
     %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
   =render partial: "funded_accounts/row", locals: {indx: indx, cert: cert}
+-else
+  %tr.line_item(class="row_#{indx}")
+    %td.description
+      =row_description(cert)
+    %td.quantity(style='width: 9.5em;')
+    %td.center_align(id="price_#{indx}")= cert.price.format
+    -cert_quantity ||= 1
+    %td.price(id="total_#{indx}")= (cert.price * cert_quantity).format
+  =render partial: "funded_accounts/row", locals: {indx: indx, cert: cert}

@@ -27,6 +27,10 @@ class CreateProductOrders < ActiveRecord::Migration
     change_table :line_items do |t|
       t.integer     :qty
     end
+
+    change_table :sub_order_items do |t|
+      t.references   :product
+    end
   end
 
   def self.down
@@ -35,6 +39,10 @@ class CreateProductOrders < ActiveRecord::Migration
 
     change_table :line_items do |t|
       t.remove        :qty
+    end
+
+    change_table :sub_order_items do |t|
+      t.remove   :product_id
     end
   end
 end

@@ -6,9 +6,9 @@ class ProductOrder < ActiveRecord::Base
   belongs_to  :product
   has_many    :users, through: :ssl_account
   has_and_belongs_to_many :parent_product_orders, class_name: 'ProductOrder', association_foreign_key:
-      :sub_product_order_id, join_table: 'product_orders_sub_product_orders'
+      :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order belongs to other(s)
   has_and_belongs_to_many :sub_product_orders, class_name: 'ProductOrder', foreign_key:
-      :sub_product_order_id, join_table: 'product_orders_sub_product_orders'
+      :sub_product_order_id, join_table: 'product_orders_sub_product_orders' # this order has other order(s)
   #will_paginate
   cattr_reader :per_page
   @@per_page = 10
@@ -238,13 +238,7 @@ class ProductOrder < ActiveRecord::Base
   end
 
   def description
-    if certificate.is_ucc?
-      year = sub_order_items.map(&:product_variant_item).detect(&:is_domain?)
-    else
-      year = sub_order_items.map(&:product_variant_item).detect(&:is_duration?)
-    end
-    year.blank? ? "" : (year.value.to_i < 365 ? "#{year.value.to_i} Days" :
-        "#{year.value.to_i/365} Year") + " #{certificate.title}"
+    product.title
   end
 
   #find the desired Certificate, choose among it’s product_variant_groups, and finally choose among it’s product_variant_items
@@ -839,12 +833,6 @@ class ProductOrder < ActiveRecord::Base
     else
       Settings.intermediate_certs_path
     end
-  end
-
-
-  def description_with_tier
-    return description if certificate.reseller_tier.blank?
-    description + " (Tier #{certificate.reseller_tier.label} Reseller)"
   end
 
   def validation_stage_checkout_in_progress?

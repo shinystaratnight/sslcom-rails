@@ -1,13 +1,14 @@
 -colspan ||= '3'
 -indx ||= ""
 -row_class=indx.blank? ? "" : "row_#{indx}"
--if cert.parent
+-if cert.respond_to?(:parent) && cert.parent
   %tr.line_item(class=row_class)
     %td.description.subitem
       Renewal for certificate
       =link_to cert.parent.ref, certificate_order_url(cert.parent.ref)
     %td(colspan="#{colspan}")
--order_line_items(cert).each do |item|
-  %tr.line_item(class=row_class)
-    %td.description.subitem= item
-    %td(colspan="#{colspan}")
+-if cert.is_a? CertificateOrder
+  -order_line_items(cert).each do |item|
+    %tr.line_item(class=row_class)
+      %td.description.subitem= item
+      %td(colspan="#{colspan}")

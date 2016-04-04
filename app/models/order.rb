@@ -534,6 +534,8 @@ class Order < ActiveRecord::Base
     end
   end
 
+
+  # this build non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
@@ -569,6 +571,7 @@ class Order < ActiveRecord::Base
     options[:certificate_orders]
   end
 
+  # builds out certificate_order in a deeper level by building SubOrderItems for each certificate_order
   def self.setup_certificate_order(options)
     certificate, certificate_order = options[:certificate], options[:certificate_order]
     duration = certificate.duration_in_days(options[:duration] || certificate_order.duration)
@@ -627,6 +630,36 @@ class Order < ActiveRecord::Base
 
   def is_test?
     certificate_orders.any?{|co|co.is_test?}
+  end
+
+  # This is the required step to save certificate_orders to this order
+  # creates certificate_orders (and 'support' objects ie certificate_contents and sub_order_items)
+  # to be save to line_item.
+  def add_certificate_orders(certificate_orders)
+    certificate_orders.select{|co|co.is_a? CertificateOrder}.each do |cert|
+      cert.quantity.times do |i|
+        new_cert = CertificateOrder.new(cert.attributes)
+        cert.sub_order_items.each {|soi|
+          new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
+        }
+        cert.certificate_contents.each {|cc|
+          cc_tmp = CertificateContent.new(cc.attributes)
+          cc_tmp.certificate_order = new_cert
+          new_cert.certificate_contents << cc_tmp
+        }
+        new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
+        new_cert.preferred_payment_order = 'prepaid'
+        #the line blow was concocted because a simple assignment resulted in
+        #the certificate_order coming up nil on each certificate_content
+        #and failing the has_csr validation in the certificate_order
+        #        new_cert.certificate_contents.clear
+        #        cert.certificate_contents.each {|cc|
+        #          cc_tmp = cc.dclone
+        #          cc_tmp.certificate_order = new_cert
+        #          new_cert.certificate_contents << cc_tmp} unless cert.certificate_contents.blank?
+        self.line_items.build :sellable=>new_cert
+      end
+    end
   end
 
   private

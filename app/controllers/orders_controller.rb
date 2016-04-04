@@ -284,7 +284,7 @@ class OrdersController < ApplicationController
     respond_to do |format|
       if order_reqs_valid?
         if @certificate_orders
-          build_certificate_contents(@certificate_orders, @order)
+          @order.add_certificate_orders(@certificate_orders)
         else
           @order=current_order
         end
@@ -323,7 +323,7 @@ class OrdersController < ApplicationController
     end
     respond_to do |format|
       if @certificate_orders
-        build_certificate_contents(@certificate_orders, @order)
+        @order.add_certificate_orders(@certificate_orders)
       else
         @order=current_order
       end

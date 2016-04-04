@@ -137,7 +137,7 @@ class ApplicationController < ActionController::Base
     (qty <= 0) ? 0 : qty
   end
 
-  #see old_certificates_from_cookie for previous version
+  # parse the cookie and build @certificate_orders
   def certificates_from_cookie
     certs=cart_contents
     @certificate_orders=[]
@@ -198,33 +198,6 @@ class ApplicationController < ActionController::Base
       certificate_order.certificate_contents[0].
         certificate_order = certificate_order
       @certificate_orders << certificate_order if certificate_order.valid?
-    end
-  end
-
-  def build_certificate_contents(certificate_orders, order)
-    certificate_orders.select{|co|co.is_a? CertificateOrder}.each do |cert|
-      cert.quantity.times do |i|
-        new_cert = CertificateOrder.new(cert.attributes)
-        cert.sub_order_items.each {|soi|
-          new_cert.sub_order_items << SubOrderItem.new(soi.attributes)
-        }
-        cert.certificate_contents.each {|cc|
-          cc_tmp = CertificateContent.new(cc.attributes)
-          cc_tmp.certificate_order = new_cert
-          new_cert.certificate_contents << cc_tmp
-        }
-        new_cert.line_item_qty = cert.quantity if(i==cert.quantity-1)
-        new_cert.preferred_payment_order = 'prepaid'
-        #the line blow was concocted because a simple assignment resulted in
-        #the certificate_order coming up nil on each certificate_content
-        #and failing the has_csr validation in the certificate_order
-#        new_cert.certificate_contents.clear
-#        cert.certificate_contents.each {|cc|
-#          cc_tmp = cc.dclone
-#          cc_tmp.certificate_order = new_cert
-#          new_cert.certificate_contents << cc_tmp} unless cert.certificate_contents.blank?
-        order.line_items.build :sellable=>new_cert
-      end
     end
   end
 
@@ -301,7 +274,7 @@ class ApplicationController < ActionController::Base
     #will create @certificate_orders below
     certificates_from_cookie
     @order = Order.new(:amount=>(current_order.amount.to_s.to_i or 0))
-    build_certificate_contents(@certificate_orders, @order)
+    @order.add_certificate_orders(@certificate_orders)
   end
 
   def parse_certificate_orders
@@ -514,6 +487,7 @@ class ApplicationController < ActionController::Base
   def clear_cart
     cookies.delete(:cart)
     cookies.delete(:aid_li)
+    current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
   end
 
   def identify_visitor
