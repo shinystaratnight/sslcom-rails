@@ -3,6 +3,7 @@ class Certificate < ActiveRecord::Base
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
+  has_and_belongs_to_many :products
   acts_as_publishable :live, :draft, :discontinue_sell
   belongs_to  :reseller_tier
   serialize   :icons

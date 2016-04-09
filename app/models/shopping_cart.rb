@@ -12,6 +12,7 @@ class ShoppingCart < ActiveRecord::Base
   DOMAINS = "do"
   DURATION = "du"
   PRODUCT_CODE = "pr"
+  SUB_PRODUCT_CODE = "spr" # array of sub products that will be added through the sub_order_item
   RENEWAL_ORDER = "rn"
   AFFILIATE = "af"
   DEFAULT_AFFILIATE_ID = 1

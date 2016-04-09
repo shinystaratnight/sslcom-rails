@@ -231,7 +231,7 @@
       =cert_form.text_area :additional_domains, cols: 40, rows: 10
   -unless @certificate_order.is_unused_credit?
     .clearfix
-      %label{:for=>"server_software"}
+      %label{:for=>"duration"}
         *Duration:
         %span.label_desc certificate expires in
       .radio_choices
@@ -276,6 +276,39 @@
           #server_license_cost_ea_desc
             $
             %span#server_license_cost_ea> 10
+    .clearfix
+      %label{:for=>"support"}
+        Installation Support:
+        %span.label_desc see support packages for details
+      .radio_choices
+        -unless @certificate.is_ucc?
+          -@certificate.items_by_duration.each_with_index do |item, i|
+            -first = @certificate.items_by_duration[0]
+            .radio_w_desc.clearfix
+              =f.radio_button :duration, i+1, :id => item.model_and_id
+              =item.title
+              #{(item.price / (i+1)).format}#{'/yr' unless i==0}
+              -if i > 0
+                -p = 1.0-(item.price.cents.to_f / (first.price.cents * (i+1)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
+        -else
+          -first_year_price = 0
+          -@certificate.first_domains_tiers.each_with_index do |item, i|
+            .radio_w_desc.clearfix
+              =f.radio_button :duration, i+1
+              =pluralize(i+1, "Year")
+              -mod_price = item.price*3
+              -first_year_price = mod_price if i==0
+              #{(mod_price / (i+1)).format}#{'/yr' unless i==0}
+              -if i > 0
+                -p = 1.0-(mod_price.cents.to_f / (first_year_price.cents * (i+1)).to_f)
+                %span.save
+                  (
+                  %em> save #{Integer((p*100).ceil)}%
+                  )
     .clearfix
       %label{:for => "expense_amount"}
         Order Amount:

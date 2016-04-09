@@ -535,7 +535,7 @@ class Order < ActiveRecord::Base
   end
 
 
-  # this build non-deep certificate_orders(s) from the cookie params
+  # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].each do |c|
       next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
@@ -571,7 +571,7 @@ class Order < ActiveRecord::Base
     options[:certificate_orders]
   end
 
-  # builds out certificate_order in a deeper level by building SubOrderItems for each certificate_order
+  # builds out certificate_order at a deep level by building SubOrderItems for each certificate_order
   def self.setup_certificate_order(options)
     certificate, certificate_order = options[:certificate], options[:certificate_order]
     duration = certificate.duration_in_days(options[:duration] || certificate_order.duration)

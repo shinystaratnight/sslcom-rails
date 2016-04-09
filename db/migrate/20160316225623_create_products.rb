@@ -14,6 +14,7 @@ class CreateProducts < ActiveRecord::Migration
       t.text        :notes
       t.string      :auto_renew # what period ie nil, daily, weekly, quarterly, etc
       t.string      :display_order
+      t.string      :type
       t.timestamps
     end
 
@@ -22,10 +23,17 @@ class CreateProducts < ActiveRecord::Migration
       t.integer     :sub_product_id
       t.timestamps
     end
+
+    create_table :certificates_products, force: true do |t|
+      t.references  :certificate
+      t.references  :product
+      t.timestamps
+    end
   end
 
   def self.down
     drop_table  :products
     drop_table  :products_sub_products
+    drop_table  :certificates_products
   end
 end

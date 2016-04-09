@@ -5,6 +5,8 @@ class Product < ActiveRecord::Base
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :product_orders
+  # if this product is to be added to certificate_order as a line_item
+  has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   acts_as_publishable :live, :draft, :discontinue_sell
   # belongs_to  :reseller_tier
   serialize   :icons
@@ -15,6 +17,7 @@ class Product < ActiveRecord::Base
       :sub_product_id, join_table: 'products_sub_products'
   has_and_belongs_to_many :sub_products, class_name: 'Product', foreign_key:
       :sub_product_id, join_table: 'products_sub_products'
+  has_and_belongs_to_many :certificates
 
   def price=(amount)
     self.amount = amount.gsub(/\./,"").to_i

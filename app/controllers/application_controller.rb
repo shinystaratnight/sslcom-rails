@@ -104,6 +104,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # returns the cart cookie with reseller tier as an array
   def cart_contents
     find_tier
     cart = cookies[:cart]

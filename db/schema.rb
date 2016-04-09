@@ -274,6 +274,13 @@ ActiveRecord::Schema.define(:version => 20160318165011) do
     t.datetime "updated_at"
   end
 
+  create_table "certificates_products", :force => true do |t|
+    t.integer  "certificate_id"
+    t.integer  "product_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
   create_table "client_applications", :force => true do |t|
     t.string   "name"
     t.string   "url"
