@@ -1,3 +1,4 @@
+-profiles = ssl_account.billing_profiles.reject{|bp|bp.expired?}
 %h3.subheading.funding_sources_head Funding Sources
 #existing_credit_cards
   %table
@@ -8,16 +9,18 @@
       %td Expiry Date
       %td
     %tr#paypal
-      %td= radio_button_tag :funding_source, "paypal", :class=>'billing_profile_radio'
-      %td(colspan="4" ) Paypal
-    -ssl_account.billing_profiles.reject{|bp|bp.expired?}.each do |profile|
-      %tr[profile]
-        %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'
-        %td= profile.credit_card
-        %td= profile.masked_card_number
-        %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
-        %td= destroy_credit_card_link profile
+      %td(colspan="5" )=link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
+    -if profiles.empty?
+      %td(colspan="5" ) or
+    -else
+      -profiles.each do |profile|
+        %tr[profile]
+          %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'
+          %td= profile.credit_card
+          %td= profile.masked_card_number
+          %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+          %td= destroy_credit_card_link profile
     %tr
-      %td{:colspan => 6}
+      %td{:colspan => 5}
         %a#expand_register_card{:href=>"javascript:void(0);"}
           =image_tag 'add_new_billing_profile.png', :alt=> 'click here to add a new credit card', :id=>'toggle_billing_profile_form'
