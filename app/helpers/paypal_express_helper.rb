@@ -40,19 +40,21 @@ module PaypalExpressHelper
       if line_item.sellable.is_a?(Deposit)
         {
             :name => "Deposit",
-            :number => "sslcomdeposit",
-            :quantity => 1,
-            :amount => line_item.amount.cents,
+            :number => "sslcomdeposit"
+        }
+      elsif line_item.sellable.is_a?(ResellerTier)
+        product = line_item.sellable
+        {
+            :name => product.roles,
+            :number => product.roles
         }
       else
-        product = line_item.sellable.certificate
+        product = line_item.sellable.is_a?(CertificateOrder) ? line_item.sellable.certificate : line_item.sellable
         {
             :name => product.title,
-            :number => product.serial,
-            :quantity => 1,
-            :amount => line_item.amount.cents,
+            :number => product.serial
         }
-      end
+      end.merge(quantity: 1, amount: line_item.amount.cents )
     end
   end
 

@@ -16,6 +16,7 @@ class FundedAccount < ActiveRecord::Base
   end
 
   NEW_CREDIT_CARD = "new credit card"
+  PAYPAL = "paypal"
 
   def deduct_order?
     ["true", true].include? @deduct_order

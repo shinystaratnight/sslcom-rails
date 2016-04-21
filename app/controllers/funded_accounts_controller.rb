@@ -18,7 +18,7 @@ class FundedAccountsController < ApplicationController
     @reseller_initial_deposit = true if initial_reseller_deposit?
   end
 
-  # apply funds from funded_account to the purchase the order
+  # apply funds from funded_account to purchase the order
   def allocate_funds_for_order
     @funded_account = current_user ? current_user.ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"

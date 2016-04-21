@@ -420,7 +420,7 @@ class SslAccount < ActiveRecord::Base
   def build_line_items(order)
     #only do for prepaid, because 1-off certificate_orders when added are not
     #necessarily paid for already
-    if !order.new_record? && order.line_items.all? {|c|c.sellable.try(:is_prepaid?)}
+    if !order.new_record? && order.line_items.all? {|c|c.sellable.try("is_prepaid?".to_sym) if c.sellable.respond_to?("is_prepaid?".to_sym)}
       OrderNotifier.certificate_order_prepaid(self, order).deliver
       order.line_items.each do |cert|
         self.certificate_orders << cert.sellable

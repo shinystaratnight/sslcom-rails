@@ -1,6 +1,7 @@
 -content_for :title, "Deposit Funds Into SSL Account"
 =render :partial => 'index_scripts'
-=render(:partial => '/shared/form_progress_indicator', :locals => {:pages=>[Reseller::SIGNUP_PAGES, 3]}) if reseller_initial_deposit?
+=render(:partial => '/shared/form_progress_indicator',
+  :locals => {:pages=>[Reseller::SIGNUP_PAGES, 3], options:{li_style: "margin-right: -2px"}}) if reseller_initial_deposit?
 =order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
 .reseller_registration_select_tier
   %h3 Deposit Funds

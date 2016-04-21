@@ -24,10 +24,10 @@ development:
   socket: /var/run/mysqld/mysqld.sock
   adapter: mysql2
   #use when remote db source
-  host: 174.129.35.108
-  database: ssl_com_production
+#  host: 174.129.35.108
+#  database: ssl_com_production
   #else
-#  database: ssl_com_development
+  database: ssl_com_development
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

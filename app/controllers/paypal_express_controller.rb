@@ -2,7 +2,7 @@ class PaypalExpressController < ApplicationController
   before_filter :assigns_gateway, :setup_orders
 
   include ActiveMerchant::Billing
-  include ApplicationHelper, OrdersHelper, PaypalExpressHelper
+  include ApplicationHelper, OrdersHelper, PaypalExpressHelper, FundedAccountsHelper
 
   def item_to_buy
     params[:make_deposit] ? make_deposit : current_order
@@ -56,7 +56,7 @@ class PaypalExpressController < ApplicationController
 
     if purchase.success?
       # you might want to destroy your cart here if you have a shopping cart
-      if purchase_params[:items][0][:name]=~/deposit/i
+      if purchase_params[:items][0][:name]=~/(deposit|reseller)/i
         account = current_user.ssl_account
         @deposit=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
         @deposit.description = "Paypal Deposit"
@@ -65,11 +65,23 @@ class PaypalExpressController < ApplicationController
         @deposit.mark_paid!
         account.funded_account.increment! :cents, total_as_cents
         unless params[:deduct_order]=~/false/i
-          setup_orders
+          if initial_reseller_deposit?
+            @order = current_order
+            #get this before transaction so user cannot change the cookie, thus
+            #resulting in mismatched item purchased
+            immutable_cart_item = ResellerTier.find_by_label(@order.
+                line_items.first.sellable.label)
+          else
+            setup_orders
+          end
           if account.funded_account.cents >= @order.cents
+            current_user.ssl_account.orders << @order
             account.funded_account.decrement! :cents, @order.cents
             @order.finalize_sale(params: params, deducted_from: @deposit,
-                                 visitor_token: @visitor_token, cookies: cookies, ssl_account: current_user.ssl_account)
+                                 visitor_token: @visitor_token, cookies: cookies)
+            if initial_reseller_deposit?
+              account.reseller.finish_signup immutable_cart_item
+            end
             notice = "Your purchase is now complete!"
             clear_cart
           else
@@ -78,9 +90,10 @@ class PaypalExpressController < ApplicationController
         end
       else
         setup_orders
+        current_user.ssl_account.orders << @order
         @order.notes = "#paidviapaypal#{purchase.authorization}"
         @order.finalize_sale(params: params, deducted_from: @deposit,
-                             visitor_token: @visitor_token, cookies: cookies, ssl_account: current_user.ssl_account)
+                             visitor_token: @visitor_token, cookies: cookies)
         notice = "Your purchase is now complete!"
         clear_cart
       end

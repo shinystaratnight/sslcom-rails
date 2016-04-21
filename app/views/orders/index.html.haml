@@ -33,7 +33,5 @@
         %td=o.reference_number
         -if o.is_deposit?
           %td=o.final_amount.format :with_currency
-        -elsif o.is_reseller_tier?
-          %td
         -else
           %td (#{o.final_amount.format :with_currency})
