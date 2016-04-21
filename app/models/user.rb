@@ -38,6 +38,16 @@ class User < ActiveRecord::Base
 
   default_scope where{status << ['disabled']}.order(:created_at.desc)
 
+  scope :search, lambda {|term|
+    joins{ssl_account.outer}.where{
+      (ssl_account.acct_number =~ "%#{term}%") | (login =~ "%#{term}%") | (email =~ "%#{term}%")}
+  }
+
+  scope :with_role, lambda {|term|
+    joins{roles.outer}.where{
+      (roles.name=~ "%#{term}%")}
+  }
+
   def has_role?(role)
     roles.map{|r|r.name.downcase}.include?(role.to_s)
   end
