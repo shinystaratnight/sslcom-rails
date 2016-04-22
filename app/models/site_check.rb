@@ -94,6 +94,7 @@ class SiteCheck < ActiveRecord::Base
   end
 
   def self.days_left(subject,carry_over=false)
+    return 0 if subject.blank?
     old_certificate=SiteCheck.new(url: subject, verify_trust: false).certificate
     result=
       if old_certificate && ((old_certificate.not_after.to_date - DateTime.now.to_date).to_i > 0)

@@ -26,11 +26,30 @@ class UsersController < ApplicationController
 
   # GET /users
   # GET /users.xml
+  # def index
+  #   p = {:page => params[:page]}
+  #   p.merge!({:conditions=>["login #{SQL_LIKE} ? OR email #{SQL_LIKE} ?",
+  #     '%'+@search+'%', '%'+@search+'%']}) if @search = params[:search]
+  #   @users = User.unscoped.order(:created_at.desc).paginate(p)
+  #   respond_to do |format|
+  #     format.html { render :action => :index }
+  #     format.xml  { render :xml => @users }
+  #   end
+  # end
+
   def index
     p = {:page => params[:page]}
-    p.merge!({:conditions=>["login #{SQL_LIKE} ? OR email #{SQL_LIKE} ?",
-      '%'+@search+'%', '%'+@search+'%']}) if @search = params[:search]
-    @users = User.unscoped.order(:created_at.desc).paginate(p)
+    @users = User.unscoped
+    if params[:search]
+      search = params[:search].strip.split(" ")
+      role = nil
+      search.delete_if {|s|s =~ /role\:(.+)/; role ||= $1; $1}
+      search = search.join(" ")
+      @users = @users.with_role(role) if role
+      @users = @users.search(search) unless search.blank?
+    end
+    @users = @users.order(:created_at.desc).paginate(p)
+
     respond_to do |format|
       format.html { render :action => :index }
       format.xml  { render :xml => @users }
