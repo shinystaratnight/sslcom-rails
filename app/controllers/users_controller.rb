@@ -59,7 +59,7 @@ class UsersController < ApplicationController
       flash[:notice] = notice
       #in production heroku, requests coming FROM a subdomain will not transmit
       #flash messages to the target page. works fine in dev though
-      redirect_to(current_subdomain==Reseller::SUBDOMAIN ? root_url(:notice=>notice) : root_url)
+      redirect_to(current_subdomain==Reseller::SUBDOMAIN ? login_url(:notice=>notice) : login_url)
     else
       render :action => :new
     end
@@ -201,7 +201,7 @@ class UsersController < ApplicationController
           flash[:notice] = "Ooops, looks like user #{params[:login]} doesn't exist in our system"
         end
       end
-      redirect_to root_path
+      redirect_to login_path
     end
   end
 
