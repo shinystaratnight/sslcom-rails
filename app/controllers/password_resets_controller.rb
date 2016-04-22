@@ -29,7 +29,7 @@ class PasswordResetsController < ApplicationController
         @user.deliver_password_reset_instructions!
         flash[:notice] =
           "Instructions to reset your password have been emailed to you. Please check your email."
-        redirect_to root_url
+        redirect_to login_url
       else
         flash[:notice] = "No user was found with that login"
         render :action => :new
@@ -40,7 +40,7 @@ class PasswordResetsController < ApplicationController
         @user.deliver_username_reminder!
         flash[:notice] =
           "Your username has been emailed to you. Please check your email."
-        redirect_to root_url
+        redirect_to login_url
       else
         flash[:notice] = "No user was found with that email"
         render :action => :new
@@ -58,7 +58,7 @@ class PasswordResetsController < ApplicationController
         from your email into your browser or restarting the
         reset password process.
       EOS
-      redirect_to root_url
+      redirect_to login_url
     end
   end  
 end  
