@@ -81,6 +81,29 @@ class CertificateOrder < ActiveRecord::Base
       merge(options)
   }
 
+  scope :search_all_materials, lambda {|term|
+    joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+        joins{certificate_contents.csr.signed_certificates.outer}.
+        where{
+          (ref =~ "%#{term}%") |
+          (external_order_number =~ "%#{term}%") |
+          (notes =~ "%#{term}%") |
+          (certificate_contents.domains =~ "%#{term}%") |
+          (certificate_contents.csr.common_name =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.locality =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%") |
+          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%")}
+  }
+
   scope :reprocessing, lambda {
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
