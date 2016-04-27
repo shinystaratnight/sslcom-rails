@@ -72,36 +72,82 @@ class CertificateOrder < ActiveRecord::Base
     joins{certificate_contents.csr}.where{certificate_contents.csr.common_name =~ "%#{term}%"}
   }
 
+  # scope :search_with_csr, lambda {|term, options|
+  #   cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
+  #     CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
+  #   {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless
+  #     cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ? OR `certificate_orders`.`external_order_number` #{SQL_LIKE} ? OR `certificate_orders`.`notes` #{SQL_LIKE} ?",
+  #     '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
+  #     merge(options)
+  # }
+  #
   scope :search_with_csr, lambda {|term, options|
-    cids=SignedCertificate.select{csr_id}.where{common_name=~"%#{term}%"}.map(&:csr_id)+
-      CaCertificateRequest.select{api_requestable_id}.where{(response=~"%#{term}%") & (api_requestable_type == "Csr")}.map(&:api_requestable_id)
-    {:conditions => ["certificate_contents.domains #{SQL_LIKE} ? OR csrs.common_name #{SQL_LIKE} ? #{"OR csrs.id IN (#{cids.join(",")})" unless
-      cids.empty?} OR `certificate_orders`.`ref` #{SQL_LIKE} ? OR `certificate_orders`.`external_order_number` #{SQL_LIKE} ? OR `certificate_orders`.`notes` #{SQL_LIKE} ?",
-      '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%', '%'+term+'%'], :include => {:certificate_contents=>:csr}, select: "distinct certificate_orders.*"}.
-      merge(options)
-  }
-
-  scope :search_all_materials, lambda {|term|
-    joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-        joins{certificate_contents.csr.signed_certificates.outer}.
-        where{
-          (ref =~ "%#{term}%") |
-          (external_order_number =~ "%#{term}%") |
-          (notes =~ "%#{term}%") |
-          (certificate_contents.domains =~ "%#{term}%") |
-          (certificate_contents.csr.common_name =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.locality =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%") |
-          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%")}
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
+               subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
+               expires: nil, created_at: nil}
+    filters.each{|fn, fv|
+      term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
+    }
+    term = term.empty? ? nil : term.join(" ")
+    return nil if [term,*(filters.values)].compact.empty?
+    result = joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+        joins{certificate_contents.csr.signed_certificates.outer}
+    unless term.blank?
+      result = result.where{
+        (ref =~ "%#{term}%") |
+            (external_order_number =~ "%#{term}%") |
+            (notes =~ "%#{term}%") |
+            (certificate_contents.domains =~ "%#{term}%") |
+            (certificate_contents.csr.common_name =~ "%#{term}%") |
+            (certificate_contents.csr.organization =~ "%#{term}%") |
+            (certificate_contents.csr.organization_unit =~ "%#{term}%") |
+            (certificate_contents.csr.email =~ "%#{term}%") |
+            (certificate_contents.csr.sig_alg =~ "%#{term}%") |
+            (certificate_contents.csr.state =~ "%#{term}%") |
+            (certificate_contents.csr.postal_code =~ "%#{term}%") |
+            (certificate_contents.csr.subject_alternative_names =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+            (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
+    end
+    %w(postal_code signature fingerprint).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(common_name organization organization_unit state subject_alternative_names locality country strength).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%") |
+            (certificate_contents.csr.try(field.to_sym) =~ "%#{query}%") } if query
+    end
+    %w(address).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
+        (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
+    end
+    %w(expires).each do |field|
+      query=filters[field.to_sym]
+      if query
+        query=query.split("-")
+        start = Date.strptime query[0], "%m/%d/%Y"
+        finish = Date.strptime query[1], "%m/%d/%Y"
+        where{created_at >> (start..finish)}.uniq
+        result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
+      end
+    end
+    result
   }
 
   scope :reprocessing, lambda {
