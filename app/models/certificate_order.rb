@@ -105,7 +105,6 @@ class CertificateOrder < ActiveRecord::Base
             (certificate_contents.csr.email =~ "%#{term}%") |
             (certificate_contents.csr.sig_alg =~ "%#{term}%") |
             (certificate_contents.csr.state =~ "%#{term}%") |
-            (certificate_contents.csr.postal_code =~ "%#{term}%") |
             (certificate_contents.csr.subject_alternative_names =~ "%#{term}%") |
             (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
             (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
@@ -137,7 +136,7 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
         (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
     end
-    %w(expires).each do |field|
+    %w(expires created_at).each do |field|
       query=filters[field.to_sym]
       if query
         query=query.split("-")
