@@ -52,13 +52,55 @@ class Order < ActiveRecord::Base
   }
 
   scope :search, lambda {|term|
-    joins{billing_profile.outer}.joins{line_items.sellable(CertificateOrder).outer}.where{
-    (billing_profile.last_digits == "#{term}") | (billing_profile.first_name =~ "%#{term}%") |
-    (billing_profile.last_name =~ "%#{term}%") | (billing_profile.address_1 =~ "%#{term}%") |
-    (billing_profile.address_2 =~ "%#{term}%") | (billing_profile.company =~ "%#{term}%") |
-    (billing_profile.postal_code =~ "%#{term}%") | (reference_number =~ "%#{term}%") |
-    (notes =~ "%#{term}%") |
-    (line_items.sellable(CertificateOrder).ref=~ "%#{term}%")}
+    term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
+    filters = {amount: nil, email: nil, login: nil, account_nubmer: nil}
+    filters.each{|fn, fv|
+      term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
+    }
+    term = term.empty? ? nil : term.join(" ")
+    return nil if [term,*(filters.values)].compact.empty?
+    result = joins{billing_profile.outer}.joins{line_items.sellable(CertificateOrder).outer}.
+        joins{billable(SslAccount)}.joins{billable(SslAccount).users}
+    unless term.blank?
+      result = result.where{
+        (billing_profile.last_digits == "#{term}") |
+        (billing_profile.first_name =~ "%#{term}%") |
+        (billing_profile.last_name =~ "%#{term}%") |
+        (billing_profile.address_1 =~ "%#{term}%") |
+        (billing_profile.address_2 =~ "%#{term}%") |
+        (billing_profile.company =~ "%#{term}%") |
+        (billing_profile.postal_code =~ "%#{term}%") |
+        (reference_number =~ "%#{term}%") |
+        (notes =~ "%#{term}%") |
+        (line_items.sellable(CertificateOrder).ref=~ "%#{term}%") |
+        (billable(SslAccount).acct_number=~ "%#{term}%") |
+        (billable(SslAccount).users.login=~ "%#{term}%") |
+        (billable(SslAccount).users.email=~ "%#{term}%")}
+    end
+    %w(login email).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (billable(SslAccount).users.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(account_number).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (billable(SslAccount).try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(amount).each do |field|
+      if filters[field.to_sym]
+        query=filters[field.to_sym].delete(".")
+        case query
+          when /^>/
+            result = result.where{(cents > "#{query[1..-1]}")}
+          when /^</
+            result = result.where{(cents < "#{query[1..-1]}")}
+          else
+            result = result.where{(cents == "#{query}")}
+        end
+      end
+    end
+    result.order(:created_at.desc)
   }
 
   scope :not_free, lambda{

@@ -85,19 +85,22 @@ class CertificateOrder < ActiveRecord::Base
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires: nil, created_at: nil}
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     result = joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-        joins{certificate_contents.csr.signed_certificates.outer}
+        joins{certificate_contents.csr.signed_certificates.outer}.joins{ssl_account.outer}.joins{ssl_account.users.outer}
     unless term.blank?
       result = result.where{
         (ref =~ "%#{term}%") |
             (external_order_number =~ "%#{term}%") |
             (notes =~ "%#{term}%") |
+            (ssl_account.acct_number =~ "%#{term}%") |
+            (ssl_account.users.login =~ "%#{term}%") |
+            (ssl_account.users.email =~ "%#{term}%") |
             (certificate_contents.domains =~ "%#{term}%") |
             (certificate_contents.csr.common_name =~ "%#{term}%") |
             (certificate_contents.csr.organization =~ "%#{term}%") |
@@ -136,17 +139,36 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
         (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
     end
+    %w(login email).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (ssl_account.users.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(account_number).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (ssl_account.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(address).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
+        (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
+    end
     %w(expires created_at).each do |field|
       query=filters[field.to_sym]
       if query
         query=query.split("-")
         start = Date.strptime query[0], "%m/%d/%Y"
-        finish = Date.strptime query[1], "%m/%d/%Y"
-        where{created_at >> (start..finish)}.uniq
-        result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
+        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start+1.day
+        if(field=="expires_at")
+          result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
+        else
+          result = result.where{(certificate_contents.csr.signed_certificates.try(field.to_sym) >> (start..finish))}
+        end
       end
     end
-    result
+    result.uniq
   }
 
   scope :reprocessing, lambda {
