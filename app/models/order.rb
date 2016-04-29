@@ -89,14 +89,19 @@ class Order < ActiveRecord::Base
     end
     %w(amount).each do |field|
       if filters[field.to_sym]
-        query=filters[field.to_sym].delete(".")
-        case query
-          when /^>/
-            result = result.where{(cents > "#{query[1..-1]}")}
-          when /^</
-            result = result.where{(cents < "#{query[1..-1]}")}
-          else
-            result = result.where{(cents == "#{query}")}
+        query=filters[field.to_sym].split("-")
+        if query.count==1
+          query=filters[field.to_sym].delete(".")
+          case query
+            when /^>/
+              result = result.where{(cents > "#{query[1..-1]}")}
+            when /^</
+              result = result.where{(cents < "#{query[1..-1]}")}
+            else
+              result = result.where{(cents == "#{query}")}
+          end
+        else
+          result = result.where{cents >> ((query[0].delete("."))..(query[1].delete(".")))}
         end
       end
     end
