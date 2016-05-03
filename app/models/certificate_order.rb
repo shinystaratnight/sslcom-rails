@@ -155,7 +155,7 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
         (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
     end
-    %w(expires created_at).each do |field|
+    %w(expires_at created_at).each do |field|
       query=filters[field.to_sym]
       if query
         query=query.split("-")

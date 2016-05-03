@@ -53,14 +53,15 @@ class Order < ActiveRecord::Base
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = {amount: nil, email: nil, login: nil, account_nubmer: nil}
+    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
-    result = joins{billing_profile.outer}.joins{line_items.sellable(CertificateOrder).outer}.
-        joins{billable(SslAccount)}.joins{billable(SslAccount).users}
+    ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
+    result = joins{billing_profile.outer}.joins{billable(SslAccount)}.joins{billable(SslAccount).users}
+    result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?
       result = result.where{
         (billing_profile.last_digits == "#{term}") |
@@ -72,7 +73,8 @@ class Order < ActiveRecord::Base
         (billing_profile.postal_code =~ "%#{term}%") |
         (reference_number =~ "%#{term}%") |
         (notes =~ "%#{term}%") |
-        (line_items.sellable(CertificateOrder).ref=~ "%#{term}%") |
+        (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
+            (notes =~ "%#{term}%")) | # searching notes twice is a hack, nil did not work
         (billable(SslAccount).acct_number=~ "%#{term}%") |
         (billable(SslAccount).users.login=~ "%#{term}%") |
         (billable(SslAccount).users.email=~ "%#{term}%")}
@@ -86,6 +88,17 @@ class Order < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.where{
         (billable(SslAccount).try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(product).each do |field|
+      query=filters[field.to_sym]
+      case query
+        when /deposit/
+          result = result.joins{line_items.sellable(Deposit)}
+        when /certificate/
+          result = result.joins{line_items.sellable(CertificateOrder)}
+        when /reseller/
+          result = result.joins{line_items.sellable(ResellerTier)}
+      end
     end
     %w(amount).each do |field|
       if filters[field.to_sym]
@@ -105,8 +118,22 @@ class Order < ActiveRecord::Base
         end
       end
     end
-    result.order(:created_at.desc)
-  }
+    %w(created_at).each do |field|
+      query=filters[field.to_sym]
+      if query
+        query=query.split("-")
+        start = Date.strptime query[0], "%m/%d/%Y"
+        finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start+1.day
+        result = result.where{created_at >> (start..finish)}
+      end
+    end
+    result.uniq.order(:created_at.desc)
+  } do
+
+    def amount
+      sum(&:cents)*0.01
+    end
+  end
 
   scope :not_free, lambda{
     not_new.where :cents.gt=>0
@@ -515,11 +542,11 @@ class Order < ActiveRecord::Base
   end
 
   def is_deposit?
-    Deposit == line_items.first.sellable.class
+    Deposit == line_items.first.sellable.class if line_items.first
   end
 
   def is_reseller_tier?
-    ResellerTier == line_items.first.sellable.class
+    ResellerTier == line_items.first.sellable.class if line_items.first
   end
 
   def migrated_from

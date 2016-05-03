@@ -203,15 +203,26 @@ class OrdersController < ApplicationController
   # GET /orders.xml
   def index
     p = {:page => params[:page]}
-    @orders = if @search = params[:search]
-      (current_user.is_admin? ?
-        Order.unscoped{Order.search(params[:search])} :
-        current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.
-          search(params[:search]).not_new}).paginate(p)
-    else
-      ((current_user.is_admin? ? Order.not_test :
-        current_user.ssl_account.orders.not_test).paginate(p))
-    end
+    @total_amount=nil
+    unpaginated =
+      if @search = params[:search]
+        if current_user.is_admin?
+          Order.unscoped{Order.search(params[:search])}
+        else
+          current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.search(params[:search]).not_new}
+        end
+      else
+        if current_user.is_admin?
+          Order.not_test
+        else
+          current_user.ssl_account.orders.not_test
+        end
+      end
+    @total_amount=unpaginated.sum(&:cents)
+    @total_count=unpaginated.count
+    @deposits_amount=unpaginated.joins{line_items.sellable(Deposit)}.sum(&:cents)
+    @deposits_count=unpaginated.joins{line_items.sellable(Deposit)}.count
+    @orders=unpaginated.paginate(p)
 
     respond_to do |format|
       format.html { render :action => :index}

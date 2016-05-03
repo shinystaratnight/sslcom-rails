@@ -15,6 +15,16 @@
     %caption
       =title
       =will_paginate @orders
+    -if current_user.is_admin?
+      %tr
+        %td(scope="col" colspan="7" style="color:grey")
+          %span Orders Total: #{Money.new(@total_amount).format :with_currency}
+          |
+          %span Orders Count: #{@total_count}
+          |
+          %span Deposits Total: #{Money.new(@deposits_amount).format :with_currency}
+          |
+          %span Deposits Count: #{@deposits_count}
     %tr.heading_row
       %th.name(scope="col") Description
       %th(scope="col" colspan="3") Date
