@@ -203,7 +203,6 @@ class OrdersController < ApplicationController
   # GET /orders.xml
   def index
     p = {:page => params[:page]}
-    @total_amount=nil
     unpaginated =
       if @search = params[:search]
         if current_user.is_admin?
@@ -218,11 +217,7 @@ class OrdersController < ApplicationController
           current_user.ssl_account.orders.not_test
         end
       end
-    @total_amount=unpaginated.sum(&:cents)
-    @total_count=unpaginated.count
-    @deposits_amount=unpaginated.joins{line_items.sellable(Deposit)}.sum(&:cents)
-    @deposits_count=unpaginated.joins{line_items.sellable(Deposit)}.count
-    @orders=unpaginated.paginate(p)
+    stats(p, unpaginated)
 
     respond_to do |format|
       format.html { render :action => :index}
@@ -230,13 +225,25 @@ class OrdersController < ApplicationController
     end
   end
 
+  def stats(p, unpaginated)
+    @total_amount=unpaginated.sum(&:cents)
+    @total_count=unpaginated.count
+    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(&:cents)
+    @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
+    @orders=unpaginated.paginate(p)
+  end
+
   def filter_by_state
     p = {:page => params[:page]}
     states = [params[:id]]
-    @orders = (current_user.is_admin? ?
-        Order.unscoped{Order.includes(:line_items).where{state >> states}.order(:created_at.desc)} :
+    unpaginated =
+      if current_user.is_admin?
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+      else
         current_user.ssl_account.orders.unscoped{
-          current_user.ssl_account.orders.includes(:line_items).where{state >> [params[:state]]}.order(:created_at.desc)}).paginate(p)
+          current_user.ssl_account.orders.includes(:line_items).where{state >> [params[:state]]}.order(:created_at.desc)}
+      end
+    stats(p, unpaginated)
 
     respond_to do |format|
       format.html { render :action=>:index}

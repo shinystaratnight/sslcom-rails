@@ -171,7 +171,7 @@ class User < ActiveRecord::Base
   end
 
   def is_affiliate?
-    !!ssl_account.affiliate
+    !!ssl_account.try(:affiliate)
   end
 
   #if user has duplicate v2 users and is not consolidated
