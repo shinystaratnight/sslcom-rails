@@ -49,13 +49,13 @@ SslCom::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:    "smtp.fusemail.net",
+    address:    "email-smtp.us-east-1.amazonaws.com",
     port:       465,
     enable_starttls_auto: true,
     ssl: true,
     authentication: :login,
-    user_name: "bob.livingston@ssl.gs",
-    password: "Jama1Kama!"
+    user_name: "AKIAJNCUJGKABXHTVP3A",
+    password: "AqbmBAfXEHru+nWEkuHiAJbWl+8KSUx3qswKJXW8Inr5"
   }
 
   config.to_prepare do
