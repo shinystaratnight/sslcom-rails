@@ -32,8 +32,8 @@ class Csr < ActiveRecord::Base
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
-  #default_scope order(:created_at.desc) #theres about 17 records without proper bodies we should clean up later
-  default_scope where{common_name != nil}.order(:created_at.desc)
+  #default_scope{ order(:created_at.desc) #theres about 17 records without proper bodies we should clean up later}
+  default_scope{ where{common_name != nil}.order(:created_at.desc)}
 
   scope :search, lambda {|term|
     {:conditions => ["common_name like ?", '%'+term+'%'],

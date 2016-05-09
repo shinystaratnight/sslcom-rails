@@ -52,7 +52,7 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
+  default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.}
                     joins(:certificate_contents).includes(:certificate_contents).order(:created_at.desc).readonly(false)
 
   scope :not_test, where{(is_test == nil) | (is_test==false)}

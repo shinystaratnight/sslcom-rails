@@ -33,10 +33,10 @@ class Order < ActiveRecord::Base
   SSL_CERTIFICATE = "SSL Certificate Order"
 
   #go live with this
-#  default_scope includes(:line_items).where({line_items:
+#  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
+  default_scope{ includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.}
                     order(:created_at.desc).uniq
 
   scope :not_new, lambda {

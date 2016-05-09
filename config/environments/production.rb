@@ -64,6 +64,7 @@ SslCom::Application.configure do
 
   config.log_level = :info
   # END ActiveMerchant configuration
+  config.eager_load = true
 end
 
 SubdomainFu.configure do |config|

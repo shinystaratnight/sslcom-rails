@@ -1,8 +1,9 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 3.2.15'
+gem 'rails', '~> 4.2.6'
 
 # Bundle edge Rails instead:
+gem 'protected_attributes'
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"
@@ -16,13 +17,12 @@ gem 'will_paginate'
 gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 gem 'paperclip'
-gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
+# gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", '~> 2.0'
-gem 'rubyzip', git: "git://github.com/aussiegeek/rubyzip.git"
+gem 'zip-zip'
 gem 'rb-inotify', :require => false
-gem 'aws-s3'
 gem 'aws-sdk'
 gem 'xml-simple'
 gem 'json', '~> 1.8.1'
@@ -30,10 +30,10 @@ gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
 gem 'jammit'
-gem "rails_config"
+gem "config"
 gem 'sinatra'
 gem 'uuidtools'
-gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
+# gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'

@@ -28,6 +28,8 @@ SslCom::Application.configure do
   config.action_mailer.delivery_method = :test
   config.action_mailer.perform_deliveries = true
 
+  config.eager_load = false
+
   config.to_prepare do
     BillingProfile.password = "kama1jama1"
   end

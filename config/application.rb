@@ -20,6 +20,9 @@ module SslCom
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{config.root}/lib)
 
+    Bundler.require(*Rails.groups)
+    Config::Integration::Rails::Railtie.preload
+
     # Add additional load paths for your own custom dirs
     %w(observers mailers middleware).each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"

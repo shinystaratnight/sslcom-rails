@@ -35,6 +35,6 @@ class ValidationRule < ActiveRecord::Base
     FICTITIOUS_NAME_STATEMENT + LICENSE +
     MERCHANT_CERTIFICATE
 
-  default_scope order(:description.asc)
+  default_scope{ order(:description.asc)}
 
 end

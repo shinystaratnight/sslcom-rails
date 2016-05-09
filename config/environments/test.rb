@@ -43,6 +43,8 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
+  config.eager_load=false
+
   #config.log_level = Logger::INFO
 
   GATEWAY_TEST_CODE=1.0

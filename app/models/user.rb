@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
     u.status='enabled'
   }
 
-  default_scope where{status << ['disabled']}.order(:created_at.desc)
+  default_scope{ where{status << ['disabled']}.order(:created_at.desc)}
 
   scope :search, lambda {|term|
     joins{ssl_account.outer}.where{
