@@ -14,7 +14,7 @@ end
 
 # Add query counter
 ActiveRecord::Base.connection.class.class_eval do
-  IGNORED_SQL = [/^PRAGMA/, /^SELECT currval/, /^SELECT CAST/, /^SELECT @@IDENTITY/, /^SELECT @@ROWCOUNT/, /^SAVEPOINT/, /^ROLLBACK TO SAVEPOINT/, /^RELEASE SAVEPOINT/, /SHOW FIELDS/]
+  IGNORED_SQL = [/\APRAGMA/, /\ASELECT currval/, /\ASELECT CAST/, /\ASELECT @@IDENTITY/, /\ASELECT @@ROWCOUNT/, /\ASAVEPOINT/, /\AROLLBACK TO SAVEPOINT/, /\ARELEASE SAVEPOINT/, /SHOW FIELDS/]
   
   def execute_with_query_record(sql, name = nil, &block)
     $queries_executed ||= []

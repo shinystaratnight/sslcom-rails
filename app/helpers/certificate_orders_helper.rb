@@ -163,7 +163,7 @@ module CertificateOrdersHelper
         certificate_order.certificate.description["certificate_type"]
       else
         certificate_order.preferred_v2_product_description.
-            gsub /[Cc]ertificate$/, ''
+            gsub /[Cc]ertificate\z/, ''
       end
     end
   end

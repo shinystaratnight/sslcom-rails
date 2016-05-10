@@ -48,7 +48,7 @@ class Reseller < ActiveRecord::Base
   validates_presence_of :organization, :if => Proc.new{|reseller| reseller.type_organization == BUSINESS }
   validates_length_of   *((FORM_COLUMNS).map(&:intern)+[:maximum => 100])
   validates_length_of   :email, :within => 3..100
-  validates_format_of   :email, :with => /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+  validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
   validates_presence_of "state", :if => Proc.new{|x| x.american? }
 
   include Workflow

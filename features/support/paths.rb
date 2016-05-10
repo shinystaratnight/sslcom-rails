@@ -1,7 +1,7 @@
 module NavigationHelpers
   # Maps a name to a path. Used by the
   #
-  #   When /^I go to (.+)$/ do |page_name|
+  #   When /\AI go to (.+)\z/ do |page_name|
   #
   # step definition in web_steps.rb
   #
@@ -14,7 +14,7 @@ module NavigationHelpers
     # Add more mappings here.
     # Here is an example that pulls values out of the Regexp:
     #
-    #   when /^(.*)'s profile page$/i
+    #   when /\A(.*)'s profile page\z/i
     #     user_profile_path(User.find_by_login($1))
 
     else

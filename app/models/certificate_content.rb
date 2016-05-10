@@ -32,7 +32,7 @@ class CertificateContent < ActiveRecord::Base
       22=>16, 23=>17, 24=>18, 25=>30, 26=>19, 27=>20, 28=>21,
       29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1, 39=>3}
 
-  INTRANET_IP_REGEX = /^(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})$/
+  INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
 
@@ -328,7 +328,7 @@ class CertificateContent < ActiveRecord::Base
     else
       unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
-        asterisk_found = (csr.common_name=~/^\*\./)==0
+        asterisk_found = (csr.common_name=~/\A\*\./)==0
         if is_wildcard && !asterisk_found
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
@@ -359,8 +359,8 @@ class CertificateContent < ActiveRecord::Base
   def domain_validation_regex(is_wildcard, domain)
     invalid_chars = "[^\\s\\n\\w\\.\\x00\\-#{'\\*' if is_wildcard}]"
     domain.index(Regexp.new(invalid_chars))==nil and
-    domain.index(/\.\.+/)==nil and domain.index(/^\./)==nil and
-    domain.index(/[^\w]$/)==nil and domain.index(/^[^\w\*]/)==nil and
+    domain.index(/\.\.+/)==nil and domain.index(/\A\./)==nil and
+    domain.index(/[^\w]\z/)==nil and domain.index(/\A[^\w\*]/)==nil and
       is_wildcard ? (domain.index(/(\w)\*/)==nil and
         domain.index(/(\*)[^\.]/)==nil) : true
   end

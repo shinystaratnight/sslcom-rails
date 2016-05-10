@@ -365,7 +365,7 @@ module Rails
         end
 
         # ignore comments
-        lines.gsub /^(\/[^:]+:)?\s*#.+$/m, ""
+        lines.gsub /\A(\/[^:]+:)?\s*#.+\z/m, ""
       end
 
       # Sets a base path for finding files; mostly for testing
@@ -411,7 +411,7 @@ module Rails
         return nil if output.empty?
 
         output.split("\n").map do |fn|
-          if m = fn.match(/^(.+?):/)
+          if m = fn.match(/\A(.+?):/)
             m[1]
           end
         end.compact.uniq

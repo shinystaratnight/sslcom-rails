@@ -28,9 +28,9 @@ class LocalFile < ::Tempfile
 
   def content_type
     mime = `file --mime -br #{self.path}`.strip
-    mime = mime.gsub(/^.*: */,"")
-    mime = mime.gsub(/;.*$/,"")
-    mime = mime.gsub(/,.*$/,"")
+    mime = mime.gsub(/\A.*: */,"")
+    mime = mime.gsub(/;.*\z/,"")
+    mime = mime.gsub(/,.*\z/,"")
     mime
   end
 end

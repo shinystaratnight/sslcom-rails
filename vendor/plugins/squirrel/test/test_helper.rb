@@ -22,7 +22,7 @@ class Test::Unit::TestCase #:nodoc:
     def load_all_fixtures
       all_fixtures = Dir.glob("#{File.dirname(__FILE__)}/fixtures/*.yml").collect do |f|
         puts "Loading fixture '#{f}'"
-        File.basename(f).gsub(/\.yml$/, "").to_sym
+        File.basename(f).gsub(/\.yml\z/, "").to_sym
       end
       Fixtures.create_fixtures(Test::Unit::TestCase.fixture_path, all_fixtures)
     end

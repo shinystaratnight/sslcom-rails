@@ -43,7 +43,7 @@ class Affiliate < ActiveRecord::Base
   #validates_length_of   :tagline, :maximum => 60
   #validates_length_of   :description, :maximum => 500
   validates_length_of   :email, :within => 3..100
-  validates_format_of   :email, :with => /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+  validates_format_of   :email, :with => /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
 
   #include Workflow
   #workflow do

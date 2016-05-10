@@ -3,28 +3,28 @@ require 'apis/certificates_api_app'
 SslCom::Application.routes.draw do
   resources :oauth_clients
 
-  match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request
+  get '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request
 
-  match '/oauth/token',         :to => 'oauth#token',         :as => :token
+  get '/oauth/token',         :to => 'oauth#token',         :as => :token
 
-  match '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token
+  get '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token
 
-  match '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token
+  get '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token
 
-  match '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize
+  get '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize
 
-  match '/oauth',               :to => 'oauth#index',         :as => :oauth
+  get '/oauth',               :to => 'oauth#index',         :as => :oauth
 
-  match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
-  match '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
-  match '/' => 'site#index', :as => :root
-  match 'login' => 'user_sessions#new', :as => :login
-  match 'logout' => 'user_sessions#destroy', :as => :logout
+  get ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
+  get '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
+  get '/' => 'site#index', :as => :root
+  get 'login' => 'user_sessions#new', :as => :login
+  get 'logout' => 'user_sessions#destroy', :as => :logout
 
   resources :unsubscribes, only: [:edit, :update]
   #resources :site_checks
-  match 'site_check' => 'site_checks#new', :as => :site_check
-  match 'site_checks' => 'site_checks#create', :as => :site_checks
+  get 'site_check' => 'site_checks#new', :as => :site_check
+  get 'site_checks' => 'site_checks#create', :as => :site_checks
 
   # api
   constraints DomainConstraint.new(
@@ -35,7 +35,7 @@ SslCom::Application.routes.draw do
     match '/user/:login' => 'api_user_requests#show_v1_4',
           :as => :api_user_show_v1_4, via: [:get], login: /.+\/?/
     match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
-          :as => :api_certificate_create_v1_3
+          :as => :api_certificate_create_v1_3, via: [:get]
     match '/certificates' => 'api_certificate_requests#create_v1_4',
           :as => :api_certificate_create_v1_4, via: [:post]
     match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
@@ -57,17 +57,15 @@ SslCom::Application.routes.draw do
     match '/certificates/validations/csr_hash' => 'api_certificate_requests#dcv_methods_csr_hash_v1_4',
           :as => :api_dcv_methods_csr_hash_v1_4, via: [:post]
     match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
-          :as => :api_certificate_retrieve_v1_3
+          :as => :api_certificate_retrieve_v1_3, via: :get
     match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
           :as => :api_dcv_emails_v1_3, via: [:get, :post]
     match '/certificates/1.3/dcv_email_resend' => 'api_certificate_requests#dcv_email_resend_v1_3',
-          :as => :api_dcv_email_resend_v1_3
+          :as => :api_dcv_email_resend_v1_3, via: :get
     match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
-          :as => :api_certificate_reprocess_v1_3
+          :as => :api_certificate_reprocess_v1_3, via: :get
     match '/certificates/1.3/revoke' => 'api_certificate_requests#revoke_v1_3',
-          :as => :api_certificate_revoke_v1_3
-    match '/certificates/1.3/revoke' => 'api_certificate_requests#revoke_v1_3',
-          :as => :api_certificate_revoke_v1_3
+          :as => :api_certificate_revoke_v1_3, via: :get
   end
 
   resource :account, :controller=>:users do
@@ -165,8 +163,8 @@ SslCom::Application.routes.draw do
     resource :site_seal
   end
 
-  get '/certificate_orders/filter_by/:id' => 'CertificateOrders#filter_by', as: :filter_by_certificate_orders
-  get '/certificate_orders/filter_by_scope/:id' => 'CertificateOrders#filter_by_scope', as: :filter_by_scope_certificate_orders
+  get '/certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
+  get '/certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
 
   resources :certificate_contents do
     resources :contacts, :only=>:index
@@ -213,7 +211,7 @@ SslCom::Application.routes.draw do
     end
   end
 
-  match '/validation_histories/:id/documents/:style.:extension' =>
+  get '/validation_histories/:id/documents/:style.:extension' =>
     'validation_histories#documents', :as => :validation_document, style: /.+/i
 
   resources :orders do
@@ -230,12 +228,11 @@ SslCom::Application.routes.draw do
       get :change_state
     end
   end
-  get '/orders/filter_by_state/:id' => 'Orders#filter_by_state', as: :filter_by_state_orders
+  get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
 
   resources :apis
   resources :billing_profiles
-  match '/certificates/what_is_a_wildcard_ssl_certificate', to: "certificates#what_is_a_wildcard_ssl_certificate", as: :what_is_wildcard
-  match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing
+  get '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing
   resources :certificates do
     collection do
       get :single_domain
@@ -247,48 +244,48 @@ SslCom::Application.routes.draw do
     end
   end
 
-  match '/register/:activation_code' => 'activations#new', :as => :register
-  match '/activate/:id' => 'activations#create', :as => :activate
-  match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl
-  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
-  match 'secure/allocate_funds_for_order/:id' =>
+  get '/register/:activation_code' => 'activations#new', :as => :register
+  get '/activate/:id' => 'activations#create', :as => :activate
+  get 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl
+  get 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
+  get 'secure/allocate_funds_for_order/:id' =>
     'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds
-  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
-  match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup
-  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
-  match ':user_id/orders' => 'orders#user_orders', :as => :user_orders
-  match '/sitemap.xml' => 'site#sitemap', :as => :sitemap
-  match 'reseller' => 'site#reseller', :as => :reseller,
+  get 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds
+  get 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds
+  get 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
+  get 'users/new/affiliates' => 'users#new', :as => :affiliate_signup
+  get 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
+  get ':user_id/orders' => 'orders#user_orders', :as => :user_orders
+  get '/sitemap.xml' => 'site#sitemap', :as => :sitemap
+  get 'reseller' => 'site#reseller', :as => :reseller,
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}
-  match '/subject_alternative_name' => 'site#subject_alternative_name', as: :san
-  match 'browser_compatibility' => 'site#compatibility', as: :browsers
-  match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds
-  #match 'paid_cert_orders'=> 'site#paid_cert_orders'
+  get '/subject_alternative_name' => 'site#subject_alternative_name', as: :san
+  get 'browser_compatibility' => 'site#compatibility', as: :browsers
+  get 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds
+  #get 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
-    send("match", i=>"site##{i}", :as => i.to_sym)
+    send("get", i=>"site##{i}", :as => i.to_sym)
   end
-  match 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply
-  match 'certificates/apidocs/dcv' => 'restful_api#dcv', :as => :restful_api_dcv
+  get 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply
+  get 'certificates/apidocs/dcv' => 'restful_api#dcv', :as => :restful_api_dcv
 
-  #took the anchor version out /\w+\/?$/ but need to test the results of this,
+  #took the anchor version out /\w+\/?\z/ but need to test the results of this,
   #specifically the aff code should be the last thing and not followed by other characters
   #that could route this to anything other than an affiliate crediting
   get '*disregard/code/:id'=>'affiliates#refer', id: /\w+\/?/
   get '/code/:id'=>'affiliates#refer', id: /\w+\/?/
 
   resources :surls, :constraints => {:subdomain=>Surl::SUBDOMAIN}, except: [:index, :show]
-  get '/surls/:id' => 'Surls#destroy', :constraints => {:subdomain=>Surl::SUBDOMAIN}
-  get '/surls/status_204' => 'Surls#status_204', :constraints => {:subdomain=>Surl::SUBDOMAIN}
-  post '/surls/login/:id' => 'Surls#login', as: :surl_login, :constraints => {:subdomain=>Surl::SUBDOMAIN}
-  get '/ssl_links_disclaimer'=>'Surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  get '/surls/:id' => 'surls#destroy', :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  get '/surls/status_204' => 'surls#status_204', :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  post '/surls/login/:id' => 'surls#login', as: :surl_login, :constraints => {:subdomain=>Surl::SUBDOMAIN}
+  get '/ssl_links_disclaimer'=>'surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
   #get ':id'=>'surls#show', id: /[0-9a-z]+/i
 
-  match '/:controller(/:action(/:id))'
-  #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
+  get '/:controller(/:action(/:id))'
+  #get "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
-  match "paypal_express/checkout"
-  match "paypal_express/review"
-  match "paypal_express/purchase"
+  get "paypal_express/checkout"
+  get "paypal_express/review"
+  get "paypal_express/purchase"
 end

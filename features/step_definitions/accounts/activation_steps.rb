@@ -1,12 +1,12 @@
-Given /^I am a registered user$/ do
+Given /\AI am a registered user\z/ do
   Given "a registered user Fred exists"
 end
 
-Given /^I am an activated user$/ do
+Given /\AI am an activated user\z/ do
   Given "an activated user Fred exists"
 end
 
-When /^I activate myself$/ do
+When /\AI activate myself\z/ do
   get "/activate/#{@user.activation_code }"
 
   # Have to do this otherwise variable won't show that its state has changed
@@ -14,23 +14,23 @@ When /^I activate myself$/ do
 end
 
 
-When /^I activate myself without an activation code$/ do
+When /\AI activate myself without an activation code\z/ do
   get '/activate/'
   # Have to do this otherwise variable won't show that its state has changed
   @user.reload
 end
 
-When /^I activate myself with a bogus activation code$/ do
+When /\AI activate myself with a bogus activation code\z/ do
   bogus_code = "jhadasj637687ea"
   get "/activate/#{@bogus_code }"
   # Have to do this otherwise variable won't show that its state has changed
   @user.reload
 end
 
-Then /^I should be activated$/ do
+Then /\AI should be activated\z/ do
   @user.state.should == 'active'
 end
 
-Then /^I should not be activated$/ do
+Then /\AI should not be activated\z/ do
   @user.state.should_not == 'active'
 end

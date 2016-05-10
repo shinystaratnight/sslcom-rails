@@ -1,36 +1,36 @@
-When /^I fill in (.*) signup details$/ do |user|
+When /\AI fill in (.*) signup details\z/ do |user|
   fill_in(:login, :with => user)
   fill_in(:email, :with => user + '@example.com')
   fill_in(:password, :with => user + 'pass')
   fill_in('user[password_confirmation]', :with => user + 'pass')
 end
 
-When /^I signup as (\w*)$/ do |user|
+When /\AI signup as (\w*)\z/ do |user|
   When "I visit signup"
   When "I fill in #{user} signup details"
   click_button
 end
 
-When /^I signup as (.*) with wrong confirmation$/ do |user|
+When /\AI signup as (.*) with wrong confirmation\z/ do |user|
   When "I visit signup"
   When "I fill in #{user} signup details"
   fill_in('user[password_confirmation]', :with => 'poopypoop')
   click_button
 end
 
-When /^I signup as (.*) without (.*)$/ do |user, field|
+When /\AI signup as (.*) without (.*)\z/ do |user, field|
   When "I visit signup"
   When "I fill in #{user} signup details"
   field == 'password_confirmation' ? fill_in('user[password_confirmation]', :with => '') : fill_in(field, :with => '')
   click_button
 end
 
-Then /^there should be an account for Fred$/ do
+Then /\Athere should be an account for Fred\z/ do
   User.count.should == 1
 end
 
 # by default create named user with attributes done by convention
-When /^I create an? (\S+) with login (\w*)$/ do |type, login|
+When /\AI create an? (\S+) with login (\w*)\z/ do |type, login|
   without_access_control do
     @user = FactoryGirl.create(type.to_sym, :login => login,
       password: login + "pass",
@@ -44,7 +44,7 @@ When /^I create an? (\S+) with login (\w*)$/ do |type, login|
   end
 end
 
-When /^I register a user with login (\w*)$/ do |login|
+When /\AI register a user with login (\w*)\z/ do |login|
   @user = User.find_by_login(login)
   @user.active=true
   @user.save
@@ -52,7 +52,7 @@ When /^I register a user with login (\w*)$/ do |login|
   @user
 end
 
-When /^I activate a user with login (\w*)$/ do |login|
+When /\AI activate a user with login (\w*)\z/ do |login|
   @user = User.find_by_login(login)
   @user.active=true
   @user.save
@@ -60,21 +60,21 @@ When /^I activate a user with login (\w*)$/ do |login|
   @user
 end
 
-Given /^a registered (\S+) (\w*) exists$/ do |type, user|
+Given /\Aa registered (\S+) (\w*) exists\z/ do |type, user|
   type = "customer" if type=="user"
   When "I create a #{type} with login #{user}"
    And "I register a user with login #{user}"
 
 end
 
-Given /^an activated (\S+) (\w*) exists$/ do |type, user|
+Given /\Aan activated (\S+) (\w*) exists\z/ do |type, user|
   type = "customer" if type=="user"
   When "I create a #{type} with login #{user}"
    And "I register a user with login #{user}"
    And "I activate a user with login #{user}"
 end
 
-Given /^an admin user (\w*) exists$/ do |user|
+Given /\Aan admin user (\w*) exists\z/ do |user|
   When "I create a user with login #{user}"
    And "I register a user with login #{user}"
    And "I activate a user with login #{user}"
@@ -83,16 +83,16 @@ Given /^an admin user (\w*) exists$/ do |user|
    @user.should be_admin
 end
 
-Then /^Fred's details should be unchanged$/ do
+Then /\AFred's details should be unchanged\z/ do
   @user.should == User.find_by_login('Fred')
 end
 
-Given /^a duplicate login (\S+) exists$/ do |login|
+Given /\Aa duplicate login (\S+) exists\z/ do |login|
   FactoryGirl.create(:duplicate_v2_user, :login => login)
   FactoryGirl.create(:duplicate_v2_user, :login => login)
 end
 
-Given /^a duplicate email (\S+) exists/ do |email|
+Given /\Aa duplicate email (\S+) exists/ do |email|
   FactoryGirl.create(:duplicate_v2_user, :email => email)
   FactoryGirl.create(:duplicate_v2_user, :email => email)
 end

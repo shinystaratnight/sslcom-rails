@@ -353,7 +353,7 @@ if defined?(Zeus)
     end
     alias_method_chain :after_fork, :test
   end
-elsif ENV['spork'] || $0 =~ /\bspork$/
+elsif ENV['spork'] || $0 =~ /\bspork\z/
   require 'spork'
   Spork.prefork(&prefork)
   Spork.each_run(&each_run)

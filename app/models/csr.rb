@@ -128,7 +128,7 @@ class Csr < ActiveRecord::Base
     end
     unless (csr =~ Regexp.new(END_TAG))
       csr.gsub!(/-+END CERTIFICATE REQUEST-+/,"")
-      csr = csr + "\n" unless csr=~/\n\Z$/
+      csr = csr + "\n" unless csr=~/\n\Z\z/
       csr = csr + END_TAG + "\n"
     end
     csr
@@ -139,7 +139,7 @@ class Csr < ActiveRecord::Base
   end
 
   def is_ip_address?
-    common_name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if common_name
+    common_name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if common_name
   end
 
   def is_server_name?
@@ -148,7 +148,7 @@ class Csr < ActiveRecord::Base
 
   def is_fqdn?
     unless is_ip_address? && is_server_name?
-      common_name.index(/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix)==0 if common_name
+      common_name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0 if common_name
     end
   end
 
@@ -173,7 +173,7 @@ class Csr < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    common_name.gsub(/^\*\./, "").downcase unless common_name.blank?
+    common_name.gsub(/\A\*\./, "").downcase unless common_name.blank?
   end
 
   def dcv_url(secure=false)

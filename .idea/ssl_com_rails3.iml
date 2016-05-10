@@ -901,6 +901,7 @@
     <orderEntry type="library" scope="PROVIDED" name="ref (v2.0.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="request_exception_handler (v0.5.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="request_store (v1.3.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="responders (v2.2.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec (v2.14.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-core (v2.14.8, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rspec-expectations (v2.14.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />

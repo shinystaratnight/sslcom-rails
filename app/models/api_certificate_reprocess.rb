@@ -200,19 +200,19 @@ class ApiCertificateReprocess < ApiCertificateRequest
   end
 
   def is_ev?
-    serial =~ /^ev/ if serial
+    serial =~ /\Aev/ if serial
   end
 
   def is_dv?
-    serial =~ /^dv/ if serial
+    serial =~ /\Adv/ if serial
   end
 
   def is_wildcard?
-    serial =~ /^wc/ if serial
+    serial =~ /\Awc/ if serial
   end
 
   def is_ucc?
-    serial =~ /^ucc/ if serial
+    serial =~ /\Aucc/ if serial
   end
 
   def is_not_ip

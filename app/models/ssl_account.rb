@@ -385,7 +385,7 @@ class SslAccount < ActiveRecord::Base
       errors.add("preferred_#{item}_recipients".to_sym,
         'cannot be blank') if emails.empty?
       results = emails.reject do |email|
-        email =~ /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+        email =~ /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
       end
       errors.add("preferred_#{item}_recipients".to_sym,
         'has invalid email addresses') unless (results.empty?)
@@ -399,7 +399,7 @@ class SslAccount < ActiveRecord::Base
     errors.add(:preferred_reminder_notice_destinations,
       'cannot be blank') if emails.empty?
     results = emails.reject do |email|
-      email =~ /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+      email =~ /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
     end
     errors.add(:preferred_reminder_notice_destinations,
       'has invalid email addresses') unless (results.empty?)

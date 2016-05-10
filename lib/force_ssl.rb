@@ -9,12 +9,12 @@ class ForceSSL
       @app.call(env)
     else
       req = Rack::Request.new(env)
-      [301, { "Location" => req.url.gsub(/^http:/, "https:") }, []]
+      [301, { "Location" => req.url.gsub(/\Ahttp:/, "https:") }, []]
     end
   end
 
   def other_exception(env)
     #need to be able to allow link.ssl.com and ssl.com without ssl
-    !!(env["HTTP_HOST"] =~ /^ssl.com(:\d+)?/ && env["PATH_INFO"]=~/\/.+/)
+    !!(env["HTTP_HOST"] =~ /\Assl.com(:\d+)?/ && env["PATH_INFO"]=~/\/.+/)
   end
 end

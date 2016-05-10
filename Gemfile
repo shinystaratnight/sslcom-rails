@@ -2,8 +2,10 @@ source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.6'
 
-# Bundle edge Rails instead:
+# required Rails 4 upgrade
 gem 'protected_attributes'
+gem 'responders', '~> 2.0'
+
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"

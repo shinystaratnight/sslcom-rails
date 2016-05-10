@@ -106,9 +106,9 @@ class Order < ActiveRecord::Base
         if query.count==1
           query=filters[field.to_sym].delete(".")
           case query
-            when /^>/
+            when /\A>/
               result = result.where{(cents > "#{query[1..-1]}")}
-            when /^</
+            when /\A</
               result = result.where{(cents < "#{query[1..-1]}")}
             else
               result = result.where{(cents == "#{query}")}
@@ -611,7 +611,7 @@ class Order < ActiveRecord::Base
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].each do |c|
-      next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
+      next if c[ShoppingCart::PRODUCT_CODE]=~/\Areseller_tier/
       if certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
         if certificate.is_free?
           qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
@@ -667,7 +667,7 @@ class Order < ActiveRecord::Base
         # calculate wildcards by subtracting their total from additional_domains
         wildcards = 0
         if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
-          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
+          wildcards = certificate_order.domains.find_all{|d|d =~ /\A\*\./}.count
           additional_domains -= wildcards
         end
         if additional_domains > 0

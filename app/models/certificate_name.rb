@@ -22,7 +22,7 @@ class CertificateName < ActiveRecord::Base
   attr_accessor :csr
 
   def is_ip_address?
-    name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if name
+    name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
   end
 
   def is_server_name?
@@ -31,7 +31,7 @@ class CertificateName < ActiveRecord::Base
 
   def is_fqdn?
     unless is_ip_address? && is_server_name?
-      name.index(/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix)==0 if name
+      name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0 if name
     end
   end
 
@@ -96,7 +96,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    name.gsub(/^\*\./, "").downcase
+    name.gsub(/\A\*\./, "").downcase
   end
 
   def dcv_contents
@@ -165,7 +165,7 @@ class CertificateName < ActiveRecord::Base
         return "true" if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
-      if name=~/^\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
+      if name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
         prepend="www."
         retry
       end

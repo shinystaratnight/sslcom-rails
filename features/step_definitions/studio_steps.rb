@@ -1,4 +1,4 @@
-When /^he selects some files for uploading$/ do
+When /\Ahe selects some files for uploading\z/ do
   file = "/home/sysadmin/Videos/Videos.zip"
   @browser.file_field(:id, "multi_upload").set file
   lambda {
@@ -6,7 +6,7 @@ When /^he selects some files for uploading$/ do
   }.should change(User.find_by_login_slug("aaron").releases, :count).by(2)
 end
 
-When /^['"]([^'"]*)['"] selects some files for uploading$/ do |user|
+When /\A['"]([^'"]*)['"] selects some files for uploading\z/ do |user|
   file = "/home/sysadmin/Videos/Videos.zip"
   @browser.file_field(:id, "multi_upload").set file
   lambda {

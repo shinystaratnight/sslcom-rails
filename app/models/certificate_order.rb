@@ -424,7 +424,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if unit==:years
-      years =~ /^(\d+)/
+      years =~ /\A(\d+)/
       $1
     elsif unit==:days
       case years.gsub(/[^\d]+/,"").to_i
@@ -613,7 +613,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def wildcard_domains
-    domains.find_all{|d|d=~/^\*\./} unless domains.blank?
+    domains.find_all{|d|d=~/\A\*\./} unless domains.blank?
   end
 
   def nonwildcard_domains

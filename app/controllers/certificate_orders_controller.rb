@@ -143,7 +143,7 @@ class CertificateOrdersController < ApplicationController
       # @certificate_content.additional_domains = domains
       #reset dcv validation
       @certificate_order.validation.validation_rules.each do |vr|
-        if vr.description=~/^domain/
+        if vr.description=~/\Adomain/
           ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
           ruling.pend! unless ruling.pending?
         end

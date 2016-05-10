@@ -19,7 +19,7 @@ module OrdersHelper
   end
 
   def cart_items_count
-    items=cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/}
+    items=cart_contents.reject{|c|c[ShoppingCart::PRODUCT_CODE]=~/\Areseller_tier/}
     current_user ? items.select{|i|current_user.ssl_account.can_buy?(i)}.count : items.count
   end
 

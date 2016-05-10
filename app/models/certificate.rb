@@ -324,19 +324,19 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_client_basic?
-    product_root=~/basic$/
+    product_root=~/basic\z/
   end
 
   def is_client_pro?
-    product_root=~/pro$/
+    product_root=~/pro\z/
   end
 
   def is_client_business?
-    product_root=~/business$/
+    product_root=~/business\z/
   end
 
   def is_client_enterprise?
-    product_root=~/enterprise$/
+    product_root=~/enterprise\z/
   end
 
   def requires_company_info?
@@ -384,7 +384,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_dv_or_basic?
-    (serial =~ /^dv/ || serial =~ /^basic/) if serial
+    (serial =~ /\Adv/ || serial =~ /\Abasic/) if serial
   end
 
   def is_free?
@@ -427,11 +427,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def product_root
-    product.gsub(/\dtr$/,"")
+    product.gsub(/\dtr\z/,"")
   end
 
   def serial_root
-    serial.gsub(/\dtr$/,"")
+    serial.gsub(/\dtr\z/,"")
   end
 
   def untiered
@@ -541,7 +541,7 @@ class Certificate < ActiveRecord::Base
     now=DateTime.now
     new_cert = self.dup
     new_cert.attributes = {created_at: now, updated_at: now,
-                           serial: self.serial.gsub(/.+?(\dtr)?$/, new_serial+'\1')}
+                           serial: self.serial.gsub(/.+?(\dtr)?\z/, new_serial+'\1')}
     new_cert.save
     self.product_variant_groups.each do |pvg|
       new_pvg = pvg.dup
@@ -599,7 +599,7 @@ class Certificate < ActiveRecord::Base
     certs.each do |c|
       c.update_attributes title: title,
                           description: description,
-                          product: c.product.gsub(/^ucc/, "premiumssl")
+                          product: c.product.gsub(/\Aucc/, "premiumssl")
     end
     price_adjusts={sslcompremium256ssl1yrdm: [9900, 17820, 25245, 31680, 37125],
      sslcompremium256ssl1yrdm1tr: [9900, 17820, 25245, 31680, 37125],
@@ -674,7 +674,7 @@ class Certificate < ActiveRecord::Base
     certs.each do |c|
       c.update_attributes title: title,
                           description: description,
-                          product: c.product.gsub(/^high_assurance/, "basicssl"),
+                          product: c.product.gsub(/\Ahigh_assurance/, "basicssl"),
                           icons: c.icons.merge!("main"=> "silver_lock_lg.gif")
     end
     price_adjusts={sslcombasic256ssl1yr: [4900, 8820, 12495, 15680, 18375],
@@ -714,7 +714,7 @@ class Certificate < ActiveRecord::Base
     certs.each do |c|
       c.update_attributes title: title,
                           description: description,
-                          product: c.product.gsub(/^high_assurance/, "code_signing"),
+                          product: c.product.gsub(/\Ahigh_assurance/, "code_signing"),
                           icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
     end
     price_adjusts={sslcomcodesigning256ssl1yr: [12900, 23220, 32895, 41280, 48375, 54180, 58695, 61920, 63855, 64500], 
@@ -802,7 +802,7 @@ class Certificate < ActiveRecord::Base
       certs.each do |c|
         c.update_attributes title: title,
                             description: description,
-                            product: c.product.gsub(/^high_assurance/, p[:product]),
+                            product: c.product.gsub(/\Ahigh_assurance/, p[:product]),
                             icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
       end
       certs.each{ |c| c.product_variant_items.where{display_order > 3}.destroy_all}
