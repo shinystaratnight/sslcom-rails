@@ -5,6 +5,7 @@ gem 'rails', '~> 4.2.6'
 # required Rails 4 upgrade
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
+# gem 'plugger'
 
 gem 'mysql2'
 gem 'workflow'
