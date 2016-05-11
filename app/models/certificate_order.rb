@@ -19,7 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
-  has_many    :orders, :through => :line_items, :include => :stored_preferences
+  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
@@ -55,9 +55,9 @@ class CertificateOrder < ActiveRecord::Base
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
       joins(:certificate_contents).includes(:certificate_contents).order(:created_at.desc).readonly(false)}
 
-  scope :not_test, where{(is_test == nil) | (is_test==false)}
+  scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
-  scope :is_test, where{is_test==true}
+  scope :is_test, ->{where{is_test==true}}
 
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -187,22 +187,22 @@ class CertificateOrder < ActiveRecord::Base
         variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
   }
 
-  scope :unvalidated, where{(is_expired==false) &
+  scope :unvalidated, ->{where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
+      order(:certificate_contents=>:updated_at)}
 
-  scope :incomplete, not_test.where{(is_expired==false) &
+  scope :incomplete, ->{not_test.where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
+      order(:certificate_contents=>:updated_at)}
 
-  scope :pending, not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)
+  scope :pending, ->{not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
+      order(:certificate_contents=>:updated_at)}
 
-  scope :has_csr, not_test.where{(workflow_state=='paid') &
-    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
+  scope :has_csr, ->{not_test.where{(workflow_state=='paid') &
+    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)}
 
-  scope :credits, not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}})
+  scope :credits, ->{not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
+    {:certificate_contents=>{workflow_state: "new"}})}
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|
@@ -212,22 +212,22 @@ class CertificateOrder < ActiveRecord::Base
     (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
   }
 
-  scope :unrenewed, not_new.where(:renewal_id=>nil)
+  scope :unrenewed, ->{not_new.where(:renewal_id=>nil)}
 
-  scope :renewed, not_new.where{:renewal_id != nil}
+  scope :renewed, ->{not_new.where{:renewal_id != nil}}
 
-  scope :nonfree, not_new.where(:amount.gt => 0)
+  scope :nonfree, ->{not_new.where(:amount.gt => 0)}
 
-  scope :free, not_new.where(:amount => 0)
+  scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_credits, ->{where({:workflow_state=>'paid'} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
-  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_purchased_credits, ->{where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
-  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_free_credits, ->{where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
   scope :range, lambda{|start, finish|
     if start.is_a?(String)

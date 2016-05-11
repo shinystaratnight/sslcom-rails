@@ -103,6 +103,7 @@ require "#{Rails.root}/lib/money.rb"
 require "#{Rails.root}/lib/subdomain-fu.rb"
 require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/domain_constraint.rb"
+require "#{Rails.root}/lib/preferences.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3

@@ -1,0 +1,1 @@
+# require 'preferences/app/models/preference'
