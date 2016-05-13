@@ -18,7 +18,7 @@ gem 'activemerchant'
 gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
-gem 'subdomain-fu', :git => "git://github.com/nhowell/subdomain-fu.git"
+# gem 'subdomain-fu', :git => "git://github.com/mbleigh/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 gem 'paperclip'
 # gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"

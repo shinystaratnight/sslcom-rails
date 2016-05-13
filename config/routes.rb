@@ -102,12 +102,15 @@ SslCom::Application.routes.draw do
     end
   end
 
-  resources :resellers, :only=>[:index,:new] do
-    collection do
-      get :details
-      get :restful_api
+  constraints DomainConstraint.new(Reseller::SUBDOMAIN) do
+    resources :resellers, :only=>[:index,:new] do
+      collection do
+        get :details
+        get :restful_api
+      end
     end
   end
+
 
   resources :affiliates do
     collection do

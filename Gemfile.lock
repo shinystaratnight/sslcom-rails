@@ -8,12 +8,6 @@ GIT
       request_store (~> 1.0)
       scrypt (>= 1.2, < 3.0)
 
-GIT
-  remote: git://github.com/nhowell/subdomain-fu.git
-  revision: c6fbf945cf3f4ab344f9c8e0604dc5dcca9ee6cf
-  specs:
-    subdomain-fu (1.0.0.beta2)
-
 GEM
   remote: http://rubygems.org/
   specs:
@@ -515,7 +509,6 @@ DEPENDENCIES
   simpleidn
   sinatra
   squeel
-  subdomain-fu!
   therubyracer (~> 0.12.0)
   uglifier
   unscoped_associations

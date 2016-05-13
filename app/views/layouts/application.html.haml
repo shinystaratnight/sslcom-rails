@@ -37,7 +37,7 @@
         =link_to "Be sure to visit the #{Settings.community_name} IT Security Q&A free community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
     #wrapper
       -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
-        -unless current_subdomain==Reseller::SUBDOMAIN
+        -unless request.subdomain==Reseller::SUBDOMAIN
           =render :partial => '/layouts/public_new'
           -#
             -if current_page?(action: "buy_now")
