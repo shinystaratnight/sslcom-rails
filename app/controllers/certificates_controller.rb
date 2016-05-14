@@ -17,7 +17,7 @@ class CertificatesController < ApplicationController
   end
 
   def single_domain
-    @certificates = Certificate.public
+    @certificates = Certificate.available
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_single?}
@@ -29,7 +29,7 @@ class CertificatesController < ApplicationController
   end
 
   def wildcard_or_ucc
-    @certificates = Certificate.public
+    @certificates = Certificate.available
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_multi?}
@@ -43,7 +43,7 @@ class CertificatesController < ApplicationController
   # GET /certificate/wildcard
   # GET /certificate/wildcard.xml
   def show
-    @certificates = Certificate.public
+    @certificates = Certificate.available
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier)}
@@ -80,7 +80,7 @@ class CertificatesController < ApplicationController
   end
 
   def get_certificates_list
-    @certificates = Certificate.public
+    @certificates = Certificate.available
     unless @tier.blank?
       @certificates = @certificates.find_all{|c|
         c.product=~Regexp.new(@tier) && c.is_single?}

@@ -11,15 +11,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/config/initializers/acts_as_publishable.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/README" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/README" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/Rakefile" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/Rakefile" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/generators/publishing/publishing_generator.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/generators/publishing/publishing_generator.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/generators/publishing/templates/migration.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/generators/publishing/templates/migration.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/init.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/init.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/install.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/install.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/lib/acts_as_publishable.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/lib/acts_as_publishable.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/test/acts_as_publishable_test.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/test/acts_as_publishable_test.rb" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/vendor/plugins/acts_as_publishable/uninstall.rb" afterPath="$PROJECT_DIR$/lib/acts_as_publishable/uninstall.rb" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.generators" afterPath="$PROJECT_DIR$/.idea/.generators" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/views/layouts/application.html.haml" afterPath="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/application.rb" afterPath="$PROJECT_DIR$/config/application.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/environments/development.rb" afterPath="$PROJECT_DIR$/config/environments/development.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/certificates_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/certificates_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/certificates_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/certificates_helper.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate.rb" afterPath="$PROJECT_DIR$/app/models/certificate.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/order.rb" afterPath="$PROJECT_DIR$/app/models/order.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/product_variant_group.rb" afterPath="$PROJECT_DIR$/app/models/product_variant_group.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/ssl_account.rb" afterPath="$PROJECT_DIR$/app/models/ssl_account.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/lib/acts_as_money/aggregations.rb" afterPath="$PROJECT_DIR$/lib/acts_as_money/aggregations.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -95,103 +107,101 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="_public_new.html.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
+      <file leaf-file-name="ssl_account.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="33">
-              <caret line="68" column="89" selection-start-line="68" selection-start-column="56" selection-end-line="68" selection-end-column="89" />
-              <folding>
-                <marker date="1463178406587" expanded="true" signature="121:286" placeholder="{...}" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="subdomain-fu.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/subdomain-fu.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="9" column="3" selection-start-line="0" selection-start-column="0" selection-end-line="9" selection-end-column="3" />
+            <state relative-caret-position="2475">
+              <caret line="75" column="39" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="development.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
+      <file leaf-file-name="aggregations.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/acts_as_money/aggregations.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
-              <caret line="50" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+            <state relative-caret-position="752">
+              <caret line="185" column="3" selection-start-line="185" selection-start-column="3" selection-end-line="185" selection-end-column="3" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="route_set.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/actionpack-4.2.6/lib/action_dispatch/routing/route_set.rb">
+      <file leaf-file-name="database.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/database.yml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="279" column="0" selection-start-line="279" selection-start-column="0" selection-end-line="279" selection-end-column="0" />
+            <state relative-caret-position="660">
+              <caret line="29" column="32" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/application.rb">
+      <file leaf-file-name="certificate.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="607">
-              <caret line="103" column="19" selection-start-line="103" selection-start-column="19" selection-end-line="103" selection-end-column="19" />
+            <state relative-caret-position="294">
+              <caret line="208" column="18" selection-start-line="208" selection-start-column="18" selection-end-line="208" selection-end-column="18" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routing_url_for.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/actionview-4.2.6/lib/action_view/routing_url_for.rb">
+      <file leaf-file-name="certificates_controller.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
+            <state relative-caret-position="294">
+              <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Gemfile" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gemfile">
+      <file leaf-file-name="certificates_helper.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/helpers/certificates_helper.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+            <state relative-caret-position="330">
+              <caret line="10" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="reseller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/reseller.rb">
+      <file leaf-file-name="product_variant_group.rb" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/models/product_variant_group.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="37" column="2" selection-start-line="37" selection-start-column="2" selection-end-line="37" selection-end-column="2" />
+            <state relative-caret-position="231">
+              <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="site_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
+      <file leaf-file-name="show_premiumssl.html.haml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificates/show_premiumssl.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="246">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+            <state relative-caret-position="231">
+              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application.html.haml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
+      <file leaf-file-name="init.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/acts_as_publishable/init.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="232">
-              <caret line="39" column="33" selection-start-line="39" selection-start-column="33" selection-end-line="39" selection-end-column="33" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="acts_as_publishable.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/initializers/acts_as_publishable.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="52" selection-start-line="0" selection-start-column="52" selection-end-line="0" selection-end-column="52" />
               <folding />
             </state>
           </provider>
@@ -219,19 +229,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/views/validations/_entry.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/processed_certificate_order.text.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/_ev_reqs.text.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/certificate_order_paid.text.erb" />
-        <option value="$PROJECT_DIR$/app/views/order_notifier/reseller_certificate_order_paid.text.erb" />
-        <option value="$PROJECT_DIR$/app/models/note.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
         <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml" />
         <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
         <option value="$PROJECT_DIR$/app/models/csr.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
         <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
         <option value="$PROJECT_DIR$/app/models/registrant.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml" />
@@ -258,7 +260,6 @@
         <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/affiliates_controller.rb" />
         <option value="$PROJECT_DIR$/config/initializers/acts_as_billable.rb" />
-        <option value="$PROJECT_DIR$/lib/acts_as_money/aggregations.rb" />
         <option value="$PROJECT_DIR$/config/initializers/preferences.rb" />
         <option value="$PROJECT_DIR$/lib/preferences.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
@@ -270,6 +271,15 @@
         <option value="$PROJECT_DIR$/config/environments/development.rb" />
         <option value="$PROJECT_DIR$/app/views/layouts/_public_new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/layouts/application.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/order.rb" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
+        <option value="$PROJECT_DIR$/lib/acts_as_money/aggregations.rb" />
+        <option value="$PROJECT_DIR$/lib/acts_as_publishable/init.rb" />
+        <option value="$PROJECT_DIR$/config/initializers/acts_as_publishable.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificates_controller.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/certificates_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/product_variant_group.rb" />
       </list>
     </option>
   </component>
@@ -289,8 +299,30 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-13" />
     <option name="y" value="-13" />
-    <option name="width" value="3098" />
-    <option name="height" value="1674" />
+    <option name="width" value="3026" />
+    <option name="height" value="1946" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>JavaScript</id>
+          </State>
+          <State>
+            <id>Potentially confusing code constructsJavaScript</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>CoffeeScript</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -320,7 +352,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="RailsProjectView" />
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -382,7 +414,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
+              <option name="myItemId" value="lib" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="acts_as_publishable" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -396,17 +432,21 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="initializers" />
+              <option name="myItemId" value="acts_as_publishable" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="RailsProjectView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -444,17 +484,18 @@
     <property name="HbShouldOpenHtmlAsHb" value="" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\leo\git\sslcom-rails\lib" />
+      <recent name="$PROJECT_DIR$/config/client/certassure" />
+      <recent name="$PROJECT_DIR$/config/initializers" />
+      <recent name="$PROJECT_DIR$/lib" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\leo\git\sslcom-rails\lib" />
       <recent name="$PROJECT_DIR$/config/database" />
       <recent name="$PROJECT_DIR$/app/views/certificate_orders" />
       <recent name="$PROJECT_DIR$/app/models" />
       <recent name="$PROJECT_DIR$/app/views/order_notifier" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/config/client/certassure" />
-      <recent name="$PROJECT_DIR$/config/initializers" />
-      <recent name="$PROJECT_DIR$/lib" />
     </key>
   </component>
   <component name="RestClientSettings">
@@ -1330,7 +1371,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
+  <component name="RunManager" selected="IRB console.IRB console: ssl_com_rails3">
     <configuration default="false" name="routes: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1385,6 +1426,21 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="IRB console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+      <module name="ssl_com_rails3" />
+      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$APPLICATION_HOME_DIR$/rb/testing/runner/irb.rb" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="--prompt simple" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
       <method />
     </configuration>
     <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
@@ -1581,7 +1637,7 @@
       <recursive>false</recursive>
       <method />
     </configuration>
-    <list size="18">
+    <list size="19">
       <item index="0" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
       <item index="1" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
       <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
@@ -1600,12 +1656,14 @@
       <item index="15" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
       <item index="16" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
       <item index="17" class="java.lang.String" itemvalue="Rake.rails:update: ssl_com_rails3" />
+      <item index="18" class="java.lang.String" itemvalue="IRB console.IRB console: ssl_com_rails3" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="Rake.rails:update: ssl_com_rails3" />
-        <item index="1" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
-        <item index="2" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="IRB console.IRB console: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="Rake.rails:update: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
+        <item index="3" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
@@ -1629,14 +1687,11 @@
       <workItem from="1462979285721" duration="107000" />
       <workItem from="1462979409662" duration="3432000" />
       <workItem from="1463000633624" duration="5024000" />
-      <workItem from="1463170698341" duration="6229000" />
-    </task>
-    <task id="LOCAL-00289" summary="fixed row line description">
-      <created>1427144085902</created>
-      <option name="number" value="00289" />
-      <option name="presentableId" value="LOCAL-00289" />
-      <option name="project" value="LOCAL" />
-      <updated>1427144085907</updated>
+      <workItem from="1463170698341" duration="6538000" />
+      <workItem from="1463179101114" duration="790000" />
+      <workItem from="1463195536032" duration="2029000" />
+      <workItem from="1463235657816" duration="884000" />
+      <workItem from="1463237131240" duration="2387000" />
     </task>
     <task id="LOCAL-00290" summary="making single domain orders follow same validation route as ucc order">
       <created>1427758864180</created>
@@ -1974,11 +2029,18 @@
       <option name="project" value="LOCAL" />
       <updated>1463005680623</updated>
     </task>
-    <option name="localTasksCounter" value="338" />
+    <task id="LOCAL-00338" summary="Rails 4 upgrade, remove subdomain_fu gem">
+      <created>1463178679408</created>
+      <option name="number" value="00338" />
+      <option name="presentableId" value="LOCAL-00338" />
+      <option name="project" value="LOCAL" />
+      <updated>1463178679409</updated>
+    </task>
+    <option name="localTasksCounter" value="339" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="34511000" />
+    <option name="totallyTimeSpent" value="40910000" />
   </component>
   <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
@@ -2001,21 +2063,21 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-13" y="-13" width="3098" height="1674" extended-state="6" />
+    <frame x="-13" y="-13" width="3026" height="1946" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34215817" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19539835" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881355" sideWeight="0.49430296" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46915254" sideWeight="0.18130027" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32856324" sideWeight="0.489011" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46880367" sideWeight="0.19368131" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294509" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41288134" sideWeight="0.8125347" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50508475" sideWeight="0.4997227" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39254236" sideWeight="0.64209116" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4127075" sideWeight="0.8104396" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50486547" sideWeight="0.49828297" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31654266" sideWeight="0.6181319" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20107238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881355" sideWeight="0.73659515" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32856324" sideWeight="0.72012365" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46915254" sideWeight="0.8186997" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.46880367" sideWeight="0.8063187" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -2066,7 +2128,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="remove download link on show certificate order page" />
     <MESSAGE value="csr was nil when processing ucc via api" />
     <MESSAGE value="single domain certificate that was issued redirects new validation page to order page" />
     <MESSAGE value="validation page corrections for single domain certs" />
@@ -2091,7 +2152,8 @@
     <MESSAGE value="migrated routes file" />
     <MESSAGE value="acts_as_billable port successful&#10;&#10;change create_reflection to Active::Reflection.create" />
     <MESSAGE value="misc Rails 4 upgrades" />
-    <option name="LAST_COMMIT_MESSAGE" value="misc Rails 4 upgrades" />
+    <MESSAGE value="Rails 4 upgrade, remove subdomain_fu gem" />
+    <option name="LAST_COMMIT_MESSAGE" value="Rails 4 upgrade, remove subdomain_fu gem" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2155,7 +2217,7 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="2089" />
+      <option name="time" value="2091" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="IrbRunConfigurationType">
@@ -2164,76 +2226,14 @@
         <watch expression="host" />
       </configuration>
       <configuration name="RailsRunConfigurationType">
-        <watch expression="@result.errors.count " language="ruby" />
-        <watch expression="details_resellers_url(:subdomain=&gt;Reseller::SUBDOMAIN)" />
+        <watch expression="pair" />
+        <watch expression="@attributes[pair.first]" />
+        <watch expression="@attributes.write_cast_value([pair.first],part.send(pair.last))" language="ruby" />
+        <watch expression="@attributes[pair.first] = part.send(pair.last)" />
       </configuration>
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/controllers/affiliates_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1485">
-          <caret line="45" column="106" selection-start-line="45" selection-start-column="106" selection-end-line="45" selection-end-column="106" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_billable/lib/acts_as_sellable.rb" />
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/lib/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/assets.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/squeel.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/backtrace_silencers.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/malware_key.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/force_ssl.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_money/acts_as_money.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/initializers/rails_config.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -2259,7 +2259,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2268,7 +2267,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="132">
           <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2298,14 +2296,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_money/aggregations.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="148" column="67" selection-start-line="148" selection-start-column="67" selection-end-line="148" selection-end-column="67" />
         </state>
       </provider>
     </entry>
@@ -2322,7 +2312,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="231">
           <caret line="7" column="40" selection-start-line="7" selection-start-column="40" selection-end-line="7" selection-end-column="40" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2331,7 +2320,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="45" selection-start-line="0" selection-start-column="45" selection-end-line="0" selection-end-column="45" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2339,7 +2327,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="377" column="0" selection-start-line="377" selection-start-column="0" selection-end-line="377" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2354,7 +2341,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2362,7 +2348,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2370,7 +2355,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2378,7 +2362,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2386,7 +2369,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="792">
           <caret line="24" column="66" selection-start-line="24" selection-start-column="66" selection-end-line="24" selection-end-column="66" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2394,7 +2376,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1650">
           <caret line="50" column="6" selection-start-line="0" selection-start-column="0" selection-end-line="615" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2402,7 +2383,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5379">
           <caret line="163" column="8" selection-start-line="163" selection-start-column="8" selection-end-line="163" selection-end-column="8" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2418,7 +2398,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="12" column="80" selection-start-line="12" selection-start-column="61" selection-end-line="12" selection-end-column="80" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2434,21 +2413,19 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="392">
           <caret line="111" column="0" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/reseller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
+        <state relative-caret-position="1221">
           <caret line="37" column="2" selection-start-line="37" selection-start-column="2" selection-end-line="37" selection-end-column="2" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
+        <state relative-caret-position="693">
           <caret line="21" column="14" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
           <folding />
         </state>
@@ -2456,15 +2433,14 @@
     </entry>
     <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/actionpack-4.2.6/lib/action_dispatch/routing/route_set.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
+        <state relative-caret-position="9207">
           <caret line="279" column="0" selection-start-line="279" selection-start-column="0" selection-end-line="279" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
+        <state relative-caret-position="330">
           <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding />
         </state>
@@ -2472,7 +2448,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/application.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="607">
+        <state relative-caret-position="3399">
           <caret line="103" column="19" selection-start-line="103" selection-start-column="19" selection-end-line="103" selection-end-column="19" />
           <folding />
         </state>
@@ -2488,7 +2464,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/config/environments/development.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
+        <state relative-caret-position="1650">
           <caret line="50" column="0" selection-start-line="45" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
           <folding />
         </state>
@@ -2496,7 +2472,7 @@
     </entry>
     <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/actionview-4.2.6/lib/action_view/routing_url_for.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="246">
+        <state relative-caret-position="2541">
           <caret line="77" column="0" selection-start-line="77" selection-start-column="0" selection-end-line="77" selection-end-column="0" />
           <folding />
         </state>
@@ -2504,7 +2480,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/_public_new.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33">
+        <state relative-caret-position="2244">
           <caret line="68" column="89" selection-start-line="68" selection-start-column="56" selection-end-line="68" selection-end-column="89" />
           <folding>
             <marker date="1463178406587" expanded="true" signature="121:286" placeholder="{...}" />
@@ -2514,11 +2490,114 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/views/layouts/application.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="39" column="33" selection-start-line="39" selection-start-column="33" selection-end-line="39" selection-end-column="33" />
+        <state relative-caret-position="1452">
+          <caret line="44" column="17" selection-start-line="44" selection-start-column="17" selection-end-line="44" selection-end-column="17" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4653">
+          <caret line="141" column="0" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2475">
+          <caret line="75" column="39" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/acts_as_money/aggregations.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="752">
+          <caret line="185" column="3" selection-start-line="185" selection-start-column="3" selection-end-line="185" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="29" column="32" selection-start-line="29" selection-start-column="32" selection-end-line="29" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/acts_as_publishable/init.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/acts_as_publishable.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="52" selection-start-line="0" selection-start-column="52" selection-end-line="0" selection-end-column="52" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="208" column="18" selection-start-line="208" selection-start-column="18" selection-end-line="208" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="19" column="20" selection-start-line="19" selection-start-column="20" selection-end-line="19" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/show_premiumssl.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificates_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="10" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/product_variant_group.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="7" column="29" selection-start-line="7" selection-start-column="29" selection-end-line="7" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

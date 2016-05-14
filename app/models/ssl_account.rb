@@ -5,7 +5,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :api_credential
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, :include => [:orders] do
+  has_many  :certificate_orders, ->{includes [:orders]} do
     def current
       first(:conditions=>{:workflow_state=>['new']})
     end
@@ -71,9 +71,9 @@ class SslAccount < ActiveRecord::Base
   validate :reminder_notice_destinations_format,
     :unless=>"preferred_reminder_notice_destinations=='0'"
   validate :preferred_reminder_notice_triggers_format
-  validate :acct_number, presence: true, uniqueness: true, on: :create
+  validates :acct_number, presence: true, uniqueness: true, on: :create
 
-  default_scope{ :order => 'created_at DESC'}
+  default_scope ->{order(:created_at.desc)}
 
   #before create function
   def b_create

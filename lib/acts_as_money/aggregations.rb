@@ -175,7 +175,7 @@ module ActiveRecord
                 instance_variable_set("@#{name}", nil)
               else
                 part = conversion.call(part) unless part.is_a?(class_name.constantize) || conversion.nil?
-                mapping.each { |pair| @attributes[pair.first] = part.send(pair.last) }
+                mapping.each { |pair| @attributes.write_cast_value([pair.first],part.send(pair.last)) }
                 instance_variable_set("@#{name}", part.freeze)
               end
             end

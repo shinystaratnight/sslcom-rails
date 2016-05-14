@@ -206,9 +206,9 @@ class Certificate < ActiveRecord::Base
                           "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt)}}}}
 
 
-  scope :public, where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}
-  scope :sitemap, where{(product != 'mssl') & (product !~ '%tr')}
-  scope :for_sale, where{(product != 'mssl') & (serial =~ "%sslcom%")}
+  scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
+  scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
+  scope :for_sale, ->{where{(product != 'mssl') & (serial =~ "%sslcom%")}}
 
   def self.map_to_legacy(description, mapping=nil)
     [MAP_TO_TRIAL,MAP_TO_OV,MAP_TO_EV,MAP_TO_WILDCARD,MAP_TO_UCC].each do |m|
@@ -405,7 +405,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def find_tier(tier)
-    Certificate.public.find_by_product(product_root+tier+'tr')
+    Certificate.available.find_by_product(product_root+tier+'tr')
   end
 
   def is_single?
@@ -438,18 +438,18 @@ class Certificate < ActiveRecord::Base
     if reseller_tier.blank?
       self
     else
-      Certificate.public.find_by_product product_root
+      Certificate.available.find_by_product product_root
     end
   end
 
   def self.root_products
-    Certificate.public.sort{|a,b|
+    Certificate.available.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.reject{|c|
       c.product=~/\dtr/}
   end
 
   def self.tiered_products(tier)
-    Certificate.public.sort{|a,b|
+    Certificate.available.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}.find_all{|c|
         c.product=~Regexp.new(tier)}
   end
@@ -576,7 +576,7 @@ class Certificate < ActiveRecord::Base
 
   # one-time call to create ssl.com premium products
   def self.create_premium_ssl
-    c=Certificate.public.find_by_product "ucc"
+    c=Certificate.available.find_by_product "ucc"
     certs = c.duplicate_tiers "premium256sslcom", "ucc256ssl", "premium256ssl"
     title = "Premium Multi-subdomain SSL"
     description={
@@ -652,7 +652,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.create_basic_ssl
-    c=Certificate.public.find_by_product "high_assurance"
+    c=Certificate.available.find_by_product "high_assurance"
     certs = c.duplicate_tiers "basic256sslcom", "ov256ssl", "basic256ssl"
     title = "Basic SSL"
     description={
@@ -692,7 +692,7 @@ class Certificate < ActiveRecord::Base
   end
   
   def self.create_code_signing
-    c=Certificate.public.find_by_product "high_assurance"
+    c=Certificate.available.find_by_product "high_assurance"
     certs = c.duplicate_tiers "codesigning256sslcom", "ov256ssl", "codesigning256ssl"
     title = "Code Signing"
     description={
@@ -789,7 +789,7 @@ class Certificate < ActiveRecord::Base
                               sslcompersonalenterprise256ssl1yr5tr: [24900, 49900, 59900]
                }}]
     products.each do |p|
-      c=Certificate.public.find_by_product "high_assurance"
+      c=Certificate.available.find_by_product "high_assurance"
       certs = c.duplicate_tiers "#{p[:serial_root]}256sslcom", "ov256ssl", "#{p[:serial_root]}256ssl"
       title = p[:title]
       description={

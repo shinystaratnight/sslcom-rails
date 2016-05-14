@@ -36,8 +36,8 @@ class Order < ActiveRecord::Base
 #  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope{ includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.}
-                    order(:created_at.desc).uniq
+  default_scope ->{includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
+                    order(:created_at.desc).uniq}
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder).outer}.
@@ -139,7 +139,7 @@ class Order < ActiveRecord::Base
     not_new.where :cents.gt=>0
   }
 
-  scope :tracked_visitor, where{visitor_token_id != nil}
+  scope :tracked_visitor, ->{where{visitor_token_id != nil}}
 
   scope :range, lambda{|start, finish|
     if start.is_a? String
