@@ -1,1 +1,2 @@
-# require 'preferences/app/models/preference'
+require 'preferences'
+require 'preferences/app/models/preference'

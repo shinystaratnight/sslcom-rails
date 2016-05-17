@@ -1,7 +1,7 @@
 class CertificatesController < ApplicationController
   before_filter :find_tier
   before_filter :require_user, :only=>[:buy, :buy_renewal],
-    :if=>'current_subdomain==Reseller::SUBDOMAIN'
+    :if=>'request.subdomain==Reseller::SUBDOMAIN'
   before_filter :find_certificate, only: [:show, :buy, :pricing, :buy_renewal]
   layout false, only: [:pricing]
 

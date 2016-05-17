@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RUBY_MODULE" version="4">
   <component name="CompassSettings">
+    <option name="compassConfigPath" value="C:\Users\leo\git\sslcom-rails\compass.rb" />
     <option name="compassExecutableFilePath" value="$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/compass-1.0.3/bin/compass" />
-    <option name="importPaths">
-      <list>
-        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.13.alpha.0/frameworks/compass/stylesheets" />
-        <option value="$USER_HOME$/.rvm/gems/ruby-1.9.3-p327@rails323/gems/compass-0.13.alpha.0/frameworks/blueprint/stylesheets" />
-      </list>
-    </option>
+    <option name="compassSupportEnabled" value="true" />
   </component>
   <component name="FacetManager">
     <facet type="RailsFacetType" name="Ruby on Rails">
@@ -424,7 +420,7 @@
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console">
+    <configuration default="false" name="IRB console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console">
       <module name="ssl_com_rails3" />
       <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
       <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
@@ -432,15 +428,11 @@
       <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
       <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
       <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console development" />
-      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
-      <RunnerSettings RunnerId="RubyDebugRunner" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyDebugRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$APPLICATION_HOME_DIR$/rb/testing/runner/irb.rb" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="--prompt simple" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
       <method />
     </configuration>
     <configuration default="false" name="POST on /certificates/v1/apply" type="RSpecRunConfigurationType" factoryName="RSpec">
@@ -690,7 +682,7 @@
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="routes: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
+    <configuration default="false" name="routes: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake">
       <module name="ssl_com_rails3" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
@@ -712,20 +704,19 @@
       <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
-    <configuration default="false" name="Start Zeus Server: ssl_com_rails3" type="ZeusRunConfigurationType" factoryName="Zeus Server" temporary="true">
+    <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
       <module name="ssl_com_rails3" />
-      <ZEUS_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <ZEUS_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <ZEUS_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
-      <ZEUS_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
-      <ZEUS_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_NAME" VALUE="start" />
-      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_ARGS" VALUE="" />
-      <RunnerSettings RunnerId="RubyRunner" />
-      <ConfigurationWrapper RunnerId="RubyRunner" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
       <method />
     </configuration>
     <configuration default="false" name="rails:update: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
@@ -746,19 +737,20 @@
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
       <method />
     </configuration>
-    <configuration default="false" name="IRB console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+    <configuration default="false" name="Start Zeus Server: ssl_com_rails3" type="ZeusRunConfigurationType" factoryName="Zeus Server" temporary="true">
       <module name="ssl_com_rails3" />
-      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
-      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
-      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <ZEUS_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <ZEUS_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <ZEUS_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <ZEUS_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <ZEUS_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$APPLICATION_HOME_DIR$/rb/testing/runner/irb.rb" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="--prompt simple" />
-      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
+      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_NAME" VALUE="start" />
+      <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_ARGS" VALUE="" />
+      <RunnerSettings RunnerId="RubyRunner" />
+      <ConfigurationWrapper RunnerId="RubyRunner" />
       <method />
     </configuration>
   </component>
@@ -789,6 +781,7 @@
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk-core (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="aws-sdk-resources (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v1.12.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cancan (v1.6.10, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -817,6 +810,7 @@
     <orderEntry type="library" scope="PROVIDED" name="daemons (v1.2.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dalli (v2.7.6, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="database_cleaner (v1.5.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="debug_inspector (v0.0.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="declarative_authorization (v0.5.7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="deep_merge (v1.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="delayed_job (v4.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -825,6 +819,7 @@
     <orderEntry type="library" scope="PROVIDED" name="diff-lcs (v1.2.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv (v2.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="dotenv-rails (v2.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="dynamic_form (v1.1.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="easy_roles (v1.2.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="em-websocket (v0.5.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="email_spec (v2.1.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -855,6 +850,7 @@
     <orderEntry type="library" scope="PROVIDED" name="httpi (v2.4.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jammit (v0.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.4.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jmespath (v1.2.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jsmin (v1.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -914,6 +910,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rake (v11.1.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rb-fsevent (v0.9.7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rb-inotify (v0.9.7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rdoc (v4.2.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ref (v2.0.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="request_exception_handler (v0.5.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="request_store (v1.3.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -933,12 +930,14 @@
     <orderEntry type="library" scope="PROVIDED" name="sass-rails (v5.0.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="savon (v2.11.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="scrypt (v2.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="sdoc (v0.4.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sexp_processor (v4.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="shellany (v0.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="simpleidn (v0.0.7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sinatra (v1.4.7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="slop (v3.6.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="socksify (v1.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="spring (v1.7.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets (v3.6.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets-rails (v3.0.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="squeel (v1.2.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -946,11 +945,13 @@
     <orderEntry type="library" scope="PROVIDED" name="thor (v0.19.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thread_safe (v0.3.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tilt (v2.0.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="turbolinks (v2.5.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="tzinfo (v1.2.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="uglifier (v3.0.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="unscoped_associations (v0.6.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="uuidtools (v2.1.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="wasabi (v3.5.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="web-console (v2.3.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="webmock (v2.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="webrat (v0.7.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="whenever (v0.9.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />

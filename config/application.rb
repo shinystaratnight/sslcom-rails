@@ -88,7 +88,7 @@ module SslCom
     end
 
     # Enable the asset pipeline
-    config.assets.enabled = false
+    config.assets.enabled = true
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end

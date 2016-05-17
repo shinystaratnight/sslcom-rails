@@ -469,7 +469,7 @@ class ApiCertificateRequestsController < ApplicationController
   private
 
   def set_test
-    @test = (current_subdomain==TEST_SUBDOMAIN) ? true : false
+    @test = (request.subdomain==TEST_SUBDOMAIN) ? true : false
   end
 
   def record_parameters

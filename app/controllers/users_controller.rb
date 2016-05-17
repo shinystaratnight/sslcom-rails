@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   def create
     @user.create_ssl_account
-    if current_subdomain==Reseller::SUBDOMAIN
+    if request.subdomain==Reseller::SUBDOMAIN
       @user.ssl_account.add_role! "new_reseller"
       @user.ssl_account.set_reseller_default_prefs
       @user.roles << Role.find_by_name(Role::RESELLER)
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
       flash[:notice] = notice
       #in production heroku, requests coming FROM a subdomain will not transmit
       #flash messages to the target page. works fine in dev though
-      redirect_to(current_subdomain==Reseller::SUBDOMAIN ? login_url(:notice=>notice) : login_url)
+      redirect_to(request.subdomain==Reseller::SUBDOMAIN ? login_url(:notice=>notice) : login_url)
     else
       render :action => :new
     end

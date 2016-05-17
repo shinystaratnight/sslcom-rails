@@ -223,4 +223,393 @@ module Preferences
       definition
     end
   end
+
+  module ClassMethods #:nodoc:
+    # Generates the scope for looking under records with a specific set of
+    # preferences associated with them.
+    #
+    # Note thate this is a bit more complicated than usual since the preference
+    # definitions aren't in the database for joins, defaults need to be accounted
+    # for, and querying for the the presence of multiple preferences requires
+    # multiple joins.
+    def build_preference_scope(preferences, inverse = false)
+      joins = []
+      statements = []
+      values = []
+
+      # Flatten the preferences for easier processing
+      preferences = preferences.inject({}) do |result, (group, value)|
+        if value.is_a?(Hash)
+          value.each {|preference, value| result[[group, preference]] = value}
+        else
+          result[[nil, group]] = value
+        end
+        result
+      end
+
+      preferences.each do |(group, preference), value|
+        group_id, group_type = Preference.split_group(group)
+        preference = preference.to_s
+        definition = preference_definitions[preference.to_s]
+        value = definition.type_cast(value)
+        is_default = definition.default_value(group_type) == value
+
+        table = "preferences_#{group_id}_#{group_type}_#{preference}"
+
+        # Since each preference is a different record, they need their own
+        # join so that the proper conditions can be set
+        joins << "LEFT JOIN preferences AS #{table} ON #{table}.owner_id = #{table_name}.#{primary_key} AND " + sanitize_sql(
+            "#{table}.owner_type" => base_class.name.to_s,
+            "#{table}.group_id" => group_id,
+            "#{table}.group_type" => group_type,
+            "#{table}.name" => preference
+        )
+
+        if inverse
+          statements << "#{table}.id IS NOT NULL AND #{table}.value " + (value.nil? ? ' IS NOT NULL' : ' != ?') + (!is_default ? " OR #{table}.id IS NULL" : '')
+        else
+          statements << "#{table}.id IS NOT NULL AND #{table}.value " + (value.nil? ? ' IS NULL' : ' = ?') + (is_default ? " OR #{table}.id IS NULL" : '')
+        end
+        values << value unless value.nil?
+      end
+
+      sql = statements.map! {|statement| "(#{statement})"} * ' AND '
+      {:joins => joins, :conditions => values.unshift(sql)}
+    end
+  end
+
+  module InstanceMethods
+    def self.included(base) #:nodoc:
+      base.class_eval do
+        alias_method :prefs, :preferences
+      end
+    end
+
+    # Finds all preferences, including defaults, for the current record.  If
+    # looking up custom group preferences, then this will include all default
+    # preferences within that particular group as well.
+    #
+    # == Examples
+    #
+    # A user with no stored values:
+    #
+    #   user = User.find(:first)
+    #   user.preferences
+    #   => {"language"=>"English", "color"=>nil}
+    #
+    # A user with stored values for a particular group:
+    #
+    #   user.preferred_color = 'red', :cars
+    #   user.preferences(:cars)
+    #   => {"language=>"English", "color"=>"red"}
+    def preferences(group = nil)
+      preferences = preferences_group(group)
+
+      unless preferences_group_loaded?(group)
+        group_id, group_type = Preference.split_group(group)
+        find_preferences(:group_id => group_id, :group_type => group_type).each do |preference|
+          preferences[preference.name] = preference.value unless preferences.include?(preference.name)
+        end
+
+        # Add defaults
+        preference_definitions.each do |name, definition|
+          preferences[name] = definition.default_value(group_type) unless preferences.include?(name)
+        end
+      end
+
+      preferences.inject({}) do |typed_preferences, (name, value)|
+        typed_preferences[name] = value.nil? ? value : preference_definitions[name].type_cast(value)
+        typed_preferences
+      end
+    end
+
+    # Queries whether or not a value is present for the given preference.
+    # This is dependent on how the value is type-casted.
+    #
+    # == Examples
+    #
+    #   class User < ActiveRecord::Base
+    #     preference :color, :string, :default => 'red'
+    #   end
+    #
+    #   user = User.create
+    #   user.preferred(:color)              # => "red"
+    #   user.preferred?(:color)             # => true
+    #   user.preferred?(:color, 'cars')     # => true
+    #   user.preferred?(:color, Car.first)  # => true
+    #
+    #   user.write_preference(:color, nil)
+    #   user.preferred(:color)              # => nil
+    #   user.preferred?(:color)             # => false
+    def preferred?(name, group = nil)
+      name = name.to_s
+      assert_valid_preference(name)
+
+      value = preferred(name, group)
+      preference_definitions[name].query(value)
+    end
+    alias_method :prefers?, :preferred?
+
+    # Gets the actual value stored for the given preference, or the default
+    # value if nothing is present.
+    #
+    # == Examples
+    #
+    #   class User < ActiveRecord::Base
+    #     preference :color, :string, :default => 'red'
+    #   end
+    #
+    #   user = User.create
+    #   user.preferred(:color)            # => "red"
+    #   user.preferred(:color, 'cars')    # => "red"
+    #   user.preferred(:color, Car.first) # => "red"
+    #
+    #   user.write_preference(:color, 'blue')
+    #   user.preferred(:color)            # => "blue"
+    def preferred(name, group = nil)
+      name = name.to_s
+      assert_valid_preference(name)
+
+      if preferences_group(group).include?(name)
+        # Value for this group/name has been written, but not saved yet:
+        # grab from the pending values
+        value = preferences_group(group)[name]
+      else
+        # Grab the first preference; if it doesn't exist, use the default value
+        group_id, group_type = Preference.split_group(group)
+        preference = find_preferences(:name => name, :group_id => group_id, :group_type => group_type).first unless preferences_group_loaded?(group)
+
+        value = preference ? preference.value : preference_definitions[name].default_value(group_type)
+        preferences_group(group)[name] = value
+      end
+
+      definition = preference_definitions[name]
+      value = definition.type_cast(value) unless value.nil?
+      value
+    end
+    alias_method :prefers, :preferred
+
+    # Sets a new value for the given preference.  The actual Preference record
+    # is *not* created until this record is saved.  In this way, preferences
+    # act *exactly* the same as attributes.  They can be written to and
+    # validated against, but won't actually be written to the database until
+    # the record is saved.
+    #
+    # == Examples
+    #
+    #   user = User.find(:first)
+    #   user.write_preference(:color, 'red')              # => "red"
+    #   user.save!
+    #
+    #   user.write_preference(:color, 'blue', Car.first)  # => "blue"
+    #   user.save!
+    def write_preference(name, value, group = nil)
+      name = name.to_s
+      assert_valid_preference(name)
+
+      preferences_changed = preferences_changed_group(group)
+      if preferences_changed.include?(name)
+        old = preferences_changed[name]
+        preferences_changed.delete(name) unless preference_value_changed?(name, old, value)
+      else
+        old = clone_preference_value(name, group)
+        preferences_changed[name] = old if preference_value_changed?(name, old, value)
+      end
+
+      value = convert_number_column_value(value) if preference_definitions[name].number?
+      preferences_group(group)[name] = value
+
+      value
+    end
+
+    # Whether any attributes have unsaved changes.
+    #
+    # == Examples
+    #
+    #   user = User.find(:first)
+    #   user.preferences_changed?                   # => false
+    #   user.write_preference(:color, 'red')
+    #   user.preferences_changed?                   # => true
+    #   user.save
+    #   user.preferences_changed?                   # => false
+    #
+    #   # Groups
+    #   user.preferences_changed?(:car)             # => false
+    #   user.write_preference(:color, 'red', :car)
+    #   user.preferences_changed(:car)              # => true
+    def preferences_changed?(group = nil)
+      !preferences_changed_group(group).empty?
+    end
+
+    # A list of the preferences that have unsaved changes.
+    #
+    # == Examples
+    #
+    #   user = User.find(:first)
+    #   user.preferences_changed                    # => []
+    #   user.write_preference(:color, 'red')
+    #   user.preferences_changed                    # => ["color"]
+    #   user.save
+    #   user.preferences_changed                    # => []
+    #
+    #   # Groups
+    #   user.preferences_changed(:car)              # => []
+    #   user.write_preference(:color, 'red', :car)
+    #   user.preferences_changed(:car)              # => ["color"]
+    def preferences_changed(group = nil)
+      preferences_changed_group(group).keys
+    end
+
+    # A map of the preferences that have changed in the current object.
+    #
+    # == Examples
+    #
+    #   user = User.find(:first)
+    #   user.preferred(:color)                      # => nil
+    #   user.preference_changes                     # => {}
+    #
+    #   user.write_preference(:color, 'red')
+    #   user.preference_changes                     # => {"color" => [nil, "red"]}
+    #   user.save
+    #   user.preference_changes                     # => {}
+    #
+    #   # Groups
+    #   user.preferred(:color, :car)                # => nil
+    #   user.preference_changes(:car)               # => {}
+    #   user.write_preference(:color, 'red', :car)
+    #   user.preference_changes(:car)               # => {"color" => [nil, "red"]}
+    def preference_changes(group = nil)
+      preferences_changed(group).inject({}) do |changes, preference|
+        changes[preference] = preference_change(preference, group)
+        changes
+      end
+    end
+
+    # Reloads the pereferences of this object as well as its attributes
+    def reload(*args) #:nodoc:
+      result = super
+
+      @preferences.clear if @preferences
+      @preferences_changed.clear if @preferences_changed
+
+      result
+    end
+
+    private
+    # Asserts that the given name is a valid preference in this model.  If it
+    # is not, then an ArgumentError exception is raised.
+    def assert_valid_preference(name)
+      raise(ArgumentError, "Unknown preference: #{name}") unless preference_definitions.include?(name)
+    end
+
+    # Gets the set of preferences identified by the given group
+    def preferences_group(group)
+      @preferences ||= {}
+      @preferences[group.is_a?(Symbol) ? group.to_s : group] ||= {}
+    end
+
+    # Determines whether the given group of preferences has already been
+    # loaded from the database
+    def preferences_group_loaded?(group)
+      preference_definitions.length == preferences_group(group).length
+    end
+
+    # Generates a clone of the current value stored for the preference with
+    # the given name / group
+    def clone_preference_value(name, group)
+      value = preferred(name, group)
+      value.duplicable? ? value.clone : value
+    rescue TypeError, NoMethodError
+      value
+    end
+
+    # Keeps track of all preferences that have been changed so that they can
+    # be properly updated in the database.  Maps group -> preference -> value.
+    def preferences_changed_group(group)
+      @preferences_changed ||= {}
+      @preferences_changed[group.is_a?(Symbol) ? group.to_s : group] ||= {}
+    end
+
+    # Determines whether a preference changed in the given group
+    def preference_changed?(name, group)
+      preferences_changed_group(group).include?(name)
+    end
+
+    # Builds an array of [original_value, new_value] for the given preference.
+    # If the perference did not change, this will return nil.
+    def preference_change(name, group)
+      [preferences_changed_group(group)[name], preferred(name, group)] if preference_changed?(name, group)
+    end
+
+    # Gets the last saved value for the given preference
+    def preference_was(name, group)
+      preference_changed?(name, group) ? preferences_changed_group(group)[name] : preferred(name, group)
+    end
+
+    # Forces the given preference to be saved regardless of whether the value
+    # is actually diferent
+    def preference_will_change!(name, group)
+      preferences_changed_group(group)[name] = clone_preference_value(name, group)
+    end
+
+    # Reverts any unsaved changes to the given preference
+    def reset_preference!(name, group)
+      write_preference(name, preferences_changed_group(group)[name], group) if preference_changed?(name, group)
+    end
+
+    # Determines whether the old value is different from the new value for the
+    # given preference.  This will use the typecasted value to determine
+    # equality.
+    def preference_value_changed?(name, old, value)
+      definition = preference_definitions[name]
+      if definition.type == :integer && (old.nil? || old == 0)
+        # For nullable numeric columns, NULL gets stored in database for blank (i.e. '') values.
+        # Hence we don't record it as a change if the value changes from nil to ''.
+        # If an old value of 0 is set to '' we want this to get changed to nil as otherwise it'll
+        # be typecast back to 0 (''.to_i => 0)
+        value = nil if value.blank?
+      else
+        value = definition.type_cast(value)
+      end
+
+      old != value
+    end
+
+    # Updates any preferences that have been changed/added since the record
+    # was last saved
+    def update_preferences
+      if @preferences_changed
+        @preferences_changed.each do |group, preferences|
+          group_id, group_type = Preference.split_group(group)
+
+          preferences.keys.each do |name|
+            # Find an existing preference or build a new one
+            attributes = {:name => name, :group_id => group_id, :group_type => group_type}
+            preference = find_preferences(attributes).first || stored_preferences.build(attributes)
+            preference.value = preferred(name, group)
+            preference.save!
+          end
+        end
+
+        @preferences_changed.clear
+      end
+    end
+
+    # Finds all stored preferences with the given attributes.  This will do a
+    # smart lookup by looking at the in-memory collection if it was eager-
+    # loaded.
+    def find_preferences(attributes)
+      if stored_preferences.loaded?
+        stored_preferences.select do |preference|
+          attributes.all? {|attribute, value| preference[attribute] == value}
+        end
+      else
+        stored_preferences.find(:all, :conditions => attributes)
+      end
+    end
+  end
+end
+
+ActiveRecord::Base.class_eval do
+  extend Preferences::MacroMethods
 end

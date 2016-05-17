@@ -7,6 +7,7 @@ gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 # gem 'plugger'
 gem 'preferences'
+gem 'dynamic_form'
 
 gem 'mysql2'
 gem 'workflow'
@@ -41,7 +42,6 @@ gem 'uuidtools'
 gem 'radix62'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
-gem 'jquery-rails', '>= 1.0.12'
 gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer", '~> 0.12.0', platform: :ruby
@@ -69,6 +69,19 @@ gem 'nokogiri'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 
+gem 'coffee-rails'
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+# gem 'therubyracer',  platforms: :ruby
+
+# Use jquery as the JavaScript library
+gem 'jquery-rails'
+# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
+gem 'turbolinks'
+# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
+gem 'jbuilder'
+# bundle exec rake doc:rails generates the API under doc/api.
+gem 'sdoc',          group: :doc
+
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
@@ -77,6 +90,8 @@ group :development do
   gem 'foreman'
   gem 'dotenv-rails'
   gem 'guard-livereload'
+  gem 'web-console', '~> 2.0'
+  gem 'spring'
 end
 
 group :development, :test do

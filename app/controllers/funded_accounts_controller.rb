@@ -8,7 +8,7 @@ class FundedAccountsController < ApplicationController
 
   before_filter :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds],
-    :if=>'current_subdomain==Reseller::SUBDOMAIN'
+    :if=>'request.subdomain==Reseller::SUBDOMAIN'
   skip_filter :finish_reseller_signup
   filter_access_to :all
 
