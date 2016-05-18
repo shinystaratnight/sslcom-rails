@@ -1,4 +1,4 @@
-require 'preferences/preference_definition'
+require 'preferences/lib/preferences/preference_definition'
 
 # Adds support for defining preferences on ActiveRecord models.
 #
@@ -604,7 +604,7 @@ module Preferences
           attributes.all? {|attribute, value| preference[attribute] == value}
         end
       else
-        stored_preferences.find(:all, :conditions => attributes)
+        stored_preferences.where(attributes).all
       end
     end
   end

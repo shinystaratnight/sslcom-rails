@@ -6,7 +6,7 @@ gem 'rails', '~> 4.2.6'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 # gem 'plugger'
-gem 'preferences'
+# gem 'preferences'
 gem 'dynamic_form'
 
 gem 'mysql2'

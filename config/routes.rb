@@ -83,7 +83,7 @@ SslCom::Application.routes.draw do
     collection do
       get :edit_password
       get :edit_email
-      get :resend_activation
+      post :resend_activation
       get :activation_notice
       get :search
       get :cancel_reseller_signup
@@ -248,7 +248,7 @@ SslCom::Application.routes.draw do
   end
 
   get '/register/:activation_code' => 'activations#new', :as => :register
-  get '/activate/:id' => 'activations#create', :as => :activate
+  post '/activate/:id' => 'activations#create', :as => :activate
   get 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl
   get 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
   get 'secure/allocate_funds_for_order/:id' =>
