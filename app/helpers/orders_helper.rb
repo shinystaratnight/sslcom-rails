@@ -37,7 +37,7 @@ module OrdersHelper
   end
 
   def cart_total_price
-    Money.new(cart_items.sum(&:amount)).format :with_currency => true
+    Money.new(cart_items.sum(:amount)).format :with_currency => true
   end
 
   def min_cart_item_price

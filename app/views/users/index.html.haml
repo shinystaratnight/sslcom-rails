@@ -8,13 +8,13 @@
     =submit_tag 'search'
 #validations
   %table(cellspacing="0")
-    -if will_paginate @certificate_orders
+    -if will_paginate @paginated
       %tfoot
         %tr
-          %td(colspan='6')=will_paginate @certificate_orders
+          %td(colspan='6')=will_paginate @paginated
     %caption
       =title
-      =will_paginate @users
+      =will_paginate @paginated
     %tr.heading_row
       %td
       %th.name(scope="col")Username

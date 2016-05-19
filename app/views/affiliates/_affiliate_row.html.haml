@@ -3,5 +3,5 @@
   %td=url
   %td=count
   %td=orders.blank? ? 0 : orders.count
-  %td=orders.blank? ? 0 : Money.new(orders.sum(&:cents)).format
-  %td=orders.blank? ? 0 : Money.new(orders.map(&:line_items).flatten.sum(&:affiliate_commission_price)).format
+  %td=orders.blank? ? 0 : Money.new(orders.sum(:cents)).format
+  %td=orders.blank? ? 0 : Money.new(orders.map(&:line_items).flatten.sum(:affiliate_commission_price)).format

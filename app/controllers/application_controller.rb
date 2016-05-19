@@ -325,7 +325,7 @@ class ApplicationController < ActionController::Base
   end
 
   def shopping_cart_amount
-    certificates_from_cookie.sum(&:amount)
+    certificates_from_cookie.sum(:amount)
   end
 
   #co - certificate order

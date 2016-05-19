@@ -40,9 +40,9 @@ class Csr < ActiveRecord::Base
      :include=>{:certificate_content=>:certificate_order}}
   }
 
-  scope :pending, joins(:certificate_content).
+  scope :pending, ->{joins(:certificate_content).
       where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)
+      order("certificate_contents.updated_at asc")}
 
   scope :range, lambda{|start, finish|
     if start.is_a? String

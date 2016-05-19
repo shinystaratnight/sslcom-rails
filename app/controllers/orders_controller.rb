@@ -226,9 +226,9 @@ class OrdersController < ApplicationController
   end
 
   def stats(p, unpaginated)
-    @total_amount=unpaginated.sum(&:cents)
+    @total_amount=unpaginated.sum(:cents)
     @total_count=unpaginated.count
-    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(&:cents)
+    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
     @orders=unpaginated.paginate(p)
   end

@@ -175,11 +175,11 @@ class CertificateOrder < ActiveRecord::Base
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
     joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
-        order(:certificate_contents=>{:csr=>:updated_at.desc})
+        order("certificate_contents.csr.updated_at asc")
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr.outer}.order({:certificate_contents=>{:csr=>:updated_at.desc}}) #.uniq #- breaks order by csr
+    joins{certificate_contents.csr.outer}.order("certificate_contents.csr.updated_at asc") #.uniq #- breaks order by csr
   }
 
   scope :filter_by, lambda { |term|
@@ -189,17 +189,17 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :unvalidated, ->{where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)}
+      order("certificate_contents.updated_at asc")}
 
   scope :incomplete, ->{not_test.where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)}
+      order("certificate_contents.updated_at asc")}
 
   scope :pending, ->{not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)}
+      order("certificate_contents.updated_at asc")}
 
   scope :has_csr, ->{not_test.where{(workflow_state=='paid') &
-    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)}
+    (certificate_contents.signing_request != "")}.order("certificate_contents.updated_at asc")}
 
   scope :credits, ->{not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{workflow_state: "new"}})}
@@ -209,7 +209,7 @@ class CertificateOrder < ActiveRecord::Base
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
+    (includes || self).where(:workflow_state.matches % 'paid').uniq
   }
 
   scope :unrenewed, ->{not_new.where(:renewal_id=>nil)}
@@ -627,11 +627,11 @@ class CertificateOrder < ActiveRecord::Base
       product_variant_item.is_domain?}
     case type
       when 'all'
-        soid.sum(&:quantity)
+        soid.sum(:quantity)
       when 'wildcard'
-        soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
+        soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(:quantity)
       when 'nonwildcard'
-        soid.sum(&:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
+        soid.sum(:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(:quantity)
     end
   end
 

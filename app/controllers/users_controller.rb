@@ -35,7 +35,8 @@ class UsersController < ApplicationController
       @users = @users.with_role(role) if role
       @users = @users.search(search) unless search.blank?
     end
-    @users = @users.order(:created_at.desc).paginate(p)
+    @users = @users.order(:created_at.desc)
+    @paginated=@users.paginate(p)
 
     respond_to do |format|
       format.html { render :action => :index }

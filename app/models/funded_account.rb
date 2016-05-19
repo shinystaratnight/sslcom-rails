@@ -11,8 +11,7 @@ class FundedAccount < ActiveRecord::Base
   attr_accessor :deduct_order
 
   after_initialize do
-    return unless new_record?
-    self.deduct_order ||= false
+    self.deduct_order ||= false if new_record?
   end
 
   NEW_CREDIT_CARD = "new credit card"

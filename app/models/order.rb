@@ -69,7 +69,12 @@ class Order < ActiveRecord::Base
         (billing_profile.last_name =~ "%#{term}%") |
         (billing_profile.address_1 =~ "%#{term}%") |
         (billing_profile.address_2 =~ "%#{term}%") |
+        (billing_profile.city =~ "%#{term}%") |
+        (billing_profile.state =~ "%#{term}%") |
+        (billing_profile.phone =~ "%#{term}%") |
+        (billing_profile.country =~ "%#{term}%") |
         (billing_profile.company =~ "%#{term}%") |
+        (billing_profile.notes =~ "%#{term}%") |
         (billing_profile.postal_code =~ "%#{term}%") |
         (reference_number =~ "%#{term}%") |
         (notes =~ "%#{term}%") |
@@ -131,7 +136,7 @@ class Order < ActiveRecord::Base
   } do
 
     def amount
-      sum(&:cents)*0.01
+      sum(:cents)*0.01
     end
   end
 
@@ -153,7 +158,7 @@ class Order < ActiveRecord::Base
   } do
 
     def amount
-      sum(&:cents)*0.01
+      sum(:cents)*0.01
     end
   end
 

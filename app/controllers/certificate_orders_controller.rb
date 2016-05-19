@@ -52,7 +52,8 @@ class CertificateOrdersController < ApplicationController
 #    expire_fragment('admin_header_certs_status') if
 #      fragment_exist?('admin_header_certs_status')
     p = {:page => params[:page]}
-    @certificate_orders = find_certificate_orders.paginate(p)
+    @certificate_orders = find_certificate_orders
+    @paginated = @certificate_orders.paginate(p) #squeel doesn't work with will_paginate in Rails 4.2 upgrade
 
     respond_to do |format|
       format.html { render :action => :index }
@@ -264,7 +265,8 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.where{(workflow_state=='paid') & (certificate_contents.workflow_state == "new")} :
-        current_user.ssl_account.certificate_orders.credits).paginate(p)
+        current_user.ssl_account.certificate_orders.credits)
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -276,7 +278,8 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
-        current_user.ssl_account.certificate_orders.pending).paginate(p)
+        current_user.ssl_account.certificate_orders.pending)
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -288,7 +291,8 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
-        current_user.ssl_account.certificate_orders.send(params[:id].to_sym)).paginate(p)
+        current_user.ssl_account.certificate_orders.send(params[:id].to_sym))
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -301,7 +305,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(p)
+          current_user.ssl_account.certificate_orders.not_test}).order_by_csr
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -314,7 +319,8 @@ class CertificateOrdersController < ApplicationController
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test.filter_by(params[:id])} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test.filter_by(params[:id])}).order_by_csr.paginate(p)
+          current_user.ssl_account.certificate_orders.not_test.filter_by(params[:id])}).order_by_csr
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -328,7 +334,8 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.incomplete :
-      current_user.ssl_account.certificate_orders.incomplete).paginate(p)
+      current_user.ssl_account.certificate_orders.incomplete)
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -342,7 +349,8 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.reprocessing :
-      current_user.ssl_account.certificate_orders.reprocessing).paginate(p)
+      current_user.ssl_account.certificate_orders.reprocessing)
+    @paginated=@certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}
