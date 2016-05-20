@@ -238,7 +238,7 @@ class OrdersController < ApplicationController
     states = [params[:id]]
     unpaginated =
       if current_user.is_admin?
-        Order.unscoped{Order.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
       else
         current_user.ssl_account.orders.unscoped{
           current_user.ssl_account.orders.includes(:line_items).where{state >> [params[:state]]}.order(:created_at.desc)}

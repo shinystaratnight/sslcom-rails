@@ -73,7 +73,7 @@ class SslAccount < ActiveRecord::Base
   validate :preferred_reminder_notice_triggers_format
   validates :acct_number, presence: true, uniqueness: true, on: :create
 
-  default_scope ->{order(:created_at.desc)}
+  default_scope ->{order("created_at desc")}
 
   #before create function
   def b_create

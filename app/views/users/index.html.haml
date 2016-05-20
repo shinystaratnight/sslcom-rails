@@ -8,13 +8,13 @@
     =submit_tag 'search'
 #validations
   %table(cellspacing="0")
-    -if will_paginate @paginated
+    -if will_paginate @users
       %tfoot
         %tr
-          %td(colspan='6')=will_paginate @paginated
+          %td(colspan='6')=will_paginate @users
     %caption
       =title
-      =will_paginate @paginated
+      =will_paginate @users
     %tr.heading_row
       %td
       %th.name(scope="col")Username
@@ -70,9 +70,9 @@
                             %li=remote_login_link(u)
                             %li=link_to 'user dashboard', admin_show_user_path(u)
                             %li=link_to 'change email address', edit_email_user_url(u)
-                            %li=link_to_function 'change username', "change_login_#{u.id}()"
+                            %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
                             %li=link_to 'change password', edit_password_user_url(u)
-                            %li=link_to_function "change available funds amount", "adjust_funds_#{u.id}()"
+                            %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
                         .half_width_box
                           .adjust_status
                             %ul

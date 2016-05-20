@@ -23,11 +23,12 @@ class Order < ActiveRecord::Base
   attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
 
   after_initialize do
-    return unless new_record?
-    self.amount = 0
-    self.is_free ||= false
-    self.receipt ||= false
-    self.deposit_mode ||= false
+    if new_record?
+      self.amount = 0
+      self.is_free ||= false
+      self.receipt ||= false
+      self.deposit_mode ||= false
+    end
   end
 
   SSL_CERTIFICATE = "SSL Certificate Order"
@@ -37,7 +38,7 @@ class Order < ActiveRecord::Base
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
   default_scope ->{includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
-                    order(:created_at.desc).uniq}
+                    order("created_at desc").uniq}
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder).outer}.
@@ -132,7 +133,7 @@ class Order < ActiveRecord::Base
         result = result.where{created_at >> (start..finish)}
       end
     end
-    result.uniq.order(:created_at.desc)
+    result.uniq.order("created_at desc")
   } do
 
     def amount

@@ -522,8 +522,9 @@ module OldSite
     attr_accessor   :status
 
     after_initialize do
-      return unless new_record?
-      self.status ||= "enabled"
+      if new_record?
+        self.status ||= "enabled"
+      end
     end
 
     def self.invalid_accounts

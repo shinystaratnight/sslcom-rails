@@ -175,7 +175,7 @@ module ApplicationHelper
     if SERVER_SIDE_CART
       link_to_remote 'Remove', :url => {:controller => :orders, :action => :remove, :id => item.model_and_id}
     else
-      link_to_function "Remove", :id => item.model_and_id, :class => "remove_from_cart_link"
+      link_to "Remove", '#', onclick: { :id => item.model_and_id}, :class => "remove_from_cart_link"
     end
   end
 
@@ -250,7 +250,7 @@ module ApplicationHelper
   end
 
   def link_to_remove_fields(name, f)
-   f.hidden_field(:_destroy) + link_to_function(name, "remove_fields(this)")
+   f.hidden_field(:_destroy) + link_to(name, '#', onclick:  "remove_fields(this)")
   end
 
   def link_to_add_fields(name, f, association)
@@ -258,7 +258,7 @@ module ApplicationHelper
     fields = f.fields_for(association, new_object, :child_index => "new_#{association}") do |builder|
       render(association.to_s.singularize + "_fields", :f => builder)
     end
-    link_to_function(name, h("add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")"))
+    link_to(name, '#', onclick:  h("add_fields(this, \"#{association}\", \"#{escape_javascript(fields)}\")"))
   end
 
   def skip_payment?

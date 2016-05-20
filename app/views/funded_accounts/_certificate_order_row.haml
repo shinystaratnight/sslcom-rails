@@ -23,9 +23,9 @@
         %li
           =link_to("#{co.subject} (#{co.ref})", co)
           -if current_user.is_admin? && line_item_certs.count > 1
-            =link_to_function("[cancel]", "refund_reason_#{co.id}(false)")
+            =link_to("[cancel]", '#', onclick:  "refund_reason_#{co.id}(false)")
             -if cert.price.cents > 0
-              =link_to_function("[credit #{cert.price.format}]", "refund_reason_#{co.id}(true)")
+              =link_to("[credit #{cert.price.format}]", '#', onclick:  "refund_reason_#{co.id}(true)")
   %td.quantity
     =line_item_certs.count
   %td.price= cert.price.format

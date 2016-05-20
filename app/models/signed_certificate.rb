@@ -38,8 +38,9 @@ class SignedCertificate < ActiveRecord::Base
 
 
   after_initialize do
-    return unless new_record?
-    self.email_customer ||= false
+    if new_record?
+      self.email_customer ||= false
+    end
   end
 
   after_create do |s|

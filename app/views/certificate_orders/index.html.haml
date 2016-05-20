@@ -8,13 +8,13 @@
 =render :partial=>'quick_links'
 #certificate_orders
   %table(cellspacing="0")
-    -if will_paginate @paginated
+    -if will_paginate @certificate_orders
       %tfoot
         %tr
-          %td(colspan='6')=will_paginate @paginated
-    %caption
+          %td(colspan='6')=will_paginate @certificate_orders
+    %caption 
       SSL Certificates Management
-      =will_paginate @paginated
+      =will_paginate @certificate_orders
     %tr.heading_row
       %td
       %th.name(scope="col")Subject
