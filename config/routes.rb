@@ -214,8 +214,8 @@ SslCom::Application.routes.draw do
     end
   end
 
-  get '/validation_histories/:id/documents/:style.:extension' =>
-    'validation_histories#documents', :as => :validation_document, style: /.+/i
+  match '/validation_histories/:id/documents/:style.:extension' =>
+    'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
 
   resources :orders do
     collection do
@@ -235,7 +235,7 @@ SslCom::Application.routes.draw do
 
   resources :apis
   resources :billing_profiles
-  get '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing
+  match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing, via: [:get, :post]
   resources :certificates do
     collection do
       get :single_domain
@@ -247,30 +247,31 @@ SslCom::Application.routes.draw do
     end
   end
 
-  get '/register/:activation_code' => 'activations#new', :as => :register
-  post '/activate/:id' => 'activations#create', :as => :activate
-  get 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl
-  get 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds
-  get 'secure/allocate_funds_for_order/:id' =>
-    'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order
-  get 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds
-  get 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds
-  get 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds
-  get 'users/new/affiliates' => 'users#new', :as => :affiliate_signup
-  get 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders
-  get ':user_id/orders' => 'orders#user_orders', :as => :user_orders
-  get '/sitemap.xml' => 'site#sitemap', :as => :sitemap
-  get 'reseller' => 'site#reseller', :as => :reseller,
-    :constraints => {:subdomain=>Reseller::SUBDOMAIN}
-  get '/subject_alternative_name' => 'site#subject_alternative_name', as: :san
-  get 'browser_compatibility' => 'site#compatibility', as: :browsers
-  get 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds', as: :tlds
-  #get 'paid_cert_orders'=> 'site#paid_cert_orders'
+  match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
+  match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
+  match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
+  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
+  match 'secure/allocate_funds_for_order/:id' =>
+    'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
+  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :post]
+  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
+  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post]
+  match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
+  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
+  match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
+  match '/sitemap.xml' => 'site#sitemap', :as => :sitemap, via: [:get, :post]
+  match 'reseller' => 'site#reseller', :as => :reseller,
+    :constraints => {:subdomain=>Reseller::SUBDOMAIN}, via: [:get, :post]
+  match '/subject_alternative_name' => 'site#subject_alternative_name', as: :san, via: [:get, :post]
+  match 'browser_compatibility' => 'site#compatibility', as: :browsers, via: [:get, :post]
+  match 'acceptable-top-level-domains-tlds-for-ssl-certificates' => 'site#top_level_domains_tlds',
+        as: :tlds, via: [:get, :post]
+  #match 'paid_cert_orders'=> 'site#paid_cert_orders'
   (Reseller::TARGETED+SiteController::STANDARD_PAGES).each do |i|
     send("get", i=>"site##{i}", :as => i.to_sym)
   end
-  get 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply
-  get 'certificates/apidocs/dcv' => 'restful_api#dcv', :as => :restful_api_dcv
+  match 'certificates/apidocs/apply' => 'restful_api#docs_apply_v1_3', :as => :restful_apidocs_apply, via: [:get, :post]
+  match 'certificates/apidocs/dcv' => 'restful_api#dcv', :as => :restful_api_dcv, via: [:get, :post]
 
   #took the anchor version out /\w+\/?\z/ but need to test the results of this,
   #specifically the aff code should be the last thing and not followed by other characters
@@ -285,10 +286,10 @@ SslCom::Application.routes.draw do
   get '/ssl_links_disclaimer'=>'surls#disclaimer', as: :ssl_links_disclaimer, :constraints => {:subdomain=>Surl::SUBDOMAIN}
   #get ':id'=>'surls#show', id: /[0-9a-z]+/i
 
-  get '/:controller(/:action(/:id))'
-  #get "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
+  match '/:controller(/:action(/:id))', via: [:get, :post]
+  #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
-  get "paypal_express/checkout"
-  get "paypal_express/review"
-  get "paypal_express/purchase"
+  match "paypal_express/checkout", via: [:get, :post]
+  match "paypal_express/review", via: [:get, :post]
+  match "paypal_express/purchase", via: [:get, :post]
 end

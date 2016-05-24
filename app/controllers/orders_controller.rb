@@ -125,7 +125,7 @@ class OrdersController < ApplicationController
   end
 
   def lookup_discount
-    @discount=Discount.find_by_ref(params[:discount_code])
+    @discount=Discount.viable.find_by_ref(params[:discount_code])
   rescue
   end
 
@@ -433,7 +433,7 @@ class OrdersController < ApplicationController
         flash.now[:notice] = @gateway_response.message
         @order.mark_paid!
         # in case the discount becomes invalid before check out, give it to the customer
-        Discount.unscoped {@order.discounts.include_all}.each do |discount|
+        @order.discounts.each do |discount|
           Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
         end
       else

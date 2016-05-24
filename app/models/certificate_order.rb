@@ -628,11 +628,11 @@ class CertificateOrder < ActiveRecord::Base
       product_variant_item.is_domain?}
     case type
       when 'all'
-        soid.sum(:quantity)
+        soid.sum(&:quantity)
       when 'wildcard'
-        soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(:quantity)
+        soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
       when 'nonwildcard'
-        soid.sum(:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(:quantity)
+        soid.sum(:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
     end
   end
 

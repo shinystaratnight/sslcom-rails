@@ -54,14 +54,16 @@ class Order < ActiveRecord::Base
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil}
+    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
+               discount_amount: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = joins{billing_profile.outer}.joins{billable(SslAccount)}.joins{billable(SslAccount).users}
+    result = joins{discounts.outer}.joins{billing_profile.outer}.joins{billable(SslAccount)}.
+        joins{billable(SslAccount).users}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?
       result = result.where{
@@ -77,6 +79,8 @@ class Order < ActiveRecord::Base
         (billing_profile.company =~ "%#{term}%") |
         (billing_profile.notes =~ "%#{term}%") |
         (billing_profile.postal_code =~ "%#{term}%") |
+        (discounts.ref =~ "%#{term}%") |
+        (discounts.label =~ "%#{term}%") |
         (reference_number =~ "%#{term}%") |
         (notes =~ "%#{term}%") |
         (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
@@ -185,13 +189,13 @@ class Order < ActiveRecord::Base
     t=0
     unless id
       temp_discounts.each do |d|
-        d=Discount.unscoped.find(d)
+        d=Discount.find(d)
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
       end unless temp_discounts.blank?
     else
-      Discount.unscoped {self.discounts.include_all}.each do |d|
+      self.discounts.each do |d|
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
-      end unless Discount.unscoped {self.discounts.include_all}.empty?
+      end unless self.discounts.empty?
     end
     Money.new(t)
   end
@@ -216,7 +220,7 @@ class Order < ActiveRecord::Base
   def apply_discounts(params)
     if (params[:discount_code])
       self.temp_discounts =[]
-      self.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+      self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
     end
   end
 
@@ -463,7 +467,7 @@ class Order < ActiveRecord::Base
 
   def commit_discounts
     temp_discounts.each do |td|
-      discounts<<Discount.find(td)
+      discounts<<Discount.viable.find(td)
     end unless temp_discounts.blank?
     temp_discounts=nil
   end

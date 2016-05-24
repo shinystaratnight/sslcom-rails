@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
   def apply_discounts(order)
     if (params[:discount_code])
       order.temp_discounts =[]
-      order.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+      order.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
     end
   end
 
@@ -325,7 +325,7 @@ class ApplicationController < ActionController::Base
   end
 
   def shopping_cart_amount
-    certificates_from_cookie.sum(:amount)
+    certificates_from_cookie.sum(&:amount)
   end
 
   #co - certificate order

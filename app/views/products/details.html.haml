@@ -23,11 +23,11 @@
       %tr
         %td.light_blue
           .center
-            -c = Certificate.public.find_by_product "premiumssl"
+            -c = Certificate.available.find_by_product "premiumssl"
             =link_to c.title, certificate_url(:id=>c.product_root)
         %td.light_green
           .center
-            -c = Certificate.public.find_by_product "ev"
+            -c = Certificate.available.find_by_product "ev"
             =link_to c.title, certificate_url(:id=>c.product_root)
   %p
     The #{Settings.community_name} Smart SeaL is a complementary service that
