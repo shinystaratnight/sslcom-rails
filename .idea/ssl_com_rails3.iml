@@ -963,7 +963,6 @@
     <orderEntry type="library" scope="PROVIDED" name="xml-simple (v1.1.5, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="xpath (v2.0.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="yui-compressor (v0.12.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="zeus (v0.15.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="zip-zip (v0.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
   </component>
   <component name="RModuleSettingsStorage">

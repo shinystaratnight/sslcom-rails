@@ -86,7 +86,7 @@ class CertificateOrder < ActiveRecord::Base
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil}
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -127,6 +127,10 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(product).each do |field|
+      query=filters[field.to_sym]
+      result = result.filter_by(query) if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality country strength).each do |field|
       query=filters[field.to_sym]

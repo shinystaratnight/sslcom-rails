@@ -58,6 +58,9 @@ module SslCom
     #   g.fixture_replacement :machinist
     # end
 
+    #turn off strong parameters
+    config.action_controller.permit_all_parameters = true
+
     config.generators do |g|
       g.test_framework :rspec,
         :fixtures => true,
@@ -104,6 +107,7 @@ require "#{Rails.root}/lib/money.rb"
 require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/domain_constraint.rb"
 require "#{Rails.root}/lib/preferences.rb"
+require "#{Rails.root}/lib/active_record.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3

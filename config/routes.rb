@@ -3,28 +3,28 @@ require 'apis/certificates_api_app'
 SslCom::Application.routes.draw do
   resources :oauth_clients
 
-  get '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request
+  match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request, via: [:get, :post]
 
-  get '/oauth/token',         :to => 'oauth#token',         :as => :token
+  match '/oauth/token',         :to => 'oauth#token',         :as => :token, via: [:get, :post]
 
-  get '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token
+  match '/oauth/access_token',  :to => 'oauth#access_token',  :as => :access_token, via: [:get, :post]
 
-  get '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token
+  match '/oauth/request_token', :to => 'oauth#request_token', :as => :request_token, via: [:get, :post]
 
-  get '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize
+  match '/oauth/authorize',     :to => 'oauth#authorize',     :as => :authorize, via: [:get, :post]
 
-  get '/oauth',               :to => 'oauth#index',         :as => :oauth
+  match '/oauth',               :to => 'oauth#index',         :as => :oauth, via: [:get, :post]
 
-  get ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root'
-  get '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root'
-  get '/' => 'site#index', :as => :root
-  get 'login' => 'user_sessions#new', :as => :login
-  get 'logout' => 'user_sessions#destroy', :as => :logout
+  match ''=>'surls#index', :constraints => {:subdomain=>Surl::SUBDOMAIN}, as: 'surls_root', via: [:get, :post]
+  match '/'=>'resellers#index', :constraints => {:subdomain=>Reseller::SUBDOMAIN}, as: 'resellers_root', via: [:get, :post]
+  match '/' => 'site#index', :as => :root, via: [:get, :post]
+  match 'login' => 'user_sessions#new', :as => :login, via: [:get, :post]
+  match 'logout' => 'user_sessions#destroy', :as => :logout, via: [:get, :post]
 
   resources :unsubscribes, only: [:edit, :update]
   #resources :site_checks
-  get 'site_check' => 'site_checks#new', :as => :site_check
-  get 'site_checks' => 'site_checks#create', :as => :site_checks
+  match 'site_check' => 'site_checks#new', :as => :site_check, via: [:get, :post]
+  match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
 
   # api
   constraints DomainConstraint.new(
@@ -35,11 +35,11 @@ SslCom::Application.routes.draw do
     match '/user/:login' => 'api_user_requests#show_v1_4',
           :as => :api_user_show_v1_4, via: [:get], login: /.+\/?/
     match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
-          :as => :api_certificate_create_v1_3, via: [:get]
+          :as => :api_certificate_create_v1_3, via: [:post]
     match '/certificates' => 'api_certificate_requests#create_v1_4',
           :as => :api_certificate_create_v1_4, via: [:post]
     match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
-          :as => :api_certificate_update_v1_4, via: [:put], ref: /[a-z0-9\-]+/
+          :as => :api_certificate_update_v1_4, via: [:put, :post], ref: /[a-z0-9\-]+/
     match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           :as => :api_certificate_show_v1_4, via: [:get], ref: /[a-z0-9\-]+/
     match '/certificates/' => 'api_certificate_requests#index_v1_4',
@@ -253,7 +253,7 @@ SslCom::Application.routes.draw do
   match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
   match 'secure/allocate_funds_for_order/:id' =>
     'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :post]
+  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :post]
   match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
   match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post]
   match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]

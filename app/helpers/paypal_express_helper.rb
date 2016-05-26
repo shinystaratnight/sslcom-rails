@@ -80,7 +80,7 @@ module PaypalExpressHelper
   end
 
   def get_totals(cart)
-    subtotal = cart.cents
+    subtotal = cart.amount.cents
     shipping = 0.0
     total = subtotal + shipping
     return subtotal, shipping, total
