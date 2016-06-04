@@ -16,6 +16,8 @@ class Order < ActiveRecord::Base
   has_and_belongs_to_many    :discounts
 
   money :amount
+  acts_as_sellable :cents => :amount, :currency => false
+
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts
 
@@ -24,7 +26,7 @@ class Order < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.amount = 0
+      self.amount = 0 if self.amount.blank?
       self.is_free ||= false
       self.receipt ||= false
       self.deposit_mode ||= false
