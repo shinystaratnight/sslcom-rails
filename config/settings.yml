@@ -61,7 +61,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi19Kimi19'
+comodo_api_password: 'Jimi21Kimi21'
 ca_certificate_id_ev: "508"
 ca_certificate_id_ov: "507"
 ca_certificate_id_dv: "506"

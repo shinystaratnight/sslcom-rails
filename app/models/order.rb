@@ -16,7 +16,6 @@ class Order < ActiveRecord::Base
   has_and_belongs_to_many    :discounts
 
   money :amount
-  acts_as_sellable :cents => :amount, :currency => false
 
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts

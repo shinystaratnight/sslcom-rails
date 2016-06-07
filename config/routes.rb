@@ -39,7 +39,7 @@ SslCom::Application.routes.draw do
     match '/certificates' => 'api_certificate_requests#create_v1_4',
           :as => :api_certificate_create_v1_4, via: [:post]
     match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
-          :as => :api_certificate_update_v1_4, via: [:put, :post], ref: /[a-z0-9\-]+/
+          :as => :api_certificate_update_v1_4, via: [:put, :patch, :post], ref: /[a-z0-9\-]+/
     match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           :as => :api_certificate_show_v1_4, via: [:get], ref: /[a-z0-9\-]+/
     match '/certificates/' => 'api_certificate_requests#index_v1_4',
@@ -74,7 +74,7 @@ SslCom::Application.routes.draw do
   resources :password_resets
   resource :ssl_account do
     get :edit_settings
-    put :update_settings
+    match :update_settings, via: [:put, :patch]
   end
 
   resources :products
@@ -93,7 +93,7 @@ SslCom::Application.routes.draw do
       get :edit_password
       get :edit_email
       get :login_as
-      put :admin_update
+      match :admin_update, via: [:put, :patch]
       get :admin_show
       get :dup_info
       post :consolidate
@@ -143,7 +143,7 @@ SslCom::Application.routes.draw do
     end
 
     member do
-      put :update_csr
+      match :update_csr, via: [:put, :patch]
       get :download
       get :developer
       get :download_other
@@ -151,7 +151,7 @@ SslCom::Application.routes.draw do
       get :reprocess
       get :auto_renew
       post :start_over
-      put :admin_update
+      match :admin_update, via: [:put, :patch]
       get :change_ext_order_number
     end
 
@@ -210,7 +210,7 @@ SslCom::Application.routes.draw do
     member do
       get :site_report
       get :artifacts
-      put :admin_update
+      match :admin_update, via: [:put, :patch]
     end
   end
 
@@ -253,7 +253,7 @@ SslCom::Application.routes.draw do
   match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
   match 'secure/allocate_funds_for_order/:id' =>
     'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :post]
+  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
   match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
   match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post]
   match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
