@@ -35,7 +35,7 @@ module CollectiveIdea #:nodoc:
         def find_from_model_and_id model_string
           model_and_id = model_string.split(/_(?=\d+$)/)
           model = model_and_id[0].camelize.constantize
-          model.find(:all, :conditions=>{:id=>model_and_id[1]}).first
+          model.find(model_and_id[1])
         end
       end
 
