@@ -782,9 +782,8 @@
     <orderEntry type="library" scope="PROVIDED" name="attr_encrypted (v3.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="authlogic (v3.4.6@4d38f7, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="awesome_print (v1.6.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="aws-sdk-core (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="aws-sdk-resources (v2.3.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="aws-sdk (v1.66.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="aws-sdk-v1 (v1.66.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.2, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="bundler (v1.12.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
@@ -855,10 +854,8 @@
     <orderEntry type="library" scope="PROVIDED" name="i18n (v0.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jammit (v0.7.0, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.4.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="jmespath (v1.2.4, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.1.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jsmin (v1.0.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="json_pure (v1.8.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jwt (v1.5.1, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="launchy (v2.4.3, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="libv8 (v3.16.14.15, Remote-rvm:ruby-2.3.0-p0) [gem]" level="application" />

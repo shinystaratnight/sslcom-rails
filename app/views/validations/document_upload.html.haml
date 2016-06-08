@@ -10,7 +10,7 @@
     Certificate Order ##{@certificate_order.ref}
   -else
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
-  =error_messages_for :validation, @dcv, @other_party_validation_request
+  =error_messages_for :validation, :dcv, :other_party_validation_request
 #stylized.default_form
   =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
     -if checkout_in_progress

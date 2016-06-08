@@ -165,8 +165,7 @@ class ValidationsController < ApplicationController
             error << "#{attr} #{msg}: " }
         end
       else
-        vh = create_with_attachment LocalFile.new(file.path,
-          file.original_filename)
+        vh = create_with_attachment LocalFile.new(file.path, file.original_filename)
         vh.errors.each{|attr,msg|
           error << "#{attr} #{msg}: " }
         i+=1 if vh

@@ -28,7 +28,7 @@ gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", '~> 2.0'
 gem 'zip-zip'
 gem 'rb-inotify', :require => false
-gem 'aws-sdk'
+gem 'aws-sdk', '< 2.0'
 gem 'xml-simple'
 gem 'json', '~> 1.8.1'
 gem 'easy_roles'
