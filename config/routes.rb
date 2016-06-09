@@ -102,7 +102,7 @@ SslCom::Application.routes.draw do
     end
   end
 
-  constraints DomainConstraint.new(Reseller::SUBDOMAIN) do
+  constraints DomainConstraint.new(%w(reseller.ssl.com reseller.ssl.local)) do
     resources :resellers, :only=>[:index,:new] do
       collection do
         get :details
