@@ -988,17 +988,17 @@ class CertificateOrder < ActiveRecord::Base
         #attach bundle
         Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels].select do |k,v|
           if signed_certificate.try("is_ev?".to_sym)
-            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
           elsif signed_certificate.try("is_dv?".to_sym)
-            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
           elsif signed_certificate.try("is_ov?".to_sym)
-            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.is_ev?
-            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.is_essential_ssl?
-            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
           else
-            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
           end
         end.map{|k,v|k}
       else
@@ -1022,28 +1022,28 @@ class CertificateOrder < ActiveRecord::Base
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
             if signed_certificate.try("is_ev?".to_sym)
-              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
               #elsif certificate.is_free?
               #  k=="sslcom_free_ca_bundle.txt"
             elsif signed_certificate.try("is_dv?".to_sym)
-              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
             elsif signed_certificate.try("is_ov?".to_sym)
-              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
             elsif certificate.is_ev?
-              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
               #elsif certificate.is_free?
               #  k=="sslcom_free_ca_bundle.txt"
             elsif certificate.is_essential_ssl?
-              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
             else
-              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
             end
           elsif certificate.comodo_product_id==342
-            k=="free_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="free_ssl_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.comodo_product_id==43
-            k=="trial_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="trial_ssl_ca_bundle#{ascending_root(override)}.txt"
           else
-            k=="ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="ssl_ca_bundle#{ascending_root(override)}.txt"
           end
         end.map{|k,v|k}
       else
@@ -1074,6 +1074,10 @@ class CertificateOrder < ActiveRecord::Base
         end.map{|k,v|k}
       end
     end
+  end
+
+  def ascending_root(override)
+    '_amazon' if is_amazon_balancer? || override[:server]=="amazon" || override[:ascending_root]==true
   end
 
   def bundled_cert_dir
@@ -1395,6 +1399,11 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.all_domains
   end
 
+  def change_ssl_account!(acct_number)
+    sa = SslAccount.find_by_acct_number acct_number
+    sa.orders << self.order
+    sa.certificate_orders << self
+  end
   private
 
   def fill_csr_fields(options, obj)
