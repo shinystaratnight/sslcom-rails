@@ -82,7 +82,7 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term, options|
+  scope :search_with_csr, lambda {|term, options={}|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
@@ -207,7 +207,7 @@ class CertificateOrder < ActiveRecord::Base
     (certificate_contents.signing_request != "")}.order("certificate_contents.updated_at asc")}
 
   scope :credits, ->{not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}})}
+    {:certificate_contents=>{workflow_state: "new"}})} # and not new
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|

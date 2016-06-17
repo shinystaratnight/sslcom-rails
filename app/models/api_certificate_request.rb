@@ -76,20 +76,20 @@ class ApiCertificateRequest < CaApiRequest
     end
   end
 
-  def find_certificate_orders
-    self.start ||= '01-01-1900'
-    self.end ||= DateTime.now
+  def find_certificate_orders(search)
     is_test = self.test ? "is_test" : "not_test"
-    co = if self.api_requestable.users.find(&:is_admin?)
-      self.admin_submitted = true
-      CertificateOrder.range(self.start, self.end).send(is_test).limit(20)
-    else
-      self.api_requestable.certificate_orders.range(self.start, self.end).send(is_test).limit(100)
-    end
+    co =
+      if self.api_requestable.users.find(&:is_admin?)
+        self.admin_submitted = true
+        CertificateOrder.not_new.send(is_test)
+      else
+        self.api_requestable.certificate_orders.not_new.send(is_test)
+      end.limit(20)
+    co = co.search_with_csr(search) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co
     else
-      (errors[:certificate_orders] << "Certificate orders not found in range #{self.start} to #{self.end}.")
+      (errors[:certificate_orders] << "Certificate orders not found.")
     end
   end
 
