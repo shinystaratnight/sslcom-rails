@@ -11,7 +11,7 @@
     Certificate Order ##{@certificate_order.ref}
   -else
     =link_to "Certificate Order ##{@certificate_order.ref}", @certificate_order
-  =error_messages_for :validation, @dcv, @other_party_validation_request
+  =error_messages_for :validation, :dcv, :other_party_validation_request
 -if true #co.certificate.is_ucc?
   .error{style: "display: none;"}
   %h2 Domain Validation

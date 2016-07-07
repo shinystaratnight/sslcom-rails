@@ -1,9 +1,11 @@
 # Be sure to restart your server when you modify this file.
 
-session_params= if DEPLOYMENT_CLIENT=~/certassure/
-                  {:key => '_certassure_session', :domain=>".certassure.com"}
+session_params= if Rails.env=~/development/
+                  {key: '_ssl_com_session', domain:".ssl.local"}
+                elsif DEPLOYMENT_CLIENT=~/certassure/
+                  {key: '_certassure_session', domain:".certassure.com"}
                 else
-                  {:key => '_ssl_com3_session', :domain=>".ssl.com"}
+                  {key: '_ssl_com3_session', domain: ".ssl.com", expires: 20.minutes}
                 end
 SslCom::Application.config.session_store :cookie_store, session_params
 

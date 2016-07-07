@@ -249,7 +249,7 @@ class ApiCertificateRequestsController < ApplicationController
   def index_v1_4
     @result.end = DateTime.now if @result.end.blank?
     if @result.save
-      @acrs = @result.find_certificate_orders
+      @acrs = @result.find_certificate_orders(params[:search])
       if @acrs.is_a?(ActiveRecord::Relation)# && @acrs.errors.empty?
         @results=[]
         template = "api_certificate_requests/index_v1_4"
@@ -469,7 +469,7 @@ class ApiCertificateRequestsController < ApplicationController
   private
 
   def set_test
-    @test = (current_subdomain==TEST_SUBDOMAIN) ? true : false
+    @test = (request.subdomain==TEST_SUBDOMAIN) ? true : false
   end
 
   def record_parameters

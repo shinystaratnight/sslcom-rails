@@ -1,4 +1,4 @@
-Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] (?:duration\s)?['"]([^'"]*)['"] (?:year\s)?certificate using csr ['"]([^'"]*)['"]$/ do |type, duration, csr|
+Given /\A(?:he|she|I) buys? a ['"]([^'"]*)['"] (?:duration\s)?['"]([^'"]*)['"] (?:year\s)?certificate using csr ['"]([^'"]*)['"]\z/ do |type, duration, csr|
   csr = eval("@#{csr}").gsub(/\r\n/,"\n")
   When "he goes to the '#{type}' certificate buy page"
     And "he fills the 'text_field' having attribute 'id' == 'signing_request' with", csr
@@ -7,7 +7,7 @@ Given /^(?:he|she|I) buys? a ['"]([^'"]*)['"] (?:duration\s)?['"]([^'"]*)['"] (?
     And "he clicks the next image button"
 end
 
-Given /^(?:his|her|my)(?: shopping)? cart is empty$/ do
+Given /\A(?:his|her|my)(?: shopping)? cart is empty\z/ do
   if is_capybara?
     visit(show_cart_orders_path)
     find("#clear_cart").click if page.has_selector?("#clear_cart")
@@ -18,18 +18,18 @@ Given /^(?:his|her|my)(?: shopping)? cart is empty$/ do
   end
 end
 
-Given /^the following non-wildcard signed certificate exists$/ do |pystring|
+Given /\Athe following non-wildcard signed certificate exists\z/ do |pystring|
   @signed_certificate = pystring
 end
 
-Given /^there is an open certificate order with ref number ['"]([^'"]*)['"]$/ do |ref|
+Given /\Athere is an open certificate order with ref number ['"]([^'"]*)['"]\z/ do |ref|
   without_access_control do
     @current_order = CertificateOrder.find_by_ref(ref)
     @current_order.should_not be_nil
   end
 end
 
-Given /^there is a processed certificate order with ref number ['"]([^'"]*)['"]$/ do |ref|
+Given /\Athere is a processed certificate order with ref number ['"]([^'"]*)['"]\z/ do |ref|
   without_access_control do
     co = CertificateOrder.find_by_ref(ref)
     co.certificate_content.csr.signed_certificate = SignedCertificate.new(:body=>@lobby_sb_betsoftgaming_com_signed_cert)
@@ -37,12 +37,12 @@ Given /^there is a processed certificate order with ref number ['"]([^'"]*)['"]$
   end
 end
 
-Given /^['"](user .+?)['"]'s expiration trigger is set to ['"]([^'"]*)['"] ['"]([^'"]*)['"]$/ do |user,days,order|
+Given /\A['"](user .+?)['"]'s expiration trigger is set to ['"]([^'"]*)['"] ['"]([^'"]*)['"]\z/ do |user,days,order|
   user.ssl_account.preferred_reminder_notice_triggers = days.to_i, order.to_i
   user.ssl_account.save
 end
 
-Given /^certificate order ['"]([^'"]*)['"] does not have a signed certificate$/ do |cert|
+Given /\Acertificate order ['"]([^'"]*)['"] does not have a signed certificate\z/ do |cert|
   without_access_control do
     co = CertificateOrder.find_by_ref(cert)
     co.certificate_content.csr.signed_certificate.destroy unless
@@ -51,20 +51,20 @@ Given /^certificate order ['"]([^'"]*)['"] does not have a signed certificate$/ 
   end
 end
 
-Given /^(?:his|her|my) reseller account has ['"]([^'"]*)['"] available$/ do |amount|
+Given /\A(?:his|her|my) reseller account has ['"]([^'"]*)['"] available\z/ do |amount|
   without_access_control do
     @current_user.ssl_account.funded_account.update_attribute(:cents, amount.gsub(/[^\d\.]/,'').to_i*100)
   end
 end
 
-When /^(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate to the cart$/ do |duration, type|
+When /\A(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate to the cart\z/ do |duration, type|
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
     And "he clicks the 'radio' with '#{duration}' 'value'"
     And "he clicks the next image button"
 end
 
-When /^(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate with domains ['"]([^'"]*)['"] to the cart$/ do |duration, type, domains|
+When /\A(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certificate with domains ['"]([^'"]*)['"] to the cart\z/ do |duration, type, domains|
   When "he goes to the '#{type}' certificate buy page"
     And "he clicks the 'radio' with 'certificate_order_has_csr_false' 'id'"
     And "he fills the 'text_field' having attribute 'name' == 'additional_domains' with", domains
@@ -72,15 +72,15 @@ When /^(?:he|she|I) adds? a ['"]([^'"]*)['"] year ['"]([^'"]*)['"] ssl certifica
     And "he clicks the next image button"
 end
 
-When /^(?:he|she|I) check(?:s)?out$/ do
+When /\A(?:he|she|I) check(?:s)?out\z/ do
   goto new_order_path
 end
 
-When /^(?:he|she|I) go(?:es)? to the ['"]([^'"]*)['"] certificate buy page$/ do |type|
+When /\A(?:he|she|I) go(?:es)? to the ['"]([^'"]*)['"] certificate buy page\z/ do |type|
   lambda{|x|is_capybara? ? visit(x) : @browser.goto(APP_URL+x)}.(buy_certificate_path(type))
 end
 
-When /^(?:he|she|I) applies the order to the reseller account$/ do
+When /\A(?:he|she|I) applies the order to the reseller account\z/ do
   without_access_control do
     lambda{
       @browser.button(:src, /next_bl\.gif/).click
@@ -89,27 +89,27 @@ When /^(?:he|she|I) applies the order to the reseller account$/ do
   end
 end
 
-When /^(?:he|she|I) clicks the link to the current certificate order in progress$/ do
+When /\A(?:he|she|I) clicks the link to the current certificate order in progress\z/ do
   co = @current_order || @current_user.ssl_account.certificate_orders.last
   @browser.link(:href, Regexp.new(certificate_order_path(co.ref))).click
 end
 
-When /^(?:he|she|I) go(?:es)? to the certificate order page for ['"]([^'"]*)['"]$/ do |ref|
+When /\A(?:he|she|I) go(?:es)? to the certificate order page for ['"]([^'"]*)['"]\z/ do |ref|
   goto certificate_order_path(ref)
 end
 
-When /^(?:he|she|I) go(?:es)? to the certificate order page$/ do
+When /\A(?:he|she|I) go(?:es)? to the certificate order page\z/ do
   visit certificate_order_path(@certificate_order.ref)
 end
 
-When /^certificate order ['"]([^'"]*)['"] is expiring in ['"]([^'"]*)['"]$/ do |ref, days|
+When /\Acertificate order ['"]([^'"]*)['"] is expiring in ['"]([^'"]*)['"]\z/ do |ref, days|
   without_access_control do
     co = CertificateOrder.find_by_ref(ref)
     co.certificate_content.csr.signed_certificate.update_attribute :expiration_date, days.to_i.days.from_now
   end
 end
 
-When /^(?:he|she|I) fills in the applicant information using$/ do |table|
+When /\A(?:he|she|I) fills in the applicant information using\z/ do |table|
   fields = (defined? table.hashes) ? table.hashes : [table]
   fields.each do |field|
     @browser.text_field(:id, Regexp.new("department")).value = field["department"]
@@ -119,7 +119,7 @@ When /^(?:he|she|I) fills in the applicant information using$/ do |table|
   end
 end
 
-When /^(?:he|she|I) submits? ['"]([^'"]*)['"] as the signed certificate$/ do |cert|
+When /\A(?:he|she|I) submits? ['"]([^'"]*)['"] as the signed certificate\z/ do |cert|
   fill_text 'signed_certificate_body',  cert
   if is_capybara?
     click_on "Submit certificate"
@@ -133,7 +133,7 @@ When /^(?:he|she|I) submits? ['"]([^'"]*)['"] as the signed certificate$/ do |ce
   end
 end
 
-When /^(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed certificate$/ do |resubmit,cert|
+When /\A(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed certificate\z/ do |resubmit,cert|
   fill_text 'signed_certificate_body', eval("#{cert}").gsub(/\r\n/,"\n")
   if is_capybara?
     click_on "Submit certificate"
@@ -146,12 +146,12 @@ When /^(?:he|she|I) (re)?submits? the variable ['"]([^'"]*)['"] as the signed ce
   end
 end
 
-When /^(?:he|she|I) clicks? the action link for the currently displayed order$/ do
+When /\A(?:he|she|I) clicks? the action link for the currently displayed order\z/ do
   co = @current_order || @current_user.ssl_account.certificate_orders.last
   @browser.link(:href, Regexp.new(edit_certificate_order_path(co.ref))).click
 end
 
-When /^(?:he|she|I) enters? (?:his|her|my) new user information$/ do |table|
+When /\A(?:he|she|I) enters? (?:his|her|my) new user information\z/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
     {"user_login"=>profile["login"],"user_email"=>profile["email"],
@@ -161,7 +161,7 @@ When /^(?:he|she|I) enters? (?:his|her|my) new user information$/ do |table|
   end
 end
 
-When /^(?:he|she|I) enters? (?:his|her|my|the) registrant information$/ do |table|
+When /\A(?:he|she|I) enters? (?:his|her|my|the) registrant information\z/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
     {"certificate_order_certificate_contents_attributes_0_registrant_attributes_address1"=>profile["address1"],
@@ -172,7 +172,7 @@ When /^(?:he|she|I) enters? (?:his|her|my|the) registrant information$/ do |tabl
   end
 end
 
-When /^(?:he|she|I) enters? (?:his|her|my) login information$/ do |table|
+When /\A(?:he|she|I) enters? (?:his|her|my) login information\z/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
     {"user_session_login"=>profile["login"],
@@ -182,7 +182,7 @@ When /^(?:he|she|I) enters? (?:his|her|my) login information$/ do |table|
   end
 end
 
-When /^(?:he|she|I) ajax logs? in using/ do |table|
+When /\A(?:he|she|I) ajax logs? in using/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
     {"user_session_login"=>profile["login"],
@@ -195,7 +195,7 @@ When /^(?:he|she|I) ajax logs? in using/ do |table|
   page.driver.browser.switch_to.alert.accept
 end
 
-When /^(?:he|she|I) add (?:an\s)?ssl certificates? to the cart$/ do |table|
+When /\A(?:he|she|I) add (?:an\s)?ssl certificates? to the cart\z/ do |table|
   @order_total=0
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
@@ -208,12 +208,12 @@ When /^(?:he|she|I) add (?:an\s)?ssl certificates? to the cart$/ do |table|
   end
 end
 
-Then /^the order amount displayed should be the same as the cart amount$/ do
+Then /\Athe order amount displayed should be the same as the cart amount\z/ do
   Then "I should see '#{@order_total}'"
 #    And "I should see '#{@order_total}' in the 'input' with attribute 'id' == 'order_amount'"
 end
 
-Then /^(?:he|she|I) should see a popup containing ['"]([^'"]*)['"]$/ do |text|
+Then /\A(?:he|she|I) should see a popup containing ['"]([^'"]*)['"]\z/ do |text|
   if is_capybara?
     page.driver.browser.switch_to.alert.text.should have_content(text)
   else
@@ -221,23 +221,23 @@ Then /^(?:he|she|I) should see a popup containing ['"]([^'"]*)['"]$/ do |text|
   end
 end
 
-Then /^there should ['"]([^'"]*)['"] be an (expiring|expired) indicator$/ do |be_or_not, status|
+Then /\Athere should ['"]([^'"]*)['"] be an (expiring|expired) indicator\z/ do |be_or_not, status|
   expected_class = (status=='expiring')? 'expiration_warning' : 'attention'
   unless be_or_not=='not'
     @browser.elements_by_xpath("//td[@class='#{expected_class}']/span[@class='expires_on']").should_not be_empty
   end
 end
 
-Then /^(?:he|she|I) should see line items for this order$/ do
+Then /\A(?:he|she|I) should see line items for this order\z/ do
   @browser.text.should include(order_line_items(@current_user.ssl_account.certificate_orders.last))
 end
 
-Then /^(?:her|his|my) cart should be empty$/ do
+Then /\A(?:her|his|my) cart should be empty\z/ do
   @browser.goto APP_URL + show_cart_orders_path
   Then "I should see '0.00'"
 end
 
-Then /^the certificate content fields should (?:remain the same as|be updated with) ['"]([^'"]*)['"] fields$/ do |cert|
+Then /\Athe certificate content fields should (?:remain the same as|be updated with) ['"]([^'"]*)['"] fields\z/ do |cert|
   sc=SignedCertificate.new(:body=>eval("#{cert}"))
   sc_fields=[sc.common_name,
   sc.organization,
@@ -252,7 +252,7 @@ Then /^the certificate content fields should (?:remain the same as|be updated wi
   end
 end
 
-Then /^(?:he|she|I) ['"]([^'"]*)['"] authorized to ['"]([^'"]*)['"] the ['"]([^'"]*)['"] ['"]([^'"]*)['"] object$/ do |permission, action, id, element|
+Then /\A(?:he|she|I) ['"]([^'"]*)['"] authorized to ['"]([^'"]*)['"] the ['"]([^'"]*)['"] ['"]([^'"]*)['"] object\z/ do |permission, action, id, element|
   case action
   when /have on the page/
     should_or_not = (permission=='is')? :should_not : :should
@@ -260,50 +260,50 @@ Then /^(?:he|she|I) ['"]([^'"]*)['"] authorized to ['"]([^'"]*)['"] the ['"]([^'
   end
 end
 
-Then /^(?:he|she|I) should be at step ['"]([^'"]*)['"] of ['"]([^'"]*)['"]$/ do |index, count|
+Then /\A(?:he|she|I) should be at step ['"]([^'"]*)['"] of ['"]([^'"]*)['"]\z/ do |index, count|
   lambda{|e|(is_capybara? ? find(:xpath, e) :
       @browser.elements_by_xpath(e)).first.text.should include(index+" ")}.call("//li[@id='selected']")
   lambda{|e|(is_capybara? ? find(:xpath, e) :
       @browser.elements_by_xpath(e)).count.should eql(count.to_i)}.call("//div[@id='form_progress_indicator']/ul/li")
 end
 
-Then /^(?:he|she|I) should see (\d+) steps to complete my ssl.com certificate order$/ do |count|
+Then /\A(?:he|she|I) should see (\d+) steps to complete my ssl.com certificate order\z/ do |count|
   lambda{|e|(is_capybara? ? page.all(:xpath, e) :
       @browser.elements_by_xpath(e)).count.should eql(count.to_i)}.call("//div[@id='form_progress_indicator']/ul/li")
 end
 
-Then /^(?:he|she|I) should see certificate order receipt recipients$/ do
+Then /\A(?:he|she|I) should see certificate order receipt recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
       certificate_orders.last.receipt_recipients.join(", "))
 end
 
-Then /^(?:he|she|I) should see certificate order confirmation recipients$/ do
+Then /\A(?:he|she|I) should see certificate order confirmation recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
       certificate_orders.last.confirmation_recipients.join(", "))
 end
 
-Then /^(?:he|she|I) should see processed certificates recipients$/ do
+Then /\A(?:he|she|I) should see processed certificates recipients\z/ do
   @browser.text.should include(@current_user.ssl_account.
       certificate_orders.last.processed_recipients.join(", "))
 end
 
-Then /^(?:he|she|I) should be (?:directed to\s|at\s)the new certificate order path$/ do
+Then /\A(?:he|she|I) should be (?:directed to\s|at\s)the new certificate order path\z/ do
   @browser.url.should include(@current_user.ssl_account.
       certificate_orders.last.ref)
 end
 
-When /^(?:he|she|I) request domain control validation be sent during checkout$/ do
+When /\A(?:he|she|I) request domain control validation be sent during checkout\z/ do
   @domain_control_validation_count = DomainControlValidation.count
   visit(new_certificate_order_validation_path(@user.ssl_account.certificate_orders.last))
   find("#upload_files").click
 end
 
-When /^(?:he|she|I) request domain control validation from (\S+)$/ do |email|
+When /\A(?:he|she|I) request domain control validation from (\S+)\z/ do |email|
   @domain_control_validation_count = DomainControlValidation.count
   request_dcv_from_email(@user.ssl_account.certificate_orders.last, email)
 end
 
-When /^(?:he|she|I) forward domain control validation request to (\S+)$/ do |email|
+When /\A(?:he|she|I) forward domain control validation request to (\S+)\z/ do |email|
   @domain_control_validation_count = DomainControlValidation.count
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
   choose "refer_to_others_true"
@@ -311,21 +311,21 @@ When /^(?:he|she|I) forward domain control validation request to (\S+)$/ do |ema
   click_on "send request"
 end
 
-Then /^a domain control validation request should be sent$/ do
+Then /\Aa domain control validation request should be sent\z/ do
   DomainControlValidation.count.should eql(@domain_control_validation_count+1)
   dcv = DomainControlValidation.last
   page.should have_content(dcv.email_address)
   page.should have_content(dcv.sent_at.strftime("%b %d, %Y %R"))
 end
 
-When /^(\S+) received a domain control validation request from (\S+)$/ do |recipient, sender|
+When /\A(\S+) received a domain control validation request from (\S+)\z/ do |recipient, sender|
   validation_provider = User.find_by_login(recipient) ? User.find_by_login(recipient).email : recipient
   user=User.find_by_login(sender)
   @other_party_validation_request = FactoryGirl.create(:other_party_validation_request, user: user,
     other_party_requestable: @certificate_order, email_addresses: validation_provider)
 end
 
-When /^(\S+) attempts? to supply domain control validation$/ do |user|
+When /\A(\S+) attempts? to supply domain control validation\z/ do |user|
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
 end
 
@@ -343,19 +343,19 @@ def request_dcv_from_email(co, email)
   end
 end
 
-When /^(\S+) sends? domain control validation verification$/ do |user|
+When /\A(\S+) sends? domain control validation verification\z/ do |user|
   visit(other_party_validation_request_path(@other_party_validation_request.identifier))
   click_on "send verification"
 end
 
-Then /^domain control validation confirmation should appear$/ do
+Then /\Adomain control validation confirmation should appear\z/ do
   page.should have_content("Validation email sent to #{find("#domain_control_validation_email").value}")
 end
 
-Then /^domain control validation request should be created$/ do
+Then /\Adomain control validation request should be created\z/ do
   DomainControlValidation.last.email_address.should == find("#domain_control_validation_email").value
 end
 
-When /^I get a (\S+) ssl certificate$/ do |product|
+When /\AI get a (\S+) ssl certificate\z/ do |product|
   visit buy_certificate_url()
 end

@@ -522,8 +522,9 @@ module OldSite
     attr_accessor   :status
 
     after_initialize do
-      return unless new_record?
-      self.status ||= "enabled"
+      if new_record?
+        self.status ||= "enabled"
+      end
     end
 
     def self.invalid_accounts
@@ -537,7 +538,7 @@ module OldSite
 
     INVALID_ACCOUNTS ||= OldSite::Customer.invalid_accounts
 
-    default_scope where(primary_key.to_sym - OldSite::Customer::INVALID_ACCOUNTS.map(&:CustomerID))
+    default_scope{ where(primary_key.to_sym - OldSite::Customer::INVALID_ACCOUNTS.map(&:CustomerID))}
 
     def self.pk_sym
       primary_key.to_sym
@@ -802,7 +803,7 @@ module OldSite
 
     HAS_SIGNED_BUT_NO_CSR=[13778, 17295]
 
-    default_scope where(:CertificateID - HAS_SIGNED_BUT_NO_CSR)
+    default_scope{ where(:CertificateID - HAS_SIGNED_BUT_NO_CSR)}
 
     def migrate(co)
       co.certificate_contents.create.tap do |cc|
@@ -1097,7 +1098,7 @@ module OldSite
         OldSite.detect_abort
         i-=1
         unless o.migratable_exists?
-          #o.customer.blank? doesn't seem to use the default_scope of OldSite::Customer'
+          #o.customer.blank? doesn't seem to use the default_scope{ of OldSite::Customer'}
           if OldSite::Customer.exists? o.CustomerID
             ap "migrating #{o.model_and_id}"
             o.record_migration_progress

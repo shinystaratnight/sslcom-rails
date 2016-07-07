@@ -24,6 +24,8 @@ class CertificateContent < ActiveRecord::Base
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
    po_box address1 address2 address3 city state postal_code email phone ext fax)
 
+  TRADEMARKS = %w(google apple paypal amazon cloudapp microsoft amzn ssltools certchat certlock)
+
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
       1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
@@ -32,7 +34,7 @@ class CertificateContent < ActiveRecord::Base
       22=>16, 23=>17, 24=>18, 25=>30, 26=>19, 27=>20, 28=>21,
       29=>22, 30=>23, 31=>24, 32=>25, 33=>26, 34=>27, 35=>31, 36=>28, 37=>-1, 38=>-1, 39=>3}
 
-  INTRANET_IP_REGEX = /^(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})$/
+  INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
 
@@ -79,7 +81,11 @@ class CertificateContent < ActiveRecord::Base
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         unless csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
-          certificate_order.apply_for_certificate(options)
+          unless self.infringement.empty? # possible trademark problems
+            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver
+          else
+            certificate_order.apply_for_certificate(options)
+          end
           last_sent=unless certificate_order.certificate.is_ucc?
             csr.domain_control_validations.last_sent
           else
@@ -127,7 +133,7 @@ class CertificateContent < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.ajax_check_csr ||=false
+      self.ajax_check_csr ||= false
     end
   end
 
@@ -155,6 +161,15 @@ class CertificateContent < ActiveRecord::Base
       names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}
     end
     write_attribute(:domains, names)
+  end
+
+  # are any of the sub/domains trademarks?
+  def infringement
+    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|trademark.in? domain}}.compact
+  end
+
+  def self.infringers
+    CertificateContent.find_all{|cc|!cc.infringement.empty?}
   end
 
   def domains
@@ -328,7 +343,7 @@ class CertificateContent < ActiveRecord::Base
     else
       unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
-        asterisk_found = (csr.common_name=~/^\*\./)==0
+        asterisk_found = (csr.common_name=~/\A\*\./)==0
         if is_wildcard && !asterisk_found
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
         elsif ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
@@ -359,8 +374,8 @@ class CertificateContent < ActiveRecord::Base
   def domain_validation_regex(is_wildcard, domain)
     invalid_chars = "[^\\s\\n\\w\\.\\x00\\-#{'\\*' if is_wildcard}]"
     domain.index(Regexp.new(invalid_chars))==nil and
-    domain.index(/\.\.+/)==nil and domain.index(/^\./)==nil and
-    domain.index(/[^\w]$/)==nil and domain.index(/^[^\w\*]/)==nil and
+    domain.index(/\.\.+/)==nil and domain.index(/\A\./)==nil and
+    domain.index(/[^\w]\z/)==nil and domain.index(/\A[^\w\*]/)==nil and
       is_wildcard ? (domain.index(/(\w)\*/)==nil and
         domain.index(/(\*)[^\.]/)==nil) : true
   end

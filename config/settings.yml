@@ -42,11 +42,11 @@ corp_zip: "77098"
 corp_phone_tag: "+1-SSL-Certificate (+1-775-237-8434)"
 corp_tollfree_tag: "877-SSL-Secure (877-775-7328)"
 corp_fax: "832-201-7706"
-mail_address1: "2617C W Holcombe Blvd"
-mail_address2: "Suite 286"
+mail_address1: "3100 Richmond Ave"
+mail_address2: "Suite 503"
 mail_city: "Houston"
 mail_state: "TX"
-mail_zip: "77025-1601"
+mail_zip: "77098"
 public_header_phone_number: "1-877-SSL-SECURE"
 # Comment this out if you want to infer the locale
 # off of the http headers
@@ -61,7 +61,7 @@ certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 installation_support_pages: "http://info.ssl.com"
 
 comodo_api_username: 'likx2m7j'
-comodo_api_password: 'Jimi19Kimi19'
+comodo_api_password: 'Jimi21Kimi21'
 ca_certificate_id_ev: "508"
 ca_certificate_id_ov: "507"
 ca_certificate_id_dv: "506"

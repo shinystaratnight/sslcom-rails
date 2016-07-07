@@ -167,9 +167,9 @@ class ComodoApi
         "country"=>registrant.country,
         "telephoneNumber"=>registrant.phone,
         'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
-          certificate.product_root=~/enterprise$/i || certificate.product_root=~/business$/i
+          certificate.product_root=~/enterprise\z/i || certificate.product_root=~/business\z/i
     comodo_options.merge!( # enterprise
-        "organizationalUnitName"=>registrant.department) if certificate.product_root=~/enterprise$/i
+        "organizationalUnitName"=>registrant.department) if certificate.product_root=~/enterprise\z/i
     comodo_options=comodo_options.map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
     if options[:send_to_ca]
       host = PLACE_ORDER_URL

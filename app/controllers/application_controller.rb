@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
   def apply_discounts(order)
     if (params[:discount_code])
       order.temp_discounts =[]
-      order.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+      order.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
     end
   end
 
@@ -203,7 +203,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_certificate_orders(options={})
-    return CertificateOrder.where('1=0') unless current_user # returns null set. Rails 4 is CertificateOrder.none
+    return CertificateOrder.none unless current_user # returns null set. Rails 4 is CertificateOrder.none
     if @search = params[:search]
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?

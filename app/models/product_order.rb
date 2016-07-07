@@ -186,7 +186,7 @@ class ProductOrder < ActiveRecord::Base
       end
     end
     if unit==:years
-      years =~ /^(\d+)/
+      years =~ /\A(\d+)/
       $1
     elsif unit==:days
       case years.gsub(/[^\d]+/,"").to_i
@@ -369,7 +369,7 @@ class ProductOrder < ActiveRecord::Base
   end
 
   def wildcard_domains
-    domains.find_all{|d|d=~/^\*\./} unless domains.blank?
+    domains.find_all{|d|d=~/\A\*\./} unless domains.blank?
   end
 
   def nonwildcard_domains
@@ -383,7 +383,7 @@ class ProductOrder < ActiveRecord::Base
       product_variant_item.is_domain?}
     case type
       when 'all'
-        soid.sum(&:quantity)
+        soid.sum(:quantity)
       when 'wildcard'
         soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
       when 'nonwildcard'

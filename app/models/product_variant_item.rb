@@ -39,10 +39,10 @@ class ProductVariantItem < ActiveRecord::Base
         flatten.find_all{|d|d.title =~ /4-200/}.each do |pvi|
       #replace 'adm' with 'wcdm' in serial
       serial = pvi.serial.gsub "adm", "wcdm"
-      pvi.serial =~ /(\d)tr$/
+      pvi.serial =~ /(\d)tr\z/
       tier=$1
       type = pvi.serial =~ /ev/ ? :evucc : :ucc
-      pvi.title =~ /^(\d)/
+      pvi.title =~ /\A(\d)/
       duration = $1
       amount = prices[type] * duration.to_i * (tier ? tier_discounts[tier.to_i-1] : 1)
       if type == :ucc #there is no evucc wildcard but kept the logic anyway

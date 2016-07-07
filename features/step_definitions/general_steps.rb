@@ -1,36 +1,36 @@
-Given /^an activated user with login ['"]([^'"]*)['"], password ['"]([^'"]*)['"], and email ['"]([^'"]*)['"] exists$/ do |login, password, email|
+Given /\Aan activated user with login ['"]([^'"]*)['"], password ['"]([^'"]*)['"], and email ['"]([^'"]*)['"] exists\z/ do |login, password, email|
   u=User.create(:password=>password, :login=>login, :email=>email)
   u.create_ssl_account(:acct_number=>Time.now.to_i.to_s(16))
   u.active=true
   u.save
 end
 
-When /^(?:he|she|I) (uncheck|check) the checkbox with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]$/ do |status,text, attribute|
+When /\A(?:he|she|I) (uncheck|check) the checkbox with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]\z/ do |status,text, attribute|
   @browser.checkbox(attribute.intern, Regexp.new(text)).checked = (status=="check") ? true : false
 end
 
-When /^(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]$/ do |element, text, attribute|
+When /\A(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]\z/ do |element, text, attribute|
   get_element(element, attribute, text).click
 end
 
-When /^(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"]$/ do |element, text|
+When /\A(?:he|she|I) clicks? the ['"]([^'"]*)['"] with ['"]([^'"]*)['"]\z/ do |element, text|
   @browser.send(element.intern, :text, Regexp.new(text)).click
 end
 
-When /^(?:he|she|I) clicks? the ['"]([^'"]*)['"] button on the javascript popup ['"]([^'"]*)['"] launched by the ['"]([^'"]*)['"] with ['"]([^'"]*)['"] ['"]([^'"]*)['"]$/ do |popup_button, popup_text, element, text, attribute|
+When /\A(?:he|she|I) clicks? the ['"]([^'"]*)['"] button on the javascript popup ['"]([^'"]*)['"] launched by the ['"]([^'"]*)['"] with ['"]([^'"]*)['"] ['"]([^'"]*)['"]\z/ do |popup_button, popup_text, element, text, attribute|
   @browser.startClicker(popup_button, 1, popup_text)
   @browser.send(element.intern, attribute.intern, Regexp.new(text)).click
 end
 
-When /^(?:he|she|I) clicks? the "([^"]*)" "([^"]*)"$/ do |text,element|
+When /\A(?:he|she|I) clicks? the "([^"]*)" "([^"]*)"\z/ do |text,element|
   @browser.send(element.intern, :text, Regexp.new(text)).click
 end
 
-When /^(?:he|she|I) clicks? the submit button$/ do
+When /\A(?:he|she|I) clicks? the submit button\z/ do
   @browser.button(:name, "commit").click
 end
 
-When /^(?:he|she|I) clicks? the (?:next|submit) (?:image\s)?button$/ do
+When /\A(?:he|she|I) clicks? the (?:next|submit) (?:image\s)?button\z/ do
   if is_capybara?
     unless first("[src*=next_bl]").blank?
       first("[src*=next_bl]").click
@@ -46,38 +46,38 @@ When /^(?:he|she|I) clicks? the (?:next|submit) (?:image\s)?button$/ do
   end
 end
 
-When /^(?:he|she|I) clicks? the next button and 'OK' on the popup confirmation$/ do
+When /\A(?:he|she|I) clicks? the next button and 'OK' on the popup confirmation\z/ do
   @browser.startClicker('OK')
   @browser.button(:src, /next_bl\.gif/).click
 end
 
-When /^(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"] with attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"]$/ do |text, element, attribute, attribute_val|
+When /\A(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"] with attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"]\z/ do |text, element, attribute, attribute_val|
   @browser.send(element.intern, attribute.intern, attribute_val.intern).value = text
 end
 
-When /^(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"]['"]([^'"]*)['"]$/ do |text, id, element|
+When /\A(?:he|she|I) enters? ['"]([^'"]*)['"] (?:in|into) the ['"]([^'"]*)['"]['"]([^'"]*)['"]\z/ do |text, id, element|
   set_element(element, "id", id, text)
 end
 
-When /^(?:he|she|I) fills? the ['"]([^'"]*)['"] having attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"] with$/ do |element, attribute, attribute_val, pystring|
+When /\A(?:he|she|I) fills? the ['"]([^'"]*)['"] having attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"] with\z/ do |element, attribute, attribute_val, pystring|
   set_element(element, attribute, attribute_val, pystring)
 end
 
-When /^(?:he|she|I) fills? the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] with ['"]([^'"]*)['"]$/ do |id, element, text|
+When /\A(?:he|she|I) fills? the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] with ['"]([^'"]*)['"]\z/ do |id, element, text|
   @browser.send(element.intern, :id, id.intern).value = text
 end
 
-When /^(?:he|she|I) fills? the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] indexed ['"](\d)['"] with ['"]([^'"]*)['"]$/ do |id, element, index, text|
+When /\A(?:he|she|I) fills? the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] indexed ['"](\d)['"] with ['"]([^'"]*)['"]\z/ do |id, element, index, text|
   @browser.send(element.intern, :id=>id.intern, :index=>index.to_i).value = text
 end
 
-When /^(?:he|she|I) fills? all the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]s with ['"]([^'"]*)['"]$/ do |id, element, text|
+When /\A(?:he|she|I) fills? all the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]s with ['"]([^'"]*)['"]\z/ do |id, element, text|
   @browser.elements_by_xpath("//#{element}[contains(@id,\'#{id}\')]").each do |e|
     e.value = text
   end
 end
 
-When /^(?:he|she|I) selects? ['"]([^'"]*)['"] as ['"]([^'"]*)['"]$/ do |value, id|
+When /\A(?:he|she|I) selects? ['"]([^'"]*)['"] as ['"]([^'"]*)['"]\z/ do |value, id|
   if is_capybara?
     select(value, from: id)
   else
@@ -85,16 +85,16 @@ When /^(?:he|she|I) selects? ['"]([^'"]*)['"] as ['"]([^'"]*)['"]$/ do |value, i
   end
 end
 
-When /^(?:he|she|I) (?:is|am) prompted (?:to|for|with) ['"]([^'"]*)['"]$/ do |text|
+When /\A(?:he|she|I) (?:is|am) prompted (?:to|for|with) ['"]([^'"]*)['"]\z/ do |text|
   Then "I should see \'#{text}\'"
 end
 
-Then /^(?:he|she|I) should see a confirmation$/ do
+Then /\A(?:he|she|I) should see a confirmation\z/ do
   response.should have_flash
   response.flash.keys == [:notice]
 end
 
-Then /^(?:he|she|I) should see an error$/ do
+Then /\A(?:he|she|I) should see an error\z/ do
   if is_capybara?
     page.should have_css('.flash_message.error')
   else
@@ -103,19 +103,19 @@ Then /^(?:he|she|I) should see an error$/ do
   end
 end
 
-Then /^(?:he|she|I) should not see any? errors?$/ do
+Then /\A(?:he|she|I) should not see any? errors?\z/ do
   page.should_not have_css('.flash_message.error')
   page.should_not have_css('.errorExplanation')
 end
 
-Then /^(?:he|she|I) should see a flash error message ['"]([^'"]*)['"]$/ do |msg|
+Then /\A(?:he|she|I) should see a flash error message ['"]([^'"]*)['"]\z/ do |msg|
   if is_capybara?
     page.should have_css('.flash_message.error')
     page.should have_content(msg)
   end
 end
 
-Then /^(?:he|she|I) should see an? error explanation$/ do
+Then /\A(?:he|she|I) should see an? error explanation\z/ do
   if is_capybara?
     page.should have_css('.errorExplanation')
   else
@@ -123,7 +123,7 @@ Then /^(?:he|she|I) should see an? error explanation$/ do
   end
 end
 
-Then /^(?:he|she|I) should see a notice explanation/ do
+Then /\A(?:he|she|I) should see a notice explanation/ do
   if is_capybara?
     page.should have_css('.flash_message')
     page.should have_css('.notice')
@@ -133,13 +133,13 @@ Then /^(?:he|she|I) should see a notice explanation/ do
   end
 end
 
-Then /^(?:he|she|I) should see (?:the\s)?(notice|error) ['"]([^'"]*)['"]$/ do |type, text|
+Then /\A(?:he|she|I) should see (?:the\s)?(notice|error) ['"]([^'"]*)['"]\z/ do |type, text|
   steps %Q{
     Then I should see a #{type} explanation
       And I should see '#{text}'}
 end
 
-Then /^there should be an error field indicator$/ do
+Then /\Athere should be an error field indicator\z/ do
   if is_capybara?
     page.should have_css('.fieldWithErrors')
   else
@@ -147,24 +147,24 @@ Then /^there should be an error field indicator$/ do
   end
 end
 
-Then /^there should be ['"](\d)['"] error field indicators?$/ do |count|
+Then /\Athere should be ['"](\d)['"] error field indicators?\z/ do |count|
   @browser.elements_by_xpath("//div[contains(@class,\'fieldWithErrors\')]").
     count.should eql(count.to_i)
 end
 
-Then /^(?:he|she|I) should see a form$/ do
+Then /\A(?:he|she|I) should see a form\z/ do
   @browser.html.should have_tag("form")
 end
 
-Then /^(?:he|she|I) should see ['"]([^'"]*)['"]$/ do |text|
+Then /\A(?:he|she|I) should see ['"]([^'"]*)['"]\z/ do |text|
   is_capybara? ? (page.should have_content(text)) : (@browser.text.downcase.should include(text.downcase))
 end
 
-Then /^(?:he|she|I) should not see ['"]([^'"]*)['"]$/ do |text|
+Then /\A(?:he|she|I) should not see ['"]([^'"]*)['"]\z/ do |text|
   @browser.text.downcase.should_not include(text.downcase)
 end
 
-Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in ['"]([^'"]*)['"]$/ do |text, attribute_val|
+Then /\A(?:he|she|I) should see ['"]([^'"]*)['"] in ['"]([^'"]*)['"]\z/ do |text, attribute_val|
 #  alternative function
 #  doc = Hpricot(@browser.html)
 #  (doc/"#{element}[@#{attribute}*=\'#{attribute_val}\']").first.inner_html.should include(text)
@@ -172,11 +172,11 @@ Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in ['"]([^'"]*)['"]$/ do |text, 
   @browser.elements_by_xpath("//*[@id=\'#{attribute_val}\']")[0].text.downcase.should include(text.downcase)
 end
 
-Then /^(?:he|she|I) should see a link pointing to ['"]([^'"]*)['"]$/ do |path|
+Then /\A(?:he|she|I) should see a link pointing to ['"]([^'"]*)['"]\z/ do |path|
   @browser.link(:href, "#{path}").text.downcase.should include(text.downcase)
 end
 
-Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"] with attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"]$/ do |text, element, attribute, attribute_val|
+Then /\A(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"] with attribute ['"]([^'"]*)['"] == ['"]([^'"]*)['"]\z/ do |text, element, attribute, attribute_val|
 #  alternative function
 #  doc = Hpricot(@browser.html)
 #  (doc/"#{element}[@#{attribute}*=\'#{attribute_val}\']").first.inner_html.should include(text)
@@ -189,7 +189,7 @@ Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"] with att
   tm.call.downcase.should include(text.downcase)
 end
 
-Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]$/ do |text, id, element|
+Then /\A(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"]\z/ do |text, id, element|
   element=transform_element(element)
   if is_capybara?
    find(:xpath, "//#{element}[contains(@id,\'#{id}\')]").should have_content(text)
@@ -203,12 +203,12 @@ Then /^(?:he|she|I) should see ['"]([^'"]*)['"] in the ['"]([^'"]*)['"](?:\s)?['
   end
 end
 
-Then /^(?:he|she|I) should see the checkbox with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] (unchecked|checked)$/ do |attribute_val,attribute,status|
+Then /\A(?:he|she|I) should see the checkbox with ['"]([^'"]*)['"](?:\s)?['"]([^'"]*)['"] (unchecked|checked)\z/ do |attribute_val,attribute,status|
   be_or_not = (status=="checked") ? be_true : be_false
   @browser.checkbox(attribute.intern, Regexp.new(attribute_val)).checked.should be_or_not
 end
 
-Transform /^user (.+?)$/ do |username|
+Transform /\Auser (.+?)\z/ do |username|
   @current_user || 
     without_access_control do
       @current_user = User.find_by_login username
@@ -216,7 +216,7 @@ Transform /^user (.+?)$/ do |username|
     end
 end
 
-Given /^['"](user .+?)['"]'s roles? ['"]([^'"]*)['"] ['"]([^'"]*)['"]$/ do |user, equality, role|
+Given /\A['"](user .+?)['"]'s roles? ['"]([^'"]*)['"] ['"]([^'"]*)['"]\z/ do |user, equality, role|
   case equality
   when /is/
     without_access_control do
@@ -226,7 +226,7 @@ Given /^['"](user .+?)['"]'s roles? ['"]([^'"]*)['"] ['"]([^'"]*)['"]$/ do |user
   end
 end
 
-Then /^(\S+) should be denied$/ do |user|
+Then /\A(\S+) should be denied\z/ do |user|
   page.should have_content("You currently do not have permission to access that page.")
 end
 

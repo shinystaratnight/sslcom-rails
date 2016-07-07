@@ -1,4 +1,4 @@
-Given /^(?:he|she|I) adds? some items to the cart/ do
+Given /\A(?:he|she|I) adds? some items to the cart/ do
   Given "I add these items to the cart", table(%{
           |item      |price    |cart_quantity|
           |release_45|$6.99 USD|1            |
@@ -7,7 +7,7 @@ Given /^(?:he|she|I) adds? some items to the cart/ do
   })
 end
 
-Given /^(?:he|she|I) adds? these items to the cart/ do |products|
+Given /\A(?:he|she|I) adds? these items to the cart/ do |products|
   @total = "12"
   Given "I click the 'link' with 'Recent Releases' 'text'"
     products.hashes.each do |product|
@@ -16,7 +16,7 @@ Given /^(?:he|she|I) adds? these items to the cart/ do |products|
     end
 end
 
-Given /^there is an empty shopping cart$/ do
+Given /\Athere is an empty shopping cart\z/ do
   When "I click the 'link' with 'cart_size' 'id'"
     And "I click the 'button' with 'empty_cart' 'id'"
   Then "I should be at path '/orders/show_cart/current'"
@@ -24,7 +24,7 @@ Given /^there is an empty shopping cart$/ do
     And "I should see '$0.00' in 'cart_total'"
 end
 
-When /^['"]([^'"]*)['"] makes a deposit$/ do |person, profiles|
+When /\A['"]([^'"]*)['"] makes a deposit\z/ do |person, profiles|
   profiles.hashes.each do |profile|
     Given "he clicks the 'link' with 'Load Funds'"
       And "he should be at path 'secure/allocate_funds'"
@@ -38,15 +38,15 @@ When /^['"]([^'"]*)['"] makes a deposit$/ do |person, profiles|
   end
 end
 
-When /^(?:he|she|I) visits?\b "([^"]*)"$/ do |path|
+When /\A(?:he|she|I) visits?\b "([^"]*)"\z/ do |path|
   goto path
 end
 
-When /^(?:he|she|I) visits?\b the payment page$/ do
+When /\A(?:he|she|I) visits?\b the payment page\z/ do
   goto billing_profiles_path(:new)
 end
           
-When /^(?:he|she|I) enters? (?:his|her|my) profile information$/ do |table|
+When /\A(?:he|she|I) enters? (?:his|her|my) profile information\z/ do |table|
   profiles = (defined? table.hashes) ? table.hashes : [table]
   profiles.each do |profile|
     {"billing_profile_first_name"=>profile["first_name"],
@@ -63,7 +63,7 @@ When /^(?:he|she|I) enters? (?:his|her|my) profile information$/ do |table|
   end
 end
 
-When /^(?:he|she|I) enters? (?:his|her|my) credit card payment information$/ do |table|
+When /\A(?:he|she|I) enters? (?:his|her|my) credit card payment information\z/ do |table|
   cards = (defined? table.hashes) ? table.hashes : [table]
   cards.each do |card|
     {"billing_profile_credit_card"=>card["card_type"],
@@ -76,7 +76,7 @@ When /^(?:he|she|I) enters? (?:his|her|my) credit card payment information$/ do 
   end
 end
 
-Given /^(\w*) has a new dv certificate order at the validation prompt stage$/ do |login|
+Given /\A(\w*) has a new dv certificate order at the validation prompt stage\z/ do |login|
   @user = User.find_by_login(login)
   @certificate_order = FactoryGirl.create(:new_dv_certificate_order,
     ssl_account: @user.ssl_account)
@@ -84,7 +84,7 @@ Given /^(\w*) has a new dv certificate order at the validation prompt stage$/ do
     certificate_order: @certificate_order)
 end
 
-Given /^(\w*) has a completed but unvalidated dv certificate order$/ do |login|
+Given /\A(\w*) has a completed but unvalidated dv certificate order\z/ do |login|
   @user = User.find_by_login(login)
   @certificate_order = Factory(:completed_unvalidated_dv_certificate_order,
     ssl_account: @user.ssl_account)

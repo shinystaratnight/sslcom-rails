@@ -53,7 +53,7 @@ module Whois
     end
 
     def initialize(tld, nic_server = nil, options = nil) #:nodoc:
-      @tld = tld.gsub(/^\.+/, '')
+      @tld = tld.gsub(/\A\.+/, '')
       options ||= Hash.new
       @response_cache = Hash.new("")
       @nic_server = nic_server
@@ -88,14 +88,14 @@ module Whois
 
     # A list of strings representing all supported TLDs.
     def self.defined_tlds
-      self.list.collect {|tld,server| tld.gsub(/^\./, '') }
+      self.list.collect {|tld,server| tld.gsub(/\A\./, '') }
     end
 
     # Find a TLD from a full domain name.  There is special care to check for two part TLDs
     # (such as .co.uk, .kids.us, etc) first and then to look for the last part alone.
     def self.find_server_from_domain(domain)
       # valid domain?
-      return nil unless domain =~ /^((?:[-a-zA-Z0-9]+\.)+[a-zA-Z]{2,})$/
+      return nil unless domain =~ /\A((?:[-a-zA-Z0-9]+\.)+[a-zA-Z]{2,})\z/
 
       # start the searching.
       tld = nil
@@ -136,7 +136,7 @@ module Whois
       server = self.find_server_from_domain(domain)
       # This will only work on single extension domains
       if server.blank? # && domain.scan(/(\.)/).length == 1
-        domain =~ /\.([\w\-]+)$/
+        domain =~ /\.([\w\-]+)\z/
         tld = $1
         self.define_from_iana(tld)
         return false unless server = self.find_server_from_domain(domain)
@@ -156,7 +156,7 @@ module Whois
       if nic_server.kind_of?(Array)
         interpolate_vars = {
           '%DOMAIN%' => domain,
-          '%DOMAIN_NO_TLD%' => domain.gsub(/\.#{tld.to_s}$/i, ''),
+          '%DOMAIN_NO_TLD%' => domain.gsub(/\.#{tld.to_s}\z/i, ''),
           '%TLD%' => tld
           }
 
@@ -177,7 +177,7 @@ module Whois
         else
           ''
         end
-      elsif nic_server.to_s =~ /^http/
+      elsif nic_server.to_s =~ /\Ahttp/
         url = nic_server.gsub(/\%DOMAIN\%/, domain)
         @response_cache[domain] = Net::HTTP.get_response(URI.parse(url)).body
       else

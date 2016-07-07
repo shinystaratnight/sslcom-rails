@@ -24,10 +24,10 @@
     %ul
       %li=remote_login_link(u)
       %li=link_to 'user dashboard', admin_show_user_path(u)
-      %li=link_to_function "chargeback order", "change_state('charge_back')"
+      %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
       -if @order.fully_refunded?
-        %li=link_to_function "unrefund order", "change_state('unrefund')"
+        %li=link_to "unrefund order", '#', onclick:  "change_state('unrefund')"
       -else
-        %li=link_to_function "completely cancel order", "refund_reason(false)"
+        %li=link_to "completely cancel order", '#', onclick:  "refund_reason(false)"
         -if @order.amount.cents > 0
-          %li=link_to_function "completely cancel order and make $#{@order.amount} available to customer", "refund_reason(true)"
+          %li=link_to "completely cancel order and make $#{@order.amount} available to customer", '#', onclick:  "refund_reason(true)"

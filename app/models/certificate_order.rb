@@ -19,7 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
-  has_many    :orders, :through => :line_items, :include => :stored_preferences
+  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
@@ -52,12 +52,13 @@ class CertificateOrder < ActiveRecord::Base
     preference  :v2_line_items, :string
   end
 
-  default_scope where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-                    joins(:certificate_contents).includes(:certificate_contents).order(:created_at.desc).readonly(false)
+  default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
+      joins(:certificate_contents).includes(:certificate_contents).order("certificate_contents.created_at desc").
+      readonly(false)}
 
-  scope :not_test, where{(is_test == nil) | (is_test==false)}
+  scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
-  scope :is_test, where{is_test==true}
+  scope :is_test, ->{where{is_test==true}}
 
   scope :search, lambda {|term, options|
     {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
@@ -81,11 +82,11 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term, options|
+  scope :search_with_csr, lambda {|term, options={}|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil}
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -126,6 +127,10 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%")} if query
+    end
+    %w(product).each do |field|
+      query=filters[field.to_sym]
+      result = result.filter_by(query) if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality country strength).each do |field|
       query=filters[field.to_sym]
@@ -175,11 +180,11 @@ class CertificateOrder < ActiveRecord::Base
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
     joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
-        order(:certificate_contents=>{:csr=>:updated_at.desc})
+        order("csr.updated_at asc")
   }
 
   scope :order_by_csr, lambda {
-    joins{certificate_contents.csr.outer}.order({:certificate_contents=>{:csr=>:updated_at.desc}}) #.uniq #- breaks order by csr
+    joins{certificate_contents.csr.outer}.order("csrs.updated_at desc") #.uniq #- breaks order by csr
   }
 
   scope :filter_by, lambda { |term|
@@ -187,47 +192,47 @@ class CertificateOrder < ActiveRecord::Base
         variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
   }
 
-  scope :unvalidated, where{(is_expired==false) &
+  scope :unvalidated, ->{where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['pending_validation', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
+      order("certificate_contents.updated_at asc")}
 
-  scope :incomplete, not_test.where{(is_expired==false) &
+  scope :incomplete, ->{not_test.where{(is_expired==false) &
     (certificate_contents.workflow_state >> ['csr_submitted', 'info_provided', 'contacts_provided'])}.
-      order(:certificate_contents=>:updated_at)
+      order("certificate_contents.updated_at asc")}
 
-  scope :pending, not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)
+  scope :pending, ->{not_test.where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
+      order("certificate_contents.updated_at asc")}
 
-  scope :has_csr, not_test.where{(workflow_state=='paid') &
-    (certificate_contents.signing_request != "")}.order(:certificate_contents=>:updated_at)
+  scope :has_csr, ->{not_test.where{(workflow_state=='paid') &
+    (certificate_contents.signing_request != "")}.order("certificate_contents.updated_at asc")}
 
-  scope :credits, not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{workflow_state: "new"}})
+  scope :credits, ->{not_test.where({:workflow_state=>'paid'} & {is_expired: false} &
+    {:certificate_contents=>{workflow_state: "new"}})} # and not new
 
   #new certificate orders are the ones still in the shopping cart
   scope :not_new, lambda {|options=nil|
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).where(:workflow_state.matches % 'paid').select("distinct certificate_orders.*")
+    (includes || self).where(:workflow_state.matches % 'paid').uniq
   }
 
-  scope :unrenewed, not_new.where(:renewal_id=>nil)
+  scope :unrenewed, ->{not_new.where(:renewal_id=>nil)}
 
-  scope :renewed, not_new.where{:renewal_id != nil}
+  scope :renewed, ->{not_new.where{:renewal_id != nil}}
 
-  scope :nonfree, not_new.where(:amount.gt => 0)
+  scope :nonfree, ->{not_new.where(:amount.gt => 0)}
 
-  scope :free, not_new.where(:amount => 0)
+  scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_credits, ->{where({:workflow_state=>'paid'} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
-  scope :unused_purchased_credits, where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_purchased_credits, ->{where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
-  scope :unused_free_credits, where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})
+  scope :unused_free_credits, ->{where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
+    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
   scope :range, lambda{|start, finish|
     if start.is_a?(String)
@@ -424,7 +429,7 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if unit==:years
-      years =~ /^(\d+)/
+      years =~ /\A(\d+)/
       $1
     elsif unit==:days
       case years.gsub(/[^\d]+/,"").to_i
@@ -613,7 +618,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def wildcard_domains
-    domains.find_all{|d|d=~/^\*\./} unless domains.blank?
+    domains.find_all{|d|d=~/\A\*\./} unless domains.blank?
   end
 
   def nonwildcard_domains
@@ -631,7 +636,7 @@ class CertificateOrder < ActiveRecord::Base
       when 'wildcard'
         soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
       when 'nonwildcard'
-        soid.sum(&:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
+        soid.sum(:quantity)-soid.find_all{|item|item.product_variant_item.serial=~ /wcdm/}.sum(&:quantity)
     end
   end
 
@@ -983,17 +988,17 @@ class CertificateOrder < ActiveRecord::Base
         #attach bundle
         Certificate::BUNDLES[:comodo][:sha2_sslcom_2014][:labels].select do |k,v|
           if signed_certificate.try("is_ev?".to_sym)
-            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
           elsif signed_certificate.try("is_dv?".to_sym)
-            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
           elsif signed_certificate.try("is_ov?".to_sym)
-            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.is_ev?
-            k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.is_essential_ssl?
-            k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
           else
-            k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer? || override[:server]=="amazon"}.txt"
+            k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
           end
         end.map{|k,v|k}
       else
@@ -1017,28 +1022,28 @@ class CertificateOrder < ActiveRecord::Base
         Certificate::COMODO_BUNDLES.select do |k,v|
           if certificate.serial=~/256sslcom/
             if signed_certificate.try("is_ev?".to_sym)
-              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
               #elsif certificate.is_free?
               #  k=="sslcom_free_ca_bundle.txt"
             elsif signed_certificate.try("is_dv?".to_sym)
-              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
             elsif signed_certificate.try("is_ov?".to_sym)
-              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
             elsif certificate.is_ev?
-              k=="sslcom_ev_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_ev_ca_bundle#{ascending_root(override)}.txt"
               #elsif certificate.is_free?
               #  k=="sslcom_free_ca_bundle.txt"
             elsif certificate.is_essential_ssl?
-              k=="sslcom_addtrust_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_addtrust_ca_bundle#{ascending_root(override)}.txt"
             else
-              k=="sslcom_high_assurance_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+              k=="sslcom_high_assurance_ca_bundle#{ascending_root(override)}.txt"
             end
           elsif certificate.comodo_product_id==342
-            k=="free_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="free_ssl_ca_bundle#{ascending_root(override)}.txt"
           elsif certificate.comodo_product_id==43
-            k=="trial_ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="trial_ssl_ca_bundle#{ascending_root(override)}.txt"
           else
-            k=="ssl_ca_bundle#{'_amazon' if is_amazon_balancer?}.txt"
+            k=="ssl_ca_bundle#{ascending_root(override)}.txt"
           end
         end.map{|k,v|k}
       else
@@ -1069,6 +1074,10 @@ class CertificateOrder < ActiveRecord::Base
         end.map{|k,v|k}
       end
     end
+  end
+
+  def ascending_root(override)
+    '_amazon' if is_amazon_balancer? || override[:server]=="amazon" || override[:ascending_root]==true
   end
 
   def bundled_cert_dir
@@ -1377,6 +1386,7 @@ class CertificateOrder < ActiveRecord::Base
     else
       cc.signing_request = certificate_content.signing_request
       cc.server_software = certificate_content.server_software
+      cc.agreement = certificate_content.agreement #backwards compatibility with older certificate_content objects
     end
     if cc.new?
       cc.submit_csr!
@@ -1390,6 +1400,11 @@ class CertificateOrder < ActiveRecord::Base
     certificate_content.all_domains
   end
 
+  def change_ssl_account!(acct_number)
+    sa = SslAccount.find_by_acct_number acct_number
+    sa.orders << self.order
+    sa.certificate_orders << self
+  end
   private
 
   def fill_csr_fields(options, obj)

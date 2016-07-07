@@ -125,7 +125,7 @@ class OrdersController < ApplicationController
   end
 
   def lookup_discount
-    @discount=Discount.find_by_ref(params[:discount_code])
+    @discount=Discount.viable.find_by_ref(params[:discount_code])
   rescue
   end
 
@@ -226,9 +226,9 @@ class OrdersController < ApplicationController
   end
 
   def stats(p, unpaginated)
-    @total_amount=unpaginated.sum(&:cents)
+    @total_amount=unpaginated.sum(:cents)
     @total_count=unpaginated.count
-    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(&:cents)
+    @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
     @orders=unpaginated.paginate(p)
   end
@@ -238,7 +238,7 @@ class OrdersController < ApplicationController
     states = [params[:id]]
     unpaginated =
       if current_user.is_admin?
-        Order.unscoped{Order.includes(:line_items).where{state >> states}.order(:created_at.desc)}
+        Order.unscoped{Order.includes(:line_items).where{state >> states}.order("created_at desc")}
       else
         current_user.ssl_account.orders.unscoped{
           current_user.ssl_account.orders.includes(:line_items).where{state >> [params[:state]]}.order(:created_at.desc)}
@@ -433,7 +433,7 @@ class OrdersController < ApplicationController
         flash.now[:notice] = @gateway_response.message
         @order.mark_paid!
         # in case the discount becomes invalid before check out, give it to the customer
-        Discount.unscoped {@order.discounts.include_all}.each do |discount|
+        @order.discounts.each do |discount|
           Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
         end
       else

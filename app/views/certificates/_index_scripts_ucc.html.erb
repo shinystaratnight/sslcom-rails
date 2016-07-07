@@ -460,6 +460,9 @@ jQuery(function($) {
     $('.has_csr_container').click(function(){
       $(this).siblings().filter(':radio[name*=has_csr]').click();
     });
+    $('input[name=agreement]').change(function(){
+      $('#button_container').toggle(this.checked);
+    });
     $(':radio[name*=has_csr]').click(function(){
       if($(this).val()=="false"){
         show_csr=false;

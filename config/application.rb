@@ -20,6 +20,9 @@ module SslCom
     # Custom directories with classes and modules you want to be autoloadable.
     config.autoload_paths += %W(#{config.root}/lib)
 
+    Bundler.require(*Rails.groups)
+    Config::Integration::Rails::Railtie.preload
+
     # Add additional load paths for your own custom dirs
     %w(observers mailers middleware).each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"
@@ -55,6 +58,9 @@ module SslCom
     #   g.fixture_replacement :machinist
     # end
 
+    #turn off strong parameters
+    config.action_controller.permit_all_parameters = true
+
     config.generators do |g|
       g.test_framework :rspec,
         :fixtures => true,
@@ -85,7 +91,7 @@ module SslCom
     end
 
     # Enable the asset pipeline
-    config.assets.enabled = false
+    config.assets.enabled = true
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end
@@ -97,9 +103,11 @@ require "#{Rails.root}/lib/range.rb"
 require "#{Rails.root}/lib/in_words.rb"
 require "#{Rails.root}/lib/kernel.rb"
 require "#{Rails.root}/lib/money.rb"
-require "#{Rails.root}/lib/subdomain-fu.rb"
+# require "#{Rails.root}/lib/subdomain-fu.rb"
 require "#{Rails.root}/lib/force_ssl.rb"
 require "#{Rails.root}/lib/domain_constraint.rb"
+require "#{Rails.root}/lib/preferences.rb"
+require "#{Rails.root}/lib/active_record.rb"
 require "will_paginate"
 
 #try to figure this out for heroku and rails 3

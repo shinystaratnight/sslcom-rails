@@ -1,3 +1,5 @@
+require 'active_record/reflection'
+
 module ActiveRecord
   module Aggregations # :nodoc:
     def self.included(base)
@@ -143,8 +145,8 @@ module ActiveRecord
 
         reader_method(name, class_name, mapping, allow_nil)
         writer_method(name, class_name, mapping, allow_nil, block)
-        
-        create_reflection(:composed_of, part_id, options, self)
+
+        ActiveRecord::Reflection.create(:composed_of, part_id, nil, options, self)
       end
 
       private
@@ -169,11 +171,11 @@ module ActiveRecord
           module_eval do
             define_method("#{name}=") do |part|
               if part.nil? && allow_nil
-                mapping.each { |pair| @attributes[pair.first] = nil }
+                mapping.each { |pair| assign_attributes({(pair.first).to_sym => nil}, without_protection: true) }
                 instance_variable_set("@#{name}", nil)
               else
                 part = conversion.call(part) unless part.is_a?(class_name.constantize) || conversion.nil?
-                mapping.each { |pair| @attributes[pair.first] = part.send(pair.last) }
+                mapping.each { |pair| assign_attributes({(pair.first).to_sym => part.send(pair.last)}, without_protection: true) }
                 instance_variable_set("@#{name}", part.freeze)
               end
             end

@@ -5,7 +5,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :api_credential
   has_many  :users, :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, :include => [:orders] do
+  has_many  :certificate_orders, ->{includes [:orders]} do
     def current
       first(:conditions=>{:workflow_state=>['new']})
     end
@@ -71,9 +71,9 @@ class SslAccount < ActiveRecord::Base
   validate :reminder_notice_destinations_format,
     :unless=>"preferred_reminder_notice_destinations=='0'"
   validate :preferred_reminder_notice_triggers_format
-  validate :acct_number, presence: true, uniqueness: true, on: :create
+  validates :acct_number, presence: true, uniqueness: true, on: :create
 
-  default_scope :order => 'created_at DESC'
+  default_scope ->{order("created_at desc")}
 
   #before create function
   def b_create
@@ -385,7 +385,7 @@ class SslAccount < ActiveRecord::Base
       errors.add("preferred_#{item}_recipients".to_sym,
         'cannot be blank') if emails.empty?
       results = emails.reject do |email|
-        email =~ /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+        email =~ /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
       end
       errors.add("preferred_#{item}_recipients".to_sym,
         'has invalid email addresses') unless (results.empty?)
@@ -399,7 +399,7 @@ class SslAccount < ActiveRecord::Base
     errors.add(:preferred_reminder_notice_destinations,
       'cannot be blank') if emails.empty?
     results = emails.reject do |email|
-      email =~ /^([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})$/
+      email =~ /\A([^@\s]+)@((?:[-a-z0-9A-Z]+\.)+[a-zA-Z]{2,})\z/
     end
     errors.add(:preferred_reminder_notice_destinations,
       'has invalid email addresses') unless (results.empty?)

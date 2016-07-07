@@ -105,7 +105,7 @@ class PaypalExpressController < ApplicationController
 
   private
   def assigns_gateway
-    creds = Settings.paypal_express.send(Rails.env =~ /production/ ? :production : :development)
+    creds = Settings.paypal_express.send(::Rails.env =~ /production/ ? :production : :development)
     @gateway ||= PaypalExpressGateway.new(
         :login => creds.username,
         :password => creds.password,

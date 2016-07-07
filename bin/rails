@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+#--begin ssl config for webrick
+require 'rubygems'
+require 'rails/commands/server'
+require 'rack'
+require 'webrick'
+require 'webrick/https'
+
+module Rails
+  class Server < ::Rack::Server
+    def default_options
+      super.merge({
+                      :Port => 3000,
+                      :SSLEnable => true,
+                      :SSLCertName => [["CN", "www.ssl.local"]]
+                  })
+    end
+  end
+end
+#--end ssl config for webrick
+
+APP_PATH = File.expand_path('../../config/application', __FILE__)
+require_relative '../config/boot'
+require 'rails/commands'

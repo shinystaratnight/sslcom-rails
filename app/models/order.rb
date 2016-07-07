@@ -16,6 +16,7 @@ class Order < ActiveRecord::Base
   has_and_belongs_to_many    :discounts
 
   money :amount
+
   before_create :total, :determine_description
   after_create :generate_reference_number, :commit_discounts
 
@@ -23,21 +24,22 @@ class Order < ActiveRecord::Base
   attr_accessor  :is_free, :receipt, :deposit_mode, :temp_discounts
 
   after_initialize do
-    return unless new_record?
-    self.amount = 0
-    self.is_free ||= false
-    self.receipt ||= false
-    self.deposit_mode ||= false
+    if new_record?
+      self.amount = 0 if self.amount.blank?
+      self.is_free ||= false
+      self.receipt ||= false
+      self.deposit_mode ||= false
+    end
   end
 
   SSL_CERTIFICATE = "SSL Certificate Order"
 
   #go live with this
-#  default_scope includes(:line_items).where({line_items:
+#  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
-                    order(:created_at.desc).uniq
+  default_scope ->{includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
+                    order("created_at desc").uniq}
 
   scope :not_new, lambda {
     joins{line_items.sellable(CertificateOrder).outer}.
@@ -53,14 +55,16 @@ class Order < ActiveRecord::Base
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
-    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil}
+    filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
+               discount_amount: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = joins{billing_profile.outer}.joins{billable(SslAccount)}.joins{billable(SslAccount).users}
+    result = joins{discounts.outer}.joins{billing_profile.outer}.joins{billable(SslAccount)}.
+        joins{billable(SslAccount).users}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?
       result = result.where{
@@ -69,8 +73,15 @@ class Order < ActiveRecord::Base
         (billing_profile.last_name =~ "%#{term}%") |
         (billing_profile.address_1 =~ "%#{term}%") |
         (billing_profile.address_2 =~ "%#{term}%") |
+        (billing_profile.city =~ "%#{term}%") |
+        (billing_profile.state =~ "%#{term}%") |
+        (billing_profile.phone =~ "%#{term}%") |
+        (billing_profile.country =~ "%#{term}%") |
         (billing_profile.company =~ "%#{term}%") |
+        (billing_profile.notes =~ "%#{term}%") |
         (billing_profile.postal_code =~ "%#{term}%") |
+        (discounts.ref =~ "%#{term}%") |
+        (discounts.label =~ "%#{term}%") |
         (reference_number =~ "%#{term}%") |
         (notes =~ "%#{term}%") |
         (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
@@ -106,9 +117,9 @@ class Order < ActiveRecord::Base
         if query.count==1
           query=filters[field.to_sym].delete(".")
           case query
-            when /^>/
+            when /\A>/
               result = result.where{(cents > "#{query[1..-1]}")}
-            when /^</
+            when /\A</
               result = result.where{(cents < "#{query[1..-1]}")}
             else
               result = result.where{(cents == "#{query}")}
@@ -127,11 +138,11 @@ class Order < ActiveRecord::Base
         result = result.where{created_at >> (start..finish)}
       end
     end
-    result.uniq.order(:created_at.desc)
+    result.uniq.order("created_at desc")
   } do
 
     def amount
-      sum(&:cents)*0.01
+      sum(:cents)*0.01
     end
   end
 
@@ -139,7 +150,7 @@ class Order < ActiveRecord::Base
     not_new.where :cents.gt=>0
   }
 
-  scope :tracked_visitor, where{visitor_token_id != nil}
+  scope :tracked_visitor, ->{where{visitor_token_id != nil}}
 
   scope :range, lambda{|start, finish|
     if start.is_a? String
@@ -153,7 +164,7 @@ class Order < ActiveRecord::Base
   } do
 
     def amount
-      sum(&:cents)*0.01
+      sum(:cents)*0.01
     end
   end
 
@@ -179,13 +190,13 @@ class Order < ActiveRecord::Base
     t=0
     unless id
       temp_discounts.each do |d|
-        d=Discount.unscoped.find(d)
+        d=Discount.find(d)
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
       end unless temp_discounts.blank?
     else
-      Discount.unscoped {self.discounts.include_all}.each do |d|
+      self.discounts.each do |d|
         d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
-      end unless Discount.unscoped {self.discounts.include_all}.empty?
+      end unless self.discounts.empty?
     end
     Money.new(t)
   end
@@ -210,7 +221,7 @@ class Order < ActiveRecord::Base
   def apply_discounts(params)
     if (params[:discount_code])
       self.temp_discounts =[]
-      self.temp_discounts<<Discount.find_by_ref(params[:discount_code]).id if Discount.find_by_ref(params[:discount_code])
+      self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
     end
   end
 
@@ -457,7 +468,7 @@ class Order < ActiveRecord::Base
 
   def commit_discounts
     temp_discounts.each do |td|
-      discounts<<Discount.find(td)
+      discounts<<Discount.viable.find(td)
     end unless temp_discounts.blank?
     temp_discounts=nil
   end
@@ -611,7 +622,7 @@ class Order < ActiveRecord::Base
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].each do |c|
-      next if c[ShoppingCart::PRODUCT_CODE]=~/^reseller_tier/
+      next if c[ShoppingCart::PRODUCT_CODE]=~/\Areseller_tier/
       if certificate = Certificate.for_sale.find_by_product(c[ShoppingCart::PRODUCT_CODE])
         if certificate.is_free?
           qty=c[ShoppingCart::QUANTITY].to_i > options[:max_free] ? options[:max_free] : c[ShoppingCart::QUANTITY].to_i
@@ -667,7 +678,7 @@ class Order < ActiveRecord::Base
         # calculate wildcards by subtracting their total from additional_domains
         wildcards = 0
         if certificate.allow_wildcard_ucc? and !certificate_order.domains.blank?
-          wildcards = certificate_order.domains.find_all{|d|d =~ /^\*\./}.count
+          wildcards = certificate_order.domains.find_all{|d|d =~ /\A\*\./}.count
           additional_domains -= wildcards
         end
         if additional_domains > 0

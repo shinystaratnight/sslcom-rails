@@ -5,7 +5,7 @@ class BillingProfile < ActiveRecord::Base
 
   cattr_accessor :password
   attr_accessor :number
-  attr_encrypted :card_number, :key => 'v1X&3az00c!F', :mode => :per_attribute_iv_and_salt
+  attr_encrypted :card_number, :key => '7ba44e6b-69d2-4d6d-889b-2872c0140092', :mode => :per_attribute_iv_and_salt
 
   ALL_COLUMNS = %w(description first_name last_name company address_1 address_2
     postal_code city state country phone vat credit_card card_number
@@ -27,7 +27,7 @@ class BillingProfile < ActiveRecord::Base
 
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
-  default_scope where{(status << ['disable']) | (status == nil)}
+  default_scope{ where{(status << ['disable']) | (status == nil)}}
 
   scope :success, lambda{
     joins{orders.transactions}.where{orders.transactions.success==true}

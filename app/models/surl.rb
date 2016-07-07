@@ -48,7 +48,7 @@ class Surl < ActiveRecord::Base
     s.update_attributes identifier: s.id.encode62
   end
 
-  default_scope where{status >> [nil, DISABLED_STATUS]}.order(:created_at.desc)
+  default_scope{ where{status >> [nil, DISABLED_STATUS]}.order(:created_at.desc)}
 
   def access_granted(surl)
     username==surl.username && valid_password?(surl.password)
@@ -60,7 +60,7 @@ class Surl < ActiveRecord::Base
   end
 
   def is_http?
-    original =~ /^http/
+    original =~ /\Ahttp/
   end
 
   def to_param
@@ -107,7 +107,7 @@ class Surl < ActiveRecord::Base
     unless [URI::HTTP, URI::HTTPS, URI::FTP].find {|url_type| URI.parse(original).kind_of?(url_type)}
       errors.add :original, "is an invalid url. Please be sure it begins with http://, https://, or ftp://"
     else
-      errors.add(:original, Surl::LOOP_ERROR) if URI.parse(original).host =~ /^ssl.com$/i
+      errors.add(:original, Surl::LOOP_ERROR) if URI.parse(original).host =~ /\Assl.com\z/i
     end
   rescue Exception=>e
     logger.error("Error in Surl#url_format: #{e.message}")

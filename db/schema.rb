@@ -9,1258 +9,1279 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160318165011) do
+ActiveRecord::Schema.define(version: 20160707163529) do
 
-  create_table "addresses", :force => true do |t|
-    t.string "name"
-    t.string "street1"
-    t.string "street2"
-    t.string "locality"
-    t.string "region"
-    t.string "postal_code"
-    t.string "country"
-    t.string "phone"
+  create_table "addresses", force: :cascade do |t|
+    t.string "name",        limit: 255
+    t.string "street1",     limit: 255
+    t.string "street2",     limit: 255
+    t.string "locality",    limit: 255
+    t.string "region",      limit: 255
+    t.string "postal_code", limit: 255
+    t.string "country",     limit: 255
+    t.string "phone",       limit: 255
   end
 
-  create_table "affiliates", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "organization"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "postal_code"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "website"
-    t.string   "contact_email"
-    t.string   "contact_phone"
-    t.string   "tax_number"
-    t.string   "payout_method"
-    t.string   "payout_threshold"
-    t.string   "payout_frequency"
-    t.string   "bank_name"
-    t.string   "bank_routing_number"
-    t.string   "bank_account_number"
-    t.string   "swift_code"
-    t.string   "checks_payable_to"
-    t.string   "epassporte_account"
-    t.string   "paypal_account"
-    t.string   "type_organization"
+  create_table "affiliates", force: :cascade do |t|
+    t.integer  "ssl_account_id",      limit: 4
+    t.string   "first_name",          limit: 255
+    t.string   "last_name",           limit: 255
+    t.string   "email",               limit: 255
+    t.string   "phone",               limit: 255
+    t.string   "organization",        limit: 255
+    t.string   "address1",            limit: 255
+    t.string   "address2",            limit: 255
+    t.string   "postal_code",         limit: 255
+    t.string   "city",                limit: 255
+    t.string   "state",               limit: 255
+    t.string   "country",             limit: 255
+    t.string   "website",             limit: 255
+    t.string   "contact_email",       limit: 255
+    t.string   "contact_phone",       limit: 255
+    t.string   "tax_number",          limit: 255
+    t.string   "payout_method",       limit: 255
+    t.string   "payout_threshold",    limit: 255
+    t.string   "payout_frequency",    limit: 255
+    t.string   "bank_name",           limit: 255
+    t.string   "bank_routing_number", limit: 255
+    t.string   "bank_account_number", limit: 255
+    t.string   "swift_code",          limit: 255
+    t.string   "checks_payable_to",   limit: 255
+    t.string   "epassporte_account",  limit: 255
+    t.string   "paypal_account",      limit: 255
+    t.string   "type_organization",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "api_credentials", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "account_key"
-    t.string   "secret_key"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+  create_table "api_credentials", force: :cascade do |t|
+    t.integer  "ssl_account_id", limit: 4
+    t.string   "account_key",    limit: 255
+    t.string   "secret_key",     limit: 255
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
-  create_table "apis", :force => true do |t|
+  create_table "apis", force: :cascade do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "assignments", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "role_id"
+  create_table "assignments", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.integer  "role_id",    limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "authentications", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "provider"
-    t.string   "uid"
-    t.string   "email"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "nick_name"
+  create_table "authentications", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4
+    t.string   "provider",   limit: 255
+    t.string   "uid",        limit: 255
+    t.string   "email",      limit: 255
+    t.string   "first_name", limit: 255
+    t.string   "last_name",  limit: 255
+    t.string   "nick_name",  limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "auto_renewals", :force => true do |t|
-    t.integer  "certificate_order_id"
-    t.integer  "order_id"
-    t.text     "body"
-    t.string   "recipients"
-    t.string   "subject"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
+  create_table "auto_renewals", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.integer  "order_id",             limit: 4
+    t.text     "body",                 limit: 65535
+    t.string   "recipients",           limit: 255
+    t.string   "subject",              limit: 255
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
-  create_table "billing_profiles", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "description"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "address_1"
-    t.string   "address_2"
-    t.string   "country"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "phone"
-    t.string   "company"
-    t.string   "credit_card"
-    t.string   "card_number"
-    t.integer  "expiration_month"
-    t.integer  "expiration_year"
-    t.string   "security_code"
-    t.string   "last_digits"
-    t.binary   "data"
-    t.binary   "salt"
-    t.string   "notes"
+  create_table "billing_profiles", force: :cascade do |t|
+    t.integer  "ssl_account_id",             limit: 4
+    t.string   "description",                limit: 255
+    t.string   "first_name",                 limit: 255
+    t.string   "last_name",                  limit: 255
+    t.string   "address_1",                  limit: 255
+    t.string   "address_2",                  limit: 255
+    t.string   "country",                    limit: 255
+    t.string   "city",                       limit: 255
+    t.string   "state",                      limit: 255
+    t.string   "postal_code",                limit: 255
+    t.string   "phone",                      limit: 255
+    t.string   "company",                    limit: 255
+    t.string   "credit_card",                limit: 255
+    t.string   "card_number",                limit: 255
+    t.integer  "expiration_month",           limit: 4
+    t.integer  "expiration_year",            limit: 4
+    t.string   "security_code",              limit: 255
+    t.string   "last_digits",                limit: 255
+    t.binary   "data",                       limit: 65535
+    t.binary   "salt",                       limit: 65535
+    t.string   "notes",                      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "encrypted_card_number"
-    t.string   "encrypted_card_number_salt"
-    t.string   "encrypted_card_number_iv"
-    t.string   "vat"
-    t.string   "tax"
-    t.string   "status"
+    t.string   "encrypted_card_number",      limit: 255
+    t.string   "encrypted_card_number_salt", limit: 255
+    t.string   "encrypted_card_number_iv",   limit: 255
+    t.string   "vat",                        limit: 255
+    t.string   "tax",                        limit: 255
+    t.string   "status",                     limit: 255
   end
 
-  add_index "billing_profiles", ["ssl_account_id"], :name => "index_billing_profile_on_ssl_account_id"
+  add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "ca_api_requests", :force => true do |t|
-    t.integer  "api_requestable_id"
-    t.string   "api_requestable_type"
-    t.string   "request_url"
-    t.text     "parameters"
-    t.string   "method"
-    t.text     "response"
-    t.string   "type"
-    t.string   "ca"
+  create_table "ca_api_requests", force: :cascade do |t|
+    t.integer  "api_requestable_id",   limit: 4
+    t.string   "api_requestable_type", limit: 255
+    t.string   "request_url",          limit: 255
+    t.text     "parameters",           limit: 65535
+    t.string   "method",               limit: 255
+    t.text     "response",             limit: 65535
+    t.string   "type",                 limit: 255
+    t.string   "ca",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "raw_request"
-    t.text     "request_method"
+    t.text     "raw_request",          limit: 65535
+    t.text     "request_method",       limit: 65535
   end
 
-  create_table "certificate_api_requests", :force => true do |t|
-    t.integer  "server_software_id"
-    t.integer  "country_id"
-    t.string   "account_key"
-    t.string   "secret_key"
+  add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], name: "index_ca_api_requests_on_api_requestable", using: :btree
+  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
+  add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
+
+  create_table "certificate_api_requests", force: :cascade do |t|
+    t.integer  "server_software_id",                limit: 4
+    t.integer  "country_id",                        limit: 4
+    t.string   "account_key",                       limit: 255
+    t.string   "secret_key",                        limit: 255
     t.boolean  "test"
-    t.string   "product"
-    t.integer  "period"
-    t.integer  "server_count"
-    t.string   "other_domains"
-    t.string   "common_names_flag"
-    t.text     "csr"
-    t.string   "organization_name"
-    t.string   "post_office_box"
-    t.string   "street_address_1"
-    t.string   "street_address_2"
-    t.string   "street_address_3"
-    t.string   "locality_name"
-    t.string   "state_or_province_name"
-    t.string   "postal_code"
-    t.string   "duns_number"
-    t.string   "company_number"
-    t.string   "registered_locality_name"
-    t.string   "registered_state_or_province_name"
-    t.string   "registered_country_name"
-    t.string   "assumed_name"
-    t.string   "business_category"
-    t.string   "email_address"
-    t.string   "contact_email_address"
-    t.string   "dcv_email_address"
-    t.string   "ca_certificate_id"
+    t.string   "product",                           limit: 255
+    t.integer  "period",                            limit: 4
+    t.integer  "server_count",                      limit: 4
+    t.string   "other_domains",                     limit: 255
+    t.string   "common_names_flag",                 limit: 255
+    t.text     "csr",                               limit: 65535
+    t.string   "organization_name",                 limit: 255
+    t.string   "post_office_box",                   limit: 255
+    t.string   "street_address_1",                  limit: 255
+    t.string   "street_address_2",                  limit: 255
+    t.string   "street_address_3",                  limit: 255
+    t.string   "locality_name",                     limit: 255
+    t.string   "state_or_province_name",            limit: 255
+    t.string   "postal_code",                       limit: 255
+    t.string   "duns_number",                       limit: 255
+    t.string   "company_number",                    limit: 255
+    t.string   "registered_locality_name",          limit: 255
+    t.string   "registered_state_or_province_name", limit: 255
+    t.string   "registered_country_name",           limit: 255
+    t.string   "assumed_name",                      limit: 255
+    t.string   "business_category",                 limit: 255
+    t.string   "email_address",                     limit: 255
+    t.string   "contact_email_address",             limit: 255
+    t.string   "dcv_email_address",                 limit: 255
+    t.string   "ca_certificate_id",                 limit: 255
     t.date     "incorporation_date"
     t.boolean  "is_customer_validated"
     t.boolean  "hide_certificate_reference"
-    t.string   "external_order_number"
-    t.string   "external_order_number_constraint"
-    t.string   "response"
+    t.string   "external_order_number",             limit: 255
+    t.string   "external_order_number_constraint",  limit: 255
+    t.string   "response",                          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "certificate_contents", :force => true do |t|
-    t.integer  "certificate_order_id", :null => false
-    t.text     "signing_request"
-    t.text     "signed_certificate"
-    t.integer  "server_software_id"
-    t.text     "domains"
-    t.integer  "duration"
-    t.string   "workflow_state"
+  create_table "certificate_contents", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4,     null: false
+    t.text     "signing_request",      limit: 65535
+    t.text     "signed_certificate",   limit: 65535
+    t.integer  "server_software_id",   limit: 4
+    t.text     "domains",              limit: 65535
+    t.integer  "duration",             limit: 4
+    t.string   "workflow_state",       limit: 255
     t.boolean  "billing_checkbox"
     t.boolean  "validation_checkbox"
     t.boolean  "technical_checkbox"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "label"
-    t.string   "ref"
+    t.string   "label",                limit: 255
+    t.string   "ref",                  limit: 255
+    t.boolean  "agreement"
   end
 
-  add_index "certificate_contents", ["certificate_order_id"], :name => "index_certificate_contents_on_certificate_order_id"
-  add_index "certificate_contents", ["workflow_state"], :name => "index_certificate_contents_on_workflow_state"
+  add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
+  add_index "certificate_contents", ["workflow_state"], name: "index_certificate_contents_on_workflow_state", using: :btree
 
-  create_table "certificate_lookups", :force => true do |t|
-    t.text     "certificate"
-    t.string   "serial"
-    t.string   "common_name"
+  create_table "certificate_lookups", force: :cascade do |t|
+    t.text     "certificate", limit: 65535
+    t.string   "serial",      limit: 255
+    t.string   "common_name", limit: 255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "starts_at"
   end
 
-  create_table "certificate_names", :force => true do |t|
-    t.integer  "certificate_content_id"
-    t.string   "email"
-    t.string   "name"
+  create_table "certificate_names", force: :cascade do |t|
+    t.integer  "certificate_content_id", limit: 4
+    t.string   "email",                  limit: 255
+    t.string   "name",                   limit: 255
     t.boolean  "is_common_name"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
-  create_table "certificate_orders", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.integer  "validation_id"
-    t.integer  "site_seal_id"
-    t.string   "workflow_state"
-    t.string   "ref"
-    t.integer  "num_domains"
-    t.integer  "server_licenses"
-    t.integer  "line_item_qty"
-    t.integer  "amount"
-    t.text     "notes"
+  create_table "certificate_orders", force: :cascade do |t|
+    t.integer  "ssl_account_id",        limit: 4
+    t.integer  "validation_id",         limit: 4
+    t.integer  "site_seal_id",          limit: 4
+    t.string   "workflow_state",        limit: 255
+    t.string   "ref",                   limit: 255
+    t.integer  "num_domains",           limit: 4
+    t.integer  "server_licenses",       limit: 4
+    t.integer  "line_item_qty",         limit: 4
+    t.integer  "amount",                limit: 4
+    t.text     "notes",                 limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "is_expired"
-    t.integer  "renewal_id"
+    t.integer  "renewal_id",            limit: 4
     t.boolean  "is_test"
-    t.string   "auto_renew"
-    t.string   "auto_renew_status"
-    t.string   "ca"
-    t.string   "external_order_number"
+    t.string   "auto_renew",            limit: 255
+    t.string   "auto_renew_status",     limit: 255
+    t.string   "ca",                    limit: 255
+    t.string   "external_order_number", limit: 255
   end
 
-  add_index "certificate_orders", ["created_at"], :name => "index_certificate_orders_on_created_at"
-  add_index "certificate_orders", ["is_expired"], :name => "index_certificate_orders_on_is_expired"
-  add_index "certificate_orders", ["ref"], :name => "index_certificate_orders_on_ref"
-  add_index "certificate_orders", ["site_seal_id"], :name => "index_certificate_orders_site_seal_id"
-  add_index "certificate_orders", ["workflow_state"], :name => "index_certificate_orders_on_workflow_state"
+  add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
+  add_index "certificate_orders", ["id", "is_test"], name: "index_certificate_orders_on_test", using: :btree
+  add_index "certificate_orders", ["id", "workflow_state", "is_expired", "is_test"], name: "index_certificate_orders_on_workflow_state", unique: true, using: :btree
+  add_index "certificate_orders", ["is_expired"], name: "index_certificate_orders_on_is_expired", using: :btree
+  add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
+  add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
 
-  create_table "certificates", :force => true do |t|
-    t.integer  "reseller_tier_id"
-    t.string   "title"
-    t.string   "status"
-    t.text     "summary"
-    t.text     "text_only_summary"
-    t.text     "description"
-    t.text     "text_only_description"
+  create_table "certificates", force: :cascade do |t|
+    t.integer  "reseller_tier_id",      limit: 4
+    t.string   "title",                 limit: 255
+    t.string   "status",                limit: 255
+    t.text     "summary",               limit: 65535
+    t.text     "text_only_summary",     limit: 65535
+    t.text     "description",           limit: 65535
+    t.text     "text_only_description", limit: 65535
     t.boolean  "allow_wildcard_ucc"
-    t.string   "published_as",          :limit => 16, :default => "draft"
-    t.string   "serial"
-    t.string   "product"
-    t.string   "icons"
-    t.string   "display_order"
-    t.string   "roles",                               :default => "--- []"
+    t.string   "published_as",          limit: 16,    default: "draft"
+    t.string   "serial",                limit: 255
+    t.string   "product",               limit: 255
+    t.string   "icons",                 limit: 255
+    t.string   "display_order",         limit: 255
+    t.string   "roles",                 limit: 255,   default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "certificates_products", :force => true do |t|
-    t.integer  "certificate_id"
-    t.integer  "product_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "client_applications", :force => true do |t|
-    t.string   "name"
-    t.string   "url"
-    t.string   "support_url"
-    t.string   "callback_url"
-    t.string   "key",          :limit => 40
-    t.string   "secret",       :limit => 40
-    t.integer  "user_id"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-  end
-
-  add_index "client_applications", ["key"], :name => "index_client_applications_on_key", :unique => true
-
-  create_table "contacts", :force => true do |t|
-    t.string   "title"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "company_name"
-    t.string   "department"
-    t.string   "po_box"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "address3"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "postal_code"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "ext"
-    t.string   "fax"
-    t.string   "notes"
-    t.string   "type"
-    t.string   "roles",            :default => "--- []"
-    t.integer  "contactable_id"
-    t.string   "contactable_type"
+  create_table "certificates_products", force: :cascade do |t|
+    t.integer  "certificate_id", limit: 4
+    t.integer  "product_id",     limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "contacts", ["contactable_id", "contactable_type"], :name => "index_contacts_on_contactable_id_and_contactable_type"
-
-  create_table "countries", :force => true do |t|
-    t.string  "iso1_code"
-    t.string  "name_caps"
-    t.string  "name"
-    t.string  "iso3_code"
-    t.integer "num_code"
+  create_table "client_applications", force: :cascade do |t|
+    t.string   "name",         limit: 255
+    t.string   "url",          limit: 255
+    t.string   "support_url",  limit: 255
+    t.string   "callback_url", limit: 255
+    t.string   "key",          limit: 40
+    t.string   "secret",       limit: 40
+    t.integer  "user_id",      limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  create_table "csr_overrides", :force => true do |t|
-    t.integer  "csr_id"
-    t.string   "common_name"
-    t.string   "organization"
-    t.string   "organization_unit"
-    t.string   "address_1"
-    t.string   "address_2"
-    t.string   "address_3"
-    t.string   "po_box"
-    t.string   "state"
-    t.string   "locality"
-    t.string   "postal_code"
-    t.string   "country"
+  add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
+
+  create_table "contacts", force: :cascade do |t|
+    t.string   "title",            limit: 255
+    t.string   "first_name",       limit: 255
+    t.string   "last_name",        limit: 255
+    t.string   "company_name",     limit: 255
+    t.string   "department",       limit: 255
+    t.string   "po_box",           limit: 255
+    t.string   "address1",         limit: 255
+    t.string   "address2",         limit: 255
+    t.string   "address3",         limit: 255
+    t.string   "city",             limit: 255
+    t.string   "state",            limit: 255
+    t.string   "country",          limit: 255
+    t.string   "postal_code",      limit: 255
+    t.string   "email",            limit: 255
+    t.string   "phone",            limit: 255
+    t.string   "ext",              limit: 255
+    t.string   "fax",              limit: 255
+    t.string   "notes",            limit: 255
+    t.string   "type",             limit: 255
+    t.string   "roles",            limit: 255, default: "--- []"
+    t.integer  "contactable_id",   limit: 4
+    t.string   "contactable_type", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "csrs", :force => true do |t|
-    t.integer  "certificate_content_id"
-    t.text     "body"
-    t.integer  "duration"
-    t.string   "common_name"
-    t.string   "organization"
-    t.string   "organization_unit"
-    t.string   "state"
-    t.string   "locality"
-    t.string   "country"
-    t.string   "email"
-    t.string   "sig_alg"
+  add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
+
+  create_table "countries", force: :cascade do |t|
+    t.string  "iso1_code", limit: 255
+    t.string  "name_caps", limit: 255
+    t.string  "name",      limit: 255
+    t.string  "iso3_code", limit: 255
+    t.integer "num_code",  limit: 4
+  end
+
+  create_table "csr_overrides", force: :cascade do |t|
+    t.integer  "csr_id",            limit: 4
+    t.string   "common_name",       limit: 255
+    t.string   "organization",      limit: 255
+    t.string   "organization_unit", limit: 255
+    t.string   "address_1",         limit: 255
+    t.string   "address_2",         limit: 255
+    t.string   "address_3",         limit: 255
+    t.string   "po_box",            limit: 255
+    t.string   "state",             limit: 255
+    t.string   "locality",          limit: 255
+    t.string   "postal_code",       limit: 255
+    t.string   "country",           limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "subject_alternative_names"
-    t.integer  "strength"
+  end
+
+  create_table "csrs", force: :cascade do |t|
+    t.integer  "certificate_content_id",    limit: 4
+    t.text     "body",                      limit: 65535
+    t.integer  "duration",                  limit: 4
+    t.string   "common_name",               limit: 255
+    t.string   "organization",              limit: 255
+    t.string   "organization_unit",         limit: 255
+    t.string   "state",                     limit: 255
+    t.string   "locality",                  limit: 255
+    t.string   "country",                   limit: 255
+    t.string   "email",                     limit: 255
+    t.string   "sig_alg",                   limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "subject_alternative_names", limit: 65535
+    t.integer  "strength",                  limit: 4
     t.boolean  "challenge_password"
-    t.integer  "certificate_lookup_id"
+    t.integer  "certificate_lookup_id",     limit: 4
   end
 
-  add_index "csrs", ["certificate_content_id", "common_name"], :name => "index_csrs_on_common_name_and_certificate_content_id"
-  add_index "csrs", ["certificate_content_id"], :name => "index_csrs_on_certificate_content_id"
-  add_index "csrs", ["common_name"], :name => "index_csrs_on_common_name"
-  add_index "csrs", ["organization"], :name => "index_csrs_on_organization"
+  add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
+  add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
+  add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
+  add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
 
-  create_table "delayed_job_groups", :force => true do |t|
-    t.text    "on_completion_job"
-    t.text    "on_completion_job_options"
-    t.text    "on_cancellation_job"
-    t.text    "on_cancellation_job_options"
-    t.boolean "queueing_complete",           :default => false, :null => false
-    t.boolean "blocked",                     :default => false, :null => false
+  create_table "delayed_job_groups", force: :cascade do |t|
+    t.text    "on_completion_job",           limit: 65535
+    t.text    "on_completion_job_options",   limit: 65535
+    t.text    "on_cancellation_job",         limit: 65535
+    t.text    "on_cancellation_job_options", limit: 65535
+    t.boolean "queueing_complete",                         default: false, null: false
+    t.boolean "blocked",                                   default: false, null: false
   end
 
-  create_table "delayed_jobs", :force => true do |t|
-    t.integer  "priority",     :default => 0
-    t.integer  "attempts",     :default => 0
-    t.text     "handler"
-    t.text     "last_error"
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",     limit: 4,     default: 0
+    t.integer  "attempts",     limit: 4,     default: 0
+    t.text     "handler",      limit: 65535
+    t.text     "last_error",   limit: 65535
     t.datetime "run_at"
     t.datetime "locked_at"
     t.datetime "failed_at"
-    t.string   "locked_by"
+    t.string   "locked_by",    limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "queue"
-    t.boolean  "blocked",      :default => false, :null => false
-    t.integer  "job_group_id"
+    t.string   "queue",        limit: 255
+    t.boolean  "blocked",                    default: false, null: false
+    t.integer  "job_group_id", limit: 4
   end
 
-  add_index "delayed_jobs", ["job_group_id"], :name => "index_delayed_jobs_on_job_group_id"
+  add_index "delayed_jobs", ["job_group_id"], name: "index_delayed_jobs_on_job_group_id", using: :btree
 
-  create_table "deposits", :force => true do |t|
-    t.float    "amount"
-    t.string   "full_name"
-    t.string   "credit_card"
-    t.string   "last_digits"
-    t.string   "payment_method"
+  create_table "deposits", force: :cascade do |t|
+    t.float    "amount",         limit: 24
+    t.string   "full_name",      limit: 255
+    t.string   "credit_card",    limit: 255
+    t.string   "last_digits",    limit: 255
+    t.string   "payment_method", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "discountables_sellables", :force => true do |t|
-    t.integer  "discountable_id"
-    t.string   "discountable_type"
-    t.integer  "sellable_id"
-    t.string   "sellable_type"
-    t.integer  "amount"
-    t.string   "apply_as"
-    t.string   "status"
-    t.text     "notes"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
+  create_table "discountables_sellables", force: :cascade do |t|
+    t.integer  "discountable_id",   limit: 4
+    t.string   "discountable_type", limit: 255
+    t.integer  "sellable_id",       limit: 4
+    t.string   "sellable_type",     limit: 255
+    t.integer  "amount",            limit: 4
+    t.string   "apply_as",          limit: 255
+    t.string   "status",            limit: 255
+    t.text     "notes",             limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "discounts", :force => true do |t|
-    t.integer  "discountable_id"
-    t.string   "discountable_type"
-    t.string   "value"
-    t.string   "apply_as"
-    t.string   "label"
-    t.string   "ref"
+  create_table "discounts", force: :cascade do |t|
+    t.integer  "discountable_id",   limit: 4
+    t.string   "discountable_type", limit: 255
+    t.string   "value",             limit: 255
+    t.string   "apply_as",          limit: 255
+    t.string   "label",             limit: 255
+    t.string   "ref",               limit: 255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status"
-    t.integer  "remaining"
+    t.string   "status",            limit: 255
+    t.integer  "remaining",         limit: 4
   end
 
-  create_table "discounts_certificates", :force => true do |t|
-    t.integer  "discount_id"
-    t.integer  "certificate_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
+  create_table "discounts_certificates", force: :cascade do |t|
+    t.integer  "discount_id",    limit: 4
+    t.integer  "certificate_id", limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  create_table "discounts_orders", :force => true do |t|
-    t.integer  "discount_id"
-    t.integer  "order_id"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+  create_table "discounts_orders", force: :cascade do |t|
+    t.integer  "discount_id", limit: 4
+    t.integer  "order_id",    limit: 4
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
   end
 
-  create_table "domain_control_validations", :force => true do |t|
-    t.integer  "csr_id"
-    t.string   "email_address"
-    t.text     "candidate_addresses"
-    t.string   "subject"
-    t.string   "address_to_find_identifier"
-    t.string   "identifier"
+  create_table "domain_control_validations", force: :cascade do |t|
+    t.integer  "csr_id",                     limit: 4
+    t.string   "email_address",              limit: 255
+    t.text     "candidate_addresses",        limit: 65535
+    t.string   "subject",                    limit: 255
+    t.string   "address_to_find_identifier", limit: 255
+    t.string   "identifier",                 limit: 255
     t.boolean  "identifier_found"
     t.datetime "responded_at"
     t.datetime "sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "workflow_state"
-    t.string   "dcv_method"
-    t.integer  "certificate_name_id"
-    t.string   "failure_action"
+    t.string   "workflow_state",             limit: 255
+    t.string   "dcv_method",                 limit: 255
+    t.integer  "certificate_name_id",        limit: 4
+    t.string   "failure_action",             limit: 255
   end
 
-  create_table "duplicate_v2_users", :force => true do |t|
-    t.string   "login"
-    t.string   "email"
-    t.string   "password"
-    t.integer  "user_id"
+  add_index "domain_control_validations", ["id", "csr_id"], name: "index_domain_control_validations_on_id_csr_id", using: :btree
+
+  create_table "duplicate_v2_users", force: :cascade do |t|
+    t.string   "login",      limit: 255
+    t.string   "email",      limit: 255
+    t.string   "password",   limit: 255
+    t.integer  "user_id",    limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "funded_accounts", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.integer  "cents",          :default => 0
-    t.string   "state"
-    t.string   "currency"
+  create_table "funded_accounts", force: :cascade do |t|
+    t.integer  "ssl_account_id", limit: 4
+    t.integer  "cents",          limit: 4,   default: 0
+    t.string   "state",          limit: 255
+    t.string   "currency",       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "gateways", :force => true do |t|
-    t.string "service"
-    t.string "login"
-    t.string "password"
-    t.string "mode"
+  create_table "gateways", force: :cascade do |t|
+    t.string "service",  limit: 255
+    t.string "login",    limit: 255
+    t.string "password", limit: 255
+    t.string "mode",     limit: 255
   end
 
-  create_table "groupings", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "type"
-    t.string   "name"
-    t.string   "nav_tool"
-    t.integer  "parent_id"
+  create_table "groupings", force: :cascade do |t|
+    t.integer  "ssl_account_id", limit: 4
+    t.string   "type",           limit: 255
+    t.string   "name",           limit: 255
+    t.string   "nav_tool",       limit: 255
+    t.integer  "parent_id",      limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status"
+    t.string   "status",         limit: 255
   end
 
-  create_table "invoices", :force => true do |t|
-    t.integer  "order_id"
-    t.text     "description"
-    t.string   "company"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "address_1"
-    t.string   "address_2"
-    t.string   "country"
-    t.string   "city"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "phone"
-    t.string   "fax"
-    t.string   "vat"
-    t.string   "tax"
-    t.string   "notes"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+  create_table "invoices", force: :cascade do |t|
+    t.integer  "order_id",    limit: 4
+    t.text     "description", limit: 65535
+    t.string   "company",     limit: 255
+    t.string   "first_name",  limit: 255
+    t.string   "last_name",   limit: 255
+    t.string   "address_1",   limit: 255
+    t.string   "address_2",   limit: 255
+    t.string   "country",     limit: 255
+    t.string   "city",        limit: 255
+    t.string   "state",       limit: 255
+    t.string   "postal_code", limit: 255
+    t.string   "phone",       limit: 255
+    t.string   "fax",         limit: 255
+    t.string   "vat",         limit: 255
+    t.string   "tax",         limit: 255
+    t.string   "notes",       limit: 255
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  create_table "legacy_v2_user_mappings", :force => true do |t|
-    t.integer  "old_user_id"
-    t.integer  "user_mappable_id"
-    t.string   "user_mappable_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "line_items", :force => true do |t|
-    t.integer "order_id"
-    t.integer "affiliate_id"
-    t.integer "sellable_id"
-    t.string  "sellable_type"
-    t.integer "cents"
-    t.string  "currency"
-    t.float   "affiliate_payout_rate"
-    t.string  "aff_url"
-    t.integer "qty"
-  end
-
-  add_index "line_items", ["order_id"], :name => "index_line_items_on_order_id"
-  add_index "line_items", ["sellable_id", "sellable_type"], :name => "index_line_items_on_sellable_id_and_sellable_type"
-  add_index "line_items", ["sellable_id"], :name => "index_line_items_on_sellable_id"
-  add_index "line_items", ["sellable_type"], :name => "index_line_items_on_sellable_type"
-
-  create_table "malware_hashes", :force => true do |t|
-    t.string "url", :limit => 32, :null => false
-  end
-
-  create_table "malwares", :force => true do |t|
-    t.integer  "black_major"
-    t.integer  "black_minor"
-    t.integer  "malware_major"
-    t.integer  "malware_minor"
+  create_table "legacy_v2_user_mappings", force: :cascade do |t|
+    t.integer  "old_user_id",        limit: 4
+    t.integer  "user_mappable_id",   limit: 4
+    t.string   "user_mappable_type", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "notes", :force => true do |t|
-    t.string   "title",        :limit => 50, :default => ""
-    t.text     "note"
-    t.integer  "notable_id"
-    t.string   "notable_type"
-    t.integer  "user_id"
+  create_table "line_items", force: :cascade do |t|
+    t.integer "order_id",              limit: 4
+    t.integer "affiliate_id",          limit: 4
+    t.integer "sellable_id",           limit: 4
+    t.string  "sellable_type",         limit: 255
+    t.integer "cents",                 limit: 4
+    t.string  "currency",              limit: 255
+    t.float   "affiliate_payout_rate", limit: 24
+    t.string  "aff_url",               limit: 255
+    t.integer "qty",                   limit: 4
+  end
+
+  add_index "line_items", ["order_id"], name: "index_line_items_on_order_id", using: :btree
+  add_index "line_items", ["sellable_id", "sellable_type"], name: "index_line_items_on_sellable_id_and_sellable_type", using: :btree
+  add_index "line_items", ["sellable_id"], name: "index_line_items_on_sellable_id", using: :btree
+  add_index "line_items", ["sellable_type"], name: "index_line_items_on_sellable_type", using: :btree
+
+  create_table "malware_hashes", force: :cascade do |t|
+    t.string "url", limit: 32, null: false
+  end
+
+  create_table "malwares", force: :cascade do |t|
+    t.integer  "black_major",   limit: 4
+    t.integer  "black_minor",   limit: 4
+    t.integer  "malware_major", limit: 4
+    t.integer  "malware_minor", limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "notes", ["notable_id"], :name => "index_notes_on_notable_id"
-  add_index "notes", ["notable_type"], :name => "index_notes_on_notable_type"
-  add_index "notes", ["user_id"], :name => "index_notes_on_user_id"
-
-  create_table "oauth_nonces", :force => true do |t|
-    t.string   "nonce"
-    t.integer  "timestamp"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+  create_table "notes", force: :cascade do |t|
+    t.string   "title",        limit: 50,    default: ""
+    t.text     "note",         limit: 65535
+    t.integer  "notable_id",   limit: 4
+    t.string   "notable_type", limit: 255
+    t.integer  "user_id",      limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "oauth_nonces", ["nonce", "timestamp"], :name => "index_oauth_nonces_on_nonce_and_timestamp", :unique => true
+  add_index "notes", ["notable_id"], name: "index_notes_on_notable_id", using: :btree
+  add_index "notes", ["notable_type"], name: "index_notes_on_notable_type", using: :btree
+  add_index "notes", ["user_id"], name: "index_notes_on_user_id", using: :btree
 
-  create_table "oauth_tokens", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "type",                  :limit => 20
-    t.integer  "client_application_id"
-    t.string   "token",                 :limit => 40
-    t.string   "secret",                :limit => 40
-    t.string   "callback_url"
-    t.string   "verifier",              :limit => 20
-    t.string   "scope"
+  create_table "oauth_nonces", force: :cascade do |t|
+    t.string   "nonce",      limit: 255
+    t.integer  "timestamp",  limit: 4
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "oauth_nonces", ["nonce", "timestamp"], name: "index_oauth_nonces_on_nonce_and_timestamp", unique: true, using: :btree
+
+  create_table "oauth_tokens", force: :cascade do |t|
+    t.integer  "user_id",               limit: 4
+    t.string   "type",                  limit: 20
+    t.integer  "client_application_id", limit: 4
+    t.string   "token",                 limit: 40
+    t.string   "secret",                limit: 40
+    t.string   "callback_url",          limit: 255
+    t.string   "verifier",              limit: 20
+    t.string   "scope",                 limit: 255
     t.datetime "authorized_at"
     t.datetime "invalidated_at"
     t.datetime "valid_to"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
-  add_index "oauth_tokens", ["token"], :name => "index_oauth_tokens_on_token", :unique => true
+  add_index "oauth_tokens", ["token"], name: "index_oauth_tokens_on_token", unique: true, using: :btree
 
-  create_table "order_transactions", :force => true do |t|
-    t.integer  "order_id"
-    t.integer  "amount"
+  create_table "order_transactions", force: :cascade do |t|
+    t.integer  "order_id",     limit: 4
+    t.integer  "amount",       limit: 4
     t.boolean  "success"
-    t.string   "reference"
-    t.string   "message"
-    t.string   "action"
-    t.text     "params"
-    t.text     "avs"
-    t.text     "cvv"
-    t.string   "fraud_review"
+    t.string   "reference",    limit: 255
+    t.string   "message",      limit: 255
+    t.string   "action",       limit: 255
+    t.text     "params",       limit: 65535
+    t.text     "avs",          limit: 65535
+    t.text     "cvv",          limit: 65535
+    t.string   "fraud_review", limit: 255
     t.boolean  "test"
-    t.string   "notes"
+    t.string   "notes",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "orders", :force => true do |t|
-    t.integer  "billing_profile_id"
-    t.integer  "billable_id"
-    t.string   "billable_type"
-    t.integer  "address_id"
-    t.integer  "cents"
-    t.string   "currency"
+  create_table "orders", force: :cascade do |t|
+    t.integer  "billing_profile_id",     limit: 4
+    t.integer  "billable_id",            limit: 4
+    t.string   "billable_type",          limit: 255
+    t.integer  "address_id",             limit: 4
+    t.integer  "cents",                  limit: 4
+    t.string   "currency",               limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "paid_at"
     t.datetime "canceled_at"
-    t.integer  "lock_version",           :default => 0
-    t.string   "description"
-    t.string   "state",                  :default => "pending"
-    t.string   "status",                 :default => "active"
-    t.string   "reference_number"
-    t.integer  "deducted_from_id"
-    t.string   "notes"
-    t.string   "po_number"
-    t.string   "quote_number"
-    t.integer  "visitor_token_id"
-    t.string   "ext_affiliate_name"
-    t.string   "ext_affiliate_id"
+    t.integer  "lock_version",           limit: 4,   default: 0
+    t.string   "description",            limit: 255
+    t.string   "state",                  limit: 255, default: "pending"
+    t.string   "status",                 limit: 255, default: "active"
+    t.string   "reference_number",       limit: 255
+    t.integer  "deducted_from_id",       limit: 4
+    t.string   "notes",                  limit: 255
+    t.string   "po_number",              limit: 255
+    t.string   "quote_number",           limit: 255
+    t.integer  "visitor_token_id",       limit: 4
+    t.string   "ext_affiliate_name",     limit: 255
+    t.string   "ext_affiliate_id",       limit: 255
     t.boolean  "ext_affiliate_credited"
   end
 
-  add_index "orders", ["billable_id", "billable_type"], :name => "index_orders_on_billable_id_and_billable_type"
-  add_index "orders", ["billable_id"], :name => "index_orders_on_billable_id"
-  add_index "orders", ["billable_type"], :name => "index_orders_on_billable_type"
-  add_index "orders", ["created_at"], :name => "index_orders_on_created_at"
-  add_index "orders", ["po_number"], :name => "index_orders_on_po_number"
-  add_index "orders", ["quote_number"], :name => "index_orders_on_quote_number"
-  add_index "orders", ["reference_number"], :name => "index_orders_on_reference_number"
-  add_index "orders", ["status"], :name => "index_orders_on_status"
-  add_index "orders", ["updated_at"], :name => "index_orders_on_updated_at"
+  add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree
+  add_index "orders", ["billable_id"], name: "index_orders_on_billable_id", using: :btree
+  add_index "orders", ["billable_type"], name: "index_orders_on_billable_type", using: :btree
+  add_index "orders", ["created_at"], name: "index_orders_on_created_at", using: :btree
+  add_index "orders", ["po_number"], name: "index_orders_on_po_number", using: :btree
+  add_index "orders", ["quote_number"], name: "index_orders_on_quote_number", using: :btree
+  add_index "orders", ["reference_number"], name: "index_orders_on_reference_number", using: :btree
+  add_index "orders", ["status"], name: "index_orders_on_status", using: :btree
+  add_index "orders", ["updated_at"], name: "index_orders_on_updated_at", using: :btree
 
-  create_table "other_party_requests", :force => true do |t|
-    t.integer  "other_party_requestable_id"
-    t.string   "other_party_requestable_type"
-    t.integer  "user_id"
-    t.text     "email_addresses"
-    t.string   "identifier"
+  create_table "other_party_requests", force: :cascade do |t|
+    t.integer  "other_party_requestable_id",   limit: 4
+    t.string   "other_party_requestable_type", limit: 255
+    t.integer  "user_id",                      limit: 4
+    t.text     "email_addresses",              limit: 65535
+    t.string   "identifier",                   limit: 255
     t.datetime "sent_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "payments", :force => true do |t|
-    t.integer  "order_id"
-    t.integer  "address_id"
-    t.integer  "cents"
-    t.string   "currency"
-    t.string   "confirmation"
+  create_table "payments", force: :cascade do |t|
+    t.integer  "order_id",     limit: 4
+    t.integer  "address_id",   limit: 4
+    t.integer  "cents",        limit: 4
+    t.string   "currency",     limit: 255
+    t.string   "confirmation", limit: 255
     t.datetime "cleared_at"
     t.datetime "voided_at"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version", :default => 0
+    t.integer  "lock_version", limit: 4,   default: 0
   end
 
-  add_index "payments", ["cleared_at"], :name => "index_payments_on_cleared_at"
-  add_index "payments", ["created_at"], :name => "index_payments_on_created_at"
-  add_index "payments", ["order_id"], :name => "index_payments_on_order_id"
-  add_index "payments", ["updated_at"], :name => "index_payments_on_updated_at"
+  add_index "payments", ["cleared_at"], name: "index_payments_on_cleared_at", using: :btree
+  add_index "payments", ["created_at"], name: "index_payments_on_created_at", using: :btree
+  add_index "payments", ["order_id"], name: "index_payments_on_order_id", using: :btree
+  add_index "payments", ["updated_at"], name: "index_payments_on_updated_at", using: :btree
 
-  create_table "permissions", :force => true do |t|
-    t.string   "name"
-    t.string   "action"
-    t.string   "subject_class"
-    t.integer  "subject_id"
-    t.text     "description"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+  create_table "permissions", force: :cascade do |t|
+    t.string   "name",          limit: 255
+    t.string   "action",        limit: 255
+    t.string   "subject_class", limit: 255
+    t.integer  "subject_id",    limit: 4
+    t.text     "description",   limit: 65535
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
-  create_table "permissions_roles", :force => true do |t|
-    t.integer  "permission_id"
-    t.integer  "role_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+  create_table "permissions_roles", force: :cascade do |t|
+    t.integer  "permission_id", limit: 4
+    t.integer  "role_id",       limit: 4
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
-  create_table "preferences", :force => true do |t|
-    t.string   "name",       :null => false
-    t.integer  "owner_id",   :null => false
-    t.string   "owner_type", :null => false
-    t.integer  "group_id"
-    t.string   "group_type"
-    t.string   "value"
+  create_table "preferences", force: :cascade do |t|
+    t.string   "name",       limit: 255, null: false
+    t.integer  "owner_id",   limit: 4,   null: false
+    t.string   "owner_type", limit: 255, null: false
+    t.integer  "group_id",   limit: 4
+    t.string   "group_type", limit: 255
+    t.string   "value",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], :name => "index_preferences_on_owner_and_name_and_preference", :unique => true
-  add_index "preferences", ["owner_id", "owner_type"], :name => "index_preferences_on_owner_id_and_owner_type"
+  add_index "preferences", ["group_id", "group_type", "name", "owner_id", "owner_type"], name: "index_preferences_on_owner_and_name_and_preference", unique: true, using: :btree
+  add_index "preferences", ["id", "name", "owner_id", "owner_type", "value"], name: "index_preferences_on_owner_and_name_and_value", using: :btree
+  add_index "preferences", ["id", "name", "value"], name: "index_preferences_on_name_and_value", using: :btree
+  add_index "preferences", ["id", "owner_id", "owner_type"], name: "index_preferences_on_owner_id_and_owner_type", unique: true, using: :btree
 
-  create_table "product_orders", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.integer  "product_id"
-    t.string   "workflow_state"
-    t.string   "ref"
-    t.string   "auto_renew"
-    t.string   "auto_renew_status"
+  create_table "product_orders", force: :cascade do |t|
+    t.integer  "ssl_account_id",    limit: 4
+    t.integer  "product_id",        limit: 4
+    t.string   "workflow_state",    limit: 255
+    t.string   "ref",               limit: 255
+    t.string   "auto_renew",        limit: 255
+    t.string   "auto_renew_status", limit: 255
     t.boolean  "is_expired"
-    t.string   "value"
-    t.integer  "amount"
-    t.text     "notes"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-  end
-
-  add_index "product_orders", ["created_at"], :name => "index_product_orders_on_created_at"
-  add_index "product_orders", ["is_expired"], :name => "index_product_orders_on_is_expired"
-  add_index "product_orders", ["ref"], :name => "index_product_orders_on_ref"
-
-  create_table "product_orders_sub_product_orders", :force => true do |t|
-    t.integer  "product_order_id"
-    t.integer  "sub_product_order_id"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
-  end
-
-  create_table "product_variant_groups", :force => true do |t|
-    t.integer  "variantable_id"
-    t.string   "variantable_type"
-    t.string   "title"
-    t.string   "status"
-    t.text     "description"
-    t.text     "text_only_description"
-    t.integer  "display_order"
-    t.string   "serial"
-    t.string   "published_as"
+    t.string   "value",             limit: 255
+    t.integer  "amount",            limit: 4
+    t.text     "notes",             limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "product_variant_items", :force => true do |t|
-    t.integer  "product_variant_group_id"
-    t.string   "title"
-    t.string   "status"
-    t.text     "description"
-    t.text     "text_only_description"
-    t.integer  "amount"
-    t.integer  "display_order"
-    t.string   "item_type"
-    t.string   "value"
-    t.string   "serial"
-    t.string   "published_as"
+  add_index "product_orders", ["created_at"], name: "index_product_orders_on_created_at", using: :btree
+  add_index "product_orders", ["is_expired"], name: "index_product_orders_on_is_expired", using: :btree
+  add_index "product_orders", ["ref"], name: "index_product_orders_on_ref", using: :btree
+
+  create_table "product_orders_sub_product_orders", force: :cascade do |t|
+    t.integer  "product_order_id",     limit: 4
+    t.integer  "sub_product_order_id", limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "products", :force => true do |t|
-    t.string   "title"
-    t.string   "status"
-    t.string   "type"
-    t.string   "value"
-    t.text     "summary"
-    t.text     "text_only_summary"
-    t.text     "description"
-    t.text     "text_only_description"
-    t.string   "published_as",          :limit => 16, :default => "draft"
-    t.string   "ref"
-    t.string   "serial"
-    t.string   "icons"
-    t.integer  "amount"
-    t.integer  "duration"
-    t.text     "notes"
-    t.string   "auto_renew"
-    t.string   "display_order"
-    t.datetime "created_at",                                               :null => false
-    t.datetime "updated_at",                                               :null => false
-  end
-
-  create_table "products_sub_products", :force => true do |t|
-    t.integer  "product_id"
-    t.integer  "sub_product_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "receipts", :force => true do |t|
-    t.integer  "order_id"
-    t.string   "confirmation_recipients"
-    t.string   "receipt_recipients"
-    t.string   "processed_recipients"
-    t.string   "deposit_reference_number"
-    t.string   "deposit_created_at"
-    t.string   "deposit_description"
-    t.string   "deposit_method"
-    t.string   "profile_full_name"
-    t.string   "profile_credit_card"
-    t.string   "profile_last_digits"
-    t.string   "deposit_amount"
-    t.string   "available_funds"
-    t.string   "order_reference_number"
-    t.string   "order_created_at"
-    t.string   "line_item_descriptions"
-    t.string   "line_item_amounts"
-    t.string   "order_amount"
+  create_table "product_variant_groups", force: :cascade do |t|
+    t.integer  "variantable_id",        limit: 4
+    t.string   "variantable_type",      limit: 255
+    t.string   "title",                 limit: 255
+    t.string   "status",                limit: 255
+    t.text     "description",           limit: 65535
+    t.text     "text_only_description", limit: 65535
+    t.integer  "display_order",         limit: 4
+    t.string   "serial",                limit: 255
+    t.string   "published_as",          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "reminder_triggers", :force => true do |t|
-    t.integer  "name"
+  create_table "product_variant_items", force: :cascade do |t|
+    t.integer  "product_variant_group_id", limit: 4
+    t.string   "title",                    limit: 255
+    t.string   "status",                   limit: 255
+    t.text     "description",              limit: 65535
+    t.text     "text_only_description",    limit: 65535
+    t.integer  "amount",                   limit: 4
+    t.integer  "display_order",            limit: 4
+    t.string   "item_type",                limit: 255
+    t.string   "value",                    limit: 255
+    t.string   "serial",                   limit: 255
+    t.string   "published_as",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "renewal_attempts", :force => true do |t|
-    t.integer  "certificate_order_id"
-    t.integer  "order_transaction_id"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
-  end
-
-  create_table "renewal_notifications", :force => true do |t|
-    t.integer  "certificate_order_id"
-    t.text     "body"
-    t.string   "recipients"
-    t.string   "subject"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
-  end
-
-  create_table "reseller_tiers", :force => true do |t|
-    t.string   "label"
-    t.string   "description"
-    t.integer  "amount"
-    t.string   "roles"
-    t.string   "published_as"
+  create_table "products", force: :cascade do |t|
+    t.string   "title",                 limit: 255
+    t.string   "status",                limit: 255
+    t.string   "type",                  limit: 255
+    t.string   "value",                 limit: 255
+    t.text     "summary",               limit: 65535
+    t.text     "text_only_summary",     limit: 65535
+    t.text     "description",           limit: 65535
+    t.text     "text_only_description", limit: 65535
+    t.string   "published_as",          limit: 16,    default: "draft"
+    t.string   "ref",                   limit: 255
+    t.string   "serial",                limit: 255
+    t.string   "icons",                 limit: 255
+    t.integer  "amount",                limit: 4
+    t.integer  "duration",              limit: 4
+    t.text     "notes",                 limit: 65535
+    t.string   "auto_renew",            limit: 255
+    t.string   "display_order",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "resellers", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.integer  "reseller_tier_id"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "organization"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "address3"
-    t.string   "po_box"
-    t.string   "postal_code"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "ext"
-    t.string   "fax"
-    t.string   "website"
-    t.string   "tax_number"
-    t.string   "roles"
-    t.string   "type_organization"
-    t.string   "workflow_state"
+  create_table "products_sub_products", force: :cascade do |t|
+    t.integer  "product_id",     limit: 4
+    t.integer  "sub_product_id", limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "roles", :force => true do |t|
-    t.string   "name"
+  create_table "receipts", force: :cascade do |t|
+    t.integer  "order_id",                 limit: 4
+    t.string   "confirmation_recipients",  limit: 255
+    t.string   "receipt_recipients",       limit: 255
+    t.string   "processed_recipients",     limit: 255
+    t.string   "deposit_reference_number", limit: 255
+    t.string   "deposit_created_at",       limit: 255
+    t.string   "deposit_description",      limit: 255
+    t.string   "deposit_method",           limit: 255
+    t.string   "profile_full_name",        limit: 255
+    t.string   "profile_credit_card",      limit: 255
+    t.string   "profile_last_digits",      limit: 255
+    t.string   "deposit_amount",           limit: 255
+    t.string   "available_funds",          limit: 255
+    t.string   "order_reference_number",   limit: 255
+    t.string   "order_created_at",         limit: 255
+    t.string   "line_item_descriptions",   limit: 255
+    t.string   "line_item_amounts",        limit: 255
+    t.string   "order_amount",             limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "ssl_account_id"
-    t.text     "description"
-    t.string   "status"
   end
 
-  create_table "sent_reminders", :force => true do |t|
-    t.integer  "signed_certificate_id"
-    t.text     "body"
-    t.string   "recipients"
-    t.string   "subject"
-    t.string   "trigger_value"
+  create_table "reminder_triggers", force: :cascade do |t|
+    t.integer  "name",       limit: 4
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "renewal_attempts", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.integer  "order_transaction_id", limit: 4
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  create_table "renewal_notifications", force: :cascade do |t|
+    t.integer  "certificate_order_id", limit: 4
+    t.text     "body",                 limit: 65535
+    t.string   "recipients",           limit: 255
+    t.string   "subject",              limit: 255
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+  end
+
+  create_table "reseller_tiers", force: :cascade do |t|
+    t.string   "label",        limit: 255
+    t.string   "description",  limit: 255
+    t.integer  "amount",       limit: 4
+    t.string   "roles",        limit: 255
+    t.string   "published_as", limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "resellers", force: :cascade do |t|
+    t.integer  "ssl_account_id",    limit: 4
+    t.integer  "reseller_tier_id",  limit: 4
+    t.string   "first_name",        limit: 255
+    t.string   "last_name",         limit: 255
+    t.string   "email",             limit: 255
+    t.string   "phone",             limit: 255
+    t.string   "organization",      limit: 255
+    t.string   "address1",          limit: 255
+    t.string   "address2",          limit: 255
+    t.string   "address3",          limit: 255
+    t.string   "po_box",            limit: 255
+    t.string   "postal_code",       limit: 255
+    t.string   "city",              limit: 255
+    t.string   "state",             limit: 255
+    t.string   "country",           limit: 255
+    t.string   "ext",               limit: 255
+    t.string   "fax",               limit: 255
+    t.string   "website",           limit: 255
+    t.string   "tax_number",        limit: 255
+    t.string   "roles",             limit: 255
+    t.string   "type_organization", limit: 255
+    t.string   "workflow_state",    limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "roles", force: :cascade do |t|
+    t.string   "name",           limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "ssl_account_id", limit: 4
+    t.text     "description",    limit: 65535
+    t.string   "status",         limit: 255
+  end
+
+  create_table "sent_reminders", force: :cascade do |t|
+    t.integer  "signed_certificate_id", limit: 4
+    t.text     "body",                  limit: 65535
+    t.string   "recipients",            limit: 255
+    t.string   "subject",               limit: 255
+    t.string   "trigger_value",         limit: 255
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "server_softwares", :force => true do |t|
-    t.string   "title",       :null => false
+  add_index "sent_reminders", ["recipients", "subject", "trigger_value", "expires_at"], name: "index_contacts_on_recipients_subject_trigger_value_expires_at", using: :btree
+
+  create_table "server_softwares", force: :cascade do |t|
+    t.string   "title",       limit: 255, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "support_url"
+    t.string   "support_url", limit: 255
   end
 
-  create_table "sessions", :force => true do |t|
-    t.string   "session_id", :null => false
-    t.text     "data"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+  create_table "sessions", force: :cascade do |t|
+    t.string   "session_id", limit: 255,   null: false
+    t.text     "data",       limit: 65535
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
-  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
-  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
 
-  create_table "shopping_carts", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "guid"
-    t.text     "content"
-    t.string   "token"
-    t.string   "crypted_password"
-    t.string   "password_salt"
-    t.string   "access"
-    t.datetime "created_at",       :null => false
-    t.datetime "updated_at",       :null => false
+  create_table "shopping_carts", force: :cascade do |t|
+    t.integer  "user_id",          limit: 4
+    t.string   "guid",             limit: 255
+    t.text     "content",          limit: 65535
+    t.string   "token",            limit: 255
+    t.string   "crypted_password", limit: 255
+    t.string   "password_salt",    limit: 255
+    t.string   "access",           limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
   end
 
-  create_table "signed_certificates", :force => true do |t|
-    t.integer  "csr_id"
-    t.integer  "parent_id"
-    t.string   "common_name"
-    t.string   "organization"
-    t.text     "organization_unit"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "locality"
-    t.string   "state"
-    t.string   "postal_code"
-    t.string   "country"
+  create_table "signed_certificates", force: :cascade do |t|
+    t.integer  "csr_id",                    limit: 4
+    t.integer  "parent_id",                 limit: 4
+    t.string   "common_name",               limit: 255
+    t.string   "organization",              limit: 255
+    t.text     "organization_unit",         limit: 65535
+    t.string   "address1",                  limit: 255
+    t.string   "address2",                  limit: 255
+    t.string   "locality",                  limit: 255
+    t.string   "state",                     limit: 255
+    t.string   "postal_code",               limit: 255
+    t.string   "country",                   limit: 255
     t.datetime "effective_date"
     t.datetime "expiration_date"
-    t.string   "fingerprintSHA"
-    t.string   "fingerprint"
-    t.text     "signature"
-    t.string   "url"
-    t.text     "body"
+    t.string   "fingerprintSHA",            limit: 255
+    t.string   "fingerprint",               limit: 255
+    t.text     "signature",                 limit: 65535
+    t.string   "url",                       limit: 255
+    t.text     "body",                      limit: 65535
     t.boolean  "parent_cert"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "subject_alternative_names"
-    t.integer  "strength"
-    t.integer  "certificate_lookup_id"
-    t.text     "decoded"
+    t.text     "subject_alternative_names", limit: 65535
+    t.integer  "strength",                  limit: 4
+    t.integer  "certificate_lookup_id",     limit: 4
+    t.text     "decoded",                   limit: 65535
   end
 
-  add_index "signed_certificates", ["csr_id"], :name => "index_signed_certificates_on_csr_id"
+  add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
 
-  create_table "site_checks", :force => true do |t|
-    t.text     "url"
-    t.integer  "certificate_lookup_id"
+  create_table "site_checks", force: :cascade do |t|
+    t.text     "url",                   limit: 65535
+    t.integer  "certificate_lookup_id", limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "site_seals", :force => true do |t|
-    t.string   "workflow_state"
-    t.string   "seal_type"
-    t.string   "ref"
+  create_table "site_seals", force: :cascade do |t|
+    t.string   "workflow_state", limit: 255
+    t.string   "seal_type",      limit: 255
+    t.string   "ref",            limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "site_seals", ["ref"], :name => "index_site_seals_ref"
-  add_index "site_seals", ["workflow_state"], :name => "index_site_seals_workflow_state"
+  add_index "site_seals", ["ref"], name: "index_site_seals_ref", using: :btree
+  add_index "site_seals", ["workflow_state"], name: "index_site_seals_workflow_state", using: :btree
 
-  create_table "ssl_accounts", :force => true do |t|
-    t.string   "acct_number"
-    t.string   "roles",       :default => "--- []"
+  create_table "ssl_accounts", force: :cascade do |t|
+    t.string   "acct_number", limit: 255
+    t.string   "roles",       limit: 255, default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status"
+    t.string   "status",      limit: 255
   end
 
-  create_table "ssl_docs", :force => true do |t|
-    t.integer  "folder_id"
-    t.string   "reviewer"
-    t.string   "notes"
-    t.string   "admin_notes"
-    t.string   "document_file_name"
-    t.string   "document_file_size"
-    t.string   "document_content_type"
+  add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
+
+  create_table "ssl_docs", force: :cascade do |t|
+    t.integer  "folder_id",             limit: 4
+    t.string   "reviewer",              limit: 255
+    t.string   "notes",                 limit: 255
+    t.string   "admin_notes",           limit: 255
+    t.string   "document_file_name",    limit: 255
+    t.string   "document_file_size",    limit: 255
+    t.string   "document_content_type", limit: 255
     t.datetime "document_updated_at"
-    t.string   "random_secret"
+    t.string   "random_secret",         limit: 255
     t.boolean  "processing"
-    t.string   "status"
-    t.string   "display_name"
+    t.string   "status",                limit: 255
+    t.string   "display_name",          limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "sub_order_items", :force => true do |t|
-    t.integer  "sub_itemable_id"
-    t.string   "sub_itemable_type"
-    t.integer  "product_variant_item_id"
-    t.integer  "quantity"
-    t.integer  "amount"
+  create_table "sub_order_items", force: :cascade do |t|
+    t.integer  "sub_itemable_id",         limit: 4
+    t.string   "sub_itemable_type",       limit: 255
+    t.integer  "product_variant_item_id", limit: 4
+    t.integer  "quantity",                limit: 4
+    t.integer  "amount",                  limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "product_id"
+    t.integer  "product_id",              limit: 4
   end
 
-  create_table "surl_blacklists", :force => true do |t|
-    t.string   "fingerprint"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
+  add_index "sub_order_items", ["id", "sub_itemable_id", "sub_itemable_type"], name: "index_sub_order_items_on_sub_itemable", using: :btree
 
-  create_table "surl_visits", :force => true do |t|
-    t.integer  "surl_id"
-    t.integer  "visitor_token_id"
-    t.string   "referer_host"
-    t.string   "referer_address"
-    t.string   "request_uri"
-    t.string   "http_user_agent"
-    t.string   "result"
+  create_table "surl_blacklists", force: :cascade do |t|
+    t.string   "fingerprint", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "surl_visits", ["surl_id"], :name => "index_surl_visits_on_surl_id"
+  create_table "surl_visits", force: :cascade do |t|
+    t.integer  "surl_id",          limit: 4
+    t.integer  "visitor_token_id", limit: 4
+    t.string   "referer_host",     limit: 255
+    t.string   "referer_address",  limit: 255
+    t.string   "request_uri",      limit: 255
+    t.string   "http_user_agent",  limit: 255
+    t.string   "result",           limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
-  create_table "surls", :force => true do |t|
-    t.integer  "user_id"
-    t.text     "original"
-    t.string   "identifier"
-    t.string   "guid"
-    t.string   "username"
-    t.string   "password_hash"
-    t.string   "password_salt"
+  add_index "surl_visits", ["surl_id"], name: "index_surl_visits_on_surl_id", using: :btree
+
+  create_table "surls", force: :cascade do |t|
+    t.integer  "user_id",       limit: 4
+    t.text     "original",      limit: 65535
+    t.string   "identifier",    limit: 255
+    t.string   "guid",          limit: 255
+    t.string   "username",      limit: 255
+    t.string   "password_hash", limit: 255
+    t.string   "password_salt", limit: 255
     t.boolean  "require_ssl"
     t.boolean  "share"
-    t.string   "status"
+    t.string   "status",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "system_audits", :force => true do |t|
-    t.integer  "owner_id"
-    t.string   "owner_type"
-    t.integer  "target_id"
-    t.string   "target_type"
-    t.text     "notes"
-    t.string   "action"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+  create_table "system_audits", force: :cascade do |t|
+    t.integer  "owner_id",    limit: 4
+    t.string   "owner_type",  limit: 255
+    t.integer  "target_id",   limit: 4
+    t.string   "target_type", limit: 255
+    t.text     "notes",       limit: 65535
+    t.string   "action",      limit: 255
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  create_table "tracked_urls", :force => true do |t|
-    t.text     "url"
-    t.string   "md5"
+  create_table "tracked_urls", force: :cascade do |t|
+    t.text     "url",        limit: 65535
+    t.string   "md5",        limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "tracked_urls", ["md5", "url"], :name => "index_tracked_urls_on_md5_and_url", :length => {"md5"=>100, "url"=>100}
-  add_index "tracked_urls", ["md5"], :name => "index_tracked_urls_on_md5"
+  add_index "tracked_urls", ["md5", "url"], name: "index_tracked_urls_on_md5_and_url", length: {"md5"=>100, "url"=>100}, using: :btree
+  add_index "tracked_urls", ["md5"], name: "index_tracked_urls_on_md5", using: :btree
 
-  create_table "trackings", :force => true do |t|
-    t.integer  "tracked_url_id"
-    t.integer  "visitor_token_id"
-    t.integer  "referer_id"
+  create_table "trackings", force: :cascade do |t|
+    t.integer  "tracked_url_id",   limit: 4
+    t.integer  "visitor_token_id", limit: 4
+    t.integer  "referer_id",       limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "remote_ip"
+    t.string   "remote_ip",        limit: 255
   end
 
-  create_table "unsubscribes", :force => true do |t|
-    t.string   "specs"
-    t.text     "domain"
-    t.text     "email"
-    t.text     "ref"
+  create_table "unsubscribes", force: :cascade do |t|
+    t.string   "specs",      limit: 255
+    t.text     "domain",     limit: 65535
+    t.text     "email",      limit: 65535
+    t.text     "ref",        limit: 65535
     t.boolean  "enforce"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "user_groups", :force => true do |t|
-    t.integer "ssl_account_id"
-    t.string  "roles",          :default => "--- []"
-    t.string  "name"
-    t.text    "description"
-    t.text    "notes"
+  create_table "user_groups", force: :cascade do |t|
+    t.integer "ssl_account_id", limit: 4
+    t.string  "roles",          limit: 255,   default: "--- []"
+    t.string  "name",           limit: 255
+    t.text    "description",    limit: 65535
+    t.text    "notes",          limit: 65535
   end
 
-  create_table "user_groups_users", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "user_group_id"
-    t.string   "status"
-    t.string   "notes"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+  create_table "user_groups_users", force: :cascade do |t|
+    t.integer  "user_id",       limit: 4
+    t.integer  "user_group_id", limit: 4
+    t.string   "status",        limit: 255
+    t.string   "notes",         limit: 255
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  create_table "users", :force => true do |t|
-    t.integer  "ssl_account_id"
-    t.string   "login",                                  :null => false
-    t.string   "email",                                  :null => false
-    t.string   "crypted_password"
-    t.string   "password_salt"
-    t.string   "persistence_token",                      :null => false
-    t.string   "single_access_token",                    :null => false
-    t.string   "perishable_token",                       :null => false
-    t.string   "status"
-    t.integer  "login_count",         :default => 0,     :null => false
-    t.integer  "failed_login_count",  :default => 0,     :null => false
+  create_table "users", force: :cascade do |t|
+    t.integer  "ssl_account_id",      limit: 4
+    t.string   "login",               limit: 255,                 null: false
+    t.string   "email",               limit: 255,                 null: false
+    t.string   "crypted_password",    limit: 255
+    t.string   "password_salt",       limit: 255
+    t.string   "persistence_token",   limit: 255,                 null: false
+    t.string   "single_access_token", limit: 255,                 null: false
+    t.string   "perishable_token",    limit: 255,                 null: false
+    t.string   "status",              limit: 255
+    t.integer  "login_count",         limit: 4,   default: 0,     null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
     t.datetime "last_request_at"
     t.datetime "current_login_at"
     t.datetime "last_login_at"
-    t.string   "current_login_ip"
-    t.string   "last_login_ip"
-    t.boolean  "active",              :default => false, :null => false
-    t.string   "openid_identifier"
+    t.string   "current_login_ip",    limit: 255
+    t.string   "last_login_ip",       limit: 255
+    t.boolean  "active",                          default: false, null: false
+    t.string   "openid_identifier",   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "phone"
-    t.string   "organization"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "address3"
-    t.string   "po_box"
-    t.string   "postal_code"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
+    t.string   "first_name",          limit: 255
+    t.string   "last_name",           limit: 255
+    t.string   "phone",               limit: 255
+    t.string   "organization",        limit: 255
+    t.string   "address1",            limit: 255
+    t.string   "address2",            limit: 255
+    t.string   "address3",            limit: 255
+    t.string   "po_box",              limit: 255
+    t.string   "postal_code",         limit: 255
+    t.string   "city",                limit: 255
+    t.string   "state",               limit: 255
+    t.string   "country",             limit: 255
     t.boolean  "is_auth_token"
   end
 
-  add_index "users", ["email"], :name => "index_users_on_email"
-  add_index "users", ["login"], :name => "index_users_on_login"
-  add_index "users", ["perishable_token"], :name => "index_users_on_perishable_token"
+  add_index "users", ["email"], name: "index_users_on_email", using: :btree
+  add_index "users", ["id", "ssl_account_id", "status"], name: "index_users_on_status_and_ssl_account_id", using: :btree
+  add_index "users", ["id", "status"], name: "index_users_on_status", using: :btree
+  add_index "users", ["login", "email"], name: "index_users_on_login_and_email", using: :btree
+  add_index "users", ["login"], name: "index_users_on_login", using: :btree
+  add_index "users", ["perishable_token"], name: "index_users_on_perishable_token", using: :btree
+  add_index "users", ["ssl_account_id", "login", "email"], name: "index_users_on_ssl_account_id_and_login_and_email", using: :btree
+  add_index "users", ["ssl_account_id"], name: "index_users_on_ssl_acount_id", using: :btree
 
-  create_table "v2_migration_progresses", :force => true do |t|
-    t.string   "source_table_name"
-    t.integer  "source_id"
-    t.integer  "migratable_id"
-    t.string   "migratable_type"
+  create_table "v2_migration_progresses", force: :cascade do |t|
+    t.string   "source_table_name", limit: 255
+    t.integer  "source_id",         limit: 4
+    t.integer  "migratable_id",     limit: 4
+    t.string   "migratable_type",   limit: 255
     t.datetime "migrated_at"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "validation_histories", :force => true do |t|
-    t.integer  "validation_id"
-    t.string   "reviewer"
-    t.string   "notes"
-    t.string   "admin_notes"
-    t.string   "document_file_name"
-    t.string   "document_file_size"
-    t.string   "document_content_type"
+  create_table "validation_histories", force: :cascade do |t|
+    t.integer  "validation_id",                 limit: 4
+    t.string   "reviewer",                      limit: 255
+    t.string   "notes",                         limit: 255
+    t.string   "admin_notes",                   limit: 255
+    t.string   "document_file_name",            limit: 255
+    t.string   "document_file_size",            limit: 255
+    t.string   "document_content_type",         limit: 255
     t.datetime "document_updated_at"
-    t.string   "random_secret"
+    t.string   "random_secret",                 limit: 255
     t.boolean  "publish_to_site_seal"
-    t.boolean  "publish_to_site_seal_approval", :default => false
-    t.string   "satisfies_validation_methods"
+    t.boolean  "publish_to_site_seal_approval",             default: false
+    t.string   "satisfies_validation_methods",  limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "validation_histories", ["validation_id"], :name => "index_validation_histories_validation_id"
+  add_index "validation_histories", ["validation_id"], name: "index_validation_histories_validation_id", using: :btree
 
-  create_table "validation_history_validations", :force => true do |t|
-    t.integer  "validation_history_id"
-    t.integer  "validation_id"
+  create_table "validation_history_validations", force: :cascade do |t|
+    t.integer  "validation_history_id", limit: 4
+    t.integer  "validation_id",         limit: 4
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "validation_rules", :force => true do |t|
-    t.string   "description"
-    t.string   "operator"
-    t.integer  "parent_id"
-    t.string   "applicable_validation_methods"
-    t.string   "required_validation_methods"
-    t.string   "required_validation_methods_operator", :default => "AND"
-    t.string   "notes"
+  create_table "validation_rules", force: :cascade do |t|
+    t.string   "description",                          limit: 255
+    t.string   "operator",                             limit: 255
+    t.integer  "parent_id",                            limit: 4
+    t.string   "applicable_validation_methods",        limit: 255
+    t.string   "required_validation_methods",          limit: 255
+    t.string   "required_validation_methods_operator", limit: 255, default: "AND"
+    t.string   "notes",                                limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "validation_rulings", :force => true do |t|
-    t.integer  "validation_rule_id"
-    t.integer  "validation_rulable_id"
-    t.string   "validation_rulable_type"
-    t.string   "workflow_state"
-    t.string   "status"
-    t.string   "notes"
+  create_table "validation_rulings", force: :cascade do |t|
+    t.integer  "validation_rule_id",      limit: 4
+    t.integer  "validation_rulable_id",   limit: 4
+    t.string   "validation_rulable_type", limit: 255
+    t.string   "workflow_state",          limit: 255
+    t.string   "status",                  limit: 255
+    t.string   "notes",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "validation_rulings", ["validation_rulable_id", "validation_rulable_type"], :name => "index_validation_rulings_on_rulable_id_and_rulable_type"
-  add_index "validation_rulings", ["validation_rule_id"], :name => "index_validation_rulings_on_validation_rule_id"
+  add_index "validation_rulings", ["validation_rulable_id", "validation_rulable_type"], name: "index_validation_rulings_on_rulable_id_and_rulable_type", using: :btree
+  add_index "validation_rulings", ["validation_rule_id"], name: "index_validation_rulings_on_validation_rule_id", using: :btree
 
-  create_table "validation_rulings_validation_histories", :force => true do |t|
-    t.integer  "validation_history_id"
-    t.integer  "validation_ruling_id"
-    t.string   "status"
-    t.string   "notes"
+  create_table "validation_rulings_validation_histories", force: :cascade do |t|
+    t.integer  "validation_history_id", limit: 4
+    t.integer  "validation_ruling_id",  limit: 4
+    t.string   "status",                limit: 255
+    t.string   "notes",                 limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "validations", :force => true do |t|
-    t.string   "label"
-    t.string   "notes"
-    t.string   "first_name"
-    t.string   "last_name"
-    t.string   "email"
-    t.string   "phone"
-    t.string   "organization"
-    t.string   "address1"
-    t.string   "address2"
-    t.string   "postal_code"
-    t.string   "city"
-    t.string   "state"
-    t.string   "country"
-    t.string   "website"
-    t.string   "contact_email"
-    t.string   "contact_phone"
-    t.string   "tax_number"
-    t.string   "workflow_state"
-    t.string   "domain"
+  create_table "validations", force: :cascade do |t|
+    t.string   "label",          limit: 255
+    t.string   "notes",          limit: 255
+    t.string   "first_name",     limit: 255
+    t.string   "last_name",      limit: 255
+    t.string   "email",          limit: 255
+    t.string   "phone",          limit: 255
+    t.string   "organization",   limit: 255
+    t.string   "address1",       limit: 255
+    t.string   "address2",       limit: 255
+    t.string   "postal_code",    limit: 255
+    t.string   "city",           limit: 255
+    t.string   "state",          limit: 255
+    t.string   "country",        limit: 255
+    t.string   "website",        limit: 255
+    t.string   "contact_email",  limit: 255
+    t.string   "contact_phone",  limit: 255
+    t.string   "tax_number",     limit: 255
+    t.string   "workflow_state", limit: 255
+    t.string   "domain",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  create_table "visitor_tokens", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "affiliate_id"
-    t.string   "guid"
+  create_table "visitor_tokens", force: :cascade do |t|
+    t.integer  "user_id",      limit: 4
+    t.integer  "affiliate_id", limit: 4
+    t.string   "guid",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "visitor_tokens", ["guid", "affiliate_id"], :name => "index_visitor_tokens_on_guid_and_affiliate_id"
-  add_index "visitor_tokens", ["guid"], :name => "index_visitor_tokens_on_guid"
+  add_index "visitor_tokens", ["guid", "affiliate_id"], name: "index_visitor_tokens_on_guid_and_affiliate_id", using: :btree
+  add_index "visitor_tokens", ["guid"], name: "index_visitor_tokens_on_guid", using: :btree
 
-  create_table "whois_lookups", :force => true do |t|
-    t.integer  "csr_id"
-    t.text     "raw"
-    t.string   "status"
+  create_table "whois_lookups", force: :cascade do |t|
+    t.integer  "csr_id",            limit: 4
+    t.text     "raw",               limit: 65535
+    t.string   "status",            limit: 255
     t.datetime "record_created_on"
     t.datetime "expiration"
     t.datetime "created_at"

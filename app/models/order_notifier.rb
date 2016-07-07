@@ -55,6 +55,14 @@ class OrderNotifier < ActionMailer::Base
     )
   end
 
+  def potential_trademark(contact, certificate_order, domains)
+    @domains = domains
+    @certificate_order=certificate_order
+    mail  subject:       "Potential Trademark Issue for #{certificate_order.ref}",
+          from:          Settings.from_email.no_reply,
+          to:    contact
+  end
+
   def validation_documents_uploaded(contact, certificate_order, files)
     @files=files
     setup(contact, certificate_order)
@@ -166,7 +174,7 @@ class OrderNotifier < ActionMailer::Base
     @sent_on     = Time.now
     @body[:user] = user
   end
-  
+
   def setup_sender_info
     @from       = "The #{Settings.community_name} Team <#{Settings.support_email}>"
     headers     "Reply-to" => "#{Settings.support_email}"

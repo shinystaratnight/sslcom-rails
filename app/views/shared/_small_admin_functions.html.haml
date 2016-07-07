@@ -20,4 +20,4 @@
     %li=link_to "#{co.csr.md5_hash}.txt", http_dcv_file_csr_path(csr), target: "_blank"
   -if co.external_order_number
     %li ext order number: #{co.external_order_number}
-  %li=link_to_function "change ext order number", "change_ext_order_#{co.id}()"
+  %li=link_to "change ext order number", '#', onclick:  "change_ext_order_#{co.id}()"

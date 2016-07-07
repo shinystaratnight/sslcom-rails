@@ -26,14 +26,14 @@ end
 def fill_text(key,value)
   if is_capybara?
     case key
-    when /country$/, /credit_card$/, /expiration_(month|year)$/
+    when /country\z/, /credit_card\z/, /expiration_(month|year)\z/
       select value, from: key
     else
       fill_in(key, with: value)
     end
   else
     case key
-    when /country$/, /credit_card$/, /expiration_[month|year]$/
+    when /country\z/, /credit_card\z/, /expiration_[month|year]\z/
       @browser.select_list(:id, key).set value
     else
       @browser.text_field(:id, key).value = value

@@ -38,8 +38,9 @@ class SignedCertificate < ActiveRecord::Base
 
 
   after_initialize do
-    return unless new_record?
-    self.email_customer ||= false
+    if new_record?
+      self.email_customer ||= false
+    end
   end
 
   after_create do |s|
@@ -361,7 +362,7 @@ class SignedCertificate < ActiveRecord::Base
   def to_nginx(is_windows=nil)
     "".tap do |tmp|
       tmp << body+"\n"
-      certificate_order.bundled_cert_names(is_open_ssl: true).reverse.each do |file_name|
+      certificate_order.bundled_cert_names(is_open_ssl: true, ascending_root: true).each do |file_name|
         file=File.new(certificate_order.bundled_cert_dir+file_name.strip, "r")
         tmp << file.readlines.join("")
       end
@@ -518,7 +519,7 @@ class SignedCertificate < ActiveRecord::Base
       cert.gsub!(/-+BEGIN PKCS7-+/,"")
       cert = BEGIN_TAG + "\n" + cert.strip
       cert.gsub!(/-+END PKCS7-+/,"")
-      cert = cert + "\n" unless cert=~/\n\Z$/
+      cert = cert + "\n" unless cert=~/\n\Z\z/
       cert = cert + END_TAG + "\n"
     else
       unless cert =~ Regexp.new(BEGIN_TAG)
@@ -527,7 +528,7 @@ class SignedCertificate < ActiveRecord::Base
       end
       unless cert =~ Regexp.new(END_TAG)
         cert.gsub!(/-+END CERTIFICATE-+/,"")
-        cert = cert + "\n" unless cert=~/\n\Z$/
+        cert = cert + "\n" unless cert=~/\n\Z\z/
         cert = cert + END_TAG + "\n"
       end
     end

@@ -21,7 +21,7 @@ module Rails
         environment_file = environment_code
         
         # Get each line that starts with config.gem
-        gem_lines = environment_file.split("\n").select {|l| l =~ /^\s*config\.gem/}
+        gem_lines = environment_file.split("\n").select {|l| l =~ /\A\s*config\.gem/}
         
         # Toss those lines to a generator class; the lines are evaluated in the 
         # context of that instance.

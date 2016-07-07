@@ -32,17 +32,15 @@ class Csr < ActiveRecord::Base
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
-  #default_scope order(:created_at.desc) #theres about 17 records without proper bodies we should clean up later
-  default_scope where{common_name != nil}.order(:created_at.desc)
+  default_scope{ where{csrs.common_name != nil}.order("created_at desc")}
 
   scope :search, lambda {|term|
-    {:conditions => ["common_name like ?", '%'+term+'%'],
-     :include=>{:certificate_content=>:certificate_order}}
+    where(common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
 
-  scope :pending, joins(:certificate_content).
+  scope :pending, ->{joins(:certificate_content).
       where{certificate_contents.workflow_state >> ['pending_validation', 'validated']}.
-      order(:certificate_contents=>:updated_at)
+      order("certificate_contents.updated_at asc")}
 
   scope :range, lambda{|start, finish|
     if start.is_a? String
@@ -128,7 +126,7 @@ class Csr < ActiveRecord::Base
     end
     unless (csr =~ Regexp.new(END_TAG))
       csr.gsub!(/-+END CERTIFICATE REQUEST-+/,"")
-      csr = csr + "\n" unless csr=~/\n\Z$/
+      csr = csr + "\n" unless csr=~/\n\Z\z/
       csr = csr + END_TAG + "\n"
     end
     csr
@@ -139,7 +137,7 @@ class Csr < ActiveRecord::Base
   end
 
   def is_ip_address?
-    common_name.index(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/)==0 if common_name
+    common_name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if common_name
   end
 
   def is_server_name?
@@ -148,7 +146,7 @@ class Csr < ActiveRecord::Base
 
   def is_fqdn?
     unless is_ip_address? && is_server_name?
-      common_name.index(/^[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/ix)==0 if common_name
+      common_name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0 if common_name
     end
   end
 
@@ -173,7 +171,7 @@ class Csr < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    common_name.gsub(/^\*\./, "").downcase unless common_name.blank?
+    common_name.gsub(/\A\*\./, "").downcase unless common_name.blank?
   end
 
   def dcv_url(secure=false)
@@ -188,6 +186,7 @@ class Csr < ActiveRecord::Base
     retries=2
     begin
       timeout(Surl::TIMEOUT_DURATION) do
+        r=""
         http_or_s = "http"
         if retries<2
           http_or_s = "https"
@@ -196,9 +195,10 @@ class Csr < ActiveRecord::Base
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
+          response = http.request(request)
+          r = response.body unless response.kind_of? Net::HTTPRedirection
         else
-          r=open(dcv_url).read
+          r = open(dcv_url).read(redirect: false)
         end
         return http_or_s if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end

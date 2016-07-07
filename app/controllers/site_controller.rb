@@ -37,7 +37,7 @@ class SiteController < ApplicationController
     #if stale?(:etag => last_item, :last_modified => last_item.updated_at.utc)
     #  render action: 'sitemap.xml'
     #end
-    if current_subdomain==Reseller::SUBDOMAIN
+    if request.subdomain==Reseller::SUBDOMAIN
       render action: 'reseller_sitemap.xml', content_type: 'application/xml', layout: false
     else
       render action: 'sitemap.xml', content_type: 'application/xml', layout: false

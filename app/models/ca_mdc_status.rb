@@ -1,7 +1,7 @@
 class CaMdcStatus < CaApiRequest
 
   def response_code
-    response =~ /^(\d)\n/
+    response =~ /\A(\d)\n/
     $1.to_i
   end
 

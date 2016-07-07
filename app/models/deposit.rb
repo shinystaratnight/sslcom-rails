@@ -1,6 +1,6 @@
 class Deposit < ActiveRecord::Base
   acts_as_sellable :cents => :amount, :currency => false
-  has_many    :orders, :through => :line_items, :include => :stored_preferences
+  has_many    :orders, ->{includes(:stored_preferences)}, :through => :line_items
 
 
   def price=(amount)

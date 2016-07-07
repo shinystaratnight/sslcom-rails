@@ -1,4 +1,4 @@
--title = current_subdomain==Reseller::SUBDOMAIN ? "Reseller login" : "Customer login"
+-title = request.subdomain==Reseller::SUBDOMAIN ? "Reseller login" : "Customer login"
 -content_for :title, title
 .reseller_registration_profile
   =form_for @user_session, :url => user_session_path do |f|

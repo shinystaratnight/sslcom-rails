@@ -31,38 +31,38 @@ end
 # Cucumber Assertions
 #
 
-Given /^I am the user "(.*)"$/ do |login|
+Given /\AI am the user "(.*)"\z/ do |login|
   create_user login
 end
 
-Given /^I am logged in as "(.*)"$/ do |login|
+Given /\AI am logged in as "(.*)"\z/ do |login|
   create_user login
   login_user
 end
 
-#Given /^I am not logged in$/ do
+#Given /\AI am not logged in\z/ do
 #  logout_user
 #end
 
-When /^I Log In$/ do
+When /\AI Log In\z/ do
   login_user
 end
 
-When /^I logout$/ do
+When /\AI logout\z/ do
   logout_user
 end
 
-Then /^there should be a session$/ do
+Then /\Athere should be a session\z/ do
   user_session
   @session.should_not be nil
 end
 
-Then /^there should not be a session$/ do
+Then /\Athere should not be a session\z/ do
   user_session
   @session.should be nil
 end
 
-Then /^the user should be "([^"]*)"$/ do |login| #"
+Then /\Athe user should be "([^"]*)"\z/ do |login| #"
   user_session
   @session.user.login.should be == login
 end
