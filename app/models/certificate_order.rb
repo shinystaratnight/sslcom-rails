@@ -1386,6 +1386,7 @@ class CertificateOrder < ActiveRecord::Base
     else
       cc.signing_request = certificate_content.signing_request
       cc.server_software = certificate_content.server_software
+      cc.agreement = certificate_content.agreement #backwards compatibility with older certificate_content objects
     end
     if cc.new?
       cc.submit_csr!

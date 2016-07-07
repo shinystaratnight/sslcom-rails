@@ -24,6 +24,8 @@ class CertificateContent < ActiveRecord::Base
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
    po_box address1 address2 address3 city state postal_code email phone ext fax)
 
+  TRADEMARKS = %w(google apple paypal amazon cloudapp microsoft amzn ssltools certchat certlock)
+
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
       1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
@@ -79,7 +81,11 @@ class CertificateContent < ActiveRecord::Base
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         unless csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
-          certificate_order.apply_for_certificate(options)
+          unless self.infringement.empty? # possible trademark problems
+            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver
+          else
+            certificate_order.apply_for_certificate(options)
+          end
           last_sent=unless certificate_order.certificate.is_ucc?
             csr.domain_control_validations.last_sent
           else
@@ -127,7 +133,7 @@ class CertificateContent < ActiveRecord::Base
 
   after_initialize do
     if new_record?
-      self.ajax_check_csr ||=false
+      self.ajax_check_csr ||= false
     end
   end
 
@@ -155,6 +161,15 @@ class CertificateContent < ActiveRecord::Base
       names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}
     end
     write_attribute(:domains, names)
+  end
+
+  # are any of the sub/domains trademarks?
+  def infringement
+    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|trademark.in? domain}}.compact
+  end
+
+  def self.infringers
+    CertificateContent.find_all{|cc|!cc.infringement.empty?}
   end
 
   def domains

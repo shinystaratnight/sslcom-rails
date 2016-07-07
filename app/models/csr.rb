@@ -186,6 +186,7 @@ class Csr < ActiveRecord::Base
     retries=2
     begin
       timeout(Surl::TIMEOUT_DURATION) do
+        r=""
         http_or_s = "http"
         if retries<2
           http_or_s = "https"
@@ -194,9 +195,10 @@ class Csr < ActiveRecord::Base
           http.use_ssl = true
           http.verify_mode = OpenSSL::SSL::VERIFY_NONE
           request = Net::HTTP::Get.new(uri.request_uri)
-          r = http.request(request).body
+          response = http.request(request)
+          r = response.body unless response.kind_of? Net::HTTPRedirection
         else
-          r=open(dcv_url).read
+          r = open(dcv_url).read(redirect: false)
         end
         return http_or_s if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
       end

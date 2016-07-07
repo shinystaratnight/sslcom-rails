@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
 
   acts_as_authentic do |c|
+    c.logged_in_timeout = 20.minutes
     c.validate_email_field = false
     c.session_ids = [nil, :shadow],
     c.transition_from_crypto_providers = LegacySslMd5,
@@ -234,6 +235,13 @@ class User < ActiveRecord::Base
     sysadmin=Role.find_by_name("sysadmin")
     u.roles << Role.find_by_name("sysadmin") unless u.roles.include?(sysadmin)
     u.roles.delete(Role.find_by_name("customer"))
+  end
+
+  def self.remove_admin(username)
+    u=User.find_by_login(username)
+    customer=Role.find_by_name("customer")
+    u.roles << Role.find_by_name("customer") unless u.roles.include?(customer)
+    u.roles.delete(Role.find_by_name("sysadmin"))
   end
 
   def self.change_login(old, new)

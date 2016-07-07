@@ -86,10 +86,6 @@
             .subheading Total Amount To Charge
             =render :partial => "orders/form", :locals => {:f => f, :object => Order.new}
             -#=link_to image_tag("https://www.paypal.com/en_US/i/btn/btn_xpressCheckout.gif"), :controller => 'paypal_express', :action => 'checkout'
-    -if certificate
-      #subscriber_agreement
-        %p By placing this order you agree to the #{certificate.subscriber_agreement[:title]} below:
-        =text_area_tag :agreement, render(file: certificate.subscriber_agreement[:location]), :size=>"106x8"
     #button_container
       =render partial: 'shared/prev_next_buttons'
     -if DEPLOYMENT_CLIENT=~/www.ssl.com/

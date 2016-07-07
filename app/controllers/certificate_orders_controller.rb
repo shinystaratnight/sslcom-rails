@@ -111,11 +111,11 @@ class CertificateOrdersController < ApplicationController
         @certificate_order.has_csr=true
         @certificate = @certificate_order.mapped_certificate
         @certificate_content = @certificate_order.certificate_content
+        @certificate_content.agreement=true
         return render '/certificates/buy', :layout=>'application'
       end
       unless @certificate_order.certificate_content.csr_submitted?
         redirect_to certificate_order_url(@certificate_order)
-        # redirect_to @certificate_order.workflow_paid=='paid' ? certificate_order_url(@certificate_order) :
       else
         csr = @certificate_order.certificate_content.csr
         setup_registrant()
@@ -142,6 +142,7 @@ class CertificateOrdersController < ApplicationController
                                          server_software_id: @certificate_order.certificate_content.server_software_id)
       # @certificate_content.additional_domains = domains
       #reset dcv validation
+      @certificate_content.agreement=true
       @certificate_order.validation.validation_rules.each do |vr|
         if vr.description=~/\Adomain/
           ruling=@certificate_order.validation.validation_rulings.detect{|vrl| vrl.validation_rule == vr}
