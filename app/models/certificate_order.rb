@@ -19,6 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
+  has_many    :system_audits, :as => :target, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
@@ -103,13 +104,13 @@ class CertificateOrder < ActiveRecord::Base
             (ssl_account.users.login =~ "%#{term}%") |
             (ssl_account.users.email =~ "%#{term}%") |
             (certificate_contents.domains =~ "%#{term}%") |
-            (certificate_contents.csr.common_name =~ "%#{term}%") |
-            (certificate_contents.csr.organization =~ "%#{term}%") |
-            (certificate_contents.csr.organization_unit =~ "%#{term}%") |
-            (certificate_contents.csr.email =~ "%#{term}%") |
-            (certificate_contents.csr.sig_alg =~ "%#{term}%") |
-            (certificate_contents.csr.state =~ "%#{term}%") |
-            (certificate_contents.csr.subject_alternative_names =~ "%#{term}%") |
+            (certificate_contents.csrs.common_name =~ "%#{term}%") |
+            (certificate_contents.csrs.organization =~ "%#{term}%") |
+            (certificate_contents.csrs.organization_unit =~ "%#{term}%") |
+            (certificate_contents.csrs.email =~ "%#{term}%") |
+            (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
+            (certificate_contents.csrs.state =~ "%#{term}%") |
+            (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
             (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
             (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
             (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
