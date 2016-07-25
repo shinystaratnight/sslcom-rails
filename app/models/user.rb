@@ -23,13 +23,15 @@ class User < ActiveRecord::Base
   acts_as_authentic do |c|
     c.logged_in_timeout = 20.minutes
     c.validate_email_field = false
-    c.session_ids = [nil, :shadow],
-    c.transition_from_crypto_providers = LegacySslMd5,
+    c.session_ids = [nil, :shadow]
+    # c.transition_from_crypto_providers = [LegacySslMd5,Authlogic::CryptoProviders::Sha512]
+    # c.crypto_provider = Authlogic::CryptoProviders::SCrypt
+    c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.validates_length_of_password_field_options =
-      {:on => :update, :minimum => 4,
+      {:on => :update, :minimum => 8,
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
     c.validates_length_of_password_confirmation_field_options =
-      {:on => :update, :minimum => 4,
+      {:on => :update, :minimum => 8,
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
 

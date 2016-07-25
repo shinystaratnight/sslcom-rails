@@ -320,6 +320,7 @@ class CertificateOrder < ActiveRecord::Base
         halt unless payment
         post_process_csr unless is_prepaid?
       end
+      event :cancel, :transitions_to => :canceled
     end
 
     state :paid do

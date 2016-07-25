@@ -5,7 +5,11 @@ class BillingProfile < ActiveRecord::Base
 
   cattr_accessor :password
   attr_accessor :number
-  attr_encrypted :card_number, :key => '7ba44e6b-69d2-4d6d-889b-2872c0140092', :mode => :per_attribute_iv_and_salt
+  # attr_encrypted :card_number, :key => '7ba44e6b-69d2-4d6d-889b-2872c0140092',
+  #                algorithm: 'aes-256-cbc', mode: :single_iv_and_salt, insecure_mode: true
+
+  attr_encrypted :card_number, :key => '7ba44e6b-69d2-4d6d-889b-2872c0140092', :mode => :per_attribute_iv_and_salt,
+                 insecure_mode: true
 
   ALL_COLUMNS = %w(description first_name last_name company address_1 address_2
     postal_code city state country phone vat credit_card card_number
