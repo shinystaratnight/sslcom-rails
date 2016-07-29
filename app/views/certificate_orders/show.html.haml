@@ -304,7 +304,8 @@
                             %li
                               =f.text_area :notes, cols: 40, rows: 10
                       .certificate_details_box
-                        %strong Audit Log
+                        %strong audit log
+                        -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
                         -@certificate_order.system_audits.each do |audit|
-                          =audit.created_at
-                          =audit.action
+                          -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                        =text_area_tag :audits, audits, :size=>"30x10"

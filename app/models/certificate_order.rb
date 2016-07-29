@@ -93,36 +93,36 @@ class CertificateOrder < ActiveRecord::Base
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
-    result = joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-        joins{certificate_contents.csr.signed_certificates.outer}.joins{ssl_account.outer}.joins{ssl_account.users.outer}
+    result = joins{certificate_contents.outer}.joins{certificate_contents.unscoped_csr.outer}.
+        joins{certificate_contents.unscoped_csr.signed_certificates.outer}.joins{ssl_account.outer}.joins{ssl_account.users.outer}
     unless term.blank?
       result = result.where{
         (ref =~ "%#{term}%") |
-            (external_order_number =~ "%#{term}%") |
-            (notes =~ "%#{term}%") |
-            (ssl_account.acct_number =~ "%#{term}%") |
-            (ssl_account.users.login =~ "%#{term}%") |
-            (ssl_account.users.email =~ "%#{term}%") |
-            (certificate_contents.domains =~ "%#{term}%") |
-            (certificate_contents.csrs.common_name =~ "%#{term}%") |
-            (certificate_contents.csrs.organization =~ "%#{term}%") |
-            (certificate_contents.csrs.organization_unit =~ "%#{term}%") |
-            (certificate_contents.csrs.email =~ "%#{term}%") |
-            (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
-            (certificate_contents.csrs.state =~ "%#{term}%") |
-            (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
-            (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
+        (external_order_number =~ "%#{term}%") |
+        (notes =~ "%#{term}%") |
+        (ssl_account.acct_number =~ "%#{term}%") |
+        (ssl_account.users.login =~ "%#{term}%") |
+        (ssl_account.users.email =~ "%#{term}%") |
+        (certificate_contents.domains =~ "%#{term}%") |
+        (certificate_contents.csrs.common_name =~ "%#{term}%") |
+        (certificate_contents.csrs.organization =~ "%#{term}%") |
+        (certificate_contents.csrs.organization_unit =~ "%#{term}%") |
+        (certificate_contents.csrs.email =~ "%#{term}%") |
+        (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
+        (certificate_contents.csrs.state =~ "%#{term}%") |
+        (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+        (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
     end
     %w(postal_code signature fingerprint).each do |field|
       query=filters[field.to_sym]

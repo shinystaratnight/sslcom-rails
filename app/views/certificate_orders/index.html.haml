@@ -90,6 +90,12 @@
                                     %strong notes (viewable only by #{Settings.community_name} team)
                                   %li
                                     =f.text_area :notes, cols: 40, rows: 10
+                              .certificate_details_box
+                                %strong audit log
+                                -audits=(co.system_audits.empty? ? "n/a" : "###")+"\n"
+                                -co.system_audits.each do |audit|
+                                  -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                                =text_area_tag :audits, audits, :size=>"30x10"
                       .certificate_details_box
                         %ul
                           %li
