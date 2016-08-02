@@ -51,7 +51,6 @@ class UserSessionsController < ApplicationController
             reseller_tier.label, :path => "/", :expires => Settings.
             cart_cookie_days.to_i.days.from_now}
         end
-#        if user.duplicate_v2_users.empty?
         flash[:notice] = "Successfully logged in." unless request.xhr?
         format.js   {render :json=>url_for_js(user)}
         format.html {redirect_back_or_default account_url}

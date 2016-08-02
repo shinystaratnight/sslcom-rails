@@ -2,7 +2,7 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
-    var signed_certificate_exists = <%=!@cc.csr.signed_certificate.blank?%>;
+    var signed_certificate_exists = <%=@cc.csr && !@cc.csr.signed_certificate.blank?%>;
     var submit_label;
     $('#signed_certificate_body').val($('textarea#tmp_signed_certificate').val());
     $('#csr_body').val($('textarea#tmp_csr').val());
