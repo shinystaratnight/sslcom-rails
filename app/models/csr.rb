@@ -35,7 +35,7 @@ class Csr < ActiveRecord::Base
   default_scope{ where{csrs.common_name != nil}.order("created_at desc")}
 
   scope :search, lambda {|term|
-    where(common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
+    where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }
 
   scope :pending, ->{joins(:certificate_content).
