@@ -70,4 +70,5 @@ Vagrant.configure(2) do |config|
   # SHELL
   config.vm.network "forwarded_port", guest: 1234, host: 61234, auto_correct: true
   config.vm.network "forwarded_port", guest: 10000, host: 10000, auto_correct: true
+  config.vm.network "forwarded_port", guest: 3000, host: 3100, auto_correct: true
 end
