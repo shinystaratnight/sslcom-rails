@@ -5,8 +5,6 @@ gem 'rails', '~> 4.2.6'
 # required Rails 4 upgrade
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
-# gem 'plugger'
-# gem 'preferences'
 gem 'dynamic_form'
 
 gem 'mysql2'
@@ -15,14 +13,11 @@ gem "rabl"
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
-#gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
-# gem 'subdomain-fu', :git => "git://github.com/mbleigh/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 gem 'paperclip'
-# gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", '~> 2.0'
@@ -38,7 +33,6 @@ gem 'jammit'
 gem "config"
 gem 'sinatra'
 gem 'uuidtools'
-# gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
@@ -93,6 +87,7 @@ group :development do
   gem 'spring'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'annotate'
 end
 
 group :development, :test do
