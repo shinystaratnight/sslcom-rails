@@ -75,10 +75,6 @@ gem 'jbuilder'
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc',          group: :doc
 
-# Bundle gems for the local environment. Make sure to
-# put test-only gems in this group so their generators
-# and rake tasks are available in development mode:
-#
 group :development do
   gem 'foreman'
   gem 'dotenv-rails'
@@ -95,12 +91,9 @@ group :development, :test do
   gem "builder"
   gem 'ruby_parser'
   gem "rspec-rails", '~> 2.14.0'
-  #gem 'activerecord-sqlserver-adapter'
   gem 'ruby-odbc'
   gem 'launchy'
   gem 'factory_girl_rails'
-  #gem 'spork'
-  #gem 'active_reload'
 end
 
 group :test do
@@ -113,7 +106,6 @@ group :test do
   gem 'webmock'
   gem 'faker'
   gem 'guard-rspec'
-  gem 'launchy' #http://everydayrails.com/2012/03/12/testing-series-rspec-setup.html#sthash.huwPdI5i.dpuf
 end
 
 group :assets do
