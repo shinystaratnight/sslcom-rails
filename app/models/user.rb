@@ -24,8 +24,6 @@ class User < ActiveRecord::Base
     c.logged_in_timeout = 20.minutes
     c.validate_email_field = false
     c.session_ids = [nil, :shadow]
-    # c.transition_from_crypto_providers = [LegacySslMd5,Authlogic::CryptoProviders::Sha512]
-    # c.crypto_provider = Authlogic::CryptoProviders::SCrypt
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.validates_length_of_password_field_options =
       {:on => :update, :minimum => 8,
@@ -41,12 +39,12 @@ class User < ActiveRecord::Base
 
   default_scope{ where{status << ['disabled']}.order("created_at desc")}
 
-  scope :search, lambda {|term|
+  scope :search, -> {|term|
     joins{ssl_account.outer}.where{
       (ssl_account.acct_number =~ "%#{term}%") | (login =~ "%#{term}%") | (email =~ "%#{term}%")}
   }
 
-  scope :with_role, lambda {|term|
+  scope :with_role, -> {|term|
     joins{roles.outer}.where{
       (roles.name=~ "%#{term}%")}
   }
