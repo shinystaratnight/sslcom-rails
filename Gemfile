@@ -1,12 +1,9 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.6'
-
-# required Rails 4 upgrade
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
-
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"
@@ -52,27 +49,11 @@ gem 'public_suffix'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancan'
 gem 'unscoped_associations'
-
-# Deploy with Capistrano
-#gem 'rvm-capistrano'
-
-# Bundle the extra gems:
-# gem 'bj'
 gem 'nokogiri'
-# gem 'sqlite3-ruby', :require => 'sqlite3'
-# gem 'aws-s3', :require => 'aws/s3'
-
 gem 'coffee-rails'
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
-
-# Use jquery as the JavaScript library
 gem 'jquery-rails'
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder'
-# bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc',          group: :doc
 
 group :development do
