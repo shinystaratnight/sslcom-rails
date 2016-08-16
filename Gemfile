@@ -41,7 +41,7 @@ gem 'request_exception_handler'
 gem 'rvm-capistrano'
 gem 'newrelic_rpm'
 gem 'dalli'
-gem 'attr_encrypted'
+gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
 gem "daemons"
 gem 'delayed_job_groups_plugin'
