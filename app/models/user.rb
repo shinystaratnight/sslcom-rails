@@ -232,13 +232,13 @@ class User < ActiveRecord::Base
 
   def self.make_admin(username)
     u = User.find_by_login(username)
-    u.roles << Role.find_by_name("sysadmin") unless u.roles.include?("sysadmin")
+    u.roles << Role.find_by_name("sysadmin") unless u.roles.map(&:name).include?("sysadmin")
     u.roles.delete(Role.find_by_name("customer"))
   end
 
   def self.remove_admin(username)
     u = User.find_by_login(username)
-    u.roles << Role.find_by_name("customer") unless u.roles.include?("customer")
+    u.roles << Role.find_by_name("customer") unless u.roles..map(&:name).include?("customer")
     u.roles.delete(Role.find_by_name("sysadmin"))
   end
 
