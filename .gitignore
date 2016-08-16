@@ -13,6 +13,6 @@ config/ssl/
 log/
 tmp/
 /.idea/workspace.xml
-
+.DS_Store
 .vagrant/machines/default/virtualbox/creator_uid
 .vagrant/machines/default/virtualbox/synced_folders
