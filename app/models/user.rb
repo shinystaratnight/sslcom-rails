@@ -238,7 +238,7 @@ class User < ActiveRecord::Base
 
   def self.remove_admin(username)
     u = User.find_by_login(username)
-    u.roles << Role.find_by_name("customer") unless u.roles..map(&:name).include?("customer")
+    u.roles << Role.find_by_name("customer") unless u.roles.map(&:name).include?("customer")
     u.roles.delete(Role.find_by_name("sysadmin"))
   end
 
