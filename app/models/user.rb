@@ -229,7 +229,7 @@ class User < ActiveRecord::Base
   end
 
   private
-
+#These will need to be public methods accessible via the ui
   def self.make_admin(username)
     u = User.find_by_login(username)
     u.roles << Role.find_by_name("sysadmin") unless u.roles.map(&:name).include?("sysadmin")
