@@ -55,6 +55,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
+gem 'airbrake', '~> 5.4'
 
 group :development do
   gem 'foreman'
