@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_filter :require_user, :only => [:show, :edit, :update, :cancel_reseller_signup]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
-  before_filter :find_user, :set_admin_flag, :only=>[:edit_email, 
+  before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login]
 #  before_filter :index, :only=>:search
@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   def create
     @user.create_ssl_account
-    if request.subdomain==Reseller::SUBDOMAIN
+    if request.subdomain == Reseller::SUBDOMAIN
       @user.ssl_account.add_role! "new_reseller"
       @user.ssl_account.set_reseller_default_prefs
       @user.roles << Role.find_by_name(Role::RESELLER)
@@ -59,7 +59,7 @@ class UsersController < ApplicationController
       flash[:notice] = notice
       #in production heroku, requests coming FROM a subdomain will not transmit
       #flash messages to the target page. works fine in dev though
-      redirect_to(request.subdomain==Reseller::SUBDOMAIN ? login_url(:notice=>notice) : login_url)
+      redirect_to(request.subdomain == Reseller::SUBDOMAIN ? login_url(:notice => notice) : login_url)
     else
       render :action => :new
     end
@@ -80,11 +80,11 @@ class UsersController < ApplicationController
       current_user.roles.delete Role.find_by_name(Role::RESELLER)
     end
     current_user.roles << Role.find_by_name(Role::CUSTOMER) unless current_user.role_symbols.include?(Role::CUSTOMER.to_sym)
-    flash[:notice]="reseller signup has been canceled"
-    @user=current_user #for rable object reference
+    flash[:notice] = "reseller signup has been canceled"
+    @user = current_user #for rable object reference
   end
 
-  def admin_show    
+  def admin_show
   end
 
   def edit
@@ -106,23 +106,23 @@ class UsersController < ApplicationController
   end
 
   def change_login
-    old=@user.login
-    @user.login=params["login"]
+    old = @user.login
+    @user.login = params["login"]
     if(@user.valid?)
       User.change_login old, params["login"]
       SystemAudit.create(owner: current_user, target: @user,
                          notes: "changed login from #{old} to #{params["login"]}",
                          action: "UserController#change_login")
     else
-      @user.login=old
+      @user.login = old
     end
     render action: :admin_show
   end
 
   def consolidate
-    login, email=params[:login], params[:email]
-    keep_login = (@user.login==login)
-    keep_email = (@user.email==email)
+    login, email = params[:login], params[:email]
+    keep_login = (@user.login == login)
+    keep_email = (@user.email == email)
     if keep_login && keep_email
       #delete all duplicate_v2_users
     elsif email && login && !(keep_login && keep_email)
