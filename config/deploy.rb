@@ -46,7 +46,7 @@ set :domain, '54.235.218.187' #WP production
 # Alternate SCM
 # Git
 set :scm, :git
-set :repository, "git@github.com:codelux/ssl_com_rails3.git"
+set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_to, "/home/ubuntu/sites/#{application}"
 set :deploy_via, :remote_cache
 
