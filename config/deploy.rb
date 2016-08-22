@@ -1,4 +1,4 @@
-set :rvm_ruby_string, 'ruby-1.9.3-p125@rails323'                     # Or:
+set :rvm_ruby_string, '2.3.0p0'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
