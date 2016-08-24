@@ -3,7 +3,7 @@
 session_params= if Rails.env=~/development/
                   {key: '_ssl_com4_session', domain:".ssl.local"}
                 else
-                  {key: '_ssl_com3_session', domain: ".ssl.com", expires: 20.minutes}
+                  {key: '_ssl_com3_session', domain: ".ssl.com"}
                 end
 SslCom::Application.config.session_store :cookie_store, session_params
 
