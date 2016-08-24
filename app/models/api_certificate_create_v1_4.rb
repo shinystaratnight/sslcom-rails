@@ -56,8 +56,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
-  validates :verify_dcv, on: :create, if: "!domains.blank?"
-  validates :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate :verify_dcv, on: :create, if: "!domains.blank?"
+  validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
 
   before_validation do
     self.period = period.to_s unless period.blank?
