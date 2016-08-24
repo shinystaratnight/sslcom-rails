@@ -1,29 +1,29 @@
 class CertificateApiRequest < ActiveRecord::Base
   serialize :other_domains
-  validate :account_key, :secret_key, :product, :period, :server_count,
+  validates :account_key, :secret_key, :product, :period, :server_count,
            :server_software, :csr, :csr_obj, :is_customer_validated,
            :dcv_email_address, :country, presence: true
 
   #delete below when csr parser can obtain street and zip
-  validate :street_address_1, :postal_code, presence: true
+  validates :street_address_1, :postal_code, presence: true
   #uncomment below when csr parser can obtain street and zip
-#  validate :street_address_1, presence: true, if: lambda{|c|c.csr_obj.street1.blank?}
-#  validate :postal_code, presence: true, if: lambda{|c|c.csr_obj.postal_code.blank?}
+#  validates :street_address_1, presence: true, if: lambda{|c|c.csr_obj.street1.blank?}
+#  validates :postal_code, presence: true, if: lambda{|c|c.csr_obj.postal_code.blank?}
 
-  validate :other_domains, :domain, :common_names_flag, presence: false, unless: lambda{|c|c.product=~/[md|ucc]/}
-  validate :other_domains, presence: true, if: lambda{|c|c.product=~/[md|ucc]/ && c.csr_object.san.blank?}
-  validate :common_names_flag, presence: false, unless: lambda{|c|c.product=~/[md]/}
-  validate :incorporation_date, :registered_country_name , presence: true, if: lambda{|c|c.product=~/[ev]/}
-  validate :registered_locality_name, :registered_state_or_province_name, :registered_country_name,
+  validates :other_domains, :domain, :common_names_flag, presence: false, unless: lambda{|c|c.product=~/[md|ucc]/}
+  validates :other_domains, presence: true, if: lambda{|c|c.product=~/[md|ucc]/ && c.csr_object.san.blank?}
+  validates :common_names_flag, presence: false, unless: lambda{|c|c.product=~/[md]/}
+  validates :incorporation_date, :registered_country_name , presence: true, if: lambda{|c|c.product=~/[ev]/}
+  validates :registered_locality_name, :registered_state_or_province_name, :registered_country_name,
            :incorporation_date, :assumed_name, presence: false, unless: lambda{|c|c.product=~/[ev]/}
-  validate :organization_name, presence: true, if: lambda{|c|c.csr_obj.organization.blank?}
-  validate :locality_name, presence: true, if: lambda{|c|c.csr_obj.locality.blank?}
-  validate :state_or_province_name, presence: true, if: lambda{|c|c.csr_obj.state.blank?}
-  validate :dcv_email_address, :email_address, :contact_email_address, format: :email
-  validate :business_category, format: /[bcd]/
-  validate :common_names_flag, format: /[01]/
-  
-  ERROR_CODES = { 
+  validates :organization_name, presence: true, if: lambda{|c|c.csr_obj.organization.blank?}
+  validates :locality_name, presence: true, if: lambda{|c|c.csr_obj.locality.blank?}
+  validates :state_or_province_name, presence: true, if: lambda{|c|c.csr_obj.state.blank?}
+  validates :dcv_email_address, :email_address, :contact_email_address, format: :email
+  validates :business_category, format: /[bcd]/
+  validates :common_names_flag, format: /[01]/
+
+  ERROR_CODES = {
     #"-1" => "Request was not made over https!",
     "-2" => "'xxxx' is an unrecognised argument!",
     "-3" => "The 'xxxx' argument is missing!",
