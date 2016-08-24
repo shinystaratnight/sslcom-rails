@@ -12,7 +12,7 @@ class SignedCertificate < ActiveRecord::Base
   belongs_to :certificate_lookup
   validates_presence_of :body, :if=> Proc.new{|r| !r.parent_cert}
   validates :csr_id, :presence=>true, :on=>:save
-  validates :proper_certificate?, :if=>
+  validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
@@ -535,3 +535,4 @@ class SignedCertificate < ActiveRecord::Base
     cert
   end
 end
+

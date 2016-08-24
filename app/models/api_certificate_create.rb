@@ -50,7 +50,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
   validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
   #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
-  validates :verify_dcv_email_address, on: :create
+  validate :verify_dcv_email_address, on: :create
 
   before_validation do
     if new_record?

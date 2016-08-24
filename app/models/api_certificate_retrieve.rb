@@ -18,7 +18,7 @@ class ApiCertificateRetrieve < ApiCertificateRequest
   validates :show_subscriber_agreement, format: /[YNyn]/, if: lambda{|c|c.show_subscriber_agreement}
   validates :show_domains, format: /[YNyn]/, if: lambda{|c|c.show_domains}
   validates :show_ext_status, format: /[YNyn]/, if: lambda{|c|c.show_ext_status}
-  validates :order_exists, if: lambda{|c|c.ref}
+  validate :order_exists, if: lambda{|c|c.ref}
 
   attr_accessor :validity_period, :domains, :ext_status, :certificates, :order_status, :certificate_order,
                 :common_name, :subject_alternative_names, :effective_date, :expiration_date, :algorithm,

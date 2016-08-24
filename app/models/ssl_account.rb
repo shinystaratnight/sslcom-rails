@@ -65,12 +65,12 @@ class SslAccount < ActiveRecord::Base
   TRIGGER_RANGE = -364..364
 
   SETTINGS_SECTIONS.each do |item|
-    validates "#{item}_recipients_format".to_sym,
+    validate "#{item}_recipients_format".to_sym,
       :unless=>"preferred_#{item}_recipients=='0'"
   end
-  validates :reminder_notice_destinations_format,
+  validate :reminder_notice_destinations_format,
     :unless=>"preferred_reminder_notice_destinations=='0'"
-  validates :preferred_reminder_notice_triggers_format
+  validate :preferred_reminder_notice_triggers_format
   validates :acct_number, presence: true, uniqueness: true, on: :create
 
   default_scope ->{order("created_at desc")}
@@ -208,7 +208,7 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-
+  
   def set_reseller_default_prefs
     self.preferred_reminder_include_cert_admin=false
     self.preferred_reminder_include_cert_tech=false

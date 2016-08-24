@@ -4,7 +4,7 @@ class OtherPartyRequest < ActiveRecord::Base
   serialize   :email_addresses
 
   validates   :other_party_requestable, :email_addresses, presence: true
-  validates    :email_addresses_formats
+  validate    :email_addresses_formats
 
   before_validation on: :create do |o|
     o.identifier='opvr-'+SecureRandom.hex(1)+Time.now.to_i.to_s(32)
