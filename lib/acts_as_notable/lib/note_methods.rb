@@ -11,7 +11,7 @@ module ActsAsNotable
       note_model.extend Finders
       note_model.scope :in_order, lambda{order("created_at asc")}
       note_model.scope :recent, lambda{order("created_at desc")}
-      note_model.scope :limit, lambda {|limit| {:limit => limit}}
+      # note_model.scope :limit, lambda {|limit| {:limit => limit}}
     end
     
     module Finders
