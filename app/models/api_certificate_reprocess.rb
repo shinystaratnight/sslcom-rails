@@ -46,7 +46,7 @@ class ApiCertificateReprocess < ApiCertificateRequest
   validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
   validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
   #validate  :common_name, :is_not_ip, if: lambda{|c|!c.is_dv?}
-  validate :verify_dcv_methods, on: :create
+  validates_presence_of :verify_dcv_methods, on: :create
 
   after_initialize do
     if new_record? && self.csr
