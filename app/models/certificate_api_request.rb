@@ -46,7 +46,7 @@ class CertificateApiRequest < ActiveRecord::Base
     "-35" => "The CSR's Common Name may not be an IP Address!",
     "-40" => "The CSR uses a key that is believed to have been compromised!"}
 
-  attribute :csr_obj
+  attribute :csr_obj, Csr.new
 
   def csr=(csr)
     self.csr_obj = Csr.new(body: csr)
