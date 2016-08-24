@@ -6,7 +6,7 @@ class OtherPartyValidationRequest < OtherPartyRequest
   preference  :show_order_number, :default=>false
   preference  :sections, :string, :default=>BOTH_SECTIONS
 
-  validate :allowed_to_create, on: :create
+  validates :allowed_to_create, on: :create
 
   after_create do |o|
     OtherPartyRequestMailer.request_validation(o).deliver

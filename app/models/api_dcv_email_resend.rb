@@ -1,7 +1,7 @@
 class ApiDcvEmailResend < ApiCertificateRequest
   validates :account_key, :secret_key, :ref, presence: true
   validates :email_address, email: true, unless: lambda{|c|c.email_address.blank?}
-  validate  :order_exists, :verify_dcv_email_address, on: :create
+  validates  :order_exists, :verify_dcv_email_address, on: :create
 
   attr_accessor :certificate_order, :sent_at
 

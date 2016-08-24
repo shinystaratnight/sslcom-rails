@@ -6,7 +6,7 @@ class Surl < ActiveRecord::Base
   belongs_to  :user
   has_many    :surl_visits
 
-  validate  :url_format
+  validates  :url_format
   validates :guid, uniqueness: true, on: :create
   validates :username, length: {within: 6..50}, presence: true, :if => :perform_username_validation?
   validates :password, length: {within: 6..20}, presence: true, :if => :perform_password_validation?
