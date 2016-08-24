@@ -45,8 +45,8 @@ class CertificateContent < ActiveRecord::Base
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
     :if => :certificate_order_has_csr_and_signing_request
-  validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
-  validate :csr_validation, :if=>"new? && csr"
+  validates :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
+  validates :csr_validation, :if=>"new? && csr"
   #end
 
   attr_accessor  :additional_domains #used to html format results to page
