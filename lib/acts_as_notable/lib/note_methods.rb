@@ -9,8 +9,8 @@ module ActsAsNotable
     
     def self.included(note_model)
       note_model.extend Finders
-      note_model.scope :in_order, {:order => 'created_at ASC'}
-      note_model.scope :recent, {:order => "created_at DESC"}
+      note_model.scope :in_order, lambda{order("created_at asc")}
+      note_model.scope :recent, lambda{order("created_at desc")}
       note_model.scope :limit, lambda {|limit| {:limit => limit}}
     end
     
