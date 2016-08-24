@@ -57,7 +57,7 @@ gem 'jbuilder'
 gem 'sdoc',          group: :doc
 gem 'airbrake', '~> 5.4'
 gem 'rails-observers'
-
+gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 
 group :development do
   gem 'foreman'
