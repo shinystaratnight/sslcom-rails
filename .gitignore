@@ -4,6 +4,7 @@ config/database.yml
 config/secrets.yml
 capybara*.html
 .zeus.sock
+config/settings.yml
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
