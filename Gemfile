@@ -26,7 +26,7 @@ gem 'json', '~> 1.8.1'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
-gem 'jammit'
+gem 'jammit',                 :github => "documentcloud/jammit", :branch => "master"
 gem "config"
 gem 'sinatra'
 gem 'uuidtools'
