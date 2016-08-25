@@ -56,7 +56,7 @@ set :deploy_via, :remote_cache
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :user, "ubuntu"
-set :branch, "deploy_rails4"
+set :branch, "asset_pipeline"
 set :use_sudo, false
 
 role :cache, domain
