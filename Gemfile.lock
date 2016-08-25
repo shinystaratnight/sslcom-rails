@@ -9,7 +9,7 @@ GIT
       scrypt (>= 1.2, < 3.0)
 
 GIT
-  remote: git://github.com/documentcloud/jammit.git
+  remote: git://github.com/documentcloud/jammit
   revision: 5ddcf9c415b2e3985628c35e2ea5bdf94a383284
   branch: master
   specs:
