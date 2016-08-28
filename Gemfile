@@ -26,7 +26,8 @@ gem 'json', '~> 1.8.1'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
-gem 'jammit'
+#Commented out while converting to pipeline
+# gem 'jammit'
 gem "config"
 gem 'sinatra'
 gem 'uuidtools'
