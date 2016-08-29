@@ -29,7 +29,7 @@ SslCom::Application.configure do
 
   # Disable Rails's static asset server
   # In production, Apache or nginx will already do this
-  config.serve_static_files = true
+  config.assets.serve_static_files = true
   config.assets.css_compressor = :yui
   config.assets.js_compressor = :uglifier
 
