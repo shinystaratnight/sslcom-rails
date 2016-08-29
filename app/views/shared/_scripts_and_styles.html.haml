@@ -1,5 +1,4 @@
 -if DEPLOYMENT_CLIENT=~/certassure/i
-  = include_stylesheets :certassure
   %link#contact-form-7-css{:href => "https://www.certassure.com/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=4.2.1", :media => "all", :rel => "stylesheet", :type => "text/css"}/
   %link#ub_adminbar_general_styles-css{:href => "https://www.certassure.com/wp-content/plugins/ultimate-branding/ultimate-branding-files/modules/custom-admin-bar-files/css/general.css?ver=1.0", :media => "all", :rel => "stylesheet", :type => "text/css"}/
   %link#ub_favicons_style-css{:href => "https://www.certassure.com/wp-content/plugins/ultimate-branding/ultimate-branding-files/modules/favicons/css/admin.css?ver=1.0.0", :media => "all", :rel => "stylesheet", :type => "text/css"}/
@@ -15,11 +14,7 @@
   %link{:href => "https://www.certassure.com/xmlrpc.php?rsd", :rel => "EditURI", :title => "RSD", :type => "application/rsd+xml"}/
   %link{:href => "https://www.certassure.com/wp-includes/wlwmanifest.xml", :rel => "wlwmanifest", :type => "application/wlwmanifest+xml"}/
 -else
-  = include_stylesheets :ssl_com
-= include_stylesheets :common
-= include_stylesheets :print, media: 'print'
 -if current_page?(action: "buy_now") || current_page?(root_path) || current_page?(affiliates_path) || current_page?(details_affiliates_path)
-  = include_stylesheets :buy_now
 /[if lt IE 8]
   = stylesheet_link_tag "compiled/ie"
 /[if IE 8]
