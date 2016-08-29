@@ -13,7 +13,7 @@ SslCom::Application.configure do
   config.cache_store = :dalli_store
 
   # For nginx:
-  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
   # If you have no front-end server that supports something like X-Sendfile,
   # just comment this out and Rails will serve the files
