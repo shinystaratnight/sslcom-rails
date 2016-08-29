@@ -13,7 +13,6 @@
   %script{:src => "https://www.certassure.com/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1", :type => "text/javascript"}
   %link{:href => "https://www.certassure.com/xmlrpc.php?rsd", :rel => "EditURI", :title => "RSD", :type => "application/rsd+xml"}/
   %link{:href => "https://www.certassure.com/wp-includes/wlwmanifest.xml", :rel => "wlwmanifest", :type => "application/wlwmanifest+xml"}/
--else
 -if current_page?(action: "buy_now") || current_page?(root_path) || current_page?(affiliates_path) || current_page?(details_affiliates_path)
 /[if lt IE 8]
   = stylesheet_link_tag "compiled/ie"
