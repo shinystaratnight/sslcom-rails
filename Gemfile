@@ -59,6 +59,8 @@ gem 'sdoc',          group: :doc
 gem 'airbrake', '~> 5.4'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
+gem 'sass-rails'
+gem 'compass-rails'
 
 group :development do
   gem 'foreman'
@@ -94,8 +96,6 @@ group :test do
 end
 
 group :assets do
-  gem 'sass-rails'
   gem 'coffee-rails'
   gem 'uglifier'
-  gem 'compass-rails'
 end

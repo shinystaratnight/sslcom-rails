@@ -1,6 +1,8 @@
 !!!
 %html(xmlns:fb="facebook.com/2008/fbml" itemscope="" itemtype="http://schema.org/Organization")
   %head
+    = javascript_include_tag "application"
+    = stylesheet_link_tag "application"
     -#-cache("head_08042014"+params.to_s, expires_in: 1.year) do
     :javascript
       var _sf_startpt=(new Date()).getTime()
@@ -28,7 +30,6 @@
     -if Settings.enable_google_translate
       %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
     =csrf_meta_tag
-    =render :partial => "shared/scripts_and_styles"
   %body
     =render partial: "layouts/facebook" if Rails.env=~/production/i
     -if show_short_links?

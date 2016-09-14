@@ -1,0 +1,389 @@
+/* CSS for ssl Website */
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+@font-face {
+  font-family: "arial black";
+  src: url(/fonts/aria-black.eot);
+  src: url(/fonts/aria-black.ttf);
+}
+@font-face {
+  font-family: "arial black italic";
+  src: url(/fonts/arial-black-italic.eot);
+  src: url(/fonts/arial-black-italic.ttf);
+}
+/* line 15, ../../../app/stylesheets/master.sass */
+body {
+  background: #fff;
+  font-family: "Raleway", Georgia, "Times New Roman", Times, serif;
+  min-height: 100%;
+  width: 100%;
+  height: 100%;
+  margin-left: 0 !important;
+  padding: 0;
+  position: relative !important;
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+}
+/* line 26, ../../../app/stylesheets/master.sass */
+body[class|="page-body"] {
+  background: #fff;
+  /* Applies to IE 7 and most modern browsers except Opera */
+}
+
+/*MISCELLANOUS */
+/* line 32, ../../../app/stylesheets/master.sass */
+a {
+  text-decoration: none;
+}
+/* line 34, ../../../app/stylesheets/master.sass */
+a img {
+  border: none;
+}
+
+/* line 37, ../../../app/stylesheets/master.sass */
+.bold {
+  font-weight: bold;
+}
+
+/* line 40, ../../../app/stylesheets/master.sass */
+.left {
+  float: left;
+}
+
+/* line 43, ../../../app/stylesheets/master.sass */
+.right {
+  float: right;
+}
+
+/* line 46, ../../../app/stylesheets/master.sass */
+.clear {
+  height: 1%;
+  clear: both;
+  content: ".";
+  height: 0;
+  visibility: hidden;
+}
+
+/* line 53, ../../../app/stylesheets/master.sass */
+.divider {
+  border-bottom: 1px solid #444;
+}
+
+/* line 56, ../../../app/stylesheets/master.sass */
+.divider-horizontal {
+  border-right: 1px solid #aaa;
+  padding: 0 4px;
+  height: 20px;
+  margin: -3px 6px 0 0;
+}
+
+/*icons */
+/* line 64, ../../../app/stylesheets/master.sass */
+.icn_live, .icn_phone, .icn_email, .icn_support {
+  background: image-url("icon-set.png") no-repeat;
+}
+
+/* line 67, ../../../app/stylesheets/master.sass */
+.icn_live {
+  background-position: -10px 13px;
+  padding: 17px 12px;
+}
+
+/* line 71, ../../../app/stylesheets/master.sass */
+.icn_phone {
+  background-position: -42px 12px;
+  padding: 17px 14px;
+}
+
+/* line 75, ../../../app/stylesheets/master.sass */
+.icn_email {
+  background-position: -88px 12px;
+  padding: 17px 14px;
+}
+
+/* line 79, ../../../app/stylesheets/master.sass */
+.icn_support {
+  background-position: -130px 12px;
+  padding: 17px 12px;
+}
+
+/* line 83, ../../../app/stylesheets/master.sass */
+.icn_cart {
+  background: image-url("icn-cart.png") 4px 3px no-repeat #4d4d4d;
+  padding: 5px 6px 4px 24px;
+  margin-left: 3px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* line 91, ../../../app/stylesheets/master.sass */
+.icn_cart-filled {
+  background: image-url("icn-cart.png") 4px 3px no-repeat #4d4d4d;
+  padding: 5px 6px 4px 24px;
+  margin-left: 3px;
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  background: image-url("icn-cart.png") 4px 3px no-repeat #8bb43b;
+}
+
+/* line 100, ../../../app/stylesheets/master.sass */
+.icn_cart:hover, .icn_cart-filled:hover {
+  text-decoration: underline;
+}
+
+/* line 103, ../../../app/stylesheets/master.sass */
+.content {
+  margin: 0 auto !important;
+  width: 960px;
+}
+/* line 107, ../../../app/stylesheets/master.sass */
+.content li {
+  font-size: 14px;
+}
+
+/*header */
+/* line 112, ../../../app/stylesheets/master.sass */
+#header {
+  text-align: left !important;
+  background: #282928 100%;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  height: 78px;
+}
+/* line 120, ../../../app/stylesheets/master.sass */
+#header .content .logo {
+  float: left;
+  padding: 0px 150px 20px 0;
+  margin-right: 15px;
+  background: image-url("big-logo.png") no-repeat;
+}
+/* line 125, ../../../app/stylesheets/master.sass */
+#header .content .navigation {
+  float: left;
+  width: 580px;
+}
+/* line 128, ../../../app/stylesheets/master.sass */
+#header .content .navigation .top_navigation {
+  width: 580px;
+  padding: 12px 0px 13px 30px;
+  margin-left: 1px;
+}
+/* line 132, ../../../app/stylesheets/master.sass */
+#header .content .navigation .bottom_navigation {
+  width: 580px;
+  padding: 17px 30px 0px;
+}
+
+/* line 137, ../../../app/stylesheets/master.sass */
+.top_navigation a {
+  color: #ccc !important;
+}
+/* line 139, ../../../app/stylesheets/master.sass */
+.top_navigation li {
+  float: right !important;
+  color: #ccc;
+  list-style-type: none;
+  padding: 0 4px;
+  font-size: 12px;
+}
+/* line 140, ../../../app/stylesheets/master.sass */
+.top_navigation li a:hover {
+  color: #fff !important;
+  text-decoration: underline;
+  cursor: pointer !important;
+}
+
+/* line 151, ../../../app/stylesheets/master.sass */
+.bottom_navigation ul#nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+/* line 155, ../../../app/stylesheets/master.sass */
+.bottom_navigation li {
+  float: right !important;
+  background: #111;
+  border-right: 1px solid #282928;
+  font-family: "Raleway", Arial !important;
+  font-size: 12px;
+  padding: 9px 18px;
+  position: relative;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+/* line 167, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover {
+  background: #232323;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -ms-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+/* line 173, ../../../app/stylesheets/master.sass */
+.bottom_navigation ul#nav a {
+  display: block;
+  color: #ddd;
+}
+/* line 176, ../../../app/stylesheets/master.sass */
+.bottom_navigation ul#nav a:hover {
+  display: block;
+  color: #fff;
+}
+/* line 181, ../../../app/stylesheets/master.sass */
+.bottom_navigation li ul {
+  display: none;
+  position: absolute;
+  width: 220px;
+  top: 0;
+  left: 0;
+  margin-left: -41px;
+}
+/* line 188, ../../../app/stylesheets/master.sass */
+.bottom_navigation li > ul {
+  top: 32px;
+  left: 40px;
+  background: #212121;
+}
+/* line 192, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul, .bottom_navigation li.over ul {
+  display: block;
+  list-style: none;
+}
+/* line 195, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul li {
+  background: #232323;
+  padding: 10px;
+  width: 240px !important;
+  border: none;
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -ms-box-shadow: none;
+  -webkit-box-shadow: none;
+  cursor: pointer;
+}
+/* line 205, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul li.divider {
+  margin: 0 0 0 10px;
+  padding: 0 10px;
+  border-bottom: #999 1px solid;
+}
+/* line 209, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul li a {
+  color: #CCC !important;
+  margin-left: 4px;
+}
+/* line 212, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul li a:hover {
+  color: #fff !important;
+}
+/* line 214, ../../../app/stylesheets/master.sass */
+.bottom_navigation li:hover ul li:hover {
+  width: 240px !important;
+  background: #000 !important;
+  color: #fff !important;
+}
+
+/*content */
+/* line 221, ../../../app/stylesheets/master.sass */
+.container {
+  padding: 15px 0 0 0 !important;
+}
+
+/* line 224, ../../../app/stylesheets/master.sass */
+#container {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: auto !important;
+  /* for modern browsers */
+  height: 100%;
+  background: #e6e6e6;
+  text-align: left !important;
+}
+
+/*footer */
+/* line 237, ../../../app/stylesheets/master.sass */
+#footer {
+  clear: both;
+  background: #282928;
+  width: 100%;
+  margin: 0px;
+  height: 300px;
+  padding-top: 30px;
+  bottom: 0;
+  /* important */
+  text-align: left !important;
+}
+/* line 248, ../../../app/stylesheets/master.sass */
+#footer .content .box-logo {
+  width: 190px;
+}
+/* line 251, ../../../app/stylesheets/master.sass */
+#footer .content .box .footer-like {
+  padding: 0px 210px 10px 0;
+}
+/* line 253, ../../../app/stylesheets/master.sass */
+#footer .content .box .logo-small {
+  padding: 0px 210px 60px 0;
+  background: image-url("small-logo.png") no-repeat;
+}
+/* line 256, ../../../app/stylesheets/master.sass */
+#footer .content .box-social {
+  width: 210px;
+}
+/* line 258, ../../../app/stylesheets/master.sass */
+#footer .content .box {
+  width: 185px;
+  background: inherit;
+  height: auto !important;
+  margin-bottom: 0 !important;
+  color: #fff;
+}
+/* line 264, ../../../app/stylesheets/master.sass */
+#footer .content .box b {
+  color: #fff !important;
+}
+/* line 266, ../../../app/stylesheets/master.sass */
+#footer .content .box .title {
+  font-size: 14px;
+  margin-left: 34px;
+}
+/* line 269, ../../../app/stylesheets/master.sass */
+#footer .content .box ul {
+  margin: 12px 0 0 0 !important;
+}
+/* line 271, ../../../app/stylesheets/master.sass */
+#footer .content .box li {
+  list-style-type: none;
+  padding: 4px;
+}
+/* line 274, ../../../app/stylesheets/master.sass */
+#footer .content .box a {
+  color: #ddd;
+  font-size: 12px;
+  margin-left: -8px;
+}
+/* line 278, ../../../app/stylesheets/master.sass */
+#footer .content .box a b {
+  font-size: 12px;
+  letter-spacing: -0.5px;
+  font-weight: bold;
+  font-style: italic;
+}
+/* line 283, ../../../app/stylesheets/master.sass */
+#footer .content .box a:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+/* line 286, ../../../app/stylesheets/master.sass */
+#footer .content .copyright {
+  margin: 25px 0 0 220px;
+  font-size: 12px;
+  color: #fff;
+}

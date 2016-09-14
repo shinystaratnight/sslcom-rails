@@ -92,6 +92,11 @@ module SslCom
 
     # Enable the asset pipeline
     config.assets.enabled = true
+
+    config.sass.preferred_syntax = :sass
+    config.sass.line_comments = false
+    config.sass.cache = false
+
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end
@@ -126,5 +131,3 @@ SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 ActiveMerchant::Billing::CreditCard.require_verification_value=false
-
-

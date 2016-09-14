@@ -34,6 +34,12 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
+  # Do not compress assets
+  config.assets.compress = false
+
+  # Expands the lines which load the assets
+  config.assets.debug = true
+
   ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info
   # GATEWAY_TEST_CODE = 1.0
@@ -48,5 +54,3 @@ end
 #   config.mirrors = %w(www)
 #   config.preferred_mirror = "www"
 # end
-
-

@@ -148,7 +148,7 @@ jQuery(function($) {
         $.prettyLoader.show();
         var current_link = $(this).parents('#manage_current_links tr');
         current_link.addClass('deleting');
-        $(this).parent().html("<img src='/images/ajax-loader.gif' />");
+        $(this).parent().html("<%= image_tag 'ajax-loader.gif' %>");
         $(this).bind('ajax:success', function(event, data, status, xhr) {
         }).bind('ajax:complete', function(event, data, status, xhr){
           //livequery function $('#manage_current_links tr').livequery(function())
