@@ -39,7 +39,7 @@ $('#expand_register_card').live('click', function(){
 $('.delete_profile').livequery(
   'ajax:beforeSend', function(){
     $(this).parent().parent().children('td').addClass('deleting');
-    $(this).parent().prev().html("<img src='/images/ajax-loader.gif' />");
+    $(this).parent().html('<%= image_tag "ajax-loader.gif" %>');
     $(this).parent().html("");
     $(this).bind('ajax:complete', function(event, data, status, xhr){
       $('tr#billing_profile_'+$(this).attr('href').match(/\d+$/)[0]).remove();

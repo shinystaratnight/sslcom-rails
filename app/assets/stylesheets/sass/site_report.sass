@@ -62,10 +62,14 @@ a:hover
 #site_report_title
   font-size: 1.1em
 
-.section_header
+.section_header, .report_header
   padding: 0em 0.4em 1px
   background: #e0e0ff
   border-top: 1px solid #AAAAFF
+
+.report_header
+  background: #d0ffd0
+  border-top: 1px solid #11FF11
 
 dt
   margin-bottom: .2em
@@ -76,7 +80,7 @@ dt
   border-right: 1px solid red
   padding: 0 .1em
 
-.warning
+.warning, .pending
   background-color: lightyellow
   border-left: 1px solid yellow
   border-right: 1px solid yellow
@@ -88,3 +92,61 @@ dt
   background-color: #ccffcc
   padding: 0 .1em
 
+dl dd.img
+  margin: 0
+
+dd.img .img_preview img
+  float: left
+  margin: 0 8px 0 0
+  padding: 4px
+  border: 1px solid #D9E0E6
+  border-bottom-color: #C8CDD2
+  border-right-color: #C8CDD2
+  background: #fff
+
+dd.preview
+  font-size: 80%
+  margin: 0 0 0 22px
+  clear: both
+  width: 7em
+
+  a
+    padding: 2px 0
+
+.satisfies_requirements
+
+  ul
+    list-style: none
+
+    li.requirement
+      background: url(/images/chkshield.png) no-repeat 3.6em 0
+      padding: 0.1em 0 0.8em 5.6em
+
+.report_icon
+  vertical-align: middle
+  padding-right: .2em
+
+#report_title
+  padding: 0 0 .3em .7em
+  margin-top: -.5em
+
+=clearfixIE5_and_6
+  * html &
+    height: 1%
+
+=clearfixIE7
+  *:first-child_html &
+    min-height: 1px
+
+=clearfix
+  &:after
+    content: '.'
+    height: 0
+    visibility: hidden
+    display: block
+    clear: both
+  +clearfixIE5_and_6
+  +clearfixIE7
+
+.clearfix
+  +clearfix

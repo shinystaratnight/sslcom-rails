@@ -6,12 +6,18 @@
 *= require prettyPhoto.css
 *= require prettyLoader.css
 *= require prettyPopin.css
-*= require print.css
 *= require prettyPhoto.css
-*= require sass1/main
-*= require sass1/master
-*= require sass1/ie
-*= require sass1/ie8
-*= require sass1/buy_now
-*= require sass1/ssl_seal
+*= require sass/main
+*= require sass/master
+*= require sass/ie
+*= require sass/ie8
+*= require sass/buy_now
+*= require sass/ssl_seal
+*/
+
+/*
+TODO: I had to remove the site report from the main import here.
+This will need to be added back and loaded only on the site report page only
+or figure out why the styles are conflicting with the main layout
+require sass/site_report
 */
