@@ -56,7 +56,7 @@ set :deploy_via, :remote_cache
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :user, "ubuntu"
-set :branch, "asset_pipeline"
+set :branch, "mp-asset-pipeline"
 set :use_sudo, false
 
 role :cache, domain

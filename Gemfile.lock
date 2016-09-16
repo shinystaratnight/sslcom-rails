@@ -538,6 +538,7 @@ DEPENDENCIES
   simpleidn
   sinatra
   spring
+  sprockets
   squeel
   therubyracer (~> 0.12.0)
   turbolinks

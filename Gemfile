@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.6'
+gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
 gem 'dynamic_form'
