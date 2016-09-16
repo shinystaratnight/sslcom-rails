@@ -5,14 +5,14 @@
 @font-face
   font-family: 'Museo700'
   src: url('/fonts/Museo700-Regular-webfont.eot')
-  src: local("☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  src: local("image-☺"), url('/fonts/Museo700-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo700-Regular-webfont.woff') format('woff'), url('/fonts/Museo700-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo700-Regular-webfont.svg#webfontNpXBDqia') format('svg')
   font-weight: normal
   font-style: normal
 
 @font-face
   font-family: 'Museo300'
-  src: url('/fonts/Museo300-Regular-webfont.eot')
-  src: local("☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
+  src: url('/fimage-onts/Museo300-Regular-webfont.eot')
+  src: local("image-☺"), url('/fonts/Museo300-Regular-webfont.eot?iefix') format('eot'), url('/fonts/Museo300-Regular-webfont.woff') format('woff'), url('/fonts/Museo300-Regular-webfont.ttf') format('truetype'), url('/fonts/Museo300-Regular-webfont.svg#webfontNpXBDqia') format('svg')
   font-weight: normal
   font-style: normal
 
@@ -70,7 +70,7 @@ a:hover
 #header
   background-color: black
   width: 100%
-  background-image: url('/images/sitesprite2.png')
+  background-image: image-url('sitesprite2.png')
   background-position: 0px -10px
   background-repeat: repeat-x
   font-family: "Raleway",Arial !important
@@ -79,7 +79,7 @@ a:hover
   display: block
   height: 70px
   margin: 5px 0 0 -10px
-  background: url('/images/certassure/certlogo.png') no-repeat
+  background: image-url('certassure/certlogo.png') no-repeat
 
   a
     height: 100%
@@ -148,25 +148,25 @@ a:hover
 
 .innercontainer
   +innercontainer("center" 325px)
-  background-image: url('/images/innercontainer_background.gif')
+  background-image: image-url('innercontainer_background.gif')
 
 .innercontainerb
   +innercontainer("center" 130px)
-  background-image: url('/images/landing-background.jpg')
+  background-image: image-url('landing-background.jpg')
 
 .innercontainerc
   +innercontainer("center" 130px)
-  background-image: url('/images/404_background.gif')
+  background-image: image-url('404_background.gif')
 
 .innercontainerd
   +innercontainer("center" 400px)
-  background-image: url('/images/innercontainer_background2.gif')
+  background-image: image-url('innercontainer_background2.gif')
 
 .innercontainere
   +innercontainer(46% 380px)
 
   &.shadow
-    background-image: url('/images/innercontainer_background2.gif')
+    background-image: image-url('innercontainer_background2.gif')
 
 .inner
   padding-bottom: 0px
@@ -210,7 +210,7 @@ a:hover
   margin: 0 0 0 -2px
   float: left
   background:
-    image: url('/images/sitesprite1.png')
+    image: image-url('sitesprite1.png')
     position: -10px -755px
     repeat: no-repeat
 
@@ -363,7 +363,7 @@ a:hover
   margin-bottom: 17px
   margin-right: 0
   margin-top: 0
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -786px
   background-repeat: no-repeat
   padding: 0 0 0 23px
@@ -374,7 +374,7 @@ a:hover
   margin-bottom: 10px
   margin-right: 0
   margin-top: 0
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -786px
   background-repeat: no-repeat
   padding: 0 0 0 23px
@@ -386,13 +386,13 @@ a:hover
   padding-left: 25px
   margin: 0
   margin-bottom: 17px
-  background: url('/images/list_arrow.gif') no-repeat 0 1px
+  background: image-url('list_arrow.gif') no-repeat 0 1px
   font-size: 16px
 
 .listd li
   margin: 0
   margin-bottom: 15px
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -8px -638px
   background-repeat: no-repeat
   padding: 0 0 0 28px
@@ -405,7 +405,7 @@ a:hover
   display: block
   width: 430px
   height: 71px
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -77px
   background-repeat: no-repeat
   overflow: hidden
@@ -417,7 +417,7 @@ a:hover
   display: block
   width: 371px
   height: 60px
-  background: url('/images/landing-cta.gif') no-repeat
+  background: image-url('landing-cta.gif') no-repeat
   overflow: hidden
   text-indent: -9999px
 
@@ -427,7 +427,7 @@ a:hover
   display: block
   width: 430px
   height: 70px
-  background: url('/images/sitesprite1.png') -10px -75px no-repeat
+  background: image-url('sitesprite1.png') -10px -75px no-repeat
   text-indent: -9999px
   border-bottom-style: none
 
@@ -438,13 +438,13 @@ a:hover
   display: block
   width: 217px
   height: 39px
-  background: url('/images/home_demo_button.gif') no-repeat
+  background: image-url('home_demo_button.gif') no-repeat
   overflow: hidden
   text-indent: -9999px
   border-bottom-style: none
 
 .small
-  background: url('/images/bg-small-button.gif') no-repeat
+  background: image-url('bg-small-button.gif') no-repeat
   display: block
   width: 222px
   height: 39px
@@ -493,7 +493,7 @@ a:hover
   padding-top: 20px
   height: 280px
   overflow: hidden
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -168px
   background-repeat: no-repeat
 
@@ -504,7 +504,7 @@ a:hover
   padding-top: 20px
   height: 280px
   overflow: hidden
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -168px
   background-repeat: no-repeat
 
@@ -567,7 +567,7 @@ a:hover
 .securewide
   background-position: 305px center
   background-repeat: no-repeat
-  background-image: url('/images/securitybadgeslong.gif')
+  background-image: image-url('securitybadgeslong.gif')
   margin-bottom: 15px
   padding-left: 15px
   padding-bottom: 5px
@@ -759,7 +759,7 @@ a:hover
 
 .boxesprice li
   background-repeat: no-repeat
-  background-image: url('/images/bg-list.gif')
+  background-image: image-url('bg-list.gif')
   background-position: 0 12px
   display: inline
   padding-left: 23px
@@ -829,12 +829,12 @@ a:hover
 .sidebar
   float: left
   width: 238px
-  background: url('/images/bg-sidebar.gif') repeat-y
+  background: image-url('bg-sidebar.gif') repeat-y
 
 .sidebar .top
-  background: url('/images/bg-sidebar-top.gif') no-repeat
+  background: image-url('bg-sidebar-top.gif') no-repeat
 .sidebar .bottom
-  background: url('/images/bg-sidebar-bt.gif') no-repeat 0 100%
+  background: image-url('bg-sidebar-bt.gif') no-repeat 0 100%
   height: 1%
   overflow: hidden
   padding: 21px 0 79px
@@ -844,13 +844,13 @@ a:hover
   list-style: none
   margin: 0
   padding: 0
-  background: url('/images/bg-sidebar-li.gif') no-repeat
+  background: image-url('bg-sidebar-li.gif') no-repeat
 
 .menu li
   height: 1%
   overflow: hidden
   vertical-align: top
-  background: url('/images/bg-sidebar-li.gif') no-repeat 0 100%
+  background: image-url('bg-sidebar-li.gif') no-repeat 0 100%
   padding: 0 0 1px
 
 .menu a
@@ -874,11 +874,11 @@ a:hover
   cursor: pointer
 
 .menu li.active span
-  background: url('/images/bg-sidebar-active.gif') no-repeat 100% 0
+  background: image-url('bg-sidebar-active.gif') no-repeat 100% 0
   padding: 10px 23px 10px 15px
 
 .menu li.active a
-  background: url('/images/bg-li-active.gif') repeat-y
+  background: image-url('bg-li-active.gif') repeat-y
   border-left: 1px solid #dbdbdb
   margin: 0
   border-style: none
@@ -916,7 +916,7 @@ a:hover
   color: #fff
   line-height: 34px
   text-align: center
-  background: url('/images/bg-number1.gif') no-repeat
+  background: image-url('bg-number1.gif') no-repeat
   text-indent: -9999px
 
 .number2
@@ -929,7 +929,7 @@ a:hover
   color: #fff
   line-height: 34px
   text-align: center
-  background: url('/images/bg-number2.gif') no-repeat
+  background: image-url('bg-number2.gif') no-repeat
   text-indent: -9999px
 
 .number3
@@ -942,7 +942,7 @@ a:hover
   color: #fff
   line-height: 34px
   text-align: center
-  background: url('/images/bg-number3.gif') no-repeat
+  background: image-url('bg-number3.gif') no-repeat
   text-indent: -9999px
 
 .ordered li p
@@ -977,13 +977,13 @@ a:hover
   margin-bottom: 15px
   width: 380px
   height: 329px
-  background: url('/images/bg-box.gif') no-repeat
+  background: image-url('bg-box.gif') no-repeat
   float: left
   padding: 11px 0 0
 
 .wide
   width: 540px
-  background: url('/images/bg-wide.gif') no-repeat
+  background: image-url('bg-wide.gif') no-repeat
   float: right
 
 .box-inner
@@ -1012,7 +1012,7 @@ a:hover
   color: white
   text-align: center
   float: left
-  background-image: url('/images/box-wide-top.gif')
+  background-image: image-url('box-wide-top.gif')
   background-repeat: no-repeat
   background-color: black
   width: 940px
@@ -1044,7 +1044,7 @@ a:hover
 
 .boxwidebottom
   margin-bottom: 10px
-  background-image: url('/images/box-wide-bottom.gif')
+  background-image: image-url('box-wide-bottom.gif')
   float: left
   height: 16px
   width: 940px
@@ -1056,7 +1056,7 @@ a:hover
   padding-bottom: 16px
   background-position: 0 bottom
   margin-bottom: 10px
-  background-image: url('/images/box-wide-bottom.gif')
+  background-image: image-url('box-wide-bottom.gif')
   float: left
   width: 940px
 
@@ -1084,7 +1084,7 @@ a:hover
 
 .box .list li
   font-size: 1.4em
-  background: url('/images/bg-box-list.gif') no-repeat
+  background: image-url('bg-box-list.gif') no-repeat
   margin: 17px 0 0
   float: left
   width: 138px
@@ -1129,7 +1129,7 @@ a:hover
   overflow: hidden
 
 .bullet li
-  background: url('/images/bg-bullet.gif') no-repeat 0 8px
+  background: image-url('bg-bullet.gif') no-repeat 0 8px
   padding: 0 0 0 14px
   font-size: 1.4em
   line-height: 18px
@@ -1151,7 +1151,7 @@ a:hover
 
 .inner-gallery
   margin: 0 auto
-  background: url('/images/bg-gallery-holder.gif') no-repeat 0 100%
+  background: image-url('bg-gallery-holder.gif') no-repeat 0 100%
   width: 860px
   padding: 0 60px
   overflow: hidden
@@ -1188,7 +1188,7 @@ a:hover
   width: 140px
   overflow: hidden
   padding: 15px 0 0
-  background: url('/images/bg-gallery-image.gif') no-repeat
+  background: image-url('bg-gallery-image.gif') no-repeat
   margin: 0 0 5px
   position: relative
 
@@ -1199,7 +1199,7 @@ a:hover
   position: absolute
   width: 28px
   height: 28px
-  background: url('/images/btn-video.png') no-repeat
+  background: image-url('btn-video.png') no-repeat
   overflow: hidden
   right: 5px
   bottom: 5px
@@ -1253,7 +1253,7 @@ a:hover
 .btn-free
   width: 303px
   height: 54px
-  background: url('/images/btn-free2.gif') no-repeat
+  background: image-url('btn-free2.gif') no-repeat
   display: block
   overflow: hidden
   text-indent: -9999px
@@ -1262,7 +1262,7 @@ a:hover
   float: right
   width: 276px
   height: 54px
-  background: url('/images/btn-free3.gif') no-repeat
+  background: image-url('btn-free3.gif') no-repeat
   display: block
   overflow: hidden
   text-indent: -9999px
@@ -1435,7 +1435,7 @@ a:hover
   background-position: right top
   height: 285px
   background-repeat: no-repeat
-  background-image: url('/images/leftnav_gradient.gif')
+  background-image: image-url('leftnav_gradient.gif')
   margin-right: 20px
   float: left
   padding-right: 25px
@@ -1470,7 +1470,7 @@ a:hover
 .contacttop
   float: left
   background-repeat: no-repeat
-  background-image: url('/images/contact_top.gif')
+  background-image: image-url('contact_top.gif')
   height: 17px
   width: 464px
 
@@ -1478,18 +1478,18 @@ a:hover
   padding-left: 20px
   float: left
   background-repeat: repeat-y
-  background-image: url('/images/contact_middle.gif')
+  background-image: image-url('contact_middle.gif')
   width: 444px
 
 .contactbottom
   float: left
   background-repeat: no-repeat
-  background-image: url('/images/contact_bottom.gif')
+  background-image: image-url('contact_bottom.gif')
   height: 17px
   width: 464px
 
 .contactright
-  background-image: url('/images/big_bull.gif')
+  background-image: image-url('big_bull.gif')
   background-position: 0 45px
   background-repeat: no-repeat
   height: 250px
@@ -1513,7 +1513,7 @@ a:hover
   float: left
 
 .contactlinks a
-  background: url('/images/twitter_gray.gif') no-repeat 0 50%
+  background: image-url('twitter_gray.gif') no-repeat 0 50%
   float: left
   padding: 0 0 0 41px
   font: 1.4em/32px Georgia, "Times New Roman", Times, serif
@@ -1541,7 +1541,7 @@ a:hover
   border-bottom-width: 1px
   padding-left: 22px
   background-repeat: no-repeat
-  background-image: url('/images/Document_16x16.png')
+  background-image: image-url('Document_16x16.png')
   margin: 0 0 7px
 
 .twitterhead
@@ -1557,7 +1557,7 @@ a:hover
   border-bottom-width: 1px
   padding-left: 22px
   background-repeat: no-repeat
-  background-image: url('/images/twitter_16x16.gif')
+  background-image: image-url('twitter_16x16.gif')
 
 /*twitter*/
 .twitter
@@ -1725,7 +1725,7 @@ a:hover
   height: 475px
   background-repeat: no-repeat
   padding-left: 28px
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -827px
   float: right
   width: 292px
@@ -1786,14 +1786,14 @@ a:hover
   text-align: center
   background-position: 0 top
   background-repeat: no-repeat
-  background-image: url('/images/security_top2.gif')
+  background-image: image-url('security_top2.gif')
   background-color: #999999
   width: 294px
 
 .securityb
   background-position: center bottom
   background-repeat: no-repeat
-  background-image: url('/images/security_bottom2.gif')
+  background-image: image-url('security_bottom2.gif')
   margin-bottom: 25px
   padding-bottom: 5px
   text-align: center
@@ -1817,7 +1817,7 @@ a:hover
   text-align: center
   background:
     repeat: no-repeat
-    image: url('/images/sitesprite3.png')
+    image: image-url('sitesprite3.png')
     position: -303px -10px
     color: #999999
   width: 273px
@@ -1825,7 +1825,7 @@ a:hover
 .security
   background:
     repeat: no-repeat
-    image: url('/images/sitesprite3.png')
+    image: image-url('sitesprite3.png')
     position: -10px 268px
   margin-bottom: 25px
   padding-bottom: 5px
@@ -1844,7 +1844,7 @@ a:hover
 
 .cards
   text-align: right
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -481px
   background-repeat: no-repeat
   float: right
@@ -1880,7 +1880,7 @@ a:hover
 .merchant_logoa
   margin-bottom: 10px
   background-position: 0 bottom
-  background-image: url('/images/millennium-logo.gif')
+  background-image: image-url('millennium-logo.gif')
   background-repeat: no-repeat
   height: 67px
   float: left
@@ -1888,7 +1888,7 @@ a:hover
 
 .merchant_logob
   margin-bottom: 10px
-  background-image: url('/images/transFS.gif')
+  background-image: image-url('transFS.gif')
   background-repeat: no-repeat
   height: 67px
   float: left
@@ -1944,7 +1944,7 @@ a:hover
 .merchant_button a
   display: block
   background-repeat: no-repeat
-  background-image: url('/images/merchant_button.gif')
+  background-image: image-url('merchant_button.gif')
   float: left
   height: 43px
   width: 283px
@@ -1956,7 +1956,7 @@ a:hover
   margin-left: 302px
   display: block
   background-repeat: no-repeat
-  background-image: url('/images/merchant_buttonb.gif')
+  background-image: image-url('merchant_buttonb.gif')
   float: left
   height: 43px
   width: 283px
@@ -1978,7 +1978,7 @@ a:hover
   display: block
   margin-top: -1px
   background-repeat: no-repeat
-  background-image: url('/images/question_mark.gif')
+  background-image: image-url('question_mark.gif')
   height: 19px
   width: 19px
   text-indent: -9999px
@@ -2001,14 +2001,14 @@ a:hover
   float: left
   height: 106px
   width: 273px
-  background-image: url('/images/chargify_identity.gif')
+  background-image: image-url('chargify_identity.gif')
 
 .links
   float: right
   padding: 15px 0 0
 
 .links a
-  background: url('/images/twitter.gif') no-repeat 0 50%
+  background: image-url('twitter.gif') no-repeat 0 50%
   float: left
   padding: 0 0 0 41px
   font: 1.3em/32px "Raleway",Arial !important
@@ -2026,7 +2026,7 @@ a:hover
   font: 1.3em/32px "Raleway",Arial !important
   color: #1da4d7
   text-indent: -9999px
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -650px
   background-repeat: no-repeat
   border-bottom-style: none
@@ -2046,7 +2046,7 @@ a:hover
   margin-right: 0px
   margin-top: 13px
   background-repeat: no-repeat
-  background-image: url('/images/sitesprite1.png')
+  background-image: image-url('sitesprite1.png')
   background-position: -10px -603px
   float: left
   height: 27px
@@ -2058,12 +2058,12 @@ a:hover
 .badgesmall a:hover
   background:
     repeat: no-repeat
-    image: url('/images/TC50_small_colorb.png')
+    image: image-url('TC50_small_colorb.png')
     position: 0 0
 
 .badgesmallb a
   background:
-    image: url('/images/sitesprite1.png')
+    image: image-url('sitesprite1.png')
     position: -10px -690px
     repeat: no-repeat
   display: block
@@ -2079,7 +2079,7 @@ a:hover
 .badgesmallb a:hover
   background:
     repeat: no-repeat
-    image: url('/images/labs_logo_colorc.png') !important
+    image: image-url('labs_logo_colorc.png') !important
     position: 0 0
 
 .securitybadgecontainer
@@ -2144,7 +2144,7 @@ a:hover
   z-index: 1
   padding-left: 15px
   padding-top: 15px
-  background-image: url('/images/video-embed-border3.gif')
+  background-image: image-url('video-embed-border3.gif')
   height: 339px
   width: 417px
   float: left
@@ -2175,19 +2175,19 @@ a:hover
   height: 300px
 
 .pki_image
-  background: #ffffff url('/images/global_lock.jpg') no-repeat 0 0
+  background: #ffffff image-url('global_lock.jpg') no-repeat 0 0
   height: 324px
   width: 402px
 
 .go_green_with_ev_image
-  background: #ffffff url('/images/go_green_with_ev_ssl.jpg') no-repeat 0 0
+  background: #ffffff image-url('go_green_with_ev_ssl.jpg') no-repeat 0 0
   height: 324px
   width: 402px
 
 .landing_video
   padding-left: 15px
   padding-top: 15px
-  background-image: url('/images/video-embed-border2.gif')
+  background-image: image-url('video-embed-border2.gif')
   float: left
   height: 359px
   width: 440px
@@ -2206,7 +2206,7 @@ a:hover
   padding-top: 10px
   background-repeat: no-repeat
   background-color: #999999
-  background-image: url('/images/landing-box1-top.gif')
+  background-image: image-url('landing-box1-top.gif')
   width: 380px
 
 .landing-box1-middle
@@ -2225,7 +2225,7 @@ a:hover
   text-align: center
   background-repeat: no-repeat
   background-color: #999999
-  background-image: url('/images/landing-box1-bottom.gif')
+  background-image: image-url('landing-box1-bottom.gif')
   width: 380px
 
 .landing-box2-container
@@ -2242,7 +2242,7 @@ a:hover
   padding-top: 10px
   background-repeat: no-repeat
   background-color: #999999
-  background-image: url('/images/landing-box2-top.gif')
+  background-image: image-url('landing-box2-top.gif')
   width: 540px
 
 .landing-box2-middle
@@ -2260,7 +2260,7 @@ a:hover
   text-align: center
   background-repeat: no-repeat
   background-color: #999999
-  background-image: url('/images/landing-box2-bottom.gif')
+  background-image: image-url('landing-box2-bottom.gif')
   width: 540px
 
 .landing-cta-container
@@ -2274,7 +2274,7 @@ a:hover
   position: absolute
   top: 0px
   background-repeat: no-repeat
-  background-image: url('/images/get_started_burst_blank.png')
+  background-image: image-url('get_started_burst_blank.png')
   height: 125px
   width: 206px
   overflow: hidden
@@ -2300,7 +2300,7 @@ a:hover
   margin-bottom: 10px
   background-position: 0px 2px
   padding-left: 23px
-  background-image: url('/images/Arrow_right_16x16.png')
+  background-image: image-url('Arrow_right_16x16.png')
   background-repeat: no-repeat
   border-bottom-style: none
   color: #91b145
@@ -2317,7 +2317,7 @@ a:hover
 /* addthis styling */
 
 .at300bs.at15t_expanded, .at300bs.at15t_compact
-  background: transparent url('/images/addthis_more.gif') no-repeat scroll left center !important
+  background: transparent image-url('addthis_more.gif') no-repeat scroll left center !important
 
 .addthis_default_style .at300m
   font-size: 1.2em
@@ -2351,7 +2351,7 @@ a:hover
   background-position: left top
   background-repeat: no-repeat
   padding-left: 100px
-  background-image: url('/images/twitter_bull_and_bird.gif')
+  background-image: image-url('twitter_bull_and_bird.gif')
 
 .twitter-popup a
   border-bottom-style: none
@@ -2403,13 +2403,13 @@ a:hover
   list-style-type: none
 
 .quote_container_home
-  background-image: url('/images/sdfsdf')
+  background-image: image-url('sdfsdf')
   margin-bottom: 20px
   background-repeat: no-repeat
   float: left
   height: 135px
   width: 273px
-  background-image: url('/images/quote_home_background.gif')
+  background-image: image-url('quote_home_background.gif')
 
 .quote_logo_home
   float: left
@@ -2441,7 +2441,7 @@ a:hover
 
 .quote_border_hiw
   float: left
-  background-image: url('/images/quote_border_hiw.gif')
+  background-image: image-url('quote_border_hiw.gif')
   background-repeat: no-repeat
   height: 1px
   width: 605px
@@ -2449,7 +2449,7 @@ a:hover
 .quote_middle_hiw
   padding-bottom: 20px
   float: left
-  background-image: url('/images/quote_middle_hiw.gif')
+  background-image: image-url('quote_middle_hiw.gif')
   background-repeat: repeat-y
   width: 605px
 
@@ -2484,7 +2484,7 @@ a:hover
 
 .quote_border_features
   float: left
-  background-image: url('/images/quote_border_features.gif')
+  background-image: image-url('quote_border_features.gif')
   background-repeat: no-repeat
   height: 1px
   width: 940px
@@ -2492,7 +2492,7 @@ a:hover
 .quote_middle_features
   padding-bottom: 20px
   float: left
-  background-image: url('/images/quote_middle_features.gif')
+  background-image: image-url('quote_middle_features.gif')
   background-repeat: repeat-y
   width: 940px
 
@@ -2556,7 +2556,7 @@ a:hover
   width: 60px
   height: 76px
   float: left
-  background-image: url('/images/date_bg.jpg')
+  background-image: image-url('date_bg.jpg')
   background-repeat: no-repeat
 
 .content_container div.left_content div.each_article_container div.left_column div.date_container div.month
@@ -2586,7 +2586,7 @@ a:hover
   width: 580px
   height: 13px
   float: left
-  background-image: url('/images/each_article_top.jpg')
+  background-image: image-url('each_article_top.jpg')
   background-repeat: no-repeat
   background-position: bottom
 
@@ -2594,7 +2594,7 @@ a:hover
   width: 580px
   height: 13px
   clear: both
-  background-image: url('/images/each_article_bottom.jpg')
+  background-image: image-url('each_article_bottom.jpg')
   background-repeat: no-repeat
   background-position: top
 
@@ -2603,7 +2603,7 @@ a:hover
   height: auto
   float: left
   padding: 3px 20px
-  background-image: url('/images/each_article_mid.jpg')
+  background-image: image-url('each_article_mid.jpg')
   background-repeat: repeat-y
 
 .content_container div.left_content div.each_article_container div.right_column div.mid h3 a
@@ -2641,7 +2641,7 @@ a:hover
   padding: 4px 0 0 0
   float: left
   text-decoration: none
-  background-image: url('/images/comments_icon.jpg')
+  background-image: image-url('comments_icon.jpg')
   background-position: bottom
   font-size: 12px
   color: #ffffff
@@ -2656,7 +2656,7 @@ a:hover
   height: 32px
   float: left
   text-decoration: none
-  background-image: url('/images/facebook_icon.jpg')
+  background-image: image-url('facebook_icon.jpg')
   background-position: bottom
   margin-left: 10px
 
@@ -2667,7 +2667,7 @@ a:hover
   height: 32px
   float: left
   text-decoration: none
-  background-image: url('/images/twitter_icon.jpg')
+  background-image: image-url('twitter_icon.jpg')
   background-position: bottom
   margin-left: 10px
 
@@ -2718,7 +2718,7 @@ a:hover
   height: auto
   float: right
   padding-left: 46px
-  background-image: url('/images/right_content_bg.jpg')
+  background-image: image-url('right_content_bg.jpg')
   background-repeat: no-repeat
   background-position: left top
 
@@ -2726,7 +2726,7 @@ a:hover
   width: 100%
   height: 33px
   float: left
-  background-image: url('/images/search_textbox.jpg')
+  background-image: image-url('search_textbox.jpg')
   background-repeat: no-repeat
   background-position: left center
   margin-bottom: 19px
@@ -2747,7 +2747,7 @@ a:hover
   width: 71px
   height: 33px
   float: right
-  background-image: url('/images/search_button.jpg')
+  background-image: image-url('search_button.jpg')
   background-repeat: no-repeat
   cursor: pointer
   border: 0
@@ -2765,7 +2765,7 @@ a:hover
   height: 30px
   padding: 8px 0 0 0
   float: left
-  background-image: url('/images/right_each_panel_top.jpg')
+  background-image: image-url('right_each_panel_top.jpg')
   background-repeat: no-repeat
   background-position: bottom
   text-align: center
@@ -2777,7 +2777,7 @@ a:hover
   width: 219px
   height: 13px
   clear: both
-  background-image: url('/images/right_each_panel_bottom.jpg')
+  background-image: image-url('right_each_panel_bottom.jpg')
   background-repeat: no-repeat
   background-position: top
 
@@ -2875,7 +2875,7 @@ a:hover
   text-decoration: none
   padding-left: 25px
   padding-bottom: 10px
-  background-image: url('/images/black_arrow.jpg')
+  background-image: image-url('black_arrow.jpg')
   background-repeat: no-repeat
   background-position: left 3px
 
@@ -2961,7 +2961,7 @@ a:hover
   width: 247px
   overflow: hidden
   position: absolute
-  background: url('/images/blog_header_bull.png') no-repeat 0 -75px
+  background: image-url('blog_header_bull.png') no-repeat 0 -75px
 
 .blog_header
   width: 750px
@@ -3128,7 +3128,7 @@ a:hover
   width: 535px
   background-position: 30px
   background-repeat: no-repeat
-  background-image: url('/images/triangle.png')
+  background-image: image-url('triangle.png')
   float: left
 
 .submit
@@ -3137,7 +3137,7 @@ a:hover
   height: 34px
   width: 72px
   background-repeat: no-repeat
-  background-image: url('/images/submit_button.gif')
+  background-image: image-url('submit_button.gif')
   text-indent: -9999px
   cursor: pointer
 
@@ -3148,7 +3148,7 @@ a.bu_standard
   margin: 10px auto 10px auto
   padding: 13px 0 19px 0
   text-align: center
-  background: transparent url('/images/landing-cta-blank.gif') 0 0 no-repeat
+  background: transparent image-url('landing-cta-blank.gif') 0 0 no-repeat
   display: block
 
 a.bu_standard span
@@ -3174,7 +3174,7 @@ a.bu_standard:hover
   margin: 10px auto 10px auto
   padding: 17px 0 17px 0
   text-align: center
-  background: transparent url('/images/landing-cta-blank.gif') 0 0 no-repeat
+  background: transparent image-url('landing-cta-blank.gif') 0 0 no-repeat
   display: block
 
 .merchant_form_wrapper
@@ -3197,7 +3197,7 @@ a.bu_standard:hover
   width: 515px
   height: 67px
   margin-top: 25px
-  background: url('/images/millennium-logo.gif') no-repeat center
+  background: image-url('millennium-logo.gif') no-repeat center
   margin-bottom: 25px
   margin-left: 0px
 
@@ -3289,7 +3289,7 @@ label.error
 
 #prog_nav a:hover, #t-intro a
   color: #333
-  background: #fff url(/images/on_bg.gif) repeat-x top left
+  background: #fff image-url('if') repeat-x top left
 
 .order_amount_strong
   font-size: 110%
@@ -3595,19 +3595,19 @@ label.error
 /* Flexible box */
 
 .quickbox
-  background: url(/images/quickbox_bottom_bg.gif) no-repeat bottom left
+  background: image-url('quickbox_bottom_bg.gif') no-repeat bottom left
   font-size: 1.4em
 
 .quickbox .heading
   color: #333
   border-bottom: 1px solid #7e8dfd
-  background: url(/images/quickbox_header_bg.gif) no-repeat top left
+  background: image-url('quickbox_header_bg.gif') no-repeat top left
 
 .quickbox strong
   display: block
   margin: 0
   padding: 6px 0px 4px 10px
-  background: url(/images/quickbox_header_rt.gif) no-repeat top right
+  background: image-url('quickbox_header_rt.gif') no-repeat top right
 
 .quickbox ul
   margin: 0
@@ -3706,7 +3706,7 @@ label.error
 
 #stylized
   border: solid 1px #ccccff
-  background: #fff url(/images/bg.gif) repeat-x
+  background: #fff image-url('bg.gif') repeat-x
   @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
   @include background(linear-gradient(#DEDEDE, white 20%))
   @include border-radius(5px)
@@ -4121,7 +4121,7 @@ table#line_items_receipt
           font-size: 1.5em
 
       span.finished
-        background-image: url('/images/sitesprite1.png')
+        background-image: image-url('sitesprite1.png')
         background-position: -10px -782px
         background-repeat: no-repeat
         color: #666
@@ -4338,7 +4338,7 @@ table#line_items_receipt
     color: #000
 
   .p_ev
-    background: url(/images/get_green_bar.png) no-repeat
+    background: image-url('get_green_bar.png') no-repeat
 
   .p_body
     padding: 10px 20px 20px
@@ -4373,7 +4373,7 @@ table#line_items_receipt
           height: 22px
 
         .check
-          background: url(/images/check_bl.png) no-repeat scroll 0 0
+          background: image-url('check_bl.png') no-repeat scroll 0 0
 
     .p_starting_at, .reseller_p_starting_at
       font-size: 1.7em
@@ -4418,7 +4418,7 @@ h3#certificate_crumbs
   float: right
   font-size: 1.4em
   width: 32%
-  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+  background: #FFFFFF image-url('bg.gif') repeat-x scroll 0 0
 
   ul
     list-style: none
@@ -4446,12 +4446,12 @@ h3#certificate_crumbs
 /* Product Page */
 /* Product Page */
 .center_product_desc
-  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+  background: #FFFFFF image-url('bg.gif') repeat-x scroll 0 0
   margin: 9px 0 0
   padding: 0.6em
 
 .right_product_desc
-  background: #FFFFFF url(/images/bg.gif) repeat-x scroll 0 0
+  background: #FFFFFF image-url('bg.gif') repeat-x scroll 0 0
   float: right
   margin: 9px 0 0
   padding: 0.6em
@@ -4615,7 +4615,7 @@ img.blue_icon
   clear: both
 
 .approved_validation_document
-  background: url(/images/bg-list.gif) no-repeat left top
+  background: image-url('bg-list.gif') no-repeat left top
 
   &.crossout span
     text-decoration: line-through
@@ -4630,7 +4630,7 @@ ul.applicable_documents, ul.applied_docs
 
 .tree-connect
   padding-left: 1.2em
-  background: url(/images/tree-connect.gif) no-repeat left center
+  background: image-url('tree-connect.gif') no-repeat left center
 
 span.rule_name
   background: lightyellow
@@ -4783,7 +4783,7 @@ span.footer_link
 .contact_us_support
   float: right
   width: 330px
-  background: #fff url(/images/bg.gif) repeat-x
+  background: #fff image-url('bg.gif') repeat-x
 
   .support_panel
     margin: 10px
