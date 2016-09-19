@@ -34,11 +34,9 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
-  # Do not compress assets
-  config.assets.compress = false
-
-  # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
+  config.assets.compile = true
+  config.assets.digest = false
 
   ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info

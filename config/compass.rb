@@ -5,7 +5,7 @@
 http_path = "/"
 css_dir = "public/stylesheets/compiled"
 http_stylesheets_path = "/stylesheets"
-sass_dir = "app/stylesheets"
+sass_dir = "app/asstes/stylesheets"
 images_dir = "public/images"
 http_images_path = "/images"
 javascripts_dir = "public/javascripts"

@@ -34,7 +34,7 @@
             %li
               %span.head_menu
                 =link_to "My Profile".l, dashboard_user_path(current_user)
-                %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+                %img.arrow{:src=>"#{asset_path('arrow.png')}", :width=>"18", :height=>"15", :align=>"top"}
               .sub_menu
                 -if current_user.admin?
                   =link_to 'Admin dashboard'.l, admin_dashboard_path
@@ -57,7 +57,7 @@
           %li
             %span.head_menu
               = link_to "Destinations", recent_releases_path
-              %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+              %img.arrow{:src=>"#{asset_path('arrow.png')}", :width=>"18", :height=>"15", :align=>"top"}
             .sub_menu
               = link_to "My Purchased Releases".l, purchased_user_releases_path(current_user) if logged_in?
               = link_to "Recent Releases".l, recent_releases_path, :class => (logged_in?) ? "item_line" : ""
@@ -76,7 +76,7 @@
                     = link_to "Studio", dashboard_studio_path(studio)
                   -else
                     = link_to "Studio", about_studios_path
-                  %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+                  %img.arrow{:src=>"#{asset_path('arrow.png')}", :width=>"18", :height=>"15", :align=>"top"}
                 .sub_menu
                   = link_to "About studios", about_studios_path if state==:pending_studio_registration
                   = link_to "Create your studio".l, new_studio_path if state==:pending_studio_registration
@@ -103,7 +103,7 @@
                     = link_to "Affiliate".l, dashboard_affiliate_path(affiliate)
                   -else
                     = link_to "Affiliate".l, about_affiliates_path
-                  %img.arrow{:src=>"/images/arrow.png", :width=>"18", :height=>"15", :align=>"top"}
+                  %img.arrow{:src=>"#{asset_path('arrow.png')}", :width=>"18", :height=>"15", :align=>"top"}
                 .sub_menu
                   -unless affiliate
                     = link_to "About affiliates", about_affiliates_path

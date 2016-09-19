@@ -13,7 +13,7 @@ jQuery(function($) {
     });
     $(':radio[id*=funded_account_funding_source]').click(function(){
       $('#register_card_form').fadeOut();
-      $('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+      $('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
       profile_form_hidden = true;
     });
     $.update_balance_after_load();
