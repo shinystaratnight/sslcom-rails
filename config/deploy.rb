@@ -185,7 +185,8 @@ namespace :deploy do
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings.yml"
-    run "ln -nfs #{shared_path}/repository #{release_path}/repository"
+    run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
+    run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'
