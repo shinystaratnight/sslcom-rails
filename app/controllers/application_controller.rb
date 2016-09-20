@@ -340,7 +340,15 @@ class ApplicationController < ActionController::Base
   end
 =end
 
-  protected
+  def handle_unverified_request
+    # raise an exception
+    fail ActionController::InvalidAuthenticityToken
+    # or destroy session, redirect
+    if current_user_session
+      current_user_session.destroy
+    end
+    redirect_to root_url
+  end
 
   #derive the model name from the controller. egs UsersController will return User
   def self.permission
