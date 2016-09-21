@@ -1,0 +1,19 @@
+-title = "Edit User - #{@user.first_name} #{@user.last_name}"
+-content_for :title, title
+.reseller_registration_profile
+  %h3=title
+  %p
+    Please add the username and email for the user.
+  =form_for @user, url: managed_user_path do |f|
+    =f.error_messages
+    #stylized.default_form
+      .subheading Credentials
+      =render partial: "form", object: f
+    #button_container
+      #next_submit=image_submit_tag "bl_submit_button.gif"
+
+:javascript
+  $( "#user_role_ids" ).select2();
+  $(document).ready(function() {
+    $( "#user_role_ids" ).select2();
+  });

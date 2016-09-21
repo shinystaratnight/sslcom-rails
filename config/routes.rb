@@ -79,6 +79,8 @@ SslCom::Application.routes.draw do
 
   resources :products
 
+  resources :managed_users, only: [:new, :create, :edit, :update]
+
   resources :users do
     collection do
       get :edit_password

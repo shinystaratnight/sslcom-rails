@@ -5,6 +5,7 @@ class Role < ActiveRecord::Base
   belongs_to                :ssl_account #as account_role. if specified, then it's a role that is specific to this account. If not specified then it's a global role
 
   RESELLER = 'reseller'
-  CUSTOMER = 'account_admin'
+  CUSTOMER = 'customer'
+  CUSTOMER_ADMIN = 'customer_admin'
   VETTER = 'vetter'
 end

@@ -1,0 +1,18 @@
+-if @user.new_record?
+  .clearfix.form_input
+    = form.label :first_name, "First Name".html_safe
+    = form.text_field :first_name, :size=>HTML_TEXT_FIELD_SIZE
+  .clearfix.form_input
+    = form.label :last_name, "Last Name".html_safe
+    = form.text_field :last_name, :size=>HTML_TEXT_FIELD_SIZE
+  .clearfix.form_input
+    = form.label :email, "Email<span class='label_desc'>receives activation</span>".html_safe
+    = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE
+.clearfix.form_input
+  = form.label :role_id, "Roles<span class='label_desc'>determines permissions</span>".html_safe
+  = form.select :role_ids,
+      options_from_collection_for_select(Role.all, :id, :name, @role_ids || [4]),
+      {},
+      prompt: 'Select One',
+      multiple: true,
+      size: HTML_TEXT_FIELD_SIZE

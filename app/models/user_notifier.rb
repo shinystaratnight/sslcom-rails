@@ -6,54 +6,55 @@ class UserNotifier < ActionMailer::Base
 
   def activation_instructions(user)
     @account_activation_url = register_url(user.perishable_token)
-    mail subject:       "SSL.com user account activation instructions",
-            from:          Settings.from_email.activations,
-            to:    user.email
+    mail subject: "SSL.com user account activation instructions",
+            from: Settings.from_email.activations,
+              to: user.email
   end
 
   def activation_confirmation(user)
     @account_url = account_url
     @login = user.login
-    mail subject:       "SSL.com user account activated",
-            from:          Settings.from_email.activations,
-            to:    user.email
+    mail subject: "SSL.com user account activated",
+            from: Settings.from_email.activations,
+              to: user.email
   end
 
   def password_reset_instructions(user)
     @edit_password_reset_url = edit_password_reset_url(user.perishable_token)
-    mail  subject:      "SSL.com user account password reset instructions",
-             from:         Settings.from_email.activations,
-             to:   user.email
+    mail  subject: "SSL.com user account password reset instructions",
+             from: Settings.from_email.activations,
+               to: user.email
   end
 
   def password_changed(user)
-    mail subject:       "SSL.com user account password changed",
-           from:          Settings.from_email.activations,
-           to:    user.email
+    mail subject: "SSL.com user account password changed",
+           from:  Settings.from_email.activations,
+             to:  user.email
   end
 
   def email_changed(user, email)
      @user=user
-     mail  subject:      "SSL.com user account email address changed",
-              from:         Settings.from_email.activations,
-              to:   email
+     mail  subject: "SSL.com user account email address changed",
+              from: Settings.from_email.activations,
+                to: email
   end
 
   def username_reminder(user)
      @login = user.login
-     mail  subject:       "SSL.com username reminder",
-              from:          Settings.from_email.activations,
-              to:    user.email
+     mail  subject: "SSL.com username reminder",
+              from: Settings.from_email.activations,
+                to: user.email
   end
 
-  def signup_invitation(email, user, message)
-    setup_sender_info
-    @recipients  = "#{email}"
-    @subject     = "#{user.login} would like you to join #{Settings.community_name}!"
-    @sent_on     = Time.now
-    @body[:user] = user
-    @body[:url]  = signup_by_id_url(user, user.invite_code)
-    @body[:message] = message
+  def signup_invitation(user, current_user, base_url)
+    @user = user
+    @current_user = current_user
+    @ssl_account = user.ssl_account
+    @invite_url = base_url + "register/#{@user.perishable_token}?invite=true"
+    @login = user.login
+    mail subject:  "Invition to SSL.com",
+            from:  Settings.from_email.activations,
+              to: user.email
   end
 
   protected

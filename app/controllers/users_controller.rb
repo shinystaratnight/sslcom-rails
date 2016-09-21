@@ -6,7 +6,7 @@ class UsersController < ApplicationController
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login]
-#  before_filter :index, :only=>:search
+ # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
@@ -26,7 +26,8 @@ class UsersController < ApplicationController
 
   def index
     p = {:page => params[:page]}
-    @users = User.unscoped
+    set_users
+
     if params[:search]
       search = params[:search].strip.split(" ")
       role = nil
@@ -51,6 +52,7 @@ class UsersController < ApplicationController
       @user.roles << Role.find_by_name(Role::RESELLER)
     else
       @user.roles << Role.find_by_name(Role::CUSTOMER)
+      @user.roles << Role.find_by_name(Role::CUSTOMER_ADMIN)
     end
     if @user.signup!(params)
       @user.deliver_activation_instructions!
@@ -143,7 +145,7 @@ class UsersController < ApplicationController
 
   def edit_email
     @user ||= @current_user
-    permission_denied if (!@current_user.is_admin? && @current_user != @user)
+    permission_denied unless admin_or_current_user?
   end
 
   def update
@@ -218,10 +220,25 @@ class UsersController < ApplicationController
   end
 
   def admin_op?
-    (@user!=@current_user && @current_user.is_admin?) unless @current_user.blank?
+    (@user!=@current_user &&
+      (@current_user.is_admin? || @current_user.is_customer_admin?)
+    ) unless @current_user.blank?
   end
 
   def set_admin_flag
     @user.admin_update=true if admin_op?
   end
+
+  def set_users
+    if current_user.is_super_user? || current_user.is_admin?
+      @users = User.unscoped
+    else
+      @users = current_user.manageable_users
+    end
+  end
+
+  def admin_or_current_user?
+    (@current_user.is_admin? || @current_user.is_customer_admin?) || @current_user == @user
+  end
+
 end

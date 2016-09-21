@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   include V2MigrationProgressAddon
 #  using_access_control
-  has_many  :assignments
+  has_many  :assignments, dependent: :destroy
   has_many  :visitor_tokens
   has_many  :surls
   has_many  :roles, :through => :assignments
@@ -14,11 +14,12 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   belongs_to :ssl_account
-  attr_accessor :changing_password, :admin_update
+  attr_accessor :changing_password, :admin_update, :role_ids
   attr_accessible :login, :email, :password, :password_confirmation,
-    :openid_identifier, :status
-  attr_readonly :login unless MIGRATING_FROM_LEGACY
+    :openid_identifier, :status, :assignments_attributes, :first_name, :last_name
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
+
+  accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|
     c.logged_in_timeout = 20.minutes
@@ -49,17 +50,16 @@ class User < ActiveRecord::Base
       (roles.name=~ "%#{term}%")}
   }
 
+  def manageable_users
+    ssl_account.users
+  end
+
   def has_role?(role)
     roles.map{|r|r.name.downcase}.include?(role.to_s)
   end
 
   def active?
     active
-  end
-
-  def activate!
-    self.active = true
-    save
   end
 
   def is_disabled?
@@ -74,6 +74,10 @@ class User < ActiveRecord::Base
   def deliver_activation_confirmation!
     reset_perishable_token!
     UserNotifier.activation_confirmation(self).deliver
+  end
+
+  def deliver_signup_invitation!(current_user, root_url)
+    UserNotifier.signup_invitation(self, current_user, root_url).deliver
   end
 
   def deliver_password_reset_instructions!
@@ -124,14 +128,41 @@ class User < ActiveRecord::Base
     self.crypted_password.blank? #&& self.openid_identifier.blank?
   end
 
+  def setup_roles
+
+  end
+
   # ...
   # now let's define a couple of methods in the user model. The first
   # will take care of setting any data that you want to happen at signup
   # (aka before activation)
   def signup!(params)
-    self.login = params[:user][:login]
+    assign_roles(params, true)
+    self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
     save_without_session_maintenance
+  end
+
+  def assign_roles(params, signup=false)
+    role_ids = params['user']['role_ids']
+    unless role_ids.nil?
+      new_role_ids = role_ids.compact.reject{|id| id.blank?}.map(&:to_i)
+    end
+    if new_role_ids.present?
+      if signup
+        new_role_ids << 4 unless new_role_ids.include? 4
+      end
+      current_role_ids = assignments.pluck(:role_id)
+      new_role_ids = new_role_ids - current_role_ids
+      self.assignments_attributes = new_role_ids.uniq.map{|id| {role_id: id}}
+    end
+  end
+
+  def remove_roles(params)
+    new_role_ids = params['user']['role_ids'].compact.reject{|id| id.blank?}.map(&:to_i)
+    current_role_ids = assignments.pluck(:role_id)
+    removable_role_ids = current_role_ids - new_role_ids
+    assignments.where(role_id: removable_role_ids).destroy_all
   end
 
   # the second will take care of setting any data that you want to happen
@@ -139,6 +170,7 @@ class User < ActiveRecord::Base
   # and setting a pass, openid, or both.
   def activate!(params)
     self.active = true
+    self.login = params[:user][:login] if params[:user][:login]
     self.password = params[:user][:password]
     self.password_confirmation = params[:user][:password_confirmation]
     #self.openid_identifier = params[:user][:openid_identifier]
@@ -165,6 +197,10 @@ class User < ActiveRecord::Base
 
   def is_super_user?
     role_symbols.include? :super_user
+  end
+
+  def is_customer_admin?
+    role_symbols.include? :customer_admin
   end
 
   def is_standard?

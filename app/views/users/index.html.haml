@@ -1,11 +1,14 @@
 -title = "User Management"
 -content_for :title, title
 =render :partial => 'index_scripts'
-#search_bar
-  =form_tag :search_users, :method=>:get do
-    username or email
-    =text_field_tag :search, @search
-    =submit_tag 'search'
+%div{style: 'display:flex;justify-content:flex-end'}
+  #search_bar{style: 'flex-basis:400px;margin:0;'}
+    =form_tag :search_users, :method=>:get do
+      username or email
+      =text_field_tag :search, @search
+      =submit_tag 'search'
+  %div{style: 'flex-basis:270px;'}
+    =link_to '+ Create User', new_managed_user_path, style: 'padding-top:19px;display:block;text-align:right;font-size:16px;'
 #validations
   %table(cellspacing="0")
     -if will_paginate @users
@@ -16,7 +19,7 @@
       =title
       =will_paginate @users
     %tr.heading_row
-      %td
+      %th
       %th.name(scope="col")Username
       %th(scope="col") Email Address
       %th(scope="col") Account Type
@@ -35,7 +38,7 @@
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
           -us, us_class=user_status(u)
-          %td.expandable.validation_status_message(class="#{us_class}" colspan="2")=us
+          %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details
@@ -66,13 +69,16 @@
                           %ul
                             %li
                               %strong manage account
-                            %li available funds: $#{u.ssl_account.funded_account.amount}
-                            %li=remote_login_link(u)
+                            - if permitted_to? :admin_manage
+                              %li available funds: $#{u.ssl_account.funded_account.amount}
+                              %li=remote_login_link(u)
                             %li=link_to 'user dashboard', admin_show_user_path(u)
+                            %li=link_to 'change roles', edit_managed_user_path(u)
                             %li=link_to 'change email address', edit_email_user_url(u)
                             %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
                             %li=link_to 'change password', edit_password_user_url(u)
-                            %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
+                            - if permitted_to? :admin_manage
+                              %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
                         .half_width_box
                           .adjust_status
                             %ul

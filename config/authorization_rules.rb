@@ -6,6 +6,7 @@ authorization do
   role :sysadmin do
     includes :vetter
     has_permission_on :users, :to => :admin_manage
+    has_permission_on :managed_users, :to => :admin_manage
     has_permission_on :surls, :to => :manage
   end
 
@@ -23,10 +24,15 @@ authorization do
     has_permission_on :validation_rules, :to => :admin_manage, :except=>:delete
   end
 
-  role :account_admin do
+  role :customer_admin do
+    has_permission_on :managed_users, :to => [:read, :create, :update, :edit]
+    has_permission_on :users, :to => [:read, :create, :update, :edit_email]
+  end
+
+  role :customer do
     includes :reseller
   end
-  
+
   role :reseller do
     has_permission_on :billing_profiles, :to => :manage do
       if_attribute :ssl_account => is {user.ssl_account}
