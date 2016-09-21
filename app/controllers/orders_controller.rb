@@ -423,8 +423,7 @@ class OrdersController < ApplicationController
   end
 
   def purchase_successful?
-    return false unless ActiveMerchant::Billing::Base.mode == :test ?
-        true : @credit_card.valid?
+    return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
     @order.amount= BillingProfile::TEST_AMOUNT if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
     @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
     @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
