@@ -24,8 +24,6 @@ class User < ActiveRecord::Base
     c.logged_in_timeout = 20.minutes
     c.validate_email_field = false
     c.session_ids = [nil, :shadow]
-    # c.transition_from_crypto_providers = [LegacySslMd5,Authlogic::CryptoProviders::Sha512]
-    # c.crypto_provider = Authlogic::CryptoProviders::SCrypt
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
     c.validates_length_of_password_field_options =
       {:on => :update, :minimum => 8,
@@ -231,18 +229,16 @@ class User < ActiveRecord::Base
   end
 
   private
-
+#These will need to be public methods accessible via the ui
   def self.make_admin(username)
-    u=User.find_by_login(username)
-    sysadmin=Role.find_by_name("sysadmin")
-    u.roles << Role.find_by_name("sysadmin") unless u.roles.include?(sysadmin)
+    u = User.find_by_login(username)
+    u.roles << Role.find_by_name("sysadmin") unless u.roles.map(&:name).include?("sysadmin")
     u.roles.delete(Role.find_by_name("customer"))
   end
 
   def self.remove_admin(username)
-    u=User.find_by_login(username)
-    customer=Role.find_by_name("customer")
-    u.roles << Role.find_by_name("customer") unless u.roles.include?(customer)
+    u = User.find_by_login(username)
+    u.roles << Role.find_by_name("customer") unless u.roles.map(&:name).include?("customer")
     u.roles.delete(Role.find_by_name("sysadmin"))
   end
 

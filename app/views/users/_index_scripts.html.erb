@@ -12,13 +12,13 @@ jQuery(function($) {
     $('.dropdown, .status_message, .expand, .subject_column > a, .expandable').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
-        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/expand.png');
+        $(this).parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");
         $(this).parents().filter('tr').find('.expand').text('expand');
         this.expanded = false;
       }
       else{
         this.expanded = true;
-        $(this).parents().filter('tr').find('.dropdown img').attr('src','/images/contract.png');
+        $(this).parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
         $(this).parents().filter('tr').next().show();
         $(this).parents().filter('tr').find('.expand').text('close');
       }

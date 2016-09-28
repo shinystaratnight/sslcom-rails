@@ -45,6 +45,9 @@ SslCom::Application.configure do
 
   config.eager_load=false
 
+  config.serve_static_assets = true
+  config.static_cache_control = "public, max-age=3600"
+
   #config.log_level = Logger::INFO
 
   GATEWAY_TEST_CODE=1.0

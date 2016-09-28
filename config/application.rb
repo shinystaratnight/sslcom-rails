@@ -92,6 +92,11 @@ module SslCom
 
     # Enable the asset pipeline
     config.assets.enabled = true
+
+    config.sass.preferred_syntax = :sass
+    config.sass.line_comments = false
+    config.sass.cache = false
+
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end
@@ -120,11 +125,12 @@ HTML_TEXT_FIELD_SIZE = 20
 AMOUNT_FIELD_SIZE = 10
 ADDRESS_FIELD_SIZE = 30
 SERVER_SIDE_CART = false
-SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
-  downcase=='postgresql' ? 'ilike' : 'like'
+# SQL_LIKE = Rails.configuration.database_configuration[Rails.env]['adapter'].
+#   downcase=='postgresql' ? 'ilike' : 'like'
+db_env = Rails.configuration.database_configuration[Rails.env]
+db_adapter = db_env['adapter'].downcase if db_env.present?
+SQL_LIKE = db_adapter == 'postgresql' ? 'ilike' : 'like'
 
 #uncomment to track down bugs on heroku production
 #ActiveRecord::Base.logger.level = 0 # at any time
 ActiveMerchant::Billing::CreditCard.require_verification_value=false
-
-

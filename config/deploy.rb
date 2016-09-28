@@ -1,4 +1,4 @@
-set :rvm_ruby_string, 'ruby-1.9.3-p125@rails323'                     # Or:
+set :rvm_ruby_string, '2.3.0p0'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-set :domain, '184.73.226.63' #WP production
+set :domain, '107.20.223.45' #WP production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
@@ -46,7 +46,7 @@ set :domain, '184.73.226.63' #WP production
 # Alternate SCM
 # Git
 set :scm, :git
-set :repository, "git@github.com:codelux/ssl_com_rails3.git"
+set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_to, "/home/ubuntu/sites/#{application}"
 set :deploy_via, :remote_cache
 
@@ -56,7 +56,7 @@ set :deploy_via, :remote_cache
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :user, "ubuntu"
-set :branch, "master"
+set :branch, "lg-asset-pipeline"
 set :use_sudo, false
 
 role :cache, domain
@@ -185,7 +185,8 @@ namespace :deploy do
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings.yml"
-    run "ln -nfs #{shared_path}/repository #{release_path}/repository"
+    run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
+    run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'

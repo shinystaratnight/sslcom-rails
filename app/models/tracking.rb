@@ -25,8 +25,8 @@ class Tracking < ActiveRecord::Base
                "http://links.ssl.com%", "https://links.ssl.com%",
                "http://info.ssl.com%", "https://info.ssl.com%"]
 
-  scope :non_ssl_com_url, joins{tracked_url}.where{tracked_urls.url.not_like_all SSL_LINKS}
-  scope :non_ssl_com_referer, joins{referer}.where{referer.url.not_like_all SSL_LINKS}
+  scope :non_ssl_com_url, lambda{joins{tracked_url}.where{tracked_urls.url.not_like_all SSL_LINKS}}
+  scope :non_ssl_com_referer, lambda{joins{referer}.where{referer.url.not_like_all SSL_LINKS}}
   scope :affiliate_referers, lambda {|affid|
     joins{tracked_url}.where{tracked_urls.url =~ "%/code/#{affid}%"}
   }

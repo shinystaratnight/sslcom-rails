@@ -431,13 +431,13 @@ jQuery(function($) {
     $('#expand_register_card').toggle(
       function(event){
           $('#register_card_form').fadeIn();
-          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/hide_billing_profile_form.png');
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('hide_billing_profile_form.png') %>");
           $(event.target).text('Click here to hide form');
           profile_id = $(':radio[id*=funded_account_funding_source]:checked').attr("id");
           $(':radio[id*=funded_account_funding_source]').removeAttr('checked');},
       function(event){
           $('#register_card_form').fadeOut();
-          $(this).add('img[id=toggle_billing_profile_form]').attr('src', '/images/add_new_billing_profile.png');
+          $(this).add('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
           $(event.target).text('Click here to add a new credit card')
           $(':radio[id*='+profile_id+']').attr("checked","checked")}
       );

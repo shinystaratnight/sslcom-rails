@@ -54,7 +54,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).includes(:certificate_contents).order("certificate_contents.created_at desc").
+      joins(:certificate_contents).includes(:certificate_contents).order("certificate_orders.created_at desc").
       readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
@@ -181,7 +181,7 @@ class CertificateOrder < ActiveRecord::Base
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
     joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
-        order("csr.updated_at asc")
+        order("csrs.updated_at asc")
   }
 
   scope :order_by_csr, lambda {

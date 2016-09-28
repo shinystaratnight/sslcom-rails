@@ -1,5 +1,5 @@
 SslCom::Application.configure do
-  APP_URL = "http://dev-station:3000"
+  APP_URL = "http://www.ssl.local:3000"
   MIGRATING_FROM_LEGACY = false
   MIGRATING_SURLS_TO_SSL_GS = false
   # Settings specified here will take precedence over those in config/environment.rb
@@ -34,6 +34,10 @@ SslCom::Application.configure do
     BillingProfile.password = "kama1jama1"
   end
 
+  config.assets.debug = false
+  config.assets.compile = true
+  config.assets.digest = false
+
   ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info
   # GATEWAY_TEST_CODE = 1.0
@@ -41,6 +45,8 @@ SslCom::Application.configure do
 
   require 'sass/plugin/rack'
   Sass::Plugin.options[:line_numbers] = true
+
+  config.middleware.use "SetCookieDomain", ".ssl.local"
 end
 
 # SubdomainFu.configure do |config|
@@ -48,5 +54,3 @@ end
 #   config.mirrors = %w(www)
 #   config.preferred_mirror = "www"
 # end
-
-

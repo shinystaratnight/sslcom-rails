@@ -1,0 +1,22 @@
+/*
+*= require_self
+*= require jquery-ui-1.8.7.custom.css
+*= require jquery.tooltip.css
+*= require prettyPhoto.css
+*= require prettyLoader.css
+*= require prettyPopin.css
+*= require prettyPhoto.css
+*= require sass/main
+*= require sass/master
+*= require sass/ie
+*= require sass/ie8
+*= require sass/buy_now
+*= require sass/ssl_seal
+*/
+
+/*
+TODO: I had to remove the site report from the main import here.
+This will need to be added back and loaded only on the site report page only
+or figure out why the styles are conflicting with the main layout
+require sass/site_report
+*/

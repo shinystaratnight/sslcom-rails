@@ -1,28 +1,21 @@
 source 'http://rubygems.org'
 
 gem 'rails', '~> 4.2.6'
-
-# required Rails 4 upgrade
+gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
-# gem 'plugger'
-# gem 'preferences'
 gem 'dynamic_form'
-
 gem 'mysql2'
 gem 'workflow'
 gem "rabl"
 gem 'pry-rails'
 gem 'awesome_print'
 gem 'activemerchant'
-#gem 'money', :git => "git://github.com/RubyMoney/money.git"
 gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
-# gem 'subdomain-fu', :git => "git://github.com/mbleigh/subdomain-fu.git"
 gem 'haml', '>= 3.1.alpha.50'
 gem 'paperclip'
-# gem 'resource_controller', :git => "git@github.com:codelux/resource_controller.git"
 gem 'declarative_authorization'
 gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
 gem "savon", '~> 2.0'
@@ -34,11 +27,11 @@ gem 'json', '~> 1.8.1'
 gem 'easy_roles'
 gem 'squeel'
 gem 'yui-compressor'
-gem 'jammit'
+#Commented out while converting to pipeline
+# gem 'jammit'
 gem "config"
 gem 'sinatra'
 gem 'uuidtools'
-# gem 'malware_api', git: "git@github.com:codelux/malware_api.git"
 gem 'radix62'
 gem 'whenever', require: false
 gem 'openssl-extensions', :require => 'openssl-extensions/all'
@@ -48,9 +41,9 @@ gem "therubyracer", '~> 0.12.0', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
 gem 'request_exception_handler'
 gem 'rvm-capistrano'
-gem 'newrelic_rpm'
+# gem 'newrelic_rpm'
 gem 'dalli'
-gem 'attr_encrypted'
+gem 'attr_encrypted', '>= 3.0.3'
 gem 'delayed_job_active_record'
 gem "daemons"
 gem 'delayed_job_groups_plugin'
@@ -58,33 +51,18 @@ gem 'public_suffix'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'cancan'
 gem 'unscoped_associations'
-
-# Deploy with Capistrano
-#gem 'rvm-capistrano'
-
-# Bundle the extra gems:
-# gem 'bj'
 gem 'nokogiri'
-# gem 'sqlite3-ruby', :require => 'sqlite3'
-# gem 'aws-s3', :require => 'aws/s3'
-
 gem 'coffee-rails'
-# See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer',  platforms: :ruby
-
-# Use jquery as the JavaScript library
 gem 'jquery-rails'
-# Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 gem 'turbolinks'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder'
-# bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc',          group: :doc
+gem 'airbrake', '~> 5.4'
+gem 'rails-observers'
+gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
+gem 'sass-rails'
+gem 'compass-rails'
 
-# Bundle gems for the local environment. Make sure to
-# put test-only gems in this group so their generators
-# and rake tasks are available in development mode:
-#
 group :development do
   gem 'foreman'
   gem 'dotenv-rails'
@@ -93,6 +71,7 @@ group :development do
   gem 'spring'
   gem 'better_errors'
   gem 'binding_of_caller'
+  gem 'annotate'
 end
 
 group :development, :test do
@@ -100,12 +79,9 @@ group :development, :test do
   gem "builder"
   gem 'ruby_parser'
   gem "rspec-rails", '~> 2.14.0'
-  #gem 'activerecord-sqlserver-adapter'
   gem 'ruby-odbc'
   gem 'launchy'
   gem 'factory_girl_rails'
-  #gem 'spork'
-  #gem 'active_reload'
 end
 
 group :test do
@@ -118,12 +94,9 @@ group :test do
   gem 'webmock'
   gem 'faker'
   gem 'guard-rspec'
-  gem 'launchy' #http://everydayrails.com/2012/03/12/testing-series-rspec-setup.html#sthash.huwPdI5i.dpuf
 end
 
 group :assets do
-  gem 'sass-rails'
   gem 'coffee-rails'
   gem 'uglifier'
-  gem 'compass-rails'
 end

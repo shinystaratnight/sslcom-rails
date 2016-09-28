@@ -13,7 +13,7 @@ SslCom::Application.configure do
   config.cache_store = :dalli_store
 
   # For nginx:
-  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
 
   # If you have no front-end server that supports something like X-Sendfile,
   # just comment this out and Rails will serve the files
@@ -27,11 +27,16 @@ SslCom::Application.configure do
   # Use a different cache store in production
   # config.cache_store = :mem_cache_store
 
-  # Disable Rails's static asset server
-  # In production, Apache or nginx will already do this
-  config.serve_static_assets = false
-  config.assets.css_compressor = :yui
+  # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
+  config.assets.css_compressor = :sass
+
+  # Do not fallback to assets pipeline if a precompiled asset is missed.
+  config.assets.compile = false
+
+  # Asset digests allow you to set far-future HTTP expiration dates on all assets,
+  # yet still be able to expire them through the digest params.
+  config.assets.digest = true
 
   # Enable serving of images, stylesheets, and javascripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
@@ -66,11 +71,12 @@ SslCom::Application.configure do
   config.log_level = :info
   # END ActiveMerchant configuration
   config.eager_load = true
-end
 
-SubdomainFu.configure do |config|
-  config.tld_sizes = {development: 1, test: 1, production: 1} # set all at once (also the defaults)
-  config.mirrors = %w(www)
-  config.preferred_mirror = "www"
+  config.middleware.use "SetCookieDomain", ".ssl.com"
 end
-
+#comment out temporarily
+# SubdomainFu.configure do |config|
+#   config.tld_sizes = {development: 1, test: 1, production: 1} # set all at once (also the defaults)
+#   config.mirrors = %w(www)
+#   config.preferred_mirror = "www"
+# end
