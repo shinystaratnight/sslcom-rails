@@ -647,7 +647,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    ComodoApi.apply_for_certificate(self, options)
+    ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
   end
 
   def retrieve_ca_cert(email_customer=false)
@@ -1078,6 +1078,7 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  # @param [Hash] override
   def ascending_root(override)
     '_amazon' if is_amazon_balancer? || override[:server]=="amazon" || override[:ascending_root]==true
   end
@@ -1090,6 +1091,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  # @return [String]
+  def ca_name
+    if common_name =~ /impulshcs/
+      "ssl.com"
+    else
+      "comodo"
+    end
+  end
 
   def description_with_tier
     return description if certificate.reseller_tier.blank?

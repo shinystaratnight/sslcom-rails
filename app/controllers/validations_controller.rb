@@ -184,7 +184,7 @@ class ValidationsController < ApplicationController
           end
           OrderNotifier.validation_documents_uploaded(Settings.notify_address, @certificate_order, @files).deliver
           OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @certificate_order, @files).
-              deliver if @certificate_order.certificate.is_ev?
+              deliver if (@certificate_order.certificate.is_ev? && @certificate_order.ca_name=="comodo")
         end
         checkout={}
         if @certificate_order.certificate_content.contacts_provided?

@@ -25,7 +25,7 @@ class ValidationHistory < ActiveRecord::Base
   CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
     ['image/gif', 'gif'], ['image/bmp', 'bmp'],
-    ['application/zip', 'zip'], ['text/plain', 'txt'],
+    ['application/zip', 'zip'],
     ['application/msword', 'doc'], ['audio/mpeg', 'mp3']]
 
   # validates_attachment_presence :document
