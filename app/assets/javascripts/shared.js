@@ -3,3 +3,4 @@
 //= require jquery.prettyLoader
 //= require jquery.prettyPopin
 //= require jquery.form
+//= require select2

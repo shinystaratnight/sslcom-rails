@@ -401,6 +401,8 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    select2-rails (4.0.3)
+      thor (~> 0.14)
     sexp_processor (4.7.0)
     shellany (0.0.1)
     simpleidn (0.0.7)
@@ -533,6 +535,7 @@ DEPENDENCIES
   sass-rails
   savon (~> 2.0)
   sdoc
+  select2-rails
   simpleidn
   sinatra
   spring

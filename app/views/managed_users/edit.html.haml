@@ -12,8 +12,10 @@
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif"
 
-:javascript
-  $( "#user_role_ids" ).select2();
-  $(document).ready(function() {
+-content_for :js do
+  :javascript
     $( "#user_role_ids" ).select2();
-  });
+    $(document).ready(function() {
+      $( "#user_role_ids" ).select2();
+    });
+

@@ -29,6 +29,7 @@
       %meta(content="270203b2aec0195d-351e2e7194e8a573-g8eac2d942a134c20-b" name="google-translate-customization")
     =csrf_meta_tag
     =render :partial => "shared/scripts_and_styles"
+    =yield :js
   %body
     =render partial: "layouts/facebook" if Rails.env=~/production/i
     -if show_short_links?
