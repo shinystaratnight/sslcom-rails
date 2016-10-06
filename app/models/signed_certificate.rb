@@ -135,7 +135,7 @@ class SignedCertificate < ActiveRecord::Base
         end
         self[:signature] = parsed.subject_key_identifier
         self[:fingerprint] = parsed.serial
-        self[:fingerprint_sha] = parsed.signature_algorithm
+        self[:fingerprintSHA] = parsed.signature_algorithm
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
@@ -167,7 +167,7 @@ class SignedCertificate < ActiveRecord::Base
           certs[i][:country] = @parsed[i][:c][:c]
           certs[i][:signature] = @parsed[i][:signature]
           certs[i][:fingerprint] = @parsed[i][:fingerprint]
-          certs[i][:fingerprint_sha] = @parsed[i][:fingerprint_sha]
+          certs[i][:fingerprintSHA] = @parsed[i][:fingerprint_sha]
           certs[i][:effective_date] = @parsed[i][:eff_date]
           certs[i][:expiration_date] = @parsed[i][:exp_date]
           certs[i].save unless i==0

@@ -10,7 +10,7 @@ describe SignedCertificate, "as an ssl.com signed certificate" do
     parsed.state.should == "Denmark"
     parsed.locality.should == "Broendby"
     parsed.country.should == "DK"
-    parsed.fingerprint_sha.should == "sha1WithRSAEncryption"
+    parsed.fingerprintSHA.should == "sha1WithRSAEncryption"
     parsed.strength.should == 1024
   end
 

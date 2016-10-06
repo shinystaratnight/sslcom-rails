@@ -162,7 +162,7 @@ class OrdersController < ApplicationController
           OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if(defined? li.sellable.external_order_number)
           OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
             params["refund_reason"]).deliver if(defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
-          OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.notes =~ /DV#(\d+)/
+          OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
         }
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
@@ -206,9 +206,9 @@ class OrdersController < ApplicationController
     unpaginated =
       if @search = params[:search]
         if current_user.is_admin?
-          Order.unscoped{Order.search(params[:search])}
+          Order.unscoped.search(params[:search])
         else
-          current_user.ssl_account.orders.unscoped{current_user.ssl_account.orders.search(params[:search]).not_new}
+          current_user.ssl_account.orders.unscoped.not_new.search(params[:search])
         end
       else
         if current_user.is_admin?
