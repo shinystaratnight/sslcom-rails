@@ -24,7 +24,7 @@ class SiteSealsController < ApplicationController
   # GET /site_seals/1
   # GET /site_seals/1.xml
   def show
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id], :include=>:site_seal)
+    @certificate_order = CertificateOrder.includes(:site_seal).find_by_ref(params[:certificate_order_id])
     @site_seal = @certificate_order.site_seal
 
     respond_to do |format|

@@ -4,6 +4,7 @@ class SslAccount < ActiveRecord::Base
   easy_roles :roles
   has_one   :api_credential
   has_many  :users, :dependent=>:destroy
+  has_many  :users_unscoped, foreign_key: :ssl_account_id, class_name: "UserUnscoped", :dependent=>:destroy
   has_many  :billing_profiles
   has_many  :certificate_orders, ->{includes [:orders]} do
     def current
