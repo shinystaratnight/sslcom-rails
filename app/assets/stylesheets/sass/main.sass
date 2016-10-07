@@ -5433,3 +5433,40 @@ span#no_emails_accessible
 
 .select2-selection
   background-color: transparent !important
+
+/* Ssl Account select dropdown */
+.acc-sel-dropbtn
+  color: white
+  border: none
+  cursor: pointer
+
+.acc-sel-dropdown
+  display: inline-block
+  &:hover .acc-sel-dropdown-cont
+    display: block
+  &:hover .acc-sel-dropbtn
+    color: #6B9029
+
+.acc-sel-dropdown-cont
+  background-color: #282928
+  display: none
+  position: absolute
+  z-index: 100
+  ul
+    list-style: none
+    padding: 2px 0
+  a
+    color: white
+    min-width: 95px
+    text-decoration: none
+    padding: 2px 0
+    display: block
+    &:hover
+      font-size: 1.2rem
+      padding: 5px 0
+      color: #6B9029
+
+.search-hint
+  font-size:   1rem
+  font-weight: bold
+  margin-left: 4.2rem

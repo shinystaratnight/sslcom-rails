@@ -57,6 +57,44 @@ class UserNotifier < ActionMailer::Base
               to: user.email
   end
 
+  def invite_to_account(invite_user, current_user, ssl_account_id)
+    @invited_user = invite_user
+    @current_user = current_user.is_a?(User) ? current_user : User.find(current_user)
+    @ssl_account  = SslAccount.find ssl_account_id
+    @approval_url = approve_account_invite_user_url(@invited_user)
+    @approval_url << @invited_user.generate_approval_query(ssl_account_id: @ssl_account.id)
+    mail subject: "Invition to SSL.com account",
+            from: @current_user.email,
+              to: @invited_user.email
+  end
+
+  def invite_to_account_notify_admin(invite_user, current_user, ssl_account_id)
+    @invited_user = invite_user
+    @current_user = current_user.is_a?(User) ? current_user : User.find(current_user)
+    @ssl_account  = SslAccount.find ssl_account_id
+    mail subject: "You have invited a user to your SSL.com account",
+            from: Settings.from_email.activations,
+              to: @current_user.email
+  end
+
+  def removed_from_account(user, account, current_user)
+    @remove_user  = user
+    @current_user = current_user
+    @ssl_account  = account
+    mail subject: "You have been removed from SSL.com account",
+            from: @current_user.email,
+              to: @remove_user.email
+  end
+
+  def removed_from_account_notify_admin(user, account, current_user)
+    @remove_user  = user
+    @current_user = current_user
+    @ssl_account  = account
+    mail subject: "You have removed user from SSL.com account",
+            from: Settings.from_email.activations,
+              to: @current_user.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

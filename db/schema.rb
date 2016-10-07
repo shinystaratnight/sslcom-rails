@@ -988,8 +988,8 @@ ActiveRecord::Schema.define(version: 20161018191559) do
   add_index "site_seals", ["workflow_state"], name: "index_site_seals_workflow_state", using: :btree
 
   create_table "ssl_account_users", force: :cascade do |t|
-    t.integer  "user_id",        limit: 4,                   null: false
-    t.integer  "ssl_account_id", limit: 4,                   null: false
+    t.integer  "user_id",        limit: 4, null: false
+    t.integer  "ssl_account_id", limit: 4, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "approved",                   default: false

@@ -15,7 +15,7 @@
       =link_to "Orders", certificate_orders_path
     %li(id="#{(is_on?("orders") && !@prev) ? 't-intro' : 'manage_orders'}")
       =link_to "History", orders_path
-    -if current_user.is_admin? || current_user.is_customer_admin?
+    -if current_user.is_admin? || current_user.is_account_admin?
       %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_url
       %li(id="#{current_page?(edit_settings_ssl_account_url) ? 't-intro' : 'manage_settings'}")

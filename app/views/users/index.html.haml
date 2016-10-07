@@ -4,9 +4,11 @@
 %div{style: 'display:flex;justify-content:flex-end'}
   #search_bar{style: 'flex-basis:400px;margin:0;'}
     =form_tag :search_users, :method=>:get do
-      username or email
+      username or email or role
       =text_field_tag :search, @search
       =submit_tag 'search'
+      .search-hint
+        = '*e.g.: role:ssl_user'
   %div{style: 'flex-basis:270px;'}
     =link_to '+ Create User', new_managed_user_path, style: 'padding-top:19px;display:block;text-align:right;font-size:16px;'
 #validations
@@ -26,19 +28,28 @@
       %th(scope="col") Created
       %th(scope="col") Last Login
       %th(scope="col") Status
+      - unless current_user.is_system_admins?
+        %th(scope="col") Approved
     -@users.each do |u|
       -unless u==current_user
         %tr
           %td.dropdown=image_tag 'expand.png'
           %td.name.expandable=u.login
           %td.expandable=u.email
-          -type=u.role_symbols.join("/").or_else("user")
-          -type+="/affiliate" if u.is_affiliate?
+          -if current_user.is_admin? || current_user.is_super_user?
+            -type=u.role_symbols_all_accounts
+          -else
+            -type=u.role_symbols(current_user.ssl_account)
+          -type = type.join("/").or_else("user")
+          -type << "/affiliate" if u.is_affiliate?
           %td.expandable=type
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
           -us, us_class=user_status(u)
           %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
+          - unless current_user.is_system_admins?
+            -as, as_class=ssl_account_status(u, current_user.ssl_account)
+            %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details
@@ -70,15 +81,26 @@
                             %li
                               %strong manage account
                             - if permitted_to? :admin_manage
-                              %li available funds: $#{u.ssl_account.funded_account.amount}
+                              - if u.ssl_account
+                                %li available funds: $#{u.ssl_account.funded_account.amount}
                               %li=remote_login_link(u)
-                            %li=link_to 'user dashboard', admin_show_user_path(u)
-                            %li=link_to 'change roles', edit_managed_user_path(u)
-                            %li=link_to 'change email address', edit_email_user_url(u)
-                            %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
-                            %li=link_to 'change password', edit_password_user_url(u)
-                            - if permitted_to? :admin_manage
+                              %li=link_to 'user dashboard', admin_show_user_path(u)
+                              %li=link_to 'change email address', edit_email_user_url(u)
+                              %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
+                              %li=link_to 'change password', edit_password_user_url(u)
                               %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
+                            - if permitted_to? :update_roles, :managed_users
+                              %li=link_to 'change roles', edit_managed_user_path(u)
+                            - if permitted_to? :remove_from_account, :managed_users
+                              - if current_user.is_system_admins?
+                                - u.ssl_accounts.each do |ssl|
+                                  %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, ssl_account_id: ssl.id)
+                              - else
+                                %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u)
+                            - if permitted_to? :resend_account_invite, :users
+                              - unless current_user.is_system_admins? || u.approval_token_not_expired?(ssl_account_id: current_user.ssl_account.id)
+                                %li=link_to 'resend invite (token expired)', resend_account_invite_user_path(u, 
+                                ssl_account_id: current_user.ssl_account.id, from_user: current_user)
                         .half_width_box
                           .adjust_status
                             %ul
@@ -101,3 +123,16 @@
                                 %li
                                   =f.radio_button :status, 'disabled'
                                   reseller tier 1
+                        -if current_user.is_system_admins?
+                          .half_width_box
+                            .adjust_status
+                              %ul
+                                %li
+                                  %strong accounts status
+                                - u.ssl_accounts.each do |ssl|
+                                  - status = ssl_account_status(u, ssl).first
+                                  %li
+                                    ="##{ssl.acct_number.upcase}: #{status}"
+                                    - if status == 'token expired'
+                                      =link_to '&rarr; RESEND INVITE'.html_safe,
+                                      resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)

@@ -11,7 +11,7 @@ FactoryGirl.define do
       status "enabled"
       after(:create) {|user|
         user.crypted_password = "iMc/GE5OmEG6SCL8+UWCsI9l/n1VMr5GTSG12A=="
-        user.roles = [FactoryGirl.create(:role, name: Role::CUSTOMER)]
+        user.roles = [FactoryGirl.create(:role, name: Role::ACCOUNT_ADMIN)]
         user.save
       }
     end
