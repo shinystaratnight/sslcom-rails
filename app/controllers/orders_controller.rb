@@ -157,6 +157,7 @@ class OrdersController < ApplicationController
           performed << " and made $#{@order.amount} available to customer"
         end
         @order.full_refund!
+        SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
         notify_ca(params["refund_reason"],performed)
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
@@ -184,8 +185,7 @@ class OrdersController < ApplicationController
     redirect_to order_url(@order)
   end
 
-  def notify_ca(notes,performed)
-    SystemAudit.create(owner: current_user, target: @order, notes: notes, action: performed)
+  def notify_ca(notes)
     @order.line_items.each { |li|
       OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, notes).deliver if (defined? li.sellable.external_order_number)
       OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
@@ -199,7 +199,7 @@ class OrdersController < ApplicationController
     unless @order.blank?
       @order.send "#{params[:state]}!"
       SystemAudit.create(owner: current_user, target: @order, action: performed)
-      notify_ca(params[:state], "charged back order") if params[:state]=="charge_back"
+      notify_ca(params[:state], performed) if params[:state]=="charge_back"
     end
     redirect_to order_url(@order)
   end
