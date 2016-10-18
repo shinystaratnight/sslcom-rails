@@ -5,7 +5,7 @@ class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
   belongs_to  :billable, :polymorphic => true
   belongs_to  :address
-  belongs_to  :billing_profile
+  belongs_to  :billing_profile, unscoped: true
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token

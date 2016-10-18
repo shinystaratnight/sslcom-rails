@@ -157,13 +157,7 @@ class OrdersController < ApplicationController
           performed << " and made $#{@order.amount} available to customer"
         end
         @order.full_refund!
-        SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
-        @order.line_items.each{|li|
-          OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, params["refund_reason"]).deliver if(defined? li.sellable.external_order_number)
-          OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
-            params["refund_reason"]).deliver if(defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
-          OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, params["refund_reason"]).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
-        }
+        notify_ca(params["refund_reason"],performed)
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
@@ -190,11 +184,22 @@ class OrdersController < ApplicationController
     redirect_to order_url(@order)
   end
 
+  def notify_ca(notes,performed)
+    SystemAudit.create(owner: current_user, target: @order, notes: notes, action: performed)
+    @order.line_items.each { |li|
+      OrderNotifier.request_comodo_refund("refunds@ssl.com", li.sellable.external_order_number, notes).deliver if (defined? li.sellable.external_order_number)
+      OrderNotifier.request_comodo_refund("refunds@comodo.com", li.sellable.external_order_number,
+                                          notes).deliver if (defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
+      OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, notes).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
+    }
+  end
+
   def change_state
     performed="order changed to #{params[:state]}"
     unless @order.blank?
       @order.send "#{params[:state]}!"
       SystemAudit.create(owner: current_user, target: @order, action: performed)
+      notify_ca(params[:state], "charged back order") if params[:state]=="charge_back"
     end
     redirect_to order_url(@order)
   end
