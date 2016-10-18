@@ -20,7 +20,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :system_audits, :as => :target, :dependent => :destroy
-  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items
+  has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
   has_many    :ca_retrieve_certificates, as: :api_requestable, dependent: :destroy
@@ -642,8 +642,8 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def order(reload=nil)
-    orders(reload).last
+  def order
+    orders.last
   end
 
   def apply_for_certificate(options={})
