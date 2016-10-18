@@ -158,7 +158,7 @@ class OrdersController < ApplicationController
         end
         @order.full_refund!
         SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
-        notify_ca(params["refund_reason"],performed)
+        notify_ca(params["refund_reason"])
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
         @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
@@ -199,7 +199,7 @@ class OrdersController < ApplicationController
     unless @order.blank?
       @order.send "#{params[:state]}!"
       SystemAudit.create(owner: current_user, target: @order, action: performed)
-      notify_ca(params[:state], performed) if params[:state]=="charge_back"
+      notify_ca(params[:state]) if params[:state]=="charge_back"
     end
     redirect_to order_url(@order)
   end
