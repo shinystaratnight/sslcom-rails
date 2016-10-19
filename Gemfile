@@ -76,25 +76,32 @@ group :development do
 end
 
 group :development, :test do
-  gem 'pry-remote'
-  gem "builder"
-  gem 'ruby_parser'
-  gem "rspec-rails", '~> 2.14.0'
-  gem 'ruby-odbc'
-  gem 'launchy'
+  gem 'builder'
   gem 'factory_girl_rails'
+  gem 'launchy'
+  gem 'pry-remote'
+  gem 'ruby_parser'
+  gem 'ruby-odbc'
 end
 
 group :test do
-  gem 'cucumber-rails', :require => false
   gem 'capybara'
+  gem 'capybara-webkit'
+  gem 'capybara_minitest_spec'
+  gem 'capybara-screenshot'
+  gem 'chromedriver-helper'
   gem 'database_cleaner'
-  gem 'webrat'
-  gem 'email_spec'
-  gem 'rspec'
-  gem 'webmock'
   gem 'faker'
-  gem 'guard-rspec'
+  gem 'guard'
+  gem 'guard-minitest'
+  gem 'headless'
+  gem 'minitest-focus'
+  gem 'minitest-rails'
+  gem 'minitest-reporters'
+  gem 'mocha'
+  gem 'rack_session_access'
+  gem 'selenium-webdriver'
+  gem 'terminal-notifier-guard'
 end
 
 group :assets do

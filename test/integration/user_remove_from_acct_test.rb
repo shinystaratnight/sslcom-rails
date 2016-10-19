@@ -1,0 +1,87 @@
+require 'test_helper'
+
+describe 'remove user from account' do
+  before do
+    create_reminder_triggers
+    create_roles
+    set_common_roles
+    @current_admin       = create(:user, :account_admin)
+    @invited_ssl_acct    = @current_admin.ssl_account
+    @existing_user_email = 'exist_user@domain.com'
+    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @existing_ssl_acct   = @existing_user.ssl_account
+    @existing_user.ssl_accounts << @invited_ssl_acct
+    @existing_user.set_roles_for_account(@invited_ssl_acct, @ssl_user_role)
+    @existing_user.send(:approve_account, ssl_account_id: @invited_ssl_acct.id)
+    @existing_user.activate!(
+      user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
+    )
+  end
+  
+  describe 'account_admin' do
+    before do
+      assert_equal 2, @existing_user.ssl_accounts.count
+      assert_equal 2, @existing_user.roles.count
+      assert       @current_admin.user_exists_for_account?(@existing_user_email) 
+
+      login_as(@current_admin, self.controller.cookies)
+      visit account_path
+      click_on 'Users'
+      first('td', text: @existing_user_email).click
+      click_on 'remove user from this account'
+    end
+
+    it 'user removed from users index' do
+      assert_match users_path, current_path
+      assert page.has_no_content? @existing_user_email
+      assert page.has_no_content? @existing_user.login
+    end
+    it 'account_admin receives removed_from_account_notify_admin email' do
+      assert_equal    2, email_total_deliveries
+      assert_match    'You have removed user from SSL.com account', email_subject
+      assert_match    @current_admin.email, email_to
+      assert_match    'noreply@ssl.com', email_from
+      assert_includes email_body, "You have removed user #{@existing_user_email} from your account."
+    end
+    it 'removed user receives removed_from_account email' do
+      assert_equal    2, email_total_deliveries
+      assert_match    'You have been removed from SSL.com account', email_subject(:first)
+      assert_match    @existing_user_email, email_to(:first)
+      assert_match    @current_admin.email, email_from(:first)
+      assert_includes email_body(:first), "#{@current_admin.login} has removed you from their SSL.com account."
+    end
+    it 'remove association to ssl account and roles' do
+      assert_equal 1, @existing_user.ssl_accounts.count
+      assert_equal 1, @existing_user.roles.count
+      assert_equal @existing_ssl_acct.id, @existing_user.default_ssl_account
+      assert_equal @acct_admin_role, @existing_user.roles.ids
+      refute       @current_admin.user_exists_for_account?(@existing_user_email) 
+    end
+  end
+
+  describe 'sysadmin' do
+    before do
+      @sysadmin = create(:user, :sysadmin)
+      login_as(@sysadmin, update_cookie(self.controller.cookies, @sysadmin))
+      visit account_path
+      click_on 'Users'
+      first('td', text: @existing_user_email).click
+      click_on "remove user from account: ##{@invited_ssl_acct.acct_number.upcase}"
+    end
+    
+    it 'removed user receives removed_from_account email' do
+      assert_equal    1, email_total_deliveries
+      assert_match    'You have been removed from SSL.com account', email_subject(:first)
+      assert_match    @existing_user_email, email_to(:first)
+      assert_match    @sysadmin.email, email_from(:first)
+      assert_includes email_body(:first), "#{@sysadmin.login} has removed you from their SSL.com account."
+    end
+    it 'remove association to ssl account and roles' do
+      assert_equal 1, @existing_user.ssl_accounts.count
+      assert_equal 1, @existing_user.roles.count
+      assert_equal @existing_ssl_acct.id, @existing_user.default_ssl_account
+      assert_equal @acct_admin_role, @existing_user.roles.ids
+      refute       @current_admin.user_exists_for_account?(@existing_user_email)
+    end
+  end
+end

@@ -1,7 +1,7 @@
 class CreateSslAccountUsers < ActiveRecord::Migration
   def change
     drop_table :ssl_account_users
-    
+
     create_table :ssl_account_users do |t|
       t.references :user, null: false, index: true, limit: 4
       t.references :ssl_account, null: false, index: true, limit: 4

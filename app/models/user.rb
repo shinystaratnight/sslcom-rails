@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
 
   def invite_existing_user(params)
     email       = params[:user][:email] if params[:user]
-    ssl_acct_id = params[:user][:ssl_account_id] || params[:ssl_account_id]
+    ssl_acct_id = (params[:user] && params[:user][:ssl_account_id]) || params[:ssl_account_id]
     user        = email ? User.get_user_by_email(email) : self
     new_params  = params.merge(ssl_account_id: ssl_acct_id, skip_match: true, from_user: params[:from_user])
     
@@ -351,31 +351,31 @@ class User < ActiveRecord::Base
   end
 
   def is_admin?
-    role_symbols_all_accounts.include? :sysadmin
+    role_symbols_all_accounts.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
-    role_symbols_all_accounts.include? :super_user
+    role_symbols_all_accounts.include? Role::SUPER_USER.to_sym
   end
 
   def is_account_admin?
-    role_symbols.include? :account_admin
+    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
   end
 
   def is_standard?
-    role_symbols.include? :account_admin
+    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
   end
 
   def is_ssl_user?
-    role_symbols.include? :ssl_user
+    role_symbols.include? Role::SSL_USER.to_sym
   end
 
   def is_reseller?
-    role_symbols.include? :reseller
+    role_symbols.include? Role::RESELLER.to_sym
   end
 
   def is_vetter?
-    role_symbols.include? :vetter
+    role_symbols.include? Role::VETTER.to_sym
   end
 
   def is_affiliate?
