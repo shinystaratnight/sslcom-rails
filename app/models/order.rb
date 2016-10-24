@@ -721,6 +721,7 @@ class Order < ActiveRecord::Base
   # creates certificate_orders (and 'support' objects ie certificate_contents and sub_order_items)
   # to be save to line_item.
   def add_certificate_orders(certificate_orders)
+    self.amount=0 #will be adding the line_items below
     certificate_orders.select{|co|co.is_a? CertificateOrder}.each do |cert|
       cert.quantity.times do |i|
         new_cert = CertificateOrder.new(cert.attributes)
