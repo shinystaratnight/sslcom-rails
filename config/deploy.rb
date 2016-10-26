@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-set :domain, '107.20.223.45' #Rails 4 production
+set :domain, '54.160.212.24' #Rails 4 production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
@@ -185,6 +185,7 @@ namespace :deploy do
   task :symlink_shared, :roles => :app do
     run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{shared_path}/config/settings.yml #{release_path}/config/settings.yml"
+    run "ln -nfs #{shared_path}/config/initializers/session_store.rb #{release_path}/config/initializers/session_store.rb"
     run "ln -nfs #{shared_path}/assets #{release_path}/public/assets"
     #preserve backwards compatibility
     run "ln -nfs #{shared_path}/images #{release_path}/public/images"

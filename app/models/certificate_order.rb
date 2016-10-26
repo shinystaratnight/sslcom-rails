@@ -283,6 +283,7 @@ class CertificateOrder < ActiveRecord::Base
   RECERTS = [RENEWING, REPROCESSING]
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
+  ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -1389,9 +1390,9 @@ class CertificateOrder < ActiveRecord::Base
     cc = self.certificate_content
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
-      certificate_content.create_registrant(cc.registrant.attributes).save
+      certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)).save
       cc.certificate_contacts.each do |contact|
-        certificate_content.certificate_contacts << CertificateContact.new(contact.attributes)
+        certificate_content.certificate_contacts << CertificateContact.new(contact.attributes.except(*ID_AND_TIMESTAMP))
       end
       cc = self.certificate_content
     else

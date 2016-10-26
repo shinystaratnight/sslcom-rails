@@ -1,9 +1,9 @@
 # Be sure to restart your server when you modify this file.
 
 session_params= if Rails.env=~/development/
-                  {key: '_ssl_com_session_10202016', domain: "ssl.local"}
+                  {key: '_ssl_com_session_10242016', domain: "ssl.local"}
                 else
-                  {key: '_ssl_com_session_10202016', domain: "ssl.local"}
+                  {key: '_ssl_com_session_10262016', domain: "ssl.com"}
                 end
 SslCom::Application.config.session_store :cookie_store, session_params
 

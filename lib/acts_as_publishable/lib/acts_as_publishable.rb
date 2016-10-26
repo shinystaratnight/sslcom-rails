@@ -49,7 +49,7 @@ module Acts
             args.shift
             # find_all_by_published_as(state.to_s.downcase, *args)
             # again, hacked
-            with_scope(:find => {:conditions => ["published_as = ?", state.to_s.downcase] }) do
+            where(published_as: state.to_s.downcase).scoping do
               find_without_published_as(:all, *args)
             end            
           else
