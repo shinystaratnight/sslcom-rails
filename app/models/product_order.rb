@@ -1119,9 +1119,10 @@ class ProductOrder < ActiveRecord::Base
     cc = self.certificate_content
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
-      certificate_content.create_registrant(cc.registrant.attributes).save
+      certificate_content.create_registrant(cc.registrant.attributes.except(*CertificateOrder::ID_AND_TIMESTAMP)).save
       cc.certificate_contacts.each do |contact|
-        certificate_content.certificate_contacts << CertificateContact.new(contact.attributes)
+        certificate_content.certificate_contacts << CertificateContact.new(contact.attributes.
+            except(*CertificateOrder::ID_AND_TIMESTAMP))
       end
       cc = self.certificate_content
     else
