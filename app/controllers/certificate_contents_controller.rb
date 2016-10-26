@@ -19,7 +19,8 @@ class CertificateContentsController < ApplicationController
           CertificateContent::CONTACT_ROLES.each_with_index do |role, index|
             if @certificate_content.send("#{role}_contact").blank?
               cc_new=@certificate_content.certificate_contacts.create(
-                  params[:certificate_content][:certificate_contacts_attributes][index.to_s])
+                  params[:certificate_content][:certificate_contacts_attributes][index.to_s].
+                      except(*CertificateOrder::ID_AND_TIMESTAMP))
             end
           end
 #          cc = @certificate_content.certificate_contacts.last

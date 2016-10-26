@@ -11,10 +11,7 @@
   =form_for setup_certificate_contacts(@certificate_content) do |f|
     #stylized.default_form
       -i = 0
-      -contacts = @certificate_content.certificate_contacts.order("roles").to_a
-      -contacts = [].tap{|c_tmp|CertificateContent::CONTACT_ROLES.each {|r| c_tmp << CertificateContact.new(contactable: @certificate_content, country: @certificate_content.registrant.country, roles: [r])}} if contacts.empty?
-      -#-contacts = [].tap{|c_tmp|4.times{c_tmp << CertificateContact.new(country: 'US')}} if contacts.empty?
-      =f.fields_for :certificate_contacts, contacts do |c|
+      =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form do |c|
         -role=c.object.roles.last
         -i+=1
         =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}

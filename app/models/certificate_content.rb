@@ -314,6 +314,15 @@ class CertificateContent < ActiveRecord::Base
     certificate_order.ref+"-"+certificate_order.certificate_contents.index(self).to_s
   end
 
+  def contacts_for_form
+    unless self.certificate_contacts.blank?
+      CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}
+    else
+      [].tap{|c_tmp|CertificateContent::CONTACT_ROLES.each {|r|
+        c_tmp << CertificateContact.new(contactable: self, country: self.registrant.country, roles: [r])}}
+    end
+  end
+
   private
 
   def domains_validation

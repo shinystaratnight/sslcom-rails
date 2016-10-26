@@ -17,3 +17,4 @@ tmp/
 .vagrant/machines/default/virtualbox/creator_uid
 .vagrant/machines/default/virtualbox/synced_folders
 /.idea/
+/config/initializers/session_store.rb
