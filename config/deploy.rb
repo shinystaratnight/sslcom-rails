@@ -191,6 +191,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/images #{release_path}/public/images"
     run "ln -nfs #{shared_path}/javascripts #{release_path}/public/javascripts"
     run "ln -nfs #{shared_path}/stylesheets #{release_path}/public/stylesheets"
+    run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'

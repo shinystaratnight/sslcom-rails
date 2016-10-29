@@ -255,7 +255,7 @@ SslCom::Application.routes.draw do
     'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
   match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
   match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post]
+  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post, :put]
   match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
   match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
   match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
