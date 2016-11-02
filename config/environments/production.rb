@@ -72,7 +72,6 @@ SslCom::Application.configure do
   # END ActiveMerchant configuration
   config.eager_load = true
 
-  config.middleware.use "SetCookieDomain", ".ssl.com"
 end
 #comment out temporarily
 # SubdomainFu.configure do |config|

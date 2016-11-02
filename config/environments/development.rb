@@ -45,8 +45,6 @@ SslCom::Application.configure do
 
   require 'sass/plugin/rack'
   Sass::Plugin.options[:line_numbers] = true
-
-  config.middleware.use "SetCookieDomain", ".ssl.local"
 end
 
 # SubdomainFu.configure do |config|

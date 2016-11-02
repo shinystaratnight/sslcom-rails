@@ -168,7 +168,7 @@ class User < ActiveRecord::Base
   end
 
   def is_standard?
-    role_symbols.include? :customer
+    role_symbols.include? Role::CUSTOMER.to_sym
   end
 
   def is_affiliate?

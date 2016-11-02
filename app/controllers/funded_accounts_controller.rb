@@ -57,12 +57,14 @@ class FundedAccountsController < ApplicationController
     @funded_account.ssl_account = @billing_profile.ssl_account = account
     @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
     if @funded_account.valid?
-      @account_total = account.funded_account
+      @account_total = account.funded_account(true)
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
       @account_total.cents += @funded_account.amount.cents - @order.cents
-      @funded_account.errors.add(:amount, "being loaded is not sufficient") if @account_total.cents <= 0
+      #do this before we attempt to deduct funds
+      @funded_account.errors.add(:amount, "being loaded is not sufficient") if
+          @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
       @funded_account.errors.add(:amount,
         "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}" ) unless
           !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
