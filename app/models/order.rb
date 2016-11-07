@@ -277,11 +277,17 @@ class Order < ActiveRecord::Base
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
       event :transaction_declined, :transitions_to => :payment_declined
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|li.sellable.reject!} if complete
+      end
     end
 
     state :authorized do
       event :payment_captured, transitions_to: :paid
       event :transaction_declined, transitions_to: :authorized
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|li.sellable.reject!} if complete
+      end
     end
 
     state :paid do
@@ -296,7 +302,10 @@ class Order < ActiveRecord::Base
           li.sellable.refund! if (li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)
         end
       end
-      event :cancel, transitions_to: :canceled do |complete=true|
+        event :reject, :transitions_to => :rejected do |complete=true|
+          line_items.each {|li|li.sellable.reject!} if complete
+        end
+        event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete
         update_attribute :canceled_at, Time.now
       end
@@ -310,13 +319,17 @@ class Order < ActiveRecord::Base
         line_items.each {|li|
           CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
       end
-
       event :charge_back, transitions_to: :charged_back do |complete=true|
         line_items.each {|li|li.sellable.charge_back!} if complete
+      end
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
       end
     end
 
     state :charged_back
+    state :rejected
 
     state :payment_declined do
       event :give_away, transitions_to: :payment_not_required
@@ -332,6 +345,9 @@ class Order < ActiveRecord::Base
       event :cancel, transitions_to: :canceled do |complete=true|
         line_items.each {|li|li.sellable.cancel!} if complete
         update_attribute :canceled_at, Time.now
+      end
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|li.sellable.reject!} if complete
       end
     end
 
@@ -548,6 +564,8 @@ class Order < ActiveRecord::Base
         "(REFUNDED)"
       when "charged_back"
         "(CHARGEBACK)"
+      when "rejected"
+        "(REJECTED)"
       else
         ""
     end

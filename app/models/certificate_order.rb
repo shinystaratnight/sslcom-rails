@@ -322,11 +322,13 @@ class CertificateOrder < ActiveRecord::Base
         halt unless payment
         post_process_csr unless is_prepaid?
       end
+      event :reject, :transitions_to => :rejected
       event :cancel, :transitions_to => :canceled
     end
 
     state :paid do
       event :cancel, :transitions_to => :canceled
+      event :reject, :transitions_to => :rejected
       event :refund, :transitions_to => :refunded
       event :charge_back, :transitions_to => :charged_back
       event :start_over, transitions_to: :paid do |complete=false|
@@ -345,15 +347,18 @@ class CertificateOrder < ActiveRecord::Base
 
     state :canceled do
       event :refund, :transitions_to => :refunded
+      event :reject, :transitions_to => :rejected
       event :charge_back, :transitions_to => :charged_back
     end
 
     state :refunded do #only refund a canceled order
       event :unrefund, :transitions_to => :paid
+      event :reject, :transitions_to => :rejected
       event :charge_back, :transitions_to => :charged_back
     end
 
     state :charged_back
+    state :rejected
   end
 
   def certificate
@@ -671,7 +676,7 @@ class CertificateOrder < ActiveRecord::Base
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).select("distinct certificate_orders.*").where(:workflow_state.matches % 'paid')
+    (includes || self).select("distinct certificate_orders.*").where{(workflow_state << ['new'])}
   end
 
   def to_param

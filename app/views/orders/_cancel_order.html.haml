@@ -25,6 +25,8 @@
       %li=remote_login_link(u)
       %li=link_to 'user dashboard', admin_show_user_path(u)
       %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
+      -unless @order.rejected?
+        %li=link_to "reject order", '#', onclick:  "change_state('reject')"
       -if @order.fully_refunded?
         %li=link_to "unrefund order", '#', onclick:  "change_state('unrefund')"
       -else
