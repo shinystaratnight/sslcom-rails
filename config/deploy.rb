@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-set :domain, '54.160.212.24' #Rails 4 production
+set :domain, '184.73.226.63' #Rails 4 production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
 
@@ -191,6 +191,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/images #{release_path}/public/images"
     run "ln -nfs #{shared_path}/javascripts #{release_path}/public/javascripts"
     run "ln -nfs #{shared_path}/stylesheets #{release_path}/public/stylesheets"
+    run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'

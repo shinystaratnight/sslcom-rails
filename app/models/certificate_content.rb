@@ -23,9 +23,19 @@ class CertificateContent < ActiveRecord::Base
   CONTACT_ROLES = %w(administrative billing technical validation)
 
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
-   po_box address1 address2 address3 city state postal_code email phone ext fax)
+    po_box address1 address2 address3 city state postal_code email phone ext fax)
 
-  TRADEMARKS = %w(google apple paypal amazon cloudapp microsoft amzn ssltools certchat certlock)
+  TRADEMARKS = %w(google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock *.*.com
+    *.*.org *.10million.org *.android.com *.aol.com *.azadegi.com *.balatarin.com *.comodo.com *.digicert.com
+    *.globalsign.com *.google.com *.JanamFadayeRahbar.com *.logmein.com *.microsoft.com *.mossad.gov.il
+    *.mozilla.org *.RamzShekaneBozorg.com *.SahebeDonyayeDigital.com *.skype.com *.startssl.com
+    *.thawte.com *.torproject.org *.walla.co.il *.windowsupdate.com *.wordpress.com addons.mozilla.org
+    azadegi.com Comodo\ Root\ CA CyberTrust\ Root\ CA DigiCert\ Root\ CA Equifax\ Root\ CA friends.walla.co.il
+    GlobalSign\ Root\ CA login.live.com login.yahoo.com my.screenname.aol.com secure.logmein.com
+    Thawte\ Root\ CA twitter.com VeriSign\ Root\ CA wordpress.com www.10million.org www.balatarin.com
+    www.cia.gov www.cybertrust.com www.Equifax.com www.facebook.com www.globalsign.com
+    www.google.com www.hamdami.com www.mossad.gov.il www.sis.gov.uk www.update.microsoft.com www.google.com
+    login.yahoo.com login.yahoo.com login.skype.com addons.mozilla.org login.live.com global\ trustee)
 
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
@@ -166,7 +176,7 @@ class CertificateContent < ActiveRecord::Base
 
   # are any of the sub/domains trademarks?
   def infringement
-    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|trademark.in? domain}}.compact
+    return all_domains.map{|domain|domain if TRADEMARKS.any?{|trademark|trademark.downcase.in? domain.downcase}}.compact
   end
 
   def self.infringers

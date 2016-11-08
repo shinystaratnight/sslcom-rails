@@ -23,7 +23,7 @@ authorization do
     has_permission_on :validation_rules, :to => :admin_manage, :except=>:delete
   end
 
-  role :customer do
+  role :account_admin do
     includes :reseller
   end
   

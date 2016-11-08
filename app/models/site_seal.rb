@@ -140,7 +140,7 @@ class SiteSeal < ActiveRecord::Base
 
   def all_certificate_orders # includes renewals
     certs=[certificate_orders.last]
-    find_renewal = ->(co){ CertificateOrder.unscoped{co.renewal} }
+    find_renewal = ->(co){ CertificateOrder.unscoped{co.renewal} if co }
     renewal = find_renewal.call(certificate_order)
     loop do
       if renewal
