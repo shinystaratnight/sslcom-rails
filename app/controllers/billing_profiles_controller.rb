@@ -8,6 +8,11 @@ class BillingProfilesController < ApplicationController
   
   before_filter :require_user
 
+  def index
+    @billing_profiles = current_user.ssl_account.billing_profiles
+    @billing_profile  = BillingProfile.new
+  end
+
   def destroy
     @bp=BillingProfile.find(params[:id])
     @bp.update_column :status, "disable"
@@ -22,11 +27,18 @@ class BillingProfilesController < ApplicationController
     @billing_profile = current_user.ssl_account.billing_profiles.build(params[:billing_profile])
     if @billing_profile.save
       flash[:notice] = "Billing Profile successfully created!"
-      redirect_to account_path
+      if params[:manage_billing_profiles]
+        redirect_to :back
+      else
+        redirect_to account_path
+      end
     else
-      render action: "new"
+      if params[:manage_billing_profiles]
+        @billing_profiles = current_user.ssl_account.billing_profiles
+        render :index
+      else
+        render :new
+      end
     end
-
   end
-
 end

@@ -1,0 +1,26 @@
+-title = 'Billing Profiles'
+-content_for :title, title
+=render partial: 'funded_accounts/index_scripts'
+#validations
+  %table(cellspacing='0')
+    %caption
+      =title
+    %tr.heading_row
+      %th(scope='col')Method
+      %th(scope='col')Card Number
+      %th(scope='col')Expiry Date
+      %th(scope='col')
+    -@billing_profiles.reject{|bp|bp.expired?}.each do |profile|
+      %tr[profile]
+        %td= profile.credit_card
+        %td= profile.masked_card_number
+        %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
+        %td= destroy_credit_card_link profile
+%a#expand_register_card{href: 'javascript:void(0);'}
+  =image_tag 'add_new_billing_profile.png', alt: 'click here to add a new credit card', id: 'toggle_billing_profile_form'
+#stylized.billing_index_form
+  #register_card_form{initial_display?}
+    =error_messages_for 'billing_profile'
+    =form_for @billing_profile do |form|
+      =hidden_field_tag :manage_billing_profiles, true
+      =render partial: 'billing_profiles/form', locals: {form: form, only_billing_profile: true}
