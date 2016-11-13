@@ -1,8 +1,14 @@
+= hidden_field_tag :invite, params[:invite]
+= hidden_field_tag :activation_code, params[:activation_code]
 -@chpwd ||= false
 -if @chpwd
   .clearfix
     = form.label :old_password, "Old Password"
     = password_field_tag :old_password, nil, :size=>30
+-if params[:invite]
+  .clearfix
+    = form.label :login, "Login"
+    = form.text_field :login, value: ''
 .clearfix
   = form.label :password, "#{(@chpwd) ? 'New p' : 'P'}assword<span class='label_desc'>min. size 4 chars</span>".html_safe
   = form.password_field :password

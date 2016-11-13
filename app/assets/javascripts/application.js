@@ -12,6 +12,23 @@ function add_fields(link, association, content) {
    $(link).parent().before(content.replace(regexp, new_id));
 }
 
+function refreshRolesSelect(account_id) {
+  var roles_list = JSON.parse($.toJSON($('#user_account_roles')
+    .data('accounts-roles')))[account_id];
+  if (roles_list) {
+    $('#user_role_ids option:selected').removeAttr('selected');
+    roles_list.forEach(function(role_id) {
+      $('#user_role_ids option[value="' + role_id + '"]')
+        .attr('selected', 'selected');
+    });
+    $("#user_role_ids").select2();
+  }
+}
+
 $.ajaxSettings.dataType = "json";
 
-
+jQuery(function($) {
+  $('#user_ssl_account_id').on('change', function() {
+    refreshRolesSelect($(this).val());
+  }); 
+});

@@ -560,6 +560,8 @@ ActiveRecord::Schema.define(version: 20161018191559) do
     t.string "url", limit: 32, null: false
   end
 
+  add_index "malware_hashes", ["url"], name: "index_malware_hashes_on_url", using: :btree
+
   create_table "malwares", force: :cascade do |t|
     t.integer  "black_major",   limit: 4
     t.integer  "black_minor",   limit: 4
@@ -988,8 +990,8 @@ ActiveRecord::Schema.define(version: 20161018191559) do
   add_index "site_seals", ["workflow_state"], name: "index_site_seals_workflow_state", using: :btree
 
   create_table "ssl_account_users", force: :cascade do |t|
-    t.integer  "user_id",        limit: 4,                   null: false
-    t.integer  "ssl_account_id", limit: 4,                   null: false
+    t.integer  "user_id",        limit: 4, null: false
+    t.integer  "ssl_account_id", limit: 4, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "approved",                   default: false
@@ -1141,17 +1143,6 @@ ActiveRecord::Schema.define(version: 20161018191559) do
     t.string   "single_access_token", limit: 255,                 null: false
     t.string   "perishable_token",    limit: 255,                 null: false
     t.string   "status",              limit: 255
-    t.integer  "login_count",         limit: 4,   default: 0,     null: false
-    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
-    t.datetime "last_request_at"
-    t.datetime "current_login_at"
-    t.datetime "last_login_at"
-    t.string   "current_login_ip",    limit: 255
-    t.string   "last_login_ip",       limit: 255
-    t.boolean  "active",                          default: false, null: false
-    t.string   "openid_identifier",   limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.string   "first_name",          limit: 255
     t.string   "last_name",           limit: 255
     t.string   "phone",               limit: 255
@@ -1164,6 +1155,21 @@ ActiveRecord::Schema.define(version: 20161018191559) do
     t.string   "city",                limit: 255
     t.string   "state",               limit: 255
     t.string   "country",             limit: 255
+    t.string   "ext",                 limit: 255
+    t.string   "fax",                 limit: 255
+    t.string   "website",             limit: 255
+    t.string   "tax_number",          limit: 255
+    t.integer  "login_count",         limit: 4,   default: 0,     null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",    limit: 255
+    t.string   "last_login_ip",       limit: 255
+    t.boolean  "active",                          default: false, null: false
+    t.string   "openid_identifier",   limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "is_auth_token"
     t.integer  "default_ssl_account", limit: 4
   end

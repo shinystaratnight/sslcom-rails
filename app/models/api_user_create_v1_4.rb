@@ -12,7 +12,7 @@ class ApiUserCreate_v1_4 < ApiUserRequest
     @user = User.create(params)
     if @user.errors.empty?
       @user.create_ssl_account
-      @user.roles << Role.find_by_name(Role::CUSTOMER)
+      @user.roles << Role.find_by_name(Role::ACCOUNT_ADMIN)
       @user.signup!({user: params})
       @user.activate!({user: params})
       @user.deliver_activation_confirmation!

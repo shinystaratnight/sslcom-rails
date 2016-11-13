@@ -6,6 +6,7 @@ authorization do
   role :sysadmin do
     includes :vetter
     has_permission_on :users, :to => :admin_manage
+    has_permission_on :managed_users, :to => :admin_manage
     has_permission_on :surls, :to => :manage
   end
 
@@ -21,12 +22,38 @@ authorization do
     has_permission_on :site_seals, :to => :admin_manage, :except=>:delete
     has_permission_on :validations, :validation_histories, :to => :admin_manage
     has_permission_on :validation_rules, :to => :admin_manage, :except=>:delete
+    has_permission_on :users, :to => :switch_default_ssl_account do
+      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    end
+    has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
   end
 
   role :account_admin do
     includes :reseller
+    has_permission_on :managed_users, :to => [:read, :create, :update_roles, :edit, :remove_from_account]
+    has_permission_on :users, :to => [:create, :delete]
+    has_permission_on :users, :to => [:read, :update, :edit_email, :edit] do
+      if_attribute :id => is {user.id}
+    end
+    has_permission_on :users, :to => :switch_default_ssl_account do
+      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    end
+    has_permission_on :users, :to => :resend_account_invite do
+      if_attribute ssl_account_id: is_in {user.ssl_accounts.map(&:id)}
+    end
+    has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
+    has_permission_on :ssl_accounts, :to => [:create]
+    has_permission_on :funded_accounts, :to => [:create]
   end
-  
+
+  role :ssl_user do
+    includes :reseller
+  end
+
   role :reseller do
     has_permission_on :billing_profiles, :to => :manage do
       if_attribute :ssl_account => is {user.ssl_account}
@@ -70,6 +97,9 @@ authorization do
     has_permission_on :users, :to => [:create, :show, :update] do
       if_attribute :id => is {user.id}
     end
+    has_permission_on :users, :to => :switch_default_ssl_account do
+      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    end
     has_permission_on :surls, :to => [:update, :delete] do
       if_attribute :user => is {user}
     end
@@ -80,6 +110,9 @@ authorization do
       :allocate_funds, :allocate_funds_for_order, :deposit_funds, :apply_funds,
       :confirm_funds] do
       if_attribute :ssl_account => is {user.ssl_account}
+    end
+    has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
     end
   end
 
@@ -95,12 +128,16 @@ authorization do
                                                 :allocate_funds_for_order]
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
+    has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
   end
 end
 
 privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
-    :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, :change_ext_order_number]
+    :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, 
+    :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite]
   privilege :manage, :includes => [:create, :read, :update, :delete, :refund, :change_state]
   privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
   privilege :create, :includes => :new

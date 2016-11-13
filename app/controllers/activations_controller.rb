@@ -3,6 +3,7 @@ class ActivationsController < ApplicationController
 
   def new
     @user = User.find_using_perishable_token(params[:activation_code], 1.week) || (raise Exception)
+    @invite_params = params[:invite]
     flash[:notice] = "Your account has already been activated." if @user.active?
   end
 
@@ -15,7 +16,8 @@ class ActivationsController < ApplicationController
       flash[:notice] = "Your account has been activated."
       redirect_to account_url
     else
-      render :action => :new
+      @invite_params = params[:invite]
+      render action: :new
     end
   end
 end

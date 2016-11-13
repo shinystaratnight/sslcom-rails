@@ -3,7 +3,6 @@ class SslAccount < ActiveRecord::Base
   acts_as_billable
   easy_roles :roles
   has_one   :api_credential
-  has_many  :users, :dependent=>:destroy
   has_many  :users_unscoped, foreign_key: :ssl_account_id, class_name: "UserUnscoped", :dependent=>:destroy
   has_many  :billing_profiles
   has_many  :certificate_orders, ->{includes [:orders]} do
@@ -23,6 +22,8 @@ class SslAccount < ActiveRecord::Base
   has_many  :api_certificate_create_v1_4s, as: :api_requestable, class_name: "ApiCertificateCreate_v1_4"
   has_many  :api_certificate_retrieves, as: :api_requestable, class_name: "ApiCertificateRetrieve"
   has_many  :account_roles, class_name: "Role" # customizable roles that belong to this account
+  has_many  :ssl_account_users, dependent: :destroy
+  has_many  :users, through: :ssl_account_users
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -244,7 +245,7 @@ class SslAccount < ActiveRecord::Base
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
-        u.roles.delete Role.find_by_name(Role::CUSTOMER)
+        u.roles.delete Role.find_by_name(Role::ACCOUNT_ADMIN)
         u.roles << Role.find_by_name(Role::RESELLER)
       end
       reseller.update_attribute :workflow_state, "complete"

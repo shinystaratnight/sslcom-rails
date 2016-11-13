@@ -79,6 +79,11 @@ SslCom::Application.routes.draw do
 
   resources :products
 
+  resources :managed_users, only: [:new, :create, :edit] do
+    patch 'update_roles', on: :member
+    get   'remove_from_account', on: :member
+  end
+
   resources :users do
     collection do
       get :edit_password
@@ -99,6 +104,9 @@ SslCom::Application.routes.draw do
       post :consolidate
       get :adjust_funds
       get :change_login
+      get :switch_default_ssl_account
+      get :approve_account_invite
+      get :resend_account_invite
     end
   end
 

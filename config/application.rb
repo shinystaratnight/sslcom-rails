@@ -62,23 +62,17 @@ module SslCom
     config.action_controller.permit_all_parameters = true
 
     config.generators do |g|
-      g.test_framework :rspec,
-        :fixtures => true,
-        :view_specs => false,
-        :helper_specs => false,
-        :routing_specs => false,
-        :controller_specs => true,
-        :request_specs => true
-      g.fixture_replacement :factory_girl,
-        :dir => "spec/factories"
-    end #See more at: http://everydayrails.com/2012/03/12/testing-series-rspec-setup.html#sthash.nLKiuyz7.dpuf
+      g.test_framework :minitest, spec: true, fixture: false
+    end
 
     config.middleware.use OAuth::Rack::OAuthFilter
 
     #config.force_ssl = true
-    config.middleware.use Rack::SslEnforcer,
-      only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
-             %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
+    unless Rails.env.test?
+      config.middleware.use Rack::SslEnforcer,
+        only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
+          %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
+    end
 
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do

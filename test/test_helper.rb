@@ -1,50 +1,74 @@
-ENV["RAILS_ENV"] = "test"
-require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
-require 'test_help'
+ENV["RAILS_ENV"] = 'test'
+require File.expand_path('../../config/environment', __FILE__)
 
-class ActiveSupport::TestCase
-  # Transactional fixtures accelerate your tests by wrapping each test method
-  # in a transaction that's rolled back on completion.  This ensures that the
-  # test database remains unchanged so your fixtures don't have to be reloaded
-  # between every test method.  Fewer database queries means faster tests.
-  #
-  # Read Mike Clark's excellent walkthrough at
-  #   http://clarkware.com/cgi/blosxom/2005/10/24#Rails10FastTesting
-  #
-  # Every Active Record database supports transactions except MyISAM tables
-  # in MySQL.  Turn off transactional fixtures in this case; however, if you
-  # don't care one way or the other, switching from MyISAM to InnoDB tables
-  # is recommended.
-  #
-  # The only drawback to using transactional fixtures is when you actually 
-  # need to test transactions.  Since your test is bracketed by a transaction,
-  # any transactions started in your code will be automatically rolled back.
-  self.use_transactional_fixtures = true
+require 'rails/test_help'
+require 'minitest/rails'
+require 'minitest/pride'
+require "minitest/reporters"
+require 'mocha/setup'
+require 'database_cleaner'
+require 'factory_girl'
+require 'rack/utils'
+require 'capybara'
+require 'capybara/rails'
+require 'capybara/dsl'
+require 'capybara-screenshot/minitest'
+require 'headless'
+require 'authlogic/test_case'
+require 'rack_session_access/capybara'
+require 'declarative_authorization/maintenance'
 
-  # Instantiated fixtures are slow, but give you @david where otherwise you
-  # would need people(:david).  If you don't want to migrate your existing
-  # test cases which use the @david style and don't mind the speed hit (each
-  # instantiated fixtures translates to a database query per test method),
-  # then set this back to true.
-  self.use_instantiated_fixtures  = false
+Capybara.app = Rack::ShowExceptions.new(SslCom::Application)
 
-  # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
-  #
-  # Note: You'll currently still have to declare fixtures explicitly in integration tests
-  # -- they do not yet inherit this setting
-  fixtures :all
+ActiveRecord::Migration.maintain_test_schema!
 
-  # Add more helper methods to be used by all tests here...
+Minitest::Reporters.use!
+
+# Requires supporting ruby files with custom matchers and macros, etc,
+# in spec/support/ and its subdirectories.
+Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
+
+include SessionHelper
+include SetupHelper
+include MailerHelper
+include Authorization::TestHelper
+
+DatabaseCleaner.clean_with :truncation
+DatabaseCleaner.strategy = :truncation
+
+class Minitest::Spec
+  include Authlogic::TestCase
+  include Capybara::DSL
+  include Capybara::Screenshot::MiniTestPlugin
+  include Rails.application.routes.url_helpers
+
+  before :each do
+    disable_authorization
+    activate_authlogic
+    DatabaseCleaner.start
+    @headless = Headless.new
+    @headless.start
+  end
+
+  after :each do
+    DatabaseCleaner.clean
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
+    Capybara.app_host = nil
+    delete_all_cookies
+    clear_email_deliveries
+  end
 end
 
-require 'sauce'
-
-Sauce.config do |conf|
-    conf.browser_url = "http://78303.test/"
-    conf.browsers = [
-        ["Windows 2003", "firefox", "3.6."]
-    ]
-    conf.application_host = "127.0.0.1"
-    conf.application_port = "3001"
+Capybara.register_driver :selenium do |app|
+  Capybara::Selenium::Driver.new(app, browser: :chrome)
 end
 
+Capybara.default_driver    = :selenium
+Capybara.javascript_driver = :selenium
+
+Capybara::Screenshot.autosave_on_failure = false
+
+# Forces all threads to share the same connection. This works on
+# Capybara because it starts the web server in a thread.
+# ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection

@@ -1,12 +1,17 @@
 class UsersController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => [:show, :edit, :update, :cancel_reseller_signup]
+  before_filter :require_user, only: [
+    :show, :edit, :update, :cancel_reseller_signup, 
+    :approve_account_invite, :resend_account_invite,
+    :switch_default_ssl_account
+  ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
-    :consolidate, :dup_info, :adjust_funds, :change_login]
-#  before_filter :index, :only=>:search
+    :consolidate, :dup_info, :adjust_funds, :change_login, 
+    :switch_default_ssl_account]
+ # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
@@ -26,7 +31,8 @@ class UsersController < ApplicationController
 
   def index
     p = {:page => params[:page]}
-    @users = User.unscoped
+    set_users
+
     if params[:search]
       search = params[:search].strip.split(" ")
       role = nil
@@ -44,15 +50,17 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user.create_ssl_account
-    if request.subdomain == Reseller::SUBDOMAIN
-      @user.ssl_account.add_role! "new_reseller"
-      @user.ssl_account.set_reseller_default_prefs
-      @user.roles << Role.find_by_name(Role::RESELLER)
-    else
-      @user.roles << Role.find_by_name(Role::CUSTOMER)
-    end
+    reseller = request.subdomain == Reseller::SUBDOMAIN
     if @user.signup!(params)
+      @user.create_ssl_account
+      if reseller
+        @user.ssl_account.add_role! "new_reseller"
+        @user.ssl_account.set_reseller_default_prefs
+      end
+      @user.set_roles_for_account(
+        @user.ssl_account,
+        [Role.find_by_name((reseller ? Role::RESELLER : Role::ACCOUNT_ADMIN)).id]
+      )
       @user.deliver_activation_instructions!
       notice = "Your account has been created. Please check your
         e-mail at #{@user.email} for your account activation instructions!"
@@ -79,7 +87,7 @@ class UsersController < ApplicationController
       current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
       current_user.roles.delete Role.find_by_name(Role::RESELLER)
     end
-    current_user.roles << Role.find_by_name(Role::CUSTOMER) unless current_user.role_symbols.include?(Role::CUSTOMER.to_sym)
+    current_user.roles << Role.find_by_name(Role::ACCOUNT_ADMIN) unless current_user.role_symbols.include?(Role::ACCOUNT_ADMIN.to_sym)
     flash[:notice] = "reseller signup has been canceled"
     @user = current_user #for rable object reference
   end
@@ -143,7 +151,7 @@ class UsersController < ApplicationController
 
   def edit_email
     @user ||= @current_user
-    permission_denied if (!@current_user.is_admin? && @current_user != @user)
+    permission_denied unless admin_or_current_user?
   end
 
   def update
@@ -205,6 +213,41 @@ class UsersController < ApplicationController
     end
   end
 
+  def switch_default_ssl_account
+    switch_ssl_account = params[:ssl_account_id]
+    if switch_ssl_account && @user.ssl_accounts.where(id: switch_ssl_account).any?
+      @user.set_default_ssl_account(switch_ssl_account)
+      acct_number    = @user.ssl_accounts.find(switch_ssl_account).acct_number
+      flash[:notice] = "You have switched to account #{acct_number}."
+      redirect_to account_path
+    else
+      flash[:error] = "Something went wrong. Please try again!"
+      redirect_to :back
+    end
+  end
+
+  def approve_account_invite
+    user   = User.find params[:id]
+    errors = user.approve_invite(params)
+    if errors.any?
+      flash[:error] = "Unable to approve due to errors. #{errors.join(' ')}"
+    else
+      flash[:notice] = 'You have successfully approved invitation to account.'
+    end
+    redirect_to account_path
+  end
+
+  def resend_account_invite
+    user   = User.find params[:id]
+    errors = user.resend_invitation_with_token(params)
+    if errors.any?
+      flash[:error] = "Unable to send invitation due to errors. #{errors.join(' ')}"
+    else
+      flash[:notice] = 'You successfully renewed the invitation token and sent notification to the user.'
+    end
+    redirect_to users_path
+  end
+
   private
 
   def new_user
@@ -218,10 +261,25 @@ class UsersController < ApplicationController
   end
 
   def admin_op?
-    (@user!=@current_user && @current_user.is_admin?) unless @current_user.blank?
+    (@user!=@current_user &&
+      (@current_user.is_admin? || @current_user.is_account_admin?)
+    ) unless @current_user.blank?
   end
 
   def set_admin_flag
     @user.admin_update=true if admin_op?
   end
+
+  def set_users
+    if current_user.is_super_user? || current_user.is_admin?
+      @users = User.unscoped
+    else
+      @users = current_user.manageable_users
+    end
+  end
+
+  def admin_or_current_user?
+    (@current_user.is_admin? || @current_user.is_account_admin?) || @current_user == @user
+  end
+
 end

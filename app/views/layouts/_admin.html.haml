@@ -40,6 +40,7 @@
           -#  %th AVAILABLE FOR USE
           -if show_short_links?
             %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
+          = render partial: 'shared/ssl_accounts'
           %th=link_to 'Logout', logout_url
         %tr#info
           %td

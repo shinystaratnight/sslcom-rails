@@ -1,0 +1,12 @@
+Hi!
+
+#{@current_user.login} has added you to their #{Settings.community_name} account.
+
+Please click the url below to accept invite.
+
+#{@approval_url}
+
+If the above URL does not work try copying and pasting it into your browser. 
+If you continue to have problems, please feel free to contact us or #{@current_user.email}.
+
+=render 'support_signature'
