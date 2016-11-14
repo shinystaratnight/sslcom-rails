@@ -22,7 +22,7 @@ describe 'user approves ssl account invite' do
     click_on 'Users'
     click_on '+ Create User'
     fill_in  'user_email', with: @existing_user_email
-    find('input[alt="Register"]').click
+    find('input[value="Invite"]').click
   end
 
   describe 'BEFORE Approved: invited user' do

@@ -1,7 +1,7 @@
 -if @user.new_record?
   .clearfix.form_input
     = form.label :email, "Email<span class='label_desc'>receives activation</span>".html_safe
-    = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE
+    = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required: true
 .clearfix.form_input
   - if current_user.is_system_admins?
     - if @user_accounts_roles 

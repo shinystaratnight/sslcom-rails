@@ -17,7 +17,7 @@ describe 'new user' do
     click_on 'Users'
     click_on '+ Create User'
     fill_in  'user_email', with: @new_user_email
-    find('input[alt="Register"]').click
+    find('input[value="Invite"]').click
     
     @new_user     = User.find_by(email: @new_user_email)
     @new_user_ssl = @new_user.ssl_accounts.where.not(id: @invited_ssl_acct.id).first
@@ -118,7 +118,7 @@ describe 'existing user' do
     click_on 'Users'
     click_on '+ Create User'
     fill_in  'user_email', with: @existing_user_email
-    find('input[alt="Register"]').click
+    find('input[value="Invite"]').click
   end
   it 'invited user receives invite_to_account email' do
     approval_token = @existing_user.ssl_account_users

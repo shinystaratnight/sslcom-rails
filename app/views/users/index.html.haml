@@ -2,7 +2,7 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 %div{style: 'display:flex;justify-content:flex-end'}
-  #search_bar{style: 'flex-basis:400px;margin:0;'}
+  #search_bar{style: 'flex-basis:400px;margin:1.5rem;'}
     =form_tag :search_users, :method=>:get do
       username or email or role
       =text_field_tag :search, @search
@@ -10,7 +10,6 @@
       .search-hint
         = '*e.g.: role:ssl_user'
   %div{style: 'flex-basis:270px;'}
-    =link_to '+ Create User', new_managed_user_path, style: 'padding-top:19px;display:block;text-align:right;font-size:16px;'
 #validations
   %table(cellspacing="0")
     -if will_paginate @users
@@ -20,6 +19,8 @@
     %caption
       =title
       =will_paginate @users
+    %tr
+      =link_to '+ Create User', new_managed_user_path, class: 'button_blue button_index'
     %tr.heading_row
       %th
       %th.name(scope="col")Username

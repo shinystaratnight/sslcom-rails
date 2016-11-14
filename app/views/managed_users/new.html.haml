@@ -10,7 +10,7 @@
       .subheading Credentials
       =render :partial => "form", :object => f
     #button_container
-      #next_submit=image_submit_tag "register.gif"
+      =f.submit 'Invite', class: 'button_blue'
 
 -content_for :js do
   :javascript
