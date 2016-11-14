@@ -437,14 +437,17 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def decode
-    sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
-    File.open(sc_pem, 'wb') do |f|
-      f.write body+"\n"
-    end
-    if self.file_type=='PKCS#7'
-      CertUtil.decode_certificate sc_pem, "pkcs7"
-    else
-      CertUtil.decode_certificate sc_pem, "x509"
+    begin
+      if self.file_type=='PKCS#7'
+        sc_pem="#{Rails.root}/tmp/sc_pem_#{id}.cer"
+        File.open(sc_pem, 'wb') do |f|
+          f.write body+"\n"
+        end
+        CertUtil.decode_certificate sc_pem, "pkcs7"
+      else
+        OpenSSL::X509::Certificate.new(body).to_text
+      end
+    rescue Exception
     end
   end
 
