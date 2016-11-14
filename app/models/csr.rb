@@ -268,6 +268,17 @@ class Csr < ActiveRecord::Base
     sc
   end
 
+  def decode
+    begin
+      OpenSSL::X509::Request.new(body).to_text if body
+    rescue Exception
+    end
+  end
+
+  def self.decode_all
+    self.find_each {|s|s.update_column :decoded, s.decode}
+  end
+
   def signed_certificate_by_text
     signed_certificate.try(:body)
   end
