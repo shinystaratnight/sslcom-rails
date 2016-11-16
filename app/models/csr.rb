@@ -276,7 +276,12 @@ class Csr < ActiveRecord::Base
   end
 
   def self.decode_all
-    self.find_each {|s|s.update_column :decoded, s.decode}
+    self.find_each {|s|
+      begin
+        s.update_column(:decoded, s.decode.scrub) if s.decode
+      rescue Exception
+      end
+    }
   end
 
   def signed_certificate_by_text
