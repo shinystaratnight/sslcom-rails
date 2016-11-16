@@ -234,7 +234,7 @@ class UsersController < ApplicationController
     else
       acct_number = SslAccount.find(params[:ssl_account_id]).acct_number
       flash[:notice] = "You've been added to account #{acct_number}. Please click <strong>%s</strong>
-        to go to the invited account, or follow the hint in the top menu."
+        to go to the new account or follow the hint in the top menu."
       flash[:notice_item] = view_context.link_to('here',
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end

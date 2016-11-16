@@ -17,6 +17,7 @@ require 'headless'
 require 'authlogic/test_case'
 require 'rack_session_access/capybara'
 require 'declarative_authorization/maintenance'
+require 'selenium-webdriver'
 
 Capybara.app = Rack::ShowExceptions.new(SslCom::Application)
 
@@ -72,3 +73,7 @@ Capybara::Screenshot.autosave_on_failure = false
 # Forces all threads to share the same connection. This works on
 # Capybara because it starts the web server in a thread.
 # ActiveRecord::Base.shared_connection = ActiveRecord::Base.connection
+
+# Ubuntu packages to run test suite setup:
+# =========================================
+# see test/support/ubuntu_packages.rb
