@@ -28,13 +28,7 @@ end
 # 
 # Roles table, convert/update "customer" role to "account_admin" role
 #
-update_role        = Role.find_by(name: 'customer').id
-account_admin_role = Role.find_by(name: 'account_admin').id
-if update_role
-  Assignment.where(role_id: account_admin_role).each{|a| a.update(role_id: update_role)}
-  account_admin_role.delete if account_admin_role
-  update_role.update(name: 'account_admin')
-end
+Role.find_by(name: 'customer').update(name: 'account_admin')
 #
 # Roles table, add new role "ssl_user", will be used as default for invited users.
 #
@@ -43,3 +37,10 @@ Role.create(name: 'ssl_user')
 # ssl_account_users table, set new "approved" attr to TRUE for all existing users.
 #
 SslAccountUser.update_all(approved: true)
+
+User.find_each{|u|
+  unless u.roles_for_account(u.ssl_account).include?(Role.find_by(name: 'account_admin').id)
+    u.assignments.create(ssl_account_id: u.default_ssl_account, role_id: Role.find_by(name: 'account_admin').id)
+  end
+}
+

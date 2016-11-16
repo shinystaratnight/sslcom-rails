@@ -14,6 +14,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :renewal_notifications
   has_many    :certificate_contents
   has_many    :certificate_names, through: :certificate_contents
+  has_many    :registrants, through: :certificate_contents
+  has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
   has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
@@ -55,7 +57,7 @@ class CertificateOrder < ActiveRecord::Base
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
       joins(:certificate_contents).includes(:certificate_contents).order("certificate_orders.created_at desc").
-      readonly(false)}
+      references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
 
@@ -87,57 +89,63 @@ class CertificateOrder < ActiveRecord::Base
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil}
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil, decoded: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
-    result = joins{certificate_contents.outer}.joins{certificate_contents.unscoped_csr.outer}.
-        joins{certificate_contents.unscoped_csr.signed_certificates.outer}.joins{ssl_account.outer}.joins{ssl_account.users.outer}
+    result = joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+        joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
+        joins{ssl_account.users.outer}
     unless term.blank?
-      result = result.where{
-        (ref =~ "%#{term}%") |
-        (external_order_number =~ "%#{term}%") |
-        (notes =~ "%#{term}%") |
-        (ssl_account.acct_number =~ "%#{term}%") |
-        (ssl_account.users.login =~ "%#{term}%") |
-        (ssl_account.users.email =~ "%#{term}%") |
-        (certificate_contents.domains =~ "%#{term}%") |
-        (certificate_contents.csrs.common_name =~ "%#{term}%") |
-        (certificate_contents.csrs.organization =~ "%#{term}%") |
-        (certificate_contents.csrs.organization_unit =~ "%#{term}%") |
-        (certificate_contents.csrs.email =~ "%#{term}%") |
-        (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
-        (certificate_contents.csrs.state =~ "%#{term}%") |
-        (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
-        (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
+      result = case term
+                 when /co-\w/i, /\d{7,8}/
+                   where{
+                     (ref =~ "%#{term}%") |
+                         (external_order_number =~ "%#{term}%") |
+                         (notes =~ "%#{term}%")}
+                 else
+                   result.where{
+                     (ssl_account.acct_number =~ "%#{term}%") |
+                         (users.login =~ "%#{term}%") |
+                         (users.email =~ "%#{term}%") |
+                         (certificate_contents.domains =~ "%#{term}%") |
+                         (certificate_contents.csrs.common_name =~ "%#{term}%") |
+                         (certificate_contents.csr.organization =~ "%#{term}%") |
+                         (certificate_contents.csr.organization_unit =~ "%#{term}%") |
+                         (certificate_contents.csr.email =~ "%#{term}%") |
+                         (certificate_contents.csr.sig_alg =~ "%#{term}%") |
+                         (certificate_contents.csr.state =~ "%#{term}%") |
+                         (certificate_contents.csr.subject_alternative_names =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
+                         (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
+               end
     end
     %w(postal_code signature fingerprint).each do |field|
       query=filters[field.to_sym]
       result = result.where{
-        (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%")} if query
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(product).each do |field|
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
     end
-    %w(common_name organization organization_unit state subject_alternative_names locality country strength).each do |field|
+    %w(common_name organization organization_unit state subject_alternative_names locality country strength decoded).each do |field|
       query=filters[field.to_sym]
       result = result.where{
-        (certificate_contents.csr.signed_certificates.try(field.to_sym) =~ "%#{query}%") |
-            (certificate_contents.csr.try(field.to_sym) =~ "%#{query}%") } if query
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
+            (certificate_contents.csrs.send(field.to_sym) =~ "%#{query}%") } if query
     end
     %w(address).each do |field|
       query=filters[field.to_sym]
@@ -148,12 +156,12 @@ class CertificateOrder < ActiveRecord::Base
     %w(login email).each do |field|
       query=filters[field.to_sym]
       result = result.where{
-        (ssl_account.users.try(field.to_sym) =~ "%#{query}%")} if query
+        (ssl_account.users.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(account_number).each do |field|
       query=filters[field.to_sym]
       result = result.where{
-        (ssl_account.try(field.to_sym) =~ "%#{query}%")} if query
+        (ssl_account.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(address).each do |field|
       query=filters[field.to_sym]
@@ -170,7 +178,7 @@ class CertificateOrder < ActiveRecord::Base
         if(field=="expires_at")
           result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
         else
-          result = result.where{(certificate_contents.csr.signed_certificates.try(field.to_sym) >> (start..finish))}
+          result = result.where{(certificate_contents.csr.signed_certificates.send(field.to_sym) >> (start..finish))}
         end
       end
     end
