@@ -58,6 +58,9 @@ authorization do
     has_permission_on :billing_profiles, :to => :manage do
       if_attribute :ssl_account => is {user.ssl_account}
     end
+    has_permission_on :billing_profiles, :to => :index do
+      if_attribute :ssl_account => is {user.ssl_account}
+    end
     has_permission_on :orders, :certificate_orders, :to => [:create]
     has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
       if_attribute ssl_account: is {user.ssl_account}

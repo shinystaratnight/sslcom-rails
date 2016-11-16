@@ -102,6 +102,8 @@
                             certificates
                         %li=link_to 'buy certificate', certificates_url
                         %li=link_to 'deposit funds', allocate_funds_url
+                        -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
+                          %li=link_to 'manage billing profiles', billing_profiles_path
                         %li=link_to 'view purchased certificates', certificate_orders_url
                         -if user.ssl_account.has_credits?
                           %li=link_to 'use certificate credits', credits_certificate_orders_url

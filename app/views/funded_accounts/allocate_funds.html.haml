@@ -51,7 +51,7 @@
       #register_card_form{initial_display?}
         =#if tier 1, then opt to skip
         =fields_for :billing_profile, @billing_profile do |form|
-          = render :partial => "billing_profiles/form", :locals => { :form => form }
+          = render :partial => "billing_profiles/form", :locals => { :form => form, only_billing_profile: false }
       .subheading Amount and Balance
       = render :partial => "form", :locals => { :f => f }
     #button_container

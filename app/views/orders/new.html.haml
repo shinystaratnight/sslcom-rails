@@ -75,7 +75,7 @@
                 = radio_button_tag :payment_method, "credit_card", true
               #credit_card_form
                 =fields_for :billing_profile, @billing_profile do |form|
-                  = render :partial => "billing_profiles/form", :locals => { :form => form }
+                  = render :partial => "billing_profiles/form", :locals => { :form => form, only_billing_profile: false }
             -if current_page?(action: 'checkout')
               .subheading Optional Discounting
               .clearfix
