@@ -28,7 +28,11 @@ function refreshRolesSelect(account_id) {
 $.ajaxSettings.dataType = "json";
 
 jQuery(function($) {
+  var flash_notice = $('.flash_message.notice span');
   $('#user_ssl_account_id').on('change', function() {
     refreshRolesSelect($(this).val());
-  }); 
+  });
+  if (flash_notice.length && flash_notice.text().includes('been added to account')) {
+    $('.simple-tooltip-cont, .simple-tooltip').removeClass('hidden');
+  }
 });

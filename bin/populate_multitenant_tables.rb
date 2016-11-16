@@ -37,10 +37,12 @@ Role.create(name: 'ssl_user')
 # ssl_account_users table, set new "approved" attr to TRUE for all existing users.
 #
 SslAccountUser.update_all(approved: true)
-
+#
+# Users who are resellers (thus, missing from assignments table), create assignment 
+# with account_admin role for user's ssl account.
+#
 User.find_each{|u|
   unless u.roles_for_account(u.ssl_account).include?(Role.find_by(name: 'account_admin').id)
     u.assignments.create(ssl_account_id: u.default_ssl_account, role_id: Role.find_by(name: 'account_admin').id)
   end
 }
-

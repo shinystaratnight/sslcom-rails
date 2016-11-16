@@ -241,8 +241,8 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_list_for_user should return scoped list for non admin' do
-      expected_roles = Role.all - Role.where(id: Role.admin_role_ids)
-      assert_equal expected_roles.map(&:id).sort, User.roles_list_for_user(@account_admin).ids.sort
+      # only show ssl_user in dropdown select list 
+      assert_equal Role.get_role_ids(Role::SSL_USER), User.roles_list_for_user(@account_admin).ids.sort
     end
 
     it '#roles_list_for_user should return all roles for admins' do
