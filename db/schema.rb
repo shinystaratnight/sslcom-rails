@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161018191559) do
+ActiveRecord::Schema.define(version: 20161111214702) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -371,6 +371,7 @@ ActiveRecord::Schema.define(version: 20161018191559) do
     t.integer  "strength",                  limit: 4
     t.boolean  "challenge_password"
     t.integer  "certificate_lookup_id",     limit: 4
+    t.text     "decoded",                   limit: 65535
   end
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
