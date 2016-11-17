@@ -1,6 +1,6 @@
 -if current_user.ssl_account.is_registered_reseller?
   =render 'reseller'
--elsif permitted_to? :manage, User.new
+-elsif current_user.is_system_admins?
   =render 'admin'
 -elsif current_user.is_standard?
   =render 'standard'
