@@ -341,13 +341,8 @@ class User < ActiveRecord::Base
   end
 
   def role_symbols(target_account=nil)
-    current_roles =
-      if is_system_admins?
-        role_symbols_all_accounts
-      else
-        Role.where(id: roles_for_account(target_account || ssl_account))
-          .map{|role| role.name.underscore.to_sym}
-      end
+    Role.where(id: roles_for_account(target_account || ssl_account))
+      .map{|role| role.name.underscore.to_sym}
   end
 
   def role_symbols_all_accounts
