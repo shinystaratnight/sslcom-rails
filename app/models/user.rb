@@ -355,11 +355,11 @@ class User < ActiveRecord::Base
   end
 
   def is_admin?
-    role_symbols_all_accounts.include? Role::SYS_ADMIN.to_sym
+    role_symbols.include? Role::SYS_ADMIN.to_sym
   end
 
   def is_super_user?
-    role_symbols_all_accounts.include? Role::SUPER_USER.to_sym
+    role_symbols.include? Role::SUPER_USER.to_sym
   end
 
   def is_account_admin?
