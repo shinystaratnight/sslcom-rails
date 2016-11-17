@@ -47,7 +47,7 @@
               =render :partial => '/layouts/public'
         -else
           =render :partial => '/layouts/public_resellers'
-      -elsif (permitted_to?(:delete, User.last))
+      -elsif current_user.is_sysadmins?
         =yield(:header)
         =render :partial => '/layouts/admin'
       -elsif current_user.ssl_account.is_registered_reseller?
