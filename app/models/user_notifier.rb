@@ -52,7 +52,7 @@ class UserNotifier < ActionMailer::Base
     @ssl_account = user.ssl_account
     @invite_url = base_url + "register/#{@user.perishable_token}?invite=true"
     @login = user.login
-    mail subject:  "Invition to SSL.com",
+    mail subject:  "#{@current_user.login} has invited you to SSL.com",
             from:  Settings.from_email.activations,
               to: user.email
   end
