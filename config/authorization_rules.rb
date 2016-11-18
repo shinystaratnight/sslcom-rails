@@ -25,6 +25,9 @@ authorization do
     has_permission_on :users, :to => :switch_default_ssl_account do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
+    has_permission_on :users, :to => :decline_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
     has_permission_on :users, :to => :approve_account_invite do
       if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
     end
@@ -44,6 +47,9 @@ authorization do
       if_attribute ssl_account_id: is_in {user.ssl_accounts.map(&:id)}
     end
     has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
+    has_permission_on :users, :to => :decline_account_invite do
       if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
     end
     has_permission_on :ssl_accounts, :to => [:create]
@@ -117,6 +123,9 @@ authorization do
     has_permission_on :users, :to => :approve_account_invite do
       if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
     end
+    has_permission_on :users, :to => :decline_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
   end
 
   role :guest do
@@ -132,6 +141,9 @@ authorization do
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
     has_permission_on :users, :to => :approve_account_invite do
+      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+    end
+    has_permission_on :users, :to => :decline_account_invite do
       if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
     end
   end

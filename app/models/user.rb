@@ -461,6 +461,29 @@ class User < ActiveRecord::Base
   #
   # User invite and approval token management
   #
+
+  def pending_account_invites?
+    ssl_account_users.each do |ssl|
+      return true if approval_token_valid?(ssl_account_id: ssl.ssl_account_id, skip_match: true)
+    end
+    return false
+  end
+
+  def get_pending_accounts
+    acct_invite = []
+    ssl_account_users.each do |ssl|
+      params = {ssl_account_id: ssl.ssl_account_id, skip_match: true}
+      if approval_token_valid?(params)
+        acct_invite << {
+          acct_number:    SslAccount.find(ssl.ssl_account_id).acct_number,
+          ssl_account_id: ssl.ssl_account_id,
+          approval_token: ssl.approval_token
+        }
+      end
+    end
+    acct_invite
+  end
+
   def generate_approval_query(params)
     ssl = get_ssl_acct_user_for_approval(params)
     "?token=#{ssl.approval_token}&ssl_account_id=#{ssl.ssl_account_id}"
@@ -483,6 +506,11 @@ class User < ActiveRecord::Base
       end
     end
     errors
+  end
+
+  def decline_invite(params)
+    ssl = get_ssl_acct_user_for_approval(params)
+    ssl.update(approved: false, token_expires: nil, approval_token: nil) if ssl
   end
 
   def approve_all_accounts
@@ -514,6 +542,11 @@ class User < ActiveRecord::Base
   def user_approved_invite?(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl && ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
+  end
+  
+  def user_declined_invite?(params)
+    ssl = get_ssl_acct_user_for_approval(params)
+    ssl && !ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?
   end
 
   def resend_invitation_with_token(params)
