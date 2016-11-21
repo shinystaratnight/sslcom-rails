@@ -263,25 +263,25 @@ class UserTest < Minitest::Spec
       assert_equal [[@default_ssl.id, roles.sort]].to_h, User.get_user_accounts_roles(@account_admin)
     end
 
-    it '#role_symbols should return [role_sumbols] for non-admin' do
+    it '#role_symbols should return [scoped role_symbols] for non-admin' do
       assert_equal [:account_admin], @account_admin.role_symbols(@default_ssl)
       
       # scope to default ssl account when no account provided
       assert_equal [:account_admin], @account_admin.role_symbols
     end
 
-    it '#role_symbols should return all [role_sumbols] for sysadmin' do
+    it '#role_symbols should return [scoped role_symbols] for sysadmin' do
       @account_admin.create_ssl_account([Role.get_role_id(Role::SYS_ADMIN)])
-      
-      # should pull all roles from all (2) accounts if sysadmin
-      assert_equal [:account_admin, :sysadmin], @account_admin.role_symbols
+      # should pull 1 role from default ssl account,
+      # ignore newly created (sysadmin) role for another ssl account
+      assert_equal [:account_admin], @account_admin.role_symbols
     end
 
-    it '#role_symbols should return all [role_sumbols] for super_user' do
+    it '#role_symbols should return [scoped role_symbols] for super_user' do
       @account_admin.create_ssl_account([Role.get_role_id(Role::SUPER_USER)])
-
-      # should pull all roles from all (2) accounts if sysadmin
-      assert_equal [:account_admin, :super_user], @account_admin.role_symbols
+      # should pull 1 role from default ssl account,
+      # ignore newly created (super_user) role for another ssl account
+      assert_equal [:account_admin], @account_admin.role_symbols
     end
   end
 
@@ -351,6 +351,28 @@ class UserTest < Minitest::Spec
     it '#approval_token_not_expired false when expired' do
       @user_w_token.ssl_account_users.first.update(token_expires: (DateTime.now - 2.hours))
       refute @user_w_token.approval_token_not_expired?(ssl_account_id: @user_w_token.ssl_account.id)
+    end
+
+    it '#pending_account_invites? should return correct boolean' do
+      assert @user_w_token.pending_account_invites?
+      refute @account_admin.pending_account_invites?
+    end
+
+    it '#get_pending_accounts should return array of hashes' do
+      ssl = @user_w_token.ssl_account_users.first
+      expected_hash = {
+        acct_number:    @user_w_token.ssl_account.acct_number,
+        ssl_account_id: ssl.ssl_account_id,
+        approval_token: ssl.approval_token
+      }
+      assert_equal [expected_hash], @user_w_token.get_pending_accounts
+    end
+
+    it '#decline_invite should decline invite' do
+      params = {ssl_account_id: @user_w_token.ssl_account_users.first.ssl_account_id}
+      refute @user_w_token.user_declined_invite?(params)
+      @user_w_token.decline_invite(params)
+      assert @user_w_token.user_declined_invite?(params)
     end
   end
 

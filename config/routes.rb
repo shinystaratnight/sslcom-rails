@@ -107,6 +107,7 @@ SslCom::Application.routes.draw do
       get :switch_default_ssl_account
       get :approve_account_invite
       get :resend_account_invite
+      get :decline_account_invite
     end
   end
 

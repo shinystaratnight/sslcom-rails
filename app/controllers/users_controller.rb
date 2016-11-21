@@ -79,6 +79,9 @@ class UsersController < ApplicationController
       flash.now[:warning_item] = "Click here to view the list of credits.",
         credits_certificate_orders_path
     end
+    if current_user.pending_account_invites?
+      render_invite_messages
+    end
   end
 
   def cancel_reseller_signup
@@ -241,6 +244,20 @@ class UsersController < ApplicationController
     redirect_to account_path
   end
 
+  def decline_account_invite
+    user = User.find params[:id]
+    if user.user_declined_invite?(params)
+      flash[:error] = 'You have already declined this invite.'
+    else
+      account_number = SslAccount.find(params[:ssl_account_id]).acct_number
+      if account_number
+        user.decline_invite(params)
+        flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
+      end
+    end
+    redirect_to account_path 
+  end
+
   def resend_account_invite
     user   = User.find params[:id]
     errors = user.resend_invitation_with_token(params)
@@ -286,4 +303,19 @@ class UsersController < ApplicationController
     (@current_user.is_admin? || @current_user.is_account_admin?) || @current_user == @user
   end
 
+  def render_invite_messages
+    invites = current_user.get_pending_accounts
+    if invites.any?
+      invites.each do |invite|
+        new_params = {ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token]}
+        accept_link = view_context.link_to('here',
+          approve_account_invite_user_path(current_user, new_params))
+        decline_link = view_context.link_to('decline',
+          decline_account_invite_user_path(current_user, new_params))
+        flash[:notice] = "You have been invited to join account ##{invite[:acct_number]}.
+          Please click #{accept_link} to accept the invitation. Click %s to reject."
+        flash[:notice_item] = decline_link
+      end
+    end
+  end
 end
