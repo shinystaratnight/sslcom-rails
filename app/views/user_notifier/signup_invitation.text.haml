@@ -1,10 +1,12 @@
-Hi!
-
-#{@current_user.login} has just invited you to join #{Settings.community_name}. #{Settings.community_description}
-
+Hello,
+#{"\r\n"}
+#{@current_user.login} has just invited you to join #{Settings.community_name} and become a member of their #{Settings.community_name} account.
+#{"\r\n"}
 Visit this link to sign up:
-
+#{"\r\n"}
 #{@invite_url}
-
-Thanks,
-The #{Settings.community_name} team
+#{"\r\n"}
+If the above URL does not work try copying and pasting it into your browser.
+If you continue to have problems, please feel free to contact us or #{@current_user.email}.
+#{"\r\n"}
+=render 'support_signature'

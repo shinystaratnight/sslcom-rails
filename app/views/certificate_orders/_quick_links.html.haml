@@ -4,6 +4,8 @@
       %strong Quick Links
     %ul
       %li=link_to 'Buy Certificate', certificates_url
+      -if !current_user.is_system_admins? and (current_user.ssl_account && permitted_to?(:index, :billing_profiles))
+        %li=link_to 'Billing Profiles', billing_profiles_path
       %li=link_to 'Deposit Funds', allocate_funds_url
       -if current_user.ssl_account.reseller
         %li
