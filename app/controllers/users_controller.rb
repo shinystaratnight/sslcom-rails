@@ -187,6 +187,7 @@ class UsersController < ApplicationController
   end
 
   def admin_update
+    update_user_status(params) if params[:user][:status]
     respond_to do |format|
       if @user.update_attributes(params[:user])
         format.js { render :json=>@user.to_json}
