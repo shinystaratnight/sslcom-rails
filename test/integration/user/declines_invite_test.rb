@@ -4,9 +4,7 @@ require 'test_helper'
 # 
 describe 'Decline ssl account invite' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
+    initialize_roles
     @existing_user_email = 'exist_user@domain.com'
     @current_admin       = create(:user, :account_admin)
     @existing_user       = create(:user, :account_admin, email: @existing_user_email)

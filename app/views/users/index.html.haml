@@ -55,67 +55,72 @@
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details
-              =form_for u, :url=>admin_update_user_url(u) do |f|
-                %table(cellspacing="0")
-                  %tbody
-                    %tr
-                      %td(colspan="6")
-                        -if current_user.is_admin?
-                          :javascript
-                            function adjust_funds_#{u.id}()
-                            {
-                              var amount = prompt("Amount to adjust (in USD)?", '');
-                              if (amount == null || amount=="")
-                                return;
-                              else
-                                window.location = '#{adjust_funds_user_url(u)}?amount='+encodeURIComponent(amount);
-                            }
-                            function change_login_#{u.id}()
-                            {
-                              var login = prompt("What is the new username? (3 chars min)", '');
-                              if (login == null || login=="")
-                                return;
-                              else
-                                window.location = '#{change_login_user_url(u)}?login='+encodeURIComponent(login);
-                            }
-                        .half_width_box
+              %table(cellspacing="0")
+                %tbody
+                  %tr
+                    %td(colspan="6")
+                      -if current_user.is_admin?
+                        :javascript
+                          function adjust_funds_#{u.id}()
+                          {
+                            var amount = prompt("Amount to adjust (in USD)?", '');
+                            if (amount == null || amount=="")
+                              return;
+                            else
+                              window.location = '#{adjust_funds_user_url(u)}?amount='+encodeURIComponent(amount);
+                          }
+                          function change_login_#{u.id}()
+                          {
+                            var login = prompt("What is the new username? (3 chars min)", '');
+                            if (login == null || login=="")
+                              return;
+                            else
+                              window.location = '#{change_login_user_url(u)}?login='+encodeURIComponent(login);
+                          }
+                      .half_width_box
+                        %ul
+                          %li
+                            %strong manage account
+                          - if permitted_to? :admin_manage
+                            - if u.ssl_account
+                              %li available funds: $#{u.ssl_account.funded_account.amount}
+                            %li=remote_login_link(u)
+                            %li=link_to 'user dashboard', admin_show_user_path(u)
+                            %li=link_to 'change email address', edit_email_user_url(u)
+                            %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
+                            %li=link_to 'change password', edit_password_user_url(u)
+                            %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
+                          - if permitted_to? :update_roles, :managed_users
+                            %li=link_to 'change roles', edit_managed_user_path(u)
+                          - if permitted_to? :remove_from_account, :managed_users
+                            - if current_user.is_system_admins?
+                              - u.ssl_accounts.each do |ssl|
+                                %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, ssl_account_id: ssl.id)
+                            - else
+                              %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u)
+                          - if permitted_to? :resend_account_invite, :users
+                            - unless current_user.is_system_admins?
+                              %li=link_to 'resend invite', resend_account_invite_user_path(u, 
+                              ssl_account_id: current_user.ssl_account.id, from_user: current_user)
+                      .half_width_box
+                        .adjust_status
+                        =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
+                          -if current_user.is_system_admins?
+                            -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
+                          -else
+                            -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
                           %ul
                             %li
-                              %strong manage account
-                            - if permitted_to? :admin_manage
-                              - if u.ssl_account
-                                %li available funds: $#{u.ssl_account.funded_account.amount}
-                              %li=remote_login_link(u)
-                              %li=link_to 'user dashboard', admin_show_user_path(u)
-                              %li=link_to 'change email address', edit_email_user_url(u)
-                              %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
-                              %li=link_to 'change password', edit_password_user_url(u)
-                              %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
-                            - if permitted_to? :update_roles, :managed_users
-                              %li=link_to 'change roles', edit_managed_user_path(u)
-                            - if permitted_to? :remove_from_account, :managed_users
-                              - if current_user.is_system_admins?
-                                - u.ssl_accounts.each do |ssl|
-                                  %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, ssl_account_id: ssl.id)
-                              - else
-                                %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u)
-                            - if permitted_to? :resend_account_invite, :users
-                              - unless current_user.is_system_admins? || u.approval_token_not_expired?(ssl_account_id: current_user.ssl_account.id)
-                                %li=link_to 'resend invite (token expired)', resend_account_invite_user_path(u, 
-                                ssl_account_id: current_user.ssl_account.id, from_user: current_user)
-                        .half_width_box
-                          .adjust_status
-                            %ul
-                              %li
-                                %strong adjust status
-                              %li
-                                =f.radio_button :status, 'enabled'
-                                enabled
-                              %li
-                                =f.radio_button :status, 'disabled'
-                                disabled
-                          -#
-                            .account_type
+                              %strong adjust status
+                            %li
+                              =ed.radio_button :status, 'enabled'
+                              enabled
+                            %li
+                              =ed.radio_button :status, 'disabled'
+                              disabled
+                        -#
+                          .account_type
+                            =form_for u, :url=>admin_update_user_url(u) do |f|
                               %ul
                                 %li
                                   %strong account type
@@ -125,16 +130,16 @@
                                 %li
                                   =f.radio_button :status, 'disabled'
                                   reseller tier 1
-                        -if current_user.is_system_admins?
-                          .half_width_box
-                            .adjust_status
-                              %ul
+                      -if current_user.is_system_admins?
+                        .half_width_box
+                          .adjust_status
+                            %ul
+                              %li
+                                %strong accounts status
+                              - u.ssl_accounts.each do |ssl|
+                                - status = ssl_account_status(u, ssl).first
                                 %li
-                                  %strong accounts status
-                                - u.ssl_accounts.each do |ssl|
-                                  - status = ssl_account_status(u, ssl).first
-                                  %li
-                                    ="##{ssl.acct_number.upcase}: #{status}"
-                                    - if status == 'token expired'
-                                      =link_to '&rarr; RESEND INVITE'.html_safe,
-                                      resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
+                                  ="##{ssl.acct_number.upcase}: #{status}"
+                                  - if status == 'token expired'
+                                    =link_to '&rarr; RESEND INVITE'.html_safe,
+                                    resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)

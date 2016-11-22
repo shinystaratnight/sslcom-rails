@@ -1,6 +1,6 @@
 class ManagedUsersController < ApplicationController
   before_filter    :require_user
-  filter_access_to :create
+  filter_access_to :all
 
   def new
     @user=User.new

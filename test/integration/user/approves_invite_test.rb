@@ -4,12 +4,11 @@ require 'test_helper'
 # 
 describe 'user approves ssl account invite' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
+    initialize_roles
     @existing_user_email = 'exist_user@domain.com'
     @current_admin       = create(:user, :account_admin)
     @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @unauthorized_user   = create(:user, :account_admin)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
@@ -69,6 +68,38 @@ describe 'user approves ssl account invite' do
       assert_nil   ssl.approval_token
       assert_nil   ssl.token_expires
       assert       ssl.approved
+    end
+  end
+  
+  describe 'Unauthorized user' do
+    before do
+      ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)
+      refute_nil   ssl.approval_token
+      refute_nil   ssl.token_expires
+      refute       ssl.approved
+      assert_equal 1, @existing_user.get_all_approved_accounts.count
+      assert_equal 1, @unauthorized_user.get_all_approved_accounts.count
+
+      click_on 'Logout'
+      login_as(@unauthorized_user, update_cookie(self.controller.cookies, @unauthorized_user))
+      email_approval_link = URI.extract(email_body(:first)).first.gsub('http://www.ssl.com', '')
+      visit email_approval_link
+    end
+    
+    it 'CANNOT approve invite' do
+      # re-routed to root
+      assert_match root_path, current_path
+      
+      click_on 'MY ACCOUNT'
+      assert page.has_no_content? 'ACCOUNT'
+    end
+    it 'invite remains unapproved' do
+      ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)
+      refute_nil   ssl.approval_token
+      refute_nil   ssl.token_expires
+      refute       ssl.approved
+      assert_equal 1, @existing_user.get_all_approved_accounts.count
+      assert_equal 1, @unauthorized_user.get_all_approved_accounts.count      
     end
   end
 end

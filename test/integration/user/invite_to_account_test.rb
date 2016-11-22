@@ -4,10 +4,7 @@ require 'test_helper'
 # 
 describe 'new user' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
-    
+    initialize_roles
     @new_user_email   = 'new_user@domain.com'
     @current_admin    = create(:user, :account_admin)
     @invited_ssl_acct = @current_admin.ssl_account
@@ -25,7 +22,7 @@ describe 'new user' do
 
   it 'invited user receives signup_invitation email' do
     assert_equal    1, email_total_deliveries
-    assert_match    'Invition to SSL.com', email_subject
+    assert_match    "#{@current_admin.login} has invited you to SSL.com", email_subject
     assert_match    @new_user_email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, @new_user.perishable_token
@@ -130,7 +127,7 @@ describe 'existing user' do
     assert_includes email_body(:first), approval_token
   end
   it 'account_admin user receives invite_to_account_notify_admin email' do
-    message = "You have added a new user #{@existing_user.email} to your account."
+    message = "You have added a new user #{@existing_user.email} to your SSL.com account."
     assert_equal    2, email_total_deliveries
     assert_match    'You have invited a user to your SSL.com account', email_subject
     assert_match    @current_admin.email, email_to

@@ -92,6 +92,7 @@ SslCom::Application.routes.draw do
       get :activation_notice
       get :search
       get :cancel_reseller_signup
+      match :enable_disable, via: [:put, :patch]
     end
 
     member do

@@ -2,9 +2,7 @@ require 'test_helper'
 
 describe 'remove user from account' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
+    initialize_roles
     @current_admin       = create(:user, :account_admin)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_email = 'exist_user@domain.com'
@@ -41,14 +39,14 @@ describe 'remove user from account' do
       assert_match    'You have removed user from SSL.com account', email_subject
       assert_match    @current_admin.email, email_to
       assert_match    'noreply@ssl.com', email_from
-      assert_includes email_body, "You have removed user #{@existing_user_email} from your account."
+      assert_includes email_body, "user #{@existing_user_email} has been removed from your SSL.com account."
     end
     it 'removed user receives removed_from_account email' do
       assert_equal    2, email_total_deliveries
       assert_match    'You have been removed from SSL.com account', email_subject(:first)
       assert_match    @existing_user_email, email_to(:first)
       assert_match    @current_admin.email, email_from(:first)
-      assert_includes email_body(:first), "#{@current_admin.login} has removed you from their SSL.com account."
+      assert_includes email_body(:first), "You have been removed from SSL.com account #{@invited_ssl_acct.acct_number}."
     end
     it 'remove association to ssl account and roles' do
       assert_equal 1, @existing_user.ssl_accounts.count
@@ -74,7 +72,7 @@ describe 'remove user from account' do
       assert_match    'You have been removed from SSL.com account', email_subject(:first)
       assert_match    @existing_user_email, email_to(:first)
       assert_match    @sysadmin.email, email_from(:first)
-      assert_includes email_body(:first), "#{@sysadmin.login} has removed you from their SSL.com account."
+      assert_includes email_body(:first), "You have been removed from SSL.com account #{@invited_ssl_acct.acct_number}."
     end
     it 'remove association to ssl account and roles' do
       assert_equal 1, @existing_user.ssl_accounts.count

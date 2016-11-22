@@ -26,10 +26,10 @@ authorization do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
     has_permission_on :users, :to => :decline_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :users, :to => :approve_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
   end
 
@@ -47,10 +47,10 @@ authorization do
       if_attribute ssl_account_id: is_in {user.ssl_accounts.map(&:id)}
     end
     has_permission_on :users, :to => :approve_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :users, :to => :decline_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :ssl_accounts, :to => [:create]
     has_permission_on :funded_accounts, :to => [:create]
@@ -121,10 +121,13 @@ authorization do
       if_attribute :ssl_account => is {user.ssl_account}
     end
     has_permission_on :users, :to => :approve_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :users, :to => :decline_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
+    end
+    has_permission_on :users, :to => :enable_disable do #, :join_by => :and do
+      if_attribute id: is_in {user.ssl_account.users.map(&:id).uniq}
     end
   end
 
@@ -141,10 +144,10 @@ authorization do
     has_permission_on :validations, :site_seals, :to => [:create, :read]
     has_permission_on :validation_histories, :to => [:read]
     has_permission_on :users, :to => :approve_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :users, :to => :decline_account_invite do
-      if_attribute token: is_in {user.ssl_account_users.map(&:approval_token)}
+      if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
   end
 end
@@ -152,7 +155,8 @@ end
 privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, 
-    :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite]
+    :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite, 
+    :enable_disable, :edit]
   privilege :manage, :includes => [:create, :read, :update, :delete, :refund, :change_state]
   privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
   privilege :create, :includes => :new

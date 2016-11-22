@@ -181,8 +181,14 @@ class User < ActiveRecord::Base
     active
   end
 
-  def is_disabled?
-    status=="disabled"
+  def is_disabled?(target_ssl=nil)
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
+    ssl_account_users.where(ssl_account_id: ssl.id)
+      .map(&:user_enabled).include?(false)
+  end
+
+  def is_admin_disabled?
+    !ssl_account_users.map(&:user_enabled).include?(true)
   end
 
   def deliver_activation_instructions!
@@ -489,6 +495,10 @@ class User < ActiveRecord::Base
     "?token=#{ssl.approval_token}&ssl_account_id=#{ssl.ssl_account_id}"
   end
 
+  def get_approval_tokens
+    ssl_account_users.map(&:approval_token).uniq.compact.flatten
+  end
+
   def approve_invite(params)
     ssl_acct_id = params[:ssl_account_id]
     errors      = []
@@ -536,7 +546,7 @@ class User < ActiveRecord::Base
   end
 
   def get_all_approved_accounts
-    SslAccountUser.where(user_id: id, approved: true).map(&:ssl_account)
+    SslAccountUser.where(user_id: id, approved: true, user_enabled: true).map(&:ssl_account)
   end
 
   def user_approved_invite?(params)
@@ -569,6 +579,35 @@ class User < ActiveRecord::Base
     end
   end
 
+  def set_status_for_account(status_type, target_ssl=nil)
+    ssl          = target_ssl.nil? ? ssl_account : target_ssl
+    acc_admin_id = Role.get_role_id(Role::ACCOUNT_ADMIN)
+    params       = {user_enabled: (status_type == :enabled)}
+
+    target_ssl = if roles_for_account(ssl).include?(acc_admin_id)
+      # if account_admin, disable access to this ssl account for all associated users
+      SslAccountUser.where(ssl_account_id: ssl.id)
+    else
+      ssl_account_users.where(ssl_account_id: ssl.id)
+    end
+    target_ssl.update_all(user_enabled: (status_type == :enabled))
+    clear_def_ssl_for_users(target_ssl)
+  end
+
+  def set_status_all_accounts(status_type)
+    ssl_accounts.each{|target_ssl| set_status_for_account(status_type, target_ssl)} if status_type
+  end
+
+  def clear_def_ssl_for_users(target_ssl_account_users)
+    # if any user in target_ssl_account_users has their default_ssl_account set
+    # to ssl_account in target_ssl_account_users, clear user's default_ssl_account
+    # since it's disabled
+    users_clear_ssl = target_ssl_account_users.map(&:user).uniq.flatten.compact
+      .keep_if{|u| target_ssl_account_users.map(&:ssl_account_id)
+      .include?(u.default_ssl_account)}.map(&:id)
+    User.where(id: users_clear_ssl).update_all(default_ssl_account: nil) if users_clear_ssl.any?
+  end
+
   private
   
   def approve_account(params)
@@ -588,8 +627,10 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    ssl_id = SslAccountUser.where(user_id: id, approved: true).first.ssl_account_id
-    ssl_accounts.find ssl_id
+    params = {user_id: id, approved: true}
+    ssl = SslAccountUser.where(params.merge(user_enabled: true))
+    ssl = SslAccountUser.where(params) unless ssl.any?
+    ssl_accounts.find ssl.first.ssl_account_id
   end
 
   def self.change_login(old, new)
