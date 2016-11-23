@@ -1,5 +1,7 @@
 class Validation < ActiveRecord::Base
-  has_many    :certificate_orders
+  has_many    :certificate_orders, -> { unscope(:where) }
+  has_many    :ssl_accounts, through: :certificate_orders
+  has_many    :users, through: :ssl_accounts
   has_many    :validation_rulings, :as=>:validation_rulable
   has_many    :validation_rules, :through => :validation_rulings
   has_many    :validation_history_validations

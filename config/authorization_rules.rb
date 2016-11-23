@@ -78,8 +78,7 @@ authorization do
       if_permitted_to :update, :certificate_order
     end
     has_permission_on :validations, :to => [:read, :update] do
-      if_attribute :certificate_orders => {
-            :ssl_account => is {user.ssl_account}}
+      if_attribute :ssl_accounts => contains {user.ssl_account}
     end
     has_permission_on :validations, :site_seals, :to => [:create]
     has_permission_on :validation_histories, :to => :manage, :except=>:delete do
