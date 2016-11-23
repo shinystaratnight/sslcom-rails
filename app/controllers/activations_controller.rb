@@ -1,5 +1,6 @@
 class ActivationsController < ApplicationController
   before_filter :require_no_user, :only => [:new, :create]
+  rescue_from Exception, :with => :not_found
 
   def new
     @user = User.find_using_perishable_token(params[:activation_code], 1.week) || (raise Exception)
