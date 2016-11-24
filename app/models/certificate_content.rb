@@ -1,6 +1,6 @@
 class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
-  belongs_to  :certificate_order
+  belongs_to  :certificate_order, ->{unscope(:where)}
   belongs_to  :server_software
   has_one     :csr
   has_one     :unscoped_csr, -> { unscoped }, foreign_key: :certificate_content_id, class_name: "Csr"
