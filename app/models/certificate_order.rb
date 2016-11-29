@@ -237,6 +237,10 @@ class CertificateOrder < ActiveRecord::Base
   scope :unused_credits, ->{where({:workflow_state=>'paid'} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
+  scope :unused_expired_credits, ->{not_new.joins{certificate_contents.csr.outer}.
+      where{(created_at < Settings.cert_expiration_threshold_days.to_i.days.ago) & (csrs.id==nil)}
+  }
+
   scope :unused_purchased_credits, ->{where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
     {:certificate_contents=>{:workflow_state.eq=>"new"}})}
 
@@ -1599,4 +1603,8 @@ class CertificateOrder < ActiveRecord::Base
     [count,result]
   end
 
+  # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
+  def self.expire_credits
+    CertificateOrder.unused_expired_credits.update_all(is_expired: true)
+  end
 end

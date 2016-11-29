@@ -32,8 +32,6 @@ class Csr < ActiveRecord::Base
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
-  default_scope{ where{csrs.common_name != nil}.order("created_at desc")}
-
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
   }

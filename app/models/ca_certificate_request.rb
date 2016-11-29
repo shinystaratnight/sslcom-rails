@@ -1,18 +1,18 @@
 class CaCertificateRequest < CaApiRequest
 
   def order_number
-    response =~ /(?<=orderNumber=)(.+?)&/
-    $1
+    m=response.match(/(?<=orderNumber=)(.+?)&/)
+    m[1] unless m.blank?
   end
 
   def certificate_id
-    response =~ /(?<=certificateID=)(.+?)&/
-    $1
+    m=response.match(/(?<=certificateID=)(.+?)&/)
+    m[1] unless m.blank?
   end
 
   def total_cost
-    response =~ /(?<=totalCost=)(.+?)&/
-    $1.to_f
+    m=response.match(/(?<=totalCost=)(.+?)&/)
+    m[1].to_f unless m.blank?
   end
 
   def response_to_hash

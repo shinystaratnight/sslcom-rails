@@ -218,14 +218,9 @@ class ApplicationController < ActionController::Base
   #this function should be cronned and moved to a more appropriate location
   # flags unused certificate_orders as expired after a period of time
   def self.flag_expired_certificate_orders
-    Authorization.ignore_access_control(true)
-    CertificateOrder.includes({:certificate_contents=>
-          {:csr=>:signed_certificates}}).find_each(batch_size: 500) {|co|
-      expired =
-        ['paid'].include?(co.workflow_state) &&
-        co.created_at < Settings.cert_expiration_threshold_days.to_i.days.ago && co.csrs.blank?
-      co.update_attribute :is_expired, expired
-    }
+    CertificateOrder.not_new.joins{certificate_contents.outer}.joins{certificate_contents.csr}.
+        where{(created_at < Settings.cert_expiration_threshold_days.to_i.days.ago) & (csr.blank?)}
+    # co.update_attribute :is_expired, expired
   end
 
   def find_certificate_orders_with_site_seals
