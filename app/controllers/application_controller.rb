@@ -215,14 +215,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  #this function should be cronned and moved to a more appropriate location
-  # flags unused certificate_orders as expired after a period of time
-  def self.flag_expired_certificate_orders
-    CertificateOrder.not_new.joins{certificate_contents.outer}.joins{certificate_contents.csr}.
-        where{(created_at < Settings.cert_expiration_threshold_days.to_i.days.ago) & (csr.blank?)}
-    # co.update_attribute :is_expired, expired
-  end
-
   def find_certificate_orders_with_site_seals
     return CertificateOrder.where('1=0') unless current_user # returns null set. Rails 4 is CertificateOrder.none
     if @search = params[:search]
