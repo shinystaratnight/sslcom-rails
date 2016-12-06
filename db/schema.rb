@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161122002959) do
+ActiveRecord::Schema.define(version: 20161205210348) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1011,6 +1011,8 @@ ActiveRecord::Schema.define(version: 20161122002959) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "status",      limit: 255
+    t.string   "ssl_slug",     limit: 255
+    t.string   "company_name", limit: 255
   end
 
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
