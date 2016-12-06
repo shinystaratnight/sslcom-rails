@@ -1,5 +1,6 @@
 -title = "User Management"
 -content_for :title, title
+-slug_params = {ssl_slug: @ssl_slug}
 =render :partial => 'index_scripts'
 %div{style: 'display:flex;justify-content:flex-end'}
   #search_bar{style: 'flex-basis:400px;margin:1.5rem;'}
@@ -21,7 +22,7 @@
       =will_paginate @users
     -unless current_user.is_system_admins?
       %tr
-        =link_to '+ Create User', new_managed_user_path, class: 'button_blue button_index'
+        =link_to '+ Create User', new_managed_user_path(slug_params), class: 'button_blue button_index'
     %tr.heading_row
       %th
       %th.name(scope="col")Username
@@ -91,13 +92,13 @@
                             %li=link_to 'change password', edit_password_user_url(u)
                             %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
                           - if permitted_to? :update_roles, :managed_users
-                            %li=link_to 'change roles', edit_managed_user_path(u)
+                            %li=link_to 'change roles', edit_managed_user_path(u, slug_params)
                           - if permitted_to? :remove_from_account, :managed_users
                             - if current_user.is_system_admins?
                               - u.ssl_accounts.each do |ssl|
-                                %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, ssl_account_id: ssl.id)
+                                %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
                             - else
-                              %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u)
+                              %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u, slug_params)
                           - if permitted_to? :resend_account_invite, :users
                             - unless current_user.is_system_admins?
                               %li=link_to 'resend invite', resend_account_invite_user_path(u, 
