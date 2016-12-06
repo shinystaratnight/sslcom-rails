@@ -24,7 +24,7 @@ class SslAccountsController < ApplicationController
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
         flash[:notice] = 'Reseller profile information was successfully updated.'
-        format.html { redirect_to(account_url) }
+        format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit" }
@@ -45,7 +45,7 @@ class SslAccountsController < ApplicationController
     respond_to do |format|
       if @ssl_account.update_attributes(params[:ssl_account])
         flash[:notice] = 'Account settings were successfully updated.'
-        format.html { redirect_to(account_url) }
+        format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
         format.xml  { head :ok }
       else
         format.html { render :action => "edit_settings" }
