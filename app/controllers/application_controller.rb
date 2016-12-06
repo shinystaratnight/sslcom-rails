@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
+  before_filter :set_ssl_slug
   after_filter :set_access_control_headers
 
 #  hide_action :paginated_scope
@@ -226,6 +227,18 @@ class ApplicationController < ActionController::Base
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(:include=>:site_seal) :
         current_user.ssl_account.certificate_orders.not_new(:include=>:site_seal))
+    end
+  end
+
+  def set_ssl_slug(target_user=nil)
+    user = target_user || current_user
+    if user
+      ssl = user.ssl_account
+      @ssl_slug = if user.is_system_admins?
+        'admin'
+      else
+        ssl && ssl.ssl_slug ? ssl.ssl_slug : ssl.acct_number
+      end
     end
   end
 

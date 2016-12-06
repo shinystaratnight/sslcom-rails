@@ -224,10 +224,11 @@ class UsersController < ApplicationController
       @user.set_default_ssl_account(switch_ssl_account)
       acct_number    = @user.ssl_accounts.find(switch_ssl_account).acct_number
       flash[:notice] = "You have switched to account #{acct_number}."
+      set_ssl_slug(@user)
     else
       flash[:error] = "Something went wrong. Please try again!"
     end
-    redirect_to account_path
+    redirect_to account_path(ssl_slug: @ssl_slug)
   end
 
   def approve_account_invite
@@ -242,7 +243,7 @@ class UsersController < ApplicationController
       flash[:notice_item] = view_context.link_to('here',
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
-    redirect_to account_path
+    redirect_to account_path(ssl_slug: @ssl_slug)
   end
 
   def decline_account_invite
@@ -256,7 +257,7 @@ class UsersController < ApplicationController
         flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
       end
     end
-    redirect_to account_path 
+    redirect_to account_path(ssl_slug: @ssl_slug) 
   end
 
   def resend_account_invite
@@ -267,7 +268,7 @@ class UsersController < ApplicationController
     else
       flash[:notice] = 'You successfully renewed the invitation token and sent notification to the user.'
     end
-    redirect_to users_path
+    redirect_to users_path(ssl_slug: @ssl_slug)
   end
 
   def enable_disable
