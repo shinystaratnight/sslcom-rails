@@ -2,7 +2,11 @@ require 'apis/certificates_api_app'
 
 SslCom::Application.routes.draw do
   resources :oauth_clients
-
+  
+  %w{ users certificates certificate_orders validations site_seals orders }.each do |get_route|
+    match "(/:ssl_slug)/#{get_route}" => "#{get_route}#index", as: get_route.to_sym, via: :get
+  end
+                  
   match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request, via: [:get, :post]
 
   match '/oauth/token',         :to => 'oauth#token',         :as => :token, via: [:get, :post]
@@ -67,24 +71,30 @@ SslCom::Application.routes.draw do
     match '/certificates/1.3/revoke' => 'api_certificate_requests#revoke_v1_3',
           :as => :api_certificate_revoke_v1_3, via: :get
   end
-
-  resource :account, :controller=>:users do
-    resource :reseller
+  scope '(:ssl_slug)', module: false do
+    resource :account, controller: :users do
+      resource :reseller
+    end
   end
   resources :password_resets
-  resource :ssl_account do
-    get :edit_settings
-    match :update_settings, via: [:put, :patch]
+  
+  scope '(:ssl_slug)', module: false do
+    resource :ssl_account do
+      get :edit_settings
+      match :update_settings, via: [:put, :patch]
+    end
   end
 
   resources :products
 
-  resources :managed_users, only: [:new, :create, :edit] do
-    patch 'update_roles', on: :member
-    get   'remove_from_account', on: :member
+  scope '(:ssl_slug)', module: false do
+    resources :managed_users, only: [:new, :create, :edit] do
+      patch 'update_roles', on: :member
+      get   'remove_from_account', on: :member
+    end
   end
 
-  resources :users do
+  resources :users, except: :index do
     collection do
       get :edit_password
       get :edit_email
@@ -140,7 +150,7 @@ SslCom::Application.routes.draw do
   end
 
   resource :user_session
-  resources :certificate_orders do
+  resources :certificate_orders, except: :index do
     collection do
       get :credits
       get :pending
@@ -207,12 +217,12 @@ SslCom::Application.routes.draw do
   resources :other_party_validation_requests, only: [:create, :show]
 
   resources :validation_histories
-  resources :validations, :only=>[:index, :update] do
+  resources :validations, :only=>[:update] do
     collection do
       get :search, :requirements, :domain_control, :ev, :organization
     end
   end
-  resources :site_seals, :only=>[:index, :update, :admin_update] do
+  resources :site_seals, only: [:update, :admin_update] do
     collection do
       get :details
       get :search
@@ -227,7 +237,7 @@ SslCom::Application.routes.draw do
   match '/validation_histories/:id/documents/:style.:extension' =>
     'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
 
-  resources :orders do
+  resources :orders, except: :index do
     collection do
       get :checkout, action: "new", as: :checkout # this shows the discount code prompt
       get :show_cart
@@ -246,7 +256,7 @@ SslCom::Application.routes.draw do
   resources :apis
   resources :billing_profiles
   match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing, via: [:get, :post]
-  resources :certificates do
+  resources :certificates, except: :index do
     collection do
       get :single_domain
       get :wildcard_or_ucc
