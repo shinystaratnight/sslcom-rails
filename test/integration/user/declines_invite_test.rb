@@ -67,6 +67,8 @@ describe 'Decline ssl account invite' do
       refute       ssl.approved
     end
     it 'has 1 approved account | 0 pending invites' do
+      @existing_user = User.find_by(email: @existing_user_email)
+      
       assert_equal 1, @existing_user.get_all_approved_accounts.count
       assert_equal 0, @existing_user.get_pending_accounts.count
       refute          @existing_user.pending_account_invites?

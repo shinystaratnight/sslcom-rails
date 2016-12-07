@@ -15,7 +15,7 @@ describe 'new user' do
     click_on '+ Create User'
     fill_in  'user_email', with: @new_user_email
     find('input[value="Invite"]').click
-    
+    sleep 1 # allow time to generate notification email
     @new_user     = User.find_by(email: @new_user_email)
     @new_user_ssl = @new_user.ssl_accounts.where.not(id: @invited_ssl_acct.id).first
   end
@@ -116,10 +116,12 @@ describe 'existing user' do
     click_on '+ Create User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
+    sleep 1 # allow time to generate notification email in case of delay
   end
   it 'invited user receives invite_to_account email' do
-    approval_token = @existing_user.ssl_account_users
-      .where(ssl_account_id: @invited_ssl_acct.id).first.approval_token
+    approval_token = SslAccountUser.where(
+      ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
+    ).first.approval_token
     assert_equal    2, email_total_deliveries
     assert_match    'Invition to SSL.com', email_subject(:first)
     assert_match    @existing_user_email, email_to(:first)
@@ -187,7 +189,9 @@ describe 'existing user' do
     assert_equal @ssl_user_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
-    ssl = @existing_user.ssl_account_users.where(ssl_account_id: @existing_user_ssl.id).first
+    ssl = SslAccountUser.where(
+      ssl_account_id: @existing_user_ssl.id, user_id: @existing_user.id
+    ).first
     
     refute_nil   @existing_user.default_ssl_account
     assert_equal @existing_user_ssl.id, @existing_user.default_ssl_account
@@ -197,7 +201,9 @@ describe 'existing user' do
     assert       ssl.approved
   end
   it 'invited ssl account is NOT approved' do
-    ssl = @existing_user.ssl_account_users.where(ssl_account_id: @invited_ssl_acct.id).first
+    ssl = SslAccountUser.where(
+      ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
+    ).first
     # account NOT approved, approval token generated for invited account
     refute_nil ssl.approval_token
     refute_nil ssl.token_expires

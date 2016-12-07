@@ -59,37 +59,35 @@ describe 'Disable user' do
       visit account_path
     end
     
-    describe 'CANNOT access' do
-      it 'account_admins account' do
-        assert       @disable_user.is_disabled?(@account_admin_ssl) # IS disabled
-        assert_equal @disable_user.get_all_approved_accounts.first.id, @disable_user.default_ssl_account
-        assert_equal 2, @disable_user.get_all_approved_accounts.count
-        # cannot swith to account_admins account
-        visit switch_default_ssl_account_user_path(@disable_user, ssl_account_id: @account_admin_ssl.id)
-        assert_match root_path, current_path
-        visit account_path
-        page.must_have_content "ssl account information for #{@disable_user.login}"
-        page.must_have_content "account number: #{@disable_user.ssl_account.acct_number}"
-        assert_equal           @disable_user.get_all_approved_accounts.first.id, @disable_user.default_ssl_account
-        assert_equal           2, @disable_user.get_all_approved_accounts.count
-      end
+    it 'CANNOT access account_admins account' do
+      assert       @disable_user.is_disabled?(@account_admin_ssl) # IS disabled
+      assert_equal @disable_user.get_all_approved_accounts.first.id, @disable_user.default_ssl_account
+      assert_equal 2, @disable_user.get_all_approved_accounts.count
+      # cannot swith to account_admins account
+      visit switch_default_ssl_account_user_path(@disable_user, ssl_account_id: @account_admin_ssl.id)
+      assert_match root_path, current_path
+      visit account_path
+      page.must_have_content "ssl account information for #{@disable_user.login}"
+      page.must_have_content "account number: #{@disable_user.ssl_account.acct_number}"
+      assert_equal           @disable_user.get_all_approved_accounts.first.id, @disable_user.default_ssl_account
+      assert_equal           2, @disable_user.get_all_approved_accounts.count
     end
-    
-    describe 'CAN access' do
-      it 'their own account' do
-        page.must_have_content "ssl account information for #{@disable_user.login}"
-        page.must_have_content "account number: #{@disable_user.ssl_account.acct_number}"
-        assert_equal           2, @disable_user.get_all_approved_accounts.count
-      end
-      it 'other associated accounts' do
-        # CAN switch to another invited/enabled ssl account of @account_admin_2
-        visit switch_default_ssl_account_user_path(
-          @disable_user, ssl_account_id: @account_admin_2.ssl_account.id
-        )
-        page.must_have_content "ssl account information for #{@disable_user.login}"
-        page.must_have_content "account number: #{@account_admin_2.ssl_account.acct_number}"
-        assert_equal           @account_admin_2.ssl_account.id, @disable_user.default_ssl_account
-      end
+  
+    it 'CAN access their own account' do
+      page.must_have_content "ssl account information for #{@disable_user.login}"
+      page.must_have_content "account number: #{@disable_user.ssl_account.acct_number}"
+      assert_equal           2, @disable_user.get_all_approved_accounts.count
+    end
+
+    it 'CAN access other associated accounts' do
+      # CAN switch to another invited/enabled ssl account of @account_admin_2
+      visit switch_default_ssl_account_user_path(
+        @disable_user, ssl_account_id: @account_admin_2.ssl_account.id
+      )
+      @disable_user          = User.find_by(login: 'ssl_user_1') # refresh record
+      page.must_have_content "ssl account information for #{@disable_user.login}"
+      page.must_have_content "account number: #{@account_admin_2.ssl_account.acct_number}"
+      assert_equal           @account_admin_2.ssl_account.id, @disable_user.default_ssl_account
     end
   end
 
