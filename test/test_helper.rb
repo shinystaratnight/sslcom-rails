@@ -4,7 +4,7 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'minitest/rails'
 require 'minitest/pride'
-require "minitest/reporters"
+require 'minitest/reporters'
 require 'mocha/setup'
 require 'database_cleaner'
 require 'factory_girl'

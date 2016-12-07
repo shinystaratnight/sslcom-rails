@@ -27,6 +27,7 @@ describe 'remove user from account' do
       click_on 'Users'
       first('td', text: @existing_user_email).click
       click_on 'remove user from this account'
+      sleep 1 # allow time to generate notification email
     end
 
     it 'user removed from users index' do
@@ -65,6 +66,7 @@ describe 'remove user from account' do
       click_on 'Users'
       first('td', text: @existing_user_email).click
       click_on "remove user from account: ##{@invited_ssl_acct.acct_number.upcase}"
+      sleep 1 # allow time to generate notification email
     end
     
     it 'removed user receives removed_from_account email' do
