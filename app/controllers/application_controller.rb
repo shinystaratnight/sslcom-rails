@@ -235,7 +235,7 @@ class ApplicationController < ActionController::Base
     if user
       ssl = user.ssl_account
       @ssl_slug = if user.is_system_admins?
-        'admin'
+        nil
       else
         ssl && ssl.ssl_slug ? ssl.ssl_slug : ssl.acct_number
       end
