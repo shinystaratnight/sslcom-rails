@@ -21,7 +21,7 @@ module SslCom
     config.autoload_paths += %W(#{config.root}/lib)
 
     Bundler.require(*Rails.groups)
-    Config::Integration::Rails::Railtie.preload
+    # Config::Integration::Rails::Railtie.preload
 
     # Add additional load paths for your own custom dirs
     %w(observers mailers middleware).each do |dir|
@@ -42,9 +42,6 @@ module SslCom
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-
-    # JavaScript files you want as :defaults (application.js is always included).
-    config.action_view.javascript_expansions[:defaults] = %w(jquery.min jquery_ujs)
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"

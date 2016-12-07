@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '~> 4.2.6'
+gem 'rails', '~> 4.2.7.1'
 gem 'sprockets'
 gem 'protected_attributes'
 gem 'responders', '~> 2.0'
@@ -17,7 +17,7 @@ gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
 gem 'paperclip'
 gem 'declarative_authorization'
-gem "authlogic", :git => 'git://github.com/binarylogic/authlogic.git'
+gem "authlogic"
 gem "savon", '~> 2.0'
 gem 'zip-zip'
 gem 'rb-inotify', :require => false
@@ -57,7 +57,7 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder'
 gem 'sdoc',          group: :doc
-gem 'airbrake', '~> 5.4'
+gem 'airbrake'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
@@ -105,6 +105,5 @@ group :test do
 end
 
 group :assets do
-  gem 'coffee-rails'
   gem 'uglifier'
 end
