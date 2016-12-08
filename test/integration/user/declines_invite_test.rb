@@ -87,7 +87,7 @@ describe 'Decline ssl account invite' do
       click_on 'Users'
       first('td', text: @existing_user_email).click # expand user's row
       
-      page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: declined")
+      page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ declined ]")
     end
 
   end
