@@ -139,7 +139,7 @@
                               - u.ssl_accounts.each do |ssl|
                                 - status = ssl_account_status(u, ssl).first
                                 %li
-                                  ="##{ssl.acct_number.upcase}: #{status}"
+                                  =link_to("##{ssl.acct_number.upcase}", users_path(search: ssl.acct_number.upcase))+" : #{status}"
                                   - if status == 'token expired'
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
                                     resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
