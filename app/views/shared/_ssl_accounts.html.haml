@@ -5,10 +5,10 @@
     .acc-sel-dropbtn
       ="ACCOUNTS (#{current_user.get_all_approved_accounts.count})"
       %br
-      ="#{ssl_account.acct_number} &#9660;".html_safe
+      ="#{ssl_account.get_team_name[0..10]} &#9660;".html_safe
     .acc-sel-dropdown-cont
       %ul
         -(current_user.get_all_approved_accounts - [ssl_account]).each do |acct|
           %li
             -path = switch_default_ssl_account_user_path(current_user.id, ssl_account_id: acct.id)
-            =link_to acct.acct_number, path
+            =link_to acct.get_team_name[0..10], path

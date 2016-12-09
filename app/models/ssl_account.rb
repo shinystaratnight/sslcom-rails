@@ -294,6 +294,10 @@ class SslAccount < ActiveRecord::Base
     ).map(&:user).first
   end
 
+  def get_team_name
+    company_name || acct_number
+  end
+
   def self.blacklist_keyword?(str)
     reserved_routes_names.each{|s| return true if str.include?(s)}
     return false
