@@ -81,7 +81,10 @@ SslCom::Application.routes.draw do
   scope '(:ssl_slug)', module: false do
     resource :ssl_account do
       get :edit_settings
+      get :validate_ssl_slug
       match :update_settings, via: [:put, :patch]
+      match :update_ssl_slug, via: [:put, :patch]
+      match :update_company_name, via: [:put, :patch]
     end
   end
 

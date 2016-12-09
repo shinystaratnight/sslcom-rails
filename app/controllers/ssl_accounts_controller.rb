@@ -13,10 +13,48 @@ class SslAccountsController < ApplicationController
 
   # GET /ssl_account/edit
   def edit
+    if params[:url_slug] || params[:company_name]
+      @ssl_account = SslAccount.find params[:id]
+    end
   end
 
   # GET /ssl_account/edit_settings
   def edit_settings
+  end
+
+  def update_ssl_slug
+    ssl_slug = params[:ssl_account][:ssl_slug]
+    ssl      = SslAccount.find params[:ssl_account][:id]
+    
+    if ssl && SslAccount.ssl_slug_valid?(ssl_slug) && ssl.update(ssl_slug: ssl_slug)
+      flash[:notice] = "You have successfully added url slug name #{params[:ssl_account][:ssl_slug]} to account."
+      if current_user.is_system_admins?
+        redirect_to users_path
+      else
+        set_ssl_slug(@user)
+        redirect_to account_path(ssl_slug: @ssl_slug)
+      end
+    else
+      flash[:notice] = 'Something went wrong, try again using a valid slug name.'
+      redirect_to edit_ssl_account_path(params[:ssl_account].merge(url_slug: true))
+    end
+  end
+
+  def validate_ssl_slug
+    respond_to do |format|
+      format.js {render json: {message: SslAccount.ssl_slug_valid?(params[:ssl_slug])}}
+    end
+  end
+
+  def update_company_name
+    ssl = SslAccount.find params[:ssl_account][:id]
+    if ssl && ssl.update(company_name: params[:ssl_account][:company_name])
+      flash[:notice] = "Company name has been successfully updated to #{ssl.company_name}"
+      redirect_to account_path(ssl_slug: @ssl_slug)
+    else
+      flash[:error] = 'Company name has NOT been updated due to errors!'
+      redirect_to edit_ssl_account_path(params[:ssl_account].merge(update_company_name: true))
+    end
   end
 
   # PUT /ssl_account/
