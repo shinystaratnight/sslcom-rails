@@ -295,7 +295,6 @@ class SslAccount < ActiveRecord::Base
   end
 
   def self.blacklist_keyword?(str)
-    %w{ & ^ # }.each{|s| return true if str.include?(s)}
     reserved_routes_names.each{|s| return true if str.include?(s)}
     return false
   end

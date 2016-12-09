@@ -9,4 +9,4 @@
   %li company name: #{ssl.company_name}
 -else
   -if permitted_to? :update_company_name, user.ssl_account
-    %li company name: #{link_to 'ADD COMPANY NAME', edit_ssl_account_path(id: ssl.id, company_name: true, ssl_slug: @ssl_slug)}
+    %li company name: #{link_to 'ADD COMPANY NAME', edit_ssl_account_path(id: ssl.id, update_company_name: true, ssl_slug: @ssl_slug)}

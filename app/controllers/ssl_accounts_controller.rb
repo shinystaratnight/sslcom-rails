@@ -52,8 +52,8 @@ class SslAccountsController < ApplicationController
       flash[:notice] = "Company name has been successfully updated to #{ssl.company_name}"
       redirect_to account_path(ssl_slug: @ssl_slug)
     else
-      flash[:errors] = 'Company name has NOT been updated due to errors!'
-      redirect_to update_company_name_path(params[:ssl_account].merge(company_name: true))
+      flash[:error] = 'Company name has NOT been updated due to errors!'
+      redirect_to edit_ssl_account_path(params[:ssl_account].merge(update_company_name: true))
     end
   end
 
