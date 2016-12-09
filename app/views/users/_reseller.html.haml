@@ -110,6 +110,7 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
+                        =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_user_url(user)

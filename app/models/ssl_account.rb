@@ -282,6 +282,24 @@ class SslAccount < ActiveRecord::Base
     User.unscoped{users.first}
   end
 
+  def self.ssl_slug_valid?(slug_str)
+    !slug_str.blank? &&
+      !blacklist_keyword?(slug_str.downcase) &&
+      slug_str.strip.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
+  end
+
+  def get_account_owner
+    Assignment.where(
+      role_id: Role.get_role_id(Role::ACCOUNT_ADMIN), ssl_account_id: id
+    ).map(&:user).first
+  end
+
+  def self.blacklist_keyword?(str)
+    %w{ & ^ # }.each{|s| return true if str.include?(s)}
+    reserved_routes_names.each{|s| return true if str.include?(s)}
+    return false
+  end
+
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
@@ -435,5 +453,9 @@ class SslAccount < ActiveRecord::Base
     ids=User.pluck :ssl_account_id
     SslAccount.where{id << ids}.delete_all
     Preference.where{(owner_type=="SslAccount") & (owner_id << ids)}.delete_all
+  end
+
+  def self.reserved_routes_names
+    Rails.application.routes.named_routes.map{|r| r.to_s}
   end
 end
