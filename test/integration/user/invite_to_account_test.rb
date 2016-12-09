@@ -59,8 +59,8 @@ describe 'new user' do
     first('td', text: @new_user_email).click
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
     page.must_have_content("remove user from account: ##{@new_user_ssl.acct_number.upcase}")
-    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: approved")
-    page.must_have_content("##{@new_user_ssl.acct_number.upcase}: approved")
+    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ approved ]")
+    page.must_have_content("##{@new_user_ssl.acct_number.upcase} [ approved ]")
   end
   it 'user is NOT activated' do
     refute @new_user.active
@@ -170,8 +170,8 @@ describe 'existing user' do
 
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
     page.must_have_content("remove user from account: ##{@existing_user_ssl.acct_number.upcase}")
-    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: sent")
-    page.must_have_content("##{@existing_user_ssl.acct_number.upcase}: approved")
+    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ sent ]")
+    page.must_have_content("##{@existing_user_ssl.acct_number.upcase} [ approved ]")
   end
   it 'invited ssl account NOT approved' do
     refute @existing_user.get_all_approved_accounts.include? @invited_ssl_acct
