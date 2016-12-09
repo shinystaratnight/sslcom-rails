@@ -145,5 +145,5 @@
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
                                     resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
                                   ][
-                                  =link_to "leave", remove_from_account_managed_user_path(u, ssl_account_id: ssl.id)
+                                  =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
                                   ]
