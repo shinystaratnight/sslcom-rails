@@ -23,7 +23,7 @@ class SslAccountsController < ApplicationController
   end
 
   def update_ssl_slug
-    ssl_slug = params[:ssl_account][:ssl_slug]
+    ssl_slug = params[:ssl_account][:ssl_slug].downcase
     ssl      = SslAccount.find params[:ssl_account][:id]
     
     if ssl && SslAccount.ssl_slug_valid?(ssl_slug) && ssl.update(ssl_slug: ssl_slug)
