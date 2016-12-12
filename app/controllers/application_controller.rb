@@ -656,8 +656,10 @@ class ApplicationController < ActionController::Base
   end
 
   def team_base
-    @team_ssl_account = SslAccount.where{(ssl_slug=(params[:ssl_slug])) | (acct_number=(params[:ssl_slug]))}
-    current_user.set_default_ssl_account(@team_ssl_account) if (current_user.get_all_approved_accounts.include?(@team_ssl_account) || current_user.is_system_admins?)
+    @ssl_account = SslAccount.where('ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
+    if current_user.get_all_approved_accounts.include?(@ssl_account) || current_user.is_system_admins?
+      current_user.set_default_ssl_account(@ssl_account)
+    end
   end
 
   class Helper

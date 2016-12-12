@@ -74,6 +74,8 @@ class SslAccount < ActiveRecord::Base
     :unless=>"preferred_reminder_notice_destinations=='0'"
   validate :preferred_reminder_notice_triggers_format
   validates :acct_number, presence: true, uniqueness: true, on: :create
+  validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
+  validates :company_name, length: {in: 2..20}, allow_nil: true
 
   default_scope ->{order("created_at desc")}
 

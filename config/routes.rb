@@ -68,49 +68,9 @@ SslCom::Application.routes.draw do
           :as => :api_certificate_revoke_v1_3, via: :get
   end
 
-  resource :account, :controller=>:users do
-    resource :reseller
-  end
   resources :password_resets
-  resource :ssl_account do
-    get :edit_settings
-    match :update_settings, via: [:put, :patch]
-  end
 
   resources :products
-
-  resources :managed_users, only: [:new, :create, :edit] do
-    patch 'update_roles', on: :member
-    get   'remove_from_account', on: :member
-  end
-
-  resources :users do
-    collection do
-      get :edit_password
-      get :edit_email
-      post :resend_activation
-      get :activation_notice
-      get :search
-      get :cancel_reseller_signup
-      match :enable_disable, via: [:put, :patch]
-    end
-
-    member do
-      get :edit_password
-      get :edit_email
-      get :login_as
-      match :admin_update, via: [:put, :patch]
-      get :admin_show
-      get :dup_info
-      post :consolidate
-      get :adjust_funds
-      get :change_login
-      get :switch_default_ssl_account
-      get :approve_account_invite
-      get :resend_account_invite
-      get :decline_account_invite
-    end
-  end
 
   constraints DomainConstraint.new(%w(reseller.ssl.com reseller.ssl.local)) do
     resources :resellers, :only=>[:index,:new] do
@@ -237,14 +197,61 @@ SslCom::Application.routes.draw do
       end
     end
     resources :billing_profiles
+
+    resource :ssl_account do
+      get :edit_settings
+      get :validate_ssl_slug
+      match :update_settings, via: [:put, :patch]
+      match :update_ssl_slug, via: [:put, :patch]
+      match :update_company_name, via: [:put, :patch]
+    end
+
+    resources :users, only: :index do
+      match :enable_disable, via: [:put, :patch], on: :member
+    end
+
+    resource :account, controller: :users do
+      resource :reseller
+    end
+
+    resources :managed_users, only: [:new, :create, :edit] do
+      member do
+        patch 'update_roles'
+        get   'remove_from_account'
+      end
+    end
   end
 
-  scope '/', module: false do
+  scope '(/team/:ssl_slug)', module: false do
     concerns :teamable
   end
 
-  scope '/team/:ssl_slug', module: false do
-    concerns :teamable
+  resources :users, except: :index do
+    collection do
+      get :edit_password
+      get :edit_email
+      post :resend_activation
+      get :activation_notice
+      get :search
+      get :cancel_reseller_signup
+      match :enable_disable, via: [:put, :patch]
+    end
+
+    member do
+      get :edit_password
+      get :edit_email
+      get :login_as
+      match :admin_update, via: [:put, :patch]
+      get :admin_show
+      get :dup_info
+      post :consolidate
+      get :adjust_funds
+      get :change_login
+      get :switch_default_ssl_account
+      get :approve_account_invite
+      get :resend_account_invite
+      get :decline_account_invite
+    end
   end
 
   get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders

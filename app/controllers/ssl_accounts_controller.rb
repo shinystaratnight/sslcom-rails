@@ -35,7 +35,7 @@ class SslAccountsController < ApplicationController
         redirect_to account_path(ssl_slug: @ssl_slug)
       end
     else
-      flash[:notice] = 'Something went wrong, try again using a valid slug name.'
+      flash[:error] = "Please try again using a valid slug name. #{ssl.errors.full_messages.join(', ')}."
       redirect_to edit_ssl_account_path(params[:ssl_account].merge(url_slug: true))
     end
   end
@@ -52,7 +52,7 @@ class SslAccountsController < ApplicationController
       flash[:notice] = "Company name has been successfully updated to #{ssl.company_name}"
       redirect_to account_path(ssl_slug: @ssl_slug)
     else
-      flash[:error] = 'Company name has NOT been updated due to errors!'
+      flash[:error] = "Company name has NOT been updated due to errors! #{ssl.errors.full_messages.join(', ')}"
       redirect_to edit_ssl_account_path(params[:ssl_account].merge(update_company_name: true))
     end
   end

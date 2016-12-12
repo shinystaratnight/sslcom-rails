@@ -7,7 +7,7 @@ class SslAccountTest < Minitest::Spec
   end
 
   describe 'attributes' do
-    before(:each)  { @ssl_acct = create(:ssl_account) }
+    before(:each) { @ssl_acct = build(:ssl_account) }
 
     it { assert_respond_to @ssl_acct, :acct_number }
     it { assert_respond_to @ssl_acct, :roles }
@@ -17,6 +17,70 @@ class SslAccountTest < Minitest::Spec
   end
 
   describe 'validations' do
+    before(:each) { @ssl_acct = build(:ssl_account) }
+
+    it '#ssl_slug should NOT be valid under 2 characters' do
+      @ssl_acct.ssl_slug = 'a'
+      @ssl_acct.save
+      
+      assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:ssl_slug]
+    end
+    it '#ssl_slug should NOT be valid when over 20 characters' do
+      @ssl_acct.ssl_slug = 'overtwentycharacterslong'
+      @ssl_acct.save
+      
+      assert_equal ['is too long (maximum is 20 characters)'], @ssl_acct.errors.messages[:ssl_slug]
+    end
+    it '#ssl_slug should NOT be valid when empty string' do
+      @ssl_acct.ssl_slug = ''
+      @ssl_acct.save
+      
+      assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:ssl_slug]
+    end
+    it '#ssl_slug should NOT be valid when not unique' do
+      @dupe = create(:ssl_account, ssl_slug: 'dupe')
+      @ssl_acct.ssl_slug = 'dupe'
+      @ssl_acct.save
+
+      assert_equal ['has already been taken'], @ssl_acct.errors.messages[:ssl_slug]
+    end
+    it '#ssl_slug should ignore case' do
+      @dupe = create(:ssl_account, ssl_slug: 'dupe')
+      @ssl_acct.ssl_slug = 'DUPE'
+      @ssl_acct.save
+
+      assert_equal ['has already been taken'], @ssl_acct.errors.messages[:ssl_slug]
+    end
+    it '#ssl_slug should be valid when nil' do
+      @ssl_acct.ssl_slug = nil
+      @ssl_acct.save
+
+      assert @ssl_acct.valid?
+    end
+    it '#company_name should NOT be valid under 2 characters' do
+      @ssl_acct.company_name = 'a'
+      @ssl_acct.save
+      
+      assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:company_name]
+    end
+    it '#company_name should NOT be valid when over 20 characters' do
+      @ssl_acct.company_name = 'overtwentycharacterslong'
+      @ssl_acct.save
+      
+      assert_equal ['is too long (maximum is 20 characters)'], @ssl_acct.errors.messages[:company_name]
+    end
+    it '#company_name should NOT be valid when empty string' do
+      @ssl_acct.company_name = ''
+      @ssl_acct.save
+      
+      assert_equal ['is too short (minimum is 2 characters)'], @ssl_acct.errors.messages[:company_name]
+    end
+    it '#company_name should be valid when nil' do
+      @ssl_acct.company_name = nil
+      @ssl_acct.save
+
+      assert @ssl_acct.valid?
+    end
   end
 
   describe 'slug string validation' do

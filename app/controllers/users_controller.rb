@@ -222,8 +222,8 @@ class UsersController < ApplicationController
     switch_ssl_account = params[:ssl_account_id]
     if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
-      acct_number    = @user.ssl_accounts.find(switch_ssl_account).acct_number
-      flash[:notice] = "You have switched to account #{acct_number}."
+      team_name      = @user.ssl_accounts.find(switch_ssl_account).get_team_name
+      flash[:notice] = "You have switched to account '#{team_name}'."
       set_ssl_slug(@user)
     else
       flash[:error] = "Something went wrong. Please try again!"
