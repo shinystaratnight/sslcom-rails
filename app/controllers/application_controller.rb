@@ -17,6 +17,7 @@ class ApplicationController < ActionController::Base
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
+  before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug
   after_filter :set_access_control_headers
 
@@ -393,7 +394,7 @@ class ApplicationController < ActionController::Base
 
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
-    @current_user_session = UserSession.find(:shadow) || UserSession.find
+    @current_user_session = UserSession.find(:shadow).try(:user) ? UserSession.find(:shadow) : UserSession.find
   end
 
   def current_user
@@ -652,6 +653,11 @@ class ApplicationController < ActionController::Base
 
   def error(status, code, message)
     render :js => {:response_type => "ERROR", :response_code => code, :message => message}.to_json, :status => status
+  end
+
+  def team_base
+    @team_ssl_account = SslAccount.where{(ssl_slug=(params[:ssl_slug])) | (acct_number=(params[:ssl_slug]))}
+    current_user.set_default_ssl_account(@team_ssl_account) if (current_user.get_all_approved_accounts.include?(@team_ssl_account) || current_user.is_system_admins?)
   end
 
   class Helper
