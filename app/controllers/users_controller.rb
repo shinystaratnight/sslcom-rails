@@ -301,8 +301,8 @@ class UsersController < ApplicationController
   end
 
   def set_users
-    if current_user.is_super_user? || current_user.is_admin?
-      @users = User.unscoped
+    if current_user.is_system_admins?
+      @users = @ssl_account.try(:users) || User.unscoped
     else
       @users = current_user.manageable_users
     end

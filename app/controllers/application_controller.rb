@@ -208,12 +208,13 @@ class ApplicationController < ActionController::Base
     if @search = params[:search]
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
-        (CertificateOrder.unscoped{CertificateOrder.search_with_csr(params[:search], options)}) :
-        current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
+        (CertificateOrder.unscoped{
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
+            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
     else
       (current_user.is_admin? ?
-        CertificateOrder.not_test.find_not_new(options) :
-        current_user.ssl_account.certificate_orders.not_test.not_new(options))
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
+            current_user.ssl_account.certificate_orders.not_test.not_new(options))
     end
   end
 
@@ -657,7 +658,7 @@ class ApplicationController < ActionController::Base
 
   def team_base
     @ssl_account = SslAccount.where('ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
-    if current_user.get_all_approved_accounts.include?(@ssl_account) || current_user.is_system_admins?
+    if current_user.get_all_approved_accounts.include?(@ssl_account)
       current_user.set_default_ssl_account(@ssl_account)
     end
   end

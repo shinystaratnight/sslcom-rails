@@ -132,7 +132,7 @@
                                   =f.radio_button :status, 'disabled'
                                   reseller tier 1
                       -if current_user.is_system_admins?
-                        .half_width_box
+                        .full_width_box
                           .adjust_status
                             %ul
                               %li
@@ -146,7 +146,17 @@
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
                                     resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
                                   ][
-                                  =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
-                                  ][
                                   =link_to "update slug", edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)
+                                  ][
+                                  =link_to "users", users_path(ssl_slug: ssl.to_slug)
+                                  ][
+                                  =link_to "certificates", certificate_orders_path(ssl_slug: ssl.to_slug)
+                                  ][
+                                  =link_to "transactions", orders_path(ssl_slug: ssl.to_slug)
+                                  ][
+                                  =link_to "validations", validations_path(ssl_slug: ssl.to_slug)
+                                  ][
+                                  =link_to "site seals", site_seals_path(ssl_slug: ssl.to_slug)
+                                  ][
+                                  =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
                                   ]

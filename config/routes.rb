@@ -220,6 +220,28 @@ SslCom::Application.routes.draw do
         get   'remove_from_account'
       end
     end
+
+    get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
+    match '/validation_histories/:id/documents/:style.:extension' =>
+              'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
+    get 'certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
+    get 'certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
+    match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
+    match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
+    match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
+    match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
+    match 'secure/allocate_funds_for_order/:id' =>
+              'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
+    match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
+    match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
+    match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post, :put]
+    match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
+    match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
+    match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
+
+    match "paypal_express/checkout", via: [:get, :post]
+    match "paypal_express/review", via: [:get, :post]
+    match "paypal_express/purchase", via: [:get, :post]
   end
 
   scope '(/team/:ssl_slug)', module: false do
@@ -253,28 +275,6 @@ SslCom::Application.routes.draw do
       get :decline_account_invite
     end
   end
-
-  get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
-  match '/validation_histories/:id/documents/:style.:extension' =>
-            'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
-  get 'certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
-  get 'certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
-  match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
-  match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
-  match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
-  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
-  match 'secure/allocate_funds_for_order/:id' =>
-            'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
-  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post, :put]
-  match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
-  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
-  match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
-
-  match "paypal_express/checkout", via: [:get, :post]
-  match "paypal_express/review", via: [:get, :post]
-  match "paypal_express/purchase", via: [:get, :post]
 
   resources :apis
   match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing, via: [:get, :post]

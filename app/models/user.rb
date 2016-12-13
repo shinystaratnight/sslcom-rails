@@ -50,8 +50,8 @@ class User < ActiveRecord::Base
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account
-    if default_ssl_account
-      ssl_accounts.find(default_ssl_account)
+    if default_ssl_account and ssl_accounts.find_by(id: default_ssl_account)
+      ssl_accounts.find_by id: default_ssl_account
     else
       approved_account = get_first_approved_acct
       set_default_ssl_account(approved_account) if approved_account
