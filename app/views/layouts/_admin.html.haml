@@ -13,9 +13,9 @@
           %th.certificate_status
             %table
               %tr
-                %td.certificate_status=link_to "IN PROGRESS", filter_by_scope_certificate_orders_path("pending")
+                %td.certificate_status=link_to "IN PROGRESS", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
               %tr
-                %td.certificate_status=link_to CertificateOrder.pending.count, filter_by_scope_certificate_orders_path("pending")
+                %td.certificate_status=link_to CertificateOrder.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
           %th.certificate_status
             %table
               %tr
@@ -36,7 +36,7 @@
               %tr
                 %td=link_to "SHOW WILDCARD ORDERS", filter_by_certificate_orders_path("wildcard")
               %tr
-                %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path("is_test")
+                %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
           -#-unless current_user.ssl_account.funded_account.blank?
           -#  %th AVAILABLE FOR USE
           -if show_short_links?
