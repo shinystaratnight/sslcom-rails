@@ -51,6 +51,7 @@ class ManagedUsersController < ApplicationController
   end
 
   def update_roles
+    params[:user][:role_ids] = (params[:user][:role_ids] & User.roles_list_for_user(current_user).ids.map(&:to_s))
     @user = User.find(params[:id])
     @user.assign_roles(params)
     @user.remove_roles(params)
