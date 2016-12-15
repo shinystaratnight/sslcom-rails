@@ -146,7 +146,7 @@
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
                                     resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
                                   ][
-                                  =link_to "update slug", edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)
+                                  =link_to "update team url", edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)
                                   ][
                                   =link_to "users", users_path(ssl_slug: ssl.to_slug)
                                   ][

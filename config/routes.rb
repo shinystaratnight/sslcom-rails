@@ -252,7 +252,7 @@ SslCom::Application.routes.draw do
     collection do
       get :edit_password
       get :edit_email
-      post :resend_activation
+      match :resend_activation, via: [:get, :post]
       get :activation_notice
       get :search
       get :cancel_reseller_signup

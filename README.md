@@ -16,3 +16,6 @@
 ```
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
 ```
+
+## Migrating to SSL.com v3.0
+`rails runner bin/populate_multitenant_tables.rb -e production`

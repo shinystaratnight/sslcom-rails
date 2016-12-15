@@ -1,6 +1,6 @@
 -if params[:url_slug]
   =render :partial => 'index_scripts'
-  -title = "#{current_user.is_system_admins? ? 'Edit' : 'Create'} team url slug for this account."
+  -title = "#{current_user.is_system_admins? ? 'Edit' : 'Create'} team url for this account."
   -content_for :title, title
   .reseller_registration_profile
     %h3=title
@@ -8,7 +8,7 @@
       #stylized.default_form
         .clearfix.form_input
           =f.label :ssl_slug,
-            "Team url slug<span class='label_desc'>*allowed: letters, numbers, underscores and dashes. </span>".html_safe
+            "Team url <span class='label_desc'>*allowed: letters, numbers, underscores and dashes. </span>".html_safe
           =f.text_field :ssl_slug, maxlength: 20, size: 20, required: true
           =f.hidden_field :id, value: @ssl_account.id
         .clearfix.form_input

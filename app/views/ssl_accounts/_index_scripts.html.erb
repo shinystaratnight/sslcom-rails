@@ -9,7 +9,7 @@ jQuery(function($) {
       $.get(validate_url).always(function(data) {
         if (data.message){
           render.text('VALID: ' + slug).css('color','#6b9029')
-            .append(' &rarr; https://www.ssl.com/' + slug);
+            .append(' &rarr; https://www.ssl.com/team/' + slug);
           $('#slug_submit').prop('disabled', false);
         } else {
           render.text('INVALID: ' + slug).css('color','#f00');
