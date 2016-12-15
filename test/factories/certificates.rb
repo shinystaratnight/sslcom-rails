@@ -34,7 +34,7 @@ FactoryGirl.define do
           published_as:           'live',
         )
         
-        (1..6).to_a.each do |n|
+        (1..3).to_a.each do |n|
           ProductVariantItem.create(
             product_variant_group_id: group.id,
             title:                    "#{n} Years",
