@@ -324,11 +324,11 @@ class OrdersController < ApplicationController
         credit_affiliate(@order)
         if @certificate_orders
           clear_cart
-          format.html { redirect_to @order }
+          format.html { redirect_to order_path(@ssl_slug, @order) }
         elsif @certificate_order
           current_user.ssl_account.certificate_orders << @certificate_order
           @certificate_order.pay! @gateway_response.success?
-          format.html { redirect_to edit_certificate_order_path(@certificate_order)}
+          format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)}
         end
       else
         format.html { render :action => "new" }
@@ -429,7 +429,7 @@ class OrdersController < ApplicationController
 
   def purchase_successful?
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    @order.amount= BillingProfile::TEST_AMOUNT if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
+    @order.amount= BillingProfile::TEST_AMOUNT if (%w{development test}.include?(Rails.env) && defined?(BillingProfile::TEST_AMOUNT))
     @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
     @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
     (@gateway_response.success?).tap do |success|
