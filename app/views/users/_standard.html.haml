@@ -69,6 +69,7 @@
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
                         %li available funds: $#{user.ssl_account.funded_account.amount}
+                        =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript
                             function adjust_funds_#{user.id}()

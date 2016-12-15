@@ -46,3 +46,11 @@ User.find_each{|u|
     u.assignments.create(ssl_account_id: u.default_ssl_account, role_id: Role.find_by(name: 'account_admin').id)
   end
 }
+#
+# Users who are disabled, update associated SslAccountUser records to update new
+# attribute user_enabled.
+#
+disabled_users = User.unscoped.where(status: 'disabled').ids
+if disabled_users.any?
+  SslAccountUser.where(user_id: disabled_users).update_all(user_enabled: false)
+end

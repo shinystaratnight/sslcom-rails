@@ -2,6 +2,23 @@
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
+    $('#ssl_account_ssl_slug').keyup(function(){
+      var slug         = $(this).val().replace(/\#|\&|\+|\s/g, ''),
+          render       = $('#slug_validator'),
+          validate_url = render.data('validate-slug') + '?ssl_slug=' + slug;
+      $.get(validate_url).always(function(data) {
+        if (data.message){
+          render.text('VALID: ' + slug).css('color','#6b9029')
+            .append(' &rarr; https://www.ssl.com/team/' + slug);
+          $('#slug_submit').prop('disabled', false);
+        } else {
+          render.text('INVALID: ' + slug).css('color','#f00');
+          $('#slug_submit').prop('disabled', true);
+        }
+      });
+      $(this).val(slug);
+    });
+
     $('form').submit(function(){
       if($('input[name*=processed_certificate_recipients]:checkbox').is(':checked'))
         $('input[name*=processed_certificate_recipients]:checkbox').val(

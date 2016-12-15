@@ -1,3 +1,4 @@
+-slug_params = {ssl_slug: @ssl_slug}
 #header
   .inner
     %table#at_a_glance_header
@@ -12,9 +13,9 @@
           %th.certificate_status
             %table
               %tr
-                %td.certificate_status=link_to "IN PROGRESS", filter_by_scope_certificate_orders_path("pending")
+                %td.certificate_status=link_to "IN PROGRESS", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
               %tr
-                %td.certificate_status=link_to CertificateOrder.pending.count, filter_by_scope_certificate_orders_path("pending")
+                %td.certificate_status=link_to CertificateOrder.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
           %th.certificate_status
             %table
               %tr
@@ -26,16 +27,16 @@
               %tr
                 %td=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
               %tr
-                %td=link_to "SHOW EV ORDERS", filter_by_certificate_orders_path("ev")
+                %td=link_to "SHOW EV ORDERS", filter_by_certificate_orders_path(@ssl_slug, "ev")
               %tr
-                %td=link_to "SHOW UCC ORDERS", filter_by_certificate_orders_path("ucc")
+                %td=link_to "SHOW UCC ORDERS", filter_by_certificate_orders_path(@ssl_slug, "ucc")
               -if DEPLOYMENT_CLIENT=~/ssl\.com/i
                 %tr
-                  %td=link_to "SHOW PREMIUM ORDERS", filter_by_certificate_orders_path("premium")
+                  %td=link_to "SHOW PREMIUM ORDERS", filter_by_certificate_orders_path(@ssl_slug, "premium")
               %tr
-                %td=link_to "SHOW WILDCARD ORDERS", filter_by_certificate_orders_path("wildcard")
+                %td=link_to "SHOW WILDCARD ORDERS", filter_by_certificate_orders_path(@ssl_slug, "wildcard")
               %tr
-                %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path("is_test")
+                %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
           -#-unless current_user.ssl_account.funded_account.blank?
           -#  %th AVAILABLE FOR USE
           -if show_short_links?
@@ -56,19 +57,19 @@
     #prog_nav_container
       %ul(id="prog_nav")
         %li(id="#{current_page?(account_url) ? 't-intro' : 'dashboard' }")
-          =link_to "Dashboard", account_url
+          =link_to "Dashboard", account_path(slug_params)
         %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_certificates'}")
-          =link_to "Users", users_url
+          =link_to "Users", users_path(slug_params)
         %li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
-          =link_to "Validations", validations_url
+          =link_to "Validations", validations_path(slug_params)
         -#%li(id="#{current_page?(validations_url) ? 't-intro' : 'manage_validations'}")
         -#  =link_to "Documents", validations_url
         %li(id="#{current_page?(site_seals_url) ? 't-intro' : 'manage_site_seals'}")
-          =link_to "Smart SeaLs", site_seals_url
+          =link_to "Smart SeaLs", site_seals_path(slug_params)
         %li(id="#{current_page?(certificate_orders_url) ? 't-intro' : 'manage_certificate_orders'}")
-          =link_to "Orders", certificate_orders_path
+          =link_to "Orders", certificate_orders_path(slug_params)
         %li(id="#{current_page?(orders_url) ? 't-intro' : 'manage_orders'}")
-          =link_to "Transactions", orders_path
+          =link_to "Transactions", orders_path(slug_params)
     .inner
       =render :partial => "shared/messages"
       =yield

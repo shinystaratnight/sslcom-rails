@@ -1,6 +1,6 @@
 class ManagedUsersController < ApplicationController
   before_filter    :require_user
-  filter_access_to :create
+  filter_access_to :all
 
   def new
     @user=User.new
@@ -34,7 +34,7 @@ class ManagedUsersController < ApplicationController
         end
 
         flash[:notice] = "An invitation email has been sent to #{@user.email}."
-        redirect_to users_path
+        redirect_to users_path(ssl_slug: @ssl_slug)
       else
         render :new
       end
@@ -51,11 +51,12 @@ class ManagedUsersController < ApplicationController
   end
 
   def update_roles
+    params[:user][:role_ids] = (params[:user][:role_ids] & User.roles_list_for_user(current_user).ids.map(&:to_s))
     @user = User.find(params[:id])
     @user.assign_roles(params)
     @user.remove_roles(params)
     flash[:notice] = "#{@user.email} roles have been updated."
-    redirect_to users_path
+    redirect_to users_path(ssl_slug: @ssl_slug)
   end
 
   def remove_from_account
@@ -64,7 +65,7 @@ class ManagedUsersController < ApplicationController
     account = account ? account : current_user.ssl_account
     @user.remove_user_from_account(account, current_user)
     flash[:notice] = "#{@user.email} has been removed from account '#{account.acct_number}' and is being notified."
-    redirect_to users_path
+    redirect_to users_path(ssl_slug: @ssl_slug)
   end
 
   private

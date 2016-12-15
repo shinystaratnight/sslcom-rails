@@ -1,12 +1,45 @@
--content_for :title, "Edit reseller profile information"
-=render :partial => '/resellers/index_scripts'
--@reseller = @ssl_account.reseller
-.order_container
-  %h3 Edit Reseller Profile Information
-  =error_messages_for :ssl_account
-  =form_for @ssl_account, :url=>ssl_account_path do |s|
-    =s.fields_for :reseller, @reseller do |f|
+-if params[:url_slug]
+  =render :partial => 'index_scripts'
+  -title = "#{current_user.is_system_admins? ? 'Edit' : 'Create'} team url for this account."
+  -content_for :title, title
+  .reseller_registration_profile
+    %h3=title
+    =form_for @ssl_account, url: update_ssl_slug_ssl_account_path(ssl_slug: @ssl_slug) do |f|
       #stylized.default_form
-        =render :partial => "/resellers/form", :locals => {:f=>f}
+        .clearfix.form_input
+          =f.label :ssl_slug,
+            "Team url <span class='label_desc'>*allowed: letters, numbers, underscores and dashes. </span>".html_safe
+          =f.text_field :ssl_slug, maxlength: 20, size: 20, required: true
+          =f.hidden_field :id, value: @ssl_account.id
+        .clearfix.form_input
+          #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path}}
       #button_container
-        #next_submit=image_submit_tag "bl_submit_button.gif"
+        #next_submit=image_submit_tag 'bl_submit_button.gif', id: 'slug_submit'
+
+-elsif params[:update_company_name]
+  -title = 'Account company name'
+  -content_for :title, title
+  .reseller_registration_profile
+    %h3=title
+    =form_for @ssl_account, url: update_company_name_ssl_account_path(ssl_slug: @ssl_slug) do |f|
+      #stylized.default_form
+        .clearfix.form_input
+          =f.label :company_name
+          =f.text_field :company_name, maxlength: 20, size: 20, required: true
+          =f.hidden_field :id, value: @ssl_account.id
+      #button_container
+        #next_submit=image_submit_tag 'bl_submit_button.gif'
+
+-else
+  -content_for :title, "Edit reseller profile information"
+  =render :partial => '/resellers/index_scripts'
+  -@reseller = @ssl_account.reseller
+  .order_container
+    %h3 Edit Reseller Profile Information
+    =error_messages_for :ssl_account
+    =form_for @ssl_account, :url=>ssl_account_path do |s|
+      =s.fields_for :reseller, @reseller do |f|
+        #stylized.default_form
+          =render :partial => "/resellers/form", :locals => {:f=>f}
+        #button_container
+          #next_submit=image_submit_tag "bl_submit_button.gif"

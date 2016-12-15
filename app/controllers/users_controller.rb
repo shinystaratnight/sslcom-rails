@@ -3,17 +3,19 @@ class UsersController < ApplicationController
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account
+    :switch_default_ssl_account, :enable_disable
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account]
+    :switch_default_ssl_account, :enable_disable]
  # before_filter :index, :only=>:search
   filter_access_to  :all
-  filter_access_to  :update, :admin_update, attribute_check: true
+  filter_access_to  :update, :admin_update, :enable_disable,
+    :switch_default_ssl_account, :decline_account_invite,
+    :approve_account_invite, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :require=>:edit
@@ -218,15 +220,15 @@ class UsersController < ApplicationController
 
   def switch_default_ssl_account
     switch_ssl_account = params[:ssl_account_id]
-    if switch_ssl_account && @user.ssl_accounts.where(id: switch_ssl_account).any?
+    if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
-      acct_number    = @user.ssl_accounts.find(switch_ssl_account).acct_number
-      flash[:notice] = "You have switched to account #{acct_number}."
-      redirect_to account_path
+      team_name      = @user.ssl_accounts.find(switch_ssl_account).get_team_name
+      flash[:notice] = "You have switched to account '#{team_name}'."
+      set_ssl_slug(@user)
     else
       flash[:error] = "Something went wrong. Please try again!"
-      redirect_to :back
     end
+    redirect_to account_path(ssl_slug: @ssl_slug)
   end
 
   def approve_account_invite
@@ -241,7 +243,7 @@ class UsersController < ApplicationController
       flash[:notice_item] = view_context.link_to('here',
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
-    redirect_to account_path
+    redirect_to account_path(ssl_slug: @ssl_slug)
   end
 
   def decline_account_invite
@@ -255,7 +257,7 @@ class UsersController < ApplicationController
         flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
       end
     end
-    redirect_to account_path 
+    redirect_to account_path(ssl_slug: @ssl_slug) 
   end
 
   def resend_account_invite
@@ -266,7 +268,14 @@ class UsersController < ApplicationController
     else
       flash[:notice] = 'You successfully renewed the invitation token and sent notification to the user.'
     end
-    redirect_to users_path
+    redirect_to users_path(ssl_slug: @ssl_slug)
+  end
+
+  def enable_disable
+    update_user_status(params) if params[:user][:status]
+    respond_to do |format|
+      format.js {render json: @user.to_json}
+    end  
   end
 
   private
@@ -292,8 +301,8 @@ class UsersController < ApplicationController
   end
 
   def set_users
-    if current_user.is_super_user? || current_user.is_admin?
-      @users = User.unscoped
+    if current_user.is_system_admins?
+      @users = @ssl_account.try(:users) || User.unscoped
     else
       @users = current_user.manageable_users
     end
@@ -317,5 +326,14 @@ class UsersController < ApplicationController
         flash[:notice_item] = decline_link
       end
     end
+  end
+end
+
+def update_user_status(params)
+  target_user   = User.unscoped.find params[:id]
+  target_status = params[:user][:status].to_sym
+  if target_user && target_status
+    target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
+    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_account_admin?
   end
 end

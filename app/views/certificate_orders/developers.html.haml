@@ -107,5 +107,5 @@
     certificate. If you are using a linux platform (ie Apache, Nginx, Java, etc) please look at #{link_to "http://tools.ssl.com"}
     for a simple command generator. For other platforms, please visit #{link_to "info.ssl.com"}.
   %p
-    To see a list of your test orders, please visit #{link_to 'your test orders.', filter_by_scope_certificate_orders_path("is_test")}
+    To see a list of your test orders, please visit #{link_to 'your test orders.', filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")}
 

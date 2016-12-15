@@ -22,7 +22,7 @@ jQuery(function($) {
           $('.error').append("</ul>").show();
         }
         else
-          window.location.replace("<%=filter_by_scope_certificate_orders_path("is_test")%>");
+          window.location.replace("<%=filter_by_scope_certificate_orders_path(@ssl_slug, 'is_test')%>");
       }
     });
 

@@ -4,9 +4,7 @@ require 'test_helper'
 # 
 describe 'Decline ssl account invite' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
+    initialize_roles
     @existing_user_email = 'exist_user@domain.com'
     @current_admin       = create(:user, :account_admin)
     @existing_user       = create(:user, :account_admin, email: @existing_user_email)
@@ -69,6 +67,8 @@ describe 'Decline ssl account invite' do
       refute       ssl.approved
     end
     it 'has 1 approved account | 0 pending invites' do
+      @existing_user = User.find_by(email: @existing_user_email)
+      
       assert_equal 1, @existing_user.get_all_approved_accounts.count
       assert_equal 0, @existing_user.get_pending_accounts.count
       refute          @existing_user.pending_account_invites?
@@ -89,7 +89,7 @@ describe 'Decline ssl account invite' do
       click_on 'Users'
       first('td', text: @existing_user_email).click # expand user's row
       
-      page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: declined")
+      page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ declined ]")
     end
 
   end

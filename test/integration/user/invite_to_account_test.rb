@@ -4,10 +4,7 @@ require 'test_helper'
 # 
 describe 'new user' do
   before do
-    create_reminder_triggers
-    create_roles
-    set_common_roles
-    
+    initialize_roles
     @new_user_email   = 'new_user@domain.com'
     @current_admin    = create(:user, :account_admin)
     @invited_ssl_acct = @current_admin.ssl_account
@@ -18,14 +15,14 @@ describe 'new user' do
     click_on '+ Create User'
     fill_in  'user_email', with: @new_user_email
     find('input[value="Invite"]').click
-    
+    sleep 1 # allow time to generate notification email
     @new_user     = User.find_by(email: @new_user_email)
     @new_user_ssl = @new_user.ssl_accounts.where.not(id: @invited_ssl_acct.id).first
   end
 
   it 'invited user receives signup_invitation email' do
     assert_equal    1, email_total_deliveries
-    assert_match    'Invition to SSL.com', email_subject
+    assert_match    "#{@current_admin.login} has invited you to SSL.com", email_subject
     assert_match    @new_user_email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, @new_user.perishable_token
@@ -62,8 +59,8 @@ describe 'new user' do
     first('td', text: @new_user_email).click
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
     page.must_have_content("remove user from account: ##{@new_user_ssl.acct_number.upcase}")
-    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: approved")
-    page.must_have_content("##{@new_user_ssl.acct_number.upcase}: approved")
+    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ approved ]")
+    page.must_have_content("##{@new_user_ssl.acct_number.upcase} [ approved ]")
   end
   it 'user is NOT activated' do
     refute @new_user.active
@@ -119,10 +116,12 @@ describe 'existing user' do
     click_on '+ Create User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
+    sleep 1 # allow time to generate notification email in case of delay
   end
   it 'invited user receives invite_to_account email' do
-    approval_token = @existing_user.ssl_account_users
-      .where(ssl_account_id: @invited_ssl_acct.id).first.approval_token
+    approval_token = SslAccountUser.where(
+      ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
+    ).first.approval_token
     assert_equal    2, email_total_deliveries
     assert_match    'Invition to SSL.com', email_subject(:first)
     assert_match    @existing_user_email, email_to(:first)
@@ -130,7 +129,7 @@ describe 'existing user' do
     assert_includes email_body(:first), approval_token
   end
   it 'account_admin user receives invite_to_account_notify_admin email' do
-    message = "You have added a new user #{@existing_user.email} to your account."
+    message = "You have added a new user #{@existing_user.email} to your SSL.com account."
     assert_equal    2, email_total_deliveries
     assert_match    'You have invited a user to your SSL.com account', email_subject
     assert_match    @current_admin.email, email_to
@@ -171,8 +170,8 @@ describe 'existing user' do
 
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
     page.must_have_content("remove user from account: ##{@existing_user_ssl.acct_number.upcase}")
-    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase}: sent")
-    page.must_have_content("##{@existing_user_ssl.acct_number.upcase}: approved")
+    page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ sent ]")
+    page.must_have_content("##{@existing_user_ssl.acct_number.upcase} [ approved ]")
   end
   it 'invited ssl account NOT approved' do
     refute @existing_user.get_all_approved_accounts.include? @invited_ssl_acct
@@ -190,7 +189,9 @@ describe 'existing user' do
     assert_equal @ssl_user_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
-    ssl = @existing_user.ssl_account_users.where(ssl_account_id: @existing_user_ssl.id).first
+    ssl = SslAccountUser.where(
+      ssl_account_id: @existing_user_ssl.id, user_id: @existing_user.id
+    ).first
     
     refute_nil   @existing_user.default_ssl_account
     assert_equal @existing_user_ssl.id, @existing_user.default_ssl_account
@@ -200,7 +201,9 @@ describe 'existing user' do
     assert       ssl.approved
   end
   it 'invited ssl account is NOT approved' do
-    ssl = @existing_user.ssl_account_users.where(ssl_account_id: @invited_ssl_acct.id).first
+    ssl = SslAccountUser.where(
+      ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
+    ).first
     # account NOT approved, approval token generated for invited account
     refute_nil ssl.approval_token
     refute_nil ssl.token_expires

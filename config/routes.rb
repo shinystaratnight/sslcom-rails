@@ -68,48 +68,9 @@ SslCom::Application.routes.draw do
           :as => :api_certificate_revoke_v1_3, via: :get
   end
 
-  resource :account, :controller=>:users do
-    resource :reseller
-  end
   resources :password_resets
-  resource :ssl_account do
-    get :edit_settings
-    match :update_settings, via: [:put, :patch]
-  end
 
   resources :products
-
-  resources :managed_users, only: [:new, :create, :edit] do
-    patch 'update_roles', on: :member
-    get   'remove_from_account', on: :member
-  end
-
-  resources :users do
-    collection do
-      get :edit_password
-      get :edit_email
-      post :resend_activation
-      get :activation_notice
-      get :search
-      get :cancel_reseller_signup
-    end
-
-    member do
-      get :edit_password
-      get :edit_email
-      get :login_as
-      match :admin_update, via: [:put, :patch]
-      get :admin_show
-      get :dup_info
-      post :consolidate
-      get :adjust_funds
-      get :change_login
-      get :switch_default_ssl_account
-      get :approve_account_invite
-      get :resend_account_invite
-      get :decline_account_invite
-    end
-  end
 
   constraints DomainConstraint.new(%w(reseller.ssl.com reseller.ssl.local)) do
     resources :resellers, :only=>[:index,:new] do
@@ -138,112 +99,184 @@ SslCom::Application.routes.draw do
     end
   end
 
-  resource :user_session
-  resources :certificate_orders do
-    collection do
-      get :credits
-      get :pending
-      get :order_by_csr
-      get :incomplete
-      get :reprocessing
-      get :search
-      get :developers
-      post :parse_csr
-    end
+  concern :teamable do
+    resource :user_session
+    resources :certificate_orders do
+      collection do
+        get :credits
+        get :pending
+        get :order_by_csr
+        get :incomplete
+        get :reprocessing
+        get :search
+        get :developers
+        post :parse_csr
+      end
 
-    member do
-      match :update_csr, via: [:put, :patch]
-      get :download
-      get :developer
-      get :download_other
-      get :renew
-      get :reprocess
-      get :auto_renew
-      post :start_over
-      match :admin_update, via: [:put, :patch]
-      get :change_ext_order_number
-    end
-
-    resource :validation do
-      post :upload, :send_dcv_email
-      get :send_to_ca
       member do
-        get :document_upload
+        match :update_csr, via: [:put, :patch]
+        get :download
+        get :developer
+        get :download_other
+        get :renew
+        get :reprocess
+        get :auto_renew
+        post :start_over
+        match :admin_update, via: [:put, :patch]
+        get :change_ext_order_number
+      end
+
+      resource :validation do
+        post :upload, :send_dcv_email
+        get :send_to_ca
+        member do
+          get :document_upload
+        end
+      end
+
+      resource :site_seal
+    end
+
+    resources :certificate_contents do
+      resources :contacts, :only=>:index
+    end
+
+    resources :csrs do
+      resources :signed_certificates do
+        member do
+          get :server_bundle
+          get :pkcs7
+          get :whm_zip
+          get :nginx
+          get :apache_zip
+          get :amazon_zip
+        end
+      end
+      collection do
+        get :country_codes
+      end
+
+      member do
+        get :http_dcv_file
+        get :verification_check
       end
     end
 
-    resource :site_seal
-  end
+    resources :other_party_validation_requests, only: [:create, :show]
 
-  get '/certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
-  get '/certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
-
-  resources :certificate_contents do
-    resources :contacts, :only=>:index
-  end
-
-  resources :csrs do
-    resources :signed_certificates do
-      member do
-        get :server_bundle
-        get :pkcs7
-        get :whm_zip
-        get :nginx
-        get :apache_zip
-        get :amazon_zip
+    resources :validation_histories
+    resources :validations, :only=>[:index, :update] do
+      collection do
+        get :search, :requirements, :domain_control, :ev, :organization
       end
     end
-    collection do
-      get :country_codes
+    resources :site_seals, :only=>[:index, :update, :admin_update] do
+      collection do
+        get :details
+        get :search
+      end
+      member do
+        get :site_report
+        get :artifacts
+        match :admin_update, via: [:put, :patch]
+      end
     end
 
-    member do
-      get :http_dcv_file
-      get :verification_check
+    resources :orders do
+      collection do
+        get :checkout, action: "new" # this shows the discount code prompt
+        get :show_cart
+        get :search
+        get :visitor_trackings
+        post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
+      end
+      member do
+        get :invoice
+        get :refund
+        get :change_state
+      end
     end
+    resources :billing_profiles
+
+    resource :ssl_account do
+      get :edit_settings
+      get :validate_ssl_slug
+      match :update_settings, via: [:put, :patch]
+      match :update_ssl_slug, via: [:put, :patch]
+      match :update_company_name, via: [:put, :patch]
+    end
+
+    resources :users, only: :index do
+      match :enable_disable, via: [:put, :patch], on: :member
+    end
+
+    resource :account, controller: :users do
+      resource :reseller
+    end
+
+    resources :managed_users, only: [:new, :create, :edit] do
+      member do
+        patch 'update_roles'
+        get   'remove_from_account'
+      end
+    end
+
+    get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
+    match '/validation_histories/:id/documents/:style.:extension' =>
+              'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
+    get 'certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
+    get 'certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
+    match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
+    match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
+    match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
+    match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
+    match 'secure/allocate_funds_for_order/:id' =>
+              'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
+    match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
+    match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
+    match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post, :put]
+    match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
+    match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
+    match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
+
+    match "paypal_express/checkout", via: [:get, :post]
+    match "paypal_express/review", via: [:get, :post]
+    match "paypal_express/purchase", via: [:get, :post]
   end
 
-  resources :other_party_validation_requests, only: [:create, :show]
-
-  resources :validation_histories
-  resources :validations, :only=>[:index, :update] do
-    collection do
-      get :search, :requirements, :domain_control, :ev, :organization
-    end
+  scope '(/team/:ssl_slug)', module: false do
+    concerns :teamable
   end
-  resources :site_seals, :only=>[:index, :update, :admin_update] do
+
+  resources :users, except: :index do
     collection do
-      get :details
+      get :edit_password
+      get :edit_email
+      match :resend_activation, via: [:get, :post]
+      get :activation_notice
       get :search
+      get :cancel_reseller_signup
+      match :enable_disable, via: [:put, :patch]
     end
+
     member do
-      get :site_report
-      get :artifacts
+      get :edit_password
+      get :edit_email
+      get :login_as
       match :admin_update, via: [:put, :patch]
+      get :admin_show
+      get :dup_info
+      post :consolidate
+      get :adjust_funds
+      get :change_login
+      get :switch_default_ssl_account
+      get :approve_account_invite
+      get :resend_account_invite
+      get :decline_account_invite
     end
   end
-
-  match '/validation_histories/:id/documents/:style.:extension' =>
-    'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
-
-  resources :orders do
-    collection do
-      get :checkout, action: "new", as: :checkout # this shows the discount code prompt
-      get :show_cart
-      get :search
-      get :visitor_trackings
-      post :create_free_ssl, :create_multi_free_ssl, :lookup_discount
-    end
-    member do
-      get :invoice
-      get :refund
-      get :change_state
-    end
-  end
-  get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
 
   resources :apis
-  resources :billing_profiles
   match '/certificates/pricing', to: "certificates#pricing", as: :certificate_pricing, via: [:get, :post]
   resources :certificates do
     collection do
@@ -256,18 +289,6 @@ SslCom::Application.routes.draw do
     end
   end
 
-  match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
-  match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
-  match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
-  match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
-  match 'secure/allocate_funds_for_order/:id' =>
-    'funded_accounts#allocate_funds_for_order', :as => :allocate_funds_for_order, via: [:get, :post]
-  match 'secure/deposit_funds' => 'funded_accounts#deposit_funds', :as => :deposit_funds, via: [:get, :put, :patch, :post]
-  match 'secure/confirm_funds/:id' => 'funded_accounts#confirm_funds', :as => :confirm_funds, via: [:get, :post]
-  match 'secure/apply_funds' => 'funded_accounts#apply_funds', :as => :apply_funds, via: [:get, :post, :put]
-  match 'users/new/affiliates' => 'users#new', :as => :affiliate_signup, via: [:get, :post]
-  match 'affiliates/:affiliate_id/orders' => 'orders#affiliate_orders', :as => :affiliate_orders, via: [:get, :post]
-  match ':user_id/orders' => 'orders#user_orders', :as => :user_orders, via: [:get, :post]
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap, via: [:get, :post]
   match 'reseller' => 'site#reseller', :as => :reseller,
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}, via: [:get, :post]
@@ -298,7 +319,4 @@ SslCom::Application.routes.draw do
   match '/:controller(/:action(/:id))', via: [:get, :post]
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
-  match "paypal_express/checkout", via: [:get, :post]
-  match "paypal_express/review", via: [:get, :post]
-  match "paypal_express/purchase", via: [:get, :post]
 end

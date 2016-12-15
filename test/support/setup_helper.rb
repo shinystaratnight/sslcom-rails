@@ -24,4 +24,25 @@ module SetupHelper
     @ssl_user_role   = [Role.get_role_id(Role::SSL_USER)]
     @acct_admin_role = [Role.get_role_id(Role::ACCOUNT_ADMIN)]
   end
+
+  def initialize_roles
+    create_reminder_triggers
+    create_roles
+    set_common_roles
+  end
+
+  def create_and_approve_user(invited_ssl_acct, login=nil)
+    new_user = login.nil? ? create(:user, :account_admin) : create(:user, :account_admin, login: login)
+    new_user.ssl_accounts << invited_ssl_acct
+    new_user.set_roles_for_account(invited_ssl_acct, @ssl_user_role)
+    new_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
+    new_user
+  end
+
+  def approve_user_for_account(invited_ssl_acct, invited_user)
+    invited_user.ssl_accounts << invited_ssl_acct
+    invited_user.set_roles_for_account(invited_ssl_acct, @ssl_user_role)
+    invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
+    invited_user
+  end
 end

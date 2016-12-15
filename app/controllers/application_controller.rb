@@ -17,6 +17,8 @@ class ApplicationController < ActionController::Base
   before_filter :identify_visitor, :record_visit,
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
+  before_filter :team_base, if: "params[:ssl_slug] && current_user"
+  before_filter :set_ssl_slug
   after_filter :set_access_control_headers
 
 #  hide_action :paginated_scope
@@ -206,12 +208,13 @@ class ApplicationController < ActionController::Base
     if @search = params[:search]
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
-        (CertificateOrder.unscoped{CertificateOrder.search_with_csr(params[:search], options)}) :
-        current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
+        (CertificateOrder.unscoped{
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
+            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
     else
       (current_user.is_admin? ?
-        CertificateOrder.not_test.find_not_new(options) :
-        current_user.ssl_account.certificate_orders.not_test.not_new(options))
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
+            current_user.ssl_account.certificate_orders.not_test.not_new(options))
     end
   end
 
@@ -226,6 +229,18 @@ class ApplicationController < ActionController::Base
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(:include=>:site_seal) :
         current_user.ssl_account.certificate_orders.not_new(:include=>:site_seal))
+    end
+  end
+
+  def set_ssl_slug(target_user=nil)
+    user = target_user || current_user
+    if user
+      ssl = user.ssl_account
+      @ssl_slug = if user.is_system_admins?
+        nil
+      else
+        ssl && ssl.ssl_slug ? ssl.ssl_slug : ssl.acct_number
+      end
     end
   end
 
@@ -380,7 +395,7 @@ class ApplicationController < ActionController::Base
 
   def current_user_session
     return @current_user_session if defined?(@current_user_session)
-    @current_user_session = UserSession.find(:shadow) || UserSession.find
+    @current_user_session = UserSession.find(:shadow).try(:user) ? UserSession.find(:shadow) : UserSession.find
   end
 
   def current_user
@@ -639,6 +654,13 @@ class ApplicationController < ActionController::Base
 
   def error(status, code, message)
     render :js => {:response_type => "ERROR", :response_code => code, :message => message}.to_json, :status => status
+  end
+
+  def team_base
+    @ssl_account = SslAccount.where('ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
+    if current_user.get_all_approved_accounts.include?(@ssl_account)
+      current_user.set_default_ssl_account(@ssl_account)
+    end
   end
 
   class Helper

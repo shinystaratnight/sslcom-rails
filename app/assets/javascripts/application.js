@@ -32,7 +32,7 @@ jQuery(function($) {
   $('#user_ssl_account_id').on('change', function() {
     refreshRolesSelect($(this).val());
   });
-  if (flash_notice.length && flash_notice.text().includes('been added to account')) {
+  if (flash_notice.length && flash_notice.text().indexOf('been added to account') > -1) {
     $('.simple-tooltip-cont, .simple-tooltip').removeClass('hidden');
   }
 });
