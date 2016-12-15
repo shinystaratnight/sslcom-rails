@@ -1,4 +1,4 @@
-set :rvm_ruby_string, '2.3.0p0'                     # Or:
+set :rvm_ruby_string, '2.3.3-p222'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
@@ -57,7 +57,7 @@ set :deploy_via, :remote_cache
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :user, "ubuntu"
-set :branch, "master"
+set :branch, "ssl-34-friendly-name-slug-url-leo"
 set :use_sudo, false
 
 role :cache, domain
