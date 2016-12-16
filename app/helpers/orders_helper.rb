@@ -24,7 +24,7 @@ module OrdersHelper
   end
 
   def current_order
-    order = current_user.nil? ? User.new.build_ssl_account.purchase(*cart_items) :
+    order = current_user.nil? ? User.new.ssl_accounts.build.purchase(*cart_items) :
       current_user.ssl_account.purchase(*cart_items)
     order.cents = cart_items.inject(0){|result, element| result +
         element.attributes_before_type_cast["amount"].to_f}

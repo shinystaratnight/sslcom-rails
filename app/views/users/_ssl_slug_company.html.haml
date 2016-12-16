@@ -1,9 +1,9 @@
 -ssl = user.ssl_account
 -if ssl.ssl_slug
-  %li url slug: #{ssl.ssl_slug}
+  %li team url: #{ssl.ssl_slug}
 -else
   -if permitted_to? :update_ssl_slug, user.ssl_account
-    %li url slug: #{link_to 'ADD URL SLUG', edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)}
+    %li team url: #{link_to 'ADD TEAM URL', edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)}
 
 -if permitted_to? :update_company_name, user.ssl_account
   -path_name = ssl.company_name ? ssl.company_name : 'ADD COMPANY NAME'

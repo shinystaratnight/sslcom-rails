@@ -60,6 +60,7 @@ class User < ActiveRecord::Base
   end
   
   def create_ssl_account(role_ids=nil)
+    self.save if self.new_record?
     new_ssl_account = SslAccount.create
     ssl_accounts << new_ssl_account
     set_roles_for_account(new_ssl_account, role_ids) if (role_ids && role_ids.length > 0)
