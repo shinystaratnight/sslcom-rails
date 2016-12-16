@@ -45,6 +45,7 @@ describe 'Valid user' do
   end
 
   it 'creates database records' do
+    sleep 1 # allow time to generate notification email
     assert_equal 1, Order.count
     assert_equal 1, OrderTransaction.count
     assert_equal 1, CertificateOrder.count
@@ -74,6 +75,7 @@ describe 'Valid user' do
   
   it 'show order transaction page' do
     page.must_have_content('Show Order Transaction')
+    page.must_have_content(Order.first.reference_number)
     page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")
     page.must_have_content(@billing_profile.last_digits)
     page.must_have_content('$156.43')
