@@ -12,7 +12,7 @@
 #credit_card_details
   .subheading Credit Card Information
   .clearfix
-    = credit_card_select_field_for(form, :credit_card.to_s, {:format=>"no_div", :class=>"form_row class_billing_profile_"+:credit_card.to_s, :format=>"table", :required=>true}, {}){image_tag('logo_cards_150x26.gif', :style=>'vertical-align: middle;margin-left: 6px;')}
+    = credit_card_select_field_for(form, :credit_card.to_s, {:class=>"form_row class_billing_profile_"+:credit_card.to_s, :format=>"table", :required=>true}, {}){image_tag('logo_cards_150x26.gif', :style=>'vertical-align: middle;margin-left: 6px;')}
   .clearfix
     = text_field_for form, :card_number.to_s, nil, nil, :class=>"form_row class_billing_profile_"+:card_number.to_s, :format=>"table", :required=>true
   .clearfix

@@ -58,7 +58,7 @@ class BillingProfile < ActiveRecord::Base
             :year       => options[:expiration_year] || expiration_year}
     cc.merge!(:verification_value => options[:verification_value] || security_code) if options[:cvv]
     card = ActiveMerchant::Billing::CreditCard.new(cc)
-    card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+    card.brand = 'bogus' if defined?(::GATEWAY_TEST_CODE)
     card
   end
   

@@ -144,6 +144,7 @@ class CertificateContent < ActiveRecord::Base
   after_initialize do
     if new_record?
       self.ajax_check_csr ||= false
+      self.signing_request ||= ""
     end
   end
 
