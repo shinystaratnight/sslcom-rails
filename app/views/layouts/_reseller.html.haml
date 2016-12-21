@@ -10,7 +10,8 @@
           -if current_user.ssl_account.has_credits?
             %th.certificate_status=link_to "AVAILABLE CREDITS", credits_certificate_orders_path
           %th.certificate_status=link_to "ITEMS IN CART", show_cart_orders_url
-          = render partial: 'shared/ssl_accounts'
+          %th.certificate_status=link_to "PRODUCTS", certificates_url
+= render partial: 'shared/ssl_accounts'
           %th=link_to 'Logout', logout_url
         %tr#info
           %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
