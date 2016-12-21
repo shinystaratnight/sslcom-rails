@@ -409,12 +409,6 @@ class ProductOrder < ActiveRecord::Base
     end
   end
 
-  def self.retrieve_ca_certs(start, finish)
-    cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
-    #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
-    cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
-  end
-
   def self.find_not_new(options=nil)
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])

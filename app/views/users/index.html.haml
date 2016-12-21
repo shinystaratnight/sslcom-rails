@@ -136,12 +136,12 @@
                           .adjust_status
                             %ul
                               %li
-                                %strong accounts status
+                                %strong teams
                               - u.ssl_accounts.each do |ssl|
                                 - status = ssl_account_status(u, ssl).first
                                 %li
                                   -owner = (ssl.get_account_owner && ssl.get_account_owner.id == u.id) ? '(owner) ' : ''
-                                  =link_to("#{owner}##{ssl.acct_number.upcase}", users_path(search: ssl.acct_number.upcase))+" [ #{status}"
+                                  =link_to("#{owner} #{ssl.get_team_name}", users_path(search: ssl.get_team_name))+" [ #{status}"
                                   - if status == 'token expired'
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
                                     resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
@@ -150,7 +150,7 @@
                                   ][
                                   =link_to "users", users_path(ssl_slug: ssl.to_slug)
                                   ][
-                                  =link_to "certificates", certificate_orders_path(ssl_slug: ssl.to_slug)
+                                  =link_to "certificate orders", certificate_orders_path(ssl_slug: ssl.to_slug)
                                   ][
                                   =link_to "transactions", orders_path(ssl_slug: ssl.to_slug)
                                   ][
