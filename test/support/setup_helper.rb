@@ -31,6 +31,13 @@ module SetupHelper
     set_common_roles
   end
 
+  def initialize_certificates
+    create(:certificate, :basicssl)
+    create(:certificate, :evssl)
+    create(:certificate, :uccssl)
+    create(:certificate, :wcssl)    
+  end
+
   def create_and_approve_user(invited_ssl_acct, login=nil)
     new_user = login.nil? ? create(:user, :account_admin) : create(:user, :account_admin, login: login)
     new_user.ssl_accounts << invited_ssl_acct

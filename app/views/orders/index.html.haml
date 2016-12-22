@@ -35,10 +35,10 @@
         -if o.is_reseller_tier?
           %td Reseller Tier #{o.line_items.last.sellable.label} Discounting
         -elsif o.description.blank?
-          %td.name=link_to 'nil', o, :title=> o.description
+          %td.name=link_to 'nil', order_path(@ssl_slug, o), :title=> o.description
         -else
           -qualifier = o.display_state
-          %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), o, :title=> o.description
+          %td.name=link_to [qualifier,o.description.shorten(45, false)].join(" "), order_path(@ssl_slug, o), :title=> o.description
         %td(colspan="3")=o.created_at.strftime("%b %d, %Y")
         %td=o.reference_number
         -if o.is_deposit?

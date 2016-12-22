@@ -71,7 +71,7 @@ class OrdersController < ApplicationController
     if current_user
       if current_user.ssl_account.funded_account.cents > 0
         redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-          allocate_funds_for_order_url(:order)) and return
+          allocate_funds_for_order_path(id: :order)) and return
       elsif @certificate_orders && is_order_free?
         create_multi_free_ssl
       end
