@@ -3,15 +3,15 @@
     %table#at_a_glance_header
       %tbody
         %tr
-          %th.validations=link_to "INCOMPLETE ORDERS", incomplete_certificate_orders_path
-          %th.certificate_status=link_to "SSL CERTS PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+          %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
+          %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
           -unless current_user.ssl_account.funded_account.blank?
-            %th.certificate_status=link_to "AVAILABLE FOR USE", allocate_funds_url
+            %th.certificate_status=link_to "AVAILABLE FUNDS", allocate_funds_url
           -if current_user.ssl_account.has_credits?
-            %th.certificate_status=link_to "AVAILABLE CREDITS", credits_certificate_orders_path
-          %th.certificate_status=link_to "ITEMS IN CART", show_cart_orders_url
-          %th.certificate_status=link_to "PRODUCTS", certificates_url
-= render partial: 'shared/ssl_accounts'
+            %th.certificate_status=link_to "CREDITS", credits_certificate_orders_path
+          %th.certificate_status=link_to "CART ITEMS", show_cart_orders_url
+          %th.certificate_status=link_to "CERTIFICATES", certificates_url
+          = render partial: 'shared/ssl_accounts'
           %th=link_to 'Logout', logout_url
         %tr#info
           %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path

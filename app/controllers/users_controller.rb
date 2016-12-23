@@ -18,7 +18,7 @@ class UsersController < ApplicationController
     :approve_account_invite, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
-  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :require=>:edit
+  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
 
   def new
   end
@@ -276,6 +276,10 @@ class UsersController < ApplicationController
     respond_to do |format|
       format.js {render json: @user.to_json}
     end  
+  end
+
+  def teams
+    @teams = current_user.get_all_approved_accounts
   end
 
   private

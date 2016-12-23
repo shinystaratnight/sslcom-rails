@@ -5,11 +5,12 @@
     %ul
       %li=link_to 'Buy Certificate', certificates_url
       -if !current_user.is_system_admins? and (current_user.ssl_account && permitted_to?(:index, :billing_profiles))
-        %li=link_to 'Billing Profiles', billing_profiles_path
-      %li=link_to 'Deposit Funds', allocate_funds_url
+        %li=link_to 'Billing Profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+      %li=link_to 'Deposit Funds', allocate_funds_url(ssl_slug: @ssl_slug)
       -if current_user.ssl_account.reseller
         %li
           =link_to 'Certificate Pricing', reseller_tier_url(current_user.ssl_account.reseller.reseller_tier.id)
+      %li=link_to "Smart SeaLs", details_site_seals_url
       %li &nbsp;
       %li Filter Orders:
       %li=link_to Certificate.find_by_serial("basic256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "basic")

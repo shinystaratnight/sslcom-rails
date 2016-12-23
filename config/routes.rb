@@ -271,6 +271,7 @@ SslCom::Application.routes.draw do
       get :approve_account_invite
       get :resend_account_invite
       get :decline_account_invite
+      get :teams
     end
   end
 

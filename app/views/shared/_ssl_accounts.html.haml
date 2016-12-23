@@ -3,8 +3,6 @@
     =link_to "<strong class='hint-icon'>&#63;</strong> <span>You can switch accounts by selecting one from the <strong>ACCOUNT</strong> menu item on the right.</span>".html_safe, '#', class: 'simple-tooltip hidden'
   %th.acc-sel-dropdown{rowspan: current_user.ssl_accounts.length}
     .acc-sel-dropbtn
-      ="TEAMS (#{current_user.get_all_approved_accounts.count})"
-      %br
       ="#{ssl_account.get_team_name[0..10]} &#9660;".html_safe
     .acc-sel-dropdown-cont
       %ul

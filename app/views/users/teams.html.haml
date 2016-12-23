@@ -1,0 +1,32 @@
+-title = 'Teams'
+-content_for :title, title
+#validations
+  %table(cellspacing="0")
+    %caption
+      =title
+    %tr.heading_row
+      %th.name(scope="col") Name
+      %th(scope="col") Account #
+      %th(scope="col") Join Date
+      %th(scope="col") Roles
+      %th(scope="col") Details
+      %th(scope="col") Action
+    -@teams.each do |t|
+      %tr
+        %td=link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+        %td=link_to t.acct_number, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
+        %td=t.created_at.strftime("%b %d, %Y")
+        %td=current_user.role_symbols(t)
+        %td
+          [
+          =link_to "orders", certificate_orders_path(ssl_slug: t.to_slug)
+          ][
+          =link_to "transactions", orders_path(ssl_slug: t.to_slug)
+          ][
+          =link_to "validations", validations_path(ssl_slug: t.to_slug)
+          ]
+        %td
+          -unless t.get_account_owner == current_user
+            [
+            =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id})
+            ]

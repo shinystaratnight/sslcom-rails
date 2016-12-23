@@ -1,23 +1,23 @@
 -slug_params = {ssl_slug: @ssl_slug}
+-current_slug = params[:ssl_slug] ? slug_params : {}
 #prog_nav_container
   %ul(id="prog_nav")
-    %li(id="#{current_page?(account_url) ? 't-intro' : 'dashboard' }")
+    %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)
-    %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}")
-      =link_to "Certificates", certificates_path(slug_params)
-    %li(id="#{is_on?("validations") ? 't-intro' : 'manage_validations'}")
+    %li(id="#{is_on?("validations",current_slug) ? 't-intro' : 'manage_validations'}")
       =link_to "Validations", validations_path(slug_params)
-    %li(id="#{is_on?("site_seals") ? 't-intro' : 'manage_site_seals'}")
-      =link_to "Smart SeaLs", site_seals_path(slug_params)
     -unless current_user.ssl_account.affiliate.blank?
       %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
         =link_to "Affiliate", affiliate_path(current_user.ssl_account.affiliate)
-    %li(id="#{is_on?("certificate_orders") ? 't-intro' : 'manage_certificate_orders' }")
+    %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
       =link_to "Orders", certificate_orders_path(slug_params)
-    %li(id="#{(is_on?("orders") && !@prev) ? 't-intro' : 'manage_orders'}")
-      =link_to "History", orders_path(slug_params)
+    %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
+      =link_to "Transactions", orders_path(slug_params)
+    -if current_user.get_all_approved_accounts.length > 1
+      %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
+        =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
     -if current_user.is_admin? || current_user.is_account_admin?
-      %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_users'}")
+      %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-      %li(id="#{current_page?(edit_settings_ssl_account_url) ? 't-intro' : 'manage_settings'}")
+      %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
         =link_to "Settings", edit_settings_ssl_account_path(slug_params)
