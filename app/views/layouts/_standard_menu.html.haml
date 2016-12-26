@@ -2,9 +2,11 @@
 -current_slug = params[:ssl_slug] ? slug_params : {}
 #prog_nav_container
   %ul(id="prog_nav")
+    %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
+      =link_to "BUY", certificates_path
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)
-    %li(id="#{is_on?("validations",current_slug) ? 't-intro' : 'manage_validations'}")
+    %li(id="#{is_on?("validations") ? 't-intro' : 'manage_validations'}")
       =link_to "Validations", validations_path(slug_params)
     -unless current_user.ssl_account.affiliate.blank?
       %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
