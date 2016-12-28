@@ -9,9 +9,9 @@
         return;
       else
         if(return_funds==true)
-          window.location = '#{refund_order_url(@order, return_funds: true)}&refund_reason='+encodeURIComponent(reason);
+          window.location = '#{refund_order_url(id: @order.id, return_funds: true)}&refund_reason='+encodeURIComponent(reason);
         else
-          window.location = '#{refund_order_url(@order)}?refund_reason='+encodeURIComponent(reason);
+          window.location = '#{refund_order_url(id: @order.id)}?refund_reason='+encodeURIComponent(reason);
     }
 
     function change_state(state){

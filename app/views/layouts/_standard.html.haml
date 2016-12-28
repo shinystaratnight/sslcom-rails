@@ -1,12 +1,10 @@
--show_teams = current_user.get_all_approved_accounts.length > 1 ? true : false
 #header
   -unless is_new_order_page?
     .inner
       %table#at_a_glance_header
         %tbody
           %tr
-            -if show_teams
-              %th{colspan: 2} CURRENT TEAM
+            %th{colspan: 2} CURRENT TEAM
             %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
             %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
             -unless current_user.ssl_account.funded_account.blank?
@@ -17,9 +15,8 @@
             %th
             %th.certificate_status=link_to 'Logout', logout_url
           %tr#info
-            -if show_teams
-              =render partial: 'shared/ssl_accounts'
-              %td
+            =render partial: 'shared/ssl_accounts'
+            %td
             %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
             %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
             -unless current_user.ssl_account.funded_account.blank?

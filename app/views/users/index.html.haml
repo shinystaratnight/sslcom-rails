@@ -140,7 +140,7 @@
                               - u.ssl_accounts.each do |ssl|
                                 - status = ssl_account_status(u, ssl).first
                                 %li
-                                  -owner = (ssl.get_account_owner && ssl.get_account_owner.id == u.id) ? '(owner) ' : ''
+                                  -owner = (u.is_account_owner?(ssl)) ? '(owner) ' : ''
                                   =link_to("#{owner} #{ssl.get_team_name}", users_path(search: ssl.get_team_name))+" [ #{status}"
                                   - if status == 'token expired'
                                     =link_to '&rarr; RESEND INVITE'.html_safe,
