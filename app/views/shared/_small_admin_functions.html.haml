@@ -12,8 +12,9 @@
   %li
     %strong admin functions
   -u = co.ssl_account.get_account_owner
-  %li=remote_login_link(u)
-  %li=link_to 'user dashboard', admin_show_user_path(u)
+  -unless u.blank?
+    %li=remote_login_link(u)
+    %li=link_to 'user dashboard', admin_show_user_path(u)
   -if csr.try(:body)
     -unless co.skip_verification?
       %li=link_to "view dcv url", csr.dcv_url, target: "_blank"

@@ -146,7 +146,7 @@ class CertificateName < ActiveRecord::Base
   def dcv_verify(protocol)
     prepend=""
     begin
-      timeout(Surl::TIMEOUT_DURATION) do
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
         if protocol=="https"
           uri = URI.parse(dcv_url(true,prepend))
           http = Net::HTTP.new(uri.host, uri.port)

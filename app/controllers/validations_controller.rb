@@ -192,7 +192,7 @@ class ValidationsController < ApplicationController
           checkout={checkout: "true"}
         end
         @validation_histories = @certificate_order.validation_histories
-        format.html { redirect_to certificate_order_path(@certificate_order, checkout)}
+        format.html { redirect_to certificate_order_path({id: @certificate_order.id}.merge!(checkout))}
         format.xml { render :xml => @release,
           :status => :created,
           :location => @release }
