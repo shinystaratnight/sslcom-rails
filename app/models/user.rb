@@ -67,7 +67,7 @@ class User < ActiveRecord::Base
     assignments.where{role_id = Role.get_role_id(Role::ACCOUNT_ADMIN)}.first.try :ssl_account
   end
 
-  def self.find_ssl_account_orphans
+  def self.find_non_owners
      [].tap do |orphans|
       find_each do |u|
         orphans << u if u.owned_ssl_account.blank?

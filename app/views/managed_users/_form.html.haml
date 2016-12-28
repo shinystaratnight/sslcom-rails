@@ -15,7 +15,7 @@
     = form.hidden_field :ssl_account_id, value: current_user.ssl_account.try(:id)
 .clearfix.form_input
   - role_ids = current_user.is_system_admins? ? @user.roles_for_account(user_ssl_account) : @role_ids
-  = form.label :role_id, "Roles<span class='label_desc'>determines permissions</span>".html_safe
+  = form.label :role_id, "Roles<span class='label_desc'>set permissions</span>".html_safe
   = form.select :role_ids,
       options_from_collection_for_select(User.roles_list_for_user(current_user), :id, :name, (role_ids || [Role.get_role_id(Role::SSL_USER)])),
       {},
