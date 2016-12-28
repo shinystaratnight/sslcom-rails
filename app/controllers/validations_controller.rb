@@ -28,7 +28,7 @@ class ValidationsController < ApplicationController
     elsif @certificate_order.certificate_content.issued?
       checkout={checkout: "true"}
       respond_to do |format|
-        format.html { redirect_to certificate_order_path(id: @certificate_order.id, checkout)}
+        format.html { redirect_to certificate_order_path({id: @certificate_order.id}.merge!(checkout))}
       end
     end
   end

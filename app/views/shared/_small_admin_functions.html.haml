@@ -11,7 +11,7 @@
 -if current_user && current_user.is_admin?
   %li
     %strong admin functions
-  -u = co.ssl_account.users.unscoped{co.ssl_account.primary_user}
+  -u = co.ssl_account.get_account_owner
   %li=remote_login_link(u)
   %li=link_to 'user dashboard', admin_show_user_path(u)
   -if csr.try(:body)
