@@ -213,7 +213,7 @@ class CertificateOrdersController < ApplicationController
           end
         end
         if @certificate_order.is_express_signup?
-          format.html { redirect_to new_certificate_order_validation_url(@certificate_order) }
+          format.html { redirect_to new_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_url(cc) }
         end

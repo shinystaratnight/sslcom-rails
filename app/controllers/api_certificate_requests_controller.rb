@@ -32,7 +32,7 @@ class ApiCertificateRequestsController < ApplicationController
     result.order_amount = acr.order(true).amount.format
     result.certificate_url = ORDERS_DOMAIN+certificate_order_path(acr)
     result.receipt_url = ORDERS_DOMAIN+order_path(acr.order)
-    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(acr)
+    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(certificate_order_id: acr.ref)
     result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
     result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
     result.update_attribute :response, rendered
@@ -53,8 +53,8 @@ class ApiCertificateRequestsController < ApplicationController
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
-            @result.validation_url = certificate_order_validation_url(@acr)
+            @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
+            @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
             @result.update_attribute :response, render_to_string(:template => template)
             render(:template => template)
           else
@@ -310,8 +310,8 @@ class ApiCertificateRequestsController < ApplicationController
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
-            @result.validation_url = certificate_order_validation_url(@acr)
+            @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
+            @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
             @result.update_attribute :response, render_to_string(:template => template)
             render(:template => template)
           else

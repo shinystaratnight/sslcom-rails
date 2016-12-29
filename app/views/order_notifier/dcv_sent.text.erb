@@ -21,6 +21,6 @@ It will be sent from comodo.com, our ssl vetting partner. Note that <%=Settings.
 
 PLEASE DO NOT REPLY TO THIS EMAIL
 
-If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(certificate_order_id: @certificate_order.id)%> to change the address.
+If you would prefer the request be sent to a different address, please visit <%=new_certificate_order_validation_url(certificate_order_id: certificate_order_id: @certificate_order.id.ref)%> to change the address.
 
 <%=render(:partial=>"support_contact")%>

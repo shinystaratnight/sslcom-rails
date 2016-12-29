@@ -4,7 +4,7 @@
     .subheading Documents #{"(optional)" if co.certificate.is_dv?}
   -unless vhs.blank?
     %p
-      =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', document_upload_certificate_order_validation_url(co)
+      =link_to image_tag('upload.png', :class=>'blue_icon')+'upload new document', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
     -unless other_party_request(co)
       %p
         The following validation documents have been uploaded for certificate
@@ -59,6 +59,6 @@
   -else
     %p
       There are currently no documents uploaded.
-      =link_to 'Click here', document_upload_certificate_order_validation_url(co)
+      =link_to 'Click here', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
       to upload documents for validating this certificate order of
       #{co.subject}.

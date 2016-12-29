@@ -14,9 +14,9 @@
       =link_to co.certificate_content.issued? ? "download" : "details", certificate_order_url(co), :title=>"view order for "+cn
       -unless hide_validation?(co)
         %span :
-        =link_to "validation", certificate_order_validation_url(co), :title=>"view validation status for "+cn
+        =link_to "validation", certificate_order_validation_url(certificate_order_id: co.ref), :title=>"view validation status for "+cn
       %span :
-      =link_to "seal", certificate_order_site_seal_url(co), :title=>"get site seal for "+cn
+      =link_to "seal", certificate_order_site_seal_url(certificate_order_id: co.ref), :title=>"get site seal for "+cn
       -if co.certificate_content.issued? && !co.certificate_content.expired?
         %span :
         =link_to 'rekey', reprocess_certificate_order_path(certificate_order)

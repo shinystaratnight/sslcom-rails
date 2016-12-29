@@ -117,14 +117,14 @@
                       %li
                         %em none submitted
                       %li
-                        =link_to image_tag('upload_med.jpg', :style=>'vertical-align:middle')+"UPLOAD DOCUMENT(S)", document_upload_certificate_order_validation_url(co)
+                        =link_to image_tag('upload_med.jpg', :style=>'vertical-align:middle')+"UPLOAD DOCUMENT(S)", document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
                   -else
                     -co.validation.validation_histories.each_with_index do |h, hi|
                       .validation_history
                         %li
                           =link_to image_tag('preview.png', :class=>'blue_icon'), h.document_url(:preview), :rel=>'prettyPhoto'
                           =link_to image_tag('download.png', :class=>'blue_icon'), h.document_url
-                          %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20,false), edit_certificate_order_validation_url(co)
+                          %span.doc_filename(alt="#{h.document_file_name}")=link_to h.document_file_name.shorten(20,false), edit_certificate_order_validation_url(certificate_order_id: co.ref)
                           -unless current_user.try("is_admin?") || h.satisfies_validation_methods.blank?
                             -methods=h.satisfies_validation_methods.split(", ")
                             %dl
@@ -150,10 +150,10 @@
                                     -selected = h.satisfies_validation_methods.blank? ? [Validation::NONE_SELECTED] : h.satisfies_validation_methods
                                     =f.select :satisfies_validation_methods, options_for_select(o, selected),{}, {:multiple=>true, :size=>3, :alt=>"#{i}_#{h.id}"}
                     %li
-                      =link_to 'manage', edit_certificate_order_validation_url(co)
+                      =link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
                       -unless co.validation_rules_satisfied?
                         |
-                        =link_to 'upload', document_upload_certificate_order_validation_url(co)
+                        =link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
               .certificate_details_box
                 %ul
                   -if cn
@@ -164,7 +164,7 @@
                     %li
                       %strong
                         process certificate signing request
-                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(co), remote: true, id: "send_to_ca", "data-type"=>"json"
+                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"
                     %li
                       #processing_ca
                         =image_tag 'waiting_bar_medium.gif'
