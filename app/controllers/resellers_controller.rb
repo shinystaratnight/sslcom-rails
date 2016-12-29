@@ -63,16 +63,12 @@ private
 
   def go_forward
     if @reseller.nil? || @reseller.new?
-      current_user.ssl_account.create_reseller if @reseller.nil?
       #prevent the form from sumitting to update, we need to create a new
       reseller = Reseller.new(params[:reseller])
       reseller.ssl_account = current_user.ssl_account
       if reseller.valid?
         #atts was a hack because the direct merge! doesn't work
-        atts = current_user.ssl_account.reseller.attributes.merge reseller.attributes
-        current_user.ssl_account.reseller.attributes = atts
-        current_user.ssl_account.reseller.save
-        @reseller = current_user.ssl_account.reseller
+        @reseller = reseller
         @reseller.profile_submitted!
         determine_tier
         render :action => :select_tier
