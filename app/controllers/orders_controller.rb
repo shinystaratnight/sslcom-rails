@@ -16,7 +16,7 @@ class OrdersController < ApplicationController
   filter_access_to :show,:attribute_check=>true
 
   def show_cart
-    if params[:id] # manually overwrite owned shopping_cart in favor or url specified
+    if params[:id] and ShoppingCart.find_by_guid(params[:id]) # manually overwrite owned shopping_cart in favor or url specified
       cookies[:cart] = {:value=>ShoppingCart.find_by_guid(params[:id]).content, :path => "/",
                         :expires => Settings.cart_cookie_days.to_i.days.from_now}
     else

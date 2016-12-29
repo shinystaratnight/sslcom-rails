@@ -247,8 +247,7 @@ class SslAccount < ActiveRecord::Base
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
-        u.roles.delete Role.find_by_name(Role::ACCOUNT_ADMIN)
-        u.roles << Role.find_by_name(Role::RESELLER)
+        u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
       reseller.update_attribute :workflow_state, "complete"
     else
