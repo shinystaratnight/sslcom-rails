@@ -244,6 +244,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def not_found
+    render :text => "404 Not Found", :status => 404
+  end
+
   protected
 
   def set_prev_flag
@@ -456,10 +460,6 @@ class ApplicationController < ActionController::Base
 
   def user_not_authorized
     render :text => "403 Forbidden", :status => 403
-  end
-
-  def not_found
-    render :text => "404 Not Found", :status => 404
   end
 
   def save_billing_profile

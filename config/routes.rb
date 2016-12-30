@@ -114,6 +114,7 @@ SslCom::Application.routes.draw do
       end
 
       member do
+        get :update_csr, to: 'application#not_found', status: 404
         match :update_csr, via: [:put, :patch]
         get :download
         get :developer
@@ -240,6 +241,8 @@ SslCom::Application.routes.draw do
     match "paypal_express/checkout", via: [:get, :post]
     match "paypal_express/review", via: [:get, :post]
     match "paypal_express/purchase", via: [:get, :post]
+
+    match "/site_seals/:id/site_report'," => 'site_seals#site_report', via: :get
   end
 
   scope '(/team/:ssl_slug)', module: false do
