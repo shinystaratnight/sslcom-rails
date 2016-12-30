@@ -72,6 +72,9 @@ authorization do
     has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
       if_attribute ssl_account: is {user.ssl_account}
     end
+    has_permission_on :contacts, :to => [:read, :update, :delete] do
+      if_attribute :contactable => is_in {user.ssl_account.certificate_contacts}
+    end
     has_permission_on :orders, :to => [:read, :update, :delete, :create_free_ssl, :create_multi_free_ssl] do
       if_attribute :billable => is {user.ssl_account}
     end

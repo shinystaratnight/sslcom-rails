@@ -5,11 +5,13 @@ class SslAccount < ActiveRecord::Base
   has_one   :api_credential
   has_many  :users_unscoped, foreign_key: :ssl_account_id, class_name: "UserUnscoped", :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, ->{includes [:orders]} do
+  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
     def current
       first(:conditions=>{:workflow_state=>['new']})
     end
   end
+  has_many  :certificate_contents, through: :certificate_orders
+  has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
