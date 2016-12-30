@@ -26,7 +26,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
                    :filter_by_scope, :require=>:read
   filter_access_to :update_csr, :require=>[:update]
-  filter_access_to :set_csr_signed_certificate_by_text, :parse_csr, :download, :start_over,
+  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
     :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
@@ -115,7 +115,7 @@ class CertificateOrdersController < ApplicationController
         @certificate_content.agreement=true
         return render '/certificates/buy', :layout=>'application'
       end
-      unless @certificate_order.certificate_content.csr_submitted?
+      unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
         redirect_to certificate_order_url(@certificate_order)
       else
         csr = @certificate_order.certificate_content.csr

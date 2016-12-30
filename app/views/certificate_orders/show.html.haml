@@ -149,6 +149,9 @@
                           -unless r.email.blank?
                             %li
                               =r.email
+                          -if current_user.is_system_admins?
+                            %li
+                              =link_to 'edit registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: true)
                         -else
                           %li
                             -if @cc.workflow_state=="csr_submitted"
