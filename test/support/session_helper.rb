@@ -60,7 +60,7 @@ module SessionHelper
         fill_in 'password', with: password
         click_button 'Log In'
         sleep 7                      # Let Paypal load/generate preview page
-        find('#confirmButtonTop').click
+        first('#continue') ? find('#continue').click : find('#confirmButtonTop').click
       end
     end
     sleep 7                          # Let Paypal process transaction and exit/re-route
