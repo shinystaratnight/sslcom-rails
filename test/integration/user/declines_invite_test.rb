@@ -30,7 +30,7 @@ describe 'Decline ssl account invite' do
   describe 'BEFORE Decline' do
     it 'can only see their own account' do
       ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)
-      assert page.has_no_content? 'ACCOUNT'
+      assert page.has_no_content? 'CURRENT TEAM'
       assert_equal 2, @existing_user.ssl_accounts.count
       assert_equal 2, @existing_user.roles.count
       # only invited user's own account is approved
@@ -59,7 +59,7 @@ describe 'Decline ssl account invite' do
       params = {ssl_account_id: @invited_ssl_acct.id}
       ssl    = @existing_user.ssl_account_users.find_by(params)
       
-      assert       page.has_no_content? 'ACCOUNT'
+      assert       page.has_no_content? 'CURRENT TEAM'
       assert       @existing_user.user_declined_invite?(params)
       assert_equal @existing_user_ssl.id, @existing_user.default_ssl_account
       assert_nil   ssl.approval_token
@@ -89,7 +89,7 @@ describe 'Decline ssl account invite' do
       click_on 'Users'
       first('td', text: @existing_user_email).click # expand user's row
       
-      page.must_have_content("##{@invited_ssl_acct.acct_number.upcase} [ declined ]")
+      page.must_have_content("#{@invited_ssl_acct.acct_number} [ declined ]")
     end
 
   end
