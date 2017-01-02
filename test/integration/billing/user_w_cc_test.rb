@@ -34,6 +34,7 @@ describe 'Valid user' do
     page.must_have_content('Order Amount: charged in $USD $156.43 USD')
     find("#funding_source_#{BillingProfile.first.id}").click
     find('input[name="next"]').click
+    sleep 1 # allow time to generate notification email
   end
 
   it 'user receives #certificate_order_prepaid notification email' do
@@ -45,7 +46,6 @@ describe 'Valid user' do
   end
 
   it 'creates database records' do
-    sleep 1 # allow time to generate notification email
     assert_equal 1, Order.count
     assert_equal 1, OrderTransaction.count
     assert_equal 1, CertificateOrder.count
