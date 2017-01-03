@@ -5,6 +5,10 @@ class CertificateContentsController < ApplicationController
 
   end
 
+  def show
+    redirect_to(certificate_order_url(CertificateContent.find(params[:id]).certificate_order))
+  end
+
   # PUT /contacts/1
   # PUT /contacts/1.xml
   def update

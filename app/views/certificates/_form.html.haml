@@ -300,31 +300,31 @@
     -#    .radio_w_desc.clearfix
     -#      =radio_button_tag :support, "combo"
     -#      Gold+SSL Score Booster and Monitor $1029
-    .clearfix
-      %label{:for=>"support"}
-        SSL Score Booster:
-        %span.label_desc boost trust with a higher SSL Score
-      .radio_choices
-        .radio_w_desc.clearfix
-          =check_box_tag :ssl_booster, "standard", false
-          Score 'A' Assistance $299.00
-    .clearfix
-      %label{:for=>"support"}
-        SSL Score Monitor:
-        %span.label_desc get notified of SSL Score changes
-      .radio_choices
-        .radio_w_desc.clearfix
-          =radio_button_tag :ssl_monitor, "m500"
-          500 Pages Scanned Monthly $0/mo (included)
-        .radio_w_desc.clearfix
-          =radio_button_tag :ssl_monitor, "d500"
-          500 Pages Scanned Daily $9.00/mo
-        .radio_w_desc.clearfix
-          =radio_button_tag :ssl_monitor, "d10000"
-          10,000 Pages Scanned Daily $29.00/mo
-        .radio_w_desc.clearfix
-          =radio_button_tag :ssl_monitor, "h10000"
-          10,000 Pages Scanned Hourly $149.00/mo
+      .clearfix
+        %label{:for=>"support"}
+          SSL Score Booster:
+          %span.label_desc boost trust with a higher SSL Score
+        .radio_choices
+          .radio_w_desc.clearfix
+            =check_box_tag :ssl_booster, "standard", false
+            Score 'A' Assistance $299.00
+      .clearfix
+        %label{:for=>"support"}
+          SSL Score Monitor:
+          %span.label_desc get notified of SSL Score changes
+        .radio_choices
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "m500"
+            500 Pages Scanned Monthly $0/mo (included)
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "d500"
+            500 Pages Scanned Daily $9.00/mo
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "d10000"
+            10,000 Pages Scanned Daily $29.00/mo
+          .radio_w_desc.clearfix
+            =radio_button_tag :ssl_monitor, "h10000"
+            10,000 Pages Scanned Hourly $149.00/mo
     .clearfix
       %label{:for => "expense_amount"}
         Order Amount:
