@@ -55,13 +55,15 @@ module SessionHelper
       sleep 7                        # Let Paypal load/generate preview page
       find('#continue').click
     else
-      within_frame find('iframe') do # Newer Paypal login view
-        fill_in 'email',    with: email
-        fill_in 'password', with: password
-        click_button 'Log In'
-        sleep 7                      # Let Paypal load/generate preview page
-        find('#confirmButtonTop').click
+      if first('iframe')
+        within_frame find('iframe') do # Newer Paypal login view
+          fill_in 'email',    with: email
+          fill_in 'password', with: password
+          click_button 'Log In'
+          sleep 8                      # Let Paypal load/generate preview page
+        end
       end
+      first('#continue') ? find('#continue').click : find('#confirmButtonTop').click
     end
     sleep 7                          # Let Paypal process transaction and exit/re-route
   end
