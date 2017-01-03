@@ -5,8 +5,7 @@ class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
   belongs_to  :billable, :polymorphic => true
   belongs_to  :address
-  belongs_to  :billing_profile, unscoped: true
-  belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
+  belongs_to  :billing_profile, -> { unscope(where: [:status]) }
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
@@ -64,32 +63,32 @@ class Order < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.joins{billable(SslAccount)}.
-        joins{billable(SslAccount).users_unscoped}
+    result = joins{discounts.outer}.joins{billing_profile.outer}.joins{billable(SslAccount)}.
+        joins{billable(SslAccount).users}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?
       result = result.where{
-        (billing_profile_unscoped.last_digits == "#{term}") |
-        (billing_profile_unscoped.first_name =~ "%#{term}%") |
-        (billing_profile_unscoped.last_name =~ "%#{term}%") |
-        (billing_profile_unscoped.address_1 =~ "%#{term}%") |
-        (billing_profile_unscoped.address_2 =~ "%#{term}%") |
-        (billing_profile_unscoped.city =~ "%#{term}%") |
-        (billing_profile_unscoped.state =~ "%#{term}%") |
-        (billing_profile_unscoped.phone =~ "%#{term}%") |
-        (billing_profile_unscoped.country =~ "%#{term}%") |
-        (billing_profile_unscoped.company =~ "%#{term}%") |
-        (billing_profile_unscoped.notes =~ "%#{term}%") |
-        (billing_profile_unscoped.postal_code =~ "%#{term}%") |
-        (discounts.ref =~ "%#{term}%") |
-        (discounts.label =~ "%#{term}%") |
-        (reference_number =~ "%#{term}%") |
-        (notes =~ "%#{term}%") |
-        (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
-            (notes =~ "%#{term}%")) | # searching notes twice is a hack, nil did not work
-        (billable(SslAccount).acct_number=~ "%#{term}%") |
-        (billable(SslAccount).users_unscoped.login=~ "%#{term}%") |
-        (billable(SslAccount).users_unscoped.email=~ "%#{term}%")}
+        (billing_profile.last_digits == "#{term}") |
+            (billing_profile.first_name =~ "%#{term}%") |
+            (billing_profile.last_name =~ "%#{term}%") |
+            (billing_profile.address_1 =~ "%#{term}%") |
+            (billing_profile.address_2 =~ "%#{term}%") |
+            (billing_profile.city =~ "%#{term}%") |
+            (billing_profile.state =~ "%#{term}%") |
+            (billing_profile.phone =~ "%#{term}%") |
+            (billing_profile.country =~ "%#{term}%") |
+            (billing_profile.company =~ "%#{term}%") |
+            (billing_profile.notes =~ "%#{term}%") |
+            (billing_profile.postal_code =~ "%#{term}%") |
+            (discounts.ref =~ "%#{term}%") |
+            (discounts.label =~ "%#{term}%") |
+            (reference_number =~ "%#{term}%") |
+            (notes =~ "%#{term}%") |
+            (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
+                (notes =~ "%#{term}%")) | # searching notes twice is a hack, nil did not work
+            (billable(SslAccount).acct_number=~ "%#{term}%") |
+            (billable(SslAccount).users.login=~ "%#{term}%") |
+            (billable(SslAccount).users.email=~ "%#{term}%")}
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]

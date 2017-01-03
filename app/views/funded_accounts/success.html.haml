@@ -42,7 +42,7 @@
         \#{link_to 'Click here', edit_certificate_order_path(@ssl_slug, @certificate_order)} to finish processing this certificate order.
     -else
       %p
-        \#{link_to 'Click here', @certificate_order} to view the progress or status of this certificate order.
+        \#{link_to 'Click here', certificate_order_url(id: @certificate_order.ref)} to view the progress or status of this certificate order.
   #completed_order_results
     -if @deposit
       #deposit_details.striped_divs
