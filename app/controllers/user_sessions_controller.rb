@@ -8,6 +8,10 @@ class UserSessionsController < ApplicationController
     @user_session = UserSession.new
   end
 
+  def show
+    redirect_to action: :new
+  end
+
   def create
     if params["prev.x".intern]
       #assume trying to login during checkout

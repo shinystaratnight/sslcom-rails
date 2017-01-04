@@ -50,10 +50,9 @@ class PaypalExpressController < ApplicationController
       redirect_to orders_url, :notice => "Sorry! Something went wrong with the Paypal purchase. Please try again later."
       return
     end
-    if ActiveMerchant::Billing::Base.mode == :test
+    if ::Rails.env.test?
       UserSession.create(User.first, true)
-      Authorization.current_user = User.first
-      current_user = User.first
+      current_user = Authorization.current_user = User.first
     end
     total_as_cents, purchase_params = get_purchase_params @gateway.details_for(params[:token]), request, params
     purchase = @gateway.purchase total_as_cents, purchase_params
