@@ -1,6 +1,7 @@
 class PaypalExpressController < ApplicationController
+  Helper SslAccountsController
   before_filter :assigns_gateway, :setup_orders
-
+  before_filter :find_ssl_account, only: [:make_deposit,:purchase]
   include ActiveMerchant::Billing
   include ApplicationHelper, OrdersHelper, PaypalExpressHelper, FundedAccountsHelper
 
@@ -53,6 +54,7 @@ class PaypalExpressController < ApplicationController
     if ::Rails.env.test?
       UserSession.create(User.first, true)
       current_user = Authorization.current_user = User.first
+      @ssl_account = current_user.ssl_account
     end
     total_as_cents, purchase_params = get_purchase_params @gateway.details_for(params[:token]), request, params
     purchase = @gateway.purchase total_as_cents, purchase_params
@@ -60,13 +62,12 @@ class PaypalExpressController < ApplicationController
     if purchase.success?
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/(deposit|reseller)/i
-        account = current_user.ssl_account
-        @deposit=account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
+        @deposit=@ssl_account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})
         @deposit.description = "Paypal Deposit"
         @deposit.notes = "#paidviapaypal#{purchase.authorization}"
         @deposit.deposit_mode=true
         @deposit.mark_paid!
-        account.funded_account.increment! :cents, total_as_cents
+        @ssl_account.funded_account.increment! :cents, total_as_cents
         unless params[:deduct_order]=~/false/i
           if initial_reseller_deposit?
             @order = current_order
@@ -77,23 +78,23 @@ class PaypalExpressController < ApplicationController
           else
             setup_orders
           end
-          if account.funded_account.cents >= @order.cents
-            current_user.ssl_account.orders << @order
-            account.funded_account.decrement! :cents, @order.cents
+          if @ssl_account.funded_account.cents >= @order.cents
+            @ssl_account.orders << @order
+            @ssl_account.funded_account.decrement! :cents, @order.cents
             @order.finalize_sale(params: params, deducted_from: @deposit,
                                  visitor_token: @visitor_token, cookies: cookies)
             if initial_reseller_deposit?
-              account.reseller.finish_signup immutable_cart_item
+              @ssl_account.reseller.finish_signup immutable_cart_item
             end
             notice = "Your purchase is now complete!"
             clear_cart
           else
-            notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{((account.funded_account.cents - @order.cents)*0.01).to_money}"
+            notice = "Uh oh, not enough funds to complete the purchase. Please deposit #{((@ssl_account.funded_account.cents - @order.cents)*0.01).to_money}"
           end
         end
       else
         setup_orders
-        current_user.ssl_account.orders << @order
+        @ssl_account.orders << @order
         @order.notes = "#paidviapaypal#{purchase.authorization}"
         @order.finalize_sale(params: params, deducted_from: @deposit,
                              visitor_token: @visitor_token, cookies: cookies)
