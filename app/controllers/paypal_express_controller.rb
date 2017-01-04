@@ -1,7 +1,6 @@
 class PaypalExpressController < ApplicationController
-  Helper SslAccountsController
   before_filter :assigns_gateway, :setup_orders
-  before_filter :find_ssl_account, only: [:make_deposit,:purchase]
+  before_filter :find_ssl_account, only: [:make_deposit, :purchase]
   include ActiveMerchant::Billing
   include ApplicationHelper, OrdersHelper, PaypalExpressHelper, FundedAccountsHelper
 

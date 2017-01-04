@@ -91,15 +91,4 @@ class SslAccountsController < ApplicationController
       end
     end
   end
-
-  private
-
-  def find_ssl_account
-    @ssl_account =
-        if params[:ssl_slug]
-          SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
-        else
-          current_user.ssl_account
-        end
-  end
 end

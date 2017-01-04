@@ -368,6 +368,14 @@ class ApplicationController < ActionController::Base
   def load_permissions
     @current_permissions = current_user.permissions.collect{|i| [i.subject_class, i.action]}
   end
+  
+  def find_ssl_account
+    @ssl_account = if params[:ssl_slug]
+      SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
+    else
+      current_user.ssl_account if current_user
+    end
+  end
 
   private
 
