@@ -96,13 +96,11 @@ authorization do
       if_attribute :csr => {:certificate_content => {:certificate_order => {
             :ssl_account => is {user.ssl_account}}}}
     end
-    has_permission_on :ssl_accounts, :to => [:create]
-    has_permission_on :resellers, :to => [:create]
-    has_permission_on :ssl_accounts, :to => [:read, :update] do
-      if_attribute get_account_owner: is {user}
+    has_permission_on :ssl_accounts, :to => [:create, :read, :update] do
+      if_attribute :id => is {user.ssl_account.id}
     end
-    has_permission_on :resellers, :to => [:read, :update] do
-      if_attribute ssl_account: is_in {user.ssl_accounts.map(&:id)}
+    has_permission_on :resellers, :to => [:create, :read, :update] do
+      if_attribute :ssl_account => is {user.ssl_account}
     end
     has_permission_on :affiliates, :to => [:create, :read, :update] do
       if_attribute :ssl_account => is {user.ssl_account}

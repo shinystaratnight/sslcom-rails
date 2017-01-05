@@ -291,6 +291,8 @@ class UsersController < ApplicationController
   def find_user
     if params[:id]
       @user=User.unscoped.find(params[:id])
+    else
+      @user=current_user
     end
   end
 
