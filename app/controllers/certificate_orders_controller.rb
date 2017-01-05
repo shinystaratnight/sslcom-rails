@@ -64,7 +64,7 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1
   # GET /certificate_orders/1.xml
   def show
-    redirect_to edit_certificate_order_path(@certificate_order) and return if @certificate_order.certificate_content.new?
+    redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) and return if @certificate_order.certificate_content.new?
     respond_to do |format|
       format.html # show.html.erb
       format.xml  { render :xml => @certificate_order }
@@ -116,7 +116,7 @@ class CertificateOrdersController < ApplicationController
         return render '/certificates/buy', :layout=>'application'
       end
       unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
-        redirect_to certificate_order_url(@certificate_order)
+        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
       else
         csr = @certificate_order.certificate_content.csr
         setup_registrant()
@@ -214,9 +214,9 @@ class CertificateOrdersController < ApplicationController
           end
         end
         if @certificate_order.is_express_signup?
-          format.html { redirect_to new_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) }
+          format.html { redirect_to new_certificate_order_validation_path(@ssl_slug, @certificate_order.ref) }
         else #assume ev full signup process
-          format.html { redirect_to certificate_content_contacts_url(cc) }
+          format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
         end
         format.xml  { head :ok }
       else
@@ -241,9 +241,9 @@ class CertificateOrdersController < ApplicationController
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
         if cc.pending_validation?
-          format.html { redirect_to(@certificate_order) }
+          format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
         end
-        format.html { redirect_to edit_certificate_order_url(@certificate_order) }
+        format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
         format.xml  { head :ok }
       else
         @certificate = @certificate_order.certificate
@@ -257,7 +257,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.update_column :external_order_number, params[:num]
     SystemAudit.create(owner: current_user, target: @certificate_order,
                        action: "changed external order number to #{params[:num]}")
-    redirect_to certificate_order_path(@certificate_order)
+    redirect_to certificate_order_path(@ssl_slug, @certificate_order)
   end
 
   # GET /certificate_orders/credits
