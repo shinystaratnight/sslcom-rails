@@ -18,6 +18,7 @@ describe 'Anonymous user' do
     assert_equal 0, Assignment.count
     assert_equal 0, SslAccount.count
     assert_equal 0, SslAccountUser.count
+    assert_equal 0, ShoppingCart.count
     
     visit buy_certificate_path 'basicssl'
     # Subscriber Agreement
@@ -31,7 +32,9 @@ describe 'Anonymous user' do
     click_on 'Checkout'
     page.must_have_content('required fields below to complete your account registration.')
     page.must_have_content("Order Amount: charged in $USD #{@amount} USD")
-    assert_equal 1, ShoppingCart.count    
+    assert_equal 1, ShoppingCart.count
+    refute_nil   ShoppingCart.first.content
+    assert_nil   ShoppingCart.first.user_id
 
     # Login Information
     fill_in 'user_login',                  with: 'new_user'

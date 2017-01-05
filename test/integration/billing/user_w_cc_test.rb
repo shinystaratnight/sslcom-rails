@@ -16,6 +16,7 @@ describe 'Valid user' do
 
     assert_equal 1, BillingProfile.count
     assert_equal 1, FundedAccount.count
+    assert_equal 0, ShoppingCart.count
     
     visit buy_certificate_path 'basicssl'
     # Subscriber Agreement
@@ -52,6 +53,7 @@ describe 'Valid user' do
     assert_equal 1, CertificateContent.count
     assert_equal 1, LineItem.count
     assert_equal 1, OrderTransaction.count
+    assert_equal 1, ShoppingCart.count
   end
   
   it 'creates correct order record' do
@@ -74,6 +76,11 @@ describe 'Valid user' do
   end
   
   it 'show order transaction page' do
+    # Shopping cart is empty and belongs to user
+    # ====================================================
+    assert_equal User.first.id, ShoppingCart.first.user_id
+    assert_nil   ShoppingCart.first.content
+
     page.must_have_content('Show Order Transaction')
     page.must_have_content(Order.first.reference_number)
     page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")

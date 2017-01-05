@@ -20,7 +20,7 @@ FactoryGirl.define do
                               validation_level: "domain",
                               summary:          "for securing small sites",
                               abbr:             "Basic SSL"
-                            }}
+                            }.with_indifferent_access}
 
       after(:create) do |certificate|
         value = 730
@@ -69,7 +69,7 @@ FactoryGirl.define do
                               validation_level: "Class 3 DoD",
                               summary:          "highest trust assurance",
                               abbr:             "EV SSL"
-                            }}
+                            }.with_indifferent_access}
     end
 
     trait :uccssl do
@@ -88,7 +88,7 @@ FactoryGirl.define do
                               validation_level: "Class 2 DoD",
                               summary:          "for Exchange and Communications Server\n",
                               abbr:             "UCC SSL"
-                            }}
+                            }.with_indifferent_access}
     end
 
     trait :wcssl do
@@ -107,7 +107,7 @@ FactoryGirl.define do
                               validation_level: "Class 2 DoD",
                               summary:          "high validation and trust value",
                               abbr:             "Wildcard SSL"
-                            }}
+                            }.with_indifferent_access}
     end
   end
 end
