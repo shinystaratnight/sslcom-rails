@@ -176,7 +176,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def is_registered_reseller?
-    has_role?('reseller') && !reseller.new?
+    has_role?('reseller') && reseller.try("complete?")
   end
 
   def clear_new_certificate_orders
