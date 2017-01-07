@@ -1,6 +1,6 @@
 class BillingProfile < ActiveRecord::Base  
   belongs_to  :ssl_account
-  has_many    :orders
+  has_many    :orders, -> { unscope(where: [:state]) }
   include ActiveMerchant::Billing::CreditCardMethods
 
   cattr_accessor :password
