@@ -8,6 +8,10 @@ class UserSessionsController < ApplicationController
     @user_session = UserSession.new
   end
 
+  def show
+    redirect_to action: :new
+  end
+
   def create
     if params["prev.x".intern]
       #assume trying to login during checkout
@@ -39,6 +43,7 @@ class UserSessionsController < ApplicationController
     respond_to do |format|
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
+        user.clear_default_ssl_account #prevent user from being lockedout due to default_ssl_account set
         cookies[:acct] = {:value=>user.ssl_account.acct_number, :path => "/", :expires => Settings.
             cart_cookie_days.to_i.days.from_now}
         #we'll know what tier the user is even if s/he is not logged in

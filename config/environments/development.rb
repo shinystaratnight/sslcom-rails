@@ -45,6 +45,13 @@ SslCom::Application.configure do
 
   require 'sass/plugin/rack'
   Sass::Plugin.options[:line_numbers] = true
+
+  config.middleware.insert_before 0, "Rack::Cors" do
+    allow do
+      origins '*'
+      resource '*', :headers => :any, :methods => :any
+    end
+  end
 end
 
 # SubdomainFu.configure do |config|

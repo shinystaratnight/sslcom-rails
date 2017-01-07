@@ -16,12 +16,12 @@
                 return;
               else
                 if(return_funds==true)
-                  window.location = '#{refund_order_url(@order, return_funds: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
+                  window.location = '#{refund_order_url(id: @order.reference_number, return_funds: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
                 else
-                  window.location = '#{refund_order_url(@order, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
+                  window.location = '#{refund_order_url(id: @order.reference_number, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
             }
         %li
-          =link_to("#{co.subject} (#{co.ref})", co)
+          =link_to("#{co.subject} (#{co.ref})", certificate_order_path(@ssl_slug, co))
           -if current_user.is_admin? && line_item_certs.count > 1
             =link_to("[cancel]", '#', onclick:  "refund_reason_#{co.id}(false)")
             -if cert.price.cents > 0

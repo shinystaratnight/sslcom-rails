@@ -1,5 +1,5 @@
 class Validation < ActiveRecord::Base
-  has_many    :certificate_orders
+  has_many    :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]) }
   has_many    :ssl_accounts, through: :certificate_orders
   has_many    :users, through: :ssl_accounts
   has_many    :validation_rulings, :as=>:validation_rulable

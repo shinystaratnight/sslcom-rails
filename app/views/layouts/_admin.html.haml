@@ -22,7 +22,11 @@
                 %td.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
               %tr
                 %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
-          %th.certificate_status{rowspan: 5}
+          %th.certificate_status
+            %table
+              %tr
+                %td.certificate_status=link_to "PRODUCTS", certificates_url
+          %th.certificate_status{rowspan: 4}
             %table
               %tr
                 %td=link_to "ORDER BY CSR", order_by_csr_certificate_orders_path
@@ -37,11 +41,6 @@
                 %td=link_to "SHOW WILDCARD ORDERS", filter_by_certificate_orders_path(@ssl_slug, "wildcard")
               %tr
                 %td=link_to "SHOW TEST ORDERS", filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
-          -#-unless current_user.ssl_account.funded_account.blank?
-          -#  %th AVAILABLE FOR USE
-          -if show_short_links?
-            %th=link_to "SSL LINKS", surls_root_url(subdomain: Surl::SUBDOMAIN)
-          = render partial: 'shared/ssl_accounts'
           %th=link_to 'Logout', logout_url
         %tr#info
           %td

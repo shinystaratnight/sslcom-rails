@@ -58,7 +58,7 @@
       -unless reseller_initial_deposit? or @certificate_order
         #click_to_load
           =image_submit_tag "load_funds_bl.gif", :alt=>'Click here to load funds into your account', name: "load_funds"
-          =link_to image_tag("load_funds_bl.gif", alt: "paypal"), {controller: 'paypal_express', action: 'checkout', make_deposit: true, order_type:@funded_account.order_type, deduct_order: @funded_account.deduct_order, amount: 0}, style: "display: none", :name=>"paypal"
+          =link_to image_tag("load_funds_bl.gif", alt: "paypal"), {controller: 'paypal_express', action: 'checkout', ssl_slug: params[:ssl_slug], make_deposit: true, order_type:@funded_account.order_type, deduct_order: @funded_account.deduct_order, amount: 0}, style: "display: none", :name=>"paypal"
       -else
         =render partial: 'shared/prev_next_buttons'
     .waiting_bar.clearfix

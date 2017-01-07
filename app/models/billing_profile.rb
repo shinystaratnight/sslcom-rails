@@ -1,6 +1,6 @@
 class BillingProfile < ActiveRecord::Base  
   belongs_to  :ssl_account
-  has_many    :orders
+  has_many    :orders, -> { unscope(where: [:state]) }
   include ActiveMerchant::Billing::CreditCardMethods
 
   cattr_accessor :password
@@ -22,9 +22,9 @@ class BillingProfile < ActiveRecord::Base
   AMERICAN = "United States"
 
   # test - see http://developer.authorize.net/tools/errorgenerationguide/
-  #TEST_ZIP_CODE = 46204
-      #46282 #decline
-  #TEST_AMOUNT = 70.02
+  # TEST_ZIP_CODE = 46204 #46282 #decline
+  TEST_AMOUNT = 80.50 # valid
+  # TEST_AMOUNT = 70.02 # This transaction has been declined.
 
   validates_presence_of *((REQUIRED_COLUMNS).map(&:intern))
 
@@ -58,7 +58,7 @@ class BillingProfile < ActiveRecord::Base
             :year       => options[:expiration_year] || expiration_year}
     cc.merge!(:verification_value => options[:verification_value] || security_code) if options[:cvv]
     card = ActiveMerchant::Billing::CreditCard.new(cc)
-    card.type = 'bogus' if defined?(::GATEWAY_TEST_CODE)
+    card.brand = 'bogus' if defined?(::GATEWAY_TEST_CODE)
     card
   end
   
@@ -70,7 +70,7 @@ class BillingProfile < ActiveRecord::Base
       :locality     => self.city,
       :region       => self.state,
       :country      => self.country,
-      :postal_code  => (Rails.env=~/development/i && defined?(TEST_ZIP_CODE)) ? TEST_ZIP_CODE : self.postal_code, #testing decline or not
+      :postal_code  => (%w{development test}.include?(Rails.env) && defined?(TEST_ZIP_CODE)) ? TEST_ZIP_CODE : self.postal_code, #testing decline or not
       :phone        => self.phone
     })
   end

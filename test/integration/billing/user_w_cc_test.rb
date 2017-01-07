@@ -1,0 +1,85 @@
+require 'test_helper'
+# 
+# A valid logged-in user makes a certificate order purchase using 
+# a valid credit card.
+# 
+describe 'Valid user' do
+  before do
+    initialize_roles
+    create(:certificate, :basicssl)
+    @logged_in_user     = create(:user, :account_admin)
+    @logged_in_ssl_acct = @logged_in_user.ssl_account
+    @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
+    @billing_profile    = @logged_in_ssl_acct.billing_profiles.first
+    @year_3_id          = ProductVariantItem.find_by(serial: "sslcombasic256ssl3yr").id
+    login_as(@logged_in_user, self.controller.cookies)
+
+    assert_equal 1, BillingProfile.count
+    assert_equal 1, FundedAccount.count
+    
+    visit buy_certificate_path 'basicssl'
+    # Subscriber Agreement
+    find('#certificate_order_certificate_contents_attributes_0_agreement').click
+    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
+    page.must_have_content('$156.43 USD') # $52.14 * 3 years
+    
+    # Shopping Cart
+    find('#next_submit input').click
+    page.must_have_content('$156.43 USD')
+    
+    # Checkout
+    click_on 'Checkout'
+    page.must_have_content('Funding Sources')
+    page.must_have_content(@billing_profile.last_digits)
+    page.must_have_content('Order Amount: charged in $USD $156.43 USD')
+    find("#funding_source_#{BillingProfile.first.id}").click
+    find('input[name="next"]').click
+    sleep 1 # allow time to generate notification email
+  end
+
+  it 'user receives #certificate_order_prepaid notification email' do
+    assert_equal    1, email_total_deliveries
+    assert_includes email_subject, Order.first.reference_number
+    assert_match    @logged_in_user.email, email_to
+    assert_match    'orders@ssl.com', email_from
+    assert_includes email_body, "Order Amount: $156.43"
+  end
+
+  it 'creates database records' do
+    assert_equal 1, Order.count
+    assert_equal 1, OrderTransaction.count
+    assert_equal 1, CertificateOrder.count
+    assert_equal 1, CertificateContent.count
+    assert_equal 1, LineItem.count
+    assert_equal 1, OrderTransaction.count
+  end
+  
+  it 'creates correct order record' do
+    o = Order.first
+    assert_equal @billing_profile.id, o.billing_profile_id
+    assert_equal 'SslAccount', o.billable_type
+    assert_equal 'paid', o.state
+    assert_equal 'active', o.status
+    assert_equal 15643, o.cents
+    assert_equal OrderTransaction.first.order_id, o.id
+    refute_nil   o.reference_number
+  end
+  
+  it 'creates correct certificate order record' do
+    co = CertificateOrder.first
+    assert_equal @logged_in_ssl_acct.id, co.ssl_account_id
+    assert_equal 'paid', co.workflow_state
+    assert_equal 1, co.line_item_qty
+    assert_equal 15643, co.amount
+  end
+  
+  it 'show order transaction page' do
+    page.must_have_content('Show Order Transaction')
+    page.must_have_content(Order.first.reference_number)
+    page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")
+    page.must_have_content(@billing_profile.last_digits)
+    page.must_have_content('$156.43')
+  end
+end
+
+

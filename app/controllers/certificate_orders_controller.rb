@@ -25,6 +25,7 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :read, :update, :delete, attribute_check: true
   filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
                    :filter_by_scope, :require=>:read
+  filter_access_to :update_csr, :require=>[:update]
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
     :require=>[:create, :update, :delete]
@@ -114,7 +115,7 @@ class CertificateOrdersController < ApplicationController
         @certificate_content.agreement=true
         return render '/certificates/buy', :layout=>'application'
       end
-      unless @certificate_order.certificate_content.csr_submitted?
+      unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
         redirect_to certificate_order_url(@certificate_order)
       else
         csr = @certificate_order.certificate_content.csr
@@ -213,7 +214,7 @@ class CertificateOrdersController < ApplicationController
           end
         end
         if @certificate_order.is_express_signup?
-          format.html { redirect_to new_certificate_order_validation_url(@certificate_order) }
+          format.html { redirect_to new_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_url(cc) }
         end

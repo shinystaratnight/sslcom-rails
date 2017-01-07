@@ -71,7 +71,6 @@ a:hover
   background-color: black
   width: 100%
   background-image: image-url('sitesprite2.png')
-  background-position: 0px -10px
   background-repeat: repeat-x
   font-family: "Raleway",Arial !important
 
@@ -82,8 +81,8 @@ a:hover
   width: 180px
   //overflow: hidden
   //text-indent: -9999px
-  background-image: image-url('sitesprite1.png')
-  background-position: -10px -590px
+  background-image: image-url('ssl_logo_original.jpg')
+  background-size: 180px 44px
   background-repeat: no-repeat
 
   a
@@ -93,17 +92,6 @@ a:hover
 
     span
       visibility: hidden
-
-  &.admin_logo
-    background-position: -5px -460px
-    background-size: 215%
-    margin: 40px 0 0
-
-  &.reseller
-    background-position: -5px 25px
-    background-size: 160%
-    height: 75px
-    width: 240px
 
     a
       width: 240px
@@ -5480,6 +5468,7 @@ span#no_emails_accessible
   cursor: pointer
 
 .acc-sel-dropdown
+  text-decoration: none !important
   display: inline-block
   &:hover .acc-sel-dropdown-cont
     display: block
@@ -5487,7 +5476,7 @@ span#no_emails_accessible
     color: #6B9029
 
 .acc-sel-dropdown-cont
-  background-color: #282928
+  background-color: #2d2d2f
   display: none
   position: absolute
   z-index: 100
@@ -5500,9 +5489,8 @@ span#no_emails_accessible
     text-decoration: none
     padding: 2px 0
     display: block
+    font-size: 1.2rem
     &:hover
-      font-size: 1.2rem
-      padding: 5px 0
       color: #6B9029
 
 .search-hint

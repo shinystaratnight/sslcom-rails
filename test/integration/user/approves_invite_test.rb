@@ -55,13 +55,13 @@ describe 'user approves ssl account invite' do
     end
     
     it 'can see both accounts' do
-      page.must_have_content 'ACCOUNT'
+      page.must_have_content 'CURRENT TEAM'
       page.must_have_content 'Users'
       page.must_have_content @existing_user_ssl.acct_number.upcase
       assert_equal 2, @existing_user.get_all_approved_accounts.count
     end
     it 'can switch to invited ssl account' do
-      find('div.acc-sel-dropbtn').click # ACCOUNT dropdown
+      find('div.acc-sel-dropbtn').click # CURRENT TEAM dropdown
       find('a', text: @invited_ssl_acct.acct_number.upcase).click
       ssl = SslAccountUser.where(
         ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
@@ -96,7 +96,7 @@ describe 'user approves ssl account invite' do
       assert_match root_path, current_path
       
       click_on 'MY ACCOUNT'
-      assert page.has_no_content? 'ACCOUNT'
+      assert page.has_no_content? 'CURRENT TEAM'
     end
     it 'invite remains unapproved' do
       ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)

@@ -1,6 +1,8 @@
 class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
-  belongs_to  :certificate_order
+  belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
+  has_one     :ssl_account, through: :certificate_order
+  has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr
   has_many    :signed_certificates, through: :csr
@@ -32,9 +34,9 @@ class CertificateContent < ActiveRecord::Base
     azadegi.com Comodo\ Root\ CA CyberTrust\ Root\ CA DigiCert\ Root\ CA Equifax\ Root\ CA friends.walla.co.il
     GlobalSign\ Root\ CA login.live.com login.yahoo.com my.screenname.aol.com secure.logmein.com
     Thawte\ Root\ CA twitter.com VeriSign\ Root\ CA wordpress.com www.10million.org www.balatarin.com
-    www.cia.gov www.cybertrust.com www.Equifax.com www.facebook.com www.globalsign.com
-    www.google.com www.hamdami.com www.mossad.gov.il www.sis.gov.uk www.update.microsoft.com www.google.com
-    login.yahoo.com login.yahoo.com login.skype.com addons.mozilla.org login.live.com global\ trustee)
+    cia.gov cybertrust.com equifax.com facebook.com globalsign.com
+    google.com hamdami.com mossad.gov.il sis.gov.uk microsoft.com google.com
+    yahoo.com login.yahoo.com login.skype.com mozilla.org live.com global\ trustee)
 
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
@@ -144,6 +146,7 @@ class CertificateContent < ActiveRecord::Base
   after_initialize do
     if new_record?
       self.ajax_check_csr ||= false
+      self.signing_request ||= ""
     end
   end
 

@@ -114,6 +114,7 @@ SslCom::Application.routes.draw do
       end
 
       member do
+        get :update_csr, to: 'application#not_found', status: 404
         match :update_csr, via: [:put, :patch]
         get :download
         get :developer
@@ -226,8 +227,6 @@ SslCom::Application.routes.draw do
               'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]
     get 'certificate_orders/filter_by/:id' => 'certificate_orders#filter_by', as: :filter_by_certificate_orders
     get 'certificate_orders/filter_by_scope/:id' => 'certificate_orders#filter_by_scope', as: :filter_by_scope_certificate_orders
-    match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
-    match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
     match 'get_free_ssl' => 'funded_accounts#create_free_ssl', :as => :create_free_ssl, via: [:get, :post]
     match 'secure/allocate_funds' => 'funded_accounts#allocate_funds', :as => :allocate_funds, via: [:get, :post]
     match 'secure/allocate_funds_for_order/:id' =>
@@ -242,6 +241,8 @@ SslCom::Application.routes.draw do
     match "paypal_express/checkout", via: [:get, :post]
     match "paypal_express/review", via: [:get, :post]
     match "paypal_express/purchase", via: [:get, :post]
+
+    match "/site_seals/:id/site_report'," => 'site_seals#site_report', via: :get
   end
 
   scope '(/team/:ssl_slug)', module: false do
@@ -273,6 +274,7 @@ SslCom::Application.routes.draw do
       get :approve_account_invite
       get :resend_account_invite
       get :decline_account_invite
+      get :teams
     end
   end
 
@@ -289,6 +291,8 @@ SslCom::Application.routes.draw do
     end
   end
 
+  match '/activate/:id' => 'activations#create', :as => :activate, via: [:get, :post]
+  match '/register/:activation_code' => 'activations#new', :as => :register, via: [:get, :post]
   match '/sitemap.xml' => 'site#sitemap', :as => :sitemap, via: [:get, :post]
   match 'reseller' => 'site#reseller', :as => :reseller,
     :constraints => {:subdomain=>Reseller::SUBDOMAIN}, via: [:get, :post]

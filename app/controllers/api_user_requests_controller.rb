@@ -140,8 +140,8 @@ class ApiUserRequestsController < ApplicationController
             @result.order_amount = @acr.order.amount.format
             @result.certificate_url = url_for(@acr)
             @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(@acr)
-            @result.validation_url = certificate_order_validation_url(@acr)
+            @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
+            @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
             @result.update_attribute :response, render_to_string(:template => template)
             render(:template => template)
           else

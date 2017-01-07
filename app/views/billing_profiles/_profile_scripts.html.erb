@@ -31,7 +31,7 @@ $('#expand_register_card').live('click', function(){
   }
   if($("#payment_method_paypal").is(":checked")){
     $('#credit_card_form').hide();
-    $('form#new_order').attr("action","/paypal_express/checkout");
+    $('form#new_order').attr("action","<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>");
   }
   else{
     $('#credit_card_form').show();

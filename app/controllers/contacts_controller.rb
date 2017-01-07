@@ -1,5 +1,6 @@
 class ContactsController < ApplicationController
   layout 'application'
+  filter_access_to :all
   # GET /contacts
   # GET /contacts.xml
   def index

@@ -1,6 +1,6 @@
 -ec = (co.site_seal.preferred_seal_image?) ? link_to(image_tag(image_url(co.site_seal.preferred_seal_image, false)), site_report_site_seal_url(co.site_seal), popup_code(co)) : ""
--key_logo = render partial: 'site_seal_code',:locals=>{:co=>co}
--css_key_logo = render partial: 'css_site_seal_code',:locals=>{:co=>co}
+-key_logo = render partial: '/site_seals/site_seal_code',:locals=>{:co=>co}
+-css_key_logo = render partial: '/site_seals/css_site_seal_code',:locals=>{:co=>co}
 %tr.expanded(class="#{'hidden' if current_page?(:site_seals)}")
   %td(colspan="6")
     .certificate_details
@@ -65,8 +65,8 @@
                 %ul
                   %li.small_section
                     -unless co.certificate_content.expired?
-                      -u=link_to 'upload', new_certificate_order_validation_url(co)
+                      -u=link_to 'upload', new_certificate_order_validation_url(certificate_order_id: co.ref)
                     -unless co.validation.validation_histories.blank?
-                      -m=link_to 'manage', edit_certificate_order_validation_url(co)
-                    -s=link_to 'status', certificate_order_validation_url(co)
+                      -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
+                    -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
                     =link_cluster([u,m,s])

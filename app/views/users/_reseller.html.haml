@@ -83,9 +83,9 @@
                           %strong available funds
                           %li=user.ssl_account.funded_account.amount(true).format :with_currency=>false
                           %li
-                            =link_to 'deposit funds', allocate_funds_url
+                            =link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
                           -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
-                            %li=link_to 'manage billing profiles', billing_profiles_path
+                            %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
                           %li
                             =link_to 'buy certificate', certificates_url
                           %li

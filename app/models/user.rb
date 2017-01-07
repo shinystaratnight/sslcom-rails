@@ -58,8 +58,25 @@ class User < ActiveRecord::Base
       approved_account
     end
   end
+
+  def is_account_owner?(ssl_account)
+    ssl_account == self.owned_ssl_account
+  end
+
+  def owned_ssl_account
+    assignments.where{role_id = Role.get_role_id(Role::ACCOUNT_ADMIN)}.first.try :ssl_account
+  end
+
+  def self.find_non_owners
+     [].tap do |orphans|
+      find_each do |u|
+        orphans << u if u.owned_ssl_account.blank?
+      end
+    end
+  end
   
   def create_ssl_account(role_ids=nil)
+    self.save if self.new_record?
     new_ssl_account = SslAccount.create
     ssl_accounts << new_ssl_account
     set_roles_for_account(new_ssl_account, role_ids) if (role_ids && role_ids.length > 0)

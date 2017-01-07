@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def save_user
-    @user.create_ssl_account(Role::ACCOUNT_ADMIN)
+    @user.create_ssl_account([Role.get_role_id(Role::ACCOUNT_ADMIN)])
     @user.signup!(params)
     @user.activate!(params)
     @user.deliver_activation_confirmation!
@@ -244,6 +244,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def not_found
+    render :text => "404 Not Found", :status => 404
+  end
+
   protected
 
   def set_prev_flag
@@ -364,6 +368,14 @@ class ApplicationController < ActionController::Base
   def load_permissions
     @current_permissions = current_user.permissions.collect{|i| [i.subject_class, i.action]}
   end
+  
+  def find_ssl_account
+    @ssl_account = if params[:ssl_slug]
+      SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
+    else
+      current_user.ssl_account if current_user
+    end
+  end
 
   private
 
@@ -451,15 +463,15 @@ class ApplicationController < ActionController::Base
   def finish_reseller_signup
     blocked = %w(certificate_orders orders site_seals validations ssl_accounts users)
     redirect_to new_account_reseller_url and return if
-      current_user.ssl_account.is_new_reseller? and blocked.include?(controller_name)
+        (current_user.ssl_account.reseller ?
+            # following line avoids loop with last condition in ResellersController#new comparing reseller.complete?
+            # with ssl_account.is_new_reseller?
+            !current_user.ssl_account.reseller.complete? :
+            current_user.ssl_account.is_new_reseller?) and blocked.include?(controller_name)
   end
 
   def user_not_authorized
     render :text => "403 Forbidden", :status => 403
-  end
-
-  def not_found
-    render :text => "404 Not Found", :status => 404
   end
 
   def save_billing_profile

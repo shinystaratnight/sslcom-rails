@@ -63,8 +63,12 @@ class ManagedUsersController < ApplicationController
     @user   = User.find(params[:id])
     account = SslAccount.find(params[:ssl_account_id]) if params[:ssl_account_id]
     account = account ? account : current_user.ssl_account
-    @user.remove_user_from_account(account, current_user)
-    flash[:notice] = "#{@user.email} has been removed from account '#{account.acct_number}' and is being notified."
+    unless account.get_account_owner == @user
+      @user.remove_user_from_account(account, current_user)
+      flash[:notice] = "#{@user.email} has been removed from account '#{account.acct_number}' and is being notified."
+    else
+      flash[:notice] = "#{@user.email} is the owner of account '#{account.acct_number}' and cannot be removed."
+    end
     redirect_to users_path(ssl_slug: @ssl_slug)
   end
 

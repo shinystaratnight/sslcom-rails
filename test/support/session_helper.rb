@@ -43,4 +43,28 @@ module SessionHelper
     cookie.to_h['user_credentials'].merge!(value: value)
     cookie
   end
+
+  def paypal_login
+    email    = Settings.paypal_buyer_email
+    password = Settings.paypal_buyer_password
+    sleep 5                          # Let Paypal login page load
+    if first('#login_email')         # Older Paypal login view
+      fill_in 'login_email',    with: email
+      fill_in 'login_password', with: password
+      click_button 'Log In'
+      sleep 7                        # Let Paypal load/generate preview page
+      find('#continue').click
+    else
+      if first('iframe')
+        within_frame find('iframe') do # Newer Paypal login view
+          fill_in 'email',    with: email
+          fill_in 'password', with: password
+          click_button 'Log In'
+          sleep 8                      # Let Paypal load/generate preview page
+        end
+      end
+      first('#continue') ? find('#continue').click : find('#confirmButtonTop').click
+    end
+    sleep 7                          # Let Paypal process transaction and exit/re-route
+  end
 end

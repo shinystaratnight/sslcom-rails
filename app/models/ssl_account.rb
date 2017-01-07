@@ -5,11 +5,13 @@ class SslAccount < ActiveRecord::Base
   has_one   :api_credential
   has_many  :users_unscoped, foreign_key: :ssl_account_id, class_name: "UserUnscoped", :dependent=>:destroy
   has_many  :billing_profiles
-  has_many  :certificate_orders, ->{includes [:orders]} do
+  has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
     def current
       first(:conditions=>{:workflow_state=>['new']})
     end
   end
+  has_many  :certificate_contents, through: :certificate_orders
+  has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
@@ -23,7 +25,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :api_certificate_retrieves, as: :api_requestable, class_name: "ApiCertificateRetrieve"
   has_many  :account_roles, class_name: "Role" # customizable roles that belong to this account
   has_many  :ssl_account_users, dependent: :destroy
-  has_many  :users, through: :ssl_account_users
+  has_many  :users, -> { unscope(where: [:status]) }, through: :ssl_account_users
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -175,7 +177,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def is_registered_reseller?
-    has_role?('reseller') && !reseller.new?
+    has_role?('reseller') && reseller.try("complete?")
   end
 
   def clear_new_certificate_orders
@@ -247,8 +249,7 @@ class SslAccount < ActiveRecord::Base
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
-        u.roles.delete Role.find_by_name(Role::ACCOUNT_ADMIN)
-        u.roles << Role.find_by_name(Role::RESELLER)
+        u.set_roles_for_account(self, [Role.find_by_name(Role::RESELLER).id])
       end
       reseller.update_attribute :workflow_state, "complete"
     else

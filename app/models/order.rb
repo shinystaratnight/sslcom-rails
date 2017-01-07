@@ -5,7 +5,7 @@ class Order < ActiveRecord::Base
   include V2MigrationProgressAddon
   belongs_to  :billable, :polymorphic => true
   belongs_to  :address
-  belongs_to  :billing_profile, unscoped: true
+  belongs_to  :billing_profile, -> { unscope(where: [:status]) }
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
@@ -64,7 +64,7 @@ class Order < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.joins{billable(SslAccount)}.
+    result = unscoped.joins{discounts.outer}.joins{billing_profile_unscoped.outer}.joins{billable(SslAccount)}.
         joins{billable(SslAccount).users_unscoped}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?

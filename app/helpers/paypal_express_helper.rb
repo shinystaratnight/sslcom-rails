@@ -3,7 +3,7 @@ module PaypalExpressHelper
     subtotal, shipping, total = get_totals(cart)
     return to_cents(total), {
         :ip => request.remote_ip,
-        :return_url => url_for(:action => 'purchase', :only_path => false, deduct_order: params[:deduct_order]),
+        :return_url => url_for(:action => 'purchase', ssl_slug: params[:ssl_slug], :only_path => false, deduct_order: params[:deduct_order]),
         :cancel_return_url => root_url,
         :subtotal => to_cents(subtotal),
         :shipping => to_cents(shipping),

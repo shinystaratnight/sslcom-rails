@@ -52,7 +52,7 @@
                 =link_to "Show cart".l, {:controller => :orders, :action => :show_cart, :id => :current}, :class => "item_line"
                 =link_to_checkout unless link_to_checkout.blank?
                 =link_to "Load funds".l, allocate_funds_path
-                =link_to "Orders history".l, user_orders_path(current_user)
+                =link_to "Transactions".l, user_orders_path(current_user)
                 =link_to 'Log out'.l, logout_path, :class => "item_line"
           %li
             %span.head_menu

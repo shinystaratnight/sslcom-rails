@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account, :enable_disable
+    :switch_default_ssl_account, :enable_disable, :teams
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
@@ -18,7 +18,7 @@ class UsersController < ApplicationController
     :approve_account_invite, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
-  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :require=>:edit
+  filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
 
   def new
   end
@@ -223,7 +223,7 @@ class UsersController < ApplicationController
     if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
       team_name      = @user.ssl_accounts.find(switch_ssl_account).get_team_name
-      flash[:notice] = "You have switched to account '#{team_name}'."
+      flash[:notice] = "You have switched to team '#{team_name}'."
       set_ssl_slug(@user)
     else
       flash[:error] = "Something went wrong. Please try again!"
@@ -278,6 +278,10 @@ class UsersController < ApplicationController
     end  
   end
 
+  def teams
+    @teams = current_user.get_all_approved_accounts
+  end
+
   private
 
   def new_user
@@ -287,6 +291,8 @@ class UsersController < ApplicationController
   def find_user
     if params[:id]
       @user=User.unscoped.find(params[:id])
+    else
+      @user=current_user
     end
   end
 
