@@ -32,10 +32,10 @@ module SetupHelper
   end
 
   def initialize_certificates
-    create(:certificate, :basicssl)
+    create(:certificate, :basicssl) # non-wildcard
     create(:certificate, :evssl)
-    create(:certificate, :uccssl)
-    create(:certificate, :wcssl)    
+    create(:certificate, :uccssl)   # multi-domain + wildcard
+    create(:certificate, :wcssl)    # wildcard   
   end
 
   def initialize_server_software
