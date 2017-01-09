@@ -8,7 +8,7 @@
   %p
     Please provide point of contacts for #{@certificate_order.subject.downcase}.
   =error_messages_for :certificate_content
-  =form_for setup_certificate_contacts(@certificate_content) do |f|
+  =form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
     #stylized.default_form
       -i = 0
       =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form do |c|

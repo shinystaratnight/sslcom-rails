@@ -6,7 +6,7 @@
     %li team url: #{link_to 'ADD TEAM URL', edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)}
 
 -if permitted_to? :update_company_name, user.ssl_account
-  -path_name = ssl.company_name ? ssl.company_name : 'ADD COMPANY NAME'
+  -path_name = ssl.company_name ? ssl.company_name : 'ADD TEAM NAME'
   %li team name: #{link_to path_name, edit_ssl_account_path(id: ssl.id, update_company_name: true, ssl_slug: @ssl_slug)}
 -else
   %li team name: #{ssl.company_name}

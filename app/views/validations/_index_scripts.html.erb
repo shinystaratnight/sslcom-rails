@@ -353,22 +353,22 @@ jQuery(function($) {
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
         }
         else if(/https/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           if($(dcv_select).attr("alt").startsWith('*'))
             instructions+=" or to this location <a href='"+wwwhttps+"' target='_new'>"+wwwhttps+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=https&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
         }
         else if(/http/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_url(@certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           if($(dcv_select).attr("alt").startsWith('*'))
             instructions+=" or to this location <a href='"+wwwhttp+"' target='_new'>"+wwwhttp+"</a>";
           $(instruction).html(instructions);
-          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=http&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
@@ -376,7 +376,7 @@ jQuery(function($) {
         }
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
-          $.ajax({url: '<%=verification_check_csr_path(@certificate_order.csr)%>?protocol=cname&dcv='+
+          $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
           $(dcv_select).parents('tr').attr('id')}).done(
                   function(data){
                     $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));

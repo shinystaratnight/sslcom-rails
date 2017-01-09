@@ -34,6 +34,8 @@ describe 'Valid user' do
     page.must_have_content('required fields below to complete your account registration.')
     page.must_have_content("Order Amount: charged in $USD #{@amount} USD")
     assert_equal 1, ShoppingCart.count
+    refute_nil   ShoppingCart.first.content
+    assert_nil   ShoppingCart.first.user_id
 
     # New Login Information
     fill_in 'user_login',                  with: 'new_user'
