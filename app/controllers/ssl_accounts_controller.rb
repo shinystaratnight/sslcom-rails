@@ -41,7 +41,7 @@ class SslAccountsController < ApplicationController
 
   def validate_ssl_slug
     respond_to do |format|
-      format.js {render json: {message: SslAccount.ssl_slug_valid?(params[:ssl_slug])}}
+      format.js {render json: {message: SslAccount.ssl_slug_valid?(params[:ssl_slug_name])}}
     end
   end
 
