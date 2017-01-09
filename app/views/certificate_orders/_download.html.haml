@@ -1,14 +1,12 @@
 -formats = certificate_formats(co)
 %li
-  %strong{style: "color: blue"} certificate download
+  %strong{style: "color: blue"} certificate download by platform
 %li.category_border.download_certificate
   %table
-    %tr
-      %td format
-      %td instructions
     -formats.each do |k,v|
       %tr
+        %td=v[0]
         %td
-          =link_to v[0], v[1]
+          &nbsp;#{link_to 'download', v[1]}&nbsp;
         %td
-          =link_to "click", v[2], :target => "_blank"
+          &nbsp;#{link_to 'guide', v[2], :target => "_blank"}&nbsp;
