@@ -1,7 +1,7 @@
 require 'test_helper'
-# 
+#
 # Workflow: user submits wildcard (single-domain | multi-subdomains) csr key.
-# 
+#
 describe 'wildcard (single-domain) csr' do
   before do
     initialize_roles
@@ -13,7 +13,7 @@ describe 'wildcard (single-domain) csr' do
     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
     @year_3_id          = ProductVariantItem.find_by(serial:  "sslcomwc256ssl3yr").id
     login_as(@logged_in_user, self.controller.cookies)
-    
+
     # Purchase wildcard certificate
     # =========================================================
     visit buy_certificate_path 'wildcard'
@@ -48,7 +48,7 @@ describe 'wildcard (single-domain) csr' do
     assert_equal SslAccount.first.id, co.ssl_account_id
     assert_equal co.id, cc.certificate_order_id
     assert_equal [], cc.domains
-    
+
     # Submit and validate CSR Key for non-wilrdcard certificate
     # =========================================================
     visit certificate_orders_path   # Certificate Orders
