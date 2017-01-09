@@ -75,12 +75,12 @@
                                   A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
                                   multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
                           -unless co.is_unused_credit?
-                            %li=link_to "view certificate details", co
-                          %li=link_to "view order transaction", order
+                            %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
+                          %li=link_to "view order transaction", order_path(@ssl_slug, order)
                           %li.category_border
                           %li
                             %strong for developers
-                          %li=link_to "preformatted api strings", developer_certificate_order_path(co)
+                          %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
                           %li=link_to "developer tools", developers_certificate_orders_path
                           -if current_user.is_admin?
                             %li

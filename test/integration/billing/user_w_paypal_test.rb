@@ -21,6 +21,7 @@ describe 'Valid user' do
 
     assert_equal 1, BillingProfile.count
     assert_equal 1, FundedAccount.count
+    assert_equal 0, ShoppingCart.count
     
     # Buy Certificate
     visit buy_certificate_path 'basicssl'
@@ -65,6 +66,7 @@ describe 'Valid user' do
       assert_equal 1, CertificateOrder.count
       assert_equal 1, CertificateContent.count
       assert_equal 2, LineItem.count
+      assert_equal 1, ShoppingCart.count
     
     # creates correct line_items associated w/2 orders
     # ======================================================
@@ -102,6 +104,12 @@ describe 'Valid user' do
       assert_equal 1, co.line_item_qty
       assert_equal 15643, co.amount
     
+    # Shopping cart is empty and belongs to user
+    # ======================================================
+      assert_equal 1, ShoppingCart.count
+      assert_equal User.first.id, ShoppingCart.first.user_id
+      assert_nil   ShoppingCart.first.content
+
     # orders history page
     # ======================================================
       page.must_have_content('SSL Certificate Order')

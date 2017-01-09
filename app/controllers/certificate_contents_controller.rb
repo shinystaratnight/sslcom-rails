@@ -6,7 +6,7 @@ class CertificateContentsController < ApplicationController
   end
 
   def show
-    redirect_to(certificate_order_url(CertificateContent.find(params[:id]).certificate_order))
+    redirect_to certificate_order_path(@ssl_slug, CertificateContent.find(params[:id]).certificate_order)
   end
 
   # PUT /contacts/1
@@ -38,8 +38,9 @@ class CertificateContentsController < ApplicationController
         end
         if @certificate_content.info_provided?
           @certificate_content.provide_contacts!
-          format.html { redirect_to new_certificate_order_validation_url(
-              @certificate_content.certificate_order) }
+          format.html { redirect_to new_certificate_order_validation_path(
+            @ssl_slug, @certificate_content.certificate_order)
+          }
         else
           flash[:notice] = 'Contacts were successfully updated.'
           format.html { redirect_to(@certificate_content.certificate_order) }

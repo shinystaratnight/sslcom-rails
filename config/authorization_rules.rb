@@ -5,8 +5,7 @@ authorization do
 
   role :sysadmin do
     includes :vetter
-    has_permission_on :users, :to => :admin_manage
-    has_permission_on :managed_users, :to => :admin_manage
+    has_permission_on :managed_users,:ssl_accounts, :users, :to => :admin_manage
     has_permission_on :surls, :to => :manage
   end
 
@@ -54,6 +53,9 @@ authorization do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :ssl_accounts, :to => [:create]
+    has_permission_on :ssl_accounts, :to => [:admin_manage] do
+      if_attribute get_account_owner: is {user}
+    end
     has_permission_on :funded_accounts, :to => [:create]
   end
 
@@ -136,7 +138,7 @@ authorization do
       if_attribute get_account_owner: is {user},
                             ssl_slug: is {nil}
     end
-    has_permission_on :ssl_accounts, :to => :update_company_name do
+    has_permission_on :ssl_accounts, :to => [:update_company_name] do
       if_attribute get_account_owner: is {user}
     end
   end
@@ -166,7 +168,7 @@ privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, 
     :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite, 
-    :enable_disable, :edit, :update_ssl_slug, :update_company_name]
+    :enable_disable, :edit, :update_ssl_slug, :update_company_name, :edit_settings, :update_settings]
   privilege :manage, :includes => [:create, :read, :update, :delete, :refund, :change_state]
   privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
   privilege :create, :includes => :new

@@ -20,7 +20,7 @@ FactoryGirl.define do
                               validation_level: "domain",
                               summary:          "for securing small sites",
                               abbr:             "Basic SSL"
-                            }}
+                            }.with_indifferent_access}
 
       after(:create) do |certificate|
         value = 730
@@ -69,7 +69,7 @@ FactoryGirl.define do
                               validation_level: "Class 3 DoD",
                               summary:          "highest trust assurance",
                               abbr:             "EV SSL"
-                            }}
+                            }.with_indifferent_access}
     end
 
     trait :uccssl do
@@ -88,7 +88,7 @@ FactoryGirl.define do
                               validation_level: "Class 2 DoD",
                               summary:          "for Exchange and Communications Server\n",
                               abbr:             "UCC SSL"
-                            }}
+                            }.with_indifferent_access}
     end
 
     trait :wcssl do
@@ -107,7 +107,64 @@ FactoryGirl.define do
                               validation_level: "Class 2 DoD",
                               summary:          "high validation and trust value",
                               abbr:             "Wildcard SSL"
-                            }}
+                            }.with_indifferent_access}
+
+      after(:create) do |certificate|
+        value  = 730
+        amount = 800
+        group_server = certificate.product_variant_groups.create(
+          title:                 'Server Licenses',
+          status:                'live',
+          description:           'Server Licenses',
+          text_only_description: 'Server Licenses',
+          display_order:          2,
+          serial:                 nil,
+          published_as:           'live',
+        )
+        (1..3).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_server.id,
+            title:                 "#{n} Year Additional Server License",
+            status:                "live",
+            description:           "#{n} year additional server license",
+            text_only_description: "#{n} year additional server license",
+            amount:                amount,
+            display_order:         n,
+            item_type:             'server_license',
+            value:                 value,
+            serial:                "sslcomwc256ssl#{n}yrsl",
+            published_as:          "live",
+          )
+          value  += 366
+          amount -= 50
+        end
+        value = 730
+        group_duration = certificate.product_variant_groups.create(
+          title:                 'Duration',
+          status:                'live',
+          description:           'Duration',
+          text_only_description: 'Duration',
+          display_order:          1,
+          serial:                 nil,
+          published_as:           'live',
+        )
+        (1..3).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_duration.id,
+            title:                    "#{n} Years",
+            status:                   "live",
+            description:              "#{n} years",
+            text_only_description:    "#{n} years",
+            amount:                   "#{value*10.7}",
+            display_order:            n,
+            item_type:                'duration',
+            value:                    value,
+            serial:                   "sslcomwc256ssl#{n}yr",
+            published_as:             "live",
+          )
+          value += 366
+        end
+      end
     end
   end
 end

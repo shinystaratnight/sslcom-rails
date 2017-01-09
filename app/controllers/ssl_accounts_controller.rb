@@ -1,7 +1,6 @@
 class SslAccountsController < ApplicationController
   before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
-  filter_access_to :edit_settings, :update_settings, :require=>:update
 
   # GET /ssl_account/
   def show
