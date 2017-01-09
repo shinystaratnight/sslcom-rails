@@ -5,7 +5,7 @@ jQuery(function($) {
     $('#ssl_account_ssl_slug').keyup(function(){
       var slug         = $(this).val().replace(/\#|\&|\+|\s/g, ''),
           render       = $('#slug_validator'),
-          validate_url = render.data('validate-slug') + '?ssl_slug=' + slug;
+          validate_url = render.data('validate-slug') + '?ssl_slug_name=' + slug;
       $.get(validate_url).always(function(data) {
         if (data.message){
           render.text('VALID: ' + slug).css('color','#6b9029')
