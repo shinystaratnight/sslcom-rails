@@ -22,7 +22,7 @@
       =will_paginate @users
     -unless current_user.is_system_admins?
       %tr
-        =link_to '+ Create User', new_managed_user_path(slug_params), class: 'button_blue button_index'
+        =link_to 'Invite User', new_managed_user_path(slug_params), class: 'button_blue button_index'
     %tr.heading_row
       %th
       %th.name(scope="col")Username
