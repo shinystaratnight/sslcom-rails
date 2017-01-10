@@ -287,8 +287,13 @@ class SslAccount < ActiveRecord::Base
 
   def self.ssl_slug_valid?(slug_str)
     !slug_str.blank? &&
+      !SslAccount.get_ssl_slugs.include?(slug_str.downcase) &&
       !blacklist_keyword?(slug_str.downcase) &&
       slug_str.strip.gsub(/([a-zA-Z]|_|-|\s|\d)/, '').length == 0
+  end
+
+  def self.get_ssl_slugs
+    SslAccount.pluck(:ssl_slug).compact.map(&:downcase)
   end
 
   def get_account_owner
