@@ -12,7 +12,7 @@
           =f.text_field :ssl_slug, maxlength: 20, size: 20, required: true
           =f.hidden_field :id, value: @ssl_account.id
         .clearfix.form_input
-          #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path}}
+          #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path(@ssl_slug)}}
       #button_container
         #next_submit=image_submit_tag 'bl_submit_button.gif', id: 'slug_submit'
 
@@ -21,10 +21,10 @@
   -content_for :title, title
   .reseller_registration_profile
     %h3=title
-    =form_for @ssl_account, url: update_company_name_ssl_account_path(ssl_slug: @ssl_slug) do |f|
+    =form_for @ssl_account, url: update_company_name_ssl_account_path(@ssl_slug) do |f|
       #stylized.default_form
         .clearfix.form_input
-          =f.label :company_name
+          =f.label :team_name
           =f.text_field :company_name, maxlength: 20, size: 20, required: true
           =f.hidden_field :id, value: @ssl_account.id
       #button_container

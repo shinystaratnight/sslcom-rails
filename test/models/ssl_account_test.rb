@@ -106,6 +106,10 @@ class SslAccountTest < Minitest::Spec
         refute SslAccount.ssl_slug_valid?(named_route)
       end
     end
+    it '#ssl_slug_valid? string not unique should NOT be valid' do
+      create(:ssl_account, ssl_slug: 'dupe')
+      refute SslAccount.ssl_slug_valid?('dupe')
+    end
   end
 
   describe 'helper methods' do
