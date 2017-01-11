@@ -7,6 +7,8 @@
   =error_messages_for :ssl_account
   =form_for @ssl_account, :url=>update_settings_ssl_account_path(ssl_slug: params[:ssl_slug]) do |f|
     #stylized.default_form
-      =render :partial => "settings_form", :locals => {:f=>f}
+      .subheading Team Name and URL
+      =render partial: '/users/ssl_slug_company', locals: {user: current_user}
+      =render partial: "settings_form", :locals => {:f=>f}
     #button_container
       #next_submit=image_submit_tag "bl_submit_button.gif"
