@@ -5,7 +5,7 @@
   .clearfix
     = form.label :old_password, "Old Password"
     = password_field_tag :old_password, nil, :size=>30
--if params[:invite]
+-unless params[:invite].blank?
   .clearfix
     = form.label :login, "Login"
     = form.text_field :login, value: ''
