@@ -10,3 +10,6 @@
           %li
             -path = switch_default_ssl_account_user_path(current_user.id, ssl_account_id: acct.id)
             =link_to acct.get_team_name[0..10], path
+          -if permitted_to? :create_team, current_user
+            %li
+              =link_to '+ Add Team', create_team_user_path(current_user)

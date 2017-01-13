@@ -1,12 +1,18 @@
--title = 'Teams'
+-title = "Teams (can own up to #{current_user.max_teams} teams)"
 -content_for :title, title
 #validations
   %table(cellspacing="0")
+    -if permitted_to? :create_team, current_user
+      %br
+      %tr
+        =link_to '+ Create Team', create_team_user_path(current_user), class: 'button_blue button_index'
     %caption
       =title
     %tr.heading_row
       %th.name(scope="col") Name
       %th(scope="col") Account #
+      %th(scope="col") Owner
+      %th(scope="col") Default
       %th(scope="col") Join Date
       %th(scope="col") Roles
       %th(scope="col") Details
@@ -15,6 +21,8 @@
       %tr
         %td=link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
         %td=t.acct_number
+        %td="&#10003;".html_safe if current_user.is_account_owner? t
+        %td="&#10003;".html_safe if current_user.is_main_account? t
         %td=t.created_at.strftime("%b %d, %Y")
         %td=current_user.role_symbols(t)
         %td

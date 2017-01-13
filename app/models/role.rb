@@ -22,4 +22,8 @@ class Role < ActiveRecord::Base
   def self.admin_role_ids
     Role.get_role_ids([SYS_ADMIN, SUPER_USER, ACCOUNT_ADMIN])
   end
+
+  def self.get_account_admin_id
+    Role.get_role_id(Role::ACCOUNT_ADMIN)
+  end
 end

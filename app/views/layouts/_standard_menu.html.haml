@@ -15,7 +15,7 @@
       =link_to "Orders", certificate_orders_path(slug_params)
     %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
       =link_to "Transactions", orders_path(slug_params)
-    -if current_user.get_all_approved_accounts.length > 1
+    -if current_user.get_all_approved_accounts.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
         =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
     -if current_user.is_admin? || current_user.is_account_admin?

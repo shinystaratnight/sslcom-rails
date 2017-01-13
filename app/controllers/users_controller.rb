@@ -15,7 +15,7 @@ class UsersController < ApplicationController
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
-    :approve_account_invite, attribute_check: true
+    :approve_account_invite, :create_team, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -282,6 +282,20 @@ class UsersController < ApplicationController
     @teams = current_user.get_all_approved_accounts
   end
 
+  def create_team
+    @user = User.find params[:id]
+    if @user && !@user.max_teams_reached? && params[:create] && params[:team_name]
+      ssl = create_custom_ssl_acct(@user, params)
+      if ssl.persisted?
+        flash[:notice] = "Team #{ssl.company_name} has been successfully created."
+        redirect_to teams_user_path
+      else
+        flash[:error] = 'Failed to create new team, please try again.'
+        redirect_to :back
+      end
+    end
+  end
+
   private
 
   def new_user
@@ -342,4 +356,12 @@ def update_user_status(params)
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
     target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_account_admin?
   end
+end
+
+def create_custom_ssl_acct(user, params)
+  slug_valid = params[:ssl_slug] && SslAccount.ssl_slug_valid?(params[:ssl_slug])
+  user.create_ssl_account(
+    [Role.get_account_admin_id],
+    {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
+  )
 end

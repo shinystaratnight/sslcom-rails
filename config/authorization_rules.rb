@@ -141,6 +141,9 @@ authorization do
     has_permission_on :ssl_accounts, :to => [:update_company_name] do
       if_attribute get_account_owner: is {user}
     end
+    has_permission_on :users, :to => :create_team do
+      if_attribute max_teams_reached?: is {false}
+    end
   end
 
   role :guest do

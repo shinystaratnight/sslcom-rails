@@ -5,8 +5,8 @@ FactoryGirl.define do
     sequence(:login)      {|n| "user_login#{n}"}
     sequence(:email)      {|n| "tester_#{n}@domain.com"}
     status                'enabled'
-    password              'testing'
-    password_confirmation 'testing'
+    password              'testingssl'
+    password_confirmation 'testingssl'
     active                true
 
     trait :sysadmin do
