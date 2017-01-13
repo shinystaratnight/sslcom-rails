@@ -68,7 +68,7 @@ class SslAccount < ActiveRecord::Base
   NUMBER_OF_TRIGGERS = 5
   TRIGGER_RANGE = -364..364
   @@reserved_routes ||= Rails.application.routes.named_routes.map{|r| r.to_s}
-
+  SHOW_TEAMS_THRESHOLD=0
   SETTINGS_SECTIONS.each do |item|
     validate "#{item}_recipients_format".to_sym,
       :unless=>"preferred_#{item}_recipients=='0'"

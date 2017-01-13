@@ -1,4 +1,4 @@
--show_teams = current_user.get_all_approved_accounts.length > 1
+-show_teams = current_user.get_all_approved_accounts.length > SslAccount::SHOW_TEAMS_THRESHOLD
 #header
   -unless is_new_order_page?
     .inner
