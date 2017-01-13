@@ -181,7 +181,7 @@ class UsersController < ApplicationController
     elsif edit_email
       render :action => :edit_email
     else
-      @chpwd = true
+      @chpwd = !(current_user.is_system_admins?)
       render :action => :edit_password
     end
   end

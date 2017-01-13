@@ -4,17 +4,26 @@
 -if @chpwd
   .clearfix
     = form.label :old_password, "Old Password"
-    = password_field_tag :old_password, nil, :size=>30
+    = password_field_tag :old_password, nil
 -unless params[:invite].blank?
   .clearfix
     = form.label :login, "Login"
     = form.text_field :login, value: ''
 .clearfix
-  = form.label :password, "#{(@chpwd) ? 'New p' : 'P'}assword<span class='label_desc'>min. size 4 chars</span>".html_safe
+  = form.label :password, "#{(@chpwd) ? 'New p' : 'P'}assword<span class='label_desc'>min. 8 chars</span>".html_safe
   = form.password_field :password
 .clearfix
   = form.label :password_confirmation, "#{(@chpwd) ? 'New p' : 'P'}assword again<span class='label_desc'>type the password again</span>".html_safe
   = form.password_field :password_confirmation
+%dl
+  %dt
+    #{(@chpwd) ? 'New p' : 'P'}assword requires:
+  %ul
+    %li a minimum of 8 characters and
+    %li a minimum of 1 lower case letter [a-z] and
+    %li a minimum of 1 upper case letter [A-Z] and
+    %li a minimum of 1 numeric character [0-9] and
+    %li a minimum of 1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
 -#
 -#  #or(style='width:100%;')
 -#    Or

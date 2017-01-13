@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
-      message: "must be at least 8 characters and include a lowercase, uppercase, and special character such as [!@#$%^&*]."}
+      message: "must be at least 8 characters and include a lowercase, uppercase, and special character such as ~`!@#$%^&*()-_+={}[]|\;:\"<>,./?."}
   accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|
@@ -31,6 +31,12 @@ class User < ActiveRecord::Base
     c.validate_email_field = false
     c.session_ids = [nil, :shadow]
     c.crypto_provider = Authlogic::CryptoProviders::Sha512
+    c.validates_length_of_password_field_options =
+      {:on => :update, :minimum => 8,
+      :if => '(has_no_credentials? && !admin_update) || changing_password'}
+    c.validates_length_of_password_confirmation_field_options =
+      {:on => :update, :minimum => 8,
+      :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
 
   before_create {|u|
