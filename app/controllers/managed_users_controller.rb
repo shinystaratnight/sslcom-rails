@@ -7,7 +7,7 @@ class ManagedUsersController < ApplicationController
   end
 
   def create
-    ssl_account = current_user.ssl_account
+    ssl_account = SslAccount.find params[:user][:ssl_account_id]
     if current_user.user_exists_for_account?(params[:user][:email])
       @user=User.new
       flash[:error] = "User #{params[:user][:email]} already exists for this account!"
@@ -33,7 +33,7 @@ class ManagedUsersController < ApplicationController
           @user.invite_new_user(new_params.merge(deliver_invite: true))
         end
 
-        flash[:notice] = "An invitation email has been sent to #{@user.email}."
+        flash[:notice] = "An invitation email has been sent to #{@user.email} for team #{ssl_account.get_team_name}."
         redirect_to users_path(ssl_slug: @ssl_slug)
       else
         render :new

@@ -44,7 +44,7 @@ class User < ActiveRecord::Base
 
   before_create do |u|
     u.status='enabled'
-    u.max_teams = OWNED_MAX_TEAMS
+    u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
   end
 
   default_scope        {where{status << ['disabled']}.order("created_at desc")}
@@ -80,7 +80,7 @@ class User < ActiveRecord::Base
 
   def total_teams_owned(user_id=nil)
     user = user_id ? User.find(user_id) : self
-    user.assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq
+    user.assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
   end
 
   def max_teams_reached?(user_id=nil)
@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
-      user.create_ssl_account([Role.find_by(name: Role::ACCOUNT_ADMIN).id])
+      user.create_ssl_account([Role.get_account_admin_id])
       user
     end
   end

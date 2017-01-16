@@ -1,20 +1,26 @@
--if @user.new_record?
+- system_admin = current_user.is_system_admins?
+- if @user.new_record?
   .clearfix.form_input
     = form.label :email, "Email<span class='label_desc'>receives activation</span>".html_safe
     = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required: true
 .clearfix.form_input
-  - if current_user.is_system_admins?
+  - if system_admin || current_user.is_account_admin?
     - if @user_accounts_roles 
       .hidden{data: {accounts_roles: @user_accounts_roles.to_json}, id: 'user_account_roles'}
     - user_ssl_account = @user.ssl_accounts.first
-    = form.label :ssl_account_id, "Ssl Account #".html_safe
-    = form.select :ssl_account_id,
-      options_from_collection_for_select(@user.ssl_accounts, :id, :acct_number, user_ssl_account), {},
-      data: {user_id: @user.try(:id)}
+    - ssl_label = system_admin ? 'Ssl Account #' : 'Team'
+    = form.label :ssl_account_id, ssl_label
+    - if system_admin
+      = form.select :ssl_account_id,
+        options_from_collection_for_select(@user.ssl_accounts, :id, :acct_number, user_ssl_account), {},
+        data: {user_id: @user.try(:id)}
+    - else
+      = form.select :ssl_account_id,
+        options_from_collection_for_select(current_user.total_teams_owned, :id, :get_team_name, current_user.default_ssl_account)
   - else
     = form.hidden_field :ssl_account_id, value: current_user.ssl_account.try(:id)
 .clearfix.form_input
-  - role_ids = current_user.is_system_admins? ? @user.roles_for_account(user_ssl_account) : @role_ids
+  - role_ids = system_admin ? @user.roles_for_account(user_ssl_account) : @role_ids
   = form.label :role_id, "Roles<span class='label_desc'>set permissions</span>".html_safe
   = form.select :role_ids,
       options_from_collection_for_select(User.roles_list_for_user(current_user), :id, :name, (role_ids || [Role.get_role_id(Role::SSL_USER)])),
