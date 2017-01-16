@@ -3,7 +3,7 @@
   .settings_block.clearfix
     .destination_block
       %label
-        Team url -
+        Team url:
         -if ssl.ssl_slug
           #{ssl.ssl_slug}
         -else
@@ -12,7 +12,7 @@
   .settings_block.clearfix
     .destination_block
       %label
-        Team name -
+        Team name:
         -if permitted_to? :update_company_name, user.ssl_account
           -path_name = ssl.company_name ? ssl.company_name : 'ADD TEAM NAME'
           #{link_to path_name, edit_ssl_account_path(id: ssl.id, update_company_name: true, ssl_slug: @ssl_slug)}

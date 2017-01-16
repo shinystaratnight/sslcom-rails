@@ -64,8 +64,8 @@ class Order < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = unscoped.joins{discounts.outer}.joins{billing_profile_unscoped.outer}.joins{billable(SslAccount)}.
-        joins{billable(SslAccount).users_unscoped}
+    result = unscoped.joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
+        joins{billable(SslAccount).unscoped_users.outer}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?
       result = result.where{
@@ -88,8 +88,8 @@ class Order < ActiveRecord::Base
         (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
             (notes =~ "%#{term}%")) | # searching notes twice is a hack, nil did not work
         (billable(SslAccount).acct_number=~ "%#{term}%") |
-        (billable(SslAccount).users_unscoped.login=~ "%#{term}%") |
-        (billable(SslAccount).users_unscoped.email=~ "%#{term}%")}
+        (billable(SslAccount).unscoped_users.login=~ "%#{term}%") |
+        (billable(SslAccount).unscoped_users.email=~ "%#{term}%")}
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
