@@ -57,6 +57,9 @@ authorization do
       if_attribute get_account_owner: is {user}
     end
     has_permission_on :funded_accounts, :to => [:create]
+    has_permission_on :users, :to => :set_default_team do
+      if_attribute ssl_account: is_in {user.total_teams_owned}
+    end
   end
 
   role :ssl_user do

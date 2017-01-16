@@ -276,6 +276,7 @@ SslCom::Application.routes.draw do
       get :decline_account_invite
       get :teams
       match :create_team, via: [:get, :post]
+      put :set_default_team
     end
   end
 

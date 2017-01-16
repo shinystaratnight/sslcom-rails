@@ -15,7 +15,8 @@ class UsersController < ApplicationController
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
-    :approve_account_invite, :create_team, attribute_check: true
+    :approve_account_invite, :create_team, :set_default_team,
+    attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -294,6 +295,19 @@ class UsersController < ApplicationController
         redirect_to :back
       end
     end
+  end
+
+  def set_default_team
+    @user = User.find params[:id]
+    if @user && params[:ssl_account_id]
+      ssl = SslAccount.find(params[:ssl_account_id])
+      if ssl && @user.set_default_team(ssl)
+        flash[:notice] = "Team #{ssl.company_name} has been set to default."
+      else
+        flash[:error] = "Something went wrong, please try again."
+      end
+    end
+    redirect_to teams_user_path
   end
 
   private

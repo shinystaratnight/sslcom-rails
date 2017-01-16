@@ -20,6 +20,8 @@ class UserTest < Minitest::Spec
     it { assert_respond_to @user, :email }
     it { assert_respond_to @user, :active }
     it { assert_respond_to @user, :default_ssl_account }
+    it { assert_respond_to @user, :main_ssl_account }
+    it { assert_respond_to @user, :max_teams }
 
     it '#first_name returns a string' do
       assert_match 'first name', @user.first_name
@@ -32,6 +34,9 @@ class UserTest < Minitest::Spec
     end
     it '#email returns a string' do
       assert_includes @user.email, '@domain.com'
+    end
+    it '#max_teams_reached returns an integer' do
+      assert_equal 5, @user.max_teams
     end
   end
 
@@ -435,6 +440,61 @@ class UserTest < Minitest::Spec
         refute_nil ssl.approval_token
         refute_nil ssl.token_expires
         refute     ssl.approved
+      end
+    end
+
+    describe 'team helpers' do
+      it '#max_teams_reached? should return correct boolean' do
+        user_2_teams = create(:user, :account_admin, max_teams: 2)
+        assert_equal 2, user_2_teams.max_teams
+        assert_equal 1, SslAccount.count
+        assert_equal 1, user_2_teams.ssl_accounts.count
+        assert_equal 1, user_2_teams.assignments.count
+        refute user_2_teams.max_teams_reached?
+
+        # User owns a second ssl account/team, max has been reached
+        user_2_teams.create_ssl_account([Role.get_account_admin_id])
+
+        assert_equal 2, SslAccount.count
+        assert_equal 2, user_2_teams.ssl_accounts.count
+        assert_equal 2, user_2_teams.assignments.count
+        assert user_2_teams.max_teams_reached?
+      end
+      it '#total_teams_owned should return owned ssl accounts/teams' do
+        user_2_teams = create(:user, :account_admin)
+        assert_equal 1, SslAccount.count
+        assert_equal 1, user_2_teams.ssl_accounts.count
+        assert_equal 1, user_2_teams.assignments.count
+        assert_equal 1, user_2_teams.total_teams_owned.count
+
+        # User owns a second ssl account/team
+        user_2_teams.create_ssl_account([Role.get_account_admin_id])
+
+        assert_equal 2, SslAccount.count
+        assert_equal 2, user_2_teams.ssl_accounts.count
+        assert_equal 2, user_2_teams.assignments.count
+        assert_equal 2, user_2_teams.total_teams_owned.count
+      end
+      it '#set_default_team should update user' do
+        user      = create(:user, :account_admin)
+        ssl_own   = user.ssl_accounts.first
+        ssl_other = create(:ssl_account)
+
+        assert_nil user.main_ssl_account
+        user.set_default_team(ssl_own)
+        assert_equal ssl_own.id, user.main_ssl_account
+      end
+      it '#set_default_team should ignore if user does not own team' do
+        user      = create(:user, :account_admin)
+        ssl_own   = user.ssl_accounts.first
+        ssl_other = create(:ssl_account)
+        assert_nil user.main_ssl_account
+
+        user.set_default_team(ssl_own)
+        assert_equal ssl_own.id, user.main_ssl_account
+
+        user.set_default_team(ssl_other) # user does not own ssl_other
+        assert_equal ssl_own.id, user.main_ssl_account        
       end
     end
   end

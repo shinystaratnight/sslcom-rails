@@ -18,11 +18,15 @@
       %th(scope="col") Details
       %th(scope="col") Action
     -@teams.each do |t|
+      -account_owner = current_user.is_account_owner? t
+      -main_account  = current_user.is_main_account? t
+      -if permitted_to? :set_default_team, current_user
+        -set_default_team = link_to 'set default', set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
       %tr
         %td=link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
         %td=t.acct_number
-        %td="&#10003;".html_safe if current_user.is_account_owner? t
-        %td="&#10003;".html_safe if current_user.is_main_account? t
+        %td="&#10003;".html_safe if account_owner
+        %td= main_account ? "&#10003;".html_safe : (account_owner && set_default_team ? set_default_team : nil)
         %td=t.created_at.strftime("%b %d, %Y")
         %td=current_user.role_symbols(t)
         %td
