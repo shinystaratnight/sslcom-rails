@@ -93,6 +93,8 @@
                             %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
                           - if permitted_to? :update_roles, :managed_users
                             %li=link_to 'change roles', edit_managed_user_path(u, slug_params)
+                          - if permitted_to? :set_default_team_max, :users
+                            %li=link_to "change team max (current #{u.max_teams})", edit_user_path(u, update_own_team_limit: true)
                           - if permitted_to? :remove_from_account, :managed_users
                             - if current_user.is_system_admins?
                               - u.ssl_accounts.each do |ssl|

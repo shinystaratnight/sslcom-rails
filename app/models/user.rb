@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
   attr_accessor :changing_password, :admin_update, :role_ids
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
-    :default_ssl_account, :ssl_account_id, :role_ids, :main_ssl_account
+    :default_ssl_account, :ssl_account_id, :role_ids, :main_ssl_account, :max_teams
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),

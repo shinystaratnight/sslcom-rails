@@ -102,6 +102,7 @@ class UsersController < ApplicationController
   end
 
   def edit
+    @user = User.find(params[:id]) if params[:update_own_team_limit]
   end
 
   def login_as
@@ -308,6 +309,16 @@ class UsersController < ApplicationController
       end
     end
     redirect_to teams_user_path
+  end
+
+  def set_default_team_max
+    @user = User.find params[:id]
+    max   = params[:user][:max_teams]
+    if @user && max
+      @user.update(max_teams: max)
+      flash[:notice] = "User #{@user.login} team limit has been successfully updated to #{max}."
+    end
+    redirect_to users_path
   end
 
   private

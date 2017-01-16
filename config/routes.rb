@@ -261,22 +261,23 @@ SslCom::Application.routes.draw do
     end
 
     member do
-      get :edit_password
-      get :edit_email
-      get :login_as
+      get   :edit_password
+      get   :edit_email
+      get   :login_as
       match :admin_update, via: [:put, :patch]
-      get :admin_show
-      get :dup_info
-      post :consolidate
-      get :adjust_funds
-      get :change_login
-      get :switch_default_ssl_account
-      get :approve_account_invite
-      get :resend_account_invite
-      get :decline_account_invite
-      get :teams
+      get   :admin_show
+      get   :dup_info
+      post  :consolidate
+      get   :adjust_funds
+      get   :change_login
+      get   :switch_default_ssl_account
+      get   :approve_account_invite
+      get   :resend_account_invite
+      get   :decline_account_invite
+      get   :teams
       match :create_team, via: [:get, :post]
-      put :set_default_team
+      put   :set_default_team
+      match :set_default_team_max, via: [:put, :patch]
     end
   end
 

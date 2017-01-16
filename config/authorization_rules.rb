@@ -174,7 +174,8 @@ privileges do
   privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
     :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, 
     :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite, 
-    :enable_disable, :edit, :update_ssl_slug, :update_company_name, :edit_settings, :update_settings]
+    :enable_disable, :edit, :update_ssl_slug, :update_company_name, :edit_settings, :update_settings,
+    :set_default_team_max]
   privilege :manage, :includes => [:create, :read, :update, :delete, :refund, :change_state]
   privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
   privilege :create, :includes => :new
