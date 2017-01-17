@@ -1,13 +1,19 @@
--title = "Teams (can own up to #{current_user.max_teams} teams)"
+-title = "Teams (max limit of #{current_user.max_teams} can be owned)"
+-will_paginate @teams
 -content_for :title, title
 #validations
   %table(cellspacing="0")
+    -if will_paginate @teams
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @teams
+    %caption
+      =title
+      =will_paginate @teams
     -if permitted_to? :create_team, current_user
       %br
       %tr
         =link_to '+ Create Team', create_team_user_path(current_user), class: 'button_blue button_index'
-    %caption
-      =title
     %tr.heading_row
       %th.name(scope="col") Name
       %th(scope="col") Account #
@@ -25,7 +31,7 @@
       %tr
         %td=link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
         %td=t.acct_number
-        %td="&#10003;".html_safe if account_owner
+        %td=current_user.is_system_admins? ? (link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)) : ("&#10003;".html_safe if account_owner)
         %td= main_account ? "&#10003;".html_safe : (account_owner && set_default_team ? set_default_team : nil)
         %td=t.created_at.strftime("%b %d, %Y")
         %td=current_user.role_symbols(t)

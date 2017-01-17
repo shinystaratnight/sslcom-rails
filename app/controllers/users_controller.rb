@@ -281,7 +281,8 @@ class UsersController < ApplicationController
   end
 
   def teams
-    @teams = current_user.get_all_approved_accounts
+    p = {page: params[:page]}
+    @teams = current_user.get_all_approved_accounts.paginate(p)
   end
 
   def create_team

@@ -16,6 +16,10 @@ class User < ActiveRecord::Base
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
+  has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},
+            dependent: :destroy, class_name: "SslAccountUser"
+  has_many  :approved_ssl_accounts,
+            foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   
@@ -590,7 +594,9 @@ class User < ActiveRecord::Base
   end
 
   def get_all_approved_accounts
-    SslAccountUser.where(user_id: id, approved: true, user_enabled: true).map(&:ssl_account)
+    self.is_system_admins? ?
+        SslAccount :
+        self.approved_ssl_accounts
   end
 
   def user_approved_invite?(params)
