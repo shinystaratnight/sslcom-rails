@@ -12,7 +12,7 @@ describe 'new user' do
     login_as(@current_admin, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @new_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email
@@ -107,13 +107,13 @@ describe 'existing user' do
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
-      user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
+      user: {login: 'existing_user', password: 'Testing_ssl+1', password_confirmation: 'Testing_ssl+1'}
     )
 
     login_as(@current_admin, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email in case of delay

@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
-      message: "must be at least 8 characters and include a lowercase, uppercase, and special character such as ~`!@#$%^&*()-_+={}[]|\;:\"<>,./?."}
+      message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."}
   accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|

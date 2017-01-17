@@ -12,7 +12,7 @@ describe 'remove user from account' do
     @existing_user.set_roles_for_account(@invited_ssl_acct, @ssl_user_role)
     @existing_user.send(:approve_account, ssl_account_id: @invited_ssl_acct.id)
     @existing_user.activate!(
-      user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
+      user: {login: 'existing_user', password: 'Testing_ssl+1', password_confirmation: 'Testing_ssl+1'}
     )
   end
   

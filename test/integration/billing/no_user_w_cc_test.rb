@@ -113,7 +113,7 @@ describe 'Anonymous user' do
 
   it 'creates correct user record' do
     user = User.first
-    assert_equal 2, user.login_count
+    assert_equal 1, user.login_count
     assert_equal 1, user.get_all_approved_accounts.count
     assert_equal 1, user.assignments.count
     assert_equal 1, user.ssl_account_users.count
