@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161205210348) do
+ActiveRecord::Schema.define(version: 20170109193640) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1118,8 +1118,11 @@ ActiveRecord::Schema.define(version: 20161205210348) do
     t.datetime "updated_at"
     t.boolean  "is_auth_token"
     t.integer  "default_ssl_account", limit: 4
+    t.integer  "max_teams",           limit: 4
+    t.integer  "main_ssl_account",    limit: 4
   end
 
+  add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", using: :btree
   add_index "users", ["login"], name: "index_users_on_login", using: :btree
   add_index "users", ["perishable_token"], name: "index_users_on_perishable_token", using: :btree
