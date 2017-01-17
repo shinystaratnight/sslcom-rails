@@ -1,5 +1,5 @@
 -if params[:update_own_team_limit] && permitted_to?(:set_default_team_max, :users)
-  -title = 'Update Team Maximum Limit'
+  -title = "Update Team Maximum Limit for User #{@user.login}"
   -content_for :title, title
   .reseller_registration_profile
     %h3=title
