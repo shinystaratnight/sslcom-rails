@@ -69,11 +69,11 @@ class OrdersController < ApplicationController
       certificates_from_cookie
     end
     if current_user
-      if current_user.ssl_account.funded_account.cents > 0
-        redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-          allocate_funds_for_order_path(id: :order)) and return
-      elsif @certificate_orders && is_order_free?
+      if @certificate_orders && is_order_free?
         create_multi_free_ssl
+      elsif current_user.ssl_account.funded_account.cents > 0
+        redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
+                        allocate_funds_for_order_path(id: :order)) and return
       end
     end
   end
