@@ -5,7 +5,7 @@ class UserTest < Minitest::Spec
   before do
     create_reminder_triggers
     create_roles
-    @account_admin_role = Role.get_role_id(Role::ACCOUNT_ADMIN)
+    @account_admin_role = Role.get_role_id(Role::OWNER)
     @vetter_role        = Role.get_role_id(Role::VETTER)
     @reseller_role      = Role.get_role_id(Role::RESELLER)
     @ssl_user_role      = Role.get_role_id(Role::SSL_USER)
@@ -188,7 +188,7 @@ class UserTest < Minitest::Spec
     end
 
     it '#get_roles_by_name should return all assignments' do
-      assert_equal 1, @account_admin.get_roles_by_name(Role::ACCOUNT_ADMIN).count
+      assert_equal 1, @account_admin.get_roles_by_name(Role::OWNER).count
       assert_equal 0, @account_admin.get_roles_by_name(Role::VETTER).count
     end
     
@@ -196,7 +196,7 @@ class UserTest < Minitest::Spec
       assert_equal 1, @account_admin.roles.count
       assert_equal @account_admin_role, @account_admin.roles.first.id
 
-      @account_admin.update_account_role(@default_ssl, Role::ACCOUNT_ADMIN, Role::VETTER)
+      @account_admin.update_account_role(@default_ssl, Role::OWNER, Role::VETTER)
 
       assert_equal 1, @account_admin.roles.count
       assert_equal @vetter_role, @account_admin.roles.first.id
@@ -398,7 +398,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, new_user.ssl_accounts.count
         assert_equal 1, new_user.roles.count
         assert_equal 1, new_user.get_all_approved_accounts.count
-        assert_equal [Role.get_role_id(Role::ACCOUNT_ADMIN)], new_user.roles.ids
+        assert_equal [Role.get_role_id(Role::OWNER)], new_user.roles.ids
         refute_nil   new_user.default_ssl_account
         
         # account is approved, no invitation token
@@ -423,7 +423,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, existing_user.ssl_accounts.count
         assert_equal 1, existing_user.roles.count
         assert_equal 1, existing_user.get_all_approved_accounts.count
-        assert_equal [Role.get_role_id(Role::ACCOUNT_ADMIN)], existing_user.roles.ids
+        assert_equal [Role.get_role_id(Role::OWNER)], existing_user.roles.ids
 
         existing_user.ssl_accounts << invite_user.ssl_account
         existing_user.set_roles_for_account(invite_user.ssl_account, [@ssl_user_role])
@@ -435,7 +435,7 @@ class UserTest < Minitest::Spec
         # existing user now has two accounts and added role 'ssl_user' for invited account
         assert_equal 2, existing_user.ssl_accounts.count
         assert_equal 2, existing_user.roles.count
-        assert_equal Role.get_role_ids([Role::ACCOUNT_ADMIN, Role::SSL_USER]).sort, existing_user.roles.ids.sort
+        assert_equal Role.get_role_ids([Role::OWNER, Role::SSL_USER]).sort, existing_user.roles.ids.sort
         # account NOT approved, approval token generated for invited account
         refute_nil ssl.approval_token
         refute_nil ssl.token_expires

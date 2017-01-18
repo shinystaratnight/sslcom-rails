@@ -337,7 +337,7 @@ class User < ActiveRecord::Base
     end
     if new_role_ids.present?
       if signup
-        acct_admin_role = Role.get_role_id(Role::ACCOUNT_ADMIN)
+        acct_admin_role = Role.get_owner_id
         new_role_ids    << acct_admin_role unless new_role_ids.include? acct_admin_role
       end
       current_account  = SslAccount.find cur_account_id
@@ -412,11 +412,11 @@ class User < ActiveRecord::Base
   end
 
   def is_account_admin?
-    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
+    role_symbols.include? Role::OWNER.to_sym
   end
 
   def is_standard?
-    role_symbols & [Role::ACCOUNT_ADMIN.to_sym, Role::SSL_USER.to_sym]
+    role_symbols & [Role::OWNER.to_sym, Role::SSL_USER.to_sym]
   end
 
   def is_ssl_user?
@@ -506,7 +506,7 @@ class User < ActiveRecord::Base
         if r.ssl_account_id.nil?
           r.delete
         else
-          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::ACCOUNT_ADMIN)
+          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
         end
       end
     end
@@ -631,7 +631,7 @@ class User < ActiveRecord::Base
 
   def set_status_for_account(status_type, target_ssl=nil)
     ssl          = target_ssl.nil? ? ssl_account : target_ssl
-    acc_admin_id = Role.get_role_id(Role::ACCOUNT_ADMIN)
+    acc_admin_id = Role.get_owner_id
     params       = {user_enabled: (status_type == :enabled)}
 
     target_ssl = if roles_for_account(ssl).include?(acc_admin_id)

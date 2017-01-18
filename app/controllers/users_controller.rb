@@ -62,7 +62,7 @@ class UsersController < ApplicationController
       end
       @user.set_roles_for_account(
         @user.ssl_account,
-        [Role.find_by_name((reseller ? Role::RESELLER : Role::ACCOUNT_ADMIN)).id]
+        [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
       )
       @user.deliver_activation_instructions!
       notice = "Your account has been created. Please check your
@@ -93,7 +93,7 @@ class UsersController < ApplicationController
       current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
       current_user.roles.delete Role.find_by_name(Role::RESELLER)
     end
-    current_user.roles << Role.find_by_name(Role::ACCOUNT_ADMIN) unless current_user.role_symbols.include?(Role::ACCOUNT_ADMIN.to_sym)
+    current_user.roles << Role.find_by_name(Role::OWNER) unless current_user.role_symbols.include?(Role::OWNER.to_sym)
     flash[:notice] = "reseller signup has been canceled"
     @user = current_user #for rable object reference
   end
