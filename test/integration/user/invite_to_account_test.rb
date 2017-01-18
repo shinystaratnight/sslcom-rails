@@ -1,6 +1,6 @@
 require 'test_helper'
 # 
-# account_admin invites (new to SSL.com) user to their ssl account
+# owner invites (new to SSL.com) user to their ssl account
 # 
 describe 'new user' do
   before do
@@ -27,7 +27,7 @@ describe 'new user' do
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, @new_user.perishable_token
   end
-  it 'users index: account_admin view' do
+  it 'users index: owner view' do
     assert_match users_path, current_path
     page.must_have_content('Username')
     page.must_have_content(@new_user_email)
@@ -54,7 +54,7 @@ describe 'new user' do
 
     # Invited user row
     page.must_have_content(@new_user_email)
-    page.must_have_content('ssl_user/account_admin')
+    page.must_have_content('ssl_user/owner')
     # expand row
     first('td', text: @new_user_email).click
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
@@ -92,7 +92,7 @@ describe 'new user' do
   end
 end
 # 
-# account_admin invites existing SSL.com user to their ssl account
+# owner invites existing SSL.com user to their ssl account
 # 
 describe 'existing user' do
   before do
@@ -128,7 +128,7 @@ describe 'existing user' do
     assert_match    @current_admin.email, email_from(:first)
     assert_includes email_body(:first), approval_token
   end
-  it 'account_admin user receives invite_to_account_notify_admin email' do
+  it 'owner user receives invite_to_account_notify_admin email' do
     message = "You have added a new user #{@existing_user.email} to your SSL.com account."
     assert_equal    2, email_total_deliveries
     assert_match    'You have invited a user to your SSL.com account', email_subject
@@ -136,7 +136,7 @@ describe 'existing user' do
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, message
   end
-  it 'users index: account_admin view' do
+  it 'users index: owner view' do
     assert_match users_path, current_path
     page.must_have_content('Username')
     page.must_have_content('existing_user')
@@ -164,7 +164,7 @@ describe 'existing user' do
     # Invited user row
     page.must_have_content('existing_user')
     page.must_have_content(@existing_user_email)
-    page.must_have_content('ssl_user/account_admin')
+    page.must_have_content('ssl_user/owner')
     #expand row
     find('td', text: @existing_user_email).click
 
