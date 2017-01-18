@@ -83,7 +83,7 @@ class User < ActiveRecord::Base
   end
 
   def self.total_teams_owned(user_id)
-    User.find(user_id).assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+    User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def total_teams_owned(user_id=nil)
