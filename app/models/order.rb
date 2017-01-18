@@ -64,7 +64,7 @@ class Order < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = unscoped.joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
+    result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
         joins{billable(SslAccount).unscoped_users.outer}
     result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
     unless term.blank?

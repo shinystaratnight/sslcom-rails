@@ -210,13 +210,13 @@ class OrdersController < ApplicationController
     p = {:page => params[:page]}
     unpaginated =
       if @search = params[:search]
-        if current_user.is_admin?
+        if current_user.is_system_admins?
           (@ssl_account.try(:orders) || Order).unscoped.search(params[:search])
         else
-          current_user.ssl_account.orders.unscoped.not_new.search(params[:search])
+          current_user.ssl_account.orders.not_new.search(params[:search])
         end
       else
-        if current_user.is_admin?
+        if current_user.is_system_admins?
           (@ssl_account.try(:orders) || Order).not_test
         else
           current_user.ssl_account.orders.not_test
