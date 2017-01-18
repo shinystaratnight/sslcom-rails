@@ -7,7 +7,7 @@ describe 'Valid user' do
   before do
     initialize_roles
     create(:certificate, :basicssl)
-    @logged_in_user     = create(:user, :account_admin)
+    @logged_in_user     = create(:user, :owner)
     @logged_in_ssl_acct = @logged_in_user.ssl_account
     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
     @billing_profile    = @logged_in_ssl_acct.billing_profiles.first

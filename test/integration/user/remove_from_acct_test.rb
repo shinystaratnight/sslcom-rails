@@ -3,10 +3,10 @@ require 'test_helper'
 describe 'remove user from account' do
   before do
     initialize_roles
-    @current_admin       = create(:user, :account_admin)
+    @current_admin       = create(:user, :owner)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_email = 'exist_user@domain.com'
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
     @existing_ssl_acct   = @existing_user.ssl_account
     @existing_user.ssl_accounts << @invited_ssl_acct
     @existing_user.set_roles_for_account(@invited_ssl_acct, @ssl_user_role)

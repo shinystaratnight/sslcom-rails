@@ -6,8 +6,8 @@ describe 'Decline ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :account_admin)
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @current_admin       = create(:user, :owner)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     

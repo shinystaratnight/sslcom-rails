@@ -3,8 +3,8 @@ require 'test_helper'
 describe 'Disable user' do
   before do
     initialize_roles
-    @account_admin     = create(:user, :account_admin)
-    @account_admin_2   = create(:user, :account_admin)
+    @account_admin     = create(:user, :owner)
+    @account_admin_2   = create(:user, :owner)
     @account_admin_ssl = @account_admin.ssl_account
     @sysadmin          = create(:user, :sysadmin)
     (1..4).to_a.each {|n| create_and_approve_user(@account_admin_ssl, "ssl_user_#{n}")}

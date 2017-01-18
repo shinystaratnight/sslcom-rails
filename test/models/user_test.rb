@@ -52,7 +52,7 @@ class UserTest < Minitest::Spec
       refute build(:user, email: 'dupe@domain.com').valid?
     end
     it 'should have default_ssl_account if assigned role' do
-      user = create(:user, :account_admin)
+      user = create(:user, :owner)
       refute_nil user.default_ssl_account
     end
   end
@@ -65,7 +65,7 @@ class UserTest < Minitest::Spec
       assert create(:user, :super_user).is_super_user?
     end
     it 'should be able to set role account_admin' do
-      assert create(:user, :account_admin).is_account_admin?
+      assert create(:user, :owner).is_account_admin?
     end
     it 'should be able to set role ssl_user' do
       assert create(:user, :ssl_user).is_ssl_user?
@@ -80,7 +80,7 @@ class UserTest < Minitest::Spec
 
   describe 'account helper methods' do
     before(:all) do
-      @account_admin = create(:user, :account_admin)
+      @account_admin = create(:user, :owner)
       @default_ssl   = @account_admin.ssl_account
     end
     
@@ -147,7 +147,7 @@ class UserTest < Minitest::Spec
 
   describe 'role helper methods' do
     before(:all) { 
-      @account_admin = create(:user, :account_admin)
+      @account_admin = create(:user, :owner)
       @default_ssl   = @account_admin.ssl_account 
     }
 
@@ -160,7 +160,7 @@ class UserTest < Minitest::Spec
     end
     
     it '#set_roles_for_account should ignore unassociated ssl_account' do
-      other_ssl_account = create(:user, :account_admin).ssl_account
+      other_ssl_account = create(:user, :owner).ssl_account
       prev_roles        = @account_admin.roles.count
       @account_admin.set_roles_for_account(other_ssl_account, [@account_admin_role])
       
@@ -182,7 +182,7 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_for_account should ignore unassociated ssl_account' do
-      other_ssl_account = create(:user, :account_admin).ssl_account
+      other_ssl_account = create(:user, :owner).ssl_account
       
       assert_equal [], @account_admin.roles_for_account(other_ssl_account)
     end
@@ -292,9 +292,9 @@ class UserTest < Minitest::Spec
 
   describe 'approval token helpers' do
     before(:all) { 
-      @account_admin  = create(:user, :account_admin)
+      @account_admin  = create(:user, :owner)
       @default_ssl    = @account_admin.ssl_account
-      @user_w_token   = create(:user, :account_admin)
+      @user_w_token   = create(:user, :owner)
       @ssl_prms_token = { ssl_account_id: @user_w_token.ssl_account.id, skip_match: true}
       @user_w_token.set_approval_token(ssl_account_id: @user_w_token.ssl_account.id)
     }
@@ -384,7 +384,7 @@ class UserTest < Minitest::Spec
   describe 'user invite helpers' do
     describe '#invite_new_user' do
       it 'should create new user and ssl_account (pre-approved)' do
-        invite_user  = create(:user, :account_admin)
+        invite_user  = create(:user, :owner)
         new_user = invite_user.invite_new_user(
           user:      {email: 'new_user@domain.com'},
           root_url:  'root_url',
@@ -410,8 +410,8 @@ class UserTest < Minitest::Spec
 
     describe '#invite_existing_user' do
       it 'should NOT create user or ssl_account, should generate invite token' do
-        invite_user   = create(:user, :account_admin)
-        existing_user = create(:user, :account_admin, email: 'existing_user@domain.com')
+        invite_user   = create(:user, :owner)
+        existing_user = create(:user, :owner, email: 'existing_user@domain.com')
         params        = {
           user:           {email: existing_user.email},
           ssl_account_id: invite_user.ssl_account.id,
@@ -445,7 +445,7 @@ class UserTest < Minitest::Spec
 
     describe 'team helpers' do
       it '#max_teams_reached? should return correct boolean' do
-        user_2_teams = create(:user, :account_admin, max_teams: 2)
+        user_2_teams = create(:user, :owner, max_teams: 2)
         assert_equal 2, user_2_teams.max_teams
         assert_equal 1, SslAccount.count
         assert_equal 1, user_2_teams.ssl_accounts.count
@@ -461,7 +461,7 @@ class UserTest < Minitest::Spec
         assert user_2_teams.max_teams_reached?
       end
       it '#total_teams_owned should return owned ssl accounts/teams' do
-        user_2_teams = create(:user, :account_admin)
+        user_2_teams = create(:user, :owner)
         assert_equal 1, SslAccount.count
         assert_equal 1, user_2_teams.ssl_accounts.count
         assert_equal 1, user_2_teams.assignments.count
@@ -476,7 +476,7 @@ class UserTest < Minitest::Spec
         assert_equal 2, user_2_teams.total_teams_owned.count
       end
       it '#set_default_team should update user' do
-        user      = create(:user, :account_admin)
+        user      = create(:user, :owner)
         ssl_own   = user.ssl_accounts.first
         ssl_other = create(:ssl_account)
 
@@ -485,7 +485,7 @@ class UserTest < Minitest::Spec
         assert_equal ssl_own.id, user.main_ssl_account
       end
       it '#set_default_team should ignore if user does not own team' do
-        user      = create(:user, :account_admin)
+        user      = create(:user, :owner)
         ssl_own   = user.ssl_accounts.first
         ssl_other = create(:ssl_account)
         assert_nil user.main_ssl_account
