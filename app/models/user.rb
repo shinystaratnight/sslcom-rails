@@ -79,12 +79,12 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    assignments.where{role_id = Role.get_account_admin_id}.first.try :ssl_account
+    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
 
   def total_teams_owned(user_id=nil)
     user = user_id ? User.find(user_id) : self
-    user.assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+    user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def max_teams_reached?(user_id=nil)
@@ -175,7 +175,7 @@ class User < ActiveRecord::Base
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
-      user.create_ssl_account([Role.get_account_admin_id])
+      user.create_ssl_account([Role.get_owner_id])
       user
     end
   end

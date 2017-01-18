@@ -453,7 +453,7 @@ class UserTest < Minitest::Spec
         refute user_2_teams.max_teams_reached?
 
         # User owns a second ssl account/team, max has been reached
-        user_2_teams.create_ssl_account([Role.get_account_admin_id])
+        user_2_teams.create_ssl_account([Role.get_owner_id])
 
         assert_equal 2, SslAccount.count
         assert_equal 2, user_2_teams.ssl_accounts.count
@@ -468,7 +468,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, user_2_teams.total_teams_owned.count
 
         # User owns a second ssl account/team
-        user_2_teams.create_ssl_account([Role.get_account_admin_id])
+        user_2_teams.create_ssl_account([Role.get_owner_id])
 
         assert_equal 2, SslAccount.count
         assert_equal 2, user_2_teams.ssl_accounts.count

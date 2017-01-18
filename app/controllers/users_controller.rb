@@ -387,7 +387,7 @@ end
 def create_custom_ssl_acct(user, params)
   slug_valid = params[:ssl_slug] && SslAccount.ssl_slug_valid?(params[:ssl_slug])
   user.create_ssl_account(
-    [Role.get_account_admin_id],
+    [Role.get_owner_id],
     {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
   )
 end
