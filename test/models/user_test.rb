@@ -5,7 +5,7 @@ class UserTest < Minitest::Spec
   before do
     create_reminder_triggers
     create_roles
-    @account_admin_role = Role.get_role_id(Role::OWNER)
+    @account_admin_role = Role.get_owner_id
     @vetter_role        = Role.get_role_id(Role::VETTER)
     @reseller_role      = Role.get_role_id(Role::RESELLER)
     @ssl_user_role      = Role.get_role_id(Role::SSL_USER)
@@ -398,7 +398,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, new_user.ssl_accounts.count
         assert_equal 1, new_user.roles.count
         assert_equal 1, new_user.get_all_approved_accounts.count
-        assert_equal [Role.get_role_id(Role::OWNER)], new_user.roles.ids
+        assert_equal [Role.get_owner_id], new_user.roles.ids
         refute_nil   new_user.default_ssl_account
         
         # account is approved, no invitation token
@@ -423,7 +423,7 @@ class UserTest < Minitest::Spec
         assert_equal 1, existing_user.ssl_accounts.count
         assert_equal 1, existing_user.roles.count
         assert_equal 1, existing_user.get_all_approved_accounts.count
-        assert_equal [Role.get_role_id(Role::OWNER)], existing_user.roles.ids
+        assert_equal [Role.get_owner_id], existing_user.roles.ids
 
         existing_user.ssl_accounts << invite_user.ssl_account
         existing_user.set_roles_for_account(invite_user.ssl_account, [@ssl_user_role])
