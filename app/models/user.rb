@@ -82,6 +82,10 @@ class User < ActiveRecord::Base
     assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
 
+  def self.total_teams_owned(user_id)
+    User.find(user_id).assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+  end
+
   def total_teams_owned(user_id=nil)
     user = user_id ? User.find(user_id) : self
     user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
@@ -598,9 +602,7 @@ class User < ActiveRecord::Base
   end
 
   def get_all_approved_accounts
-    self.is_system_admins? ?
-        SslAccount :
-        self.approved_ssl_accounts
+    (self.is_system_admins? ? SslAccount.unscoped : self.approved_ssl_accounts).order("created_at desc")
   end
 
   def user_approved_invite?(params)

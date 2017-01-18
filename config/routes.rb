@@ -205,6 +205,9 @@ SslCom::Application.routes.draw do
       match :update_settings, via: [:put, :patch]
       match :update_ssl_slug, via: [:put, :patch]
       match :update_company_name, via: [:put, :patch]
+      member do
+        get :adjust_funds
+      end
     end
 
     resources :users, only: :index do
