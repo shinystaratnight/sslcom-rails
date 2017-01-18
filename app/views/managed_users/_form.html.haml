@@ -4,7 +4,7 @@
     = form.label :email, "Email<span class='label_desc'>receives activation</span>".html_safe
     = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required: true
 .clearfix.form_input
-  - if system_admin || current_user.is_account_admin?
+  - if system_admin || current_user.is_owner?
     - if @user_accounts_roles 
       .hidden{data: {accounts_roles: @user_accounts_roles.to_json}, id: 'user_account_roles'}
     - user_ssl_account = @user.ssl_accounts.first

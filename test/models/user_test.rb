@@ -65,7 +65,7 @@ class UserTest < Minitest::Spec
       assert create(:user, :super_user).is_super_user?
     end
     it 'should be able to set role account_admin' do
-      assert create(:user, :owner).is_account_admin?
+      assert create(:user, :owner).is_owner?
     end
     it 'should be able to set role ssl_user' do
       assert create(:user, :ssl_user).is_ssl_user?

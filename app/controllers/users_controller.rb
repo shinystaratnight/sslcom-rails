@@ -338,7 +338,7 @@ class UsersController < ApplicationController
 
   def admin_op?
     (@user!=@current_user &&
-      (@current_user.is_admin? || @current_user.is_account_admin?)
+      (@current_user.is_admin? || @current_user.is_owner?)
     ) unless @current_user.blank?
   end
 
@@ -355,7 +355,7 @@ class UsersController < ApplicationController
   end
 
   def admin_or_current_user?
-    (@current_user.is_admin? || @current_user.is_account_admin?) || @current_user == @user
+    (@current_user.is_admin? || @current_user.is_owner?) || @current_user == @user
   end
 
   def render_invite_messages
@@ -380,7 +380,7 @@ def update_user_status(params)
   target_status = params[:user][:status].to_sym
   if target_user && target_status
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
-    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_account_admin?
+    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_owner?
   end
 end
 

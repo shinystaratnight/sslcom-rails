@@ -411,9 +411,13 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::SUPER_USER.to_sym
   end
 
-  def is_account_admin?
+  def is_owner?
     role_symbols.include? Role::OWNER.to_sym
   end
+
+  def is_account_admin?
+    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
+  end  
 
   def is_standard?
     role_symbols & [Role::OWNER.to_sym, Role::SSL_USER.to_sym]
