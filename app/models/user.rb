@@ -639,7 +639,7 @@ class User < ActiveRecord::Base
     params       = {user_enabled: (status_type == :enabled)}
 
     target_ssl = if roles_for_account(ssl).include?(acc_admin_id)
-      # if account_admin, disable access to this ssl account for all associated users
+      # if owner, disable access to this ssl account for all associated users
       SslAccountUser.where(ssl_account_id: ssl.id)
     else
       ssl_account_users.where(ssl_account_id: ssl.id)

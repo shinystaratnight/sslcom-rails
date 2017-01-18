@@ -73,7 +73,7 @@ describe 'Decline ssl account invite' do
       assert_equal 0, @existing_user.get_pending_accounts.count
       refute          @existing_user.pending_account_invites?
     end
-    it 'account_admin should see decline status' do
+    it 'owner should see decline status' do
       click_on 'Logout'
       login_as(@current_admin, self.controller.cookies)
       visit account_path
