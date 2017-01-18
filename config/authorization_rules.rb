@@ -33,7 +33,7 @@ authorization do
     end
   end
 
-  role :account_admin do
+  role :owner do
     includes :reseller
     has_permission_on :managed_users, :to => [:read, :create, :update_roles, :edit, :remove_from_account]
     has_permission_on :users, :to => [:create, :delete]
