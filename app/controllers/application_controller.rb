@@ -49,7 +49,7 @@ class ApplicationController < ActionController::Base
   end
 
   def save_user
-    @user.create_ssl_account([Role.get_role_id(Role::ACCOUNT_ADMIN)])
+    @user.create_ssl_account([Role.get_owner_id])
     @user.signup!(params)
     @user.activate!(params)
     @user.deliver_activation_confirmation!

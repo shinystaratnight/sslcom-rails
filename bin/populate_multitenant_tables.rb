@@ -26,9 +26,9 @@ User.all.each do |u|
   end
 end
 # 
-# Roles table, convert/update "customer" role to "account_admin" role
+# Roles table, convert/update "customer" role to "owner" role
 #
-Role.find_by(name: 'customer').update(name: 'account_admin')
+Role.find_by(name: 'customer').update(name: 'owner')
 #
 # Roles table, add new role "ssl_user", will be used as default for invited users.
 #
@@ -39,11 +39,11 @@ Role.create(name: 'ssl_user')
 SslAccountUser.update_all(approved: true)
 #
 # Users who are resellers (thus, missing from assignments table), create assignment 
-# with account_admin role for user's ssl account.
+# with owner role for user's ssl account.
 #
 User.find_each{|u|
-  unless u.roles_for_account(u.ssl_account).include?(Role.find_by(name: 'account_admin').id)
-    u.assignments.create(ssl_account_id: u.default_ssl_account, role_id: Role.find_by(name: 'account_admin').id)
+  unless u.roles_for_account(u.ssl_account).include?(Role.find_by(name: 'owner').id)
+    u.assignments.create(ssl_account_id: u.default_ssl_account, role_id: Role.find_by(name: 'owner').id)
   end
 }
 #

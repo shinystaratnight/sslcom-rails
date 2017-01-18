@@ -62,7 +62,7 @@ class UsersController < ApplicationController
       end
       @user.set_roles_for_account(
         @user.ssl_account,
-        [Role.find_by_name((reseller ? Role::RESELLER : Role::ACCOUNT_ADMIN)).id]
+        [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
       )
       @user.deliver_activation_instructions!
       notice = "Your account has been created. Please check your
@@ -93,7 +93,7 @@ class UsersController < ApplicationController
       current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
       current_user.roles.delete Role.find_by_name(Role::RESELLER)
     end
-    current_user.roles << Role.find_by_name(Role::ACCOUNT_ADMIN) unless current_user.role_symbols.include?(Role::ACCOUNT_ADMIN.to_sym)
+    current_user.roles << Role.find_by_name(Role::OWNER) unless current_user.role_symbols.include?(Role::OWNER.to_sym)
     flash[:notice] = "reseller signup has been canceled"
     @user = current_user #for rable object reference
   end
@@ -338,7 +338,7 @@ class UsersController < ApplicationController
 
   def admin_op?
     (@user!=@current_user &&
-      (@current_user.is_admin? || @current_user.is_account_admin?)
+      (@current_user.is_admin? || @current_user.is_owner?)
     ) unless @current_user.blank?
   end
 
@@ -355,7 +355,7 @@ class UsersController < ApplicationController
   end
 
   def admin_or_current_user?
-    (@current_user.is_admin? || @current_user.is_account_admin?) || @current_user == @user
+    (@current_user.is_admin? || @current_user.is_owner?) || @current_user == @user
   end
 
   def render_invite_messages
@@ -380,14 +380,14 @@ def update_user_status(params)
   target_status = params[:user][:status].to_sym
   if target_user && target_status
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
-    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_account_admin?
+    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_owner?
   end
 end
 
 def create_custom_ssl_acct(user, params)
   slug_valid = params[:ssl_slug] && SslAccount.ssl_slug_valid?(params[:ssl_slug])
   user.create_ssl_account(
-    [Role.get_account_admin_id],
+    [Role.get_owner_id],
     {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
   )
 end

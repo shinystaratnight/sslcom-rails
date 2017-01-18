@@ -79,12 +79,12 @@ class User < ActiveRecord::Base
   end
 
   def owned_ssl_account
-    assignments.where{role_id = Role.get_account_admin_id}.first.try :ssl_account
+    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
 
   def total_teams_owned(user_id=nil)
     user = user_id ? User.find(user_id) : self
-    user.assignments.where(role_id: Role.get_account_admin_id).map(&:ssl_account).uniq.compact
+    user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
   def max_teams_reached?(user_id=nil)
@@ -175,7 +175,7 @@ class User < ActiveRecord::Base
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
-      user.create_ssl_account([Role.get_account_admin_id])
+      user.create_ssl_account([Role.get_owner_id])
       user
     end
   end
@@ -337,7 +337,7 @@ class User < ActiveRecord::Base
     end
     if new_role_ids.present?
       if signup
-        acct_admin_role = Role.get_role_id(Role::ACCOUNT_ADMIN)
+        acct_admin_role = Role.get_owner_id
         new_role_ids    << acct_admin_role unless new_role_ids.include? acct_admin_role
       end
       current_account  = SslAccount.find cur_account_id
@@ -411,12 +411,16 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::SUPER_USER.to_sym
   end
 
-  def is_account_admin?
-    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
+  def is_owner?
+    role_symbols.include? Role::OWNER.to_sym
   end
 
+  def is_account_admin?
+    role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
+  end  
+
   def is_standard?
-    role_symbols & [Role::ACCOUNT_ADMIN.to_sym, Role::SSL_USER.to_sym]
+    role_symbols & [Role::OWNER.to_sym, Role::SSL_USER.to_sym]
   end
 
   def is_ssl_user?
@@ -506,7 +510,7 @@ class User < ActiveRecord::Base
         if r.ssl_account_id.nil?
           r.delete
         else
-          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::ACCOUNT_ADMIN)
+          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
         end
       end
     end
@@ -631,11 +635,11 @@ class User < ActiveRecord::Base
 
   def set_status_for_account(status_type, target_ssl=nil)
     ssl          = target_ssl.nil? ? ssl_account : target_ssl
-    acc_admin_id = Role.get_role_id(Role::ACCOUNT_ADMIN)
+    acc_admin_id = Role.get_owner_id
     params       = {user_enabled: (status_type == :enabled)}
 
     target_ssl = if roles_for_account(ssl).include?(acc_admin_id)
-      # if account_admin, disable access to this ssl account for all associated users
+      # if owner, disable access to this ssl account for all associated users
       SslAccountUser.where(ssl_account_id: ssl.id)
     else
       ssl_account_users.where(ssl_account_id: ssl.id)

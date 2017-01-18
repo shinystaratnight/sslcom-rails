@@ -8,7 +8,7 @@ describe 'wildcard (single-domain) csr' do
     initialize_certificates
     initialize_server_software
     initialize_certificate_csr_keys
-    @logged_in_user     = create(:user, :account_admin)
+    @logged_in_user     = create(:user, :owner)
     @logged_in_ssl_acct = @logged_in_user.ssl_account
     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
     @year_3_id          = ProductVariantItem.find_by(serial:  "sslcomwc256ssl3yr").id

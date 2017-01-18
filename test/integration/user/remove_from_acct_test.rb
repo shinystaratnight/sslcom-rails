@@ -3,10 +3,10 @@ require 'test_helper'
 describe 'remove user from account' do
   before do
     initialize_roles
-    @current_admin       = create(:user, :account_admin)
+    @current_admin       = create(:user, :owner)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_email = 'exist_user@domain.com'
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
     @existing_ssl_acct   = @existing_user.ssl_account
     @existing_user.ssl_accounts << @invited_ssl_acct
     @existing_user.set_roles_for_account(@invited_ssl_acct, @ssl_user_role)
@@ -16,7 +16,7 @@ describe 'remove user from account' do
     )
   end
   
-  describe 'account_admin' do
+  describe 'owner' do
     before do
       assert_equal 2, @existing_user.ssl_accounts.count
       assert_equal 2, @existing_user.roles.count
@@ -35,7 +35,7 @@ describe 'remove user from account' do
       assert page.has_no_content? @existing_user_email
       assert page.has_no_content? @existing_user.login
     end
-    it 'account_admin receives removed_from_account_notify_admin email' do
+    it 'owner receives removed_from_account_notify_admin email' do
       assert_equal    2, email_total_deliveries
       assert_match    'You have removed user from SSL.com account', email_subject
       assert_match    @current_admin.email, email_to

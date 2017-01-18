@@ -3,7 +3,7 @@ require 'test_helper'
 describe 'user creates a new team' do
   before do
     initialize_roles
-    @current_admin = create(:user, :account_admin)
+    @current_admin = create(:user, :owner)
     @ssl_acct      = @current_admin.ssl_account
     @company_name  = 'team_2_name'
     @ssl_slug      = 'team_2_slug'

@@ -10,6 +10,7 @@ class Role < ActiveRecord::Base
   SSL_USER      = 'ssl_user'
   SYS_ADMIN     = 'sysadmin'
   SUPER_USER    = 'super_user'
+  OWNER         = 'owner'
 
   def self.get_role_id(role_name)
     Role.find_by(name: role_name).id
@@ -20,10 +21,14 @@ class Role < ActiveRecord::Base
   end
 
   def self.admin_role_ids
-    Role.get_role_ids([SYS_ADMIN, SUPER_USER, ACCOUNT_ADMIN])
+    Role.get_role_ids([SYS_ADMIN, SUPER_USER, OWNER])
   end
 
   def self.get_account_admin_id
     Role.get_role_id(Role::ACCOUNT_ADMIN)
+  end
+    
+  def self.get_owner_id
+    Role.get_role_id(Role::OWNER)
   end
 end

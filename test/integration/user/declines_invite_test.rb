@@ -6,8 +6,8 @@ describe 'Decline ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :account_admin)
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
+    @current_admin       = create(:user, :owner)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
     @invited_ssl_acct    = @current_admin.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
@@ -73,7 +73,7 @@ describe 'Decline ssl account invite' do
       assert_equal 0, @existing_user.get_pending_accounts.count
       refute          @existing_user.pending_account_invites?
     end
-    it 'account_admin should see decline status' do
+    it 'owner should see decline status' do
       click_on 'Logout'
       login_as(@current_admin, self.controller.cookies)
       visit account_path

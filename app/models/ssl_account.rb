@@ -296,7 +296,7 @@ class SslAccount < ActiveRecord::Base
 
   def get_account_owner
     Assignment.where(
-      role_id: Role.get_role_id(Role::ACCOUNT_ADMIN), ssl_account_id: id
+      role_id: Role.get_owner_id, ssl_account_id: id
     ).map(&:user).first
   end
 

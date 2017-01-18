@@ -17,8 +17,8 @@ FactoryGirl.define do
       after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::SUPER_USER)])}
     end
 
-    trait :account_admin do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::ACCOUNT_ADMIN)])}
+    trait :owner do
+      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::OWNER)])}
     end
 
     trait :reseller do

@@ -115,7 +115,7 @@ class SslAccountTest < Minitest::Spec
   describe 'helper methods' do
     before { initialize_roles }
     it '#get_account_owner returns correct user/owner' do
-      target_user = create(:user, :account_admin)
+      target_user = create(:user, :owner)
       target_ssl  = target_user.ssl_account
       other_user  = create_and_approve_user(target_ssl, 'other_user')
       
