@@ -3,6 +3,7 @@ module SetupHelper
     roles = [
       Role::RESELLER,
       Role::ACCOUNT_ADMIN,
+      Role::OWNER,
       Role::VETTER,
       Role::SSL_USER,
       Role::SYS_ADMIN,
@@ -20,9 +21,9 @@ module SetupHelper
   end
 
   def set_common_roles
-    @all_roles       = [Role.get_role_id(Role::ACCOUNT_ADMIN), Role.get_role_id(Role::SSL_USER)]
+    @all_roles       = [Role.get_owner_id, Role.get_role_id(Role::SSL_USER)]
     @ssl_user_role   = [Role.get_role_id(Role::SSL_USER)]
-    @acct_admin_role = [Role.get_role_id(Role::ACCOUNT_ADMIN)]
+    @acct_admin_role = [Role.get_owner_id]
   end
 
   def initialize_roles
