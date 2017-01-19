@@ -6,16 +6,16 @@ describe 'Decline ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :owner)
+    @current_owner       = create(:user, :owner)
     @existing_user       = create(:user, :owner, email: @existing_user_email)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @invited_ssl_acct    = @current_owner.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
     click_on 'Invite User'
@@ -75,7 +75,7 @@ describe 'Decline ssl account invite' do
     end
     it 'owner should see decline status' do
       click_on 'Logout'
-      login_as(@current_admin, self.controller.cookies)
+      login_as(@current_owner, self.controller.cookies)
       visit account_path
       click_on 'Users'
 

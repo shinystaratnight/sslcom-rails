@@ -6,10 +6,10 @@ describe 'new user' do
   before do
     initialize_roles
     @new_user_email   = 'new_user@domain.com'
-    @current_admin    = create(:user, :owner)
-    @invited_ssl_acct = @current_admin.ssl_account
+    @current_owner    = create(:user, :owner)
+    @invited_ssl_acct = @current_owner.ssl_account
     
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
     click_on 'Invite User'
@@ -22,7 +22,7 @@ describe 'new user' do
 
   it 'invited user receives signup_invitation email' do
     assert_equal    1, email_total_deliveries
-    assert_match    "#{@current_admin.login} has invited you to SSL.com", email_subject
+    assert_match    "#{@current_owner.login} has invited you to SSL.com", email_subject
     assert_match    @new_user_email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, @new_user.perishable_token
@@ -101,16 +101,16 @@ describe 'existing user' do
     set_common_roles
 
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :owner)
+    @current_owner       = create(:user, :owner)
     @existing_user       = create(:user, :owner, email: @existing_user_email)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @invited_ssl_acct    = @current_owner.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'Testing_ssl+1', password_confirmation: 'Testing_ssl+1'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
     click_on 'Invite User'
@@ -125,14 +125,14 @@ describe 'existing user' do
     assert_equal    2, email_total_deliveries
     assert_match    'Invition to SSL.com', email_subject(:first)
     assert_match    @existing_user_email, email_to(:first)
-    assert_match    @current_admin.email, email_from(:first)
+    assert_match    @current_owner.email, email_from(:first)
     assert_includes email_body(:first), approval_token
   end
   it 'owner user receives invite_to_account_notify_admin email' do
     message = "You have added a new user #{@existing_user.email} to your SSL.com account."
     assert_equal    2, email_total_deliveries
     assert_match    'You have invited a user to your SSL.com account', email_subject
-    assert_match    @current_admin.email, email_to
+    assert_match    @current_owner.email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, message
   end
