@@ -25,6 +25,15 @@ function refreshRolesSelect(account_id) {
   }
 }
 
+function adjust_funds_ssl_account(ssl_slug, team_name)
+{
+  var amount = prompt("Amount to adjust for team "+team_name+" (in USD)?", '');
+  if (amount == null || amount=="")
+    return;
+  else
+    window.location = '/team/'+ssl_slug+'/ssl_account/adjust_funds?amount='+encodeURIComponent(amount);
+}
+
 $.ajaxSettings.dataType = "json";
 
 jQuery(function($) {

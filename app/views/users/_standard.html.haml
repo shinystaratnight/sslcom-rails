@@ -89,7 +89,6 @@
                                 window.location = '#{change_login_user_url(user)}?login='+encodeURIComponent(login);
                             }
                           %li=remote_login_link(user)
-                          %li=link_to "change available funds amount", '#', :onclick =>  "adjust_funds_#{user.id}()"
                         %li=link_to 'edit email address', edit_email_user_url(user)
                         %li=link_to 'change password', edit_password_user_url(user)
                         -unless current_user.is_affiliate?

@@ -45,7 +45,11 @@
           %td=current_user.role_symbols(t)
         -else
           %td="&#10003;".html_safe if account_owner
-        %td $#{t.funded_account.try :amount}
+        %td
+          -if current_user.is_system_admins?
+            %a{onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
+          -else
+            $#{t.funded_account.try :amount}
         %td
           [
           =link_to "orders", certificate_orders_path(ssl_slug: t.to_slug)
@@ -63,5 +67,5 @@
           ]
           -unless t.get_account_owner == current_user or current_user.is_system_admins?
             [
-            =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id})
+            =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id}),data:{confirm: "Please confirm you want to leave team #{t.company_name}."}
             ]

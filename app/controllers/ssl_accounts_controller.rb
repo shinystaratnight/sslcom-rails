@@ -91,12 +91,13 @@ class SslAccountsController < ApplicationController
     end
   end
 
+
   def adjust_funds
     amount=params["amount"].to_f*100
     @ssl_account.funded_account.add_cents(amount)
     SystemAudit.create(owner: current_user, target: @ssl_account.funded_account,
                        notes: "amount (in USD): #{amount.to_s}",
                        action: "FundedAccount#add_cents")
-    redirect_to show_ssl_account_path(@ssl_account)
+    redirect_to admin_show_user_path(@ssl_account.get_account_owner)
   end
 end
