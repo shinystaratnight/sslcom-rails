@@ -6,17 +6,17 @@ describe 'user approves ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :owner)
+    @current_owner       = create(:user, :owner)
     @existing_user       = create(:user, :owner, email: @existing_user_email)
     @unauthorized_user   = create(:user, :owner)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @invited_ssl_acct    = @current_owner.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
     click_on 'Invite User'

@@ -6,10 +6,10 @@ describe 'Disable user' do
     @owner     = create(:user, :owner)
     @owner_2   = create(:user, :owner)
     @owner_ssl = @owner.ssl_account
-    @sysadmin          = create(:user, :sysadmin)
-    (1..4).to_a.each {|n| create_and_approve_user(@owner_ssl, "ssl_user_#{n}")}
+    @sysadmin  = create(:user, :sysadmin)
+    (1..4).to_a.each {|n| create_and_approve_user(@owner_ssl, "account_admin_#{n}")}
     
-    @disable_user     = User.find_by(login: 'ssl_user_1')
+    @disable_user     = User.find_by(login: 'account_admin_1')
     @disable_user_ssl = SslAccountUser.where(
       user_id: @disable_user.id, ssl_account_id: @owner_ssl.id
     ).first
@@ -84,7 +84,7 @@ describe 'Disable user' do
       visit switch_default_ssl_account_user_path(
         @disable_user, ssl_account_id: @owner_2.ssl_account.id
       )
-      @disable_user          = User.find_by(login: 'ssl_user_1') # refresh record
+      @disable_user          = User.find_by(login: 'account_admin_1') # refresh record
       page.must_have_content "ssl account information for #{@disable_user.login}"
       page.must_have_content "account number: #{@owner_2.ssl_account.acct_number}"
       assert_equal           @owner_2.ssl_account.id, @disable_user.default_ssl_account
@@ -93,7 +93,7 @@ describe 'Disable user' do
 
   describe 'other users on disabled users account' do
     before do
-      @other_user_on_account = User.find_by(login: 'ssl_user_2')
+      @other_user_on_account = User.find_by(login: 'account_admin_2')
       approve_user_for_account(@disable_user.ssl_account, @other_user_on_account)
 
       assert_equal 3, @other_user_on_account.get_all_approved_accounts.count
@@ -139,7 +139,7 @@ describe 'Disable user' do
       visit account_path
       page.must_have_content "ssl account information for #{@other_user_on_account.login}"
       page.must_have_content "account number: #{@owner.ssl_account.acct_number}"
-      assert_equal           @owner.ssl_account.id, User.find_by(login: 'ssl_user_2').default_ssl_account
+      assert_equal           @owner.ssl_account.id, User.find_by(login: 'account_admin_2').default_ssl_account
     end
   end
 end

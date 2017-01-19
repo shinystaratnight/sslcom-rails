@@ -7,7 +7,6 @@ class Role < ActiveRecord::Base
   RESELLER      = 'reseller'
   ACCOUNT_ADMIN = 'account_admin'
   VETTER        = 'vetter'
-  SSL_USER      = 'ssl_user'
   SYS_ADMIN     = 'sysadmin'
   SUPER_USER    = 'super_user'
   OWNER         = 'owner'

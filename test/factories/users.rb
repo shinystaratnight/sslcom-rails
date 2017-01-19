@@ -25,8 +25,8 @@ FactoryGirl.define do
       after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::RESELLER)])}
     end
 
-    trait :ssl_user do
-      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::SSL_USER)])}
+    trait :account_admin do
+      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::ACCOUNT_ADMIN)])}
     end
 
     trait :vetter do
