@@ -1,15 +1,17 @@
 authorization do
+  # ============================================================================
+  # SUPER_USER Role
+  # ============================================================================
   role :super_user do
     includes :sysadmin
   end
 
+  # ============================================================================
+  # SYSADMIN Role
+  # ============================================================================
   role :sysadmin do
-    includes :vetter
     has_permission_on :managed_users,:ssl_accounts, :users, :to => :admin_manage
     has_permission_on :surls, :to => :manage
-  end
-
-  role :vetter do
     has_permission_on :orders, :to => :manage
     has_permission_on :certificate_orders, :to => :manage
     has_permission_on :csrs, :to => :manage
@@ -33,9 +35,20 @@ authorization do
     end
   end
 
+  # ============================================================================
+  # OWNER Role
+  # ============================================================================ 
   role :owner do
-    includes :reseller
-    has_permission_on :managed_users, :to => [:read, :create, :update_roles, :edit, :remove_from_account]
+    includes :base
+    #
+    # ManagedUsers
+    #
+    has_permission_on :managed_users, :to => [
+      :read, :create, :update_roles, :edit, :remove_from_account
+    ]
+    #
+    # Users
+    #
     has_permission_on :users, :to => [:create, :delete]
     has_permission_on :users, :to => [:read, :update, :edit_email, :edit] do
       if_attribute :id => is {user.id}
@@ -52,21 +65,40 @@ authorization do
     has_permission_on :users, :to => :decline_account_invite do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
+    has_permission_on :users, :to => :set_default_team do
+      if_attribute ssl_account: is_in {user.total_teams_owned}
+    end
+    #
+    # SslAccounts
+    #
     has_permission_on :ssl_accounts, :to => [:create]
     has_permission_on :ssl_accounts, :to => [:admin_manage] do
       if_attribute get_account_owner: is {user}
     end
+    #
+    # FundedAccounts
+    #
     has_permission_on :funded_accounts, :to => [:create]
-    has_permission_on :users, :to => :set_default_team do
-      if_attribute ssl_account: is_in {user.total_teams_owned}
-    end
   end
 
+  # ============================================================================
+  # ACCOUNT_ADMIN Role
+  # ============================================================================ 
   role :account_admin do
-    includes :reseller
+    includes :base
   end
 
+  # ============================================================================
+  # RESELLER Role
+  # ============================================================================ 
   role :reseller do
+    includes :base
+  end  
+
+  # ============================================================================
+  # BASE Role: inherited by account_admin, owner and reseller
+  # ============================================================================ 
+  role :base do
     has_permission_on :billing_profiles, :to => :manage do
       if_attribute :ssl_account => is {user.ssl_account}
     end
@@ -149,6 +181,9 @@ authorization do
     end
   end
 
+  # ============================================================================
+  # GUEST Role
+  # ============================================================================ 
   role :guest do
     has_permission_on :orders, :to => [:show_cart, :create_free_ssl, :create_multi_free_ssl,
                                        :allocate_funds_for_order, :lookup_discount]
@@ -170,15 +205,26 @@ authorization do
   end
 end
 
+# ============================================================================
+# Privileges: admin_manage, manage, read, update, create and delete
+# ============================================================================ 
 privileges do
-  privilege :admin_manage, :includes => [:manage, :admin_update, :admin_show,
-    :manage_all, :login_as, :search, :admin_index, :adjust_funds, :change_login, 
-    :change_ext_order_number, :update_roles, :remove_from_account, :resend_account_invite, 
-    :enable_disable, :edit, :update_ssl_slug, :update_company_name, :edit_settings, :update_settings,
-    :set_default_team_max]
-  privilege :manage, :includes => [:create, :read, :update, :delete, :refund, :change_state]
-  privilege :read, :includes => [:index, :show, :search, :show_cart, :lookup_discount, :invoice]
-  privilege :create, :includes => :new
-  privilege :update, :includes => [:edit, :edit_update, :edit_email, :verification_check]
-  privilege :delete, :includes => :destroy
+  privilege :admin_manage, includes: [
+    :adjust_funds, :admin_index, :admin_show, :admin_update,
+    :change_ext_order_number, :change_login, :edit, :edit_settings,
+    :enable_disable, :login_as, :manage, :manage_all, :remove_from_account,
+    :resend_account_invite, :search, :set_default_team_max, :update_company_name,
+    :update_roles, :update_settings, :update_ssl_slug
+  ]
+  privilege :manage, includes: [
+    :change_state, :create, :delete, :read, :refund, :update
+  ]
+  privilege :read, includes: [
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart
+  ]
+  privilege :update, includes: [
+    :edit, :edit_email, :edit_update, :verification_check
+  ]
+  privilege :create, includes: :new
+  privilege :delete, includes: :destroy
 end
