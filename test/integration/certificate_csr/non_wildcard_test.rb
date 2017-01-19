@@ -79,6 +79,7 @@ describe 'non-wildcard csr' do
   end
 
   it 'creates correct records and renders correct information' do
+    sleep 2
     cc  = CertificateContent.first
     co  = CertificateOrder.first
     csr = Csr.last

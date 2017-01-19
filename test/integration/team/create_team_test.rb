@@ -39,6 +39,7 @@ describe 'user creates a new team' do
   it 'creates team with ssl_slug' do
     fill_in 'ssl_account_ssl_slug', with: @ssl_slug
     first('#ssl_account_create_team').click
+    sleep 2
 
     team_added = @current_owner.ssl_accounts.where.not(id: @ssl_acct).first
     assert_equal 2, @current_owner.total_teams_owned.count

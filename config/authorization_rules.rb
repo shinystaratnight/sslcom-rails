@@ -62,7 +62,7 @@ authorization do
     end
   end
 
-  role :ssl_user do
+  role :account_admin do
     includes :reseller
   end
 

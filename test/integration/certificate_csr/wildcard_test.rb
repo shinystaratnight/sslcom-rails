@@ -23,7 +23,8 @@ describe 'wildcard (single-domain) csr' do
     click_on 'Checkout'              # Checkout
     find("#funding_source_#{BillingProfile.first.id}").click
     find('input[name="next"]').click
-
+    sleep 2
+    
     cc         = CertificateContent.first
     co         = CertificateOrder.first
     validation = Validation.first
@@ -81,6 +82,7 @@ describe 'wildcard (single-domain) csr' do
   end
 
   it 'creates correct records and renders correct information' do
+    sleep 2
     cc  = CertificateContent.first
     co  = CertificateOrder.first
     csr = Csr.last

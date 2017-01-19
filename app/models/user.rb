@@ -365,7 +365,7 @@ class User < ActiveRecord::Base
   def self.roles_list_for_user(user, exclude_roles=nil)
     exclude_roles ||= []
     unless user.is_system_admins?
-      exclude_roles << Role.where.not(id: Role.get_role_id(Role::SSL_USER)).map(&:id).uniq
+      exclude_roles << Role.where.not(id: Role.get_account_admin_id).map(&:id).uniq
     end
     exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
   end
@@ -424,11 +424,7 @@ class User < ActiveRecord::Base
   end  
 
   def is_standard?
-    role_symbols & [Role::OWNER.to_sym, Role::SSL_USER.to_sym]
-  end
-
-  def is_ssl_user?
-    role_symbols.include? Role::SSL_USER.to_sym
+    role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]
   end
 
   def is_reseller?

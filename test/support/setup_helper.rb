@@ -5,7 +5,6 @@ module SetupHelper
       Role::ACCOUNT_ADMIN,
       Role::OWNER,
       Role::VETTER,
-      Role::SSL_USER,
       Role::SYS_ADMIN,
       Role::SUPER_USER
     ]
@@ -21,9 +20,9 @@ module SetupHelper
   end
 
   def set_common_roles
-    @all_roles       = [Role.get_owner_id, Role.get_role_id(Role::SSL_USER)]
-    @ssl_user_role   = [Role.get_role_id(Role::SSL_USER)]
-    @acct_admin_role = [Role.get_owner_id]
+    @all_roles       = [Role.get_owner_id, Role.get_account_admin_id]
+    @acct_admin_role = [Role.get_account_admin_id]
+    @owner_role      = [Role.get_owner_id]
   end
 
   def initialize_roles
@@ -46,14 +45,14 @@ module SetupHelper
   def create_and_approve_user(invited_ssl_acct, login=nil)
     new_user = login.nil? ? create(:user, :owner) : create(:user, :owner, login: login)
     new_user.ssl_accounts << invited_ssl_acct
-    new_user.set_roles_for_account(invited_ssl_acct, @ssl_user_role)
+    new_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
     new_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     new_user
   end
 
   def approve_user_for_account(invited_ssl_acct, invited_user)
     invited_user.ssl_accounts << invited_ssl_acct
-    invited_user.set_roles_for_account(invited_ssl_acct, @ssl_user_role)
+    invited_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
     invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     invited_user
   end

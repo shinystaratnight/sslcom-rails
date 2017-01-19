@@ -75,9 +75,9 @@ class ManagedUsersController < ApplicationController
   private
 
   def get_role_ids(role_ids, reseller)
-    role_ids = role_ids || []
-    ssl_user = Role.get_role_id(Role::SSL_USER)
-    role_ids << ssl_user unless (reseller || role_ids.include?(ssl_user.to_s))
+    role_ids       = role_ids || []
+    acc_admin_user = Role.get_account_admin_id
+    role_ids << acc_admin_user unless (reseller || role_ids.include?(acc_admin_user.to_s))
     role_ids << Role.get_role_id(Role::RESELLER) if reseller
     role_ids
   end

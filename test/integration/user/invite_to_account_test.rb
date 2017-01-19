@@ -32,7 +32,7 @@ describe 'new user' do
     page.must_have_content('Username')
     page.must_have_content(@new_user_email)
     page.must_have_content('Account Type')
-    page.must_have_content(Role::SSL_USER)
+    page.must_have_content(Role::ACCOUNT_ADMIN)
     page.must_have_content('Last Login')
     page.must_have_content('never')
     page.must_have_content('Status')
@@ -54,7 +54,7 @@ describe 'new user' do
 
     # Invited user row
     page.must_have_content(@new_user_email)
-    page.must_have_content('ssl_user/owner')
+    page.must_have_content('account_admin/owner')
     # expand row
     first('td', text: @new_user_email).click
     page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
@@ -76,9 +76,9 @@ describe 'new user' do
   it 'user roles are set for 2 ssl accounts' do
     assert_equal @all_roles.sort, @new_user.roles.ids.sort
     # own ssl account (default: account admin)
-    assert_equal @acct_admin_role, @new_user.assignments.where.not(ssl_account_id: @invited_ssl_acct.id).map(&:role_id) 
-    # invited ssl account (default: ssl_user)
-    assert_equal @ssl_user_role, @new_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
+    assert_equal @owner_role, @new_user.assignments.where.not(ssl_account_id: @invited_ssl_acct.id).map(&:role_id) 
+    # invited ssl account (default: account_admin)
+    assert_equal @acct_admin_role, @new_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
     ssl = @new_user.ssl_account_users.where.not(ssl_account_id: @invited_ssl_acct.id).first
@@ -141,7 +141,7 @@ describe 'existing user' do
     page.must_have_content('Username')
     page.must_have_content('existing_user')
     page.must_have_content('Account Type')
-    page.must_have_content(Role::SSL_USER) # default role
+    page.must_have_content(Role::ACCOUNT_ADMIN) # default role
     page.must_have_content('Last Login')
     page.must_have_content('never')
     page.must_have_content('Status')
@@ -164,7 +164,7 @@ describe 'existing user' do
     # Invited user row
     page.must_have_content('existing_user')
     page.must_have_content(@existing_user_email)
-    page.must_have_content('ssl_user/owner')
+    page.must_have_content('account_admin/owner')
     #expand row
     find('td', text: @existing_user_email).click
 
@@ -184,9 +184,9 @@ describe 'existing user' do
   it 'user roles are set for 2 ssl accounts' do
     assert_equal @all_roles.sort, @existing_user.roles.ids.sort
     # own ssl account (default: account admin)
-    assert_equal @acct_admin_role, @existing_user.assignments.where(ssl_account_id: @existing_user_ssl.id).map(&:role_id) 
-    # invited ssl account (default: ssl_user)
-    assert_equal @ssl_user_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
+    assert_equal @owner_role, @existing_user.assignments.where(ssl_account_id: @existing_user_ssl.id).map(&:role_id) 
+    # invited ssl account (default: account_admin)
+    assert_equal @acct_admin_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
     ssl = SslAccountUser.where(

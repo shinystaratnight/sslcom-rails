@@ -23,7 +23,7 @@
   - role_ids = system_admin ? @user.roles_for_account(user_ssl_account) : @role_ids
   = form.label :role_id, "Roles<span class='label_desc'>set permissions</span>".html_safe
   = form.select :role_ids,
-      options_from_collection_for_select(User.roles_list_for_user(current_user), :id, :name, (role_ids || [Role.get_role_id(Role::SSL_USER)])),
+      options_from_collection_for_select(User.roles_list_for_user(current_user), :id, :name, (role_ids || [Role.get_account_admin_id])),
       {},
       prompt: 'Select Roles',
       multiple: true,

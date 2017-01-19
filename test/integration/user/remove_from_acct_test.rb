@@ -9,7 +9,7 @@ describe 'remove user from account' do
     @existing_user       = create(:user, :owner, email: @existing_user_email)
     @existing_ssl_acct   = @existing_user.ssl_account
     @existing_user.ssl_accounts << @invited_ssl_acct
-    @existing_user.set_roles_for_account(@invited_ssl_acct, @ssl_user_role)
+    @existing_user.set_roles_for_account(@invited_ssl_acct, @acct_admin_role)
     @existing_user.send(:approve_account, ssl_account_id: @invited_ssl_acct.id)
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'Testing_ssl+1', password_confirmation: 'Testing_ssl+1'}
@@ -53,7 +53,7 @@ describe 'remove user from account' do
       assert_equal 1, @existing_user.ssl_accounts.count
       assert_equal 1, @existing_user.roles.count
       assert_equal @existing_ssl_acct.id, @existing_user.default_ssl_account
-      assert_equal @acct_admin_role, @existing_user.roles.ids
+      assert_equal @owner_role, @existing_user.roles.ids
       refute       @current_owner.user_exists_for_account?(@existing_user_email) 
     end
   end
@@ -80,7 +80,7 @@ describe 'remove user from account' do
       assert_equal 1, @existing_user.ssl_accounts.count
       assert_equal 1, @existing_user.roles.count
       assert_equal @existing_ssl_acct.id, @existing_user.default_ssl_account
-      assert_equal @acct_admin_role, @existing_user.roles.ids
+      assert_equal @owner_role, @existing_user.roles.ids
       refute       @current_owner.user_exists_for_account?(@existing_user_email)
     end
   end

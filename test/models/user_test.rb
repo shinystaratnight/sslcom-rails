@@ -5,10 +5,10 @@ class UserTest < Minitest::Spec
   before do
     create_reminder_triggers
     create_roles
-    @owner_role = Role.get_owner_id
-    @vetter_role        = Role.get_role_id(Role::VETTER)
-    @reseller_role      = Role.get_role_id(Role::RESELLER)
-    @ssl_user_role      = Role.get_role_id(Role::SSL_USER)
+    @owner_role       = Role.get_owner_id
+    @vetter_role      = Role.get_role_id(Role::VETTER)
+    @reseller_role    = Role.get_role_id(Role::RESELLER)
+    @acct_admin_role  = Role.get_account_admin_id
   end
 
   describe 'attributes' do
@@ -67,8 +67,8 @@ class UserTest < Minitest::Spec
     it 'should be able to set role owner' do
       assert create(:user, :owner).is_owner?
     end
-    it 'should be able to set role ssl_user' do
-      assert create(:user, :ssl_user).is_ssl_user?
+    it 'should be able to set role account_admin' do
+      assert create(:user, :account_admin).is_account_admin?
     end
     it 'should be able to set role reseller' do
       assert create(:user, :reseller).is_reseller?
@@ -246,8 +246,8 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_list_for_user should return scoped list for non admin' do
-      # only show ssl_user in dropdown select list 
-      assert_equal Role.get_role_ids(Role::SSL_USER), User.roles_list_for_user(@owner).ids.sort
+      # only show account_admin in dropdown select list 
+      assert_equal Role.get_role_ids(Role::ACCOUNT_ADMIN), User.roles_list_for_user(@owner).ids.sort
     end
 
     it '#roles_list_for_user should return all roles for admins' do
@@ -426,16 +426,16 @@ class UserTest < Minitest::Spec
         assert_equal [Role.get_owner_id], existing_user.roles.ids
 
         existing_user.ssl_accounts << invite_user.ssl_account
-        existing_user.set_roles_for_account(invite_user.ssl_account, [@ssl_user_role])
+        existing_user.set_roles_for_account(invite_user.ssl_account, [@acct_admin_role])
         existing_user.invite_existing_user(params)
         ssl = existing_user.ssl_account_users.where(
           ssl_account_id: invite_user.ssl_account.id
         ).first
 
-        # existing user now has two accounts and added role 'ssl_user' for invited account
+        # existing user now has two accounts and added role 'account_admin' for invited account
         assert_equal 2, existing_user.ssl_accounts.count
         assert_equal 2, existing_user.roles.count
-        assert_equal Role.get_role_ids([Role::OWNER, Role::SSL_USER]).sort, existing_user.roles.ids.sort
+        assert_equal Role.get_role_ids([Role::OWNER, Role::ACCOUNT_ADMIN]).sort, existing_user.roles.ids.sort
         # account NOT approved, approval token generated for invited account
         refute_nil ssl.approval_token
         refute_nil ssl.token_expires
