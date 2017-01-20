@@ -25,7 +25,8 @@
       %th(scope="col") Funds
       %th(scope="col") Details
       %th(scope="col") Join Date
-      %th(scope="col") Action
+      -unless current_user.is_system_admins?
+        %th(scope="col") Action
     -@teams.each do |t|
       -account_owner = current_user.is_account_owner? t
       -main_account  = current_user.is_main_account? t
@@ -38,13 +39,11 @@
           -else
             =t.get_team_name
         %td=t.acct_number
-        -if current_user.is_system_admins? and t.get_account_owner.try(:login)
-          %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login))
         -unless current_user.is_system_admins?
           %td= main_account ? "&#10003;".html_safe : (account_owner && set_default_team ? set_default_team : nil)
           %td=current_user.role_symbols(t)
         -else
-          %td="&#10003;".html_safe if account_owner
+          %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
         %td
           -if current_user.is_system_admins?
             %a{onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
@@ -61,11 +60,12 @@
           =link_to "users", users_path(ssl_slug: t.to_slug)
           ]
         %td=t.created_at.strftime("%b %d, %Y")
-        %td
-          [
-          =link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-          ]
-          -unless t.get_account_owner == current_user or current_user.is_system_admins?
+        -unless current_user.is_system_admins?
+          %td
             [
-            =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id}),data:{confirm: "Please confirm you want to leave team #{t.company_name}."}
+            =link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
             ]
+            -unless t.get_account_owner == current_user or current_user.is_system_admins?
+              [
+              =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id}),data:{confirm: "Please confirm you want to leave team #{t.company_name}."}
+              ]

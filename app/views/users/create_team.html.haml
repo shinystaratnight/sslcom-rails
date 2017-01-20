@@ -5,11 +5,13 @@
     =hidden_field_tag :create, true
     #stylized.default_form
       .clearfix.form_input
-        =label_tag 'Team Name*'
+        %label{for: :team_name}
+          *Team Name
         =text_field_tag :team_name, nil, {minlength: 1, maxlength: 20, size: 20, required: true}
       .clearfix.form_input
-        =label_tag :ssl_slug,
-          "Team url (optional) <span class='label_desc'>*allowed: letters, numbers, underscores and dashes. </span>".html_safe
+        %label{for: :ssl_slug}
+          Team Url
+          %span.label_desc optional
         =text_field_tag :ssl_slug, nil, {maxlength: 20, size: 20, id: 'ssl_account_ssl_slug'}
       .clearfix.form_input
         #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path}}
