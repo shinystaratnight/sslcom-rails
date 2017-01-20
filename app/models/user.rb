@@ -431,8 +431,16 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::RESELLER.to_sym
   end
 
-  def is_vetter?
-    role_symbols.include? Role::VETTER.to_sym
+  def is_billing?
+    role_symbols.include? Role::BILLING.to_sym
+  end
+
+  def is_installer?
+    role_symbols.include? Role::INSTALLER.to_sym
+  end
+
+  def is_validations?
+    role_symbols.include? Role::VALIDATIONS.to_sym
   end
 
   def is_affiliate?

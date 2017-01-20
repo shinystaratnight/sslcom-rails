@@ -4,13 +4,15 @@ class Role < ActiveRecord::Base
   has_and_belongs_to_many   :permissions
   belongs_to                :ssl_account
 
-  RESELLER      = 'reseller'
   ACCOUNT_ADMIN = 'account_admin'
-  VETTER        = 'vetter'
-  SYS_ADMIN     = 'sysadmin'
-  SUPER_USER    = 'super_user'
+  BILLING       = 'billing'
+  INSTALLER     = 'installer'
   OWNER         = 'owner'
-
+  RESELLER      = 'reseller'
+  SUPER_USER    = 'super_user'
+  SYS_ADMIN     = 'sysadmin'
+  VALIDATIONS   = 'validations'
+  
   def self.get_role_id(role_name)
     Role.find_by(name: role_name).id
   end
