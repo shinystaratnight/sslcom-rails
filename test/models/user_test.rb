@@ -6,7 +6,7 @@ class UserTest < Minitest::Spec
     create_reminder_triggers
     create_roles
     @owner_role       = Role.get_owner_id
-    @vetter_role      = Role.get_role_id(Role::VETTER)
+    @billing_role     = Role.get_role_id(Role::BILLING)
     @reseller_role    = Role.get_role_id(Role::RESELLER)
     @acct_admin_role  = Role.get_account_admin_id
   end
@@ -73,8 +73,14 @@ class UserTest < Minitest::Spec
     it 'should be able to set role reseller' do
       assert create(:user, :reseller).is_reseller?
     end
-    it 'should be able to set role vetter' do
-      assert create(:user, :vetter).is_vetter?
+    it 'should be able to set role billing' do
+      assert create(:user, :billing).is_billing?
+    end
+    it 'should be able to set role installer' do
+      assert create(:user, :installer).is_installer?
+    end
+    it 'should be able to set role validations' do
+      assert create(:user, :validations).is_validations?
     end
   end
 
@@ -111,11 +117,11 @@ class UserTest < Minitest::Spec
 
     it '#create_ssl_account should set roles if provided' do
       params = { ssl_account_id: 
-        @owner.create_ssl_account([@owner_role, @vetter_role])
+        @owner.create_ssl_account([@owner_role, @billing_role])
       }
       assert_equal 2, @owner.assignments.where(params).count
       assert_equal 1, @owner.assignments.where(params.merge(role_id: @owner_role)).count
-      assert_equal 1, @owner.assignments.where(params.merge(role_id: @vetter_role)).count
+      assert_equal 1, @owner.assignments.where(params.merge(role_id: @billing_role)).count
     end
 
     it '#approve_account should approve account and clear token info' do
@@ -153,7 +159,7 @@ class UserTest < Minitest::Spec
 
     it '#set_roles_for_account should set roles' do
       prev_roles = @owner.roles.count
-      new_roles  = [@reseller_role, @vetter_role]
+      new_roles  = [@reseller_role, @billing_role]
       @owner.set_roles_for_account(@default_ssl, new_roles)
       
       assert_equal prev_roles+new_roles.count, @owner.roles.count
@@ -175,9 +181,9 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_for_account should return array of role ids' do
-      @owner.set_roles_for_account(@default_ssl, [@reseller_role, @vetter_role])
+      @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
       
-      assert_equal [@owner_role, @reseller_role, @vetter_role].sort, 
+      assert_equal [@owner_role, @reseller_role, @billing_role].sort, 
         @owner.roles_for_account(@default_ssl).sort
     end
 
@@ -189,17 +195,17 @@ class UserTest < Minitest::Spec
 
     it '#get_roles_by_name should return all assignments' do
       assert_equal 1, @owner.get_roles_by_name(Role::OWNER).count
-      assert_equal 0, @owner.get_roles_by_name(Role::VETTER).count
+      assert_equal 0, @owner.get_roles_by_name(Role::BILLING).count
     end
     
     it '#update_account_role should update assignment' do
       assert_equal 1, @owner.roles.count
       assert_equal @owner_role, @owner.roles.first.id
 
-      @owner.update_account_role(@default_ssl, Role::OWNER, Role::VETTER)
+      @owner.update_account_role(@default_ssl, Role::OWNER, Role::BILLING)
 
       assert_equal 1, @owner.roles.count
-      assert_equal @vetter_role, @owner.roles.first.id
+      assert_equal @billing_role, @owner.roles.first.id
       assert_equal 0, @owner.assignments.where(role_id: @owner_role).count
     end
 
@@ -207,11 +213,11 @@ class UserTest < Minitest::Spec
       assert_equal 1, @owner.roles.count
       @owner.assign_roles( user: {
         ssl_account_id: @default_ssl.id,
-        role_ids:       [@reseller_role, @vetter_role] }
+        role_ids:       [@reseller_role, @billing_role] }
       )
 
       assert_equal 3, @owner.roles.count
-      assert_equal [@owner_role, @reseller_role, @vetter_role].sort, 
+      assert_equal [@owner_role, @reseller_role, @billing_role].sort, 
         @owner.roles_for_account(@default_ssl).sort      
     end
     
@@ -227,7 +233,7 @@ class UserTest < Minitest::Spec
     end
 
     it '#remove_roles should destroy all roles not passed in role_ids' do
-      roles = [@reseller_role, @vetter_role]
+      roles = [@reseller_role, @billing_role]
       @owner.assign_roles( user: {
         ssl_account_id: @default_ssl.id,
         role_ids:       roles }
@@ -260,7 +266,7 @@ class UserTest < Minitest::Spec
 
     it '#get_user_accounts_roles should return a mapped hash' do
       # e.g.: { ssl_1_id: [role_ids], ssl_2_id: [role_ids] }
-      roles = [@reseller_role, @vetter_role]
+      roles = [@reseller_role, @billing_role]
       assert_equal [[@default_ssl.id, [@owner_role]]].to_h, User.get_user_accounts_roles(@owner)
       
       @owner.set_roles_for_account(@default_ssl, roles)

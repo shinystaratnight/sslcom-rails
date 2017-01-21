@@ -221,6 +221,7 @@ class UsersController < ApplicationController
   end
 
   def switch_default_ssl_account
+    old_ssl_slug       = @ssl_slug
     switch_ssl_account = params[:ssl_account_id]
     if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
@@ -230,7 +231,7 @@ class UsersController < ApplicationController
     else
       flash[:error] = "Something went wrong. Please try again!"
     end
-    redirect_to account_path(ssl_slug: @ssl_slug)
+    redirect_to(old_ssl_slug == @ssl_slug ? :back : redirect_back_w_team_slug(old_ssl_slug))
   end
 
   def approve_account_invite
@@ -390,4 +391,9 @@ def create_custom_ssl_acct(user, params)
     [Role.get_owner_id],
     {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
   )
+end
+
+def redirect_back_w_team_slug(replace_slug)
+  req = request.env['HTTP_REFERER']
+  req.present? ? req.gsub(replace_slug, @ssl_slug) : account_path(ssl_slug: @ssl_slug)
 end

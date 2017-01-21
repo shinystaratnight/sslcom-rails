@@ -1,12 +1,14 @@
 module SetupHelper
   def create_roles
     roles = [
-      Role::RESELLER,
       Role::ACCOUNT_ADMIN,
+      Role::BILLING,
+      Role::INSTALLER,
+      Role::RESELLER,
       Role::OWNER,
-      Role::VETTER,
       Role::SYS_ADMIN,
-      Role::SUPER_USER
+      Role::SUPER_USER,
+      Role::VALIDATIONS
     ]
     unless Role.count == roles.count
       roles.each { |role_name| Role.create(name: role_name) }
