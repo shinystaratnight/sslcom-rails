@@ -28,31 +28,33 @@
       %th.name(scope="col")Username
       %th(scope="col") Email Address
       %th(scope="col") Account Type
-      %th(scope="col") Created
-      %th(scope="col") Last Login
+      -if current_user.is_system_admins?
+        %th(scope="col") Created
+        %th(scope="col") Last Login
       %th(scope="col") Status
       - unless current_user.is_system_admins?
         %th(scope="col") Approved
     -@users.each do |u|
-      -unless u==current_user
-        %tr
-          %td.dropdown=image_tag 'expand.png'
-          %td.name.expandable=u.login
-          %td.expandable=u.email
-          -if current_user.is_admin? || current_user.is_super_user?
-            -type=u.role_symbols_all_accounts
-          -else
-            -type=u.role_symbols(current_user.ssl_account)
-          -type = type.join("/").or_else("user")
-          -type << "/affiliate" if u.is_affiliate?
-          %td.expandable=type
+      %tr
+        %td.dropdown=image_tag('expand.png') unless u==current_user
+        %td.name.expandable=u.login
+        %td.expandable=u.email
+        -if current_user.is_admin? || current_user.is_super_user?
+          -type=u.role_symbols_all_accounts
+        -else
+          -type=u.role_symbols(current_user.ssl_account)
+        -type = type.join("/").or_else("user")
+        -type << "/affiliate" if u.is_affiliate?
+        %td.expandable=type
+        -if current_user.is_system_admins?
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
-          -us, us_class=user_status(u)
-          %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
-          - unless current_user.is_system_admins?
-            -as, as_class=ssl_account_status(u, current_user.ssl_account)
-            %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
+        -us, us_class=user_status(u)
+        %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
+        - unless current_user.is_system_admins?
+          -as, as_class=ssl_account_status(u, current_user.ssl_account)
+          %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
+      -unless u==current_user
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details

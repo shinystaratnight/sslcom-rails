@@ -4,4 +4,6 @@ class SslAccountUser < ActiveRecord::Base
   belongs_to  :ssl_account
 
   scope :approved, ->{where{(approved == true) & (user_enabled == true)}}
+  scope :is_approved_ssl_account, ->(id){where{(approved == true) &
+      (user_enabled == true) & (ssl_account_id == id)}}
 end
