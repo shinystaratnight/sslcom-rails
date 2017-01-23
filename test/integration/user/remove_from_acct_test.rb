@@ -65,7 +65,8 @@ describe 'remove user from account' do
       visit account_path
       click_on 'Users'
       first('td', text: @existing_user_email).click
-      click_on "remove user from account: ##{@invited_ssl_acct.acct_number.upcase}"
+      click_on 'leave'
+      page.driver.browser.switch_to.alert.accept # accept prompt
       sleep 1 # allow time to generate notification email
     end
     

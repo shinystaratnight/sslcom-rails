@@ -33,8 +33,6 @@ describe 'new user' do
     page.must_have_content(@new_user_email)
     page.must_have_content('Account Type')
     page.must_have_content(Role::ACCOUNT_ADMIN)
-    page.must_have_content('Last Login')
-    page.must_have_content('never')
     page.must_have_content('Status')
     page.must_have_content('not activated')
     page.must_have_content('Approved')
@@ -57,8 +55,11 @@ describe 'new user' do
     page.must_have_content('account_admin/owner')
     # expand row
     first('td', text: @new_user_email).click
-    page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
-    page.must_have_content("remove user from account: ##{@new_user_ssl.acct_number.upcase}")
+    page.must_have_content('leave', count: 1)
+    page.must_have_content('(owner)', count: 1)
+    page.must_have_content('change roles', count: 2)
+    page.must_have_content('team url', count: 2)
+    page.must_have_content('team name', count: 2)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ approved ]")
     page.must_have_content("#{@new_user_ssl.acct_number} [ approved ]")
   end
@@ -142,8 +143,6 @@ describe 'existing user' do
     page.must_have_content('existing_user')
     page.must_have_content('Account Type')
     page.must_have_content(Role::ACCOUNT_ADMIN) # default role
-    page.must_have_content('Last Login')
-    page.must_have_content('never')
     page.must_have_content('Status')
     page.must_have_content('activated') # pre-existing user
     page.must_have_content('Approved')
@@ -168,8 +167,11 @@ describe 'existing user' do
     #expand row
     find('td', text: @existing_user_email).click
 
-    page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
-    page.must_have_content("remove user from account: ##{@existing_user_ssl.acct_number.upcase}")
+    page.must_have_content('leave', count: 1)
+    page.must_have_content('(owner)', count: 1)
+    page.must_have_content('change roles', count: 2)
+    page.must_have_content('team url', count: 2)
+    page.must_have_content('team name', count: 2)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ sent ]")
     page.must_have_content("#{@existing_user_ssl.acct_number} [ approved ]")
   end

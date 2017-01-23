@@ -231,7 +231,7 @@ class UsersController < ApplicationController
     else
       flash[:error] = "Something went wrong. Please try again!"
     end
-    redirect_to(old_ssl_slug == @ssl_slug ? :back : redirect_back_w_team_slug(old_ssl_slug))
+    redirect_to redirect_back_w_team_slug(old_ssl_slug)
   end
 
   def approve_account_invite
