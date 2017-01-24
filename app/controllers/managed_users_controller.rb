@@ -109,7 +109,10 @@ class ManagedUsersController < ApplicationController
       end
       user.ssl_accounts << ssl_account
       user.set_roles_for_account(ssl_account, roles)
-      user.invite_existing_user(params) if existing_user
+      if existing_user
+        params[:user][:ssl_account_id] = ssl_account.id
+        user.invite_existing_user(params)
+      end
     end
     unless existing_user
       user.approve_all_accounts
