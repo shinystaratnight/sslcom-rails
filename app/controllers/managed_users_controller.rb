@@ -47,17 +47,23 @@ class ManagedUsersController < ApplicationController
   end
 
   def update_roles
-    params[:user][:role_ids] = (params[:user][:role_ids] & User.roles_list_for_user(current_user).ids.map(&:to_s))
-    ssl_accounts = params[:user][:ssl_account_ids]
-    @user = User.find(params[:id])
-    teams = SslAccount.where(id: ssl_accounts).map(&:get_team_name).join(', ')
-    ssl_accounts.reject(&:blank?).compact.each do |ssl|
-      params[:user][:ssl_account_id] = ssl
-      @user.assign_roles(params)
-      @user.remove_roles(params)
+    ssl_accounts = params[:user][:ssl_account_ids].reject(&:blank?)
+    role_ids     = params[:user][:role_ids].reject(&:blank?)
+    if ssl_accounts.empty? || role_ids.empty?
+      flash[:error] = 'Must select at least one role and one team.'
+      redirect_to edit_managed_user_path
+    else
+      params[:user][:role_ids] = (role_ids & User.roles_list_for_user(current_user).ids.map(&:to_s))
+      @user = User.find(params[:id])
+      teams = SslAccount.where(id: ssl_accounts).map(&:get_team_name).join(', ')
+      ssl_accounts.compact.each do |ssl|
+        params[:user][:ssl_account_id] = ssl
+        @user.assign_roles(params)
+        @user.remove_roles(params)
+      end
+      flash[:notice] = "#{@user.email} roles have been updated for teams: #{teams}."
+      redirect_to users_path(ssl_slug: @ssl_slug)
     end
-    flash[:notice] = "#{@user.email} roles have been updated for teams: #{teams}."
-    redirect_to users_path(ssl_slug: @ssl_slug)
   end
 
   def remove_from_account
