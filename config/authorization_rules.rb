@@ -10,9 +10,12 @@ authorization do
   # SYSADMIN Role
   # ============================================================================
   role :sysadmin do
-    has_permission_on :site_seals, :validation_rules, :to => :admin_manage, except: :delete
-    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls, :to => :manage
-    has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories, :to => :admin_manage
+    has_permission_on :site_seals, :validation_rules,
+      :to => :admin_manage, except: :delete
+    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls,
+      :to => :manage
+    has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
+      :to => :admin_manage
     has_permission_on :resellers,    :to => [:create, :read, :update]
     has_permission_on :ssl_accounts, :to => [
       :create,
@@ -73,14 +76,14 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => [:create]
-    has_permission_on :ssl_accounts, :to => [:admin_manage] do
+    has_permission_on :ssl_accounts, :to => :create
+    has_permission_on :ssl_accounts, :to => :admin_manage do
       if_attribute get_account_owner: is {user}
     end
     #
     # FundedAccounts
     #
-    has_permission_on :funded_accounts, :to => [:create]
+    has_permission_on :funded_accounts, :to => :create
   end
 
   # ============================================================================

@@ -7,33 +7,29 @@ class ManagedUsersController < ApplicationController
   end
 
   def create
-    ssl_account = SslAccount.find params[:user][:ssl_account_id]
-    if current_user.user_exists_for_account?(params[:user][:email])
-      @user=User.new
-      flash[:error] = "User #{params[:user][:email]} already exists for this account!"
+    @ssl_accounts = SslAccount.where(
+      id: params[:user][:ssl_account_ids].reject(&:blank?).compact
+    )
+    ignore_teams = user_exists_for_teams(params[:user][:email])
+    ignore_teams = ignore_teams.map(&:get_team_name).join(', ') unless ignore_teams.empty?
+    if @ssl_accounts.empty?
+      @user         = User.new
+      flash[:error] = "User #{params[:user][:email]} already exists for these teams: #{ignore_teams}!"
       render :new
     else
       new_params  = params.merge(root_url: root_url, from_user: current_user)
       user_exists = User.get_user_by_email(params[:user][:email])
       @user       = current_user.invite_user_to_account!(new_params)
-      reseller    = (request.subdomain == Reseller::SUBDOMAIN)
       if @user.persisted?
-        if reseller
-          ssl_account.add_role! 'new_reseller'
-          ssl_account.set_reseller_default_prefs
-        end
-        @user.ssl_accounts << ssl_account
-        @user.set_roles_for_account(ssl_account,
-          (get_role_ids(params[:user][:role_ids], reseller)).reject(&:blank?).compact
+        invite_user_to_team(
+          @user, new_params, (request.subdomain == Reseller::SUBDOMAIN), user_exists
         )
-        
-        @user.invite_existing_user(new_params) if user_exists
-        unless user_exists
-          @user.approve_all_accounts
-          @user.invite_new_user(new_params.merge(deliver_invite: true))
+        flash_notice = "An invitation email has been sent to #{@user.email} 
+          for teams #{@ssl_accounts.map(&:get_team_name).join(', ')}."
+        unless ignore_teams.blank? || ignore_teams.empty?
+          flash_notice << " User already exisits for team(s) #{ignore_teams}."
         end
-
-        flash[:notice] = "An invitation email has been sent to #{@user.email} for team #{ssl_account.get_team_name}."
+        flash[:notice] = flash_notice
         redirect_to users_path(ssl_slug: @ssl_slug)
       else
         render :new
@@ -80,5 +76,33 @@ class ManagedUsersController < ApplicationController
     role_ids << acc_admin_user unless (reseller || role_ids.include?(acc_admin_user.to_s))
     role_ids << Role.get_role_id(Role::RESELLER) if reseller
     role_ids
+  end
+
+  def user_exists_for_teams(email)
+    ignore_teams  = []
+    @ssl_accounts = @ssl_accounts.inject([]) do |filtered_ssl, ssl|
+      user_exists = current_user.user_exists_for_account?(email, ssl)
+      ignore_teams << ssl if user_exists
+      filtered_ssl << ssl unless user_exists
+      filtered_ssl
+    end
+    ignore_teams
+  end
+
+  def invite_user_to_team(user, params, reseller, existing_user)
+    roles = (get_role_ids(params[:user][:role_ids], reseller)).reject(&:blank?).compact
+    @ssl_accounts.each do |ssl_account|
+      if reseller
+        ssl_account.add_role! 'new_reseller'
+        ssl_account.set_reseller_default_prefs
+      end
+      user.ssl_accounts << ssl_account
+      user.set_roles_for_account(ssl_account, roles)
+      user.invite_existing_user(params) if existing_user
+    end
+    unless existing_user
+      user.approve_all_accounts
+      user.invite_new_user(params.merge(deliver_invite: true))
+    end
   end
 end

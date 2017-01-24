@@ -252,8 +252,8 @@ class UserTest < Minitest::Spec
     end
 
     it '#roles_list_for_user should return scoped list for non admin' do
-      # only show account_admin in dropdown select list 
-      assert_equal Role.get_role_ids(Role::ACCOUNT_ADMIN), User.roles_list_for_user(@owner).ids.sort
+      # 'owner' user can only see roles: account_admin, billing, installer, validations 
+      assert_equal Role.get_select_ids_for_owner.sort, User.roles_list_for_user(@owner).ids.sort
     end
 
     it '#roles_list_for_user should return all roles for admins' do

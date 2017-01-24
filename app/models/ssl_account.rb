@@ -82,7 +82,7 @@ class SslAccount < ActiveRecord::Base
   validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
   validates :company_name, length: {in: 2..20}, allow_nil: true
 
-  default_scope ->{order("created_at desc")}
+  default_scope ->{order("ssl_accounts.created_at desc")}
 
   #before create function
   def b_create

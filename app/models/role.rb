@@ -32,4 +32,8 @@ class Role < ActiveRecord::Base
   def self.get_owner_id
     Role.get_role_id(Role::OWNER)
   end
+
+  def self.get_select_ids_for_owner
+    Role.get_role_ids([ACCOUNT_ADMIN, BILLING, INSTALLER, VALIDATIONS])
+  end
 end

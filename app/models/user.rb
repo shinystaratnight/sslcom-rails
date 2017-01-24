@@ -199,9 +199,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def user_exists_for_account?(user_email)
+  def user_exists_for_account?(user_email, target_ssl=nil)
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
     user = User.get_user_by_email(user_email)
-    user && SslAccountUser.where(user_id: user, ssl_account_id: ssl_account).any?
+    user && SslAccountUser.where(user_id: user, ssl_account_id: ssl).any?
   end
 
   def remove_user_from_account(account, current_user)
@@ -365,7 +366,7 @@ class User < ActiveRecord::Base
   def self.roles_list_for_user(user, exclude_roles=nil)
     exclude_roles ||= []
     unless user.is_system_admins?
-      exclude_roles << Role.where.not(id: Role.get_account_admin_id).map(&:id).uniq
+      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
     end
     exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
   end
