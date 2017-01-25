@@ -1375,7 +1375,7 @@ class CertificateOrder < ActiveRecord::Base
 
   def external_order_number_meta(options={})
     if notes =~ /(DV|EV|OV)\#\d+/
-      if options[:external_order_number] && notes =~ /(DV|EV|OV)\##{options[:external_order_number]}/
+      if options[:external_order_number] && notes =~ /(DV|EV|OV)\##{options[:external_order_number].strip}/
         return $1
       elsif options[:validation_type] && notes =~ /#{options[:validation_type]}\#(\d+)/
         return $1
