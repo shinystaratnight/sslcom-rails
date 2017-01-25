@@ -274,6 +274,14 @@ class UserTest < Minitest::Spec
       assert_equal [[@default_ssl.id, roles.sort]].to_h, User.get_user_accounts_roles(@owner)
     end
 
+    it '#get_user_accounts_roles_names should return a mapped hash' do
+      # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
+      assert_equal [[@default_ssl.get_team_name, ['owner']]].to_h, User.get_user_accounts_roles_names(@owner)
+      
+      @owner.set_roles_for_account(@default_ssl, [@reseller_role, @billing_role])
+      assert_equal [[@default_ssl.get_team_name, ['owner', 'reseller', 'billing']]].to_h, User.get_user_accounts_roles_names(@owner)
+    end    
+
     it '#role_symbols should return [scoped role_symbols] for non-admin' do
       assert_equal [:owner], @owner.role_symbols(@default_ssl)
       

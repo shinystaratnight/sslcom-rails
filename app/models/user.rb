@@ -372,9 +372,20 @@ class User < ActiveRecord::Base
   end
 
   def self.get_user_accounts_roles(user)
+    # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
     mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
+      all
+    end
+  end
+
+  def self.get_user_accounts_roles_names(user)
+    # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
+    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
+    user.ssl_accounts.inject({}) do |all, s|
+      all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
+        .map(&:role).uniq.map(&:name)
       all
     end
   end
