@@ -29,6 +29,7 @@ Minitest::Reporters.use!
 # in spec/support/ and its subdirectories.
 Dir[File.join('./test/support/**/*.rb')].sort.each { |f| require f }
 
+include AuthorizationHelper
 include SessionHelper
 include SetupHelper
 include MailerHelper

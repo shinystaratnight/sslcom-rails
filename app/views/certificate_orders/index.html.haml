@@ -117,7 +117,7 @@
                                     none
                             -unless  cc.blank?
                               %li
-                                =link_to 'create/edit contacts', certificate_content_contacts_url(cc)
+                                =link_to 'create/edit contacts', certificate_content_contacts_url(@ssl_slug, cc)
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?
