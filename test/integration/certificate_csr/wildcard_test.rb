@@ -99,6 +99,8 @@ describe 'wildcard (single-domain) csr' do
       assert_equal 4, CertificateContact.count
       assert_equal 1, CertificateName.count
       assert_equal 1, CaCertificateRequest.count
+      assert_equal 1, Validation.count
+      assert_equal 1, SiteSeal.count
 
     # creates correct associations for CertificateContent and CertificateOrder
     # =========================================================

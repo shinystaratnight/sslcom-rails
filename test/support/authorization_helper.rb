@@ -41,17 +41,59 @@ module AuthorizationHelper
   def should_see_cert_order_headers(user)
     visit user_path user 
     if user.is_system_admins?
-      page.must_have_content('IN PROGRESS')
-      page.must_have_content('REPROCESSING')
-      page.must_have_content('NEED MORE INFO')
+      page.must_have_content 'IN PROGRESS'
+      page.must_have_content 'REPROCESSING'
+      page.must_have_content 'NEED MORE INFO'
     else
-      page.must_have_content('INCOMPLETE')
-      page.must_have_content('PROCESSING')
+      page.must_have_content 'INCOMPLETE'
+      page.must_have_content 'PROCESSING'
     end
   end
+
+  def should_see_reprocess_link
+    visit certificate_orders_path
+    page.must_have_content 'click to reprocess'
+  end
+
+  def should_see_renew_link
+    visit certificate_orders_path
+    page.must_have_content 'click to renew'
+  end
+
+  def should_see_site_seal_js
+    page.must_have_content 'embeddable code'
+    page.must_have_css     'textarea#csr'
+  end
+
+  # Certificate/CertificateContent setup helper methods
+  # ===================================================
+  # 
+  def co_state_issued
+    CertificateContent.first.update(workflow_state: 'issued')
+  end
+
+  def co_state_renewal
+    CertificateContent.first.csr.signed_certificate
+      .update(expiration_date: 80.days.from_now)
+  end
+
+  def get_signed_certificate_params(csr_id)
+    {
+      csr_id:            csr_id,
+      common_name:       'qlikdev.ezops.com',
+      organization_unit: ['Domain Control Validated'],
+      fingerprint:       "--- !ruby/object:OpenSSL::BN {}\n",
+      signature:         '1E:DC:F8:1D:A3:70:32:D8:87:DE:3C:C4:AA:27:AE:98:97:DC:9C:7D',
+      body:              @nonwildcard_csr.strip,
+      parent_cert:       false,
+      strength:          4096,
+      subject_alternative_names: ["qlikdev.ezops.com", "www.qlikdev.ezops.com"]
+    }
+  end
+
   # 
   # Generates a certificate order and all associated records for the passed in 
-  # user's ssl_account. Used for validaing user authorization for all roles.
+  # user's ssl_account.
   # 
   def prepare_certificate_orders(user)
     initialize_server_software
@@ -93,5 +135,10 @@ module AuthorizationHelper
     fill_in "#{contacts_id}_email",      with: 'test_contact@domain.com'
     fill_in "#{contacts_id}_phone",      with: '1233334444'
     find('input[alt="Bl submit button"]').click
+    # Create SignedCertificate
+    # =========================================================
+    cc     = CertificateContent.first
+    csr_id = Csr.where(certificate_content_id: cc.id).first.id
+    SignedCertificate.create(get_signed_certificate_params(csr_id))
   end
 end
