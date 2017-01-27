@@ -2,6 +2,7 @@ module AuthorizationHelper
   def prepare_auth_tables
     create_reminder_triggers
     create_roles
+    set_common_roles
     initialize_certificates
   end
 

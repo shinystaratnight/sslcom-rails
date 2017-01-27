@@ -52,7 +52,9 @@ describe 'new user' do
 
     # Invited user row
     page.must_have_content(@new_user_email)
-    page.must_have_content('account_admin/owner')
+    User.get_user_accounts_roles_names(@new_user).each do |ssl|
+      page.must_have_content("#{ssl.first}: #{ssl.second.join(', ')}")
+    end
     # expand row
     first('td', text: @new_user_email).click
     page.must_have_content('leave', count: 1)
@@ -163,7 +165,9 @@ describe 'existing user' do
     # Invited user row
     page.must_have_content('existing_user')
     page.must_have_content(@existing_user_email)
-    page.must_have_content('account_admin/owner')
+    User.get_user_accounts_roles_names(@existing_user).each do |ssl|
+      page.must_have_content("#{ssl.first}: #{ssl.second.join(', ')}")
+    end
     #expand row
     find('td', text: @existing_user_email).click
 
