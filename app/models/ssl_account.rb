@@ -28,6 +28,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :users, -> { unscope(where: [:status]) }, through: :ssl_account_users
   has_many  :unscoped_users, through: :ssl_account_users
+  has_many  :assignments
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items

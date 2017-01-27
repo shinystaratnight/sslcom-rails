@@ -419,6 +419,25 @@ class User < ActiveRecord::Base
     roles.map{|role| role.name.underscore.to_sym}
   end
 
+  # check for any SslAccount records do not have roles, users or an owner
+  # check for any User record that do not have a role for a given SslAccount
+  def self.integrity_check(fix=nil)
+    # find SslAccount records with no users
+    no_users=SslAccount.joins{ssl_account_users.outer}.where{ssl_account_users.ssl_account_id == nil}
+    # verify users do not exist
+    ap no_users.map(&:users).flatten.compact
+    no_users.delete if fix
+    # find User records with no ssl_accounts
+    no_ssl_accounts=User.unscoped.joins{ssl_account_users.outer}.where{ssl_account_users.user_id == nil}
+    ap no_ssl_accounts.map(&:ssl_accounts).flatten.compact
+    # find any SslAccount record without a role that belongs to a User
+    Assignment.joins{user}.joins{user.ssl_accounts}.where{ssl_account_id == nil}.count
+    # How many SslAccounts that do not have any role
+    SslAccount.joins{assignments.outer}.where{assignments.ssl_account_id==nil}.count
+    # How many SslAccounts that have the owner role
+    SslAccount.joins{assignments}.where{assignments.role_id==4}.count
+  end
+
   def is_admin?
     role_symbols.include? Role::SYS_ADMIN.to_sym
   end
