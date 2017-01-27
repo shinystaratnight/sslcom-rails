@@ -20,7 +20,7 @@ end
 #
 # Create 3 new roles in the roles table.
 #
-['billing', 'validations', 'installer'].each do |name|
+['billing', 'validations', 'installer', 'users_manager'].each do |name|
   Role.create(name: name)
 end
 #

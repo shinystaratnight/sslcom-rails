@@ -40,5 +40,9 @@ FactoryGirl.define do
     trait :validations do
       after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::VALIDATIONS)])}
     end
+
+    trait :users_manager do
+      after(:create) {|u| u.create_ssl_account([Role.get_role_id(Role::USERS_MANAGER)])}
+    end
   end
 end

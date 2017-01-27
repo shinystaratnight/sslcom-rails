@@ -455,6 +455,10 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::VALIDATIONS.to_sym
   end
 
+  def is_users_manager?
+    role_symbols.include? Role::USERS_MANAGER.to_sym
+  end
+
   def is_affiliate?
     !!ssl_account.try(:affiliate)
   end

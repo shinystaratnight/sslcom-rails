@@ -8,6 +8,7 @@ module SetupHelper
       Role::OWNER,
       Role::SYS_ADMIN,
       Role::SUPER_USER,
+      Role::USERS_MANAGER,
       Role::VALIDATIONS
     ]
     unless Role.count == roles.count
