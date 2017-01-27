@@ -225,7 +225,7 @@
                             -else
                               none
                             %li
-                              =link_to 'create/edit contacts', certificate_content_contacts_url(@cc)
+                              =link_to 'create/edit contacts', certificate_content_contacts_path(@ssl_slug, @cc)
             %table(cellspacing="0")
               %tbody
                 -@certificate_order.certificate_contents.order('created_at DESC').each do |c|

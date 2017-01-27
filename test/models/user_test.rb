@@ -82,6 +82,9 @@ class UserTest < Minitest::Spec
     it 'should be able to set role validations' do
       assert create(:user, :validations).is_validations?
     end
+    it 'should be able to set role users_manager' do
+      assert create(:user, :users_manager).is_users_manager?
+    end
   end
 
   describe 'account helper methods' do

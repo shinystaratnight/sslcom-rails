@@ -8,6 +8,7 @@ module SetupHelper
       Role::OWNER,
       Role::SYS_ADMIN,
       Role::SUPER_USER,
+      Role::USERS_MANAGER,
       Role::VALIDATIONS
     ]
     unless Role.count == roles.count
@@ -44,10 +45,11 @@ module SetupHelper
     ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{|t| ServerSoftware.create(title: t)}
   end
 
-  def create_and_approve_user(invited_ssl_acct, login=nil)
-    new_user = login.nil? ? create(:user, :owner) : create(:user, :owner, login: login)
+  def create_and_approve_user(invited_ssl_acct, login=nil, roles=nil)
+    set_roles = roles || @acct_admin_role
+    new_user  = login.nil? ? create(:user, :owner) : create(:user, :owner, login: login)
     new_user.ssl_accounts << invited_ssl_acct
-    new_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
+    new_user.set_roles_for_account(invited_ssl_acct, set_roles)
     new_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     new_user
   end

@@ -3,8 +3,13 @@ require 'test_helper'
 describe 'owner role' do
   before do
     prepare_auth_tables
-    @owner = create(:user, :owner)
-    login_as(@owner, self.controller.cookies)
+    @owner         = create(:user, :owner)
+    @owner_ssl     = @owner.ssl_account
+    @account_admin = create_and_approve_user(@owner_ssl, 'account_admin_login')
+    
+    2.times {login_as(@account_admin, self.controller.cookies)}
+    find('div.acc-sel-dropbtn').click                    # CURRENT TEAM dropdown
+    find('a', text: @owner_ssl.acct_number.upcase).click # switch to @owner's team
   end
 
   describe 'tabs/index pages' do

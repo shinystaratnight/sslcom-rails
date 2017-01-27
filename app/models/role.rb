@@ -11,6 +11,7 @@ class Role < ActiveRecord::Base
   RESELLER      = 'reseller'
   SUPER_USER    = 'super_user'
   SYS_ADMIN     = 'sysadmin'
+  USERS_MANAGER = 'users_manager'
   VALIDATIONS   = 'validations'
   
   def self.get_role_id(role_name)
