@@ -65,6 +65,16 @@ module AuthorizationHelper
     page.must_have_css     'textarea#csr'
   end
 
+  def should_see_cert_download_table
+    first('td.dropdown').click
+    page.must_have_content 'certificate download by platform'
+    page.must_have_content 'WHM/cpanel'
+    page.must_have_content 'Apache'
+    page.must_have_content 'Amazon'
+    page.must_have_content 'Nginx'
+    page.must_have_content 'Java/Tomcat'
+  end
+
   # Certificate/CertificateContent setup helper methods
   # ===================================================
   # 
@@ -75,20 +85,6 @@ module AuthorizationHelper
   def co_state_renewal
     CertificateContent.first.csr.signed_certificate
       .update(expiration_date: 80.days.from_now)
-  end
-
-  def get_signed_certificate_params(csr_id)
-    {
-      csr_id:            csr_id,
-      common_name:       'qlikdev.ezops.com',
-      organization_unit: ['Domain Control Validated'],
-      fingerprint:       "--- !ruby/object:OpenSSL::BN {}\n",
-      signature:         '1E:DC:F8:1D:A3:70:32:D8:87:DE:3C:C4:AA:27:AE:98:97:DC:9C:7D',
-      body:              @nonwildcard_csr.strip,
-      parent_cert:       false,
-      strength:          4096,
-      subject_alternative_names: ["qlikdev.ezops.com", "www.qlikdev.ezops.com"]
-    }
   end
 
   # 
@@ -135,10 +131,10 @@ module AuthorizationHelper
     fill_in "#{contacts_id}_email",      with: 'test_contact@domain.com'
     fill_in "#{contacts_id}_phone",      with: '1233334444'
     find('input[alt="Bl submit button"]').click
-    # Create SignedCertificate
+    # Create SignedCertificate for non wildcard
     # =========================================================
-    cc     = CertificateContent.first
-    csr_id = Csr.where(certificate_content_id: cc.id).first.id
-    SignedCertificate.create(get_signed_certificate_params(csr_id))
+    create(:signed_certificate, :nonwildcard_csr, 
+      csr_id: Csr.where.not(certificate_content_id: nil).first.id
+    )
   end
 end

@@ -8,57 +8,37 @@ describe 'owner role' do
   end
 
   describe 'tabs/index pages' do
-    it 'CAN certificate_orders index (Order tab)' do
+    it 'SHOULD permit' do
+      # certificate_orders index (Order tab)
       should_permit_path certificate_orders_path
-    end
-
-    it 'CAN orders index (Transactions tab)' do
-      should_permit_path orders_path
-    end  
-
-    it 'CAN validations index (Validations tab)' do
+      # orders index (Transactions tab) 
+      should_permit_path orders_path 
+      # validations index (Validations tab)
       should_permit_path validations_path
-    end
-
-    it 'CAN teams index (Teams tab)' do
+      # teams index (Teams tab)
       should_permit_path teams_user_path(@owner)
-    end
-
-    it 'CAN site_seals index (Site Seals tab)' do
+      # site_seals index (Site Seals tab)
       should_permit_path site_seals_path
-    end
-
-    it 'CAN users index (Users tab)' do
+      # users index (Users tab)
       should_permit_path users_path
-    end
-
-    it 'CAN users/show (Dashboard tab)' do
+      # users/show (Dashboard tab)
       should_permit_path user_path(@owner)
-    end
-
-    it 'CAN billing_profiles index (Billing Profiles tab)' do
+      # billing_profiles index (Billing Profiles tab)
       should_permit_path billing_profiles_path
     end
   end
   
   describe 'page and header' do
-    it 'CAN see certificate order header items' do
+    it 'SHOULD see' do
+      # certificate order header items
       should_see_cert_order_headers @owner
-    end
-    
-    it 'CAN see CART ITEMS header item' do
+      # CART ITEMS header item
       should_see_cart_items @owner
-    end
-
-    it 'CAN see AVAILABLE FUNDS header item' do
+      # AVAILABLE FUNDS header item
       should_see_available_funds @owner
-    end
-
-    it "CAN see 'buy certificate' link" do
+      # 'buy certificate' link
       should_see_buy_certificate @owner
-    end
-
-    it "CAN see 'api credentials' link" do
+      # 'api credentials' link
       should_see_api_credentials @owner
     end
   end
@@ -68,15 +48,15 @@ describe 'owner role' do
       prepare_certificate_orders @owner
       co_state_issued
     end
-    
-    # it 'CAN see certificate download table' do
-        
-    # end
-    
-    it "CAN see 'Reprocess' and 'Renew' links" do
-      should_see_reprocess_link
-      co_state_renewal
-      should_see_renew_link
+    it 'SHOULD see' do
+      # certificate download table
+        visit certificate_orders_path
+        should_see_cert_download_table
+      
+      # 'Reprocess' and 'Renew' links
+        should_see_reprocess_link
+        co_state_renewal
+        should_see_renew_link
     end
   end
 
@@ -87,7 +67,7 @@ describe 'owner role' do
       visit certificate_orders_path
     end
 
-    it 'CAN see site seal JS code' do
+    it 'SHOULD see site seal JS code' do
       click_on 'seal'
       should_see_site_seal_js
     end
