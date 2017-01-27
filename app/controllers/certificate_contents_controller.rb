@@ -43,7 +43,7 @@ class CertificateContentsController < ApplicationController
           }
         else
           flash[:notice] = 'Contacts were successfully updated.'
-          format.html { redirect_to(@certificate_content.certificate_order) }
+          format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_content.certificate_order) }
           format.xml  { head :ok }
         end
       else

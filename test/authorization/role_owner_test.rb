@@ -1,7 +1,7 @@
 require 'test_helper'
 
 describe 'owner role' do
-  before(:context) do
+  before do
     prepare_auth_tables
     @owner = create(:user, :owner)
     login_as(@owner, self.controller.cookies)
@@ -65,24 +65,31 @@ describe 'owner role' do
 
   describe 'certificate orders' do
     before do
-      # prepare_certificate_orders @owner
+      prepare_certificate_orders @owner
+      co_state_issued
     end
-    it 'CAN see certificate download table' do
-      
-    end
-
-    it "CAN see 'Reprocess' link" do
-      
-    end
-
-    it "CAN see 'Renew' link" do
-      
+    
+    # it 'CAN see certificate download table' do
+        
+    # end
+    
+    it "CAN see 'Reprocess' and 'Renew' links" do
+      should_see_reprocess_link
+      co_state_renewal
+      should_see_renew_link
     end
   end
 
   describe 'site seals' do
-    it 'CAN see site seal JS code' do
+    before do
+      prepare_certificate_orders @owner
+      co_state_issued
+      visit certificate_orders_path
+    end
 
+    it 'CAN see site seal JS code' do
+      click_on 'seal'
+      should_see_site_seal_js
     end
   end
 end
