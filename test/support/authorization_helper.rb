@@ -53,12 +53,12 @@ module AuthorizationHelper
 
   def should_see_reprocess_link
     visit certificate_orders_path
-    page.must_have_content 'click to reprocess'
+    page.must_have_content 'change domain(s)/rekey'
   end
 
   def should_see_renew_link
     visit certificate_orders_path
-    page.must_have_content 'click to renew'
+    page.must_have_content 'renew'
   end
 
   def should_see_site_seal_js
