@@ -8,8 +8,8 @@ describe 'owner role' do
     @account_admin = create_and_approve_user(@owner_ssl, 'account_admin_login')
     
     2.times {login_as(@account_admin, self.controller.cookies)}
-    find('div.acc-sel-dropbtn').click                    # CURRENT TEAM dropdown
-    find('a', text: @owner_ssl.acct_number.upcase).click # switch to @owner's team
+    visit switch_default_ssl_account_user_path(@account_admin.id, ssl_account_id: @owner_ssl.id)
+    @account_admin = User.find_by(login: 'account_admin_login')
   end
 
   describe 'tabs/index pages' do
@@ -21,13 +21,13 @@ describe 'owner role' do
       # validations index (Validations tab)
       should_permit_path validations_path
       # teams index (Teams tab)
-      should_permit_path teams_user_path(@owner)
+      should_permit_path teams_user_path(@account_admin)
       # site_seals index (Site Seals tab)
       should_permit_path site_seals_path
       # users index (Users tab)
       should_permit_path users_path
       # users/show (Dashboard tab)
-      should_permit_path user_path(@owner)
+      should_permit_path user_path(@account_admin)
       # billing_profiles index (Billing Profiles tab)
       should_permit_path billing_profiles_path
     end
@@ -36,28 +36,28 @@ describe 'owner role' do
   describe 'page and header' do
     it 'SHOULD see' do
       # certificate order header items
-      should_see_cert_order_headers @owner
+      should_see_cert_order_headers @account_admin
       # CART ITEMS header item
-      should_see_cart_items @owner
+      should_see_cart_items @account_admin
       # AVAILABLE FUNDS header item
-      should_see_available_funds @owner
+      should_see_available_funds @account_admin
       # 'buy certificate' link
-      should_see_buy_certificate @owner
+      should_see_buy_certificate @account_admin
       # 'api credentials' link
-      should_see_api_credentials @owner
+      should_see_api_credentials @account_admin
     end
   end
 
   describe 'certificate orders' do
     before do
-      prepare_certificate_orders @owner
+      prepare_certificate_orders @account_admin
       co_state_issued
     end
 
     it 'SHOULD see' do
       # certificate download table
       visit certificate_orders_path
-      should_see_cert_download_table  
+      should_see_cert_download_table
       
       # 'Reprocess' and 'Renew' links
       should_see_reprocess_link

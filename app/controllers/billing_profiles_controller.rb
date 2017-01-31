@@ -3,7 +3,7 @@ class BillingProfilesController < ApplicationController
   #ssl_required :new
   #helper :profile
   filter_access_to :all
-
+  filter_access_to :destroy, :create, :new, attribute_check: true
   respond_to :json
   
   before_filter :require_user

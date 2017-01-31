@@ -108,7 +108,7 @@ authorization do
     # BillingProfiles
     #
     has_permission_on :billing_profiles, :to => :manage do
-      if_attribute :ssl_account => is {user.ssl_account}
+      if_attribute :users_can_manage => contains {user}
     end
     has_permission_on :billing_profiles, :to => :index do
       if_attribute :ssl_account => is {user.ssl_account}
@@ -129,12 +129,15 @@ authorization do
     ] do
       if_attribute :ssl_account => is {user.ssl_account}
     end
-
+    #
+    # CertificateOrders
+    #
+    has_permission_on :certificate_orders, :to => [:create, :index]
     #
     # Orders
     #
-    has_permission_on :orders, :certificate_orders, :to => :create
     has_permission_on :orders, :to => [
+        :create,
         :create_free_ssl,
         :create_multi_free_ssl,
         :delete,
@@ -220,20 +223,11 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => :approve_account_invite do
-      if_attribute get_approval_tokens: is {user.get_approval_tokens}
-    end
-    has_permission_on :users, :to => :decline_account_invite do
-      if_attribute get_approval_tokens: is {user.get_approval_tokens}
-    end
     has_permission_on :users, :to => :enable_disable do
       if_attribute id: is_in {user.ssl_account.users.map(&:id).uniq}
     end
     has_permission_on :users, :to => [:create, :show, :update] do
       if_attribute :id => is {user.id}
-    end
-    has_permission_on :users, :to => :switch_default_ssl_account do
-      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
     end
     has_permission_on :users, :to => :create_team do
       if_attribute max_teams_reached?: is {false}
@@ -254,8 +248,11 @@ authorization do
   # USER Role: basics permissions inherited by all roles
   # ============================================================================
   role :user do
-    has_permission_on :users, :to => [:read, :update, :edit_email, :edit] do
+    has_permission_on :users, :to => [:update, :edit_email, :edit, :show, :search] do
       if_attribute :id => is {user.id}
+    end
+    has_permission_on :users, :to => :index do
+      if_attribute :can_manage_team_users? => is {true}
     end
     has_permission_on :users, :to => :switch_default_ssl_account do
       if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}

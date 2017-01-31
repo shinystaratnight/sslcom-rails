@@ -100,6 +100,13 @@ class User < ActiveRecord::Base
     update(main_ssl_account: ssl_account.id) if total_teams_owned.include?(ssl_account)
   end
 
+  def can_manage_team_users?(target_ssl=nil)
+    assignments.where(
+      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+      role_id: Role.can_manage_users
+    ).any?
+  end
+
   def self.find_non_owners
      [].tap do |orphans|
       find_each do |u|

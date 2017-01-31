@@ -24,6 +24,7 @@ module SetupHelper
 
   def set_common_roles
     @all_roles       = [Role.get_owner_id, Role.get_account_admin_id]
+    @billing_role    = [Role.get_role_id(Role::BILLING)]
     @acct_admin_role = [Role.get_account_admin_id]
     @owner_role      = [Role.get_owner_id]
   end

@@ -1,14 +1,17 @@
 module AuthorizationHelper
   def prepare_auth_tables
-    create_reminder_triggers
-    create_roles
-    set_common_roles
+    initialize_roles
     initialize_certificates
   end
 
   def should_permit_path(path)
     visit path
     assert_match path, current_path
+  end
+
+  def should_not_permit_path(path)
+    visit path
+    refute_match path, current_path
   end
 
   def should_see_cart_items(user)
@@ -39,6 +42,14 @@ module AuthorizationHelper
     page.must_have_content 'secret key'
   end
 
+  def should_not_see_api_credentials(user)
+    visit user_path user
+    screenshot_and_save_page
+    refute page.has_content? 'api credentials'
+    refute page.has_content? 'account key'
+    refute page.has_content? 'secret key'
+  end
+
   def should_see_cert_order_headers(user)
     visit user_path user 
     if user.is_system_admins?
@@ -51,9 +62,26 @@ module AuthorizationHelper
     end
   end
 
+  def should_not_see_cert_order_headers(user)
+    visit user_path user 
+    if user.is_system_admins?
+      refute page.has_content? 'IN PROGRESS'
+      refute page.has_content? 'REPROCESSING'
+      refute page.has_content? 'NEED MORE INFO'
+    else
+      refute page.has_content? 'INCOMPLETE'
+      refute page.has_content? 'PROCESSING'
+    end
+  end
+
   def should_see_reprocess_link
     visit certificate_orders_path
     page.must_have_content 'change domain(s)/rekey'
+  end
+
+  def should_not_see_reprocess_link
+    visit certificate_orders_path
+    refute page.has_content? 'change domain(s)/rekey'
   end
 
   def should_see_renew_link

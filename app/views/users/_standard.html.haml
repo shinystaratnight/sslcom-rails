@@ -110,11 +110,12 @@
                     -if(ac = user.ssl_account.api_credential)
                       .half_width_box
                         %ul
-                          %li
-                            %strong
-                              api credentials
-                          %li account key: #{ac.account_key}
-                          %li secret key: #{ac.secret_key}
+                          -if permitted_to? :index, current_user
+                            %li
+                              %strong
+                                api credentials
+                            %li account key: #{ac.account_key}
+                            %li secret key: #{ac.secret_key}
                           %li=link_to "developer tools", developers_certificate_orders_path
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
             %table(cellspacing="0")

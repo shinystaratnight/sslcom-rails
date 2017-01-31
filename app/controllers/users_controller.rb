@@ -10,13 +10,13 @@ class UsersController < ApplicationController
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :enable_disable]
+    :switch_default_ssl_account, :enable_disable, :index]
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    attribute_check: true
+    :index, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
