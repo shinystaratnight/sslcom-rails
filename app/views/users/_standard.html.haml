@@ -112,7 +112,7 @@
                     -if(ac = user.ssl_account.api_credential)
                       .half_width_box
                         %ul
-                          -if permitted_to? :index, current_user
+                          -unless current_user.is_validations? || current_user.is_billing?
                             %li
                               %strong
                                 api credentials

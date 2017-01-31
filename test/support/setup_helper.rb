@@ -28,6 +28,7 @@ module SetupHelper
     @acct_admin_role  = [Role.get_account_admin_id]
     @owner_role       = [Role.get_owner_id]
     @validations_role = [Role.get_role_id(Role::VALIDATIONS)]
+    @installer_role   = [Role.get_role_id(Role::INSTALLER)]
   end
 
   def initialize_roles
