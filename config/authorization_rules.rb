@@ -68,9 +68,9 @@ authorization do
   end
 
   # ============================================================================
-  # USER_MANAGER Role
+  # USERS_MANAGER Role
   # ============================================================================
-  role :user_manager do
+  role :users_manager do
     includes :user
     #
     # SslAccounts
