@@ -223,7 +223,7 @@ authorization do
     includes :billing
     includes :validations
     includes :installer
-    includes :user_manager
+    includes :users_manager
     #
     # Users
     #
