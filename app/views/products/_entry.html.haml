@@ -46,10 +46,11 @@
                     %li.small_section
                       =link_to 'preview site seal report', "javascript:void(0)", popup_code(co)
                       =#link_to 'preview company documents', artifacts_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]
-              .certificate_details_box
-                %strong embeddable code
-                =text_area_tag :csr, key_logo, :size=>"30x10"
-                =#text_area_tag :csr, css_key_logo, :size=>"30x10"
+              -if permitted_to? :manage, :billing_profiles
+                .certificate_details_box
+                  %strong embeddable code
+                  =text_area_tag :csr, key_logo, :size=>"30x10"
+                  =#text_area_tag :csr, css_key_logo, :size=>"30x10"
               .certificate_details_box
                 %strong instructions
                 #site_seal_instructions

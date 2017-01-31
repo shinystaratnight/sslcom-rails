@@ -191,16 +191,20 @@ authorization do
     #
     # Validations
     #
+    has_permission_on :validations, :to => [:create]
     has_permission_on :validations, :to => [:read, :update] do
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
-    has_permission_on :validations, :site_seals, :to => [:create]
     #
     # ValidationHistories
     #
     has_permission_on :validation_histories, :to => :manage, :except=>:delete do
       if_attribute :ssl_accounts => contains {user.ssl_account}
     end
+    #
+    # SiteSeals 
+    #
+    has_permission_on :site_seals, :to => [:create, :read, :update]
   end
 
   # ============================================================================

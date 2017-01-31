@@ -1,6 +1,6 @@
 require 'test_helper'
 
-describe 'owner role' do
+describe 'billing role' do
   before do
     prepare_auth_tables
     @owner     = create(:user, :owner)
@@ -14,16 +14,16 @@ describe 'owner role' do
 
   describe 'tabs/index pages' do
     it 'SHOULD permit' do
-      # certificate_orders index (Order tab)
+      # certificate_orders index (Order tab), only 'renew' status certificate orders 
       should_permit_path certificate_orders_path
       # orders index (Transactions tab)
       should_permit_path orders_path
       # users/show (Dashboard tab)
-      should_permit_path user_path(@owner)
+      should_permit_path user_path(@billing)
       # billing_profiles index (Billing Profiles tab)
       should_permit_path billing_profiles_path
       # teams index (Teams tab)
-      should_permit_path teams_user_path(@owner)
+      should_permit_path teams_user_path(@billing)
     end
 
     it 'SHOULD NOT permit' do

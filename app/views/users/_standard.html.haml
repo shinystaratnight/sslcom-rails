@@ -68,7 +68,8 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
-                        %li available funds: $#{user.ssl_account.funded_account.amount}
+                        -if permitted_to? :create, :funded_accounts
+                          %li available funds: $#{user.ssl_account.funded_account.amount}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript
@@ -96,17 +97,18 @@
                         -unless current_user.ssl_account.is_registered_reseller?
                           %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box
-                      %ul
-                        %li
-                          %strong
-                            certificates
-                        %li=link_to 'buy certificate', certificates_url
-                        %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
-                        -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
-                          %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
-                        %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
-                        -if user.ssl_account.has_credits?
-                          %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
+                      -if permitted_to?(:manage, :billing_profiles)
+                        %ul
+                          %li
+                            %strong
+                              certificates
+                          %li=link_to 'buy certificate', certificates_url
+                          %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
+                          -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
+                            %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
+                          -if user.ssl_account.has_credits?
+                            %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
                     -if(ac = user.ssl_account.api_credential)
                       .half_width_box
                         %ul

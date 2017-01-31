@@ -18,7 +18,7 @@
             %li
               %strong manage account
             - if permitted_to? :admin_manage
-              - if u.ssl_account
+              - if u.ssl_account && permitted_to?(:create, :funded_accounts)
                 %li available funds: $#{u.ssl_account.funded_account.amount}
               %li=remote_login_link(u)
               %li=link_to 'user dashboard', admin_show_user_path(u)

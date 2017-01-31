@@ -21,7 +21,7 @@ module AuthorizationHelper
 
   def should_not_see_cart_items(user)
     visit user_path user
-    page.should_not_have_content 'CART ITEMS'
+    refute page.has_content? 'CART ITEMS'
   end
 
   def should_see_available_funds(user)
@@ -30,9 +30,20 @@ module AuthorizationHelper
     page.must_have_content 'available funds: $0.00' # dashboard summary
   end
 
+  def should_not_see_available_funds(user)
+    visit user_path user
+    refute page.has_content? 'AVAILABLE FUNDS'        # header section
+    refute page.has_content? 'available funds: $0.00' # dashboard summary
+  end
+
   def should_see_buy_certificate(user)
     visit user_path user
     page.must_have_content 'buy certificate'
+  end
+
+  def should_not_see_buy_certificate(user)
+    visit user_path user
+    refute page.has_content? 'buy certificate'
   end
 
   def should_see_api_credentials(user)
@@ -44,7 +55,6 @@ module AuthorizationHelper
 
   def should_not_see_api_credentials(user)
     visit user_path user
-    screenshot_and_save_page
     refute page.has_content? 'api credentials'
     refute page.has_content? 'account key'
     refute page.has_content? 'secret key'
@@ -92,6 +102,11 @@ module AuthorizationHelper
   def should_see_site_seal_js
     page.must_have_content 'embeddable code'
     page.must_have_css     'textarea#csr'
+  end
+
+  def should_not_see_site_seal_js
+    refute page.has_content? 'embeddable code'
+    refute page.has_content? 'textarea#csr'
   end
 
   def should_see_cert_download_table
