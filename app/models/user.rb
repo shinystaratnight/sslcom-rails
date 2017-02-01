@@ -23,10 +23,11 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   
-  attr_accessor :changing_password, :admin_update, :role_ids
+  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
-    :default_ssl_account, :ssl_account_id, :role_ids, :main_ssl_account, :max_teams
+    :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type,
+    :main_ssl_account, :max_teams
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
@@ -335,23 +336,19 @@ class User < ActiveRecord::Base
   # will take care of setting any data that you want to happen at signup
   # (aka before activation)
   def signup!(params)
-    assign_roles(params, true)
+    assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
     save_without_session_maintenance
   end
 
-  def assign_roles(params, signup=false)
+  def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
     unless role_ids.nil? || cur_account_id.nil?
       new_role_ids = role_ids.compact.reject{|id| id.blank?}.map(&:to_i)
     end
     if new_role_ids.present?
-      if signup
-        acct_admin_role = Role.get_owner_id
-        new_role_ids    << acct_admin_role unless new_role_ids.include? acct_admin_role
-      end
       current_account  = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
       new_role_ids     = new_role_ids - current_role_ids
@@ -359,10 +356,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def remove_roles(params)
+  def remove_roles(params, inverse=false)
     new_role_ids       = params[:user][:role_ids].compact.reject{|id| id.blank?}.map(&:to_i)
     current_role_ids   = roles_for_account(SslAccount.find(params[:user][:ssl_account_id]))
-    removable_role_ids = current_role_ids - new_role_ids
+    removable_role_ids = inverse ? new_role_ids : current_role_ids - new_role_ids
     
     assignments.where(
       role_id:        removable_role_ids,

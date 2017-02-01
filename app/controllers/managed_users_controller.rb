@@ -49,6 +49,7 @@ class ManagedUsersController < ApplicationController
   def update_roles
     ssl_accounts = params[:user][:ssl_account_ids].reject(&:blank?)
     role_ids     = params[:user][:role_ids].reject(&:blank?)
+    role_change  = params[:user][:role_change_type]
     if ssl_accounts.empty? || role_ids.empty?
       flash[:error] = 'Must select at least one role and one team.'
       redirect_to edit_managed_user_path
@@ -58,8 +59,14 @@ class ManagedUsersController < ApplicationController
       teams = SslAccount.where(id: ssl_accounts).map(&:get_team_name).join(', ')
       ssl_accounts.compact.each do |ssl|
         params[:user][:ssl_account_id] = ssl
-        @user.assign_roles(params)
-        @user.remove_roles(params)
+        if role_change == 'overwrite'
+          @user.assign_roles(params)
+          @user.remove_roles(params)
+        elsif role_change == 'add'
+          @user.assign_roles(params)
+        else
+          @user.remove_roles(params, true)
+        end
       end
       flash[:notice] = "#{@user.email} roles have been updated for teams: #{teams}."
       redirect_to users_path(ssl_slug: @ssl_slug)

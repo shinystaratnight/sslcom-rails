@@ -7,24 +7,28 @@
   - if system_admin || current_user.is_owner?
     - if @user_accounts_roles 
       .hidden{data: {accounts_roles: @user_accounts_roles.to_json}, id: 'user_account_roles'}
-    - user_ssl_account = @user.ssl_accounts.first
-    - ssl_label        = system_admin ? 'Ssl Account #' : 'Team(s)'
-    - ssl_collection   = system_admin ? @user.ssl_accounts : current_user.total_teams_owned
-    - ssl_select       = system_admin ? user_ssl_account : current_user.default_ssl_account
-    = form.label :ssl_account_id, ssl_label
+    - scoped_ssl     = @user.ssl_accounts.where('ssl_slug = ? || acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
+    - ssl_label      = system_admin ? 'Ssl Account #' : 'Team(s)'
+    - ssl_collection = system_admin ? @user.ssl_accounts : current_user.total_teams_owned
+    - ssl_select     = system_admin ? scoped_ssl.id : current_user.default_ssl_account
+    = form.label  :ssl_account_id, ssl_label
     = form.select :ssl_account_ids,
-      options_from_collection_for_select(ssl_collection, :id, :get_team_name, ssl_select),
-      {},
+      options_from_collection_for_select(ssl_collection, :id, :get_team_name, ssl_select), {},
       prompt: 'Select Teams',
       multiple: true,
       size: 100
   - else
     = form.hidden_field :ssl_account_id, value: current_user.ssl_account.try(:id)
+- unless @user.new_record?
+  %br
+  .clearfix.form_input
+    = form.label  :role_change_type, 'Change Type'
+    = form.select :role_change_type, options_for_select(%w{add remove overwrite}, 'overwrite')
 .clearfix.form_input
-  - role_ids = system_admin ? @user.roles_for_account(user_ssl_account) : @role_ids
+  - role_ids = system_admin ? @user.roles_for_account(scoped_ssl) : @role_ids
   = form.label :role_id, "Role(s)<span class='label_desc'>set permissions</span>".html_safe
   .checkbox_roles
-    = collection_check_boxes(:user, :role_ids, User.roles_list_for_user(current_user), 
+    = collection_check_boxes(:user, :role_ids, User.roles_list_for_user(current_user).order(:name), 
       :id, :name, checked: (role_ids || [Role.get_account_admin_id])) do |r|
       .checkbox_role
         = r.check_box
