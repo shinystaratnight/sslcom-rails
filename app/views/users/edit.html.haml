@@ -11,6 +11,33 @@
           =f.select :max_teams, options_for_select((1..20).to_a, @user.max_teams)
       #button_container
         #next_submit=image_submit_tag 'bl_submit_button.gif'
+
+-elsif params[:admin_activate] && permitted_to?(:admin_activate, @user)
+  -title = "Activate User"
+  -content_for :title, title
+  .reseller_registration_profile
+    %h3=title
+    =form_for @user, url: admin_activate_user_path(@user) do |f|
+      #stylized.default_form
+        .clearfix.form_input
+          =f.label :login, "Login <span class='label_desc'>optional</span>".html_safe
+          =f.text_field :login, minlength: 2
+        .clearfix.form_input
+          =f.label :password, "Password<span class='label_desc'>min. 8 chars</span>".html_safe
+          =f.password_field :password, required: true, minlength: 8
+        .clearfix.form_input
+          =f.label :password_confirmation, "Password again<span class='label_desc'>type the password again</span>".html_safe
+          =f.password_field :password_confirmation, required: true, minlength: 8
+        .clearfix.form_input
+          ="<strong>password requires:</strong>".html_safe
+          %div a minimum of 8 characters which must include
+          %div a minimum of 1 lower case letter [a-z] and
+          %div a minimum of 1 upper case letter [A-Z] and
+          %div a minimum of 1 numeric character [0-9] and
+          %div a minimum of 1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
+      #button_container
+        =f.submit 'Activate User', class: 'button_blue'
+
 -else
   -content_for :title, "Edit Account"
   -is_reseller = !current_user.ssl_account.reseller.blank?

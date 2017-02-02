@@ -27,6 +27,9 @@
               %li=link_to 'change password', edit_password_user_url(u)
               - if permitted_to? :set_default_team_max, :users
                 %li=link_to "change team max (current #{u.max_teams})", edit_user_path(u, update_own_team_limit: true)
+              - if permitted_to?(:admin_activate, u) && !u.active?
+                %br
+                %li="<span class='chip'>#{link_to 'activate', edit_user_path(u, admin_activate: true)}</span>".html_safe
             -unless current_user.is_system_admins?
               - if permitted_to? :update_roles, :managed_users
                 %li=link_to 'change roles', edit_managed_user_path(u, slug_params)

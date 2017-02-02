@@ -316,6 +316,7 @@ privileges do
   privilege :delete, includes: :destroy
   privilege :admin_manage, includes: [
     :adjust_funds,
+    :admin_activate,
     :admin_index,
     :admin_show,
     :admin_update,

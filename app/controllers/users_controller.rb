@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :enable_disable, :index]
+    :switch_default_ssl_account, :enable_disable, :index, :admin_activate]
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
@@ -102,7 +102,7 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find(params[:id]) if params[:update_own_team_limit]
+    @user = User.find(params[:id]) if params[:update_own_team_limit] || params[:admin_activate]
   end
 
   def login_as
@@ -321,6 +321,19 @@ class UsersController < ApplicationController
       flash[:notice] = "User #{@user.login} team limit has been successfully updated to #{max}."
     end
     redirect_to users_path
+  end
+
+  def admin_activate
+    @user = User.find params[:id]
+    @user.activate!(params)
+    if @user.valid?
+      @user.approve_all_accounts
+      flash[:notice] = "User #{@user.login} has been successfully activated!"
+      redirect_to users_path
+    else
+      flash[:error] = "Unable to activate user due to errors. #{@user.errors.full_messages.join(', ')}"
+      redirect_to edit_user_path(@user, admin_activate: true)
+    end
   end
 
   private

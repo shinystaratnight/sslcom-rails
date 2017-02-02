@@ -281,6 +281,7 @@ SslCom::Application.routes.draw do
       match :create_team, via: [:get, :post]
       put   :set_default_team
       match :set_default_team_max, via: [:put, :patch]
+      match :admin_activate, via: [:put, :patch]
     end
   end
 
