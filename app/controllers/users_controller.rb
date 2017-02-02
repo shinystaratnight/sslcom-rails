@@ -305,9 +305,9 @@ class UsersController < ApplicationController
     if @user && params[:ssl_account_id]
       ssl = SslAccount.find(params[:ssl_account_id])
       if ssl && @user.set_default_team(ssl)
-        flash[:notice] = "Team #{ssl.company_name} has been set to default."
+        flash[:notice] = "Team #{ssl.get_team_name} has been set as default team."
       else
-        flash[:error] = "Something went wrong, please try again."
+        flash[:error] = 'Something went wrong, please try again.'
       end
     end
     redirect_to teams_user_path

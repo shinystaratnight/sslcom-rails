@@ -98,7 +98,7 @@ class User < ActiveRecord::Base
   end
 
   def set_default_team(ssl_account)
-    update(main_ssl_account: ssl_account.id) if total_teams_owned.include?(ssl_account)
+    update(main_ssl_account: ssl_account.id) if ssl_accounts.include?(ssl_account)
   end
 
   def can_manage_team_users?(target_ssl=nil)

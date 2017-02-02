@@ -31,15 +31,6 @@ authorization do
     # Users
     #
     has_permission_on :users, :to => :admin_manage
-    has_permission_on :users, :to => :switch_default_ssl_account do
-      if_attribute default_ssl_account: is_in {user.ssl_accounts.map(&:id)}
-    end
-    has_permission_on :users, :to => :decline_account_invite do
-      if_attribute get_approval_tokens: is {user.get_approval_tokens}
-    end
-    has_permission_on :users, :to => :approve_account_invite do
-      if_attribute get_approval_tokens: is {user.get_approval_tokens}
-    end
   end
 
   # ============================================================================
@@ -271,7 +262,7 @@ authorization do
       if_attribute get_approval_tokens: is {user.get_approval_tokens}
     end
     has_permission_on :users, :to => :set_default_team do
-      if_attribute ssl_account: is_in {user.total_teams_owned}
+      if_attribute ssl_account: is_in {user.ssl_accounts}
     end
   end
 
