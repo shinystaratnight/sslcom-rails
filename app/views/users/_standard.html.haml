@@ -113,7 +113,7 @@
                     -if(ac = user.ssl_account.api_credential)
                       .half_width_box
                         %ul
-                          -unless current_user.is_validations? || current_user.is_billing?
+                          -unless user.is_validations? || user.is_billing?
                             %li
                               %strong
                                 api credentials
