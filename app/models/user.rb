@@ -215,14 +215,26 @@ class User < ActiveRecord::Base
 
   def remove_user_from_account(account, current_user)
     Assignment.where(user_id: self, ssl_account_id: account).delete_all
-    ssl = SslAccountUser.where(user_id: self, ssl_account_id: account).delete_all
+    ssl = ssl_account_users.where(ssl_account_id: account).delete_all
     if ssl > 0
       deliver_removed_from_account!(account, current_user)
       unless current_user.is_system_admins? 
         deliver_removed_from_account_notify_admin!(account, current_user)
       end
-      clear_default_ssl_account if default_ssl_account == account.id
+      update_default_ssl_account(account)
     end
+  end
+
+  def update_default_ssl_account(remove_ssl)
+    if default_ssl_account == remove_ssl.id
+      if main_ssl_account != remove_ssl.id
+        update(default_ssl_account: main_ssl_account)
+      else
+        ssl = get_first_approved_acct
+        update_attributes(default_ssl_account: ssl.id, main_ssl_account: ssl.id)
+      end
+    end
+    update(main_ssl_account: default_ssl_account) if main_ssl_account == remove_ssl.id
   end
 
   def self.get_user_by_email(email)
