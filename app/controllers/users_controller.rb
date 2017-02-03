@@ -7,10 +7,11 @@ class UsersController < ApplicationController
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
+  before_filter :find_ssl_account, only: [:admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :enable_disable, :index, :admin_activate]
+    :switch_default_ssl_account, :enable_disable, :index, :admin_activate, :show, :teams]
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
@@ -77,12 +78,12 @@ class UsersController < ApplicationController
   end
 
   def show
-    if current_user.ssl_account.has_credits?
+    if @user.ssl_account.has_credits?
       flash.now[:warning] = "You have unused ssl certificate credits. %s"
       flash.now[:warning_item] = "Click here to view the list of credits.",
         credits_certificate_orders_path
     end
-    if current_user.pending_account_invites?
+    if @user.pending_account_invites?
       render_invite_messages
     end
   end
@@ -99,6 +100,7 @@ class UsersController < ApplicationController
   end
 
   def admin_show
+    @ssl_slug=@ssl_account.to_slug if @ssl_account
   end
 
   def edit
@@ -283,7 +285,7 @@ class UsersController < ApplicationController
 
   def teams
     p = {page: params[:page]}
-    @teams = current_user.get_all_approved_accounts.paginate(p)
+    @teams = @user.get_all_approved_accounts.paginate(p)
   end
 
   def create_team

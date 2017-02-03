@@ -1,8 +1,5 @@
-#validations
-  %table(cellspacing="0")
-    %caption
-      User #{@user.login}
-    %tr
-      %td(colspan="6")
-        .certificate_details
-          =render "details", u: @user
+=error_messages_for :user
+-if @user.ssl_account.is_registered_reseller?
+  =render :partial=>'reseller', :locals=>{:user=>@user}
+-elsif @user.is_standard?
+  =render :partial=>'standard', :locals=>{:user=>@user} #

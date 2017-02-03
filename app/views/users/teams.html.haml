@@ -10,7 +10,7 @@
     %caption
       =title
       =will_paginate @teams
-    -if permitted_to? :create_team, current_user
+    -if permitted_to?(:create_team, current_user) and !current_user.is_system_admins?
       %br
       %tr
         =link_to "+ Create Team (#{current_user.max_teams-current_user.total_teams_owned.count} Remaining)", create_team_user_path(current_user), class: 'button_blue button_index'

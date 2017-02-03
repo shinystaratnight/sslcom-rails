@@ -67,8 +67,8 @@
                             login account
                         %li username: #{user.login}
                         %li email: #{user.email}
-                        %li account number: #{user.ssl_account.acct_number}
-                        %li roles: #{current_user.role_symbols.join('/')}
+                        %li account number: #{(@ssl_account || user.ssl_account).acct_number}
+                        %li roles: #{user.role_symbols(@ssl_account).join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript

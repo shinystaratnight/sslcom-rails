@@ -1,4 +1,4 @@
--ssl = user.ssl_account
+-ssl = @ssl_account || user.ssl_account
 -if request['action']=="edit_settings"
   .settings_block.clearfix
     .destination_block
@@ -8,14 +8,14 @@
           #{ssl.ssl_slug}
         -else
           -if permitted_to? :update_ssl_slug, user.ssl_account
-            #{link_to 'ADD TEAM URL', edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)}
+            #{link_to 'ADD TEAM URL', edit_ssl_account_path(url_slug: true, ssl_slug: @ssl_slug)}
   .settings_block.clearfix
     .destination_block
       %label
         Team name:
         -if permitted_to? :update_company_name, user.ssl_account
           -path_name = ssl.company_name ? ssl.company_name : 'ADD TEAM NAME'
-          #{link_to path_name, edit_ssl_account_path(id: ssl.id, update_company_name: true, ssl_slug: @ssl_slug)}
+          #{link_to path_name, edit_ssl_account_path(update_company_name: true, ssl_slug: @ssl_slug)}
         -else
           #{ssl.company_name}
 -else
@@ -25,11 +25,11 @@
       #{ssl.ssl_slug}
     -else
       -if permitted_to? :update_ssl_slug, user.ssl_account
-        #{link_to 'ADD TEAM URL', edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)}
+        #{link_to 'ADD TEAM URL', edit_ssl_account_path(url_slug: true, ssl_slug: @ssl_slug)}
   %li
     team name:
     -if permitted_to? :update_company_name, user.ssl_account
       -path_name = ssl.company_name ? ssl.company_name : 'ADD TEAM NAME'
-      #{link_to path_name, edit_ssl_account_path(id: ssl.id, update_company_name: true, ssl_slug: @ssl_slug)}
+      #{link_to path_name, edit_ssl_account_path(update_company_name: true, ssl_slug: @ssl_slug)}
     -else
       #{ssl.company_name}
