@@ -1,9 +1,9 @@
--title = "Edit User #{@user.first_name} #{@user.last_name}"
+-title = "Edit User #{@user.login}"
 -content_for :title, title
 .reseller_registration_profile
   %h3=title
   %p
-    Please update roles for this user.
+    Please update roles for user #{@user.login}.
   =form_for @user, url: update_roles_managed_user_path do |f|
     =f.error_messages
     #stylized.default_form

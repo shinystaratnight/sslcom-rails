@@ -68,8 +68,7 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
-                        -if permitted_to? :create, :funded_accounts
-                          %li available funds: $#{user.ssl_account.funded_account.amount}
+                        %li roles: #{current_user.role_symbols.join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript
@@ -101,7 +100,9 @@
                         %ul
                           %li
                             %strong
-                              certificates
+                              billing and purchase
+                          -if permitted_to? :create, :funded_accounts
+                            %li available funds: $#{user.ssl_account.funded_account.amount}
                           %li=link_to 'buy certificate', certificates_url
                           %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
                           -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
