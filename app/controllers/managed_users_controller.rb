@@ -47,7 +47,7 @@ class ManagedUsersController < ApplicationController
   end
 
   def update_roles
-    ssl_accounts = params[:user][:ssl_account_ids].reject(&:blank?)
+    ssl_accounts = params[:user][:ssl_account_ids].reject(&:blank?).compact
     role_ids     = params[:user][:role_ids].reject(&:blank?)
     role_change  = params[:user][:role_change_type]
     if ssl_accounts.empty? || role_ids.empty?
@@ -55,9 +55,14 @@ class ManagedUsersController < ApplicationController
       redirect_to edit_managed_user_path
     else
       params[:user][:role_ids] = (role_ids & User.roles_list_for_user(current_user).ids.map(&:to_s))
-      @user = User.find(params[:id])
-      teams = SslAccount.where(id: ssl_accounts).map(&:get_team_name).join(', ')
-      ssl_accounts.compact.each do |ssl|
+      @user         = User.find(params[:id])
+      ssl_select    = ssl_accounts.map(&:to_i)
+      ssl_user      = @user.ssl_accounts.pluck(:id)
+      ssl_update    = SslAccount.where(id: (ssl_select & ssl_user)) # update roles for teams
+      @ssl_accounts = SslAccount.where(id: (ssl_select - ssl_user)) # invite to teams
+      
+      # update roles for user's existing teams
+      ssl_update.map(&:id).each do |ssl|
         params[:user][:ssl_account_id] = ssl
         if role_change == 'overwrite'
           @user.assign_roles(params)
@@ -68,8 +73,14 @@ class ManagedUsersController < ApplicationController
           @user.remove_roles(params, true)
         end
       end
-      flash[:notice] = "#{@user.email} roles have been updated for teams: #{teams}."
-      redirect_to users_path(ssl_slug: @ssl_slug)
+      # invite existing user to new teams w/selected roles  
+      unless @ssl_accounts.empty?
+        new_params = params.merge(root_url: root_url, from_user: current_user)
+        invite_user_to_team(@user, new_params, (request.subdomain == Reseller::SUBDOMAIN), true)
+      end
+      notice =  "#{@user.email} roles have been updated for teams: #{ssl_update.map(&:get_team_name).join(', ')}."
+      notice << " And, invited to teams: #{@ssl_accounts.map(&:get_team_name).join(', ')}." unless @ssl_accounts.empty?
+      redirect_to users_path(ssl_slug: @ssl_slug), notice: notice
     end
   end
 
