@@ -21,7 +21,7 @@ describe 'billing role' do
       # users/show (Dashboard tab)
       should_permit_path user_path(@billing)
       # billing_profiles index (Billing Profiles tab)
-      should_permit_path billing_profiles_path
+      should_permit_path billing_profiles_path(@owner_ssl.to_slug)
       # teams index (Teams tab)
       should_permit_path teams_user_path(@billing)
     end
@@ -33,6 +33,10 @@ describe 'billing role' do
       should_not_permit_path site_seals_path
       # users index (Users tab)
       should_not_permit_path users_path
+      # owner's edit password page
+      should_not_permit_path edit_password_user_path(@owner)
+      # owner's edit email page
+      should_not_permit_path edit_email_user_path(@owner)
     end
   end
   

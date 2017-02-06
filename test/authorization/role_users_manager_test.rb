@@ -32,7 +32,11 @@ describe 'users_manager role' do
       # orders index (Transactions tab)
       should_not_permit_path orders_path
       # billing_profiles index (Billing Profiles tab)
-      should_not_permit_path billing_profiles_path
+      should_not_permit_path billing_profiles_path(@owner_ssl.to_slug)
+      # owner's edit password page
+      should_not_permit_path edit_password_user_path(@owner)
+      # owner's edit email page
+      should_not_permit_path edit_email_user_path(@owner)
     end
   end
   

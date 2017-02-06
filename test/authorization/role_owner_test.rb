@@ -24,7 +24,7 @@ describe 'owner role' do
       # users/show (Dashboard tab)
       should_permit_path user_path(@owner)
       # billing_profiles index (Billing Profiles tab)
-      should_permit_path billing_profiles_path
+      should_permit_path billing_profiles_path(@owner.ssl_account.to_slug)
     end
   end
   
