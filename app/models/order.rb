@@ -216,7 +216,7 @@ class Order < ActiveRecord::Base
     self.apply_discounts(params) #this needs to happen before the transaction but after the final incarnation of the order
     self.update_attribute :visitor_token, options[:visitor_token] if options[:visitor_token]
     self.mark_paid!
-    self.credit_affiliate(options[:cookies],options[:user])
+    self.credit_affiliate(options[:cookies])
   end
 
   def apply_discounts(params)
@@ -226,7 +226,7 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def credit_affiliate(cookies, current_user)
+  def credit_affiliate(cookies)
     if !(self.is_test? || self.cents==0)
       if cookies[:aid] && Affiliate.exists?(cookies[:aid])
         self.ext_affiliate_name="idevaffiliate"

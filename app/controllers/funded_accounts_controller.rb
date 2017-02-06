@@ -114,7 +114,7 @@ class FundedAccountsController < ApplicationController
           apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
           record_order_visit(@order)
           @order.mark_paid!
-          credit_affiliate(@order)
+          @order.credit_affiliate(cookies)
         end
         @account_total.save
         dep.save

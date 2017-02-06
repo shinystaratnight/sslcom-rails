@@ -321,7 +321,7 @@ class OrdersController < ApplicationController
         @order.billing_profile = @profile
         current_user.ssl_account.orders << @order
         record_order_visit(@order)
-        credit_affiliate(@order)
+        @order.credit_affiliate(cookies)
         if @certificate_orders
           clear_cart
           format.html { redirect_to order_path(@ssl_slug, @order) }
