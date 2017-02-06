@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    :index, attribute_check: true
+    :index, :edit_email, :edit_password, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -371,7 +371,7 @@ class UsersController < ApplicationController
   end
 
   def admin_or_current_user?
-    (@current_user.is_admin? || @current_user.is_owner?) || @current_user == @user
+    @current_user.is_admin? || @current_user == @user
   end
 
   def render_invite_messages

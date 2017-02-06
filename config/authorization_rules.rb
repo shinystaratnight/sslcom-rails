@@ -243,7 +243,14 @@ authorization do
   # USER Role: basics permissions inherited by all roles
   # ============================================================================
   role :user do
-    has_permission_on :users, :to => [:update, :edit_email, :edit, :show, :search] do
+    has_permission_on :users, :to => [
+      :edit,
+      :edit_email,
+      :edit_password,
+      :search,
+      :show,
+      :update
+    ] do
       if_attribute :id => is {user.id}
     end
     has_permission_on :users, :to => :index do
@@ -324,6 +331,7 @@ privileges do
     :change_login,
     :edit,
     :edit_settings,
+    :edit_password,
     :enable_disable,
     :login_as,
     :manage,
