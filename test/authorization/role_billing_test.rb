@@ -58,28 +58,35 @@ describe 'billing role' do
     end
   end
 
-  # TODO: Implement view for billing user.
-  # describe 'certificate orders' do
-  #   before do
-  #     prepare_certificate_orders @billing
-  #     co_state_issued
-  #   end
+  describe 'certificate orders' do
+    before do
+      login_as(@owner, self.controller.cookies)
+      prepare_certificate_orders @owner
+      co_state_issued
+      co_state_expire
+      login_as(@billing, self.controller.cookies)
+    end
 
-  #   it 'SHOULD see' do
-  #     # 'Renew' links
-  #     co_state_renewal
-  #     should_see_renew_link
-  #   end
+    it 'SHOULD see' do
+      # 'renew' links
+      should_see_renew_link
+    end
 
-  #   it 'SHOULD NOT see' do
-  #     # certificate download table
-  #     visit certificate_orders_path
-  #     should_not_see_cert_download_table
-
-  #     #'change domain(s)/rekey' links
-  #     should_not_see_reprocess_link
-
-  #     # site seal JS code
-  #   end
-  # end
+    it 'SHOULD NOT see' do
+      visit certificate_orders_path
+      
+      # certificate download table
+      should_not_see_cert_download_table
+      
+      # 'change domain(s)/rekey' links
+      should_not_see_reprocess_link
+      
+      # certificate order content/links
+      refute page.has_content? 'seal'
+      refute page.has_content? 'details'
+      refute page.has_content? 'documents'
+      find('a.expand').click
+      refute page.has_content? 'view certificate details'
+    end
+  end
 end

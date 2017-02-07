@@ -46,6 +46,7 @@ module CertificateOrdersHelper
   end
 
   def action(certificate_order)
+    is_billing = current_user.is_billing?
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
@@ -73,11 +74,15 @@ module CertificateOrdersHelper
             if certificate_order.renewal && certificate_order.renewal.paid?
               link_to 'see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)
             else
-              "<ul><li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)} or</li><li>#{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>".html_safe
+              links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
+              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" unless is_billing
+              "<ul>#{links}</ul>".html_safe
             end
           else
             if certificate_order.certificate.is_free?
-              "<ul><li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)} or</li><li>#{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>".html_safe
+              links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
+              links << "<li>or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" unless is_billing
+              "<ul>#{links}</ul>".html_safe
             else
               ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" : "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+"<li>#{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe
             end

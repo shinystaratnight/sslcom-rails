@@ -119,6 +119,16 @@ module AuthorizationHelper
     page.must_have_content 'Java/Tomcat'
   end
 
+  def should_not_see_cert_download_table
+    first('td.dropdown').click
+    refute page.has_content? 'certificate download by platform'
+    refute page.has_content? 'WHM/cpanel'
+    refute page.has_content? 'Apache'
+    refute page.has_content? 'Amazon'
+    refute page.has_content? 'Nginx'
+    refute page.has_content? 'Java/Tomcat'
+  end
+
   # Certificate/CertificateContent setup helper methods
   # ===================================================
   # 
@@ -129,6 +139,11 @@ module AuthorizationHelper
   def co_state_renewal
     CertificateContent.first.csr.signed_certificate
       .update(expiration_date: 80.days.from_now)
+  end
+
+  def co_state_expire
+    CertificateContent.first.csr.signed_certificate
+      .update(expiration_date: 5.days.ago)
   end
 
   # 

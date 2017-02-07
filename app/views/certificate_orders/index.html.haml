@@ -74,7 +74,7 @@
                                   expire in 36 months. However, you will be notified 60 days prior to expiration to reissue this certificate free of cost.
                                   A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
                                   multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
-                          -unless co.is_unused_credit?
+                          -unless co.is_unused_credit? || !permitted_to?(:show, co)
                             %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
                           %li=link_to "view order transaction", order_path(@ssl_slug, order)
                           %li.category_border
