@@ -482,6 +482,10 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::BILLING.to_sym
   end
 
+  def is_billing_only?
+    role_symbols.include?(Role::BILLING.to_sym) && role_symbols.count == 1
+  end
+
   def is_installer?
     role_symbols.include? Role::INSTALLER.to_sym
   end
