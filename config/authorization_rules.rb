@@ -38,6 +38,7 @@ authorization do
   # ============================================================================ 
   role :owner do
     includes :base
+    includes :account_admin
     #
     # SslAccounts
     #

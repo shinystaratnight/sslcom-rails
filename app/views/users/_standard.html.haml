@@ -91,10 +91,11 @@
                           %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_user_url(user)
                         %li=link_to 'change password', edit_password_user_url(user)
-                        -unless current_user.is_affiliate?
-                          %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
-                        -unless current_user.ssl_account.is_registered_reseller?
-                          %li=link_to 'upgrade to reseller', new_reseller_url
+                        -if permitted_to?(:manage, :billing_profiles)
+                          -unless current_user.is_affiliate?
+                            %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
+                          -unless current_user.ssl_account.is_registered_reseller?
+                            %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box
                       -if permitted_to?(:manage, :billing_profiles)
                         %ul
