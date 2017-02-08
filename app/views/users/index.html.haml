@@ -36,7 +36,7 @@
         %th(scope="col") Approved
     -@users.each do |u|
       %tr
-        %td.dropdown=image_tag('expand.png') unless u==current_user
+        %td.dropdown=image_tag('expand.png') if current_user.is_system_admins? or (u!=current_user and !u.is_owner?)
         %td.name.expandable=u.login
         %td.expandable=u.email
         -if current_user.is_system_admins?

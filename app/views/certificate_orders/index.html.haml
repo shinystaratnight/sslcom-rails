@@ -76,7 +76,8 @@
                                   multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
                           -unless co.is_unused_credit? || !permitted_to?(:show, co)
                             %li=link_to "view certificate details", certificate_order_path(@ssl_slug, co)
-                          %li=link_to "view order transaction", order_path(@ssl_slug, order)
+                          -if permitted_to?(:show, order)
+                            %li=link_to "view order transaction", order_path(@ssl_slug, order)
                           %li.category_border
                           %li
                             %strong for developers

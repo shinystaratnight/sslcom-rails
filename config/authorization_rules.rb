@@ -56,6 +56,20 @@ authorization do
   # ============================================================================ 
   role :account_admin do
     includes :base
+    #
+    # SslAccounts
+    #
+    has_permission_on :ssl_accounts, :to => :validate_ssl_slug
+    has_permission_on :ssl_accounts, :to => :update_ssl_slug, join_by: :and do
+      if_attribute :id => is {user.ssl_account.id},
+                   ssl_slug: is {nil}
+    end
+    has_permission_on :ssl_accounts, :to => [:update_company_name] do
+      if_attribute :id => is {user.ssl_account.id}
+    end
+    has_permission_on :ssl_accounts, :to => [:create, :read, :update, :edit_settings, :update_settings] do
+      if_attribute :id => is {user.ssl_account.id}
+    end
   end
 
   # ============================================================================
@@ -63,21 +77,6 @@ authorization do
   # ============================================================================
   role :users_manager do
     includes :user
-    #
-    # SslAccounts
-    #
-    has_permission_on :ssl_accounts, :to => :validate_ssl_slug
-    has_permission_on :ssl_accounts, :to => :update_ssl_slug, join_by: :and do
-      if_attribute get_account_owner: is {user},
-                   ssl_slug: is {nil}
-    end
-    has_permission_on :ssl_accounts, :to => [:update_company_name] do
-      if_attribute get_account_owner: is {user}
-    end
-    has_permission_on :ssl_accounts, :to => [:create, :read, :update] do
-      if_attribute :id => is {user.ssl_account.id}
-    end
-
     #
     # ManagedUsers
     #
@@ -87,7 +86,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => [:create, :delete]
+    has_permission_on :users, :to => [:create, :delete, :read]
   end
 
   # ============================================================================
@@ -202,8 +201,8 @@ authorization do
   # RESELLER Role
   # ============================================================================ 
   role :reseller do
-    includes :user
     includes :base
+    includes :owner
   end  
 
   # ============================================================================

@@ -53,13 +53,7 @@ class CertificateOrdersController < ApplicationController
 #    expire_fragment('admin_header_certs_status') if
 #      fragment_exist?('admin_header_certs_status')
     p = {:page => params[:page]}
-    @certificate_orders = if current_user.is_billing_only?
-      find_certificate_orders.joins(certificate_contents: {csr: :signed_certificates})
-        .where('signed_certificates.expiration_date < ?', DateTime.now)
-        .where('certificate_contents.workflow_state = ?', 'issued').paginate(p)
-    else
-      find_certificate_orders.paginate(p)
-    end
+    @certificate_orders = find_certificate_orders.paginate(p)
 
     respond_to do |format|
       format.html { render :action => :index }
