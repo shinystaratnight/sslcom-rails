@@ -3,6 +3,7 @@ class CertificatesController < ApplicationController
   before_filter :require_user, :only=>[:buy, :buy_renewal],
     :if=>'request.subdomain==Reseller::SUBDOMAIN'
   before_filter :find_certificate, only: [:show, :buy, :pricing, :buy_renewal]
+  filter_access_to :buy_renewal
   layout false, only: [:pricing]
 
   def index

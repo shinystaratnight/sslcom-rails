@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account, :enable_disable, :teams
+    :switch_default_ssl_account, :enable_disable, :teams, :index
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]

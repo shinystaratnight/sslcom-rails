@@ -124,6 +124,7 @@ authorization do
     # CertificateOrders
     #
     has_permission_on :certificate_orders, :to => [:create, :index]
+    has_permission_on :certificates, :to => [:buy_renewal]
     #
     # Orders
     #
@@ -277,6 +278,7 @@ authorization do
   # ============================================================================ 
   role :guest do
     has_permission_on :csrs, :certificate_orders, :orders,  :to => :create
+    has_permission_on :certificates,  :to => :buy_renewal
     has_permission_on :validations, :site_seals, :surls,    :to => [:create, :read]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
     has_permission_on :certificates, :validation_histories, :to => :read

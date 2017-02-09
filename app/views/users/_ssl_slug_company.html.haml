@@ -21,15 +21,14 @@
 -else
   %li
     team url:
-    -if ssl.ssl_slug
-      #{ssl.ssl_slug}
+    -if permitted_to?(:update_ssl_slug, user.ssl_account) and ssl.ssl_slug.blank?
+      #{link_to 'ADD TEAM URL', edit_ssl_account_path(url_slug: true, ssl_slug: @ssl_slug)}
     -else
-      -if permitted_to? :update_ssl_slug, user.ssl_account
-        #{link_to 'ADD TEAM URL', edit_ssl_account_path(url_slug: true, ssl_slug: @ssl_slug)}
+      #{ssl.to_slug}
   %li
     team name:
     -if permitted_to? :update_company_name, user.ssl_account
       -path_name = ssl.company_name ? ssl.company_name : 'ADD TEAM NAME'
       #{link_to path_name, edit_ssl_account_path(update_company_name: true, ssl_slug: @ssl_slug)}
     -else
-      #{ssl.company_name}
+      #{ssl.get_team_name}

@@ -6,9 +6,8 @@
   %a.common_name(title=cn)
     =((co.is_test ? " (TEST)" : "") + (%w(refunded rejected).include?(co.workflow_state) ? " (#{co.workflow_state.upcase})" : "") + cn.downcase).shorten(35, false)
   %span.expand_or_view_order
-    -unless single
-      -unless co.is_expired_credit?
-        %a.expand open
+    -if !(single and co.is_expired_credit?) and permitted_to? :show, co
+      %a.expand open
     -unless co.is_unused_credit?
       -if permitted_to? :show, co
         %span :
@@ -21,7 +20,10 @@
         =link_to "seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get site seal for "+cn
       -if co.certificate_content.issued? && !co.certificate_content.expired?
         %span :
-        =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)
+        =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
+      -if permitted_to? :read, co.order
+        %span :
+        =link_to "invoice", order_path(@ssl_slug, co.order), :title=>"transaction information for "+cn
       -u=co.ssl_account.primary_user
       -unless u.blank?
         -if permitted_to? :admin_manage, u
@@ -29,4 +31,5 @@
           =link_to "user", admin_show_user_path(u), :title=>"view user #{u.login}"
     -else
       -unless co.is_expired_credit?
+        %span :
         =link_to "finish processing", edit_certificate_order_path(@ssl_slug, co), :title=>"finishing processing "+co.certificate.description["certificate_type"]+' certificate'
