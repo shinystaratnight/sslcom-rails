@@ -145,7 +145,6 @@ authorization do
   role :installer do
     includes :user
     includes :validations
-
     #
     # Csrs
     #

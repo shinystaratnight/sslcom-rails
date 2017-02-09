@@ -345,7 +345,7 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    if params[:id]
+    if params[:id] and current_user.is_system_admins?
       @user=User.unscoped.find(params[:id])
     else
       @user=current_user
