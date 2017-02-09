@@ -11,7 +11,7 @@
   =form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
     #stylized.default_form
       -i = 0
-      =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form do |c|
+      =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form.compact do |c|
         -role=c.object.roles.last
         -i+=1
         =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}
