@@ -18,9 +18,10 @@
       -if permitted_to? :create, :site_seals
         %span :
         =link_to "seal", certificate_order_site_seal_path(ssl_slug: @ssl_slug, certificate_order_id: co.ref), :title=>"get site seal for "+cn
-      -if co.certificate_content.issued? && !co.certificate_content.expired?
-        %span :
-        =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
+      -if permitted_to? :update, co
+        -if co.certificate_content.issued? && !co.certificate_content.expired?
+          %span :
+          =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
       -if permitted_to? :read, co.order
         %span :
         =link_to "invoice", order_path(@ssl_slug, co.order), :title=>"transaction information for "+cn

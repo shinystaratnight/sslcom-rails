@@ -56,35 +56,38 @@ module CertificateOrdersHelper
     else
       case certificate_content.workflow_state
         when "csr_submitted"
-          link_to 'provide info',
-            edit_certificate_order_path(@ssl_slug, certificate_order)
+          link_to('provide info', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+              permitted_to?(:update, certificate_order)
         when "info_provided"
-          link_to 'provide contacts',
-            certificate_content_contacts_path(@ssl_slug, certificate_content)
+          link_to('provide contacts', certificate_content_contacts_path(@ssl_slug, certificate_content)) if
+              permitted_to?(:update, certificate_order)
         when "reprocess_requested"
-          link_to 'submit csr',
-            edit_certificate_order_path(@ssl_slug, certificate_order)
-        when "contacts_provided"
-          link_to 'perform validation',
-            new_certificate_order_validation_path(@ssl_slug, certificate_order)
-        when "pending_validation", "validated"
-          link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) # assume multi domain
+          link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+              permitted_to?(:update, certificate_order)
+        when "contacts_provided", "pending_validation", "validated"
+          link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
+              permitted_to?(:update, certificate_order) # assume multi domain
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
-              link_to 'see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)
+              link_to('see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)) if
+                  permitted_to?(:show, certificate_order)
             else
               links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
-              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" unless is_billing
+              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
               "<ul>#{links}</ul>".html_safe
             end
           else
             if certificate_order.certificate.is_free?
               links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
-              links << "<li>or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" unless is_billing
+              links << "<li>or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
               "<ul>#{links}</ul>".html_safe
             else
-              ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" : "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+"<li>#{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe
+              ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" :
+                  "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+
+                  "<li>#{link_to 'change domain(s)/rekey',
+                  reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe if
+                  permitted_to?(:read, certificate_order)
             end
           end
         when "canceled"
