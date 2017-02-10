@@ -6,7 +6,7 @@
   %a.common_name(title=cn)
     =((co.is_test ? " (TEST)" : "") + (%w(refunded rejected).include?(co.workflow_state) ? " (#{co.workflow_state.upcase})" : "") + cn.downcase).shorten(35, false)
   %span.expand_or_view_order
-    -if !(single and co.is_expired_credit?) and permitted_to? :show, co
+    -if !(single and co.is_expired_credit?) and permitted_to? :index, co
       %a.expand open
     -unless co.is_unused_credit?
       -if permitted_to? :show, co

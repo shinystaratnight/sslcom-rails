@@ -39,276 +39,277 @@
           .certificate_details
             =render :partial=>'/certificate_orders/menu', :locals=>{:co=>@certificate_order}
             =render :partial=>'/certificate_orders/co', :object=>@certificate_order
-            %table(cellspacing="0")
-              %tbody
-                %tr
-                  %td(colspan="5")
-                    .certificate_details_box
-                      %ul
-                        %li
-                          %strong certificate contents
-                        -if @cc.csr.blank?
+            -if permitted_to?(:show, @certificate_order)
+              %table(cellspacing="0")
+                %tbody
+                  %tr
+                    %td(colspan="5")
+                      .certificate_details_box
+                        %ul
                           %li
-                            %em waiting for csr
-                        -else
-                          -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
-                          -unless @cc.csr.signed_certificate
-                            -unless fields.organization.blank?
-                              %li
-                                organization:
-                                %span.organization
-                                  \#{fields.organization}
-                            -unless (ou=fields.organization_unit).blank?
-                              %li
-                                department:
-                                %div.department
-                                  -unless ou.is_a? Array
-                                    \#{fields.organization_unit}
-                                  -else
-                                    %ul
-                                      -ou.each do |u|
-                                        %li
-                                          =u
-                            -unless fields.locality.blank?
-                              %li
-                                city:
-                                %span.city
-                                  \#{fields.locality}
-                            -unless fields.state.blank?
-                              %li
-                                state:
-                                %span.state
-                                  \#{fields.state}
-                            -unless fields.country.blank?
-                              %li
-                                country:
-                                %span.country
-                                  \#{fields.country}
+                            %strong certificate contents
+                          -if @cc.csr.blank?
+                            %li
+                              %em waiting for csr
                           -else
-                            -#%li
-                            -#  expires:
-                            -#  %span.country
-                            -#    \#{fields.expiration_date.strftime("%b %d, %Y")}
-                            -#%li
-                            -#  remaining days:
-                            -#  %span.country
-                            -#    \#{fields.remaining_days(true)}
-                            %li
-                              algorithm:
-                              %span.country
-                                \#{fields.signature_algorithm}
-                                -if fields.is_SHA1?
-                                  =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
-                            %li
-                              decoded:
-                              %span.country
-                                %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
-                        %li.category_border
-                        %li
-                          %strong for developers
-                        %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
-                        %li=link_to "developer tools", developers_certificate_orders_path
-                        -if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
-                          %li &nbsp;
-                          %li
-                            %strong 39 month limit
-                          %li
-                            Please note that since this certificate order has a duration that exceeds the 39 month hard limit set by the CA/Browser
-                            Forum (see #{link_to "https://info.ssl.com/faq-39-month-limit-to-new-certificates-what-you-need-to-know/", "https://info.ssl.com/faq-39-month-limit-to-new-certificates-what-you-need-to-know/"}), this certificate will
-                            expire in 36 months. However, you will be notified 60 days prior to expiration to reissue this certificate free of cost.
-                            A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
-                            multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
-                    .certificate_details_box
-                      %ul
-                        %li
-                          %strong registrant
-                        -unless @cc.registrant.blank?
-                          -r = @cc.registrant
-                          %li
-                            =r.company_name
-                          -unless r.department.blank?
-                            %li
-                              =r.department
-                          -unless r.po_box.blank?
-                            %li
-                              =r.po_box
-                          -unless r.address1.blank?
-                            %li
-                              =r.address1
-                          -unless r.address2.blank?
-                            %li
-                              =r.address2
-                          -unless r.address3.blank?
-                            %li
-                              =r.address3
-                          %li
-                            \#{[r.city, r.state, r.postal_code].join(', ')}
-                          -unless r.country.blank?
-                            %li
-                              =r.country
-                          -unless r.email.blank?
-                            %li
-                              =r.email
-                          -if current_user.is_system_admins?
-                            %li
-                              =link_to 'edit registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: true)
-                        -else
-                          %li
-                            -if @cc.workflow_state=="csr_submitted"
-                              =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
-                            -else
-                              none
-                    .certificate_details_box
-                      %ul
-                        -if co.certificate_content.issued? && !co.certificate_content.expired?
-                          =render partial: 'download', locals: {co: co}
-                        -unless @cc.csr.blank? || hide_validation?(co)
-                          -if @cc.pending_validation?
-                            %li
-                              %strong domain validation
-                            =render partial: 'validations/dcv', locals: {co: co}
-                          -unless @certificate_order.certificate.is_dv?
-                            %li
-                              %strong validation documentation
-                            -unless @certificate_order.validation.validation_histories.blank?
-                              -@certificate_order.validation.validation_histories.each do |vh|
+                            -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
+                            -unless @cc.csr.signed_certificate
+                              -unless fields.organization.blank?
                                 %li
-                                  =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
-                                  =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
-                                  =vh.document_file_name.shorten(20, false)
+                                  organization:
+                                  %span.organization
+                                    \#{fields.organization}
+                              -unless (ou=fields.organization_unit).blank?
+                                %li
+                                  department:
+                                  %div.department
+                                    -unless ou.is_a? Array
+                                      \#{fields.organization_unit}
+                                    -else
+                                      %ul
+                                        -ou.each do |u|
+                                          %li
+                                            =u
+                              -unless fields.locality.blank?
+                                %li
+                                  city:
+                                  %span.city
+                                    \#{fields.locality}
+                              -unless fields.state.blank?
+                                %li
+                                  state:
+                                  %span.state
+                                    \#{fields.state}
+                              -unless fields.country.blank?
+                                %li
+                                  country:
+                                  %span.country
+                                    \#{fields.country}
                             -else
+                              -#%li
+                              -#  expires:
+                              -#  %span.country
+                              -#    \#{fields.expiration_date.strftime("%b %d, %Y")}
+                              -#%li
+                              -#  remaining days:
+                              -#  %span.country
+                              -#    \#{fields.remaining_days(true)}
                               %li
-                                %em none submitted
-                            %li.category_border
-                              -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
-                                -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                  -u=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
-                                -unless co.validation.validation_histories.blank?
-                                  -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
-                                -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
-                                =link_cluster([u,m,s])
-                              -else
-                        -if cn
-                          =render partial: 'certificate_orders/visit', locals: {cn: cn}
-                        =render partial: 'shared/small_admin_functions', locals: {co: co}
-            %table(cellspacing="0")
-              %tbody
-                %tr
-                  %td(colspan="5")
-                    -unless @cc.certificate_contacts.blank?
-                      -CertificateContent::CONTACT_ROLES.each do |role|
-                        .contact_details_box
-                          %ul
+                                algorithm:
+                                %span.country
+                                  \#{fields.signature_algorithm}
+                                  -if fields.is_SHA1?
+                                    =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
+                              %li
+                                decoded:
+                                %span.country
+                                  %textarea.selectAll{cols: 30, rows: 10}=fields.decoded
+                          %li.category_border
+                          %li
+                            %strong for developers
+                          %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
+                          %li=link_to "developer tools", developers_certificate_orders_path
+                          -if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
+                            %li &nbsp;
                             %li
-                              %strong
-                                \#{role} contact
-                            -ct = @cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
-                            -unless ct.blank?
-                              %li=ct.first_name+" "+ct.last_name
-                              -unless ct.po_box.blank?
-                                %li=ct.po_box
-                              -unless ct.address1.blank?
-                                %li=ct.address1
-                              -unless ct.address2.blank?
-                                %li=ct.address2
-                              -unless ct.address3.blank?
-                                %li=ct.address3
-                              -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
-                              -unless csp.blank?
-                                %li= csp
-                              -unless ct.country.blank?
-                                %li=ct.country
-                              -unless ct.email.blank?
-                                %li=link_to "#{ct.email}","mailto:#{ct.email}"
-                              -unless ct.phone.blank?
-                                %li=ct.phone
+                              %strong 39 month limit
+                            %li
+                              Please note that since this certificate order has a duration that exceeds the 39 month hard limit set by the CA/Browser
+                              Forum (see #{link_to "https://info.ssl.com/faq-39-month-limit-to-new-certificates-what-you-need-to-know/", "https://info.ssl.com/faq-39-month-limit-to-new-certificates-what-you-need-to-know/"}), this certificate will
+                              expire in 36 months. However, you will be notified 60 days prior to expiration to reissue this certificate free of cost.
+                              A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
+                              multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
+                      .certificate_details_box
+                        %ul
+                          %li
+                            %strong registrant
+                          -unless @cc.registrant.blank?
+                            -r = @cc.registrant
+                            %li
+                              =r.company_name
+                            -unless r.department.blank?
+                              %li
+                                =r.department
+                            -unless r.po_box.blank?
+                              %li
+                                =r.po_box
+                            -unless r.address1.blank?
+                              %li
+                                =r.address1
+                            -unless r.address2.blank?
+                              %li
+                                =r.address2
+                            -unless r.address3.blank?
+                              %li
+                                =r.address3
+                            %li
+                              \#{[r.city, r.state, r.postal_code].join(', ')}
+                            -unless r.country.blank?
+                              %li
+                                =r.country
+                            -unless r.email.blank?
+                              %li
+                                =r.email
+                            -if current_user.is_system_admins?
+                              %li
+                                =link_to 'edit registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: true)
+                          -else
+                            %li
+                              -if @cc.workflow_state=="csr_submitted"
+                                =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
+                              -else
+                                none
+                      .certificate_details_box
+                        %ul
+                          -if co.certificate_content.issued? && !co.certificate_content.expired?
+                            =render partial: 'download', locals: {co: co}
+                          -unless @cc.csr.blank? || hide_validation?(co)
+                            -if @cc.pending_validation?
+                              %li
+                                %strong domain validation
+                              =render partial: 'validations/dcv', locals: {co: co}
+                            -unless @certificate_order.certificate.is_dv?
+                              %li
+                                %strong validation documentation
+                              -unless @certificate_order.validation.validation_histories.blank?
+                                -@certificate_order.validation.validation_histories.each do |vh|
+                                  %li
+                                    =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                    =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                    =vh.document_file_name.shorten(20, false)
+                              -else
+                                %li
+                                  %em none submitted
+                              %li.category_border
+                                -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
+                                  -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                    -u=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
+                                  -unless co.validation.validation_histories.blank?
+                                    -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
+                                  -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
+                                  =link_cluster([u,m,s])
+                                -else
+                          -if cn
+                            =render partial: 'certificate_orders/visit', locals: {cn: cn}
+                          =render partial: 'shared/small_admin_functions', locals: {co: co}
+              %table(cellspacing="0")
+                %tbody
+                  %tr
+                    %td(colspan="5")
+                      -unless @cc.certificate_contacts.blank?
+                        -CertificateContent::CONTACT_ROLES.each do |role|
+                          .contact_details_box
+                            %ul
+                              %li
+                                %strong
+                                  \#{role} contact
+                              -ct = @cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
+                              -unless ct.blank?
+                                %li=ct.first_name+" "+ct.last_name
+                                -unless ct.po_box.blank?
+                                  %li=ct.po_box
+                                -unless ct.address1.blank?
+                                  %li=ct.address1
+                                -unless ct.address2.blank?
+                                  %li=ct.address2
+                                -unless ct.address3.blank?
+                                  %li=ct.address3
+                                -csp = [ct.city, ct.state, ct.postal_code].reject(&:blank?).join(', ')
+                                -unless csp.blank?
+                                  %li= csp
+                                -unless ct.country.blank?
+                                  %li=ct.country
+                                -unless ct.email.blank?
+                                  %li=link_to "#{ct.email}","mailto:#{ct.email}"
+                                -unless ct.phone.blank?
+                                  %li=ct.phone
+                              -else
+                                none
+                              %li
+                                =link_to 'create/edit contacts', certificate_content_contacts_path(@ssl_slug, @cc)
+              %table(cellspacing="0")
+                %tbody
+                  -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
+                    -current = c==@certificate_order.certificate_content
+                    -csr = c.csr
+                    -sc = c.csr.try(:signed_certificate)
+                    %tr
+                      %td(colspan="5" style="text-align: left;")
+                        %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
+                        (server software: #{c.server_software.try :title})
+                    %tr
+                      %td(colspan="5")
+                        .certificate_details_box
+                          %strong certificate signing request
+                          -unless permitted_to?(:create, SignedCertificate.new) && current
+                            -unless csr.blank?
+                              %div
+                                submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
+                              =text_area_tag :csr, csr.body, :size=>"30x10"
                             -else
-                              none
-                            %li
-                              =link_to 'create/edit contacts', certificate_content_contacts_path(@ssl_slug, @cc)
-            %table(cellspacing="0")
-              %tbody
-                -@certificate_order.certificate_contents.order('created_at DESC').each do |c|
-                  -current = c==@certificate_order.certificate_content
-                  -csr = c.csr
-                  -sc = c.csr.try(:signed_certificate)
-                  %tr
-                    %td(colspan="5" style="text-align: left;")
-                      %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                      (server software: #{c.server_software.try :title})
-                  %tr
-                    %td(colspan="5")
-                      .certificate_details_box
-                        %strong certificate signing request
-                        -unless permitted_to?(:create, SignedCertificate.new) && current
-                          -unless csr.blank?
-                            %div
-                              submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
-                            =text_area_tag :csr, csr.body, :size=>"30x10"
+                              no certificate signing request found
                           -else
-                            no certificate signing request found
-                        -else
-                          #csr_submitted_on
-                            %span.submitted_on
-                              -unless csr.try(:created_at).blank?
-                                submitted on
-                                \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                              -else
-                                &nbsp
-                          =form_for csr do |f|
-                            =f.text_area :body, :cols=>30, :rows=>10
-                            .clearfix
-                            =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                            #temporary_csr.hidden[csr, :new]
-                              =text_area_tag :tmp_csr, csr.try(:body)
-                      .certificate_details_box
-                        %strong signed certificate
-                        -unless permitted_to?(:create, SignedCertificate.new) && current
+                            #csr_submitted_on
+                              %span.submitted_on
+                                -unless csr.try(:created_at).blank?
+                                  submitted on
+                                  \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                -else
+                                  &nbsp
+                            =form_for csr do |f|
+                              =f.text_area :body, :cols=>30, :rows=>10
+                              .clearfix
+                              =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                              #temporary_csr.hidden[csr, :new]
+                                =text_area_tag :tmp_csr, csr.try(:body)
+                        .certificate_details_box
+                          %strong signed certificate
+                          -unless permitted_to?(:create, SignedCertificate.new) && current
+                            -unless sc.try(:body).blank?
+                              %div
+                                submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                              =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                            -else
+                              %div
+                                no signed certificate found
+                          -else
+                            #signed_certificate_submitted_on
+                              %span.submitted_on
+                                -unless sc.try(:created_at).blank?
+                                  submitted on
+                                  \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                -else
+                                  &nbsp
+                            =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                              =f.text_area :body, :cols=>30, :rows=>10
+                              .clearfix
+                                #{check_box_tag "email_customer", true, true}notify customer?
+                              =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                              -unless sc.blank?
+                                %textarea.selectAll=sc.decoded
+                              #temporary_signed_certificate.hidden[csr]
+                                =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                        .certificate_details_box
                           -unless sc.try(:body).blank?
+                            %strong issued domains
                             %div
-                              submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                            =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                          -else
-                            %div
-                              no signed certificate found
-                        -else
-                          #signed_certificate_submitted_on
-                            %span.submitted_on
-                              -unless sc.try(:created_at).blank?
-                                submitted on
-                                \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                              -else
-                                &nbsp
-                          =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                            =f.text_area :body, :cols=>30, :rows=>10
-                            .clearfix
-                              #{check_box_tag "email_customer", true, true}notify customer?
-                            =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                            =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                            -unless sc.blank?
-                              %textarea.selectAll=sc.decoded
-                            #temporary_signed_certificate.hidden[csr]
-                              =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                      .certificate_details_box
-                        -unless sc.try(:body).blank?
-                          %strong issued domains
-                          %div
-                            includes Common Name (CN)
-                          =text_area_tag :domains, sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : "", :size=>"30x10"
-                -if current_user.is_admin?
-                  %tr
-                    %td(colspan="5")
-                      .notes_box
-                        =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
-                          %ul
-                            %li
-                              %strong notes (viewable only by #{Settings.community_name} team)
-                            %li
-                              =f.text_area :notes, cols: 40, rows: 10
-                      .certificate_details_box
-                        %strong audit log
-                        -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
-                        -@certificate_order.system_audits.each do |audit|
-                          -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
-                        =text_area_tag :audits, audits, :size=>"30x10"
+                              includes Common Name (CN)
+                            =text_area_tag :domains, sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : "", :size=>"30x10"
+                  -if current_user.is_admin?
+                    %tr
+                      %td(colspan="5")
+                        .notes_box
+                          =form_for @certificate_order, :url=>admin_update_certificate_order_url(@certificate_order) do |f|
+                            %ul
+                              %li
+                                %strong notes (viewable only by #{Settings.community_name} team)
+                              %li
+                                =f.text_area :notes, cols: 40, rows: 10
+                        .certificate_details_box
+                          %strong audit log
+                          -audits=(@certificate_order.system_audits.empty? ? "n/a" : "###")+"\n"
+                          -@certificate_order.system_audits.each do |audit|
+                            -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                          =text_area_tag :audits, audits, :size=>"30x10"
