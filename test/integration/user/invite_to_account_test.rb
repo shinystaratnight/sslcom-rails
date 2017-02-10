@@ -58,10 +58,14 @@ describe 'new user' do
     # expand row
     first('td', text: @new_user_email).click
     page.must_have_content('leave', count: 1)
-    page.must_have_content('(owner)', count: 1)
-    page.must_have_content('change roles', count: 2)
-    page.must_have_content('team url', count: 2)
-    page.must_have_content('team name', count: 2)
+
+    page.must_have_content("#{@new_user_ssl.get_team_name}: owner", count: 1)
+    page.must_have_content("#{@invited_ssl_acct.get_team_name}: account_admin", count: 1)
+    page.must_have_content('roles: owner', count: 1)
+    page.must_have_content('roles: account_admin', count: 1)
+    page.must_have_content('slug', count: 2)
+    page.must_have_content("name: #{@invited_ssl_acct.get_team_name}", count: 1)
+    page.must_have_content("name: #{@new_user_ssl.get_team_name}", count: 1)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ approved ]")
     page.must_have_content("#{@new_user_ssl.acct_number} [ approved ]")
   end
@@ -87,6 +91,7 @@ describe 'new user' do
     ssl = @new_user.ssl_account_users.where.not(ssl_account_id: @invited_ssl_acct.id).first
     
     refute_nil   @new_user.default_ssl_account
+    assert_equal @new_user.main_ssl_account, ssl.id
     assert_equal @new_user.ssl_account.id, @new_user.default_ssl_account
     # account is approved, no invitation token
     assert_nil   ssl.approval_token
@@ -172,10 +177,13 @@ describe 'existing user' do
     find('td', text: @existing_user_email).click
 
     page.must_have_content('leave', count: 1)
-    page.must_have_content('(owner)', count: 1)
-    page.must_have_content('change roles', count: 2)
-    page.must_have_content('team url', count: 2)
-    page.must_have_content('team name', count: 2)
+    page.must_have_content("#{@existing_user_ssl.get_team_name}: owner", count: 1)
+    page.must_have_content("#{@invited_ssl_acct.get_team_name}: account_admin", count: 1)
+    page.must_have_content('roles: owner', count: 1)
+    page.must_have_content('roles: account_admin', count: 1)
+    page.must_have_content('slug', count: 2)
+    page.must_have_content("name: #{@invited_ssl_acct.get_team_name}", count: 1)
+    page.must_have_content("name: #{@existing_user_ssl.get_team_name}", count: 1)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ sent ]")
     page.must_have_content("#{@existing_user_ssl.acct_number} [ approved ]")
   end
