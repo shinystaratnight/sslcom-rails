@@ -187,7 +187,8 @@ class User < ActiveRecord::Base
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
-      user.create_ssl_account([Role.get_owner_id])
+      ssl = user.create_ssl_account([Role.get_owner_id])
+      user.update_attribute(:main_ssl_account, ssl.id) if ssl
       user
     end
   end
