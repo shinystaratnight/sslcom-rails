@@ -45,8 +45,9 @@
       %tr.hidden.expanded
         %td(colspan="6")
           .certificate_details
+            =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
             =render :partial=>'/certificate_orders/co', :object=>co
-            -if permitted_to?(:show, co)
+            -if permitted_to?(:update, co)
               %table(cellspacing="0")
                 %tbody
                   %tr

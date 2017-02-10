@@ -123,7 +123,7 @@ authorization do
     #
     # CertificateOrders
     #
-    has_permission_on :certificate_orders, :to => [:create, :index]
+    has_permission_on :certificate_orders, :to => [:create, :read]
     has_permission_on :certificates, :to => [:buy_renewal]
     #
     # Orders
