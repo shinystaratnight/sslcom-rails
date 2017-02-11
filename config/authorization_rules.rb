@@ -60,7 +60,7 @@ authorization do
     #
     # SslAccounts
     #
-    has_permission_on :ssl_accounts, :to => :validate_ssl_slug
+    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
     has_permission_on :ssl_accounts, :to => :update_ssl_slug, join_by: :and do
       if_attribute :id => is {user.ssl_account.id},
                    ssl_slug: is {nil}
@@ -68,9 +68,13 @@ authorization do
     has_permission_on :ssl_accounts, :to => [:update_company_name] do
       if_attribute :id => is {user.ssl_account.id}
     end
-    has_permission_on :ssl_accounts, :to => [:create, :read, :update, :edit_settings, :update_settings] do
+    has_permission_on :ssl_accounts, :to => [:read, :update, :edit_settings, :update_settings] do
       if_attribute :id => is {user.ssl_account.id}
     end
+    #
+    # FundedAccounts
+    #
+    has_permission_on :funded_accounts, :to => :create
   end
 
   # ============================================================================

@@ -492,6 +492,25 @@ class UserTest < Minitest::Spec
         assert_equal 2, user_2_teams.assignments.count
         assert_equal 2, user_2_teams.total_teams_owned.count
       end
+      it '#total_teams_can_manage_users should return correct ssl accounts/teams' do
+        user_2_teams = create(:user, :owner)                # CAN manage users: owner role
+        assert_equal 1, SslAccount.count
+        assert_equal 1, user_2_teams.ssl_accounts.count
+        assert_equal 1, user_2_teams.assignments.count
+        assert_equal 1, user_2_teams.total_teams_can_manage_users.count
+
+        user_2_teams.create_ssl_account([@acct_admin_role]) # CAN manage users: account_admin role
+        assert_equal 2, SslAccount.count
+        assert_equal 2, user_2_teams.ssl_accounts.count
+        assert_equal 2, user_2_teams.assignments.count
+        assert_equal 2, user_2_teams.total_teams_can_manage_users.count
+
+        user_2_teams.create_ssl_account([@billing_role])    # CANNOT manage users: billing role
+        assert_equal 3, SslAccount.count
+        assert_equal 3, user_2_teams.ssl_accounts.count
+        assert_equal 3, user_2_teams.assignments.count
+        assert_equal 2, user_2_teams.total_teams_can_manage_users.count
+      end
       it '#set_default_team should update user' do
         user      = create(:user, :owner)
         ssl_own   = user.ssl_accounts.first
