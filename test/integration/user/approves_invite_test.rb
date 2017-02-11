@@ -70,7 +70,8 @@ describe 'user approves ssl account invite' do
       assert_nil   ssl.approval_token
       assert_nil   ssl.token_expires
       assert       ssl.approved
-      assert       page.has_no_content? 'Users'
+      page.must_have_content 'roles: account_admin'
+      page.must_have_content "account number: #{@invited_ssl_acct.acct_number}"
     end
   end
   

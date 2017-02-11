@@ -92,6 +92,11 @@ class User < ActiveRecord::Base
     user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
 
+  def total_teams_can_manage_users(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
+  end
+
   def max_teams_reached?(user_id=nil)
     user = user_id ? User.find(user_id) : self
     total_teams_owned(user.id).count >= user.max_teams
