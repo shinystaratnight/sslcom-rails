@@ -7,7 +7,7 @@
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)
     -permitted_to? :read, :validations do
-      %li(id="#{is_on?("validations") ? 't-intro' : 'manage_validations'}")
+      %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")
         =link_to "Validations", validations_path(slug_params)
     -unless current_user.ssl_account.affiliate.blank?
       %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")

@@ -66,7 +66,7 @@ module CertificateOrdersHelper
               permitted_to?(:update, certificate_order)
         when "contacts_provided", "pending_validation", "validated"
           link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
-              permitted_to?(:update, certificate_order) # assume multi domain
+              permitted_to?(:update, certificate_order.validation) # assume multi domain
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
