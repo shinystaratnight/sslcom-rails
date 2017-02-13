@@ -35,8 +35,10 @@
       - unless current_user.is_system_admins?
         %th(scope="col") Approved
     -@users.each do |u|
-      %tr
-        %td.dropdown=image_tag('expand.png') if current_user.is_system_admins? or u!=current_user or !u.is_owner?
+      -user_view = current_user.is_system_admins?
+      -user_view ||= u!=current_user && !u.is_owner?(current_user.ssl_account)
+      %tr{class: "#{user_view ? 'enable' : 'disable'}"}
+        %td.dropdown= user_view ? image_tag('expand.png') : ''
         %td.name.expandable=u.login
         %td.expandable=u.email
         -if current_user.is_system_admins?
@@ -54,7 +56,6 @@
         - unless current_user.is_system_admins?
           -as, as_class=ssl_account_status(u, current_user.ssl_account)
           %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
-      -unless u==current_user
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details

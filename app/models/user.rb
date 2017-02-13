@@ -468,8 +468,8 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::SUPER_USER.to_sym
   end
 
-  def is_owner?
-    role_symbols.include? Role::OWNER.to_sym
+  def is_owner?(target_account=nil)
+    role_symbols(target_account).include? Role::OWNER.to_sym
   end
 
   def is_account_admin?
