@@ -27,6 +27,21 @@
       %th(scope="col") Join Date
       -unless current_user.is_system_admins?
         %th(scope="col") Action
+    -unless @team_invites.nil?
+      -@team_invites.each do |t|
+        -invite_ssl = SslAccount.find(t[:ssl_account_id])
+        %tr
+          %td=invite_ssl.get_team_name
+          %td=invite_ssl.acct_number
+          %td
+          %td=current_user.role_symbols(invite_ssl)
+          %td
+          %td Invited to team. Pending approval...
+          %td="<span class='chip'>pending</span>".html_safe
+          %td
+            =link_to "accept", t[:accept]
+            %br
+            =link_to "decline", t[:decline], {style: 'color:red;'}
     -@teams.each do |t|
       -account_owner = current_user.is_account_owner? t
       -main_account  = current_user.is_main_account? t

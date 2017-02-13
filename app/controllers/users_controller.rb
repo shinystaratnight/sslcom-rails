@@ -244,11 +244,11 @@ class UsersController < ApplicationController
     else
       acct_number = SslAccount.find(params[:ssl_account_id]).acct_number
       flash[:notice] = "You've been added to account #{acct_number}. Please click <strong>%s</strong>
-        to go to the new account or follow the hint in the top menu."
+        to go to the new account or select from CURRENT TEAM in the top menu."
       flash[:notice_item] = view_context.link_to('here',
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
-    redirect_to account_path(ssl_slug: @ssl_slug)
+    params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
   end
 
   def decline_account_invite
@@ -262,7 +262,7 @@ class UsersController < ApplicationController
         flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
       end
     end
-    redirect_to account_path(ssl_slug: @ssl_slug) 
+    params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
   end
 
   def resend_account_invite

@@ -1,6 +1,4 @@
 -if current_user.get_all_approved_accounts.length > SslAccount::SHOW_TEAMS_THRESHOLD
-  %td.simple-tooltip-cont.hidden
-    =link_to "<strong class='hint-icon'>&#63;</strong> <span>You can switch accounts by selecting one from the <strong>ACCOUNT</strong> menu item on the right.</span>".html_safe, '#', class: 'simple-tooltip hidden'
   %td.acc-sel-dropdown
     .acc-sel-dropbtn
       ="#{ssl_account.get_team_name[0..10]} &#9660;".html_safe

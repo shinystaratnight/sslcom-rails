@@ -44,4 +44,9 @@ jQuery(function($) {
   if (flash_notice.length && flash_notice.text().indexOf('been added to account') > -1) {
     $('.simple-tooltip-cont, .simple-tooltip').removeClass('hidden');
   }
+  if ($('.notifications-alert').length) {
+    $('.notifications-alert, .notifications-email').on('click', function() {
+      $('.notifications-expand').toggle('slow');
+    });
+  }
 });

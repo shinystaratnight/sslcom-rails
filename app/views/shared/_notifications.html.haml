@@ -1,0 +1,10 @@
+-unless @team_invites.nil?
+  %i.material-icons.notifications-alert
+    add_alert
+  %i.material-icons.notifications-email
+    email
+  .notifications-expand.notifications-hide
+    ="<span>Y</span>ou have been invited to #{@team_invites.count} teams. <span>P</span>lease click on '<span>T</span>eams' tab below to see all teams.".html_safe
+    %br
+    %br
+    ="<span>Y</span>ou can switch accounts by selecting one from the <span><strong>CURRENT TEAM</strong></span> menu item on the left.".html_safe

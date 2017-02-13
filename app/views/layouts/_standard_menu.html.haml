@@ -21,6 +21,8 @@
     -if current_user.get_all_approved_accounts.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
         =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
+        -unless @team_invites.nil?
+          %span.notifications-teams=@team_invites.count
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)

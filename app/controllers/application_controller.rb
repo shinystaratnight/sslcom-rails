@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
                 if: "Settings.track_visitors"
   before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
-  before_filter :set_ssl_slug
+  before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers
 
 #  hide_action :paginated_scope
@@ -374,6 +374,19 @@ class ApplicationController < ActionController::Base
       SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
     else
       current_user.ssl_account if current_user
+    end
+  end
+
+  def load_notifications
+    if current_user && current_user.pending_account_invites?
+      @team_invites = []
+      current_user.get_pending_accounts.each do |invite|
+        new_params       = {ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token], to_teams: true}
+        invite[:accept]  = approve_account_invite_user_path(current_user, new_params)
+        invite[:decline] = decline_account_invite_user_path(current_user, new_params)
+        invite.delete(:approval_token)
+        @team_invites   << invite
+      end
     end
   end
 
