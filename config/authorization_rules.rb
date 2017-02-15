@@ -50,6 +50,15 @@ authorization do
     # FundedAccounts
     #
     has_permission_on :funded_accounts, :to => :create
+    #
+    # ManagedUsers
+    #
+    has_permission_on :managed_users, :to => [
+      :edit, :read, :remove_from_account, :update_roles
+    ], join_by: :and do
+      if_attribute :id => is_not {user.id}
+      if_attribute :ssl_accounts => contains {user.ssl_account}
+    end
   end
 
   # ============================================================================
@@ -65,16 +74,28 @@ authorization do
       if_attribute :id => is {user.ssl_account.id},
                    ssl_slug: is {nil}
     end
-    has_permission_on :ssl_accounts, :to => [:update_company_name] do
-      if_attribute :id => is {user.ssl_account.id}
-    end
-    has_permission_on :ssl_accounts, :to => [:read, :update, :edit_settings, :update_settings] do
+    has_permission_on :ssl_accounts, :to => [
+      :edit_settings,
+      :read,
+      :update,
+      :update_company_name,
+      :update_settings
+    ] do
       if_attribute :id => is {user.ssl_account.id}
     end
     #
     # FundedAccounts
     #
     has_permission_on :funded_accounts, :to => :create
+    #
+    # ManagedUsers
+    #
+    has_permission_on :managed_users, :to => [
+      :edit, :read, :remove_from_account, :update_roles
+    ], join_by: :and do
+      if_attribute :id => is_not {user.id}
+      if_attribute :total_teams_owned => does_not_contain {user.ssl_account}
+    end
   end
 
   # ============================================================================
@@ -85,9 +106,14 @@ authorization do
     #
     # ManagedUsers
     #
+    has_permission_on :managed_users, :to => :create
     has_permission_on :managed_users, :to => [
-        :read, :create, :update_roles, :edit, :remove_from_account
-    ]
+      :edit, :read, :remove_from_account, :update_roles
+    ], join_by: :and do
+      # cannot on users w/roles account_admin|owner|sysadmin|reseller OR self
+      if_attribute :id => is_not {user.id}
+      if_attribute :total_teams_cannot_manage_users => contains {user.ssl_account}
+    end
     #
     # Users
     #

@@ -3,9 +3,6 @@ require 'test_helper'
 describe 'validations role' do
   before do
     prepare_auth_tables
-    @owner       = create(:user, :owner)
-    @owner_ssl   = @owner.ssl_account
-    @validations = create_and_approve_user(@owner_ssl, 'validation_login', @validations_role)
     
     2.times {login_as(@validations, self.controller.cookies)}
     visit switch_default_ssl_account_user_path(@validations.id, ssl_account_id: @owner_ssl.id)
@@ -33,10 +30,6 @@ describe 'validations role' do
       should_not_permit_path users_path
       # billing_profiles index (Billing Profiles tab)
       should_not_permit_path billing_profiles_path(@owner_ssl.to_slug)
-      # owner's edit password page
-      should_not_permit_path edit_password_user_path(@owner)
-      # owner's edit email page
-      should_not_permit_path edit_email_user_path(@owner)
     end
   end
   
@@ -72,6 +65,28 @@ describe 'validations role' do
       )
       # site seal JS code
       should_not_see_site_seal_js
+    end
+  end
+
+  describe 'users' do
+    before do 
+      visit users_path
+      @ssl_slug = @owner_ssl.to_slug
+    end
+
+    it 'SHOULD NOT permit' do
+      # edit billing role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @billing.id)
+      # edit users_manager role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @users_manager.id)
+      # edit self
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @validations.id)
+      # edit installer  role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @installer.id)
+      # edit account_admin role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @account_admin.id)
+      # edit owner role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @owner.id)
     end
   end
 end

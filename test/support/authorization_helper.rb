@@ -2,6 +2,18 @@ module AuthorizationHelper
   def prepare_auth_tables
     initialize_roles
     initialize_certificates
+    initialize_all_auth_users
+  end
+
+  def initialize_all_auth_users
+    @owner          = create(:user, :owner)
+    @owner_ssl      = @owner.ssl_account
+    @account_admin  = create_and_approve_user(@owner_ssl, 'account_admin_login')
+    @account_admin2 = create_and_approve_user(@owner_ssl, 'account_admin_login2')
+    @billing        = create_and_approve_user(@owner_ssl, 'billing_login', @billing_role)
+    @users_manager  = create_and_approve_user(@owner_ssl, 'users_manager_login', @users_manager_role)
+    @validations    = create_and_approve_user(@owner_ssl, 'validation_login', @validations_role)
+    @installer      = create_and_approve_user(@owner_ssl, 'installer_login', @installer_role)
   end
 
   def should_permit_path(path)
@@ -160,7 +172,6 @@ module AuthorizationHelper
     # Purchase basic non-wildcard certificate
     # =========================================================
     visit buy_certificate_path 'basicssl'
-    find('#certificate_order_certificate_contents_attributes_0_agreement').click
     find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
     find('#next_submit input').click # Shopping Cart
     click_on 'Checkout'              # Checkout

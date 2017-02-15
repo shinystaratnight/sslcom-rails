@@ -59,4 +59,17 @@ class Role < ActiveRecord::Base
       SYS_ADMIN
     ])
   end
+  
+  # 
+  # Roles that cannot be managed by users_manager role
+  # 
+  def self.cannot_be_managed
+    Role.get_role_ids([
+      ACCOUNT_ADMIN,
+      OWNER,
+      RESELLER,
+      SUPER_USER,
+      SYS_ADMIN
+    ])
+  end
 end

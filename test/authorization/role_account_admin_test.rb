@@ -3,9 +3,6 @@ require 'test_helper'
 describe 'owner role' do
   before do
     prepare_auth_tables
-    @owner         = create(:user, :owner)
-    @owner_ssl     = @owner.ssl_account
-    @account_admin = create_and_approve_user(@owner_ssl, 'account_admin_login')
     
     2.times {login_as(@account_admin, self.controller.cookies)}
     visit switch_default_ssl_account_user_path(@account_admin.id, ssl_account_id: @owner_ssl.id)
@@ -30,13 +27,6 @@ describe 'owner role' do
       should_permit_path user_path(@account_admin)
       # billing_profiles index (Billing Profiles tab)
       should_permit_path billing_profiles_path(@owner_ssl.to_slug)
-    end
-
-    it 'SHOULD NOT permit' do
-      # owner's edit password page
-      should_not_permit_path edit_password_user_path(@owner)
-      # owner's edit email page
-      should_not_permit_path edit_email_user_path(@owner)
     end
   end
   
@@ -75,6 +65,42 @@ describe 'owner role' do
       visit certificate_orders_path
       click_on 'seal'
       should_see_site_seal_js
+    end
+  end
+
+  describe 'users' do
+    before do 
+      visit users_path
+      @ssl_slug = @owner_ssl.to_slug
+    end
+    
+    it 'SHOULD see' do
+      page.all(:css, '.dropdown').each {|expand| expand.click} # expand all users
+      # cannot manage: self, :owner
+      #    can manage: :installer, :account_admin, :billing, :validations, :users_manager
+      assert_equal 7, SslAccountUser.where(ssl_account_id: @owner_ssl.id).map(&:user).count
+      page.must_have_content('change roles', count: 5)
+      page.must_have_content('remove user from this account', count: 5)
+    end
+
+    it 'SHOULD permit' do
+      # edit other account_admin role
+      should_permit_path edit_managed_user_path(@ssl_slug, @account_admin2.id)
+      # edit billing role
+      should_permit_path edit_managed_user_path(@ssl_slug, @billing.id)
+      # edit users_manager role
+      should_permit_path edit_managed_user_path(@ssl_slug, @users_manager.id)
+      # edit validations role
+      should_permit_path edit_managed_user_path(@ssl_slug, @validations.id)
+      # edit installer role
+      should_permit_path edit_managed_user_path(@ssl_slug, @installer.id)
+    end
+
+    it 'SHOULD NOT permit' do
+      # edit self
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @account_admin.id)
+      # edit owner role
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @owner.id)
     end
   end
 end

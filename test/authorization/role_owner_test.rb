@@ -3,7 +3,6 @@ require 'test_helper'
 describe 'owner role' do
   before do
     prepare_auth_tables
-    @owner = create(:user, :owner)
     login_as(@owner, self.controller.cookies)
   end
 
@@ -63,6 +62,34 @@ describe 'owner role' do
       visit certificate_orders_path
       click_on 'seal'
       should_see_site_seal_js
+    end
+  end
+
+  describe 'users' do
+    before {visit users_path}
+
+    it 'SHOULD see' do
+      page.all(:css, '.dropdown').each {|expand| expand.click} # expand all users
+      page.must_have_content('change roles', count: 6)
+      page.must_have_content('remove user from this account', count: 6)
+    end
+
+    it 'SHOULD permit' do
+      # edit other account_admin role
+      should_permit_path edit_managed_user_path(@ssl_slug, @account_admin.id)
+      # edit billing role
+      should_permit_path edit_managed_user_path(@ssl_slug, @billing.id)
+      # edit users_manager role
+      should_permit_path edit_managed_user_path(@ssl_slug, @users_manager.id)
+      # edit validations role
+      should_permit_path edit_managed_user_path(@ssl_slug, @validations.id)
+      # edit installer role
+      should_permit_path edit_managed_user_path(@ssl_slug, @installer.id)
+    end
+
+    it 'SHOULD NOT permit' do
+      # edit self
+      should_not_permit_path edit_managed_user_path(@ssl_slug, @owner.id)
     end
   end
 end

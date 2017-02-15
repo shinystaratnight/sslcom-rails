@@ -1,4 +1,5 @@
--slug_params = {ssl_slug: @ssl_slug}
+-slug_params  = {ssl_slug: @ssl_slug}
+-managed_user = u.becomes(ManagedUser) 
 %table(cellspacing="0")
   %tbody
     %tr
@@ -28,9 +29,9 @@
                 %br
                 %li="<span class='chip'>#{link_to 'activate', edit_user_path(u, admin_activate: true)}</span>".html_safe
             -unless current_user.is_system_admins?
-              - if permitted_to? :update_roles, :managed_users
+              - if permitted_to? :update_roles, managed_user
                 %li=link_to 'change roles', edit_managed_user_path(u, slug_params)
-              - if permitted_to? :remove_from_account, :managed_users
+              - if permitted_to? :remove_from_account, managed_user
                 %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u, slug_params)
               - if permitted_to?(:resend_account_invite, :users) and u.ssl_account_users.is_approved_ssl_account(current_user.ssl_account.id).count < 1
                 %li=link_to 'resend invite', resend_account_invite_user_path(u,
