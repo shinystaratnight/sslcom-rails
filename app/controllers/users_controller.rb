@@ -11,7 +11,7 @@ class UsersController < ApplicationController
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :enable_disable, :index, :admin_activate, :show, :teams]
+    :switch_default_ssl_account, :index, :admin_activate, :show, :teams]
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
@@ -396,7 +396,9 @@ def update_user_status(params)
   target_status = params[:user][:status].to_sym
   if target_user && target_status
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
-    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_owner?
+    unless (current_user.roles_for_account & Role.can_manage_users).empty?
+      target_user.set_status_for_account(target_status, current_user.ssl_account)
+    end
   end
 end
 

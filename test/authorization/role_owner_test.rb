@@ -72,6 +72,8 @@ describe 'owner role' do
       page.all(:css, '.dropdown').each {|expand| expand.click} # expand all users
       page.must_have_content('change roles', count: 6)
       page.must_have_content('remove user from this account', count: 6)
+      page.must_have_content('enabled', count: 6)
+      page.must_have_content('disabled', count: 6)
     end
 
     it 'SHOULD permit' do

@@ -97,6 +97,12 @@ class User < ActiveRecord::Base
     user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
   end
 
+  def total_teams_cannot_manage_users(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
+      .map(&:ssl_account).uniq.compact
+  end
+
   def max_teams_reached?(user_id=nil)
     user = user_id ? User.find(user_id) : self
     total_teams_owned(user.id).count >= user.max_teams
@@ -152,9 +158,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def roles_for_account(account)
-    if ssl_accounts.include?(account)
-      assignments.where(ssl_account_id: account).pluck(:role_id).uniq
+  def roles_for_account(target_ssl=nil)
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
+    if ssl_accounts.include?(ssl)
+      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
     else
       []  
     end
@@ -701,11 +708,10 @@ class User < ActiveRecord::Base
   end
 
   def set_status_for_account(status_type, target_ssl=nil)
-    ssl          = target_ssl.nil? ? ssl_account : target_ssl
-    acc_admin_id = Role.get_owner_id
-    params       = {user_enabled: (status_type == :enabled)}
+    ssl      = target_ssl.nil? ? ssl_account : target_ssl
+    owner_id = Role.get_owner_id
 
-    target_ssl = if roles_for_account(ssl).include?(acc_admin_id)
+    target_ssl = if roles_for_account(ssl).include?(owner_id)
       # if owner, disable access to this ssl account for all associated users
       SslAccountUser.where(ssl_account_id: ssl.id)
     else

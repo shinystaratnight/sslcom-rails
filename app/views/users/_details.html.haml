@@ -36,34 +36,35 @@
               - if permitted_to?(:resend_account_invite, :users) and u.ssl_account_users.is_approved_ssl_account(current_user.ssl_account.id).count < 1
                 %li=link_to 'resend invite', resend_account_invite_user_path(u,
                           ssl_account_id: current_user.ssl_account.id, from_user: current_user)
-        .half_width_box
-          .adjust_status
-          =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
-            -if current_user.is_system_admins?
-              -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
-            -else
-              -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
-            %ul
-              %li
-                %strong adjust status
-              %li
-                =ed.radio_button :status, 'enabled'
-                enabled
-              %li
-                =ed.radio_button :status, 'disabled'
-                disabled
-            -#
-              .account_type
-                =form_for u, :url=>admin_update_user_url(u) do |f|
-                  %ul
-                    %li
-                      %strong account type
-                    %li
-                      =f.radio_button :status, 'enabled'
-                      customer
-                    %li
-                      =f.radio_button :status, 'disabled'
-                      reseller tier 1
+        -if permitted_to? :enable_disable, u
+          .half_width_box
+            .adjust_status
+            =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
+              -if current_user.is_system_admins?
+                -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
+              -else
+                -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
+              %ul
+                %li
+                  %strong adjust status
+                %li
+                  =ed.radio_button :status, 'enabled'
+                  enabled
+                %li
+                  =ed.radio_button :status, 'disabled'
+                  disabled
+              -#
+                .account_type
+                  =form_for u, :url=>admin_update_user_url(u) do |f|
+                    %ul
+                      %li
+                        %strong account type
+                      %li
+                        =f.radio_button :status, 'enabled'
+                        customer
+                      %li
+                        =f.radio_button :status, 'disabled'
+                        reseller tier 1
         -if current_user.is_system_admins?
           .full_width_box
             .adjust_status

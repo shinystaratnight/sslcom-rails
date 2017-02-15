@@ -77,10 +77,11 @@ describe 'owner role' do
     it 'SHOULD see' do
       page.all(:css, '.dropdown').each {|expand| expand.click} # expand all users
       # cannot manage: self, :owner
-      #    can manage: :installer, :account_admin, :billing, :validations, :users_manager
       assert_equal 7, SslAccountUser.where(ssl_account_id: @owner_ssl.id).map(&:user).count
       page.must_have_content('change roles', count: 5)
       page.must_have_content('remove user from this account', count: 5)
+      page.must_have_content('enabled', count: 5)
+      page.must_have_content('disabled', count: 5)
     end
 
     it 'SHOULD permit' do

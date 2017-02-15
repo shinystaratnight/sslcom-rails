@@ -64,6 +64,8 @@ describe 'users_manager role' do
       assert_equal 8, SslAccountUser.where(ssl_account_id: @owner_ssl.id).map(&:user).count
       page.must_have_content('change roles', count: 4)
       page.must_have_content('remove user from this account', count: 4)
+      page.must_have_content('enabled', count: 4)
+      page.must_have_content('disabled', count: 4)
     end
 
     it 'SHOULD permit' do
