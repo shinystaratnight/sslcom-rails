@@ -49,4 +49,31 @@ jQuery(function($) {
       $('.notifications-expand').toggle('slow');
     });
   }
+
+  // Toggle role checkboxes: cannot select both account_admin/owner and other roles.
+  function update_checkbox(checkbox_ids, update_type) {
+    $.each( $(checkbox_ids), function(key, checkbox) {
+      var cur = $('#'+checkbox.id);
+      (update_type == 'check') ? cur.attr('checked', true) : cur.removeAttr('checked');
+    });
+  }
+
+  if ($('#mu_update_roles, #mu_invite_user').length) {
+    var role_ignore = ['role_sysadmin', 'role_super_user', 'role_reseller'],
+        role_ids    = $('#mu_update_roles, #mu_invite_user')
+          .find('input[type=checkbox]').map(function(){return this.id}).get().join(', #').replace(/^/gm, '#');
+    $.each(role_ignore, function(key, value) {
+      role_ids = role_ids.replace(['#',$('#'+value+' input').attr('id'),','].join(''), '');
+    });
+      
+    $(role_ids).on('change', function() {
+      var target_id = $(this).parent().attr('id');
+      if (target_id == 'role_account_admin' || target_id == 'role_owner'){
+        update_checkbox(role_ids, 'uncheck');
+        update_checkbox('#'+this.id, 'check');
+      } else {
+        update_checkbox('#role_account_admin input, #role_owner input', 'uncheck');
+      }
+    });
+  }
 });

@@ -4,7 +4,7 @@
   %h3=title
   %p
     Please update roles for user #{@user.login}.
-  =form_for @user, url: update_roles_managed_user_path do |f|
+  =form_for @user, url: update_roles_managed_user_path, html: {id: 'mu_update_roles'} do |f|
     =f.error_messages
     #stylized.default_form
       .subheading Credentials
