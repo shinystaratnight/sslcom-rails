@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
-      redirect_to user_path
+      redirect_to account_path
     end
   end
 
