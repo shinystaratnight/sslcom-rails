@@ -61,13 +61,25 @@ class User < ActiveRecord::Base
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account
-    if default_ssl_account and ssl_accounts.find_by(id: default_ssl_account)
-      ssl_accounts.find_by id: default_ssl_account
+    default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
+    main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+
+    if default_ssl
+      SslAccount.find default_ssl_account
+    elsif !default_ssl && main_ssl
+      set_default_ssl_account main_ssl_account
+      SslAccount.find main_ssl_account
     else
       approved_account = get_first_approved_acct
       set_default_ssl_account(approved_account) if approved_account
       approved_account
     end
+  end
+
+  def is_approved_account?(target_ssl)
+    ssl = target_ssl.is_a?(SslAccount) ? target_ssl : SslAccount.find(target_ssl)
+    return false if ssl.nil?
+    ssl_account_users.where(ssl_account_id: ssl.id, user_enabled: true, approved: true).any?
   end
   
   def is_main_account?(ssl_account)
@@ -754,10 +766,8 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    params = {user_id: id, approved: true}
-    ssl = SslAccountUser.where(params.merge(user_enabled: true))
-    ssl = SslAccountUser.where(params) unless ssl.any?
-    ssl_accounts.find ssl.first.ssl_account_id
+    ssl = ssl_account_users.where(approved: true, user_enabled: true)
+    ssl.any? ? ssl_accounts.find(ssl.first.ssl_account_id) : nil
   end
 
   def self.change_login(old, new)

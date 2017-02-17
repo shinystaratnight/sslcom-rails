@@ -134,6 +134,14 @@ authorization do
       if_attribute id: is_in  {user.ssl_account.users.map(&:id).uniq}
       if_attribute total_teams_cannot_manage_users: contains {user.ssl_account}
     end
+    #
+    # FundedAccounts
+    #
+    has_permission_on :funded_accounts, :to => :create
+    #
+    # SslAccounts
+    #
+    has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
   end
 
   # ============================================================================

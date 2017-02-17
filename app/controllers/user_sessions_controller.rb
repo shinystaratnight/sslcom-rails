@@ -43,7 +43,6 @@ class UserSessionsController < ApplicationController
     respond_to do |format|
       if @user_session.save && !@user_session.user.is_disabled?
         user = @user_session.user
-        user.clear_default_ssl_account #prevent user from being lockedout due to default_ssl_account set
         cookies[:acct] = {:value=>user.ssl_account.acct_number, :path => "/", :expires => Settings.
             cart_cookie_days.to_i.days.from_now}
         #we'll know what tier the user is even if s/he is not logged in
@@ -57,7 +56,7 @@ class UserSessionsController < ApplicationController
         end
         flash[:notice] = "Successfully logged in." unless request.xhr?
         format.js   {render :json=>url_for_js(user)}
-        format.html {redirect_back_or_default account_url}
+        format.html {redirect_back_or_default account_path((user.ssl_account ? user.ssl_account.to_slug : {}))}
 #        us_json = @user_session.to_json.chop << ',"redirect":"'+
 #          (user.ssl_account.is_registered_reseller?  ?
 #          "create" : new_order_url) +'"}'
