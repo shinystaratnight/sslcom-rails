@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
-      redirect_to root_url :subdomain=>Settings.root_subdomain
+      redirect_to user_path
     end
   end
 
