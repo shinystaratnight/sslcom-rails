@@ -51,6 +51,15 @@ describe 'users_manager role' do
     end
   end
 
+  describe 'teams' do
+    before {visit teams_user_path(@users_manager)}
+
+    it 'should have correct details' do
+      page.must_have_content "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:users_manager] $0.00 [ users (8) ] #{Date.today.strftime('%b')}", count: 1
+    end
+  end
+
   describe 'users' do
     before do 
       visit users_path

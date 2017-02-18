@@ -51,6 +51,15 @@ describe 'installer role' do
     end
   end
 
+  describe 'teams' do
+    before {visit teams_user_path(@installer)}
+
+    it 'should have correct details' do
+      page.must_have_content "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:installer] $0.00 [ orders (0) ] [ validations (0) ] #{Date.today.strftime('%b')}", count: 1
+    end
+  end
+
   describe 'certificate orders' do
     before do
       login_as(@owner, self.controller.cookies)

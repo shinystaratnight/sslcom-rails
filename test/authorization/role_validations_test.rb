@@ -51,6 +51,15 @@ describe 'validations role' do
     end
   end
 
+  describe 'teams' do
+    before {visit teams_user_path(@validations)}
+
+    it 'should have correct details' do
+      page.must_have_content "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:validations] $0.00 [ validations (0) ] #{Date.today.strftime('%b')}", count: 1
+    end
+  end
+
   describe 'site seals' do
     before do
       login_as(@owner, self.controller.cookies)

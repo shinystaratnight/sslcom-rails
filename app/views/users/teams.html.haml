@@ -1,6 +1,7 @@
 -title = "Teams"
 -will_paginate @teams
 -content_for :title, title
+-system_admins = current_user.is_system_admins?
 #validations
   %table(cellspacing="0")
     -if will_paginate @teams
@@ -10,14 +11,14 @@
     %caption
       =title
       =will_paginate @teams
-    -if permitted_to?(:create_team, current_user) and !current_user.is_system_admins?
+    -if permitted_to?(:create_team, current_user) and !system_admins
       %br
       %tr
         =link_to "+ Create Team (#{current_user.max_teams-current_user.total_teams_owned.count} Remaining)", create_team_user_path(current_user), class: 'button_blue button_index'
     %tr.heading_row
       %th.name(scope="col") Name
       %th(scope="col") Account #
-      -unless current_user.is_system_admins?
+      -unless system_admins
         %th(scope="col") Default
         %th(scope="col") Roles
       -else
@@ -25,7 +26,7 @@
       %th(scope="col") Funds
       %th(scope="col") Details
       %th(scope="col") Join Date
-      -unless current_user.is_system_admins?
+      -unless system_admins
         %th(scope="col") Action
     -unless @team_invites.nil?
       -@team_invites.each do |t|
@@ -49,45 +50,46 @@
         -set_default_team = link_to 'set default', set_default_team_user_path(current_user, ssl_account_id: t.id), method: :put
       %tr
         %td
-          -unless current_user.is_system_admins?
+          -unless system_admins
             =link_to t.get_team_name, switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
           -else
             =t.get_team_name
         %td=t.acct_number
-        -unless current_user.is_system_admins?
+        -unless system_admins
           %td= main_account ? "&#10003;".html_safe : set_default_team
           %td=current_user.role_symbols(t)
         -else
           %td=link_to(t.get_account_owner.try(:login).shorten(15,false),admin_show_user_path(t.get_account_owner), title: t.get_account_owner.try(:login)) if t.get_account_owner.try(:login)
         %td
-          -if current_user.is_system_admins?
+          -if system_admins
             %a{onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
           -else
             $#{t.funded_account.try :amount}
         %td
-          -if account_owner || permitted_to?(:index, :certificate_orders)
+          -permissions = team_index_permissions(current_user, t)
+          -if system_admins || permissions.include?(:orders)
             [
             =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug)
             ]
-          -if account_owner || permitted_to?(:create, :orders)
+          -if system_admins || permissions.include?(:transactions)
             [
             =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug)
             ]
-          -if account_owner || permitted_to?(:read, :validations)
+          -if system_admins || permissions.include?(:validations)
             [
             =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug)
             ]
-          -if account_owner || permitted_to?(:index, current_user)
+          -if system_admins || permissions.include?(:users)
             [
             =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug)
             ]
         %td=t.created_at.strftime("%b %d, %Y")
-        -unless current_user.is_system_admins?
+        -unless system_admins
           %td
             [
             =link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
             ]
-            -unless account_owner || current_user.is_system_admins?
+            -unless account_owner || system_admins
               [
               =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id}),data:{confirm: "Please confirm you want to leave team #{t.company_name}."}
               ]

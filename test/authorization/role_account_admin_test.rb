@@ -45,6 +45,15 @@ describe 'owner role' do
     end
   end
 
+  describe 'teams' do
+    before {visit teams_user_path(@account_admin)}
+
+    it 'should have correct details' do
+      page.must_have_content "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:account_admin] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (7) ] #{Date.today.strftime('%b')}", count: 1
+    end
+  end
+
   describe 'certificate orders' do
     before do
       prepare_certificate_orders @account_admin
