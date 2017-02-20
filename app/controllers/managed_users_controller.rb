@@ -137,7 +137,7 @@ class ManagedUsersController < ApplicationController
     end
     unless existing_user
       user.approve_all_accounts
-      user.invite_new_user(params.merge(deliver_invite: true))
+      user.invite_new_user(params.merge(deliver_invite: true, invited_teams: @ssl_accounts))
     end
   end
 end

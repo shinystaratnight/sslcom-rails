@@ -207,7 +207,7 @@ class User < ActiveRecord::Base
   def invite_new_user(params)
     if params[:deliver_invite]
       User.get_user_by_email(params[:user][:email])
-        .deliver_signup_invitation!(params[:from_user], params[:root_url])
+        .deliver_signup_invitation!(params[:from_user], params[:root_url], params[:invited_teams])
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
@@ -299,9 +299,9 @@ class User < ActiveRecord::Base
     UserNotifier.activation_confirmation(self).deliver
   end
 
-  def deliver_signup_invitation!(current_user, root_url)
+  def deliver_signup_invitation!(current_user, root_url, invited_teams)
     reset_perishable_token!
-    UserNotifier.signup_invitation(self, current_user, root_url).deliver
+    UserNotifier.signup_invitation(self, current_user, root_url, invited_teams).deliver
   end
 
   def deliver_password_reset_instructions!
@@ -449,6 +449,11 @@ class User < ActiveRecord::Base
 
   def referer_urls
     visitor_tokens.map{|v|v.trackings.non_ssl_com_referer}.flatten.map{|t|t.referer.url}
+  end
+
+  def roles_humanize(target_account=nil)
+    Role.where(id: roles_for_account(target_account || ssl_account))
+      .map{|role| role.name.humanize(capitalize: false)}
   end
 
   def role_symbols(target_account=nil)

@@ -1,6 +1,9 @@
 Hello,
 #{"\n"}
-#{@current_user.login} has added you to their #{Settings.community_name} account.
+#{@current_user.login} has invited you to their #{Settings.community_name} team.
+#{"\n\n"}
+#{"\t"}Team:#{"\t"}#{@ssl_account.get_team_name}
+#{"\t"}Roles:#{"\t"}#{@invited_user.roles_humanize(@ssl_account).join(', ')}
 #{"\n"}
 Please click the url below to accept invite.
 #{"\n"}

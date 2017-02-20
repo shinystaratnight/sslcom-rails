@@ -46,14 +46,15 @@ class UserNotifier < ActionMailer::Base
                 to: user.email
   end
 
-  def signup_invitation(user, current_user, base_url)
-    @user = user
-    @current_user = current_user
-    @ssl_account = user.ssl_account
-    @invite_url = base_url + "register/#{@user.perishable_token}?invite=true"
-    @login = user.login
-    mail subject:  "#{@current_user.login} has invited you to SSL.com",
-            from:  Settings.from_email.activations,
+  def signup_invitation(user, current_user, base_url, invited_teams)
+    @user          = user
+    @current_user  = current_user
+    @ssl_account   = user.ssl_account
+    @invited_teams = invited_teams
+    @invite_url    = "#{base_url}register/#{@user.perishable_token}?invite=true"
+    @login         = user.login
+    mail subject: "#{@current_user.login} has invited you to join SSL.com",
+            from: Settings.from_email.activations,
               to: user.email
   end
 
@@ -63,7 +64,7 @@ class UserNotifier < ActionMailer::Base
     @ssl_account  = SslAccount.find ssl_account_id
     @approval_url = approve_account_invite_user_url(@invited_user)
     @approval_url << @invited_user.generate_approval_query(ssl_account_id: @ssl_account.id)
-    mail subject: "Invition to SSL.com account",
+    mail subject: "Invition to SSL.com team #{@ssl_account.get_team_name}",
             from: @current_user.email,
               to: @invited_user.email
   end
@@ -72,7 +73,7 @@ class UserNotifier < ActionMailer::Base
     @invited_user = invite_user
     @current_user = current_user.is_a?(User) ? current_user : User.find(current_user)
     @ssl_account  = SslAccount.find ssl_account_id
-    mail subject: "You have invited a user to your SSL.com account",
+    mail subject: "You have invited a user to your SSL.com team #{@ssl_account.get_team_name}",
             from: Settings.from_email.activations,
               to: @current_user.email
   end

@@ -1,6 +1,12 @@
 Hello,
 #{"\n"}
-#{@current_user.login} has just invited you to join #{Settings.community_name} and become a member of their #{Settings.community_name} account.
+#{@current_user.login} has just invited you to join #{Settings.community_name} and become a member of their #{Settings.community_name} #{'team'.pluralize(@invited_teams.count)}.
+#{"\n\n"}
+-unless @invited_teams.empty?
+  -@invited_teams.each do |team|
+    #{"\t"}Team:#{"\t"}#{team.get_team_name}
+    #{"\t"}Roles:#{"\t"}#{@user.roles_humanize(team).join(', ')}
+    #{"\n"}
 #{"\n"}
 Visit this link to sign up:
 #{"\n"}
