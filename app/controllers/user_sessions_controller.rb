@@ -56,7 +56,7 @@ class UserSessionsController < ApplicationController
         end
         flash[:notice] = "Successfully logged in." unless request.xhr?
         format.js   {render :json=>url_for_js(user)}
-        format.html {redirect_back_or_default account_path((user.ssl_account ? user.ssl_account.to_slug : {}))}
+        format.html {redirect_back_or_default account_path(user.ssl_account(:default_team) ? user.ssl_account(:default_team).to_slug : {})}
 #        us_json = @user_session.to_json.chop << ',"redirect":"'+
 #          (user.ssl_account.is_registered_reseller?  ?
 #          "create" : new_order_url) +'"}'

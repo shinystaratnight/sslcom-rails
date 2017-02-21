@@ -60,9 +60,12 @@ class User < ActiveRecord::Base
                         (email =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
-  def ssl_account
+  def ssl_account(default_team=nil)
     default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
     main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+
+    # Retrieve team that was manually set as default in Teams by user
+    return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
 
     if default_ssl
       SslAccount.find default_ssl_account
