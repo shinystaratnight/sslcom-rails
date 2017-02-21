@@ -8,6 +8,7 @@ Hello,
 #{"\n"}#{@approval_url}
 #{"\n"}If the above URL does not work try copying and pasting it into your browser.
 If you continue to have problems, please feel free to contact us or #{@current_user.email}.
-#{"\n"}*Note: this team invitation will expire in about 72 hours or on #{@token_expire.strftime("%b %d, %Y at%l:%M %p")}.
+-expire = @token_expire ? @token_expire.strftime("%b %d, %Y at%l:%M %p") : 72.hours.from_now.strftime("%b %d, %Y at%l:%M %p")
+#{"\n"}*Note: this team invitation will expire in about 72 hours or on #{expire}.
 #{"\n"}
 =render 'support_signature'

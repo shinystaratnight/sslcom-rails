@@ -64,6 +64,7 @@ class UserNotifier < ActionMailer::Base
     @ssl_account  = SslAccount.find ssl_account_id
     @approval_url = approve_account_invite_user_url(@invited_user)
     @approval_url << @invited_user.generate_approval_query(ssl_account_id: @ssl_account.id)
+    @token_expire = @invited_user.ssl_account_users.find_by(ssl_account_id: @ssl_account.id).token_expires
     mail subject: "Invition to SSL.com team #{@ssl_account.get_team_name}",
             from: @current_user.email,
               to: @invited_user.email
