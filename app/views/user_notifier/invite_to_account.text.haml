@@ -4,12 +4,10 @@ Hello,
 #{"\n\n"}
 #{"\t"}Team:#{"\t"}#{@ssl_account.get_team_name}
 #{"\t"}Roles:#{"\t"}#{@invited_user.roles_humanize(@ssl_account).join(', ')}
-#{"\n"}
-Please click the url below to accept invite.
-#{"\n"}
-#{@approval_url}
-#{"\n"}
-If the above URL does not work try copying and pasting it into your browser. 
+#{"\n"}Please click the url below to accept this invitation.
+#{"\n"}#{@approval_url}
+#{"\n"}If the above URL does not work try copying and pasting it into your browser.
 If you continue to have problems, please feel free to contact us or #{@current_user.email}.
+#{"\n"}*Note: this team invitation will expire in about 72 hours or on #{@token_expire.strftime("%b %d, %Y at%l:%M %p")}.
 #{"\n"}
 =render 'support_signature'
