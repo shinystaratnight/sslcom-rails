@@ -302,6 +302,7 @@ authorization do
       :edit,
       :edit_email,
       :edit_password,
+      :leave_team,
       :search,
       :show,
       :update

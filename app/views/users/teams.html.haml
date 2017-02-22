@@ -91,5 +91,5 @@
             ]
             -unless account_owner || system_admins
               [
-              =link_to "leave team", remove_from_account_managed_user_path(current_user, {ssl_slug: t.to_slug, ssl_account_id: t.id}),data:{confirm: "Please confirm you want to leave team #{t.company_name}."}
+              =link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}
               ]

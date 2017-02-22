@@ -242,7 +242,7 @@ class User < ActiveRecord::Base
   end
 
   def remove_user_from_account(account, current_user)
-    Assignment.where(user_id: self, ssl_account_id: account).delete_all
+    assignments.where(ssl_account_id: account).delete_all
     ssl = ssl_account_users.where(ssl_account_id: account).delete_all
     if ssl > 0
       deliver_removed_from_account!(account, current_user)
@@ -250,6 +250,23 @@ class User < ActiveRecord::Base
         deliver_removed_from_account_notify_admin!(account, current_user)
       end
       update_default_ssl_account(account)
+    end
+  end
+
+  def leave_team(remove_ssl)
+    unless remove_ssl.get_account_owner == self 
+      ssl = ssl_account_users.where(ssl_account_id: remove_ssl).delete_all
+      assignments.where(ssl_account_id: remove_ssl).delete_all
+    end
+    if ssl && ssl > 0
+      update_default_ssl_account(remove_ssl)
+      deliver_leave_team!(remove_ssl)
+      Assignment.where( # notify team owner and users_manager(s)
+        ssl_account_id: remove_ssl,
+        role_id: Role.get_role_ids([Role::OWNER, Role::USERS_MANAGER])
+      ).map(&:user).uniq.compact.each do |notify|
+        deliver_leave_team_notify_admins!(notify, remove_ssl)
+      end
     end
   end
 
@@ -338,6 +355,14 @@ class User < ActiveRecord::Base
 
   def deliver_removed_from_account_notify_admin!(account, current_user)
     UserNotifier.removed_from_account_notify_admin(self, account, current_user).deliver
+  end
+
+  def deliver_leave_team!(account)
+    UserNotifier.leave_team(self, account).deliver
+  end
+
+  def deliver_leave_team_notify_admins!(notify_user, account)
+    UserNotifier.leave_team_notify_admins(self, notify_user, account).deliver
   end
 
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")

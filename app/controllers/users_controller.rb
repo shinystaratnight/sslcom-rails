@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    :index, :edit_email, :edit_password, attribute_check: true
+    :index, :edit_email, :edit_password, :leave_team, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -323,6 +323,19 @@ class UsersController < ApplicationController
       flash[:notice] = "User #{@user.login} team limit has been successfully updated to #{max}."
     end
     redirect_to users_path
+  end
+
+  def leave_team
+    @user    = User.find params[:id]
+    team     = @user.ssl_accounts.find(params[:ssl_account_id]) if params[:ssl_account_id]
+    own_team = (team.get_account_owner == @user) if team
+    if team && !own_team
+      @user.leave_team(team)
+      flash[:notice] = "You have successfully left team #{team.get_team_name}."
+    else
+      flash[:error] = own_team ? "You cannot leave team that you own!" : "Something went wrong, please try again."
+    end
+    redirect_to teams_user_path
   end
 
   def admin_activate

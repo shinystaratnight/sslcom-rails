@@ -97,6 +97,24 @@ class UserNotifier < ActionMailer::Base
               to: @current_user.email
   end
 
+  def leave_team(current_user, account)
+    @current_user = current_user
+    @team         = account
+    @owner_user   = @team.get_account_owner
+    mail subject: "You have left SSL.com team #{@team.get_team_name}",
+            from: Settings.from_email.activations,
+              to: @current_user.email
+  end
+
+  def leave_team_notify_admins(remove_user, notify_user, account)
+    @remove_user  = remove_user
+    @notify_user  = notify_user
+    @team         = account
+    mail subject: "User #{@remove_user.login} has left your SSL.com team #{@team.get_team_name}",
+            from: Settings.from_email.activations,
+              to: @notify_user.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"
