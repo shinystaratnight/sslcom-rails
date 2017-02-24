@@ -283,6 +283,7 @@ SslCom::Application.routes.draw do
       match :set_default_team_max, via: [:put, :patch]
       match :admin_activate, via: [:put, :patch]
       get   :leave_team
+      get   :dont_show_again
     end
   end
 

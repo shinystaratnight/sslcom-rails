@@ -72,4 +72,8 @@ class Role < ActiveRecord::Base
       SYS_ADMIN
     ])
   end
+
+  def self.cannot_be_invited
+    Role.get_role_ids([OWNER, RESELLER, SUPER_USER, SYS_ADMIN])
+  end
 end

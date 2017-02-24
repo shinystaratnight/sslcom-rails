@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170109193640) do
+ActiveRecord::Schema.define(version: 20170223224741) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -946,6 +946,8 @@ ActiveRecord::Schema.define(version: 20170109193640) do
     t.string   "approval_token", limit: 255
     t.datetime "token_expires"
     t.boolean  "user_enabled",               default: true
+    t.datetime "invited_at"
+    t.datetime "declined_at"
   end
 
   add_index "ssl_account_users", ["ssl_account_id", "user_id"], name: "index_ssl_account_users_on_ssl_account_id_and_user_id", using: :btree
@@ -1120,6 +1122,7 @@ ActiveRecord::Schema.define(version: 20170109193640) do
     t.integer  "default_ssl_account", limit: 4
     t.integer  "max_teams",           limit: 4
     t.integer  "main_ssl_account",    limit: 4
+    t.boolean  "persist_notice",                  default: false
   end
 
   add_index "users", ["default_ssl_account"], name: "index_users_on_default_ssl_account", using: :btree

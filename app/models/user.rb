@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
     :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type,
-    :main_ssl_account, :max_teams
+    :main_ssl_account, :max_teams, :persist_notice
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
@@ -216,6 +216,7 @@ class User < ActiveRecord::Base
       user.signup!(params)
       ssl = user.create_ssl_account([Role.get_owner_id])
       user.update_attribute(:main_ssl_account, ssl.id) if ssl
+      user.update_attribute(:persist_notice, true)
       user
     end
   end

@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
     :approve_account_invite, :create_team, :set_default_team,
-    :index, :edit_email, :edit_password, :leave_team, attribute_check: true
+    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -336,6 +336,12 @@ class UsersController < ApplicationController
       flash[:error] = own_team ? "You cannot leave team that you own!" : "Something went wrong, please try again."
     end
     redirect_to teams_user_path
+  end
+
+  def dont_show_again
+    @user = User.find params[:id]
+    @user.update(persist_notice: false)
+    respond_to {|format| format.js {render json: 'ok'}}
   end
 
   def admin_activate

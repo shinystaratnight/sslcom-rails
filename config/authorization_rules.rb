@@ -299,6 +299,7 @@ authorization do
   # ============================================================================
   role :user do
     has_permission_on :users, :to => [
+      :dont_show_again,
       :edit,
       :edit_email,
       :edit_password,

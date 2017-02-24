@@ -378,14 +378,19 @@ class ApplicationController < ActionController::Base
   end
 
   def load_notifications
-    if current_user && current_user.pending_account_invites?
-      @team_invites = []
-      current_user.get_pending_accounts.each do |invite|
-        new_params       = {ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token], to_teams: true}
-        invite[:accept]  = approve_account_invite_user_path(current_user, new_params)
-        invite[:decline] = decline_account_invite_user_path(current_user, new_params)
-        invite.delete(:approval_token)
-        @team_invites   << invite
+    if current_user 
+      if current_user.pending_account_invites?
+        @team_invites = []
+        current_user.get_pending_accounts.each do |invite|
+          new_params       = {ssl_account_id: invite[:ssl_account_id], token: invite[:approval_token], to_teams: true}
+          invite[:accept]  = approve_account_invite_user_path(current_user, new_params)
+          invite[:decline] = decline_account_invite_user_path(current_user, new_params)
+          invite.delete(:approval_token)
+          @team_invites   << invite
+        end
+      end
+      if current_user.persist_notice && current_user.assignments.where.not(role_id: Role.cannot_be_invited)
+        flash[:info_activation] = true
       end
     end
   end

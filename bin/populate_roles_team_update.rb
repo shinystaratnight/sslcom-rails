@@ -46,3 +46,21 @@ vestigial_roles.each do |name|
     role.destroy
   end
 end
+# 
+# Populate main roles descriptions
+# 
+Role.find_by(name: 'billing').update(
+  description: 'Access to billing tasks for team. Tasks include creating or deleting billing profiles, managing transactions and renewing certificate orders.'
+)
+Role.find_by(name: 'users_manager').update(
+  description: "Manage teams' users. Tasks include inviting users to team, removing, editing roles, disabling and enabling teams' users."
+)
+Role.find_by(name: 'installer').update(
+  description: "Access to completed certificate and site seal, also has the ability to submit initial CSR and rekey/reprocess the certificate."
+)
+Role.find_by(name: 'validations').update(
+  description: "Access to validation tasks for the Team. Tasks include uploading validation documents, selecting the validation method, and other related tasks."
+)
+Role.find_by(name: 'account_admin').update(
+  description: "Access to all tasks related to managing entire account and team except altering user who owns the ssl team."
+)
