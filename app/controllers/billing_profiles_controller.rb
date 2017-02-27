@@ -2,6 +2,7 @@ class BillingProfilesController < ApplicationController
   include ApplicationHelper, OrdersHelper
   #ssl_required :new
   #helper :profile
+  before_filter :find_ssl_account
   filter_access_to :all
   filter_access_to :destroy, attribute_check: true
   respond_to :json
@@ -10,7 +11,7 @@ class BillingProfilesController < ApplicationController
 
   def index
     permission_denied unless can_manage_profile?(params)
-    @billing_profiles = current_user.ssl_account.billing_profiles
+    @billing_profiles = @ssl_account.billing_profiles
     @billing_profile  = BillingProfile.new
   end
 
@@ -28,7 +29,7 @@ class BillingProfilesController < ApplicationController
     unless can_manage_profile?(params)
       permission_denied and return
     end
-    @billing_profile = current_user.ssl_account.billing_profiles.build(params[:billing_profile])
+    @billing_profile = @ssl_account.billing_profiles.build(params[:billing_profile])
     if @billing_profile.save
       flash[:notice] = "Billing Profile successfully created!"
       if params[:manage_billing_profiles]
@@ -38,7 +39,7 @@ class BillingProfilesController < ApplicationController
       end
     else
       if params[:manage_billing_profiles]
-        @billing_profiles = current_user.ssl_account.billing_profiles
+        @billing_profiles = @ssl_account.billing_profiles
         render :index
       else
         render :new
