@@ -60,77 +60,79 @@ describe 'Anonymous user' do
     find('input[name="next"]').click
   end
 
-  it 'new user receives #activation_confirmation notification email' do
-    assert_equal    2, email_total_deliveries
-    assert_equal    'SSL.com user account activated', email_subject(:first)
-    assert_match    @new_email, email_to(:first)
-    assert_match    'noreply@ssl.com', email_from(:first)
-    assert_includes email_body(:first), "Your SSL.com account for username new_user has been activated."
-  end
+  it 'creates correct records and renders correct elements in view' do
+    # new user receives #activation_confirmation notification email
+    # ======================================================
+      assert_equal    2, email_total_deliveries
+      assert_equal    'SSL.com user account activated', email_subject(:first)
+      assert_match    @new_email, email_to(:first)
+      assert_match    'noreply@ssl.com', email_from(:first)
+      assert_includes email_body(:first), "Your SSL.com account for username new_user has been activated."
 
-  it 'new user receives #certificate_order_prepaid notification email' do
-    assert_equal    2, email_total_deliveries
-    assert_match    @new_email, email_to
-    assert_match    'orders@ssl.com', email_from
-    assert_includes email_subject, Order.first.reference_number
-    assert_includes email_body, "Order Amount: #{@amount}"
-  end
+    # new user receives #certificate_order_prepaid notification email
+    # ======================================================
+      assert_equal    2, email_total_deliveries
+      assert_match    @new_email, email_to
+      assert_match    'orders@ssl.com', email_from
+      assert_includes email_subject, Order.first.reference_number
+      assert_includes email_body, "Order Amount: #{@amount}"
 
-  it 'creates database records' do
-    sleep 1
-    assert_equal 1, User.count
-    assert_equal 1, Assignment.count
-    assert_equal 1, SslAccount.count
-    assert_equal 1, SslAccountUser.count
-    assert_equal 1, BillingProfile.count
-    assert_equal 1, FundedAccount.count
-    assert_equal 1, Order.count
-    assert_equal 1, OrderTransaction.count
-    assert_equal 1, CertificateOrder.count
-    assert_equal 1, CertificateContent.count
-    assert_equal 1, LineItem.count
-    assert_equal 1, OrderTransaction.count
-  end
-  
-  it 'creates correct order record' do
-    o = Order.first
-    assert_equal User.first.ssl_account.billing_profiles.first.id, o.billing_profile_id
-    assert_equal 'SslAccount', o.billable_type
-    assert_equal 'paid', o.state
-    assert_equal 'active', o.status
-    assert_equal 15643, o.cents
-    assert_equal OrderTransaction.first.order_id, o.id
-    refute_nil   o.reference_number
-  end
-
-  it 'creates correct certificate order record' do
-    co = CertificateOrder.first
-    assert_equal User.first.ssl_account.id, co.ssl_account_id
-    assert_equal 'paid', co.workflow_state
-    assert_equal 1, co.line_item_qty
-    assert_equal 15643, co.amount
-  end
-
-  it 'creates correct user record' do
-    user = User.first
-    assert_equal 2, user.login_count
-    assert_equal 1, user.get_all_approved_accounts.count
-    assert_equal 1, user.assignments.count
-    assert_equal 1, user.ssl_account_users.count
-    assert_equal User.first, SslAccount.first.get_account_owner
-  end
-
-  it 'show order transaction page' do
-    # Order show: Capybara doesn't add cookie automatically, so need to login user manually.
-    login_as(User.first, self.controller.cookies)
-    reference_number = Order.first.reference_number
-    visit order_path(SslAccount.first.ssl_slug, reference_number)
+    # creates database records
+    # ======================================================
+      sleep 1
+      assert_equal 1, User.count
+      assert_equal 1, Assignment.count
+      assert_equal 1, SslAccount.count
+      assert_equal 1, SslAccountUser.count
+      assert_equal 1, BillingProfile.count
+      assert_equal 1, FundedAccount.count
+      assert_equal 1, Order.count
+      assert_equal 1, OrderTransaction.count
+      assert_equal 1, CertificateOrder.count
+      assert_equal 1, CertificateContent.count
+      assert_equal 1, LineItem.count
+      assert_equal 1, OrderTransaction.count
     
-    page.must_have_content(reference_number)
-    page.must_have_content('Show Order Transaction')
-    page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")
-    page.must_have_content(BillingProfile.first.last_digits)
-    page.must_have_content('$156.43')
+    # creates correct order record
+    # ======================================================
+      o = Order.first
+      assert_equal User.first.ssl_account.billing_profiles.first.id, o.billing_profile_id
+      assert_equal 'SslAccount', o.billable_type
+      assert_equal 'paid', o.state
+      assert_equal 'active', o.status
+      assert_equal 15643, o.cents
+      assert_equal OrderTransaction.first.order_id, o.id
+      refute_nil   o.reference_number
+
+    # creates correct certificate order record
+    # ======================================================
+      co = CertificateOrder.first
+      assert_equal User.first.ssl_account.id, co.ssl_account_id
+      assert_equal 'paid', co.workflow_state
+      assert_equal 1, co.line_item_qty
+      assert_equal 15643, co.amount
+
+    # creates correct user record
+    # ======================================================
+      user = User.first
+      assert_equal 1, user.login_count
+      assert_equal 1, user.get_all_approved_accounts.count
+      assert_equal 1, user.assignments.count
+      assert_equal 1, user.ssl_account_users.count
+      assert_equal User.first, SslAccount.first.get_account_owner
+
+    # show order transaction page
+    # ======================================================
+      # Order show: Capybara doesn't add cookie automatically, so need to login user manually.
+      login_as(User.first, self.controller.cookies)
+      reference_number = Order.first.reference_number
+      visit order_path(SslAccount.first.ssl_slug, reference_number)
+      
+      page.must_have_content(reference_number)
+      page.must_have_content('Show Order Transaction')
+      page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")
+      page.must_have_content(BillingProfile.first.last_digits)
+      page.must_have_content('$156.43')
   end
 end
 

@@ -1,4 +1,4 @@
--show_teams = current_user.get_all_approved_accounts.length > 1 ? true : false
+-show_teams = current_user.get_all_approved_accounts.length > SslAccount::SHOW_TEAMS_THRESHOLD
 #header
   .inner
     %table#at_a_glance_header
@@ -6,8 +6,9 @@
         %tr
           -if show_teams
             %th{colspan: 2} CURRENT TEAM
-          %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
-          %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+          -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
+            %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
+            %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
           -unless current_user.ssl_account.funded_account.blank?
             %th.certificate_status=link_to "AVAILABLE FUNDS", allocate_funds_url
           -if current_user.ssl_account.has_credits?
@@ -19,8 +20,9 @@
           -if show_teams
             =render partial: 'shared/ssl_accounts'
             %td
-          %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
-          %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+          -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
+            %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
+            %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
           -unless current_user.ssl_account.funded_account.blank?
             %td.certificate_status=link_to current_user.ssl_account.funded_account.amount(true).format(:with_currency=>false), credits_certificate_orders_path
           -if current_user.ssl_account.has_credits?

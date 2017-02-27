@@ -6,20 +6,20 @@ describe 'user approves ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :account_admin)
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
-    @unauthorized_user   = create(:user, :account_admin)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @current_owner       = create(:user, :owner)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
+    @unauthorized_user   = create(:user, :owner)
+    @invited_ssl_acct    = @current_owner.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email
@@ -31,7 +31,7 @@ describe 'user approves ssl account invite' do
       login_as(@existing_user, update_cookie(self.controller.cookies, @existing_user))
       visit account_path
 
-      assert page.has_no_content? 'ACCOUNT'
+      assert page.has_content? 'Teams(1)'
       assert_equal 2, @existing_user.ssl_accounts.count
       assert_equal 2, @existing_user.roles.count
       # only invited user's own account is approved
@@ -55,9 +55,9 @@ describe 'user approves ssl account invite' do
     end
     
     it 'can see both accounts' do
-      page.must_have_content 'CURRENT TEAM'
-      page.must_have_content 'Users'
-      page.must_have_content @existing_user_ssl.acct_number.upcase
+      assert       page.has_content? 'Teams(2)'
+      assert       page.has_content? 'Users'
+      assert       page.has_content? @existing_user_ssl.acct_number.upcase
       assert_equal 2, @existing_user.get_all_approved_accounts.count
     end
     it 'can switch to invited ssl account' do
@@ -66,11 +66,12 @@ describe 'user approves ssl account invite' do
       ssl = SslAccountUser.where(
         ssl_account_id: @invited_ssl_acct.id, user_id: @existing_user.id
       ).first
-      assert page.has_no_content? 'Users'
       assert_equal @invited_ssl_acct.id, User.find(@existing_user.id).default_ssl_account
       assert_nil   ssl.approval_token
       assert_nil   ssl.token_expires
       assert       ssl.approved
+      page.must_have_content 'roles: account_admin'
+      page.must_have_content "account number: #{@invited_ssl_acct.acct_number}"
     end
   end
   
@@ -96,7 +97,7 @@ describe 'user approves ssl account invite' do
       assert_match root_path, current_path
       
       click_on 'MY ACCOUNT'
-      assert page.has_no_content? 'CURRENT TEAM'
+      assert page.has_content? 'Teams(1)'
     end
     it 'invite remains unapproved' do
       ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)

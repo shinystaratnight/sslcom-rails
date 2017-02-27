@@ -1,4 +1,4 @@
--ec = (co.site_seal.preferred_seal_image?) ? link_to(image_tag(image_url(co.site_seal.preferred_seal_image, false)), site_report_site_seal_url(co.site_seal), popup_code(co)) : ""
+-ec = (co.site_seal.preferred_seal_image?) ? link_to(image_tag(image_url(co.site_seal.preferred_seal_image, false)), site_report_site_seal_path(@ssl_slug, co.site_seal), popup_code(co)) : ""
 -key_logo = render partial: '/site_seals/site_seal_code',:locals=>{:co=>co}
 -css_key_logo = render partial: '/site_seals/css_site_seal_code',:locals=>{:co=>co}
 %tr.expanded(class="#{'hidden' if current_page?(:site_seals)}")
@@ -33,7 +33,7 @@
                                 #{check_box_tag "email_customer", true, :alt=>"#{i}"}notify customer?
                               %li.approve_submit=submit_tag 'submit'
                       -else
-                        =form_for co.site_seal, :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
+                        =form_for co.site_seal, url: site_seal_path(@ssl_slug, co.site_seal), :html=>{:alt=>"#{i}", :class=>'edit_validation_ruling'} do |f|
                           =hidden_field_tag 'certificate_order', co.id
                           #{f.check_box :preferred_artifacts_status, {}, "activate", "deactivate"}enable Site Seal Artifacts?
                   -if co.site_seal.preferred_seal_image?
@@ -46,10 +46,11 @@
                     %li.small_section
                       =link_to 'preview site seal report', "javascript:void(0)", popup_code(co)
                       =#link_to 'preview company documents', artifacts_site_seal_url(co.site_seal), :popup=>['site_report',SiteSeal::REPORT_DIMENSIONS]
-              .certificate_details_box
-                %strong embeddable code
-                =text_area_tag :csr, key_logo, :size=>"30x10"
-                =#text_area_tag :csr, css_key_logo, :size=>"30x10"
+              -if permitted_to? :update, :csrs
+                .certificate_details_box
+                  %strong embeddable code
+                  =text_area_tag :csr, key_logo, :size=>"30x10"
+                  =#text_area_tag :csr, css_key_logo, :size=>"30x10"
               .certificate_details_box
                 %strong instructions
                 #site_seal_instructions

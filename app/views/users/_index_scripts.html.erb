@@ -9,7 +9,7 @@ jQuery(function($) {
         return false;
       }
     });
-    $('.dropdown, .status_message, .expand, .subject_column > a, .expandable').click(function(){
+    $('.enable .dropdown, .enable .status_message, .enable .expand, .enable .subject_column > a, .enable .expandable').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
         $(this).parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");

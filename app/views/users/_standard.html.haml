@@ -67,8 +67,8 @@
                             login account
                         %li username: #{user.login}
                         %li email: #{user.email}
-                        %li account number: #{user.ssl_account.acct_number}
-                        %li available funds: $#{user.ssl_account.funded_account.amount}
+                        %li account number: #{(@ssl_account || user.ssl_account).acct_number}
+                        %li roles: #{user.role_symbols(@ssl_account).join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript
@@ -89,33 +89,37 @@
                                 window.location = '#{change_login_user_url(user)}?login='+encodeURIComponent(login);
                             }
                           %li=remote_login_link(user)
-                          %li=link_to "change available funds amount", '#', :onclick =>  "adjust_funds_#{user.id}()"
                         %li=link_to 'edit email address', edit_email_user_url(user)
                         %li=link_to 'change password', edit_password_user_url(user)
-                        -unless current_user.is_affiliate?
-                          %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
-                        -unless current_user.ssl_account.is_registered_reseller?
-                          %li=link_to 'upgrade to reseller', new_reseller_url
+                        -if permitted_to?(:manage, :billing_profiles)
+                          -unless current_user.is_affiliate?
+                            %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
+                          -unless current_user.ssl_account.is_registered_reseller?
+                            %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box
-                      %ul
-                        %li
-                          %strong
-                            certificates
-                        %li=link_to 'buy certificate', certificates_url
-                        %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
-                        -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
-                          %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
-                        %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
-                        -if user.ssl_account.has_credits?
-                          %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
-                    -if(ac = user.ssl_account.api_credential)
-                      .half_width_box
+                      -if permitted_to?(:manage, :billing_profiles)
                         %ul
                           %li
                             %strong
-                              api credentials
-                          %li account key: #{ac.account_key}
-                          %li secret key: #{ac.secret_key}
+                              billing and purchase
+                          -if permitted_to? :create, :funded_accounts
+                            %li available funds: $#{user.ssl_account.funded_account.amount}
+                          %li=link_to 'buy certificate', certificates_url
+                          %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
+                          -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
+                            %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+                          %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
+                          -if user.ssl_account.has_credits?
+                            %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
+                    -if(ac = user.ssl_account.api_credential)
+                      .half_width_box
+                        %ul
+                          -unless user.is_validations? || user.is_billing?
+                            %li
+                              %strong
+                                api credentials
+                            %li account key: #{ac.account_key}
+                            %li secret key: #{ac.secret_key}
                           %li=link_to "developer tools", developers_certificate_orders_path
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
             %table(cellspacing="0")

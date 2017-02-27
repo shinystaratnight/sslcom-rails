@@ -1,4 +1,4 @@
--show_teams = current_user.get_all_approved_accounts.length > 1 ? true : false
+-show_teams = current_user.get_all_approved_accounts.length > SslAccount::SHOW_TEAMS_THRESHOLD
 #header
   -unless is_new_order_page?
     .inner
@@ -7,26 +7,33 @@
           %tr
             -if show_teams
               %th{colspan: 2} CURRENT TEAM
-            %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
-            %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
-            -unless current_user.ssl_account.funded_account.blank?
+            -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
+              %th.validations=link_to "INCOMPLETE", incomplete_certificate_orders_path
+              %th.certificate_status=link_to "PROCESSING", filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+            -unless current_user.ssl_account.funded_account.blank? || !permitted_to?(:create, :funded_accounts)
               %th.certificate_status=link_to "AVAILABLE FUNDS", allocate_funds_url
             -if current_user.ssl_account.has_credits?
               %th.certificate_status=link_to "CREDITS", credits_certificate_orders_path
-            %th.certificate_status=link_to "CART ITEMS", show_cart_orders_url
+            -if permitted_to? :create, :orders
+              %th.certificate_status=link_to "CART ITEMS", show_cart_orders_url
             %th
             %th.certificate_status=link_to 'Logout', logout_url
           %tr#info
             -if show_teams
               =render partial: 'shared/ssl_accounts'
               %td
-            %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
-            %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
-            -unless current_user.ssl_account.funded_account.blank?
-              %td.certificate_status=link_to current_user.ssl_account.funded_account.amount(true).format(:with_currency=>false), credits_certificate_orders_path
+            -if current_user.is_validations? || permitted_to?(:update, :certificate_orders)
+              %td.validations=link_to current_user.ssl_account.certificate_orders.incomplete.count, incomplete_certificate_orders_path
+              %td.certificate_status=link_to current_user.ssl_account.certificate_orders.pending.count, filter_by_scope_certificate_orders_path(@ssl_slug, "pending")
+            -unless current_user.ssl_account.funded_account.blank? || !permitted_to?(:create, :funded_accounts)
+              %td.certificate_status=link_to current_user.ssl_account.funded_account.amount(true).format(:with_currency=>false), allocate_funds_url(ssl_slug: @ssl_slug)
             -if current_user.ssl_account.has_credits?
               %td.certificate_status=link_to current_user.ssl_account.certificate_orders.credits.count, credits_certificate_orders_path
-            %td.certificate_status#cart_items_qty=link_to cart_items_count, show_cart_orders_url
+            -if permitted_to? :create, :orders
+              %td.certificate_status#cart_items_qty=link_to cart_items_count, show_cart_orders_url
+            -unless @team_invites.nil?
+              %td.notifications
+                =render partial: 'shared/notifications'
             %td{colspan: 1}
       %span.logo=link_to("", root_url) unless is_new_order_page?
   -else

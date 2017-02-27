@@ -95,11 +95,12 @@
                     -if ac = user.ssl_account.api_credential
                       .certificate_details_box
                         %ul
-                          %li
-                            %strong
-                              api credentials
-                          %li account key: #{ac.account_key}
-                          %li secret key: #{ac.secret_key}
+                          -unless user.is_validations? || user.is_billing?
+                            %li
+                              %strong
+                                api credentials
+                            %li account key: #{ac.account_key}
+                            %li secret key: #{ac.secret_key}
                           %li=link_to "developer tools", developers_certificate_orders_path
                           %li=link_to 'view documentation', "http://docs.sslcomapi.apiary.io/", target: "_new"
                     .certificate_details_box
@@ -110,6 +111,7 @@
                         %li username: #{user.login}
                         %li email: #{user.email}
                         %li account number: #{user.ssl_account.acct_number}
+                        %li roles: #{user.role_symbols.join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           %li=remote_login_link(user)

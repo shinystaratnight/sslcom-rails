@@ -110,6 +110,12 @@ class BillingProfile < ActiveRecord::Base
         bp.encrypted_card_number.blank?}
   end
 
+  def users_can_manage
+    Assignment.where(
+      ssl_account_id: ssl_account.id, role_id: Role.can_manage_billing
+    ).map(&:user).uniq
+  end
+
   private
 
   before_create :store_last_digits

@@ -15,7 +15,7 @@ class ActivationsController < ApplicationController
       assign_ssl_links(@user)
       @user.deliver_activation_confirmation!
       flash[:notice] = "Your account has been activated."
-      redirect_to account_url
+      redirect_to account_path((@user.ssl_account ? @user.ssl_account.to_slug : {}))
     else
       @invite_params = params[:invite]
       render action: :new

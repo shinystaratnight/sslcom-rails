@@ -13,7 +13,7 @@ class SslAccountsController < ApplicationController
   # GET /ssl_account/edit
   def edit
     if params[:url_slug] || params[:update_company_name]
-      @ssl_account = SslAccount.find params[:id]
+      @ssl_account = SslAccount.find(params[:id]) if params[:id]
     end
   end
 
@@ -26,7 +26,7 @@ class SslAccountsController < ApplicationController
     ssl      = SslAccount.find params[:ssl_account][:id]
     
     if ssl && SslAccount.ssl_slug_valid?(ssl_slug) && ssl.update(ssl_slug: ssl_slug)
-      flash[:notice] = "You have successfully added url slug name #{params[:ssl_account][:ssl_slug]} to account."
+      flash[:notice] = "You have successfully changed your team url to https://www.ssl.com/team/#{params[:ssl_account][:ssl_slug]}."
       if current_user.is_system_admins?
         redirect_to users_path
       else
@@ -89,5 +89,15 @@ class SslAccountsController < ApplicationController
         format.xml  { render :xml => @ssl_account.errors, :status => :unprocessable_entity }
       end
     end
+  end
+
+
+  def adjust_funds
+    amount=params["amount"].to_f*100
+    @ssl_account.funded_account.add_cents(amount)
+    SystemAudit.create(owner: current_user, target: @ssl_account.funded_account,
+                       notes: "amount (in USD): #{amount.to_s}",
+                       action: "FundedAccount#add_cents")
+    redirect_to admin_show_user_path(@ssl_account.get_account_owner)
   end
 end

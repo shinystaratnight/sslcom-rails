@@ -12,10 +12,12 @@
     %tr.heading_row
       %th.name(scope="col")Subject
       %th(scope="col" colspan="4") Validation Status
+      %th(scope="col") Action
     %tr
       %td.name.not_expandable
         .subject_column.center_subject
           =render :partial=>'/certificate_orders/subject_column', :locals=>{:certificate_order=>co, :single=>true}
       -os, os_class=overall_status(v.validation_rulings)
       %td.validation_status_message.not_expandable(class="#{os_class}" colspan="4")=os
+      %td=action(co)
     =render :partial=>"entry", :locals=>{:co=>co, :i=>1}

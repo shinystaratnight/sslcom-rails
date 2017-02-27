@@ -1,6 +1,9 @@
 class User < ActiveRecord::Base
   include V2MigrationProgressAddon
 #  using_access_control
+
+  OWNED_MAX_TEAMS = 3
+
   has_many  :assignments, dependent: :destroy
   has_many  :visitor_tokens
   has_many  :surls
@@ -13,17 +16,22 @@ class User < ActiveRecord::Base
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
+  has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},
+            dependent: :destroy, class_name: "SslAccountUser"
+  has_many  :approved_ssl_accounts,
+            foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   
-  attr_accessor :changing_password, :admin_update, :role_ids
+  attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
-    :default_ssl_account, :ssl_account_id, :role_ids
+    :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type,
+    :main_ssl_account, :max_teams, :persist_notice
   validates :email, email: true, uniqueness: true #TODO look at impact on checkout
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
-      message: "must be at least 8 characters and include a lowercase, uppercase, and special character such as ~`!@#$%^&*()-_+={}[]|\;:\"<>,./?."}
+      message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."}
   accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|
@@ -39,9 +47,10 @@ class User < ActiveRecord::Base
       :if => '(has_no_credentials? && !admin_update) || changing_password'}
   end
 
-  before_create {|u|
+  before_create do |u|
     u.status='enabled'
-  }
+    u.max_teams = OWNED_MAX_TEAMS unless u.max_teams
+  end
 
   default_scope        {where{status << ['disabled']}.order("created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
@@ -51,9 +60,18 @@ class User < ActiveRecord::Base
                         (email =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
-  def ssl_account
-    if default_ssl_account and ssl_accounts.find_by(id: default_ssl_account)
-      ssl_accounts.find_by id: default_ssl_account
+  def ssl_account(default_team=nil)
+    default_ssl = default_ssl_account && is_approved_account?(default_ssl_account)
+    main_ssl    = main_ssl_account && is_approved_account?(main_ssl_account)
+
+    # Retrieve team that was manually set as default in Teams by user
+    return SslAccount.find(main_ssl_account) if (default_team && main_ssl)
+
+    if default_ssl
+      SslAccount.find default_ssl_account
+    elsif !default_ssl && main_ssl
+      set_default_ssl_account main_ssl_account
+      SslAccount.find main_ssl_account
     else
       approved_account = get_first_approved_acct
       set_default_ssl_account(approved_account) if approved_account
@@ -61,12 +79,59 @@ class User < ActiveRecord::Base
     end
   end
 
+  def is_approved_account?(target_ssl)
+    ssl = target_ssl.is_a?(SslAccount) ? target_ssl : SslAccount.find(target_ssl)
+    return false if ssl.nil?
+    ssl_account_users.where(ssl_account_id: ssl.id, user_enabled: true, approved: true).any?
+  end
+  
+  def is_main_account?(ssl_account)
+    return false if main_ssl_account.nil?
+    ssl_account.id == main_ssl_account
+  end
+
   def is_account_owner?(ssl_account)
-    ssl_account == self.owned_ssl_account
+    total_teams_owned.include?(ssl_account)
   end
 
   def owned_ssl_account
-    assignments.where{role_id = Role.get_role_id(Role::ACCOUNT_ADMIN)}.first.try :ssl_account
+    assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
+  end
+
+  def self.total_teams_owned(user_id)
+    User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
+  end
+
+  def total_teams_owned(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    user.assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
+  end
+
+  def total_teams_can_manage_users(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    user.assignments.where(role_id: Role.can_manage_users).map(&:ssl_account).uniq.compact
+  end
+
+  def total_teams_cannot_manage_users(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    user.ssl_accounts - user.assignments.where(role_id: Role.cannot_be_managed)
+      .map(&:ssl_account).uniq.compact
+  end
+
+  def max_teams_reached?(user_id=nil)
+    user = user_id ? User.find(user_id) : self
+    total_teams_owned(user.id).count >= user.max_teams
+  end
+
+  def set_default_team(ssl_account)
+    update(main_ssl_account: ssl_account.id) if ssl_accounts.include?(ssl_account)
+  end
+
+  def can_manage_team_users?(target_ssl=nil)
+    assignments.where(
+      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id,
+      role_id: Role.can_manage_users
+    ).any?
   end
 
   def self.find_non_owners
@@ -77,9 +142,9 @@ class User < ActiveRecord::Base
     end
   end
   
-  def create_ssl_account(role_ids=nil)
+  def create_ssl_account(role_ids=nil, attr={})
     self.save if self.new_record?
-    new_ssl_account = SslAccount.create
+    new_ssl_account = SslAccount.create(attr)
     ssl_accounts << new_ssl_account
     set_roles_for_account(new_ssl_account, role_ids) if (role_ids && role_ids.length > 0)
     set_default_ssl_account(new_ssl_account) unless default_ssl_account
@@ -108,9 +173,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def roles_for_account(account)
-    if ssl_accounts.include?(account)
-      assignments.where(ssl_account_id: account).pluck(:role_id).uniq
+  def roles_for_account(target_ssl=nil)
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
+    if ssl_accounts.include?(ssl)
+      assignments.where(ssl_account_id: ssl).pluck(:role_id).uniq
     else
       []  
     end
@@ -144,11 +210,13 @@ class User < ActiveRecord::Base
   def invite_new_user(params)
     if params[:deliver_invite]
       User.get_user_by_email(params[:user][:email])
-        .deliver_signup_invitation!(params[:from_user], params[:root_url])
+        .deliver_signup_invitation!(params[:from_user], params[:root_url], params[:invited_teams])
     else  
       user = User.new(params[:user].merge(login: params[:user][:email]))
       user.signup!(params)
-      user.create_ssl_account([Role.find_by(name: Role::ACCOUNT_ADMIN).id])
+      ssl = user.create_ssl_account([Role.get_owner_id])
+      user.update_attribute(:main_ssl_account, ssl.id) if ssl
+      user.update_attribute(:persist_notice, true)
       user
     end
   end
@@ -168,21 +236,51 @@ class User < ActiveRecord::Base
     end
   end
 
-  def user_exists_for_account?(user_email)
+  def user_exists_for_account?(user_email, target_ssl=nil)
+    ssl = target_ssl.nil? ? ssl_account : target_ssl
     user = User.get_user_by_email(user_email)
-    user && SslAccountUser.where(user_id: user, ssl_account_id: ssl_account).any?
+    user && SslAccountUser.where(user_id: user, ssl_account_id: ssl).any?
   end
 
   def remove_user_from_account(account, current_user)
-    Assignment.where(user_id: self, ssl_account_id: account).delete_all
-    ssl = SslAccountUser.where(user_id: self, ssl_account_id: account).delete_all
+    assignments.where(ssl_account_id: account).delete_all
+    ssl = ssl_account_users.where(ssl_account_id: account).delete_all
     if ssl > 0
       deliver_removed_from_account!(account, current_user)
       unless current_user.is_system_admins? 
         deliver_removed_from_account_notify_admin!(account, current_user)
       end
-      clear_default_ssl_account if default_ssl_account == account.id
+      update_default_ssl_account(account)
     end
+  end
+
+  def leave_team(remove_ssl)
+    unless remove_ssl.get_account_owner == self 
+      ssl = ssl_account_users.where(ssl_account_id: remove_ssl).delete_all
+      assignments.where(ssl_account_id: remove_ssl).delete_all
+    end
+    if ssl && ssl > 0
+      update_default_ssl_account(remove_ssl)
+      deliver_leave_team!(remove_ssl)
+      Assignment.where( # notify team owner and users_manager(s)
+        ssl_account_id: remove_ssl,
+        role_id: Role.get_role_ids([Role::OWNER, Role::USERS_MANAGER])
+      ).map(&:user).uniq.compact.each do |notify|
+        deliver_leave_team_notify_admins!(notify, remove_ssl)
+      end
+    end
+  end
+
+  def update_default_ssl_account(remove_ssl)
+    if default_ssl_account == remove_ssl.id
+      if main_ssl_account != remove_ssl.id
+        update(default_ssl_account: main_ssl_account)
+      else
+        ssl = get_first_approved_acct
+        update_attributes(default_ssl_account: ssl.id, main_ssl_account: ssl.id)
+      end
+    end
+    update(main_ssl_account: default_ssl_account) if main_ssl_account == remove_ssl.id
   end
 
   def self.get_user_by_email(email)
@@ -222,9 +320,9 @@ class User < ActiveRecord::Base
     UserNotifier.activation_confirmation(self).deliver
   end
 
-  def deliver_signup_invitation!(current_user, root_url)
+  def deliver_signup_invitation!(current_user, root_url, invited_teams)
     reset_perishable_token!
-    UserNotifier.signup_invitation(self, current_user, root_url).deliver
+    UserNotifier.signup_invitation(self, current_user, root_url, invited_teams).deliver
   end
 
   def deliver_password_reset_instructions!
@@ -258,6 +356,14 @@ class User < ActiveRecord::Base
 
   def deliver_removed_from_account_notify_admin!(account, current_user)
     UserNotifier.removed_from_account_notify_admin(self, account, current_user).deliver
+  end
+
+  def deliver_leave_team!(account)
+    UserNotifier.leave_team(self, account).deliver
+  end
+
+  def deliver_leave_team_notify_admins!(notify_user, account)
+    UserNotifier.leave_team_notify_admins(self, notify_user, account).deliver
   end
 
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
@@ -296,23 +402,19 @@ class User < ActiveRecord::Base
   # will take care of setting any data that you want to happen at signup
   # (aka before activation)
   def signup!(params)
-    assign_roles(params, true)
+    assign_roles(params)
     self.login = params[:user][:login] if login.blank?
     self.email = params[:user][:email]
     save_without_session_maintenance
   end
 
-  def assign_roles(params, signup=false)
+  def assign_roles(params)
     role_ids = params[:user][:role_ids]
     cur_account_id = params[:user][:ssl_account_id]
     unless role_ids.nil? || cur_account_id.nil?
       new_role_ids = role_ids.compact.reject{|id| id.blank?}.map(&:to_i)
     end
     if new_role_ids.present?
-      if signup
-        acct_admin_role = Role.get_role_id(Role::ACCOUNT_ADMIN)
-        new_role_ids    << acct_admin_role unless new_role_ids.include? acct_admin_role
-      end
       current_account  = SslAccount.find cur_account_id
       current_role_ids = roles_for_account current_account
       new_role_ids     = new_role_ids - current_role_ids
@@ -320,10 +422,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def remove_roles(params)
+  def remove_roles(params, inverse=false)
     new_role_ids       = params[:user][:role_ids].compact.reject{|id| id.blank?}.map(&:to_i)
     current_role_ids   = roles_for_account(SslAccount.find(params[:user][:ssl_account_id]))
-    removable_role_ids = current_role_ids - new_role_ids
+    removable_role_ids = inverse ? new_role_ids : current_role_ids - new_role_ids
     
     assignments.where(
       role_id:        removable_role_ids,
@@ -334,15 +436,26 @@ class User < ActiveRecord::Base
   def self.roles_list_for_user(user, exclude_roles=nil)
     exclude_roles ||= []
     unless user.is_system_admins?
-      exclude_roles << Role.where.not(id: Role.get_role_id(Role::SSL_USER)).map(&:id).uniq
+      exclude_roles << Role.where.not(id: Role.get_select_ids_for_owner).map(&:id).uniq
     end
     exclude_roles.any? ? Role.where.not(id: exclude_roles.flatten) : Role.all
   end
 
   def self.get_user_accounts_roles(user)
+    # e.g.: {17198:[4], 29:[17, 18], 15:[17, 18, 19, 20]}
     mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
     user.ssl_accounts.inject({}) do |all, s|
       all[s.id] = user.assignments.where(ssl_account_id: s.id).pluck(:role_id).uniq
+      all
+    end
+  end
+
+  def self.get_user_accounts_roles_names(user)
+    # e.g.: {'team_1': ['owner'], 'team_2': ['account_admin', 'installer']}
+    mapped_roles = Role.all.map{|r| [r.id, r.name]}.to_h
+    user.ssl_accounts.inject({}) do |all, s|
+      all[s.get_team_name] = user.assignments.where(ssl_account_id: s.id)
+        .map(&:role).uniq.map(&:name)
       all
     end
   end
@@ -367,6 +480,11 @@ class User < ActiveRecord::Base
     visitor_tokens.map{|v|v.trackings.non_ssl_com_referer}.flatten.map{|t|t.referer.url}
   end
 
+  def roles_humanize(target_account=nil)
+    Role.where(id: roles_for_account(target_account || ssl_account))
+      .map{|role| role.name.humanize(capitalize: false)}
+  end
+
   def role_symbols(target_account=nil)
     Role.where(id: roles_for_account(target_account || ssl_account))
       .map{|role| role.name.underscore.to_sym}
@@ -374,6 +492,25 @@ class User < ActiveRecord::Base
 
   def role_symbols_all_accounts
     roles.map{|role| role.name.underscore.to_sym}
+  end
+
+  # check for any SslAccount records do not have roles, users or an owner
+  # check for any User record that do not have a role for a given SslAccount
+  def self.integrity_check(fix=nil)
+    # find SslAccount records with no users
+    no_users=SslAccount.joins{ssl_account_users.outer}.where{ssl_account_users.ssl_account_id == nil}
+    # verify users do not exist
+    ap no_users.map(&:users).flatten.compact
+    no_users.delete if fix
+    # find User records with no ssl_accounts
+    no_ssl_accounts=User.unscoped.joins{ssl_account_users.outer}.where{ssl_account_users.user_id == nil}
+    ap no_ssl_accounts.map(&:ssl_accounts).flatten.compact
+    # find any SslAccount record without a role that belongs to a User
+    Assignment.joins{user}.joins{user.ssl_accounts}.where{ssl_account_id == nil}.count
+    # How many SslAccounts that do not have any role
+    SslAccount.joins{assignments.outer}.where{assignments.ssl_account_id==nil}.count
+    # How many SslAccounts that have the owner role
+    SslAccount.joins{assignments}.where{assignments.role_id==4}.count
   end
 
   def is_admin?
@@ -384,24 +521,40 @@ class User < ActiveRecord::Base
     role_symbols.include? Role::SUPER_USER.to_sym
   end
 
+  def is_owner?(target_account=nil)
+    role_symbols(target_account).include? Role::OWNER.to_sym
+  end
+
   def is_account_admin?
     role_symbols.include? Role::ACCOUNT_ADMIN.to_sym
-  end
+  end  
 
   def is_standard?
-    role_symbols & [Role::ACCOUNT_ADMIN.to_sym, Role::SSL_USER.to_sym]
-  end
-
-  def is_ssl_user?
-    role_symbols.include? Role::SSL_USER.to_sym
+    role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]
   end
 
   def is_reseller?
     role_symbols.include? Role::RESELLER.to_sym
   end
 
-  def is_vetter?
-    role_symbols.include? Role::VETTER.to_sym
+  def is_billing?
+    role_symbols.include? Role::BILLING.to_sym
+  end
+
+  def is_billing_only?
+    role_symbols.include?(Role::BILLING.to_sym) && role_symbols.count == 1
+  end
+
+  def is_installer?
+    role_symbols.include? Role::INSTALLER.to_sym
+  end
+
+  def is_validations?
+    role_symbols.include? Role::VALIDATIONS.to_sym
+  end
+
+  def is_users_manager?
+    role_symbols.include? Role::USERS_MANAGER.to_sym
   end
 
   def is_affiliate?
@@ -479,7 +632,7 @@ class User < ActiveRecord::Base
         if r.ssl_account_id.nil?
           r.delete
         else
-          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::ACCOUNT_ADMIN)
+          update_account_role(r.ssl_account_id, Role::SYS_ADMIN, Role::OWNER)
         end
       end
     end
@@ -567,7 +720,7 @@ class User < ActiveRecord::Base
   end
 
   def get_all_approved_accounts
-    SslAccountUser.where(user_id: id, approved: true, user_enabled: true).map(&:ssl_account)
+    (self.is_system_admins? ? SslAccount.unscoped : self.approved_ssl_accounts).order("created_at desc")
   end
 
   def user_approved_invite?(params)
@@ -601,12 +754,11 @@ class User < ActiveRecord::Base
   end
 
   def set_status_for_account(status_type, target_ssl=nil)
-    ssl          = target_ssl.nil? ? ssl_account : target_ssl
-    acc_admin_id = Role.get_role_id(Role::ACCOUNT_ADMIN)
-    params       = {user_enabled: (status_type == :enabled)}
+    ssl      = target_ssl.nil? ? ssl_account : target_ssl
+    owner_id = Role.get_owner_id
 
-    target_ssl = if roles_for_account(ssl).include?(acc_admin_id)
-      # if account_admin, disable access to this ssl account for all associated users
+    target_ssl = if roles_for_account(ssl).include?(owner_id)
+      # if owner, disable access to this ssl account for all associated users
       SslAccountUser.where(ssl_account_id: ssl.id)
     else
       ssl_account_users.where(ssl_account_id: ssl.id)
@@ -648,10 +800,8 @@ class User < ActiveRecord::Base
   end
 
   def get_first_approved_acct
-    params = {user_id: id, approved: true}
-    ssl = SslAccountUser.where(params.merge(user_enabled: true))
-    ssl = SslAccountUser.where(params) unless ssl.any?
-    ssl_accounts.find ssl.first.ssl_account_id
+    ssl = ssl_account_users.where(approved: true, user_enabled: true)
+    ssl.any? ? ssl_accounts.find(ssl.first.ssl_account_id) : nil
   end
 
   def self.change_login(old, new)

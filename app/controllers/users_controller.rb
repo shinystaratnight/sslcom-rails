@@ -3,19 +3,21 @@ class UsersController < ApplicationController
   before_filter :require_user, only: [
     :show, :edit, :update, :cancel_reseller_signup, 
     :approve_account_invite, :resend_account_invite,
-    :switch_default_ssl_account, :enable_disable, :teams
+    :switch_default_ssl_account, :enable_disable, :teams, :index
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
+  before_filter :find_ssl_account, only: [:admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
-    :switch_default_ssl_account, :enable_disable]
+    :switch_default_ssl_account, :index, :admin_activate, :show, :teams]
  # before_filter :index, :only=>:search
   filter_access_to  :all
   filter_access_to  :update, :admin_update, :enable_disable,
     :switch_default_ssl_account, :decline_account_invite,
-    :approve_account_invite, attribute_check: true
+    :approve_account_invite, :create_team, :set_default_team,
+    :index, :edit_email, :edit_password, :leave_team, :dont_show_again, attribute_check: true
   filter_access_to  :consolidate, :dup_info, :require=>:update
   filter_access_to  :resend_activation, :activation_notice, :require=>:create
   filter_access_to  :edit_password, :edit_email, :cancel_reseller_signup, :teams, :require=>:edit
@@ -61,7 +63,7 @@ class UsersController < ApplicationController
       end
       @user.set_roles_for_account(
         @user.ssl_account,
-        [Role.find_by_name((reseller ? Role::RESELLER : Role::ACCOUNT_ADMIN)).id]
+        [Role.find_by_name((reseller ? Role::RESELLER : Role::OWNER)).id]
       )
       @user.deliver_activation_instructions!
       notice = "Your account has been created. Please check your
@@ -76,12 +78,12 @@ class UsersController < ApplicationController
   end
 
   def show
-    if current_user.ssl_account.has_credits?
+    if @user.ssl_account.has_credits?
       flash.now[:warning] = "You have unused ssl certificate credits. %s"
       flash.now[:warning_item] = "Click here to view the list of credits.",
         credits_certificate_orders_path
     end
-    if current_user.pending_account_invites?
+    if @user.pending_account_invites?
       render_invite_messages
     end
   end
@@ -92,15 +94,17 @@ class UsersController < ApplicationController
       current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
       current_user.roles.delete Role.find_by_name(Role::RESELLER)
     end
-    current_user.roles << Role.find_by_name(Role::ACCOUNT_ADMIN) unless current_user.role_symbols.include?(Role::ACCOUNT_ADMIN.to_sym)
+    current_user.roles << Role.find_by_name(Role::OWNER) unless current_user.role_symbols.include?(Role::OWNER.to_sym)
     flash[:notice] = "reseller signup has been canceled"
     @user = current_user #for rable object reference
   end
 
   def admin_show
+    @ssl_slug=@ssl_account.to_slug if @ssl_account
   end
 
   def edit
+    @user = User.find(params[:id]) if params[:update_own_team_limit] || params[:admin_activate]
   end
 
   def login_as
@@ -219,6 +223,7 @@ class UsersController < ApplicationController
   end
 
   def switch_default_ssl_account
+    old_ssl_slug       = @ssl_slug
     switch_ssl_account = params[:ssl_account_id]
     if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
@@ -228,7 +233,7 @@ class UsersController < ApplicationController
     else
       flash[:error] = "Something went wrong. Please try again!"
     end
-    redirect_to account_path(ssl_slug: @ssl_slug)
+    redirect_to redirect_back_w_team_slug(old_ssl_slug)
   end
 
   def approve_account_invite
@@ -239,11 +244,11 @@ class UsersController < ApplicationController
     else
       acct_number = SslAccount.find(params[:ssl_account_id]).acct_number
       flash[:notice] = "You've been added to account #{acct_number}. Please click <strong>%s</strong>
-        to go to the new account or follow the hint in the top menu."
+        to go to the new account or select from CURRENT TEAM in the top menu."
       flash[:notice_item] = view_context.link_to('here',
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
-    redirect_to account_path(ssl_slug: @ssl_slug)
+    params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
   end
 
   def decline_account_invite
@@ -257,7 +262,7 @@ class UsersController < ApplicationController
         flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
       end
     end
-    redirect_to account_path(ssl_slug: @ssl_slug) 
+    params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
   end
 
   def resend_account_invite
@@ -279,7 +284,77 @@ class UsersController < ApplicationController
   end
 
   def teams
-    @teams = current_user.get_all_approved_accounts
+    p = {page: params[:page]}
+    @teams = @user.get_all_approved_accounts.paginate(p)
+  end
+
+  def create_team
+    @user = User.find params[:id]
+    if @user && !@user.max_teams_reached? && params[:create] && params[:team_name]
+      ssl = create_custom_ssl_acct(@user, params)
+      if ssl.persisted?
+        flash[:notice] = "Team #{ssl.company_name} has been successfully created."
+        redirect_to teams_user_path
+      else
+        flash[:error] = 'Failed to create new team, please try again.'
+        redirect_to :back
+      end
+    end
+  end
+
+  def set_default_team
+    @user = User.find params[:id]
+    if @user && params[:ssl_account_id]
+      ssl = SslAccount.find(params[:ssl_account_id])
+      if ssl && @user.set_default_team(ssl)
+        flash[:notice] = "Team #{ssl.get_team_name} has been set as default team."
+      else
+        flash[:error] = 'Something went wrong, please try again.'
+      end
+    end
+    redirect_to teams_user_path
+  end
+
+  def set_default_team_max
+    @user = User.find params[:id]
+    max   = params[:user][:max_teams]
+    if @user && max
+      @user.update(max_teams: max)
+      flash[:notice] = "User #{@user.login} team limit has been successfully updated to #{max}."
+    end
+    redirect_to users_path
+  end
+
+  def leave_team
+    @user    = User.find params[:id]
+    team     = @user.ssl_accounts.find(params[:ssl_account_id]) if params[:ssl_account_id]
+    own_team = (team.get_account_owner == @user) if team
+    if team && !own_team
+      @user.leave_team(team)
+      flash[:notice] = "You have successfully left team #{team.get_team_name}."
+    else
+      flash[:error] = own_team ? "You cannot leave team that you own!" : "Something went wrong, please try again."
+    end
+    redirect_to teams_user_path
+  end
+
+  def dont_show_again
+    @user = User.find params[:id]
+    @user.update(persist_notice: false)
+    respond_to {|format| format.js {render json: 'ok'}}
+  end
+
+  def admin_activate
+    @user = User.find params[:id]
+    @user.activate!(params)
+    if @user.valid?
+      @user.approve_all_accounts
+      flash[:notice] = "User #{@user.login} has been successfully activated!"
+      redirect_to users_path
+    else
+      flash[:error] = "Unable to activate user due to errors. #{@user.errors.full_messages.join(', ')}"
+      redirect_to edit_user_path(@user, admin_activate: true)
+    end
   end
 
   private
@@ -289,7 +364,7 @@ class UsersController < ApplicationController
   end
 
   def find_user
-    if params[:id]
+    if params[:id] and current_user.is_system_admins?
       @user=User.unscoped.find(params[:id])
     else
       @user=current_user
@@ -298,7 +373,7 @@ class UsersController < ApplicationController
 
   def admin_op?
     (@user!=@current_user &&
-      (@current_user.is_admin? || @current_user.is_account_admin?)
+      (@current_user.is_admin? || @current_user.is_owner?)
     ) unless @current_user.blank?
   end
 
@@ -315,7 +390,7 @@ class UsersController < ApplicationController
   end
 
   def admin_or_current_user?
-    (@current_user.is_admin? || @current_user.is_account_admin?) || @current_user == @user
+    @current_user.is_admin? || @current_user == @user
   end
 
   def render_invite_messages
@@ -340,6 +415,21 @@ def update_user_status(params)
   target_status = params[:user][:status].to_sym
   if target_user && target_status
     target_user.set_status_all_accounts(target_status) if current_user.is_system_admins?
-    target_user.set_status_for_account(target_status, current_user.ssl_account) if current_user.is_account_admin?
+    unless (current_user.roles_for_account & Role.can_manage_users).empty?
+      target_user.set_status_for_account(target_status, current_user.ssl_account)
+    end
   end
+end
+
+def create_custom_ssl_acct(user, params)
+  slug_valid = params[:ssl_slug] && SslAccount.ssl_slug_valid?(params[:ssl_slug])
+  user.create_ssl_account(
+    [Role.get_owner_id],
+    {company_name: params[:team_name], ssl_slug: (slug_valid ? params[:ssl_slug] : nil)}
+  )
+end
+
+def redirect_back_w_team_slug(replace_slug)
+  req = request.env['HTTP_REFERER']
+  req.present? ? req.gsub(replace_slug, @ssl_slug) : account_path(ssl_slug: @ssl_slug)
 end

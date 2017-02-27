@@ -1,61 +1,102 @@
--content_for :title, "Edit Account"
--is_reseller = !current_user.ssl_account.reseller.blank?
--r = current_user.ssl_account.reseller if is_reseller
-.reseller_registration_profile
-  %h3 Edit Account
-  %p
-    Please choose which profile or account to edit
-#dashboard
-  %table(cellspacing="0")
-    %caption
-    %tr.heading_row
-      %tr.expanded
-        %td(colspan="5")
-          .certificate_details
-            %table(cellspacing="0")
-              %tbody
-                %tr
-                  %td(colspan="5")
-                    -if is_reseller
+-if params[:update_own_team_limit] && permitted_to?(:set_default_team_max, :users)
+  -title = "Update Team Maximum Limit for User #{@user.login}"
+  -content_for :title, title
+  .reseller_registration_profile
+    %h3=title
+    =form_for @user, url: set_default_team_max_user_path(@user) do |f|
+      #stylized.default_form
+        .clearfix.form_input
+          =f.label :max_teams,
+            "Max Teams <span class='label_desc'>*Maximum teams a user can own. Default is 5. </span>".html_safe
+          =f.select :max_teams, options_for_select((1..20).to_a, @user.max_teams)
+      #button_container
+        #next_submit=image_submit_tag 'bl_submit_button.gif'
+
+-elsif params[:admin_activate] && permitted_to?(:admin_activate, @user)
+  -title = "Activate User"
+  -content_for :title, title
+  .reseller_registration_profile
+    %h3=title
+    =form_for @user, url: admin_activate_user_path(@user) do |f|
+      #stylized.default_form
+        .clearfix.form_input
+          =f.label :login, "Login <span class='label_desc'>optional</span>".html_safe
+          =f.text_field :login, minlength: 2
+        .clearfix.form_input
+          =f.label :password, "Password<span class='label_desc'>min. 8 chars</span>".html_safe
+          =f.password_field :password, required: true, minlength: 8
+        .clearfix.form_input
+          =f.label :password_confirmation, "Password again<span class='label_desc'>type the password again</span>".html_safe
+          =f.password_field :password_confirmation, required: true, minlength: 8
+        .clearfix.form_input
+          ="<strong>password requires:</strong>".html_safe
+          %div a minimum of 8 characters which must include
+          %div a minimum of 1 lower case letter [a-z] and
+          %div a minimum of 1 upper case letter [A-Z] and
+          %div a minimum of 1 numeric character [0-9] and
+          %div a minimum of 1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
+      #button_container
+        =f.submit 'Activate User', class: 'button_blue'
+
+-else
+  -content_for :title, "Edit Account"
+  -is_reseller = !current_user.ssl_account.reseller.blank?
+  -r = current_user.ssl_account.reseller if is_reseller
+  .reseller_registration_profile
+    %h3 Edit Account
+    %p
+      Please choose which profile or account to edit
+  #dashboard
+    %table(cellspacing="0")
+      %caption
+      %tr.heading_row
+        %tr.expanded
+          %td(colspan="5")
+            .certificate_details
+              %table(cellspacing="0")
+                %tbody
+                  %tr
+                    %td(colspan="5")
+                      -if is_reseller
+                        .certificate_details_box
+                          %ul
+                            %li
+                              %strong reseller administrator
+                            %li name: #{[r.first_name, r.last_name].join(' ')}
+                            %li email: #{r.email}
+                            %li phone: #{r.phone}
+                            -unless r.ext.blank?
+                              %li ext: #{r.ext}
+                            -unless r.fax.blank?
+                              %li fax: #{r.fax}
+                            %li=link_to 'edit', edit_ssl_account_url
+                        .certificate_details_box
+                          %ul
+                            %li
+                              %strong reseller profile
+                            %li
+                              \#{r.organization}
+                            %li
+                              \#{r.address1}
+                            %li
+                              \#{r.address2}
+                            %li
+                              \#{r.address3}
+                            %li
+                              \#{r.po_box}
+                            %li
+                              \#{[r.city, r.state, r.postal_code].join(', ')}
+                            %li
+                              \#{r.country}
+                            %li
+                              \#{r.website}
+                            %li=link_to 'edit', edit_ssl_account_url
                       .certificate_details_box
                         %ul
                           %li
-                            %strong reseller administrator
-                          %li name: #{[r.first_name, r.last_name].join(' ')}
-                          %li email: #{r.email}
-                          %li phone: #{r.phone}
-                          -unless r.ext.blank?
-                            %li ext: #{r.ext}
-                          -unless r.fax.blank?
-                            %li fax: #{r.fax}
-                          %li=link_to 'edit', edit_ssl_account_url
-                      .certificate_details_box
-                        %ul
-                          %li
-                            %strong reseller profile
-                          %li
-                            \#{r.organization}
-                          %li
-                            \#{r.address1}
-                          %li
-                            \#{r.address2}
-                          %li
-                            \#{r.address3}
-                          %li
-                            \#{r.po_box}
-                          %li
-                            \#{[r.city, r.state, r.postal_code].join(', ')}
-                          %li
-                            \#{r.country}
-                          %li
-                            \#{r.website}
-                          %li=link_to 'edit', edit_ssl_account_url
-                    .certificate_details_box
-                      %ul
-                        %li
-                          %strong
-                            login account
-                        %li username: #{current_user.login}
-                        %li email: #{current_user.email}
-                        %li=link_to 'edit email address', edit_email_users_url
-                        %li=link_to 'change password', edit_password_users_url
+                            %strong
+                              login account
+                          %li username: #{current_user.login}
+                          %li email: #{current_user.email}
+                          %li=link_to 'edit email address', edit_email_users_url
+                          %li=link_to 'change password', edit_password_users_url

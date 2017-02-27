@@ -37,12 +37,14 @@
     %h3=title
   =render partial: "orders/cancel_order"
   -if @certificate_order
-    -if @certificate_order.is_unused_credit?
-      %p
-        \#{link_to 'Click here', edit_certificate_order_path(@ssl_slug, @certificate_order)} to finish processing this certificate order.
-    -else
-      %p
-        \#{link_to 'Click here', certificate_order_url(id: @certificate_order.ref)} to view the progress or status of this certificate order.
+    %p
+      -if permitted_to?(:update, @certificate_order)
+        -if @certificate_order.is_unused_credit?
+          \#{link_to 'Click here', edit_certificate_order_path(@ssl_slug, @certificate_order)} to finish processing this certificate order.
+        -else
+          \#{link_to 'Click here', certificate_order_url(id: @certificate_order.ref)} to view the progress or status of this certificate order.
+      -else
+        \#{link_to 'View Certificate Order', certificate_order_url(id: @certificate_order.ref)}
   #completed_order_results
     -if @deposit
       #deposit_details.striped_divs

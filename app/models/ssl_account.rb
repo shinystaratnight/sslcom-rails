@@ -9,6 +9,8 @@ class SslAccount < ActiveRecord::Base
       first(:conditions=>{:workflow_state=>['new']})
     end
   end
+  has_many  :validations, through: :certificate_orders
+  has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
@@ -26,6 +28,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :users, -> { unscope(where: [:status]) }, through: :ssl_account_users
   has_many  :unscoped_users, through: :ssl_account_users
+  has_many  :assignments
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -68,7 +71,7 @@ class SslAccount < ActiveRecord::Base
   NUMBER_OF_TRIGGERS = 5
   TRIGGER_RANGE = -364..364
   @@reserved_routes ||= Rails.application.routes.named_routes.map{|r| r.to_s}
-
+  SHOW_TEAMS_THRESHOLD=0
   SETTINGS_SECTIONS.each do |item|
     validate "#{item}_recipients_format".to_sym,
       :unless=>"preferred_#{item}_recipients=='0'"
@@ -80,7 +83,7 @@ class SslAccount < ActiveRecord::Base
   validates :ssl_slug, uniqueness: {case_sensitive: false}, length: {in: 2..20}, allow_nil: true
   validates :company_name, length: {in: 2..20}, allow_nil: true
 
-  default_scope ->{order("created_at desc")}
+  default_scope ->{order("ssl_accounts.created_at desc")}
 
   #before create function
   def b_create
@@ -296,7 +299,7 @@ class SslAccount < ActiveRecord::Base
 
   def get_account_owner
     Assignment.where(
-      role_id: Role.get_role_id(Role::ACCOUNT_ADMIN), ssl_account_id: id
+      role_id: Role.get_owner_id, ssl_account_id: id
     ).map(&:user).first
   end
 

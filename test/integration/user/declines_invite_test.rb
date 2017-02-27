@@ -6,19 +6,19 @@ describe 'Decline ssl account invite' do
   before do
     initialize_roles
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :account_admin)
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @current_owner       = create(:user, :owner)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
+    @invited_ssl_acct    = @current_owner.ssl_account
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
       user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
     
@@ -30,7 +30,7 @@ describe 'Decline ssl account invite' do
   describe 'BEFORE Decline' do
     it 'can only see their own account' do
       ssl = @existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id)
-      assert page.has_no_content? 'CURRENT TEAM'
+      page.must_have_content 'Teams(1)'
       assert_equal 2, @existing_user.ssl_accounts.count
       assert_equal 2, @existing_user.roles.count
       # only invited user's own account is approved
@@ -59,7 +59,7 @@ describe 'Decline ssl account invite' do
       params = {ssl_account_id: @invited_ssl_acct.id}
       ssl    = @existing_user.ssl_account_users.find_by(params)
       
-      assert       page.has_no_content? 'CURRENT TEAM'
+      page.must_have_content 'Teams(1)'
       assert       @existing_user.user_declined_invite?(params)
       assert_equal @existing_user_ssl.id, @existing_user.default_ssl_account
       assert_nil   ssl.approval_token
@@ -73,9 +73,9 @@ describe 'Decline ssl account invite' do
       assert_equal 0, @existing_user.get_pending_accounts.count
       refute          @existing_user.pending_account_invites?
     end
-    it 'account_admin should see decline status' do
+    it 'owner should see decline status' do
       click_on 'Logout'
-      login_as(@current_admin, self.controller.cookies)
+      login_as(@current_owner, self.controller.cookies)
       visit account_path
       click_on 'Users'
 

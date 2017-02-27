@@ -23,8 +23,8 @@ class CertificateOrdersController < ApplicationController
                       :change_ext_order_number, :admin_update, :developer]
   filter_access_to :all
   filter_access_to :read, :update, :delete, attribute_check: true
-  filter_access_to :credits, :incomplete, :pending, :search, :reprocessing, :order_by_csr, :filter_by,
-                   :filter_by_scope, :require=>:read
+  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
+  filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, :require=>[:update]
   filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
     :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
@@ -312,11 +312,11 @@ class CertificateOrdersController < ApplicationController
   end
 
   def filter_by
+    
     p = {:page => params[:page]}
-    @certificate_orders = (current_user.is_admin? ?
-      CertificateOrder.unscoped{CertificateOrder.not_test.filter_by(params[:id])} :
-        current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test.filter_by(params[:id])}).order_by_csr.paginate(p)
+    @certificate_orders = current_user.is_admin? ?
+        (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
+    @certificate_orders = @certificate_orders.not_test.filter_by(params[:id]).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

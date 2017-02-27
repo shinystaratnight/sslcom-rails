@@ -46,6 +46,7 @@ module CertificateOrdersHelper
   end
 
   def action(certificate_order)
+    is_billing = current_user.is_billing?
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
@@ -55,31 +56,38 @@ module CertificateOrdersHelper
     else
       case certificate_content.workflow_state
         when "csr_submitted"
-          link_to 'provide info',
-            edit_certificate_order_path(@ssl_slug, certificate_order)
+          link_to('provide info', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+              permitted_to?(:update, certificate_order)
         when "info_provided"
-          link_to 'provide contacts',
-            certificate_content_contacts_path(@ssl_slug, certificate_content)
+          link_to('provide contacts', certificate_content_contacts_path(@ssl_slug, certificate_content)) if
+              permitted_to?(:update, certificate_order)
         when "reprocess_requested"
-          link_to 'submit csr',
-            edit_certificate_order_path(@ssl_slug, certificate_order)
-        when "contacts_provided"
-          link_to 'perform validation',
-            new_certificate_order_validation_path(@ssl_slug, certificate_order)
-        when "pending_validation", "validated"
-          link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) # assume multi domain
+          link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
+              permitted_to?(:update, certificate_order)
+        when "contacts_provided", "pending_validation", "validated"
+          link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
+              permitted_to?(:update, certificate_order.validation) # assume multi domain
         when "issued"
           if certificate_content.expiring?
             if certificate_order.renewal && certificate_order.renewal.paid?
-              link_to 'see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)
+              link_to('see renewal', certificate_order_path(@ssl_slug, certificate_order.renewal)) if
+                  permitted_to?(:show, certificate_order)
             else
-              "<ul><li>#{link_to 'click to renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>".html_safe
+              links =  "<li>#{link_to 'renew', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
+              links << "<li> or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
+              "<ul>#{links}</ul>".html_safe
             end
           else
             if certificate_order.certificate.is_free?
-              "<ul><li>#{link_to 'click to upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li><li>#{link_to 'click to reprocess', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>".html_safe
+              links =  "<li>#{link_to 'upgrade', renew_certificate_order_path(@ssl_slug, certificate_order)}</li>"
+              links << "<li>or #{link_to 'change domain(s)/rekey', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li>" if permitted_to?(:update, certificate_order)
+              "<ul>#{links}</ul>".html_safe
             else
-              ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" : "<li>#{link_to 'click to download', certificate_order_path(@ssl_slug, certificate_order)}</li>")+"<li>#{link_to 'click to reprocess', reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe
+              ("<ul>"+(current_page?(certificate_order_path(@ssl_slug, certificate_order)) ? "" :
+                  "<li>#{link_to 'download', certificate_order_path(@ssl_slug, certificate_order)} or </li>")+
+                  "<li>#{link_to 'change domain(s)/rekey',
+                  reprocess_certificate_order_path(@ssl_slug, certificate_order)}</li></ul>").html_safe if
+                  permitted_to?(:read, certificate_order)
             end
           end
         when "canceled"
@@ -170,14 +178,14 @@ module CertificateOrdersHelper
 
   def certificate_formats(certificate_order)
     csr, sc = certificate_order.csr, certificate_order.signed_certificate
-    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(csr, sc), SignedCertificate::IIS_INSTALL_LINK],
-     cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
-     apache: ["Apache", apache_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
-     amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
-     nginx: ["Nginx", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
-     v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-     java: ["Java/Tomcat", download_certificate_order_url(certificate_order), SignedCertificate::JAVA_INSTALL_LINK],
-     other: ["Other platforms", download_certificate_order_url(certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
-     bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
+    {iis7: ["Microsoft IIS (*.p7b)", pkcs7_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::IIS_INSTALL_LINK],
+     cpanel: ["WHM/cpanel", whm_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::CPANEL_INSTALL_LINK],
+     apache: ["Apache", apache_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::APACHE_INSTALL_LINK],
+     amazon: ["Amazon", amazon_zip_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::AMAZON_INSTALL_LINK],
+     nginx: ["Nginx", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::NGINX_INSTALL_LINK],
+     v8_nodejs: ["V8+Node.js", nginx_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+     java: ["Java/Tomcat", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::JAVA_INSTALL_LINK],
+     other: ["Other platforms", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
+     bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
 end

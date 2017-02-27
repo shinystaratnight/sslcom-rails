@@ -1,0 +1,11 @@
+-unless @team_invites.nil?
+  %i.material-icons.notifications-alert
+    add_alert
+  %i.material-icons.notifications-email
+    email
+  .notifications-expand.notifications-hide
+    -total_team = @team_invites.count
+    ="<span>Y</span>ou have been invited to #{total_team} new #{'team'.pluralize(total_team)}. <span>P</span>lease click on '<span>T</span>eams' tab below to see all.".html_safe
+    %br
+    %br
+    ="<span>Y</span>ou can switch teams by selecting one from the <span><strong>CURRENT TEAM</strong></span> menu item on the left.".html_safe

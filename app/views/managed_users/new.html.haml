@@ -1,10 +1,10 @@
--title = 'Create New User'
+-title = 'Invite User'
 -content_for :title, title
 .reseller_registration_profile
   %h3=title
   %p
     Please provide email for the new user.
-  =form_for @user, :url =>managed_users_path do |f|
+  =form_for @user, url: managed_users_path, html: {id: 'mu_invite_user'} do |f|
     =f.error_messages
     #stylized.default_form
       .subheading Credentials
@@ -14,7 +14,7 @@
 
 -content_for :js do
   :javascript
-    $( "#user_role_ids" ).select2();
+    $("#user_ssl_account_ids").select2();
     $(document).ready(function() {
-      $( "#user_role_ids" ).select2();
+      $("#user_ssl_account_ids").select2();
     });

@@ -1,18 +1,19 @@
 require 'test_helper'
 # 
-# account_admin invites (new to SSL.com) user to their ssl account
+# owner invites (new to SSL.com) user to their ssl account
 # 
 describe 'new user' do
   before do
     initialize_roles
     @new_user_email   = 'new_user@domain.com'
-    @current_admin    = create(:user, :account_admin)
-    @invited_ssl_acct = @current_admin.ssl_account
+    @current_owner    = create(:user, :owner)
+    @invited_ssl_acct = @current_owner.ssl_account
+    @invited_ssl_name = @invited_ssl_acct.get_team_name
     
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @new_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email
@@ -22,19 +23,20 @@ describe 'new user' do
 
   it 'invited user receives signup_invitation email' do
     assert_equal    1, email_total_deliveries
-    assert_match    "#{@current_admin.login} has invited you to SSL.com", email_subject
+    assert_match    "#{@current_owner.login} has invited you to join SSL.com", email_subject
     assert_match    @new_user_email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, @new_user.perishable_token
+    assert_includes email_body, "#{@current_owner.login} has just invited you to join SSL.com and become a member of their SSL.com team."
+    assert_includes email_body, "Team:\t#{@invited_ssl_name}"
+    assert_includes email_body, "Roles:\t#{@new_user.roles_humanize(@invited_ssl_acct).join(', ')}"
   end
-  it 'users index: account_admin view' do
+  it 'users index: owner view' do
     assert_match users_path, current_path
     page.must_have_content('Username')
     page.must_have_content(@new_user_email)
-    page.must_have_content('Account Type')
-    page.must_have_content(Role::SSL_USER)
-    page.must_have_content('Last Login')
-    page.must_have_content('never')
+    page.must_have_content('Role(s)')
+    page.must_have_content(Role::ACCOUNT_ADMIN)
     page.must_have_content('Status')
     page.must_have_content('not activated')
     page.must_have_content('Approved')
@@ -54,11 +56,20 @@ describe 'new user' do
 
     # Invited user row
     page.must_have_content(@new_user_email)
-    page.must_have_content('ssl_user/account_admin')
+    User.get_user_accounts_roles_names(@new_user).each do |ssl|
+      page.must_have_content("#{ssl.first}: #{ssl.second.join(', ')}")
+    end
     # expand row
     first('td', text: @new_user_email).click
-    page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
-    page.must_have_content("remove user from account: ##{@new_user_ssl.acct_number.upcase}")
+    page.must_have_content('leave', count: 1)
+
+    page.must_have_content("#{@new_user_ssl.get_team_name}: owner", count: 1)
+    page.must_have_content("#{@invited_ssl_acct.get_team_name}: account_admin", count: 1)
+    page.must_have_content('roles: owner', count: 1)
+    page.must_have_content('roles: account_admin', count: 1)
+    page.must_have_content('slug', count: 2)
+    page.must_have_content("name: #{@invited_ssl_acct.get_team_name}", count: 1)
+    page.must_have_content("name: #{@new_user_ssl.get_team_name}", count: 1)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ approved ]")
     page.must_have_content("#{@new_user_ssl.acct_number} [ approved ]")
   end
@@ -76,14 +87,15 @@ describe 'new user' do
   it 'user roles are set for 2 ssl accounts' do
     assert_equal @all_roles.sort, @new_user.roles.ids.sort
     # own ssl account (default: account admin)
-    assert_equal @acct_admin_role, @new_user.assignments.where.not(ssl_account_id: @invited_ssl_acct.id).map(&:role_id) 
-    # invited ssl account (default: ssl_user)
-    assert_equal @ssl_user_role, @new_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
+    assert_equal @owner_role, @new_user.assignments.where.not(ssl_account_id: @invited_ssl_acct.id).map(&:role_id) 
+    # invited ssl account (default: account_admin)
+    assert_equal @acct_admin_role, @new_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
     ssl = @new_user.ssl_account_users.where.not(ssl_account_id: @invited_ssl_acct.id).first
     
     refute_nil   @new_user.default_ssl_account
+    assert_equal @new_user.main_ssl_account, ssl.id
     assert_equal @new_user.ssl_account.id, @new_user.default_ssl_account
     # account is approved, no invitation token
     assert_nil   ssl.approval_token
@@ -92,7 +104,7 @@ describe 'new user' do
   end
 end
 # 
-# account_admin invites existing SSL.com user to their ssl account
+# owner invites existing SSL.com user to their ssl account
 # 
 describe 'existing user' do
   before do
@@ -101,19 +113,20 @@ describe 'existing user' do
     set_common_roles
 
     @existing_user_email = 'exist_user@domain.com'
-    @current_admin       = create(:user, :account_admin)
-    @existing_user       = create(:user, :account_admin, email: @existing_user_email)
-    @invited_ssl_acct    = @current_admin.ssl_account
+    @current_owner       = create(:user, :owner)
+    @existing_user       = create(:user, :owner, email: @existing_user_email)
+    @invited_ssl_acct    = @current_owner.ssl_account
+    @invited_ssl_name    = @invited_ssl_acct.get_team_name
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
-      user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
+      user: {login: 'existing_user', password: 'Testing_ssl+1', password_confirmation: 'Testing_ssl+1'}
     )
 
-    login_as(@current_admin, self.controller.cookies)
+    login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on 'Users'
-    click_on '+ Create User'
+    click_on 'Invite User'
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email in case of delay
@@ -125,25 +138,28 @@ describe 'existing user' do
     assert_equal    2, email_total_deliveries
     assert_match    'Invition to SSL.com', email_subject(:first)
     assert_match    @existing_user_email, email_to(:first)
-    assert_match    @current_admin.email, email_from(:first)
+    assert_match    @current_owner.email, email_from(:first)
     assert_includes email_body(:first), approval_token
+    assert_includes email_body(:first), "#{@current_owner.login} has invited you to their SSL.com team."
+    assert_includes email_body(:first), "Team:\t#{@invited_ssl_name}"
+    assert_includes email_body(:first), "Roles:\t#{@existing_user.roles_humanize(@invited_ssl_acct).join(', ')}"
   end
-  it 'account_admin user receives invite_to_account_notify_admin email' do
-    message = "You have added a new user #{@existing_user.email} to your SSL.com account."
+  it 'owner user receives invite_to_account_notify_admin email' do
+    message = "You have invited #{@existing_user.email} to your SSL.com team."
     assert_equal    2, email_total_deliveries
-    assert_match    'You have invited a user to your SSL.com account', email_subject
-    assert_match    @current_admin.email, email_to
+    assert_match    "You have invited a user to your SSL.com team #{@invited_ssl_name}", email_subject
+    assert_match    @current_owner.email, email_to
     assert_match    'noreply@ssl.com', email_from
     assert_includes email_body, message
+    assert_includes email_body, "Team:\t#{@invited_ssl_name}"
+    assert_includes email_body, "Roles:\t#{@existing_user.roles_humanize(@invited_ssl_acct).join(', ')}"
   end
-  it 'users index: account_admin view' do
+  it 'users index: owner view' do
     assert_match users_path, current_path
     page.must_have_content('Username')
     page.must_have_content('existing_user')
-    page.must_have_content('Account Type')
-    page.must_have_content(Role::SSL_USER) # default role
-    page.must_have_content('Last Login')
-    page.must_have_content('never')
+    page.must_have_content('Role(s)')
+    page.must_have_content(Role::ACCOUNT_ADMIN) # default role
     page.must_have_content('Status')
     page.must_have_content('activated') # pre-existing user
     page.must_have_content('Approved')
@@ -164,12 +180,20 @@ describe 'existing user' do
     # Invited user row
     page.must_have_content('existing_user')
     page.must_have_content(@existing_user_email)
-    page.must_have_content('ssl_user/account_admin')
+    User.get_user_accounts_roles_names(@existing_user).each do |ssl|
+      page.must_have_content("#{ssl.first}: #{ssl.second.join(', ')}")
+    end
     #expand row
     find('td', text: @existing_user_email).click
 
-    page.must_have_content("remove user from account: ##{@invited_ssl_acct.acct_number.upcase}")
-    page.must_have_content("remove user from account: ##{@existing_user_ssl.acct_number.upcase}")
+    page.must_have_content('leave', count: 1)
+    page.must_have_content("#{@existing_user_ssl.get_team_name}: owner", count: 1)
+    page.must_have_content("#{@invited_ssl_acct.get_team_name}: account_admin", count: 1)
+    page.must_have_content('roles: owner', count: 1)
+    page.must_have_content('roles: account_admin', count: 1)
+    page.must_have_content('slug', count: 2)
+    page.must_have_content("name: #{@invited_ssl_acct.get_team_name}", count: 1)
+    page.must_have_content("name: #{@existing_user_ssl.get_team_name}", count: 1)
     page.must_have_content("#{@invited_ssl_acct.acct_number} [ sent ]")
     page.must_have_content("#{@existing_user_ssl.acct_number} [ approved ]")
   end
@@ -183,10 +207,10 @@ describe 'existing user' do
   end
   it 'user roles are set for 2 ssl accounts' do
     assert_equal @all_roles.sort, @existing_user.roles.ids.sort
-    # own ssl account (default: account admin)
-    assert_equal @acct_admin_role, @existing_user.assignments.where(ssl_account_id: @existing_user_ssl.id).map(&:role_id) 
-    # invited ssl account (default: ssl_user)
-    assert_equal @ssl_user_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
+    # own ssl account (default: owner)
+    assert_equal @owner_role, @existing_user.assignments.where(ssl_account_id: @existing_user_ssl.id).map(&:role_id) 
+    # invited ssl account (default: account_admin)
+    assert_equal @acct_admin_role, @existing_user.assignments.where(ssl_account_id: @invited_ssl_acct.id).map(&:role_id)
   end
   it 'users own ssl account approved and default' do
     ssl = SslAccountUser.where(

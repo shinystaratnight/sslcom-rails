@@ -205,6 +205,9 @@ SslCom::Application.routes.draw do
       match :update_settings, via: [:put, :patch]
       match :update_ssl_slug, via: [:put, :patch]
       match :update_company_name, via: [:put, :patch]
+      member do
+        get :adjust_funds
+      end
     end
 
     resources :users, only: :index do
@@ -261,20 +264,26 @@ SslCom::Application.routes.draw do
     end
 
     member do
-      get :edit_password
-      get :edit_email
-      get :login_as
+      get   :edit_password
+      get   :edit_email
+      get   :login_as
       match :admin_update, via: [:put, :patch]
-      get :admin_show
-      get :dup_info
-      post :consolidate
-      get :adjust_funds
-      get :change_login
-      get :switch_default_ssl_account
-      get :approve_account_invite
-      get :resend_account_invite
-      get :decline_account_invite
-      get :teams
+      get   :admin_show
+      get   :dup_info
+      post  :consolidate
+      get   :adjust_funds
+      get   :change_login
+      get   :switch_default_ssl_account
+      get   :approve_account_invite
+      get   :resend_account_invite
+      get   :decline_account_invite
+      get   :teams
+      match :create_team, via: [:get, :post]
+      put   :set_default_team
+      match :set_default_team_max, via: [:put, :patch]
+      match :admin_activate, via: [:put, :patch]
+      get   :leave_team
+      get   :dont_show_again
     end
   end
 

@@ -2,4 +2,4 @@
 -if @user.ssl_account.is_registered_reseller?
   =render :partial=>'reseller', :locals=>{:user=>@user}
 -elsif @user.is_standard?
-  =render :partial=>'standard', :locals=>{:user=>@user}
+  =render :partial=>'standard', :locals=>{:user=>@user} #

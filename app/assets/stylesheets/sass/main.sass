@@ -4097,6 +4097,24 @@ input#upload_files, input#start_over, input#validate_domains
   background: #fdd
   color: #c00
 
+.flash_message_more
+  border: 1px solid #CCCCFF
+  font-size: 1.3rem
+  margin-top: 2rem
+  padding: 1rem
+  .close_flash_message
+    color: #5a79a5
+    cursor: pointer
+    position: relative
+    margin-right: 0
+    margin-top: -34rem
+    span
+      font-weight: normal
+    span:nth-child(1)
+      font-size: 1.3rem
+    span:nth-child(2)
+      border: none
+
 table#at_a_glance_header
   margin-top: 7px
 
@@ -5498,39 +5516,84 @@ span#no_emails_accessible
   font-weight: bold
   margin-left: 4.2rem
 
-/* Simple Tooltip */
-a.simple-tooltip
-  outline: none
-  .hint-icon
-    font-size: 1rem
-    border: 2px solid #FFFFFF
-    border-radius: 10px
-    color: #FFFFFF
-    margin-top: 2rem
-    margin-right: -1rem
-    padding: 2px 4px
-  &:hover
-    text-decoration: none
-  span
-    z-index: 10
-    display: none
-    font-size: 1.3rem
-    padding: 14px 20px
-    margin-top: -30px
-    margin-left: 28px
-    width: 300px
-    line-height: 1.5rem
-    text-transform: none
-  &:hover span
-    border-radius: 3px
-    display: inline
-    position: absolute
-    color: #111
-    border: 1px solid #DCA
-    background: #FFFFFF
-
 #slug_validator
   font-size: 1.2rem
   font-weight: 700
   margin-top: 1rem
   margin-left: 6.5rem
+
+.checkbox_roles
+  margin-left: 12rem
+  margin-top: 1rem
+
+.checkbox_role input
+  float: left !important
+  margin: 0 1rem 0 0 !important
+
+.checkbox_role label
+  float: left !important
+  text-align: left !important
+
+table .constrained
+  font-size: 1.2rem
+  max-width: 20rem
+  text-align: left !important
+  strong
+    font-size: 1.3rem
+
+.chip
+  background: #6b9029
+  border-radius: 4px
+  font-size: 1.2rem
+  font-weight: 500
+  letter-spacing: 1.5px
+  padding: 2px
+  color: white
+  a
+    color: white
+
+/* Header notifications */
+i.material-icons
+  &.notifications-email
+    cursor: pointer
+    margin-top: -2rem
+    margin-right: -3rem
+    margin-left: 0.5rem
+  &.notifications-alert
+    cursor: pointer
+    font-size: 1.3rem
+    margin-right: -3.4rem
+    margin-top: -1.7rem
+    color: red
+    position: relative
+
+span.notifications-teams
+  background-color: red
+  border: 1px solid red
+  border-radius: 15px
+  color: white
+  font-size: 10px
+  font-weight: 600
+  margin-left: -2rem
+  margin-top: -0.8rem
+  padding: 0 1px
+  position: absolute
+
+.notifications-expand
+  background: #FFFFFF
+  border: 1px solid #DCA
+  border-radius: 3px
+  display: inline
+  color: #111
+  line-height: 1.5rem
+  margin-left: -25rem
+  opacity: 0.9
+  padding: 0.5rem
+  position: absolute
+  text-transform: lowercase
+  width: 25rem
+  z-index: 100
+  span
+    text-transform: uppercase
+  &.notifications-hide
+    display: none

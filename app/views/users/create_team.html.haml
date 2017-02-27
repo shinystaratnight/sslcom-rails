@@ -1,0 +1,21 @@
+=render partial: 'ssl_accounts/index_scripts'
+.reseller_registration_profile
+  %h3='Create new team'
+  =form_tag url: create_team_user_path(current_user) do
+    =hidden_field_tag :create, true
+    #stylized.default_form
+      .clearfix.form_input
+        %label{for: :team_name}
+          *Team Name
+        =text_field_tag :team_name, nil, {minlength: 1, maxlength: 20, size: 20, required: true}
+      .clearfix.form_input
+        %label{for: :ssl_slug}
+          Team Url
+          %span.label_desc optional
+        =text_field_tag :ssl_slug, nil, {maxlength: 20, size: 20, id: 'ssl_account_ssl_slug'}
+      .clearfix.form_input
+        #slug_validator{data: {validate_slug: validate_ssl_slug_ssl_account_path}}
+    #button_container
+      =submit_tag 'Create Team', class: 'button_blue', id: 'ssl_account_create_team'
+
+

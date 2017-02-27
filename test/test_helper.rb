@@ -33,6 +33,7 @@ include SessionHelper
 include SetupHelper
 include MailerHelper
 include Authorization::TestHelper
+include AuthorizationHelper
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation

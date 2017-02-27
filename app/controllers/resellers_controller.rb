@@ -26,7 +26,7 @@ class ResellersController < ApplicationController
   def create
     unless current_user.role_symbols.include?(Role::RESELLER.to_sym)
       current_user.roles << Role.find_by_name(Role::RESELLER)
-      current_user.roles.delete Role.find_by_name(Role::ACCOUNT_ADMIN)
+      current_user.roles.delete Role.find_by_name(Role::OWNER)
       current_user.ssl_account.add_role! "new_reseller"
       current_user.ssl_account.set_reseller_default_prefs
     end

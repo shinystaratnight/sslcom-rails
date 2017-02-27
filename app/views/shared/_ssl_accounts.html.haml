@@ -1,6 +1,4 @@
--if current_user.get_all_approved_accounts.length > 1
-  %td.simple-tooltip-cont.hidden
-    =link_to "<strong class='hint-icon'>&#63;</strong> <span>You can switch accounts by selecting one from the <strong>ACCOUNT</strong> menu item on the right.</span>".html_safe, '#', class: 'simple-tooltip hidden'
+-if current_user.get_all_approved_accounts.length > SslAccount::SHOW_TEAMS_THRESHOLD
   %td.acc-sel-dropdown
     .acc-sel-dropbtn
       ="#{ssl_account.get_team_name[0..10]} &#9660;".html_safe
@@ -10,3 +8,6 @@
           %li
             -path = switch_default_ssl_account_user_path(current_user.id, ssl_account_id: acct.id)
             =link_to acct.get_team_name[0..10], path
+        -if permitted_to? :create_team, current_user
+          %li
+            =link_to '+ Add Team', create_team_user_path(current_user)

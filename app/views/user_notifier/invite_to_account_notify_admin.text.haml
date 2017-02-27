@@ -1,6 +1,9 @@
 Hello,
 #{"\n"}
-You have added a new user #{@invited_user.email} to your #{Settings.community_name} account.
+You have invited #{@invited_user.email} to your #{Settings.community_name} team.
+#{"\n\n"}
+#{"\t"}Team:#{"\t"}#{@ssl_account.get_team_name}
+#{"\t"}Roles:#{"\t"}#{@invited_user.roles_humanize(@ssl_account).join(', ')}
 #{"\n"}
 If you did not authorize this, please notify #{Settings.community_name} security at #{Settings.support_email}.
 #{"\n"}

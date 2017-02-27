@@ -9,7 +9,7 @@
       =text_field_tag :search, @search
       =submit_tag 'search'
       .search-hint
-        = '*e.g.: role:ssl_user'
+        = '*e.g.: role:account_admin'
   %div{style: 'flex-basis:270px;'}
 #validations
   %table(cellspacing="0")
@@ -27,138 +27,36 @@
       %th
       %th.name(scope="col")Username
       %th(scope="col") Email Address
-      %th(scope="col") Account Type
-      %th(scope="col") Created
-      %th(scope="col") Last Login
+      %th(scope="col") Role(s)
+      -if current_user.is_system_admins?
+        %th(scope="col") Created
+        %th(scope="col") Last Login
       %th(scope="col") Status
       - unless current_user.is_system_admins?
         %th(scope="col") Approved
     -@users.each do |u|
-      -unless u==current_user
-        %tr
-          %td.dropdown=image_tag 'expand.png'
-          %td.name.expandable=u.login
-          %td.expandable=u.email
-          -if current_user.is_admin? || current_user.is_super_user?
-            -type=u.role_symbols_all_accounts
-          -else
-            -type=u.role_symbols(current_user.ssl_account)
-          -type = type.join("/").or_else("user")
-          -type << "/affiliate" if u.is_affiliate?
+      -user_view = current_user.is_system_admins?
+      -user_view ||= u!=current_user && !u.is_owner?(current_user.ssl_account)
+      %tr{class: "#{user_view ? 'enable' : 'disable'}"}
+        %td.dropdown= user_view ? image_tag('expand.png') : ''
+        %td.name.expandable=u.login
+        %td.expandable=u.email
+        -if current_user.is_system_admins?
+          -type = u.is_affiliate? ? "<strong>affiliate</strong><br />" : ''
+          -User.get_user_accounts_roles_names(u).each{|ssl| type << "<strong>#{ssl.first}</strong>: #{ssl.second.join(', ')}<br />"}
+          %td.expandable.constrained=type.html_safe
+        -else
+          -type = "#{u.role_symbols(current_user.ssl_account).join('/')} #{'/affiliate' if u.is_affiliate?}"
           %td.expandable=type
+        -if current_user.is_system_admins?
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")
-          -us, us_class=user_status(u)
-          %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
-          - unless current_user.is_system_admins?
-            -as, as_class=ssl_account_status(u, current_user.ssl_account)
-            %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
+        -us, us_class=user_status(u)
+        %td.expandable.validation_status_message(class="#{us_class}" colspan="1")=us
+        - unless current_user.is_system_admins?
+          -as, as_class=ssl_account_status(u, current_user.ssl_account)
+          %td.expandable.validation_status_message(class="#{as_class}" colspan="1")=as
         %tr.hidden.expanded
           %td(colspan="6")
             .certificate_details
-              %table(cellspacing="0")
-                %tbody
-                  %tr
-                    %td(colspan="6")
-                      -if current_user.is_admin?
-                        :javascript
-                          function adjust_funds_#{u.id}()
-                          {
-                            var amount = prompt("Amount to adjust (in USD)?", '');
-                            if (amount == null || amount=="")
-                              return;
-                            else
-                              window.location = '#{adjust_funds_user_url(u)}?amount='+encodeURIComponent(amount);
-                          }
-                          function change_login_#{u.id}()
-                          {
-                            var login = prompt("What is the new username? (3 chars min)", '');
-                            if (login == null || login=="")
-                              return;
-                            else
-                              window.location = '#{change_login_user_url(u)}?login='+encodeURIComponent(login);
-                          }
-                      .half_width_box
-                        %ul
-                          %li
-                            %strong manage account
-                          - if permitted_to? :admin_manage
-                            - if u.ssl_account
-                              %li available funds: $#{u.ssl_account.funded_account.amount}
-                            %li=remote_login_link(u)
-                            %li=link_to 'user dashboard', admin_show_user_path(u)
-                            %li=link_to 'change email address', edit_email_user_url(u)
-                            %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
-                            %li=link_to 'change password', edit_password_user_url(u)
-                            %li=link_to "change available funds amount", '#', onclick: "adjust_funds_#{u.id}()"
-                          - if permitted_to? :update_roles, :managed_users
-                            %li=link_to 'change roles', edit_managed_user_path(u, slug_params)
-                          - if permitted_to? :remove_from_account, :managed_users
-                            - if current_user.is_system_admins?
-                              - u.ssl_accounts.each do |ssl|
-                                %li=link_to "remove user from account: ##{ssl.acct_number.upcase}", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
-                            - else
-                              %li=link_to 'remove user from this account', remove_from_account_managed_user_path(u, slug_params)
-                          - if permitted_to? :resend_account_invite, :users
-                            - unless current_user.is_system_admins?
-                              %li=link_to 'resend invite', resend_account_invite_user_path(u, 
-                              ssl_account_id: current_user.ssl_account.id, from_user: current_user)
-                      .half_width_box
-                        .adjust_status
-                        =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
-                          -if current_user.is_system_admins?
-                            -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
-                          -else
-                            -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
-                          %ul
-                            %li
-                              %strong adjust status
-                            %li
-                              =ed.radio_button :status, 'enabled'
-                              enabled
-                            %li
-                              =ed.radio_button :status, 'disabled'
-                              disabled
-                        -#
-                          .account_type
-                            =form_for u, :url=>admin_update_user_url(u) do |f|
-                              %ul
-                                %li
-                                  %strong account type
-                                %li
-                                  =f.radio_button :status, 'enabled'
-                                  customer
-                                %li
-                                  =f.radio_button :status, 'disabled'
-                                  reseller tier 1
-                      -if current_user.is_system_admins?
-                        .full_width_box
-                          .adjust_status
-                            %ul
-                              %li
-                                %strong teams
-                              - u.ssl_accounts.each do |ssl|
-                                - status = ssl_account_status(u, ssl).first
-                                %li
-                                  -owner = (u.is_account_owner?(ssl)) ? '(owner) ' : ''
-                                  =link_to("#{owner} #{ssl.get_team_name}", users_path(search: ssl.get_team_name))+" [ #{status}"
-                                  - if status == 'token expired'
-                                    =link_to '&rarr; RESEND INVITE'.html_safe,
-                                    resend_account_invite_user_path(u, ssl_account_id: ssl, from_user: current_user)
-                                  ][
-                                  =link_to "update team url", edit_ssl_account_path(id: ssl.id, url_slug: true, ssl_slug: @ssl_slug)
-                                  ][
-                                  =link_to "users", users_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "orders", certificate_orders_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "transactions", orders_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "billing profiles", billing_profiles_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "validations", validations_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "site seals", site_seals_path(ssl_slug: ssl.to_slug)
-                                  ][
-                                  =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id))
-                                  ]
+              =render "details", u: u

@@ -225,6 +225,32 @@ module ApplicationHelper
     javascript_include_tiny_mce if @uses_tiny_mce
   end
 
+  def render_activation_messages
+    assignments = current_user.assignments.where.not(role_id: Role.cannot_be_invited)
+    if assignments.any?
+      teams   = assignments.map(&:ssl_account).uniq.compact
+      count   = teams.count
+      tab     = '&nbsp;' * 5
+      @notice = [
+        "In addition to activating your own account, you're a member of #{count} other #{'team'.pluralize(count)}.",
+        "You can switch teams by clicking on a team name in <strong>CURRENT TEAM</strong> in the top menu.",
+        "You can also visit <strong>#{link_to 'Teams', teams_user_path(current_user)}</strong> page to manage all teams.<br />",
+        "Invited to Teams (#{count})<br />"
+      ]
+      teams.each do |team|
+        switch_link = link_to(team.get_team_name.upcase, switch_default_ssl_account_user_path(current_user, ssl_account_id: team.id))
+        @notice << "#{tab}Team: <strong>#{switch_link}</strong>"
+        @notice << "#{tab}Roles: <strong>#{current_user.roles_humanize(team).join(', ')}</strong><br />"
+      end
+      roles = assignments.map(&:role).uniq
+      if roles.any?
+        @notice << "Role Descriptions<br />"
+        roles.each {|role| @notice << "<strong>#{role.name.humanize(capitalize: false)}:</strong> #{role.description}" if role.description}
+      end
+      @notice
+    end
+  end
+
   private
 
   def create_tags(label, form_field, options, append)

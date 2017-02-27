@@ -8,7 +8,7 @@ describe 'wildcard (single-domain) csr' do
     initialize_certificates
     initialize_server_software
     initialize_certificate_csr_keys
-    @logged_in_user     = create(:user, :account_admin)
+    @logged_in_user     = create(:user, :owner)
     @logged_in_ssl_acct = @logged_in_user.ssl_account
     @logged_in_ssl_acct.billing_profiles << create(:billing_profile)
     @year_3_id          = ProductVariantItem.find_by(serial:  "sslcomwc256ssl3yr").id
@@ -23,7 +23,8 @@ describe 'wildcard (single-domain) csr' do
     click_on 'Checkout'              # Checkout
     find("#funding_source_#{BillingProfile.first.id}").click
     find('input[name="next"]').click
-
+    sleep 2
+    
     cc         = CertificateContent.first
     co         = CertificateOrder.first
     validation = Validation.first
@@ -81,6 +82,7 @@ describe 'wildcard (single-domain) csr' do
   end
 
   it 'creates correct records and renders correct information' do
+    sleep 2
     cc  = CertificateContent.first
     co  = CertificateOrder.first
     csr = Csr.last
@@ -97,6 +99,8 @@ describe 'wildcard (single-domain) csr' do
       assert_equal 4, CertificateContact.count
       assert_equal 1, CertificateName.count
       assert_equal 1, CaCertificateRequest.count
+      assert_equal 1, Validation.count
+      assert_equal 1, SiteSeal.count
 
     # creates correct associations for CertificateContent and CertificateOrder
     # =========================================================
