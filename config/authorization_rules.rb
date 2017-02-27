@@ -152,12 +152,10 @@ authorization do
     #
     # BillingProfiles
     #
-    has_permission_on :billing_profiles, :to => :manage do
+    has_permission_on :billing_profiles, to: [:delete, :edit, :read, :update] do
       if_attribute :users_can_manage => contains {user}
     end
-    has_permission_on :billing_profiles, :to => :index do
-      if_attribute :ssl_account => is {user.ssl_account}
-    end
+    has_permission_on :billing_profiles, to: [:create, :index]
     #
     # FundedAccounts
     #

@@ -3,7 +3,7 @@ class BillingProfilesController < ApplicationController
   #ssl_required :new
   #helper :profile
   filter_access_to :all
-  filter_access_to :destroy, :create, :new, attribute_check: true
+  filter_access_to :destroy, attribute_check: true
   respond_to :json
   
   before_filter :require_user
@@ -25,6 +25,9 @@ class BillingProfilesController < ApplicationController
   end
 
   def create
+    unless can_manage_profile?(params)
+      permission_denied and return
+    end
     @billing_profile = current_user.ssl_account.billing_profiles.build(params[:billing_profile])
     if @billing_profile.save
       flash[:notice] = "Billing Profile successfully created!"
@@ -46,7 +49,7 @@ class BillingProfilesController < ApplicationController
   private
 
   def can_manage_profile?(params)
-    ssl_slug = params[:ssl_slug]
+    ssl_slug = params[:ssl_slug] || @ssl_slug
     manage   = false
     manage   = true if current_user.is_system_admins?
     unless manage || ssl_slug.nil?

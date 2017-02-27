@@ -11,7 +11,7 @@
       %th(scope='col')Expiry Date
       %th(scope='col')
     -@billing_profiles.reject{|bp|bp.expired?}.each do |profile|
-      -if permitted_to? :manage, profile
+      -if permitted_to? :edit, profile
         %tr[profile]
           %td= profile.credit_card
           %td= profile.masked_card_number
