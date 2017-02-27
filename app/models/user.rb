@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   include V2MigrationProgressAddon
 #  using_access_control
 
-  OWNED_MAX_TEAMS = 5
+  OWNED_MAX_TEAMS = 3
 
   has_many  :assignments, dependent: :destroy
   has_many  :visitor_tokens

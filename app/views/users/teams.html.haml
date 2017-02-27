@@ -10,6 +10,7 @@
           %td(colspan='6')=will_paginate @teams
     %caption
       =title
+      [learn about #{link_to "teams", "https://www.ssl.com/article/introducing-teams-ssl-com-multiuser-accounts/", target: "_blank"}]
       =will_paginate @teams
     -if permitted_to?(:create_team, current_user) and !system_admins
       %br
@@ -68,28 +69,16 @@
         %td
           -permissions = team_index_permissions(current_user, t)
           -if system_admins || permissions.include?(:orders)
-            [
-            =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug)
-            ]
+            [#{link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug)}]
           -if system_admins || permissions.include?(:transactions)
-            [
-            =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug)
-            ]
+            [#{link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug)}]
           -if system_admins || permissions.include?(:validations)
-            [
-            =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug)
-            ]
+            [#{link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug)}]
           -if system_admins || permissions.include?(:users)
-            [
-            =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug)
-            ]
+            [#{link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug)}]
         %td=t.created_at.strftime("%b %d, %Y")
         -unless system_admins
           %td
-            [
-            =link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)
-            ]
+            [#{link_to "view", switch_default_ssl_account_user_path(current_user.id, ssl_account_id: t.id)}]
             -unless account_owner || system_admins
-              [
-              =link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}
-              ]
+              [#{link_to "leave team", leave_team_user_path(current_user, ssl_account_id: t.id), data: {confirm: "Please confirm you want to leave team #{t.get_team_name}."}}]
