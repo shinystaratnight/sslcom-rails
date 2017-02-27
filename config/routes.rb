@@ -68,7 +68,7 @@ SslCom::Application.routes.draw do
           :as => :api_certificate_revoke_v1_3, via: :get
   end
 
-  resources :password_resets
+  resources :password_resets, except: [:show]
 
   resources :products
 

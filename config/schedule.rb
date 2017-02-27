@@ -22,7 +22,7 @@
 job_type :bundle_exec,  "cd :path && bundle exec script/rails runner -e :environment ':task' :output"
 
 every 12.hours, at: "12am" do
-  bundle_exec "ApplicationController.flag_expired_certificate_orders"
+  bundle_exec "CertificateOrder.expire_credits"
   #bundle_exec "Malware.update"
 end
 
