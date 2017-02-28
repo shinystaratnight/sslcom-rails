@@ -158,6 +158,8 @@ authorization do
     has_permission_on :billing_profiles, to: [:create, :index]
     #
     # FundedAccounts
+    #  most routes do not use 'id' in params to denote funded_account id
+    #  so attribute_check is not possible.
     #
     has_permission_on :funded_accounts, :to => [
         :create,
@@ -169,9 +171,7 @@ authorization do
         :deposit_funds,
         :apply_funds,
         :confirm_funds
-    ] do
-      if_attribute :ssl_account => is {user.ssl_account}
-    end
+    ]
     #
     # CertificateOrders
     #
