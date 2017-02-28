@@ -228,7 +228,9 @@ module ApplicationHelper
   def render_activation_messages
     assignments = current_user.assignments.where.not(role_id: Role.cannot_be_invited)
     if assignments.any?
-      teams   = assignments.map(&:ssl_account).uniq.compact
+      teams = current_user.ssl_account_users
+        .where(ssl_account_id: assignments.map(&:ssl_account).uniq.compact.map(&:id))  
+        .where.not(approved: false).where(declined_at: nil).map(&:ssl_account).uniq.compact
       count   = teams.count
       tab     = '&nbsp;' * 5
       @notice = [
