@@ -10,7 +10,7 @@ describe 'user creates a new team' do
     login_as(@current_owner, self.controller.cookies)
     visit account_path
     click_on "Teams(#{@current_owner.get_all_approved_accounts.count})"
-    click_on '+ Create Team (4 Remaining)'
+    click_on "+ Create Team (#{User::OWNED_MAX_TEAMS - 1} Remaining)"
     fill_in 'team_name', with: @company_name
     
     assert_equal 1, @current_owner.total_teams_owned.count
@@ -75,7 +75,7 @@ describe 'user creates a new team' do
     find("a[href='#{default_team_path}']").click
 
     assert page.has_no_content?'leave team'
-    assert page.has_content?'+ Create Team (3 Remaining)'
+    assert page.has_content?"+ Create Team (#{User::OWNED_MAX_TEAMS - 2} Remaining)"
     assert page.has_content?('owner', count: 2)
     assert page.has_content?('set default', count: 1)  # 1 of 2 teams is already set to default
     assert_equal default_ssl_id, User.first.main_ssl_account

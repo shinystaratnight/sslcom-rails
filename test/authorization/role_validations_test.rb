@@ -55,8 +55,8 @@ describe 'validations role' do
     before {visit teams_user_path(@validations)}
 
     it 'should have correct details' do
-      page.must_have_content "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}", count: 1
-      page.must_have_content "[:validations] $0.00 [ validations (0) ] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:owner] $0.00 [orders (0)] [transactions (0)] [validations (0)] [users (1)] #{Date.today.strftime('%b')}", count: 1
+      page.must_have_content "[:validations] $0.00 [validations (0)] #{Date.today.strftime('%b')}", count: 1
     end
   end
 

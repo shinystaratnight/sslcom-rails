@@ -50,7 +50,7 @@ describe 'user approves ssl account invite' do
     before do
       click_on 'Logout'
       login_as(@existing_user, update_cookie(self.controller.cookies, @existing_user))
-      email_approval_link = URI.extract(email_body(:first)).first.gsub('http://www.ssl.com', '')
+      email_approval_link = extract_url(email_body(:first))
       visit email_approval_link
     end
     
@@ -88,15 +88,14 @@ describe 'user approves ssl account invite' do
 
       click_on 'Logout'
       login_as(@unauthorized_user, update_cookie(self.controller.cookies, @unauthorized_user))
-      email_approval_link = URI.extract(email_body(:first)).first.gsub('http://www.ssl.com', '')
+      email_approval_link = extract_url(email_body(:first))
       visit email_approval_link
     end
     
     it 'CANNOT approve invite' do
-      # re-routed to root
-      assert_match root_path, current_path
+      # re-routed to Dashboard page
+      assert_match account_path, current_path
       
-      click_on 'MY ACCOUNT'
       assert page.has_content? 'Teams(1)'
     end
     it 'invite remains unapproved' do

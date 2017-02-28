@@ -10,8 +10,8 @@ describe 'Leave team' do
     @owner_ssl    = @owner_user.ssl_account
     @billing_user = create_and_approve_user(@owner_ssl, 'billing_login', @billing_role)
     @billing_ssl  = @billing_user.ssl_account
-    @billing_row  = "[:billing] $0.00 [ orders (0) ] [ transactions (0) ] #{Date.today.strftime('%b')}"
-    @b_owner_row  = "[:owner] $0.00 [ orders (0) ] [ transactions (0) ] [ validations (0) ] [ users (1) ] #{Date.today.strftime('%b')}"
+    @billing_row  = "[:billing] $0.00 [orders (0)] [transactions (0)] #{Date.today.strftime('%b')}"
+    @b_owner_row  = "[:owner] $0.00 [orders (0)] [transactions (0)] [validations (0)] [users (1)] #{Date.today.strftime('%b')}"
     
     2.times{login_as(@billing_user, self.controller.cookies)}
     visit teams_user_path(@billing_user)

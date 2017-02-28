@@ -25,7 +25,6 @@ describe 'Valid user' do
     
     # Buy Certificate
     visit buy_certificate_path 'basicssl'
-    find('#certificate_order_certificate_contents_attributes_0_agreement').click
     find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
     page.must_have_content('$156.43 USD') # $52.14 * 3 years
     

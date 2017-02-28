@@ -34,7 +34,7 @@ class UserTest < Minitest::Spec
       assert_includes @user.email, '@domain.com'
     end
     it '#max_teams_reached returns an integer' do
-      assert_equal 5, @user.max_teams
+      assert_equal User::OWNED_MAX_TEAMS, @user.max_teams
     end
   end
 

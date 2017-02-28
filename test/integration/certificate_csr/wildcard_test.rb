@@ -17,7 +17,6 @@ describe 'wildcard (single-domain) csr' do
     # Purchase wildcard certificate
     # =========================================================
     visit buy_certificate_path 'wildcard'
-    find('#certificate_order_certificate_contents_attributes_0_agreement').click
     find("#product_variant_item_#{@year_3_id}").click # 3 Years $91.30/yr
     find('#next_submit input').click # Shopping Cart
     click_on 'Checkout'              # Checkout

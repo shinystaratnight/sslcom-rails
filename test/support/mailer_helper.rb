@@ -23,6 +23,13 @@ module MailerHelper
     ActionMailer::Base.deliveries.count
   end
 
+  def extract_url(str)
+    urls   = URI.extract(str)
+    ignore = ['Team:', 'Roles:', 'Note:']
+    urls.delete_if{|d| ignore.include?(d)}
+    urls   = urls.first.gsub('http://www.ssl.com', '') if urls.any?
+  end
+
   private
     def delivery(first)
       deliveries = ActionMailer::Base.deliveries

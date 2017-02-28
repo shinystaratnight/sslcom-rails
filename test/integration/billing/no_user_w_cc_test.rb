@@ -21,8 +21,6 @@ describe 'Anonymous user' do
     assert_equal 0, ShoppingCart.count
     
     visit buy_certificate_path 'basicssl'
-    # Subscriber Agreement
-    find('#certificate_order_certificate_contents_attributes_0_agreement').click
     find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
     page.must_have_content("#{@amount} USD") # $52.14 * 3 years
     # Shopping Cart
@@ -58,6 +56,7 @@ describe 'Anonymous user' do
     fill_in 'billing_profile_security_code', with: '900'
 
     find('input[name="next"]').click
+    sleep 2 # allow time for email notifications
   end
 
   it 'creates correct records and renders correct elements in view' do

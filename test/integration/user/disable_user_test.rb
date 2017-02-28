@@ -10,9 +10,7 @@ describe 'Disable user' do
     (1..4).to_a.each {|n| create_and_approve_user(@owner_ssl, "account_admin_#{n}")}
     
     @disable_user     = User.find_by(login: 'account_admin_1')
-    @disable_user_ssl = SslAccountUser.where(
-      user_id: @disable_user.id, ssl_account_id: @owner_ssl.id
-    ).first
+    @disable_user_ssl = @disable_user.ssl_account
     approve_user_for_account(@owner_2.ssl_account, @disable_user)
     refute @disable_user.is_disabled?(@owner_ssl) # NOT disabled
     assert_equal 3, @disable_user.get_all_approved_accounts.count
@@ -118,7 +116,7 @@ describe 'Disable user' do
       page.must_have_content "account number: #{@other_user_on_account.ssl_account.acct_number}"
 
       visit switch_default_ssl_account_user_path(
-        @other_user_on_account, ssl_account_id: @disable_user.ssl_account.id
+        @other_user_on_account, ssl_account_id: @disable_user_ssl.id
       )
       # cannot switch to @disable_user's ssl account
       page.must_have_content "ssl account information for #{@other_user_on_account.login}"
