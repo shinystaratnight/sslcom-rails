@@ -5,7 +5,7 @@ class FundedAccountsController < ApplicationController
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
 #  belongs_to :user
-
+  before_filter :find_ssl_account
   before_filter :require_user, :only => [:allocate_funds_for_order,
     :deposit_funds, :allocate_funds, :apply_funds],
     :if=>'request.subdomain==Reseller::SUBDOMAIN'
@@ -13,17 +13,17 @@ class FundedAccountsController < ApplicationController
   filter_access_to :all
 
   def allocate_funds
-    @funded_account = current_user.ssl_account.funded_account
+    @funded_account = @ssl_account.funded_account
     @funded_account.deduct_order = "false"
     @reseller_initial_deposit = true if initial_reseller_deposit?
   end
 
   # apply funds from funded_account to purchase the order
   def allocate_funds_for_order
-    @funded_account = current_user ? current_user.ssl_account.funded_account : FundedAccount.new
+    @funded_account = current_user ? @ssl_account.funded_account : FundedAccount.new
     @funded_account.deduct_order = "true"
     if params[:id] == "certificate"
-      @certificate_order = current_user.ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
       @funded_account.order_type = "certificate"
     elsif params[:id] == "order"
       certificates_from_cookie
@@ -39,13 +39,13 @@ class FundedAccountsController < ApplicationController
       FundedAccount.new(params[:funded_account]),
       BillingProfile.new(params[:billing_profile])
     if @funded_account.order_type=='certificate'
-      @certificate_order = current_user.ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
     elsif @funded_account.order_type=='order'
       setup_orders
     end
     if params["prev.x".intern]
-      if current_user.ssl_account.has_role?('new_reseller')
-        current_user.ssl_account.reseller.back!
+      if @ssl_account.has_role?('new_reseller')
+        @ssl_account.reseller.back!
         redirect_to new_account_reseller_url and return
       elsif @certificate_order
         return go_back_to_buy_certificate
@@ -53,7 +53,7 @@ class FundedAccountsController < ApplicationController
         redirect_to show_cart_orders_url and return
       end
     end
-    account = current_user.ssl_account
+    account = @ssl_account
     @funded_account.ssl_account = @billing_profile.ssl_account = account
     @funded_account.funding_source = FundedAccount::NEW_CREDIT_CARD if @funded_account.funding_source.blank?
     if @funded_account.valid?
@@ -110,7 +110,7 @@ class FundedAccountsController < ApplicationController
         @deposit.billing_profile = @profile
         if apply_order
           @order.deducted_from = @deposit
-          current_user.ssl_account.orders << @order
+          @ssl_account.orders << @order
           apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
           record_order_visit(@order)
           @order.mark_paid!
@@ -160,7 +160,7 @@ class FundedAccountsController < ApplicationController
   end
 
   def apply_funds
-    @account_total = @funded_account = current_user.ssl_account.funded_account
+    @account_total = @funded_account = @ssl_account.funded_account
     apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
     @funded_account.cents -= @order.final_amount.cents unless @funded_account.blank?
     respond_to do |format|
@@ -176,7 +176,7 @@ class FundedAccountsController < ApplicationController
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
-          current_user.ssl_account.orders << @order
+          @ssl_account.orders << @order
           clear_cart
           flash[:notice] = "Order successfully placed. %s"
           flash[:notice_item] = "Click here to finish processing your
@@ -204,7 +204,7 @@ class FundedAccountsController < ApplicationController
           @certificate_order.pay! true
           return redirect_to edit_certificate_order_path(@certificate_order)
         elsif @certificate_orders
-          current_user.ssl_account.orders << @order
+          @ssl_account.orders << @order
           clear_cart
           flash[:notice] = "Order successfully placed. %s"
           flash[:notice_item] = "Click here to finish processing your
@@ -231,7 +231,7 @@ class FundedAccountsController < ApplicationController
     if params[:id]=='order'
       certificates_from_cookie
     else
-      @certificate_order = current_user.ssl_account.certificate_orders.current
+      @certificate_order = @ssl_account.certificate_orders.current
       check_for_current_certificate_order
     end
   end
@@ -239,14 +239,14 @@ class FundedAccountsController < ApplicationController
   private
 
   def object
-    @object = current_user.ssl_account.funded_account ||= FundedAccount.new(:amount => 0)
+    @object = @ssl_account.funded_account ||= FundedAccount.new(:amount => 0)
   end
 
   def save_certificate_orders
-    current_user.ssl_account.orders << @order
-    OrderNotifier.certificate_order_prepaid(@current_user.ssl_account, @order).deliver
+    @ssl_account.orders << @order
+    OrderNotifier.certificate_order_prepaid(@ssl_account, @order).deliver
     @order.line_items.each do |cert|
-      current_user.ssl_account.certificate_orders << cert.sellable
+      @ssl_account.certificate_orders << cert.sellable
       cert.sellable.pay! true
     end
   end
