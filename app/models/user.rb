@@ -98,6 +98,16 @@ class User < ActiveRecord::Base
     assignments.where{role_id = Role.get_owner_id}.first.try :ssl_account
   end
 
+  def team_status(team)
+    ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
+    status = :accepted if active && ssl.approved
+    status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
+    status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
+    status = :pending  if !active && (status != :declined) 
+    status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+    status
+  end
+
   def self.total_teams_owned(user_id)
     User.find(user_id).assignments.where(role_id: Role.get_owner_id).map(&:ssl_account).uniq.compact
   end
@@ -697,10 +707,15 @@ class User < ActiveRecord::Base
     ssl.update(approved: false, token_expires: nil, approval_token: nil) if ssl
   end
 
-  def approve_all_accounts
+  def approve_all_accounts(log_invite=nil)
     ssl_account_users.update_all(
       approved: true, token_expires: nil, approval_token: nil
     )
+    if log_invite
+      ssl_ids = assignments.where.not(role_id: Role.cannot_be_invited)
+        .map(&:ssl_account).uniq.compact.map(&:id)
+      ssl_account_users.where(ssl_account_id: ssl_ids).update_all(invited_at: DateTime.now)
+    end
   end
 
   def approval_token_not_expired?(params)
@@ -748,7 +763,8 @@ class User < ActiveRecord::Base
       ssl.update(
         approved:       false,
         token_expires:  (params[:clear] ? nil : (DateTime.now + 72.hours)), 
-        approval_token: (params[:clear] ? nil : generate_approval_token)
+        approval_token: (params[:clear] ? nil : generate_approval_token),
+        invited_at:     DateTime.now
       )
     end
   end

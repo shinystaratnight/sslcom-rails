@@ -134,9 +134,14 @@ class ManagedUsersController < ApplicationController
         params[:user][:ssl_account_id] = ssl_account.id
         user.invite_existing_user(params)
       end
+      SystemAudit.create(
+        owner:  current_user, 
+        target: user,
+        action: 'Invite user to team (ManagedUsersController#create)',
+        notes:  "#{existing_user ? 'Ssl.com' : 'New'} user #{user.login} was invited to team #{ssl_account.get_team_name} by #{current_user.login}.")
     end
     unless existing_user
-      user.approve_all_accounts
+      user.approve_all_accounts(:log_invite)
       user.invite_new_user(params.merge(deliver_invite: true, invited_teams: @ssl_accounts))
     end
   end

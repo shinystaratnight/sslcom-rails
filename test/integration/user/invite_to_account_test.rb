@@ -21,6 +21,19 @@ describe 'new user' do
     @new_user_ssl = @new_user.ssl_accounts.where.not(id: @invited_ssl_acct.id).first
   end
 
+  it 'invited to team entry is logged to SystemAudit log' do
+    audit = SystemAudit.last
+    assert_equal 1, SystemAudit.count
+    refute_nil audit
+
+    assert_equal @current_owner.id, audit.owner_id
+    assert_match 'User', audit.owner_type
+    assert_match 'User', audit.target_type
+    assert_equal @new_user.id, audit.target_id
+    assert_match "New user #{@new_user.login} was invited to team #{@invited_ssl_acct.get_team_name} by #{@current_owner.login}.", audit.notes
+    assert_match "Invite user to team (ManagedUsersController#create)", audit.action
+  end
+
   it 'invited user receives signup_invitation email' do
     assert_equal    1, email_total_deliveries
     assert_match    "#{@current_owner.login} has invited you to join SSL.com", email_subject
@@ -130,6 +143,19 @@ describe 'existing user' do
     fill_in  'user_email', with: @existing_user_email
     find('input[value="Invite"]').click
     sleep 1 # allow time to generate notification email in case of delay
+  end
+
+  it 'invited to team entry is logged to SystemAudit log' do
+    audit = SystemAudit.last
+    assert_equal 1, SystemAudit.count
+    refute_nil audit
+
+    assert_equal @current_owner.id, audit.owner_id
+    assert_match 'User', audit.owner_type
+    assert_match 'User', audit.target_type
+    assert_equal @existing_user.id, audit.target_id
+    assert_match "Ssl.com user #{@existing_user.login} was invited to team #{@invited_ssl_acct.get_team_name} by #{@current_owner.login}.", audit.notes
+    assert_match "Invite user to team (ManagedUsersController#create)", audit.action
   end
   it 'invited user receives invite_to_account email' do
     approval_token = SslAccountUser.where(

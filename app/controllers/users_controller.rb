@@ -348,7 +348,7 @@ class UsersController < ApplicationController
     @user = User.find params[:id]
     @user.activate!(params)
     if @user.valid?
-      @user.approve_all_accounts
+      @user.approve_all_accounts(:log_invite)
       flash[:notice] = "User #{@user.login} has been successfully activated!"
       redirect_to users_path
     else

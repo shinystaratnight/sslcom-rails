@@ -16,6 +16,19 @@
             }
         .half_width_box
           %ul
+            -unless current_user.is_system_admins?
+              -invite_status = u.team_status(current_user.ssl_account)
+              -if invite_status != :accepted
+                -invite = u.ssl_account_users.where(ssl_account_id: current_user.ssl_account).uniq.compact.first
+                %li
+                  %strong
+                    ="invite status: <span class='chip tiny'>#{invite_status.to_s.upcase}</span>".html_safe
+                  %br
+                  %br
+                    -{invited: invite.invited_at, declined: invite.declined_at}.compact.each do |s|
+                      %span{class: 'timestamp'}
+                        ="&nbsp;#{s.first}: #{s.last.strftime('%b %d, %Y %l:%m %p')}".html_safe
+                        %br
             %li
               %strong manage account
             - if permitted_to? :admin_manage

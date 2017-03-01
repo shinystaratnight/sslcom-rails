@@ -583,6 +583,41 @@ class UserTest < Minitest::Spec
         user.set_default_team(ssl_other) # user does not own ssl_other
         assert_equal ssl_own.id, user.main_ssl_account        
       end
+      it '#team_status returns correct status' do
+        invited_user     = create(:user, :owner)
+        invited_user_ssl = invited_user.ssl_account
+        invited_ssl_acct = create(:ssl_account)
+        params           = {ssl_account_id: invited_ssl_acct.id}
+        invited_user.ssl_accounts << invited_ssl_acct
+        invited_user.set_roles_for_account(invited_ssl_acct, @acct_admin_role)
+
+        # user is invited
+        invited_user.set_approval_token(params)
+        assert_equal 1, invited_user.get_all_approved_accounts.count 
+        assert_equal :pending, invited_user.team_status(invited_ssl_acct)
+        
+        # user DECLINES team invitation
+        invited_user.decline_invite(params)
+        assert_equal 1, invited_user.get_all_approved_accounts.count 
+        assert_equal :declined, invited_user.team_status(invited_ssl_acct)
+        
+        # user ACCEPTS team invitation
+        invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
+        assert_equal 2, invited_user.get_all_approved_accounts.count 
+        assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
+        
+        # invitation EXPIRED
+        invited_user.set_approval_token(params)
+        invited_user.ssl_account_users.where(params).first.update_attribute(:token_expires, 1.day.ago)
+        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal :expired, invited_user.team_status(invited_ssl_acct)
+        
+        # NEW user is invited
+        invited_user.update_attribute(:active, false)
+        invited_user.set_approval_token(params)
+        assert_equal 1, invited_user.get_all_approved_accounts.count
+        assert_equal :pending, invited_user.team_status(invited_ssl_acct)
+      end
     end
   end
 end
