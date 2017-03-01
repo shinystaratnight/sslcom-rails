@@ -256,10 +256,10 @@ class UsersController < ApplicationController
     if user.user_declined_invite?(params)
       flash[:error] = 'You have already declined this invite.'
     else
-      account_number = SslAccount.find(params[:ssl_account_id]).acct_number
-      if account_number
+      ssl = SslAccount.find(params[:ssl_account_id])
+      if ssl
         user.decline_invite(params)
-        flash[:notice] = "You have successfully declined a recent account invite for ##{account_number}."
+        flash[:notice] = "You have successfully declined a recent account invite to team #{ssl.get_team_name}."
       end
     end
     params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))

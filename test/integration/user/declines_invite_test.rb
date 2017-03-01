@@ -53,6 +53,20 @@ describe 'Decline ssl account invite' do
       assert          @existing_user.pending_account_invites?
 
       find('a', text: 'decline').click
+      sleep 2
+    end
+
+    it 'declined invitation is logged to SystemAudit log' do
+      audit = SystemAudit.last
+      
+      refute_nil   audit
+      assert_equal 2, SystemAudit.count # 1 for invite & 1 for decline
+      assert_equal @existing_user.id, audit.owner_id
+      assert_equal @invited_ssl_acct.id, audit.target_id
+      assert_match 'User', audit.owner_type
+      assert_match 'SslAccount', audit.target_type
+      assert_match "User #{@existing_user.login} has declined invitation to team #{@invited_ssl_acct.get_team_name} (##{@invited_ssl_acct.acct_number}).", audit.notes
+      assert_match 'Declined invitation to team (UsersController#decline_account_invite).', audit.action
     end
     
     it 'account invite should be declined' do
@@ -64,6 +78,7 @@ describe 'Decline ssl account invite' do
       assert_equal @existing_user_ssl.id, @existing_user.default_ssl_account
       assert_nil   ssl.approval_token
       assert_nil   ssl.token_expires
+      refute_nil   ssl.declined_at # timestamp exists
       refute       ssl.approved
     end
     it 'has 1 approved account | 0 pending invites' do
@@ -80,6 +95,9 @@ describe 'Decline ssl account invite' do
       click_on 'Users'
 
       page.must_have_content 'declined'
+
+      first('td', text: @existing_user_email).click # expand user's row
+      page.must_have_content "declined: #{@existing_user.ssl_account_users.find_by(ssl_account_id: @invited_ssl_acct.id).declined_at.strftime('%b %d, %Y %l:%m %p')}"
     end
     it 'sysadmin should see decline status' do
       sysadmin = create(:user, :sysadmin)

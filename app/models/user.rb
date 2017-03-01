@@ -704,7 +704,21 @@ class User < ActiveRecord::Base
 
   def decline_invite(params)
     ssl = get_ssl_acct_user_for_approval(params)
-    ssl.update(approved: false, token_expires: nil, approval_token: nil) if ssl
+    if ssl
+      team = ssl.ssl_account
+      SystemAudit.create(
+        owner:  self,
+        target: team,
+        action: 'Declined invitation to team (UsersController#decline_account_invite).',
+        notes:  "User #{login} has declined invitation to team #{team.get_team_name} (##{team.acct_number})."
+      )
+      ssl.update(
+        approved:       false,
+        token_expires:  nil,
+        approval_token: nil,
+        declined_at:    DateTime.now
+      )
+    end
   end
 
   def approve_all_accounts(log_invite=nil)
