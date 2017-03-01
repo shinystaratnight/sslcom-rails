@@ -602,7 +602,8 @@ class UserTest < Minitest::Spec
         assert_equal :declined, invited_user.team_status(invited_ssl_acct)
         
         # user ACCEPTS team invitation
-        invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
+        invited_user.set_approval_token(params)
+        invited_user.send(:approve_account, {ssl_account_id: invited_ssl_acct.id})
         assert_equal 2, invited_user.get_all_approved_accounts.count 
         assert_equal :accepted, invited_user.team_status(invited_ssl_acct)
         

@@ -789,9 +789,10 @@ class User < ActiveRecord::Base
     if ssl
       ssl.update(
         approved:       false,
-        token_expires:  (params[:clear] ? nil : (DateTime.now + 72.hours)), 
+        token_expires:  (params[:clear] ? nil : (DateTime.now + 72.hours)),
         approval_token: (params[:clear] ? nil : generate_approval_token),
-        invited_at:     DateTime.now
+        invited_at:     DateTime.now,
+        declined_at:    nil
       )
     end
   end
