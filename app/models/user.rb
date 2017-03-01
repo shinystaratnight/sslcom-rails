@@ -376,6 +376,10 @@ class User < ActiveRecord::Base
     UserNotifier.leave_team_notify_admins(self, notify_user, account).deliver
   end
 
+  def deliver_invite_to_account_accepted!(account, for_admin=nil)
+    UserNotifier.invite_to_account_accepted(self, account, for_admin).deliver
+  end
+
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
     l_bound = "01/01/2000" if l_bound.blank?
     s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
@@ -691,7 +695,16 @@ class User < ActiveRecord::Base
     else
       if approval_token_valid?(params)
         set_approval_token(params.merge(clear: true))
-        approve_account(params)
+        ssl = approve_account(params)
+        if ssl
+          deliver_invite_to_account_accepted!(ssl.ssl_account)
+          Assignment.where( # notify team owner and users_manager(s)
+            ssl_account_id: ssl_acct_id,
+            role_id: Role.get_role_ids([Role::OWNER, Role::USERS_MANAGER])
+          ).map(&:user).uniq.compact.each do |for_admin|
+            deliver_invite_to_account_accepted!(ssl.ssl_account, for_admin)
+          end
+        end
       else
         errors << 'Invite token is invalid or expired, please contact account admin!'
       end
@@ -816,6 +829,7 @@ class User < ActiveRecord::Base
   def approve_account(params)
     ssl = get_ssl_acct_user_for_approval(params)
     ssl.update(approved: true, token_expires: nil, approval_token: nil) if ssl
+    ssl
   end
   
   def generate_approval_token

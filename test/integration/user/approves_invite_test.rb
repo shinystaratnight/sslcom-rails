@@ -52,8 +52,30 @@ describe 'user approves ssl account invite' do
       login_as(@existing_user, update_cookie(self.controller.cookies, @existing_user))
       email_approval_link = extract_url(email_body(:first))
       visit email_approval_link
+      sleep 2
     end
-    
+
+    it '2 email notifications are sent to each user' do
+      assert_equal    4, email_total_deliveries
+      # invited user receives 'invite_to_account_accepted' email
+      assert_match    "You have accepted SSL.com invitation to team #{@invited_ssl_acct.get_team_name}.", email_subject(3)
+      assert_match    @existing_user.email, email_to(3)
+      assert_match    'noreply@ssl.com', email_from(3)
+      assert_includes email_body(3), 'You have accepted team invitation.'
+      assert_includes email_body(3), "Team:\t#{@invited_ssl_acct.get_team_name}"
+      assert_includes email_body(3), "Roles:\t#{@existing_user.roles_humanize(@invited_ssl_acct).join(', ')}"
+      assert_includes email_body(3), "Date:\t#{Date.today.strftime('%b')}"
+
+      # owner user receives 'invite_to_account_accepted' email
+      assert_match    "Invition to SSL.com team #{@invited_ssl_acct.get_team_name} was accepted by user #{@existing_user.login}.", email_subject
+      assert_match    @current_owner.email, email_to
+      assert_match    'noreply@ssl.com', email_from
+      assert_includes email_body, 'Your team invitation was accepted.'
+      assert_includes email_body, "Team:\t#{@invited_ssl_acct.get_team_name}"
+      assert_includes email_body, "User:\tlogin: #{@existing_user.login} | email: #{@existing_user.email}"
+      assert_includes email_body, "Roles:\t#{@existing_user.roles_humanize(@invited_ssl_acct).join(', ')}"
+      assert_includes email_body, "Date:\t#{Date.today.strftime('%b')}"
+    end
     it 'can see both accounts' do
       assert       page.has_content? 'Teams(2)'
       assert       page.has_content? 'Users'

@@ -79,6 +79,20 @@ class UserNotifier < ActionMailer::Base
               to: @current_user.email
   end
 
+  def invite_to_account_accepted(invite_user, ssl_account, for_admin)
+    @invited_user = invite_user
+    @ssl_account  = ssl_account
+    @admin        = for_admin
+    subject       = if @admin
+      "Invition to SSL.com team #{@ssl_account.get_team_name} was accepted by user #{@invited_user.login}."
+    else
+      "You have accepted SSL.com invitation to team #{@ssl_account.get_team_name}."
+    end
+    mail subject: subject,
+            from: Settings.from_email.activations,
+              to: (@admin ? @admin.email : @invited_user.email)
+  end
+
   def removed_from_account(user, account, current_user)
     @remove_user  = user
     @current_user = current_user

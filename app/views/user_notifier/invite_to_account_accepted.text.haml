@@ -1,0 +1,13 @@
+Hello,
+#{"\n"}
+#{@admin ? 'Your team invitation was accepted.' : 'You have accepted team invitation.'}
+#{"\n\n"}
+-if @admin
+  #{"\t"}User:#{"\t"}login: #{@invited_user.login} | email: #{@invited_user.email}
+#{"\t"}Team:#{"\t"}#{@ssl_account.get_team_name}
+#{"\t"}Roles:#{"\t"}#{@invited_user.roles_humanize(@ssl_account).join(', ')}
+#{"\t"}Date:#{"\t"}#{DateTime.now.strftime("%b %d, %Y at %l:%M %p")}
+#{"\n"}
+-unless @admin
+  If you did not authorize this, please notify #{Settings.community_name} security at #{Settings.support_email}.
+=render 'support_signature'
