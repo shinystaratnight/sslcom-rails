@@ -16,7 +16,7 @@ module UsersHelper
     if user.ssl_accounts.include?(account)
       params = {ssl_account_id: account.id}
       ssl = user.ssl_account_users.where(params).first
-      if ssl.approved
+      if ssl && ssl.approved
         ['approved', 'good']
       else
         if user.user_declined_invite?(params)

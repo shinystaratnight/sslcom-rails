@@ -50,8 +50,6 @@ describe 'new user' do
     page.must_have_content(@new_user_email)
     page.must_have_content('Role(s)')
     page.must_have_content(Role::ACCOUNT_ADMIN)
-    page.must_have_content('Status')
-    page.must_have_content('not activated')
     page.must_have_content('Approved')
     page.must_have_content('approved')
 
@@ -186,8 +184,6 @@ describe 'existing user' do
     page.must_have_content('existing_user')
     page.must_have_content('Role(s)')
     page.must_have_content(Role::ACCOUNT_ADMIN) # default role
-    page.must_have_content('Status')
-    page.must_have_content('activated') # pre-existing user
     page.must_have_content('Approved')
     page.must_have_content('sent') # approval token sent, not approved by user yet
 

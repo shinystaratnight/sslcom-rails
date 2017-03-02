@@ -100,11 +100,13 @@ class User < ActiveRecord::Base
 
   def team_status(team)
     ssl    = ssl_account_users.where(ssl_account_id: team.id).uniq.compact.first
-    status = :accepted if active && ssl.approved
-    status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
-    status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
-    status = :pending  if !active && (status != :declined) 
-    status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+    if ssl
+      status = :accepted if active && ssl.approved
+      status = :declined if ssl.declined_at || (!ssl.approved && ssl.token_expires.nil? && ssl.approval_token.nil?)
+      status = :expired  if ssl.token_expires && (status != :declined) && (ssl.token_expires < DateTime.now)
+      status = :pending  if !active && (status != :declined) 
+      status = :pending  if active && (!ssl.approved && ssl.token_expires && ssl.approval_token) && (ssl.token_expires > DateTime.now)
+    end
     status
   end
 

@@ -18,7 +18,7 @@
           %ul
             -unless current_user.is_system_admins?
               -invite_status = u.team_status(current_user.ssl_account)
-              -if invite_status != :accepted
+              -if invite_status && invite_status != :accepted
                 -invite = u.ssl_account_users.where(ssl_account_id: current_user.ssl_account).uniq.compact.first
                 %li
                   %strong
@@ -59,7 +59,7 @@
                 -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
               %ul
                 %li
-                  %strong adjust status
+                  %strong user enabled?
                 %li
                   =ed.radio_button :status, 'enabled'
                   enabled
