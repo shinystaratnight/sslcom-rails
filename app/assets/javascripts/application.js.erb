@@ -81,4 +81,11 @@ jQuery(function($) {
     $.get($('.close_flash_message.more').data('dont-show'));
     $('.flash_message_more').remove();
   });
+
+  $('#activate_user').submit(function(e) {
+    if (!$('input#tos').is(':checked')) {
+      $('input#tos').css('outline', '2px solid red');
+      e.preventDefault();
+    }
+  });
 });

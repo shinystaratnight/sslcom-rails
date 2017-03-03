@@ -1,5 +1,6 @@
 = hidden_field_tag :invite, params[:invite]
 = hidden_field_tag :activation_code, params[:activation_code]
+- activate_user ||=nil
 -@chpwd ||= false
 -if @chpwd
   .clearfix
@@ -11,19 +12,39 @@
     = form.text_field :login, value: ''
 .clearfix
   = form.label :password, "#{(@chpwd) ? 'New p' : 'P'}assword<span class='label_desc'>min. 8 chars</span>".html_safe
-  = form.password_field :password
+  = form.password_field :password, required: true
+.activation-pass-hint
+  %div
+    %strong
+      *#{(@chpwd) ? 'New p' : 'P'}assword requires:
+    minimum of 8 characters which must include a minimum of:
+    %br
+  %div
+    %br
+    1 lower case letter [a-z] and
+    %br
+    1 upper case letter [A-Z] and
+    %br
+    1 numeric character [0-9] and
+    %br
+    1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
 .clearfix
   = form.label :password_confirmation, "#{(@chpwd) ? 'New p' : 'P'}assword again<span class='label_desc'>type the password again</span>".html_safe
-  = form.password_field :password_confirmation
-%dl
-  %dt
-    #{(@chpwd) ? 'New p' : 'P'}assword requires:
-  %ul
-    %li a minimum of 8 characters which must include
-    %li a minimum of 1 lower case letter [a-z] and
-    %li a minimum of 1 upper case letter [A-Z] and
-    %li a minimum of 1 numeric character [0-9] and
-    %li a minimum of 1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
+  = form.password_field :password_confirmation, required: true
+-if activate_user
+  .activation-tos
+    .tos-check
+      =check_box_tag :tos
+    .tos-desc
+      -link = link_to 'Subscriber Agreement', 'https://www.ssl.com/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf', target: :blank
+      By accepting the invitation to join this Team at SSL.com you are agreeing to 
+      abide by the terms and conditions of the SSL.com #{"<strong>#{link}</strong>".html_safe}. 
+      Any actions that you perform while in your role will directly affect your active Team. 
+      Be sure to verify which Team is active by checking the "CURRENT TEAM" listing in the header 
+      section of the user portal.
+      %br
+      %br
+      ="If you have any questions please contact <strong>#{mail_to 'support@ssl.com'}</strong> for assistance.".html_safe
 -#
 -#  #or(style='width:100%;')
 -#    Or
