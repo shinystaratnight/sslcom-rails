@@ -4,18 +4,14 @@
       -lines = render_activation_messages
       -unless lines.blank?
         .flash_message_more
-          %table
-            %tr
-              %td
-                %small
-                  .close_flash_message.more{data: {dont_show: dont_show_again_user_url(current_user)}}
-                    %span X
-                    %span never show this again
-            %tr
-              %td
-                -lines.each do |line|
-                  =line.html_safe
-                  %br
+          %small
+            .close_flash_message.more{data: {dont_show: dont_show_again_user_url(current_user)}}
+              %span X
+              %span never show this again
+          %div
+            -lines.each do |line|
+              =line.html_safe
+              %br
     -else
       .flash_message{:class => "#{type.to_s}"}
         %span=message_for_item(flash[type.to_sym], flash["#{type}_item".to_sym])
