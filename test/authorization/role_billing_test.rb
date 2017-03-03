@@ -95,22 +95,27 @@ describe 'billing role' do
   describe 'users' do
     before do 
       visit users_path
-      @ssl_slug = @owner_ssl.to_slug
+      @ssl_slug    = @owner_ssl.to_slug
+      @total_users = @owner_ssl.users.count
     end
 
     it 'SHOULD NOT permit' do
-      # edit self
+      # edit user
       should_not_permit_path edit_managed_user_path(@ssl_slug, @billing.id)
-      # edit account_admin role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @account_admin.id)
-      # edit owner role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @owner.id)
-      # edit users_manager role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @users_manager.id)
-      # edit validations role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @validations.id)
-      # edit installer role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @installer.id)
+
+      # remove any user from team
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @owner.id)
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @billing.id)
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @account_admin.id)
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @users_manager.id)
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @validations.id)
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @installer.id)
+      assert_equal @total_users, @owner_ssl.users.count
     end
   end  
 end

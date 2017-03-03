@@ -63,31 +63,40 @@ describe 'users_manager role' do
   describe 'users' do
     before do 
       visit users_path
-      @ssl_slug = @owner_ssl.to_slug
+      @ssl_slug       = @owner_ssl.to_slug
+      @users_manager2 = create_and_approve_user(@owner_ssl, 'users_manager_other', @users_manager_role)
+      @total_users    = @owner_ssl.users.count
     end
 
     it 'SHOULD see' do
       page.all(:css, '.dropdown').each {|expand| expand.click} # expand all users
       # cannot manage: self, :owner, :account_admin
       #    can manage: :installer, :billing, :validations, other :users_manager
-      assert_equal 8, SslAccountUser.where(ssl_account_id: @owner_ssl.id).map(&:user).count
+      assert_equal 9, @total_users
       page.must_have_content('change roles', count: 4)
       page.must_have_content('remove user from this account', count: 4)
-      page.must_have_content('enabled', count: 4)
+      page.must_have_content('enabled?', count: 4)
       page.must_have_content('disabled', count: 4)
     end
 
     it 'SHOULD permit' do
-      # edit billing role
+      # edit user
       should_permit_path edit_managed_user_path(@ssl_slug, @billing.id)
-      # edit other users_manager role
       should_permit_path edit_managed_user_path(@ssl_slug, @users_manager2.id)
-      # edit validations role
       should_permit_path edit_managed_user_path(@ssl_slug, @validations.id)
-      # edit installer role
       should_permit_path edit_managed_user_path(@ssl_slug, @installer.id)
-    end
 
+      # remove from team
+      visit remove_from_account_managed_user_path(@owner_ssl, @billing.id)
+      assert_equal @total_users - 1, @owner_ssl.users.count
+      visit remove_from_account_managed_user_path(@owner_ssl, @validations.id)
+      assert_equal @total_users - 2, @owner_ssl.users.count
+      visit remove_from_account_managed_user_path(@owner_ssl, @installer.id)
+      assert_equal @total_users - 3, @owner_ssl.users.count
+      visit remove_from_account_managed_user_path(@owner_ssl, @users_manager2.id)
+      assert_equal @total_users - 4, @owner_ssl.users.count
+    end
+    
     it 'SHOULD NOT permit' do
       # edit self
       should_not_permit_path edit_managed_user_path(@ssl_slug, @users_manager.id)
@@ -95,6 +104,14 @@ describe 'users_manager role' do
       should_not_permit_path edit_managed_user_path(@ssl_slug, @owner.id)
       # edit account_admin role
       should_not_permit_path edit_managed_user_path(@ssl_slug, @account_admin.id)
+
+      # remove owner from team
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @owner.id)
+      # remove account_admin from team
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @account_admin.id)
+      # remove SELF from team
+      should_not_permit_path remove_from_account_managed_user_path(@owner_ssl, @users_manager.id)
+      assert_equal @total_users, @owner_ssl.users.count
     end
   end  
 end
