@@ -22,7 +22,7 @@ class CertificateOrdersController < ApplicationController
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer]
   filter_access_to :all
-  filter_access_to :read, :update, :delete, attribute_check: true
+  filter_access_to :read, :update, :delete, :show, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, :require=>[:update]
@@ -30,7 +30,6 @@ class CertificateOrdersController < ApplicationController
     :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
     :require=>[:create, :update, :delete]
   filter_access_to :auto_renew, require: [:admin_manage]
-  filter_access_to :show,:attribute_check=>true
   before_filter :require_user, :if=>'request.subdomain==Reseller::SUBDOMAIN'
   before_filter :require_user_1, :only=>[:developers]
   #cache_sweeper :certificate_order_sweeper

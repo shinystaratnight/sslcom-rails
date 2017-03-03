@@ -175,7 +175,9 @@ authorization do
     #
     # CertificateOrders
     #
-    has_permission_on :certificate_orders, :to => [:create, :read]
+    has_permission_on :certificate_orders, :to => [:create, :read, :show] do
+      if_attribute ssl_account: is {user.ssl_account}
+    end
     has_permission_on :certificates, :to => [:buy_renewal]
     #
     # Orders
@@ -207,7 +209,7 @@ authorization do
     end
 
     has_permission_on :certificates, :to => :read
-    has_permission_on :certificate_orders, :to => [:read, :update, :delete] do
+    has_permission_on :certificate_orders, :to => [:read, :show, :update, :delete] do
       if_attribute ssl_account: is {user.ssl_account}
     end
 
