@@ -69,7 +69,8 @@ class Role < ActiveRecord::Base
       OWNER,
       RESELLER,
       SUPER_USER,
-      SYS_ADMIN
+      SYS_ADMIN,
+      USERS_MANAGER
     ])
   end
 
