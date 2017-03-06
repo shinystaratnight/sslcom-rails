@@ -34,8 +34,12 @@ class UserSessionsController < ApplicationController
       else
         @user_session = current_user_session
       end
-      cookies[:acct] = {:value=>current_user.ssl_account.acct_number, :path => "/", :expires => Settings.
-          cart_cookie_days.to_i.days.from_now}
+      unless current_user.ssl_account.nil?
+        cookies[:acct] = {
+          value:   current_user.ssl_account.acct_number, path: "/",
+          expires: Settings.cart_cookie_days.to_i.days.from_now
+        }
+      end
     else
       require_no_user
       @user_session = UserSession.new(params[:user_session])
@@ -85,9 +89,9 @@ class UserSessionsController < ApplicationController
           to have your activation notice resent")
         format.html {render :action => :new}
         format.js   {render :json=>@user_session.errors}
-      elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_disabled?)
+      elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
         unless @user_session.user.blank?
-          if (!@user_session.user.blank? && @user_session.user.is_disabled?)
+          if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
             flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
             @user_session.destroy
             @user_session=UserSession.new

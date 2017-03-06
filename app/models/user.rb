@@ -314,6 +314,7 @@ class User < ActiveRecord::Base
 
   def is_disabled?(target_ssl=nil)
     ssl = target_ssl.nil? ? ssl_account : target_ssl
+    return true if ssl.nil?
     ssl_account_users.where(ssl_account_id: ssl.id)
       .map(&:user_enabled).include?(false)
   end
@@ -546,7 +547,7 @@ class User < ActiveRecord::Base
   end  
 
   def is_standard?
-    role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]
+    (role_symbols & [Role::OWNER.to_sym, Role::ACCOUNT_ADMIN.to_sym]).any?
   end
 
   def is_reseller?

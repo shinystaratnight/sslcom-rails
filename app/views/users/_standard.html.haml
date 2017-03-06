@@ -1,20 +1,19 @@
 -title="#{Settings.community_name} Customer Dashboard"
 -content_for :title, title
--user ||= current_user
 .reseller_registration_select_tier
   %h2=title
   %p
     The SSL standard account is designed to streamline your ssl.com certificate
     purchases by providing an all encompassing interface related to your ssl 
     certificates including, validations, tracking, reporting, and Smart SeaLs.
-  -if user.ssl_account.has_only_credits?
+  -if ssl_account.has_only_credits?
     %p
       You currently have unused ssl certificate credits. You will need to submit
       a certificate signing request (csr) for a particular pending ssl.com 
       certificate credit in order to process the credit into an ssl certificate 
       for your website.
       =link_to "Click here to see a list of your ssl.com certificate credits.", credits_certificate_orders_path
-  -unless user.ssl_account.has_certificate_orders?
+  -unless ssl_account.has_certificate_orders?
     %p
       To get started and enable encryption and trust services on your website
       through an ssl.com certificate, you will need to acquire an ssl.com
@@ -67,8 +66,8 @@
                             login account
                         %li username: #{user.login}
                         %li email: #{user.email}
-                        %li account number: #{(@ssl_account || user.ssl_account).acct_number}
-                        %li roles: #{user.role_symbols(@ssl_account).join('/')}
+                        %li account number: #{ssl_account.acct_number}
+                        %li roles: #{user.role_symbols(ssl_account).join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
                           :javascript
@@ -94,7 +93,7 @@
                         -if permitted_to?(:edit, :billing_profiles)
                           -unless current_user.is_affiliate?
                             %li=link_to 'become an referral link partner', "https://#{Settings.community_domain}/affiliate/index.php"
-                          -unless current_user.ssl_account.is_registered_reseller?
+                          -unless ssl_account.is_registered_reseller?
                             %li=link_to 'upgrade to reseller', new_reseller_url
                     .half_width_box
                       -if permitted_to?(:edit, :billing_profiles)
@@ -103,15 +102,15 @@
                             %strong
                               billing and purchase
                           -if permitted_to? :create, :funded_accounts
-                            %li available funds: $#{user.ssl_account.funded_account.amount}
+                            %li available funds: $#{ssl_account.funded_account.amount}
                           %li=link_to 'buy certificate', certificates_url
                           %li=link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
-                          -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
+                          -if ssl_account && permitted_to?(:index, :billing_profiles)
                             %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
                           %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
-                          -if user.ssl_account.has_credits?
+                          -if ssl_account.has_credits?
                             %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
-                    -if(ac = user.ssl_account.api_credential)
+                    -if(ac = ssl_account.api_credential)
                       .half_width_box
                         %ul
                           -unless user.is_validations? || user.is_billing?
@@ -126,13 +125,13 @@
               %tbody
                 %tr
                   %td(colspan="5")
-                    -unless user.ssl_account.contact.blank?
+                    -unless ssl_account.contact.blank?
                       .contact_details_box
                         %ul
                           %li
                             %strong
                               contact
-                          -ct = user.ssl_account.contact
+                          -ct = ssl_account.contact
                           -unless ct.blank?
                             %li
                               =ct.first_name+" "+ct.last_name

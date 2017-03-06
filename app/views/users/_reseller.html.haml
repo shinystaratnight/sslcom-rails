@@ -1,6 +1,5 @@
 -content_for :title, "#{Settings.community_name} Reseller Dashboard"
--user ||= current_user
--r = user.ssl_account.reseller
+-r = ssl_account.reseller
 =render(:partial => 'shared/form_progress_indicator', :locals => {options:{li_style: "margin: 0px 40px"}, :pages=>[Reseller::SIGNUP_PAGES_FREE, 3]}) if flash[:notice]==Reseller::WELCOME
 .reseller_registration_select_tier
   %h2 SSL Reseller Dashboard
@@ -81,18 +80,18 @@
                       %ul
                         %li
                           %strong available funds
-                          %li=user.ssl_account.funded_account.amount(true).format :with_currency=>false
+                          %li=ssl_account.funded_account.amount(true).format :with_currency=>false
                           %li
                             =link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
-                          -if current_user.ssl_account && permitted_to?(:index, :billing_profiles)
+                          -if ssl_account && permitted_to?(:index, :billing_profiles)
                             %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
                           %li
                             =link_to 'buy certificate', certificates_url
                           %li
-                            =link_to 'certificate pricing', reseller_tier_url(user.ssl_account.reseller.reseller_tier.id)
+                            =link_to 'certificate pricing', reseller_tier_url(ssl_account.reseller.reseller_tier.id)
                 %tr
                   %td(colspan="5")
-                    -if ac = user.ssl_account.api_credential
+                    -if ac = ssl_account.api_credential
                       .certificate_details_box
                         %ul
                           -unless user.is_validations? || user.is_billing?
@@ -110,7 +109,7 @@
                             login account
                         %li username: #{user.login}
                         %li email: #{user.email}
-                        %li account number: #{user.ssl_account.acct_number}
+                        %li account number: #{ssl_account.acct_number}
                         %li roles: #{user.role_symbols.join('/')}
                         =render partial: 'ssl_slug_company', locals: {user: user}
                         -if permitted_to? :admin_manage, user
@@ -121,13 +120,13 @@
               %tbody
                 %tr
                   %td(colspan="5")
-                    -unless user.ssl_account.contact.blank?
+                    -unless ssl_account.contact.blank?
                       .contact_details_box
                         %ul
                           %li
                             %strong
                               contact
-                          -ct = user.ssl_account.contact
+                          -ct = ssl_account.contact
                           -unless ct.blank?
                             %li
                               =ct.first_name+" "+ct.last_name

@@ -1,6 +1,9 @@
--if current_user.ssl_account.is_registered_reseller?
-  =render 'reseller'
+-target_ssl = params[:ssl_slug] && current_user.is_system_admins? ? @ssl_account : @user.ssl_account
+-user       = @user || current_user
+-locals     = {user: user, ssl_account: target_ssl}
+-if target_ssl.is_registered_reseller?
+  =render partial: 'reseller', locals: locals
 -elsif current_user.is_system_admins?
-  =render 'admin'
--elsif current_user.is_standard?
-  =render 'standard'
+  =render partial: 'admin', locals: locals
+-else
+  =render partial: 'standard', locals: locals
