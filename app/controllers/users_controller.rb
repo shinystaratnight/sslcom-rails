@@ -228,7 +228,9 @@ class UsersController < ApplicationController
     if switch_ssl_account && @user.get_all_approved_accounts.map(&:id).include?(switch_ssl_account.to_i)
       @user.set_default_ssl_account(switch_ssl_account)
       team_name      = @user.ssl_accounts.find(switch_ssl_account).get_team_name
-      flash[:notice] = "You have switched to team '#{team_name}'."
+      flash[:notice] = "Your default Team selection has been successfully updated.
+        The current default team is %s."
+      flash[:notice_item] = "<strong>#{team_name}</strong>"
       set_ssl_slug(@user)
     else
       flash[:error] = "Something went wrong. Please try again!"
@@ -240,12 +242,15 @@ class UsersController < ApplicationController
     user   = User.find params[:id]
     errors = user.approve_invite(params)
     if errors.any?
-      flash[:error] = "Unable to approve due to errors. #{errors.join(' ')}"
+      flash[:error] = "Unable to approve due to errors. #{errors.join(' ')}."
     else
-      acct_number = SslAccount.find(params[:ssl_account_id]).acct_number
-      flash[:notice] = "You've been added to account #{acct_number}. Please click <strong>%s</strong>
-        to go to the new account or select from CURRENT TEAM in the top menu."
-      flash[:notice_item] = view_context.link_to('here',
+      team = SslAccount.find(params[:ssl_account_id])
+      flash[:notice] = "You have accepted the invitation to <strong>#{team.get_team_name}</strong>.<br />
+        Would you like to set <strong>#{team.get_team_name}</strong> as your Default Team? 
+        <i>(This setting may be changed later.)</i><br />
+        %s <span class='chip medium--grey'>NO</span><br /><br />
+        The current default is <strong>#{user.ssl_account.get_team_name}</strong>."
+      flash[:notice_item] = view_context.link_to("<span class='chip medium'>YES</span>".html_safe,
         switch_default_ssl_account_user_path(ssl_account_id: params[:ssl_account_id]))
     end
     params[:to_teams] ? redirect_to(teams_user_path(user)) : redirect_to(account_path(ssl_slug: @ssl_slug))
