@@ -1,0 +1,12 @@
+Hello,
+#{"\n"}
+#{@current_user.login} has invited a disabled user to their #{Settings.community_name} team.
+#{"\n\n"}
+#{"\t"}Team:#{"\t\t"}#{@team.get_team_name}
+#{"\t"}Disabled User:#{"\t"}login: #{@disabled_user.login} | email: #{@disabled_user.email}
+#{"\t"}Date:#{"\t\t"}#{DateTime.now.strftime("%b %d, %Y at %l:%M %p")}
+#{"\n"}
+*Note (disabled user):
+1. The user was disabled by sysadmin or super_user and thus cannot be invited to any team.
+2. This user is disabled for ALL teams they are associated with, including the teams they own.
+3. The team owner was prevented from inviting this user and was notified.
