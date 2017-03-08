@@ -226,8 +226,8 @@ module ApplicationHelper
   end
 
   def render_activation_messages
-    assignments = current_user.assignments.where.not(role_id: Role.cannot_be_invited)
-    if assignments.any?
+    assignments = current_user.assignments.where.not(role_id: Role.cannot_be_invited) if current_user
+    if assignments && assignments.any?
       teams = current_user.ssl_account_users
         .where(ssl_account_id: assignments.map(&:ssl_account).uniq.compact.map(&:id))  
         .where.not(approved: false).where(declined_at: nil).map(&:ssl_account).uniq.compact
