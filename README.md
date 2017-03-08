@@ -16,6 +16,3 @@
 ```
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
 ```
-
-## Migrating to multi-team
-`rails runner bin/populate_roles_team_update.rb -e production`
