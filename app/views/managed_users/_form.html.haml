@@ -2,7 +2,7 @@
 - if @user.new_record?
   .clearfix.form_input
     = form.label :email, "Email<span class='label_desc'>receives activation</span>".html_safe
-    = form.text_field :email, :size=>HTML_TEXT_FIELD_SIZE, required: true
+    = form.email_field :email, :size=>HTML_TEXT_FIELD_SIZE, required: true
 .clearfix.form_input
   - if system_admin || current_user.can_manage_team_users?
     - if @user_accounts_roles 
@@ -16,7 +16,8 @@
       options_from_collection_for_select(ssl_collection, :id, :get_team_name, ssl_select), {},
       prompt: 'Select Teams',
       multiple: true,
-      size: 100
+      size: 100,
+      required: true
   - else
     = form.hidden_field :ssl_account_ids, value: [current_user.ssl_account.try(:id)]
 - unless @user.new_record?

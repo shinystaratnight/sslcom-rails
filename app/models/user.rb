@@ -28,7 +28,8 @@ class User < ActiveRecord::Base
     :openid_identifier, :status, :assignments_attributes, :first_name, :last_name,
     :default_ssl_account, :ssl_account_id, :role_ids, :role_change_type,
     :main_ssl_account, :max_teams, :persist_notice
-  validates :email, email: true, uniqueness: true #TODO look at impact on checkout
+  validates :email, email: true, uniqueness: true, #TODO look at impact on checkout
+    format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
   validates :password, :format =>
       {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
       message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."}
