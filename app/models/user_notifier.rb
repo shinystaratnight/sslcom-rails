@@ -92,6 +92,15 @@ class UserNotifier < ActionMailer::Base
             from: Settings.from_email.activations,
               to: (@admin ? @admin.email : @invited_user.email)
   end
+  
+  def invite_to_account_disabled(disabled_user, account, current_user)
+    @disabled_user = disabled_user
+    @current_user  = current_user
+    @team          = account
+    mail subject: "A disabled user #{@disabled_user.login} was invited to team #{@team.get_team_name}",
+            from: Settings.support_email,
+              to: Settings.support_email
+  end
 
   def removed_from_account(user, account, current_user)
     @remove_user  = user

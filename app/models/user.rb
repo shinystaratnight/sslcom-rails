@@ -383,6 +383,10 @@ class User < ActiveRecord::Base
     UserNotifier.invite_to_account_accepted(self, account, for_admin).deliver
   end
 
+  def deliver_invite_to_account_disabled!(account, current_user)
+    UserNotifier.invite_to_account_disabled(self, account, current_user).deliver
+  end
+
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
     l_bound = "01/01/2000" if l_bound.blank?
     s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"

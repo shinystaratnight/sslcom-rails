@@ -8,32 +8,37 @@ class ManagedUsersController < ApplicationController
   end
 
   def create
-    @ssl_accounts = SslAccount.where(
-      id: params[:user][:ssl_account_ids].reject(&:blank?).compact
-    )
-    ignore_teams = user_exists_for_teams(params[:user][:email])
-    ignore_teams = ignore_teams.map(&:get_team_name).join(', ') unless ignore_teams.empty?
-    if @ssl_accounts.empty?
-      @user         = User.new
-      flash[:error] = "User #{params[:user][:email]} already exists for these teams: #{ignore_teams}!"
-      render :new
-    else
-      new_params  = params.merge(root_url: root_url, from_user: current_user)
-      user_exists = User.get_user_by_email(params[:user][:email])
-      @user       = current_user.invite_user_to_account!(new_params)
-      if @user.persisted?
-        invite_user_to_team(
-          @user, new_params, (request.subdomain == Reseller::SUBDOMAIN), user_exists
-        )
-        flash_notice = "An invitation email has been sent to #{@user.email} 
-          for teams #{@ssl_accounts.map(&:get_team_name).join(', ')}."
-        unless ignore_teams.blank? || ignore_teams.empty?
-          flash_notice << " User already exisits for team(s) #{ignore_teams}."
-        end
-        flash[:notice] = flash_notice
-        redirect_to users_path(ssl_slug: @ssl_slug)
-      else
+    user_exists   = User.get_user_by_email(params[:user][:email])
+    if user_exists && user_exists.is_admin_disabled?
+      disabled_user_invited(user_exists, params[:user][:ssl_account_ids])
+      redirect_to users_path(ssl_slug: @ssl_slug)
+    else  
+      @ssl_accounts = SslAccount.where(
+        id: params[:user][:ssl_account_ids].reject(&:blank?).compact
+      )
+      ignore_teams = user_exists_for_teams(params[:user][:email])
+      ignore_teams = ignore_teams.map(&:get_team_name).join(', ') unless ignore_teams.empty?
+      if @ssl_accounts.empty?
+        @user         = User.new
+        flash[:error] = "User #{params[:user][:email]} already exists for these teams: #{ignore_teams}!"
         render :new
+      else
+        new_params  = params.merge(root_url: root_url, from_user: current_user)
+        @user       = current_user.invite_user_to_account!(new_params)
+        if @user.persisted?
+          invite_user_to_team(
+            @user, new_params, (request.subdomain == Reseller::SUBDOMAIN), user_exists
+          )
+          flash_notice = "An invitation email has been sent to #{@user.email} 
+            for teams #{@ssl_accounts.map(&:get_team_name).join(', ')}."
+          unless ignore_teams.blank? || ignore_teams.empty?
+            flash_notice << " User already exisits for team(s) #{ignore_teams}."
+          end
+          flash[:notice] = flash_notice
+          redirect_to users_path(ssl_slug: @ssl_slug)
+        else
+          render :new
+        end
       end
     end
   end
@@ -144,5 +149,15 @@ class ManagedUsersController < ApplicationController
       user.approve_all_accounts(:log_invite)
       user.invite_new_user(params.merge(deliver_invite: true, invited_teams: @ssl_accounts))
     end
+  end
+
+  def disabled_user_invited(disabled_user, ssl_account_ids)
+    ssl_accounts = SslAccount.where(id: ssl_account_ids.reject(&:blank?).compact)
+    if ssl_accounts.any?
+      ssl_accounts.each do |team|
+        disabled_user.deliver_invite_to_account_disabled!(team, current_user)
+      end
+    end
+    flash[:error] = "User #{params[:user][:email]} has been disabled by SSL.com and cannot be invited at this moment!"
   end
 end
