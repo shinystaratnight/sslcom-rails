@@ -466,7 +466,7 @@ class ApplicationController < ActionController::Base
   end
 
   def user_not_authorized
-    render :text => "403 Forbidden", :status => 403
+    render 'site/403_forbidden', status: 403
   end
 
   def save_billing_profile
