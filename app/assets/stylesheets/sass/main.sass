@@ -5552,7 +5552,11 @@ table .constrained
   &.tiny
     font-size: 0.4rem
     padding: 3px 2px 1px 2px
-
+  &.medium
+    font-size: 0.6rem
+  &.medium--grey
+    font-size: 0.6rem
+    background: #C0C0C0
 /* Header notifications */
 i.material-icons
   &.notifications-email
@@ -5626,3 +5630,23 @@ span.notifications-teams
   width: 65%
   div:last-child
     margin-left: 2rem
+
+/* 403 Error Page */
+#not-authorized-container
+  background-color: #F7F7F7
+  padding: 8rem 0
+  text-align: center
+  #error-num
+    font-size: 8rem
+    font-weight: 700
+  #error-title
+    color: #808080
+    font-size: 2rem
+  #error-desc
+    font-size: 1.3rem
+    margin-top: 2rem
+  #error-btn
+    .button_blue
+      font-size: 1.3rem
+      padding: 0.5rem
+      width: 11%

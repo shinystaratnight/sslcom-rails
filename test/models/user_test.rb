@@ -49,6 +49,13 @@ class UserTest < Minitest::Spec
       create(:user, email: 'dupe@domain.com')
       refute build(:user, email: 'dupe@domain.com').valid?
     end
+    it 'should require valid email' do
+      refute build(:user, email: 'invalid_email.com').valid?
+      refute build(:user, email: 'invalid_email@').valid?
+      refute build(:user, email: '<valid@domain.com>').valid?
+      refute build(:user, email: 'invalid_email').valid?
+      assert build(:user, email: 'valid_email@domain.com').valid?
+    end
     it 'should have default_ssl_account if assigned role' do
       user = create(:user, :owner)
       refute_nil user.default_ssl_account
