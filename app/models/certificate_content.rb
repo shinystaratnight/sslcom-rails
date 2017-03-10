@@ -34,7 +34,7 @@ class CertificateContent < ActiveRecord::Base
     azadegi.com Comodo\ Root\ CA CyberTrust\ Root\ CA DigiCert\ Root\ CA Equifax\ Root\ CA friends.walla.co.il
     GlobalSign\ Root\ CA login.live.com login.yahoo.com my.screenname.aol.com secure.logmein.com
     Thawte\ Root\ CA twitter.com VeriSign\ Root\ CA wordpress.com www.10million.org www.balatarin.com
-    cia.gov cybertrust.com equifax.com facebook.com globalsign.com
+    cia.gov cybertrust.com equifax.com facebook.com globalsign.com ssl.com
     google.com hamdami.com mossad.gov.il sis.gov.uk microsoft.com google.com
     yahoo.com login.yahoo.com login.skype.com mozilla.org live.com global\ trustee)
 
