@@ -59,6 +59,8 @@ class User < ActiveRecord::Base
   scope :search,    -> (term){joins{ssl_accounts}.where{
                         (login =~ "%#{term}%") |
                         (email =~ "%#{term}%") |
+                        (last_login_ip =~ "%#{term}%") |
+                        (current_login_ip =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account(default_team=nil)

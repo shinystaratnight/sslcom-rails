@@ -36,6 +36,7 @@
               %li login count: #{u.login_count}
               %li failed login count: #{u.failed_login_count}
               %li last login ip: #{u.last_login_ip}
+              %li current login ip: #{u.last_login_ip}
               %li=remote_login_link(u)
               %li=link_to 'change email address', edit_email_user_url(u)
               %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
