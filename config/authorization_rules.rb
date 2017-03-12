@@ -236,9 +236,9 @@ authorization do
     #
     # Validations
     #
-    has_permission_on :validations, :to => [:create]
-    has_permission_on :validations, :to => [:read, :update] do
-      if_attribute :ssl_accounts => contains {user.ssl_account}
+    # has_permission_on :validations, :to => [:create]
+    has_permission_on :validations, :to => [:read, :update, :create] do
+      if_attribute :users => contains {user}
     end
     #
     # ValidationHistories

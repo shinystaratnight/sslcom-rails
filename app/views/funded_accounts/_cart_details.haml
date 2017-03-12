@@ -1,6 +1,6 @@
 -certs ||= @certificate_orders
 -is_receipt ||= false
-%p=remote_login_link(@cart.user) if @cart and current_user.is_system_admins?
+%p=remote_login_link(@cart.user) if(@cart and current_user.try("is_system_admins?".to_sym))
 %p.empty_cart_desc(class="#{certs.empty? ? '' : 'hidden'}")
   Your shopping cart is currently empty.
 %table#order_details_table.multiple(cellspacing='0' class="#{is_receipt ? 'receipt' : ''}")

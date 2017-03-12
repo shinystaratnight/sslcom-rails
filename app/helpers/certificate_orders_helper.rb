@@ -46,7 +46,6 @@ module CertificateOrdersHelper
   end
 
   def action(certificate_order)
-    is_billing = current_user.is_billing?
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
