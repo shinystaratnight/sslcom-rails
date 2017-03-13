@@ -283,7 +283,7 @@ class ValidationsController < ApplicationController
         if params[:id]
           Validation.find(params[:id])
         elsif params[:certificate_order_id]
-          CertificateOrder.find_by_ref(params[:certificate_order_id]).validation
+          CertificateOrder.find_by_ref(params[:certificate_order_id]).try(:validation)
         end
   end
 

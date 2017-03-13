@@ -1,5 +1,5 @@
 class Country < ActiveRecord::Base
-  BLACKLIST=%w(AF CI CU ER GN IR IQ LR MM KP RW SL SY SD SS ZW)
+  BLACKLIST=%w(AF CU ER GN IR IQ LR KP RW SL SY SD SS ZW)
   PRIORITY = [["United States", "US"], ["United Kingdom", "UK"], ["Canada", "CA"]]
 
   scope :approved, ->{where{iso1_code << Country::BLACKLIST}}
