@@ -32,11 +32,10 @@
             %li
               %strong manage account
             - if permitted_to? :admin_manage
-              %li last login ip: #{u.last_login_ip}
               %li login count: #{u.login_count}
               %li failed login count: #{u.failed_login_count}
-              %li last login ip: #{u.last_login_ip}
-              %li current login ip: #{u.last_login_ip}
+              %li last login ip: #{link_to(u.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank")}
+              %li current login ip: #{link_to(u.current_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.current_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank")}
               %li=remote_login_link(u)
               %li=link_to 'change email address', edit_email_user_url(u)
               %li=link_to 'change username', '#', onclick: "change_login_#{u.id}()"
