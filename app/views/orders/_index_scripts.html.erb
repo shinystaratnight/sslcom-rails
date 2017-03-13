@@ -221,14 +221,15 @@ jQuery(function($) {
       profile_form_hidden = true;
     });
     $("button[name=apply_discount]").bind("click", function() {
-      if($('#discount_code').val()==""){
+      var discount_code = $('#discount_code').val();
+      if(discount_code==""){
         $('span#discount_applied,span#invalid_discount_code').remove();
         $('div#tier_load_amount').text(old_total_text);
         return;
       }
       $.ajax({
         url: "<%=lookup_discount_orders_url%>",
-        data: {discount_code: $('#discount_code').val()},
+        data: {discount_code: discount_code},
         type: "POST",
         success: function(data, status){
           $('span#discount_applied,span#invalid_discount_code').remove();
@@ -243,7 +244,15 @@ jQuery(function($) {
             new_total = old_total - discount;
                     $('div#tier_load_amount').text('$'+new_total.toFixed(2).toString()+" USD");
             if($('span#discount_applied').length==0)
-              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied (-$"+(discount).toFixed(2).toString()+" USD)</span>");
+              var cur_discount = (discount).toFixed(2);
+              $('div#tier_load_amount').after("<span id='discount_applied'>"+data.discount.label+" applied (-$"+cur_discount.toString()+" USD)</span>");
+              $('span#discount_applied').data('discount', cur_discount);
+              $('span#discount_applied').data('discount_code', discount_code);
+              if ($('#payment_method_paypal, #funding_source_paypal').is(':checked')) {
+                $('[name*=paypal]').attr('href',
+                  "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>"
+                    +'?discount='+cur_discount+'&discount_code='+discount_code);
+              }
           }
           else if($('#discount_code').val()!=""){
             $('label[for=discount_code]').append("<span class='label_desc' id='invalid_discount_code'>invalid discount code</span>");

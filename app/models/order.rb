@@ -217,6 +217,7 @@ class Order < ActiveRecord::Base
     self.update_attribute :visitor_token, options[:visitor_token] if options[:visitor_token]
     self.mark_paid!
     self.credit_affiliate(options[:cookies])
+    self.commit_discounts
   end
 
   def apply_discounts(params)
