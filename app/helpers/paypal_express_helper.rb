@@ -1,16 +1,21 @@
 module PaypalExpressHelper
   def get_setup_purchase_params(cart, request, params)
-    subtotal, shipping, total = get_totals(cart)
+    subtotal, shipping, total = get_totals(cart, params[:discount])
+    items                     = get_items(cart)
+    discount_amt              = subtotal-total
+    if (discount_amt > 0) && params[:discount_code]
+      items.push({name: 'Discount', number: params[:discount_code], quantity: 1, amount: -discount_amt})
+    end
     return to_cents(total), {
         :ip => request.remote_ip,
         :return_url => url_for(:action => 'purchase', ssl_slug: params[:ssl_slug], :only_path => false, deduct_order: params[:deduct_order]),
         :cancel_return_url => root_url,
-        :subtotal => to_cents(subtotal),
+        :subtotal => to_cents(total),
         :shipping => to_cents(shipping),
         :handling => 0,
         :tax =>      0,
         :allow_note =>  true,
-        :items => get_items(cart),
+        :items => items,
     }
   end
 
@@ -79,10 +84,11 @@ module PaypalExpressHelper
     }
   end
 
-  def get_totals(cart)
+  def get_totals(cart, discount=nil)
     subtotal = cart.amount.cents
+    discount = discount ? (discount.to_f * 100) : 0
     shipping = 0.0
-    total = subtotal + shipping
+    total    = (subtotal - discount) + shipping
     return subtotal, shipping, total
   end
 

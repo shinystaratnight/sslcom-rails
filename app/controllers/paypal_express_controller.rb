@@ -59,6 +59,9 @@ class PaypalExpressController < ApplicationController
     purchase = @gateway.purchase total_as_cents, purchase_params
 
     if purchase.success?
+      discount_code = purchase_params[:items].select {|i| i[:name]=='Discount'}
+      params[:discount_code] = discount_code.first[:Number] if discount_code.any?
+
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/(deposit|reseller)/i
         @deposit=@ssl_account.purchase Deposit.create({amount: total_as_cents, payment_method: 'paypal'})

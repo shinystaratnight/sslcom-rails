@@ -2,13 +2,16 @@
 %h3.subheading.funding_sources_head Funding Sources
 #existing_credit_cards
   %table
-    -unless profiles.empty?
-      %tr#existing_credit_cards_header
-        %td Load From
-        %td Method
-        %td Card Number
-        %td Expiry Date
-        %td
+    %tr#existing_credit_cards_header
+      %td Load From
+      %td Method
+      %td Card Number
+      %td Expiry Date
+      %td
+      %tr#paypal
+        %td= radio_button_tag :funding_source, 'paypal', :class=>'billing_profile_radio'
+        %td{colspan:'4'} Paypal
+    -unless profiles.empty?  
       -profiles.each do |profile|
         %tr[profile]
           %td= radio_button_tag :funding_source, profile.id, :class=>'billing_profile_radio'

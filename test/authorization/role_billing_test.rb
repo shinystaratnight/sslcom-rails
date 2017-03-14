@@ -89,6 +89,9 @@ describe 'billing role' do
       refute page.has_content? 'documents'
       find('a.expand').click
       refute page.has_content? 'view certificate details'
+
+      # submit csr
+      should_not_permit_path edit_certificate_order_path(@owner_ssl.to_slug, CertificateOrder.first)
     end
   end
 
