@@ -209,7 +209,16 @@ authorization do
     end
 
     has_permission_on :certificates, :to => :read
-    has_permission_on :certificate_orders, :to => [:read, :show, :update, :delete] do
+    #
+    # CertificateOrders
+    #
+    has_permission_on :certificate_orders, to: [
+      :edit,
+      :delete,
+      :read,
+      :show,
+      :update
+    ] do
       if_attribute ssl_account: is {user.ssl_account}
     end
 

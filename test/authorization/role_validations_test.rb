@@ -76,6 +76,21 @@ describe 'validations role' do
       should_not_see_site_seal_js
     end
   end
+  
+  describe 'certificate orders' do
+    before do
+      login_as(@owner, self.controller.cookies)
+      prepare_certificate_orders @owner
+      login_as(@validations, self.controller.cookies)
+    end
+
+    it 'SHOULD NOT permit' do
+      assert_equal           1, CertificateOrder.count
+      should_not_permit_path certificate_orders_path(@owner_ssl.to_slug)
+      # submit csr
+      should_not_permit_path edit_certificate_order_path(@owner_ssl.to_slug, CertificateOrder.first)
+    end
+  end
 
   describe 'users' do
     before do 
