@@ -314,22 +314,34 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.make_dev_db(from=nil)
+  def self.make_dev_db(start=nil, finish=nil)
     SentReminder.delete_all
     TrackedUrl.delete_all
     Tracking.delete_all
     VisitorToken.delete_all
     CaApiRequest.delete_all
-    # ActiveRecord::Base.connection.tables.map do |model|
-    #   unless %w(auto_renewals delayed_job).include?(model)
-    #     begin
-    #       klass = model.capitalize.singularize.camelize.constantize
-    #       klass.where{created_at > from.days.ago}.delete_all
-    #     rescue
-    #
-    #     end
-    #   end
-    # end
+    if start
+      if start.is_a?(String)
+        s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+        f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+        start = Date.strptime start, s
+        finish = Date.strptime finish, f
+      end
+      %w(User SslAccount SslAccountUser SiteSeal BillingProfile CertificateOrder Order
+        CertificateContent CertificateName Csr SignedCertificate Contact Validation ValidationHistory ValidationHistoryValidation
+        ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit Api ApiCertificateRequest
+        ApiCredential CaApiRequest Reseller).each {|table| table.constantize.unscoped.where{created_at << (start..finish)}.delete_all}
+    end
+    ActiveRecord::Base.connection.tables.map do |model|
+      unless %w(auto_renewals delayed_job).include?(model)
+        begin
+          klass = model.capitalize.singularize.camelize.constantize
+          klass.where{created_at > from.days.ago}.delete_all
+        rescue
+
+        end
+      end
+    end
     # Obfuscate IDs
     i=100000
     ApiCredential.find_each{|a|
@@ -351,9 +363,8 @@ class SslAccount < ActiveRecord::Base
     i=10000
     # scramble usernames, emails
     User.find_each {|u|
-      User.change_login u.login, i
-      u.email = "test@#{i.to_s}.com"
-      u.password = i.to_s
+      u.update_columns(login: i, email: "test@#{i.to_s}.com")
+      u.password = "123456AsDF#"
       u.save
       i+=1
     }
