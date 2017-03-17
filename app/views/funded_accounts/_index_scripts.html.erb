@@ -16,7 +16,13 @@ jQuery(function($) {
       $('img[id=toggle_billing_profile_form]').attr('src', "<%= asset_path('add_new_billing_profile.png') %>");
       profile_form_hidden = true;
     });
-    $.update_balance_after_load();
+    $.update_balance_after_load();    
+    $('#funded_account_target_amount').click(function(){
+      $.update_req_funded_balance();
+    });
+    $('#funded_account_target_amount').change(function(){
+      $.update_req_funded_balance();
+    });
   });
 });
 </script>

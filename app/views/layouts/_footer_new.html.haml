@@ -550,6 +550,27 @@
         $('#balance_after_load').text('$'+((parseFloat(bracket)+parseFloat(current_balance)).toFixed(2))+" USD");
       }
     };
+    $.update_req_funded_balance = function(){
+      if ($('#funded_account_target_amount').length) {
+        var deposit_amount = $('#funded_account_target_amount').val(),
+            funded_amount  = $('#current_balance').data('funded-account'),
+            order_amount   = $('#funded_account_amount').val(),
+            diff           = deposit_amount - order_amount,
+            min_amount     = order_amount - funded_amount,
+            final_amount   = 0;
+        if (diff == 0 || diff > 0) {
+          final_amount = 0;
+        } else {
+          final_amount = funded_amount-(funded_amount-Math.abs(diff));
+        }
+        if (final_amount > funded_amount) {
+          final_amount = 'ERROR: amount below limit of $'+min_amount.toFixed(2);
+        } else {
+          final_amount = '$'+final_amount.toFixed(2)+" USD";
+        }
+        $('#current_balance').text(final_amount);
+      }
+    };
     $.adjust_items_in_cart();
     /* Easiest Tooltips CONFIG */
     // these 2 variable determine popup's distance from the cursor

@@ -48,7 +48,10 @@
   #completed_order_results
     -if @deposit
       #deposit_details.striped_divs
-        %h3.order_results_header SSL Account Deposit Details
+        -desc   = @deposit.description
+        -header = (desc =~ /Funded Account/) ? "#{desc} <br />#{@deposit.notes}" : 'SSL Account Deposit Details'
+        %h3.order_results_header
+          =header.html_safe
         #deposit_ref_num
           reference number:
           %span=h @deposit.reference_number
