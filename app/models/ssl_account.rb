@@ -315,11 +315,11 @@ class SslAccount < ActiveRecord::Base
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
   def self.make_dev_db(start=nil, finish=nil)
-    SentReminder.delete_all
-    TrackedUrl.delete_all
-    Tracking.delete_all
-    VisitorToken.delete_all
-    CaApiRequest.delete_all
+    SentReminder.unscoped.delete_all
+    TrackedUrl.unscoped.delete_all
+    Tracking.unscoped.delete_all
+    VisitorToken.unscoped.delete_all
+    CaApiRequest.unscoped.delete_all
     if start
       if start.is_a?(String)
         s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
@@ -327,60 +327,62 @@ class SslAccount < ActiveRecord::Base
         start = Date.strptime start, s
         finish = Date.strptime finish, f
       end
-      %w(User SslAccount SslAccountUser SiteSeal BillingProfile CertificateOrder Order
+      %w(User SiteSeal BillingProfile CertificateOrder Order
         CertificateContent CertificateName Csr SignedCertificate Contact Validation ValidationHistory ValidationHistoryValidation
         ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit Api ApiCertificateRequest
         ApiCredential CaApiRequest Reseller).each {|table| table.constantize.unscoped.where{created_at << (start..finish)}.delete_all}
     end
-    ActiveRecord::Base.connection.tables.map do |model|
-      unless %w(auto_renewals delayed_job).include?(model)
-        begin
-          klass = model.capitalize.singularize.camelize.constantize
-          klass.where{created_at > from.days.ago}.delete_all
-        rescue
-
-        end
-      end
-    end
+    # ActiveRecord::Base.connection.tables.map do |model|
+    #   unless %w(auto_renewals delayed_job).include?(model)
+    #     begin
+    #       klass = model.capitalize.singularize.camelize.constantize
+    #       klass.where{created_at > from.days.ago}.delete_all
+    #     rescue
+    #
+    #     end
+    #   end
+    # end
     # Obfuscate IDs
     i=100000
-    ApiCredential.find_each{|a|
-      a.account_key=i
-      a.secret_key=i
-      a.save
+    ApiCredential.unscoped.find_each{|a|
+      a.update_columns account_key: i, secret_key: i
       i+=1}
     i=10000
-    SiteSeal.find_each{|s|
-      s.ref=i
-      s.save
+    SiteSeal.unscoped.find_each{|s|
+      s.update_column :ref,i
       i+=1}
     # Obfuscate IDs
     i=10000
-    SslAccount.find_each{|s|
+    SslAccount.class_eval do
+      def self.readonly_attributes
+        []
+      end
+    end
+    SslAccount.unscoped.find_each{|s|
       s.acct_number=i
-      s.save
+      s.save validate: false
       i+=1}
     i=10000
     # scramble usernames, emails
-    User.find_each {|u|
+    User.unscoped.find_each {|u|
       u.update_columns(login: i, email: "test@#{i.to_s}.com")
       u.password = "123456AsDF#"
       u.save
       i+=1
     }
     i=10000
-    CertificateOrder.find_each{|co|
+    CertificateOrder.unscoped.find_each{|co|
       co.ref = "co-"+i.to_s
       co.external_order_number = "000000"
       co.save
       i+=1
     }
     i=10000
-    SignedCertificate.find_each{|sc|
+    SignedCertificate.unscoped.find_each{|sc|
       sc.update_column :organization, (i+=1).to_s
     }
     i=10000
-    Csr.find_each{|c|
+    Csr.unscoped.find_each{|c|
       c.organization = i.to_s
       c.organization_unit = i.to_s
       c.state = i.to_s
@@ -389,11 +391,11 @@ class SslAccount < ActiveRecord::Base
       i+=1
     }
     i=10000
-    Order.find_each{|o|
+    Order.unscoped.find_each{|o|
       o.update_column :reference_number, (i+=1).to_s
     }
     # obfuscate credit card numbers
-    BillingProfile.find_each{|bp|
+    BillingProfile.unscoped.find_each{|bp|
       bp.card_number="4222222222222"
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
@@ -404,7 +406,7 @@ class SslAccount < ActiveRecord::Base
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,
-    [Contact, Reseller].each { |klass| klass.find_each{|c|
+    [Contact, Reseller].each { |klass| klass.unscoped.find_each{|c|
       c.first_name = "Bob"
       c.last_name = "Spongepants#{c.id}"
       c.email = "bob@spongepants#{c.id}.com"

@@ -142,7 +142,7 @@ SslCom::Application.routes.draw do
       resources :contacts, :only=>:index
     end
 
-    resources :csrs do
+    resources :csrs, shallow: true do
       resources :signed_certificates do
         member do
           get :server_bundle

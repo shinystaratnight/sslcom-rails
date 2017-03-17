@@ -645,6 +645,7 @@ class User < ActiveRecord::Base
   def make_admin
     unless roles.map(&:name).include?(Role::SYS_ADMIN)
       roles << Role.find_by(name: Role::SYS_ADMIN)
+      assignments << Assignment.new(ssl_account_id: ssl_account.id, role_id: Role.find_by(name: Role::SYS_ADMIN).id)
     end
   end
 

@@ -51,10 +51,14 @@
                   %th account type
                   %th signup date
                   %th last logged on
+                  -if current_user.is_system_admins?
+                    %th last ip address
                 %tr.alt
                   %td standard
                   %td=user.created_at.strftime("%b %d, %Y")
                   %td=user.updated_at.strftime("%b %d, %Y")
+                  -if current_user.is_system_admins?
+                    %td #{link_to(u.last_login_ip, "http://www.infosniper.net/index.php?ip_address=#{u.last_login_ip}&map_source=1&overview_map=1&lang=1&map_type=1&zoom_level=7", target: "_blank") if u.last_login_ip}
             %table(cellspacing="0")
               %tbody
                 %tr
