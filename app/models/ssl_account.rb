@@ -327,7 +327,7 @@ class SslAccount < ActiveRecord::Base
         start = Date.strptime start, s
         finish = Date.strptime finish, f
       end
-      %w(User SiteSeal BillingProfile CertificateOrder Order
+      %w(User SiteSeal BillingProfile CertificateOrder Order DomainControlValidation
         CertificateContent CertificateName Csr SignedCertificate Contact Validation ValidationHistory ValidationHistoryValidation
         ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit Api ApiCertificateRequest
         ApiCredential CaApiRequest Reseller).each {|table| table.constantize.unscoped.where{created_at << (start..finish)}.delete_all}
