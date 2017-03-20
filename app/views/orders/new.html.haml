@@ -67,6 +67,10 @@
           #billing_section
             #register_card_form{initial_display?}
               .subheading Payment Method
+              -unless current_user 
+                .paypal.clearfix
+                  = label_tag "Paypal"
+                  = radio_button_tag :payment_method, "paypal", false
               .credit_card.clearfix
                 = label_tag "Credit Card"
                 = radio_button_tag :payment_method, "credit_card", true
