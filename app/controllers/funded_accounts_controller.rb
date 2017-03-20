@@ -61,14 +61,20 @@ class FundedAccountsController < ApplicationController
       #if not deducting order, then it's a straight deposit since we don't deduct anything
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
-      @account_total.cents += @funded_account.amount.cents - @order.cents
-      #do this before we attempt to deduct funds
-      @funded_account.errors.add(:amount, "being loaded is not sufficient") if
-          @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
-      @funded_account.errors.add(:amount,
-        "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}" ) unless
-          !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
-            Settings.minimum_deposit_amount
+      if @funded_account.deduct_order?
+        deduct_order_amounts
+      else
+        @account_total.cents += @funded_account.amount.cents - @order.cents
+      end
+      unless @funded_account.deduct_order?
+        # do this before we attempt to deduct funds
+        @funded_account.errors.add(:amount, "being loaded is not sufficient") if
+            @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
+        @funded_account.errors.add(:amount,
+          "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}" ) unless
+            !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
+              Settings.minimum_deposit_amount
+      end
     end
     if(@funded_account.funding_source!=FundedAccount::NEW_CREDIT_CARD) #existing credit card
       @profile = BillingProfile.find(@funded_account.funding_source)
@@ -87,6 +93,16 @@ class FundedAccountsController < ApplicationController
       :last_digits => @profile.last_digits,
       :payment_method => 'credit card'})
     @deposit = account.purchase dep
+    if @funded_account.deduct_order? && @funded_withdrawal > 0
+      fund = Deposit.new(
+        amount:         @funded_withdrawal,
+        full_name:      "Team #{@ssl_account.get_team_name} funded account",
+        credit_card:    'N/A',
+        last_digits:    'N/A',
+        payment_method: 'Funded Account'
+      )
+      @funded = account.purchase fund
+    end
     @credit_card = @profile.build_credit_card
     if ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?
       if (Rails.env=~/development/i && defined?(BillingProfile::TEST_AMOUNT))
@@ -95,6 +111,7 @@ class FundedAccountsController < ApplicationController
         @deposit.amount= @funded_account.amount
       end
       @deposit.description = "Deposit"
+      @funded.description = 'Funded Account Withdrawal' if @funded
       if initial_reseller_deposit?
         #get this before transaction so user cannot change the cookie, thus 
         #resulting in mismatched item purchased
@@ -119,6 +136,12 @@ class FundedAccountsController < ApplicationController
         @account_total.save
         dep.save
         @deposit.save
+        if @funded
+          @funded.notes = "Partial payment for order ##{@order.reference_number} ($#{@order.amount.to_s})."
+          fund.save
+          @funded.save
+          @funded.mark_paid!
+        end
         if initial_reseller_deposit?
           account.reseller.finish_signup immutable_cart_item
         end
@@ -136,6 +159,10 @@ class FundedAccountsController < ApplicationController
         route ||= "success"
       else
         @deposit.destroy
+        if @funded
+          @funded.destroy
+          @account_total.cents = @funded_original # put original amount back on the funded account
+        end
         flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
                     @gateway_response.message #not descriptive enough
       end
@@ -249,5 +276,25 @@ class FundedAccountsController < ApplicationController
       @ssl_account.certificate_orders << cert.sellable
       cert.sellable.pay! true
     end
+  end
+
+  def deduct_order_amounts
+    # existing amount on funded account
+    @funded_original = @account_total.cents
+    
+    # target amount user has chosen to deposit to go towards order amount 
+    # and/or additional deposit to funded account if in surplus  
+    @funded_target = Money.new(@funded_account.target_amount.to_f * 100)
+    
+    # determine whether to tap into existing funds in the funded account
+    @funded_diff             = @funded_target.cents - @funded_account.amount.cents
+    if (@funded_diff > 0 || @funded_diff == 0)
+      @funded_account.amount = @funded_target
+      @funded_withdrawal     = 0
+    else
+      @funded_withdrawal     = @funded_account.amount.cents - @funded_target.cents
+      @funded_account.amount = Money.new(@funded_account.amount.cents - @funded_withdrawal)
+    end
+    @account_total.cents    -= @funded_withdrawal
   end
 end

@@ -6,9 +6,7 @@ class FundedAccount < ActiveRecord::Base
 
   validates_presence_of :ssl_account
 
-  attr_accessor :funding_source
-  attr_accessor :order_type
-  attr_accessor :deduct_order
+  attr_accessor :funding_source, :order_type, :deduct_order, :target_amount
 
   after_initialize do
     self.deduct_order ||= false if new_record?

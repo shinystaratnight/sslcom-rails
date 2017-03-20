@@ -15,12 +15,30 @@
     = f.hidden_field :amount, :value=>(current_order.amount or 0)
   -else
     = f.text_field :amount, :value=>(current_order.amount or 0), :size=>AMOUNT_FIELD_SIZE
-.clearfix
-  %label{:for => "expense_amount"}
-    Total Current Balance:
-    %span.label_desc amount currently available
-  #current_balance{:class=>(@certificate_order)?'red':''}= current_user.ssl_account.funded_account(true).amount.format(:with_currency=>true).gsub(/,/, '')
--unless @certificate_order
+
+-if @certificate_orders || @certificate_orders
+  -funded_account_amt = current_user.ssl_account.funded_account(true).amount
+  -remaining_amt      = current_order.amount - funded_account_amt
+  .clearfix
+    %label{:for => "expense_amount"}
+      Funded Account Balance:
+      %span.label_desc credit applied towards order amount
+    #current_balance{class: 'red', data: {funded_account: funded_account_amt} }
+      ="-#{funded_account_amt.format(with_currency: true).gsub(/,/, '')}"
+  -unless @certificate_order
+    .clearfix
+      %label{:for => "target_amount"}
+        Total:
+        %span.label_desc Remaining (can only select between $#{remaining_amt} and $1,000.00)
+      =f.number_field :target_amount, value: remaining_amt, min: remaining_amt, max: 1000.00, required: true
+      
+-else
+  .clearfix
+    %label{:for => "expense_amount"}
+      Total Current Balance:
+      %span.label_desc amount currently available
+    #current_balance{:class=>(@certificate_order) ? 'red' : ''}
+      =current_user.ssl_account.funded_account(true).amount.format(:with_currency=>true).gsub(/,/, '')
   .clearfix
     %label{:for => "expense_amount"}
       Balance After Load:
