@@ -557,18 +557,32 @@
             order_amount   = $('#funded_account_amount').val(),
             diff           = deposit_amount - order_amount,
             min_amount     = order_amount - funded_amount,
-            final_amount   = 0;
+            final_amount   = 0,
+            str_amount     = '',
+            paypal_cur     = $('[name*=paypal]').attr('href'),
+            paypal_final   = paypal_cur,
+            paypal_replace = paypal_cur.split('&').pop().indexOf('funded_account') >= 0;
+        
+        if (paypal_replace){
+          paypal_final = paypal_final.split('&');
+          paypal_final.pop();
+          paypal_final.join('');
+        }
         if (diff == 0 || diff > 0) {
           final_amount = 0;
         } else {
           final_amount = funded_amount-(funded_amount-Math.abs(diff));
         }
         if (final_amount > funded_amount) {
-          final_amount = 'ERROR: amount below limit of $'+min_amount.toFixed(2);
+          str_amount = 'ERROR: amount below limit of $'+min_amount.toFixed(2);
         } else {
-          final_amount = '$'+final_amount.toFixed(2)+" USD";
+          str_amount = '$'+final_amount.toFixed(2)+' USD';
+          if (final_amount > 0){
+            paypal_final += '&funded_account='+final_amount.toFixed(2);
+          }
         }
-        $('#current_balance').text(final_amount);
+        $('[name*=paypal]').attr('href', paypal_final);
+        $('#current_balance').text(str_amount);
       }
     };
     $.adjust_items_in_cart();

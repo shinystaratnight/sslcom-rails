@@ -80,6 +80,7 @@ class PaypalExpressController < ApplicationController
           else
             setup_orders
           end
+          funded_account_credit(purchase_params)
           if @ssl_account.funded_account.cents >= @order.cents
             @ssl_account.orders << @order
             @ssl_account.funded_account.decrement! :cents, @order.cents
@@ -87,6 +88,9 @@ class PaypalExpressController < ApplicationController
                                  visitor_token: @visitor_token, cookies: cookies)
             if initial_reseller_deposit?
               @ssl_account.reseller.finish_signup immutable_cart_item
+            end
+            if @funded
+              @funded.update(notes: "Partial payment for order ##{@order.reference_number} ($#{@order.amount.to_s}).")
             end
             notice = "Your purchase is now complete!"
             clear_cart
@@ -117,5 +121,23 @@ class PaypalExpressController < ApplicationController
         :password => creds.password,
         :signature => creds.signature
     )
+  end
+
+  def funded_account_credit(purchase_params)
+    funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
+    funded_amt    = funded_exists[:amount].abs if funded_exists
+    if funded_exists && funded_amt > 0
+      fund = Deposit.create(
+        amount:         funded_amt,
+        full_name:      "Team #{@ssl_account.get_team_name} funded account",
+        credit_card:    'N/A',
+        last_digits:    'N/A',
+        payment_method: 'Funded Account'
+      )
+      @funded             = @ssl_account.purchase fund
+      @funded.description = 'Funded Account Withdrawal'
+      @funded.save
+      @funded.mark_paid!
+    end
   end
 end
