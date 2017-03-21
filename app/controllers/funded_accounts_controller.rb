@@ -288,9 +288,10 @@ class FundedAccountsController < ApplicationController
     
     # determine whether to tap into existing funds in the funded account
     @funded_diff             = @funded_target.cents - @funded_account.amount.cents
-    if (@funded_diff > 0 || @funded_diff == 0)
+    if (@funded_diff >= 0)  # deposit will cover cost of purchase and/or surplus for funded account
       @funded_account.amount = @funded_target
       @funded_withdrawal     = 0
+      @account_total.cents  += @funded_diff if (@funded_diff > 0)
     else
       @funded_withdrawal     = @funded_account.amount.cents - @funded_target.cents
       @funded_account.amount = Money.new(@funded_account.amount.cents - @funded_withdrawal)
