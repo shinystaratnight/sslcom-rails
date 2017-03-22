@@ -28,9 +28,11 @@
   -unless @certificate_order
     .clearfix
       %label{:for => "target_amount"}
-        Total:
-        %span.label_desc Remaining (can only select between $#{remaining_amt} and $1,000.00)
-      =f.number_field :target_amount, value: remaining_amt, min: remaining_amt, max: 1000.00, required: true
+        Total $:
+        %span.label_desc
+          ="Remaining (minimum <strong>$#{remaining_amt}</strong>).<br />Any amount over $#{current_order.amount} will be loaded to the Funded Account.".html_safe
+      =f.number_field :target_amount, value: remaining_amt, min: remaining_amt, step: :any, required: true
+      %span.lbl-usd USD
       
 -else
   .clearfix
