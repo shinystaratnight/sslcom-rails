@@ -22,7 +22,7 @@
         %li=link_to "Premium SSL", filter_by_certificate_orders_path(@ssl_slug, "premium")
       %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "wildcard")
       %li=link_to 'Test Orders (For Developers)', filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
-      -if permitted_to?(:index, :orders)
+      -if current_user.is_system_admins?
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
       %li &nbsp;
