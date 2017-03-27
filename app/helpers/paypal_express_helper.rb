@@ -2,18 +2,19 @@ module PaypalExpressHelper
   def get_setup_purchase_params(cart, request, params)
     @subtotal, @shipping, @total = get_totals(cart, params)
     @items                       = get_items(cart)
-    credit_and_discount params          
+    credit_and_discount params
+    load_funds params
 
     return to_cents(@total), {
-        :ip => request.remote_ip,
-        :return_url => url_for(:action => 'purchase', ssl_slug: params[:ssl_slug], :only_path => false, deduct_order: params[:deduct_order]),
-        :cancel_return_url => root_url,
-        :subtotal => to_cents(@total),
-        :shipping => to_cents(@shipping),
-        :handling => 0,
-        :tax =>      0,
-        :allow_note =>  true,
-        :items => @items,
+      ip:                request.remote_ip,
+      return_url:        url_for(action: 'purchase', ssl_slug: params[:ssl_slug], only_path: false, deduct_order: params[:deduct_order]),
+      cancel_return_url: root_url,
+      subtotal:          to_cents(@total),
+      shipping:          to_cents(@shipping),
+      handling:          0,
+      tax:               0,
+      allow_note:        true,
+      items:             @items,
     }
   end
 
@@ -84,15 +85,12 @@ module PaypalExpressHelper
 
   def get_totals(cart, params)
     subtotal = cart.amount.cents
-    discount = params[:discount]       ? amount_to_int(params[:discount]) : 0
-    credit   = params[:funded_account] ? amount_to_int(params[:funded_account]) : 0
+    discount = get_amount(params[:discount])
+    credit   = get_amount(params[:funded_account])
+    surplus  = get_surplus_deposit(params) > 0 ? get_surplus_deposit(params) : 0
     shipping = 0.0
-    total    = (subtotal - credit - discount) + shipping
+    total    = (subtotal - credit - discount) + surplus + shipping
     return subtotal, shipping, total
-  end
-
-  def amount_to_int(amount)
-    (amount.to_f * 100).round
   end
 
   def to_cents(money)
@@ -100,9 +98,9 @@ module PaypalExpressHelper
   end
 
   def credit_and_discount(params)
-    funded_param       = params[:funded_account]
-    funded_account_amt = funded_param ? amount_to_int(funded_param) : 0
-    discount_amt       = funded_account_amt > 0 ? amount_to_int(params[:discount]) : @subtotal-@total
+    funded_account_amt = get_amount(params[:funded_account])
+    discount_amt       = get_amount(params[:discount])
+    
     if params[:discount_code] && (discount_amt > 0)
       @items.push({
         name:     'Discount',
@@ -111,13 +109,35 @@ module PaypalExpressHelper
         amount:   -discount_amt
       })
     end
-    if funded_param && (funded_account_amt > 0)
+    # add credit from funded account towards purchase
+    if params[:funded_account] && (funded_account_amt > 0)
       @items.push({
         name:     'Funded Account',
         number:   'Credit',
         quantity: 1,
         amount:   -funded_account_amt
       })
-    end    
+    end
+  end
+
+  def load_funds(params)
+    # load additional (any amount above the purchase amount) to funded account
+    if params[:funded_target] && (get_surplus_deposit(params) > 0)
+      @items.push({
+        name:     'Load Funds',
+        number:   'to Funded Account',
+        quantity: 1,
+        amount:   get_surplus_deposit(params)
+      })
+    end
+  end
+
+  def get_surplus_deposit(params)
+    funded = params[:funded_target]
+    funded ? get_amount(funded) - (params[:amount].to_i - get_amount(params[:discount])) : 0
+  end
+
+  def get_amount(amount=nil)
+    amount ? (amount.to_f * 100).round : 0
   end
 end

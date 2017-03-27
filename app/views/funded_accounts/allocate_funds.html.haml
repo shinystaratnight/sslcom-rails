@@ -4,6 +4,10 @@
   :locals => {:pages=>[Reseller::SIGNUP_PAGES, 3], options:{li_style: "margin-right: -2px"}}) if reseller_initial_deposit?
 =order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
 .reseller_registration_select_tier
+  -unless current_order.nil? || params[:advanced_options]
+    %h3
+      %span(style="float:right; font-size:.6em")
+        =link_to "advanced options", allocate_funds_for_order_path(ssl_slug: @ssl_slug, id: :order, advanced_options: true)
   %h3 Deposit Funds
   %p 
     -if @funded_account.deduct_order? and (current_order.amount.cents > ssl_account.funded_account.amount.cents)
@@ -52,6 +56,13 @@
         =#if tier 1, then opt to skip
         =fields_for :billing_profile, @billing_profile do |form|
           = render :partial => "billing_profiles/form", :locals => { :form => form, only_billing_profile: false }
+      -unless params[:advanced_options].nil?
+        .subheading Optional Discounting
+        .clearfix
+          =label_tag        :discount_code, 'Coupon Code:'
+          =text_field_tag   :discount_code, nil, class: 'form_row', size: 6
+          =button_tag       'click to update price', id: 'apply_discount', name: 'apply_discount', type: 'button'
+          =hidden_field_tag :discount_amount
       .subheading Amount and Balance
       = render :partial => "form", :locals => { :f => f }
     #button_container
