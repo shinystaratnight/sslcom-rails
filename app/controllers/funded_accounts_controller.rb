@@ -62,7 +62,7 @@ class FundedAccountsController < ApplicationController
       @order ||= (@funded_account.deduct_order?)? current_order :
         Order.new(:cents => 0, :deposit_mode => true)
       if @funded_account.deduct_order?
-        deduct_order_amounts
+        deduct_order_amounts(params)
       else
         @account_total.cents += @funded_account.amount.cents - @order.cents
       end
@@ -129,6 +129,7 @@ class FundedAccountsController < ApplicationController
           @order.deducted_from = @deposit
           @ssl_account.orders << @order
           apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
+          @order.commit_discounts
           record_order_visit(@order)
           @order.mark_paid!
           @order.credit_affiliate(cookies)
@@ -278,23 +279,26 @@ class FundedAccountsController < ApplicationController
     end
   end
 
-  def deduct_order_amounts
+  def deduct_order_amounts(params)
+    # discount
+    discount         = params[:discount_amount]
+    discount         = (discount && discount.to_f > 0) ? (discount.to_f * 100) : 0
+    price_w_discount = @funded_account.amount.cents - discount
     # existing amount on funded account
     @funded_original = @account_total.cents
-    
-    # target amount user has chosen to deposit to go towards order amount 
-    # and/or additional deposit to funded account if in surplus  
+    # target amount user has chosen to deposit to go towards order amount
+    # and/or additional deposit to funded account if in surplus
     @funded_target = Money.new(@funded_account.target_amount.to_f * 100)
-    
     # determine whether to tap into existing funds in the funded account
-    @funded_diff             = @funded_target.cents - @funded_account.amount.cents
+    @funded_diff             = @funded_target.cents - price_w_discount
+    
     if (@funded_diff >= 0)  # deposit will cover cost of purchase and/or surplus for funded account
       @funded_account.amount = @funded_target
       @funded_withdrawal     = 0
       @account_total.cents  += @funded_diff if (@funded_diff > 0)
     else
-      @funded_withdrawal     = @funded_account.amount.cents - @funded_target.cents
-      @funded_account.amount = Money.new(@funded_account.amount.cents - @funded_withdrawal)
+      @funded_withdrawal     = price_w_discount - @funded_target.cents
+      @funded_account.amount = Money.new(price_w_discount - @funded_withdrawal)
     end
     @account_total.cents    -= @funded_withdrawal
   end

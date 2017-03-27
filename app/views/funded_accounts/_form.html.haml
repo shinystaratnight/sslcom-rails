@@ -10,11 +10,13 @@
     - else
       Load Amount:
     %span.label_desc charged in $USD
+  -amount = current_order.amount
   -if initial_reseller_deposit? || @certificate_order || @certificate_orders
-    #tier_load_amount= current_order.amount.format.gsub(/,/, '') + " USD"
-    = f.hidden_field :amount, :value=>(current_order.amount or 0)
+    #tier_load_amount{data: {original_amount: amount}}
+      ="#{amount.format.gsub(',', '')} USD"
+    =f.hidden_field :amount, value: (amount or 0)
   -else
-    = f.text_field :amount, :value=>(current_order.amount or 0), :size=>AMOUNT_FIELD_SIZE
+    =f.text_field :amount, value: (amount or 0), :size=>AMOUNT_FIELD_SIZE
 
 -if @certificate_orders || @certificate_orders
   -funded_account_amt = current_user.ssl_account.funded_account(true).amount
@@ -30,7 +32,7 @@
       %label{:for => "target_amount"}
         Total $:
         %span.label_desc
-          ="Remaining (minimum <strong>$#{remaining_amt}</strong>).<br />Any amount over $#{current_order.amount} will be loaded to the Funded Account.".html_safe
+          ="Remaining (minimum <strong id='fnd_remaining_amt'>$#{remaining_amt}</strong>).<br />Any amount over <strong id='fnd_order_amt'>$#{current_order.amount}</strong> will be loaded to the Funded Account.".html_safe
       =f.number_field :target_amount, value: remaining_amt, min: remaining_amt, step: :any, required: true
       %span.lbl-usd USD
       
