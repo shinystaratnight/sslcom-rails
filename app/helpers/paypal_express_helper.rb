@@ -133,8 +133,9 @@ module PaypalExpressHelper
   end
 
   def get_surplus_deposit(params)
-    funded = params[:funded_target]
-    funded ? get_amount(funded) - (params[:amount].to_i - get_amount(params[:discount])) : 0
+    funded      = params[:funded_target]
+    final_total = params[:amount].to_i - get_amount(params[:discount]) - get_amount(params[:funded_account])
+    funded ? get_amount(funded) - final_total : 0
   end
 
   def get_amount(amount=nil)

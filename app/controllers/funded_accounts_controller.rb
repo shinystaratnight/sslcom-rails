@@ -280,26 +280,21 @@ class FundedAccountsController < ApplicationController
   end
 
   def deduct_order_amounts(params)
-    # discount
-    discount         = params[:discount_amount]
-    discount         = (discount && discount.to_f > 0) ? (discount.to_f * 100) : 0
-    price_w_discount = @funded_account.amount.cents - discount
-    # existing amount on funded account
-    @funded_original = @account_total.cents
+    discount           = params[:discount_amount]
+    discount           = (discount && discount.to_f > 0) ? (discount.to_f * 100) : 0
+    price_w_discount   = @funded_account.amount.cents - discount
+    @funded_original   = @account_total.cents # existing amount on funded account
+    @funded_withdrawal = @account_total.cents # credited toward purchase amount from funded account
     # target amount user has chosen to deposit to go towards order amount
     # and/or additional deposit to funded account if in surplus
-    @funded_target = Money.new(@funded_account.target_amount.to_f * 100)
-    # determine whether to tap into existing funds in the funded account
-    @funded_diff             = @funded_target.cents - price_w_discount
+    @funded_target    = Money.new(@funded_account.target_amount.to_f * 100)
     
+    # determine whether to tap into existing funds in the funded account
+    @funded_diff      = @funded_target.cents - (price_w_discount - @funded_withdrawal)
     if (@funded_diff >= 0)  # deposit will cover cost of purchase and/or surplus for funded account
-      @funded_account.amount = @funded_target
-      @funded_withdrawal     = 0
       @account_total.cents  += @funded_diff if (@funded_diff > 0)
-    else
-      @funded_withdrawal     = price_w_discount - @funded_target.cents
-      @funded_account.amount = Money.new(price_w_discount - @funded_withdrawal)
     end
+    @funded_account.amount   = @funded_target
     @account_total.cents    -= @funded_withdrawal
   end
 end

@@ -4,7 +4,7 @@
   :locals => {:pages=>[Reseller::SIGNUP_PAGES, 3], options:{li_style: "margin-right: -2px"}}) if reseller_initial_deposit?
 =order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
 .reseller_registration_select_tier
-  -unless current_order.nil? || params[:advanced_options]
+  -unless current_order.nil? || params[:advanced_options] || action_name == 'allocate_funds'
     %h3
       %span(style="float:right; font-size:.6em")
         =link_to "advanced options", allocate_funds_for_order_path(ssl_slug: @ssl_slug, id: :order, advanced_options: true)

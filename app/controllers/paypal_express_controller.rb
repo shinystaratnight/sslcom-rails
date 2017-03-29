@@ -59,8 +59,8 @@ class PaypalExpressController < ApplicationController
     purchase = @gateway.purchase total_as_cents, purchase_params
 
     if purchase.success?
-      discount_code = purchase_params[:items].select {|i| i[:name]=='Discount'}
-      params[:discount_code] = discount_code.first[:Number] if discount_code.any?
+      discount = purchase_params[:items].select {|i| i[:name]=='Discount'}
+      params[:discount_code] = discount.first[:Number] if discount.any?
 
       # you might want to destroy your cart here if you have a shopping cart
       if purchase_params[:items][0][:name]=~/(deposit|reseller)/i
@@ -81,9 +81,10 @@ class PaypalExpressController < ApplicationController
             setup_orders
           end
           funded_account_credit(purchase_params)
-          if @ssl_account.funded_account.cents >= @order.cents
+          order_w_discount = discount.any? ? (@order.cents - discount.first[:amount].abs) : @order.cents
+          if @ssl_account.funded_account.cents >= order_w_discount
             @ssl_account.orders << @order
-            @ssl_account.funded_account.decrement! :cents, @order.cents
+            @ssl_account.funded_account.decrement! :cents, order_w_discount
             @order.finalize_sale(params: params, deducted_from: @deposit,
                                  visitor_token: @visitor_token, cookies: cookies)
             if initial_reseller_deposit?

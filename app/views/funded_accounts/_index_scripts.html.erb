@@ -18,14 +18,14 @@ jQuery(function($) {
     });
     $.update_balance_after_load();
     if ($('#funded_account_target_amount').length) {
-      $.update_req_funded_balance();
+      $.updateRequiredDeposit();
     }
     $('#funded_account_target_amount').on('click change', function() {
-      $.update_req_funded_balance();
+      $.updateRequiredDeposit();
     });
     $('button[name=apply_discount]').on('click', function() {
-      $.apply_discount();
-      setTimeout(function(){$.update_req_funded_balance();}, 2000);
+      $.applyDiscount();
+      setTimeout(function(){$.updateRequiredDeposit();}, 2000);
     });
   });
 });

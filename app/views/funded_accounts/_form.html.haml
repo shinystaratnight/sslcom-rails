@@ -32,7 +32,7 @@
       %label{:for => "target_amount"}
         Total $:
         %span.label_desc
-          ="Remaining (minimum <strong id='fnd_remaining_amt'>$#{remaining_amt}</strong>).<br />Any amount over <strong id='fnd_order_amt'>$#{current_order.amount}</strong> will be loaded to the Funded Account.".html_safe
+          ="Remaining (minimum <strong id='fnd_remaining_amt'>$#{remaining_amt}</strong>).<br />Any amount over the minimum will be available for use.".html_safe
       =f.number_field :target_amount, value: remaining_amt, min: remaining_amt, step: :any, required: true
       %span.lbl-usd USD
       
