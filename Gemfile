@@ -62,7 +62,8 @@ gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
 gem 'compass-rails'
-gem "select2-rails"
+gem 'select2-rails'
+gem 'stripe'
 
 group :development do
   gem 'foreman'

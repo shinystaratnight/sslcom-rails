@@ -109,7 +109,11 @@ class BillingProfile < ActiveRecord::Base
     self.find_each{|bp|bp.update_attribute(:card_number, bp.read_attribute(:card_number)) if
         bp.encrypted_card_number.blank?}
   end
-
+  
+  def self.gateway_stripe?
+    ENV['GATEWAY'] == 'stripe'
+  end
+  
   def users_can_manage
     Assignment.where(
       ssl_account_id: ssl_account.id, role_id: Role.can_manage_billing
