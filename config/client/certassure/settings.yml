@@ -68,21 +68,7 @@ ca_certificate_id_dv: "550"
 ca_certificate_id_client: "556"
 ca_certificate_id_code_signing: "557"
 
-authorize_net_key: '2s9n7LCP'
-authorize_net_transaction_id: '27PD3Czbb343hY5R'
-p_authorize_net_key: '8yhUk64R79'
-p_authorize_net_transaction_id: '539Sa8H5jc632gTh'
 olark_id: '6197-594-10-8504'
-
-paypal_express:
-  development:
-   username: "leo-facilitator_api1.ssl.com"
-   password: "1373405411"
-   signature: "AQU0e5vuZCvSg-XJploSa.sGUDlpAJk4MS-StTGW3nR1cLoXYinXNPFz"
-  production:
-   username: "neal-facilitator_api1.certassure.com"
-   password: "D8V4AEK5MGDGF35Q"
-   signature: "ArNcVBXHSF0WcWk3MEwFFPbyZkYIAxVQyQRWzDg87EMckBedPrWGftlF"
 
 dv_explanation_link: "https://www.ssl.com/certificates/apidocs/dcv/"
 
