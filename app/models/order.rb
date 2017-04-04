@@ -177,16 +177,6 @@ class Order < ActiveRecord::Base
     '%.02f' % rounded
   end
 
-  def authorize(credit_card, options = {})
-    response = gateway.authorize(self.amount, credit_card, options_for_payment(options))
-    if response.success?
-      self.payments.build(:amount => self.amount, :confirmation => response.authorization,
-        :address => options[:billing_address])
-    else
-      payment_failed(response)
-    end
-  end
-
   def discount_amount
     t=0
     unless id
@@ -244,21 +234,6 @@ class Order < ActiveRecord::Base
       end
       self.ext_affiliate_credited=false
       self.save validate: false
-    end
-  end
-
-  def pay(credit_card, options = {})
-    response = gateway.purchase(self.final_amount, credit_card, options_for_payment(options))
-    if response.success?
-      self.payments.build(:amount => self.amount,
-          :confirmation => response.authorization,
-          :cleared_at => Time.now,
-          :address => options[:billing_address]).tap do |payment|
-        self.paid_at = Time.now
-        payment.save && self.save unless new_record?
-      end
-    else
-      payment_failed(response)
     end
   end
     
@@ -412,43 +387,6 @@ class Order < ActiveRecord::Base
     SecureRandom.base64(32)
   end
   # END number
-
-  # BEGIN authorize_payment
-  def authorize_payment(credit_card, options = {})
-    options[:order_id] = number
-    transaction do
-
-      authorization = OrderTransaction.authorize(amount, credit_card, options)
-      transactions.push(authorization)
-
-      if authorization.success?
-        payment_authorized!
-      else
-        transaction_declined!
-        errors[:base]<<(authorization.message)
-      end
-
-      authorization
-    end
-  end
-  # END authorize_payment
-
-  # BEGIN capture_payment
-  def capture_payment(options = {})
-    transaction do
-      capture = OrderTransaction.capture(final_amount, authorization_reference, options)
-      transactions.push(capture)
-      if capture.success?
-        payment_captured!
-      else
-        transaction_declined!
-        errors[:base] << capture.message
-      end
-
-      capture
-    end
-  end
-  # END capture_payment
 
   # BEGIN purchase
   def purchase(credit_card, options = {})
