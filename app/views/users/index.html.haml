@@ -43,12 +43,11 @@
         %td.name.expandable=u.login
         %td.expandable=u.email
         -if current_user.is_system_admins?
-          -type = u.is_affiliate? ? "<strong>affiliate</strong><br />" : ''
+          -type = ""
           -User.get_user_accounts_roles_names(u).each{|ssl| type << "<strong>#{ssl.first}</strong>: #{ssl.second.join(', ')}<br />"}
           %td.expandable.constrained=type.html_safe
         -else
-          -type = "#{u.role_symbols(current_user.ssl_account).join('/')} #{'/affiliate' if u.is_affiliate?}"
-          %td.expandable=type
+          %td.expandable="#{u.role_symbols(current_user.ssl_account).join('/')}"
         -if current_user.is_system_admins?
           %td.expandable=u.created_at.strftime("%b %d, %Y")
           %td.expandable=(u.last_login_at.blank?) ? "never" : u.last_login_at.strftime("%b %d, %Y")

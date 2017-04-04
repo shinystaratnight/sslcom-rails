@@ -4,7 +4,7 @@ class CertificateContent < ActiveRecord::Base
   has_one     :ssl_account, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
-  has_one     :csr
+  has_one     :csr, :dependent => :destroy
   has_many    :signed_certificates, through: :csr
   has_one     :registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable

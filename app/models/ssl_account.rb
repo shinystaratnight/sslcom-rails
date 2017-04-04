@@ -314,34 +314,41 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.make_dev_db(start=nil, finish=nil)
+  def self.prep_dev_db(ranges=[])
+    require "declarative_authorization/maintenance"
     SentReminder.unscoped.delete_all
     TrackedUrl.unscoped.delete_all
     Tracking.unscoped.delete_all
     VisitorToken.unscoped.delete_all
     CaApiRequest.unscoped.delete_all
-    if start
-      if start.is_a?(String)
-        s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
-        f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
-        start = Date.strptime start, s
-        finish = Date.strptime finish, f
+    unless ranges.blank?
+      ranges.each do |range|
+        start,finish=range[0], range[1]
+        if start.is_a?(String)
+          s= start =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+          f= finish =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
+          range[0] = Date.strptime start, s
+          range[1] = Date.strptime finish, f
+        end
       end
-      %w(User SiteSeal BillingProfile CertificateOrder Order DomainControlValidation
+      %w(User SslAccount SiteSeal BillingProfile CertificateOrder Order DomainControlValidation
         CertificateContent CertificateName Csr SignedCertificate Contact Validation ValidationHistory ValidationHistoryValidation
         ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit Api ApiCertificateRequest
-        ApiCredential CaApiRequest Reseller).each {|table| table.constantize.unscoped.where{created_at << (start..finish)}.delete_all}
+        ApiCredential CaApiRequest Reseller).each {|table|
+          sql = (['created_at BETWEEN ? AND ?']*ranges.count).join(" OR ")
+          table.constantize.unscoped.where.not(sql, *(ranges.flatten)).delete_all
+      }
     end
-    # ActiveRecord::Base.connection.tables.map do |model|
-    #   unless %w(auto_renewals delayed_job).include?(model)
-    #     begin
-    #       klass = model.capitalize.singularize.camelize.constantize
-    #       klass.where{created_at > from.days.ago}.delete_all
-    #     rescue
-    #
-    #     end
-    #   end
-    # end
+    ActiveRecord::Base.connection.tables.map do |model|
+      unless %w(auto_renewals delayed_job).include?(model)
+        begin
+          klass = model.capitalize.singularize.camelize.constantize
+          klass.where{created_at > from.days.ago}.delete_all
+        rescue
+
+        end
+      end
+    end
     # Obfuscate IDs
     i=100000
     ApiCredential.unscoped.find_each{|a|
@@ -419,6 +426,12 @@ class SslAccount < ActiveRecord::Base
       c.phone = "#{c.id}"
       c.fax = "#{c.id}"
       c.save validate: false}}
+    Authorization::Maintenance::without_access_control {
+      SslAccount.select{|sa|sa.primary_user.blank?}.map(&:destroy)
+    }
+    CertificateOrder.select{|co|co.ssl_account.blank?}.map(&:destroy)
+    CertificateOrder.select{|co|co.certificate_content.issued? && !co.certificate_content.expired? &&
+        (co.certificate_content.csr.blank? || co.certificate_content.csr.signed_certificate.blank?)}.map(&:destroy)
   end
 
   SETTINGS_SECTIONS.each do |item|
@@ -478,4 +491,5 @@ class SslAccount < ActiveRecord::Base
     SslAccount.where{id << ids}.delete_all
     Preference.where{(owner_type=="SslAccount") & (owner_id << ids)}.delete_all
   end
+
 end

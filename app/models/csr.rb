@@ -6,12 +6,12 @@ require 'net/https'
 require 'uri'
 
 class Csr < ActiveRecord::Base
-  has_many    :whois_lookups
-  has_many    :signed_certificates
+  has_many    :whois_lookups, :dependent => :destroy
+  has_many    :signed_certificates, :dependent => :destroy
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
-  has_many    :domain_control_validations do
+  has_many    :domain_control_validations, :dependent => :destroy do
     def last_sent
       where{email_address !~ 'null'}.last
     end
@@ -28,7 +28,7 @@ class Csr < ActiveRecord::Base
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
   has_many    :certificate_orders, :through=>:certificate_content
-  serialize   :subject_alternative_names
+  serialize   :subject_alternative_names, :dependent => :destroy
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 

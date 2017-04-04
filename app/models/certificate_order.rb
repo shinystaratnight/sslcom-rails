@@ -12,13 +12,13 @@ class CertificateOrder < ActiveRecord::Base
     :dependent=>:destroy #represents a child renewal
   has_many    :renewal_attempts
   has_many    :renewal_notifications
-  has_many    :certificate_contents
+  has_many    :certificate_contents, :dependent => :destroy
   has_many    :certificate_names, through: :certificate_contents
   has_many    :registrants, through: :certificate_contents
   has_many    :certificate_contacts, through: :certificate_contents
   has_many    :domain_control_validations, through: :certificate_names
-  has_many    :csrs, :through=>:certificate_contents, :dependent => :destroy
-  has_many    :signed_certificates, :through=>:csrs, :dependent => :destroy
+  has_many    :csrs, :through=>:certificate_contents
+  has_many    :signed_certificates, :through=>:csrs
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :system_audits, :as => :target, :dependent => :destroy

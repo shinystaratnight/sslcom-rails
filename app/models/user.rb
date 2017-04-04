@@ -582,7 +582,7 @@ class User < ActiveRecord::Base
   end
 
   def is_affiliate?
-    !!ssl_account.try(:affiliate)
+    ssl_account && !!ssl_account.affiliate
   end
 
   def is_system_admins?
