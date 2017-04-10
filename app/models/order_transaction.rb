@@ -1,4 +1,6 @@
 class OrderTransaction < ActiveRecord::Base
+  include Stripeable
+  
   belongs_to  :order
   has_many    :renewal_attempts
 
@@ -29,11 +31,16 @@ class OrderTransaction < ActiveRecord::Base
     end
     
     def purchase(amount, credit_card, options = {})
-      process('purchase', amount) do |gw|
-        if amount.cents==0.0
-          ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
-        else
-          gw.purchase(amount, credit_card, options)
+      if BillingProfile.gateway_stripe?
+        OrderTransaction.stripe_purchase(amount, credit_card, options)
+        # if amount.cents==0.0 clause
+      else
+        process('purchase', amount) do |gw|
+          if amount.cents==0.0
+            ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
+          else
+            gw.purchase(amount, credit_card, options)
+          end
         end
       end
     end
@@ -74,11 +81,13 @@ class OrderTransaction < ActiveRecord::Base
 
     def gateway
       #ActiveMerchant::Billing::Base.default_gateway
-      s = ::Rails.application.secrets
-      ActiveMerchant::Billing::AuthorizeNetGateway.new(
-        login:    s.authorize_net_key,
-        password: s.authorize_net_trans_id
-      )
+      unless BillingProfile.gateway_stripe?
+        s = ::Rails.application.secrets
+        ActiveMerchant::Billing::AuthorizeNetGateway.new(
+          login:    s.authorize_net_key,
+          password: s.authorize_net_trans_id
+        )
+      end
     end
   end
 end

@@ -432,7 +432,9 @@ class OrdersController < ApplicationController
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
     @order.amount= BillingProfile::TEST_AMOUNT if (%w{development test}.include?(Rails.env) && defined?(BillingProfile::TEST_AMOUNT))
     @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
-    @gateway_response = @order.purchase(@credit_card, @profile.build_info(Order::SSL_CERTIFICATE))
+    options = @profile.build_info(Order::SSL_CERTIFICATE)
+      .merge(stripe_card_token: params[:billing_profile][:stripe_card_token])
+    @gateway_response = @order.purchase(@credit_card, options)
     (@gateway_response.success?).tap do |success|
       if success
         flash.now[:notice] = @gateway_response.message

@@ -1,0 +1,30 @@
+-if BillingProfile.gateway_stripe?
+  =javascript_include_tag 'https://js.stripe.com/v2/', 'https://js.stripe.com/v3/'
+  =javascript_include_tag 'stripe_charge'
+  :javascript
+    setTimeout(function(){
+      Stripe.setPublishableKey('#{Rails.application.secrets.stripe_publishable_key}');
+    }, 1000);
+-today_year = Date.today.year
+#credit_card_details
+  .subheading
+    Credit Card Information
+  .clearfix
+    =form.label :credit_card, '*Credit Card:'
+    =form.select :credit_card, BillingProfile::CREDIT_CARDS
+    =form.label :credit_card, image_tag('logo_cards_150x26.gif', style: 'vertical-align: middle;float: left;margin-left:1rem')
+  .clearfix
+    =form.label :card_number, '*Card Number:'
+    =form.text_field :card_number
+  .clearfix
+    =form.label :expiration, '*Expiration:'
+    =form.select :expiration_month, options_for_select((1..12).to_a, 1)
+    =form.select :expiration_year, options_for_select((today_year..(today_year + 10)).to_a, today_year)
+  .clearfix
+    =form.label :security_code, '*Security Code:'
+    =form.text_field :security_code, value: nil, size: 4
+    =link_to image_tag('question_mark.png'), '#what_is_security_code', rel: 'prettyPhoto', id: 'what_is_security_code_link'
+  -if only_billing_profile
+    .clearfix
+      #button_container
+        =image_submit_tag('bl_submit_button.gif', class: 'center')

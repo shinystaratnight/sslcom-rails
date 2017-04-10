@@ -4,7 +4,7 @@ class BillingProfile < ActiveRecord::Base
   include ActiveMerchant::Billing::CreditCardMethods
 
   cattr_accessor :password
-  attr_accessor :number
+  attr_accessor  :number, :stripe_card_token
   attr_encrypted :card_number, :key => 'v1X&3az00c!F',algorithm: 'aes-256-cbc', :mode => :per_attribute_iv_and_salt,
                  insecure_mode: true
 

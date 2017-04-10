@@ -652,6 +652,22 @@
       });
     };
     $.adjust_items_in_cart();
+    // Toggle Billing Profile CC form 'required' attributes
+    $.profileRequiredToggle = function(type) {
+      var form_fields = [
+        '#billing_profile_first_name',
+        '#billing_profile_last_name',
+        '#billing_profile_address_1',
+        '#billing_profile_postal_code',
+        '#billing_profile_city',
+        '#billing_profile_state',
+        '#billing_profile_phone',
+        '#billing_profile_credit_card',
+        '#billing_profile_card_number',
+        '#billing_profile_security_code'
+      ].join(', ');
+      $(form_fields).attr('required', (type=='enable'));
+    };
     /* Easiest Tooltips CONFIG */
     // these 2 variable determine popup's distance from the cursor
     // you might want to adjust to get the right result
