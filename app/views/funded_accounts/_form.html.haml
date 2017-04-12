@@ -16,7 +16,8 @@
       ="#{amount.format.gsub(',', '')} USD"
     =f.hidden_field :amount, value: (amount or 0)
   -else
-    =f.text_field :amount, value: (amount or 0), :size=>AMOUNT_FIELD_SIZE
+    -min_amt = "%.2f" % Settings.minimum_deposit_amount
+    =f.number_field :amount, value: min_amt, min: min_amt, step: :any, required: true
 
 -if @certificate_orders || @certificate_orders
   -funded_account_amt = current_user.ssl_account.funded_account(true).amount

@@ -7,7 +7,7 @@ module Stripeable
       @ot        = OrderTransaction.new
       @ot.action = 'purchase'
       @ot.amount = amount.to_s
-      card_token = @ot.create_card_token(credit_card) unless card_token
+      card_token = @ot.create_card_token(credit_card, options) unless card_token
       @ot.create_charge(amount, card_token, options)
       @ot
     end
@@ -44,14 +44,19 @@ module Stripeable
     )
   end
   # Ceate Stripe card token if using an existing CC billing profile for purchase
-  def create_card_token(credit_card)
+  def create_card_token(credit_card, options = {})
+    address = options[:billing_address]
     Stripe::Token.create(
       card: {
-        name:     "#{credit_card.first_name} #{credit_card.last_name}",
-        number:    credit_card.number,
-        exp_month: credit_card.month,
-        exp_year:  credit_card.year,
-        cvc:       credit_card.verification_value
+        name:          "#{credit_card.first_name} #{credit_card.last_name}",
+        number:        credit_card.number,
+        exp_month:     credit_card.month,
+        exp_year:      credit_card.year,
+        cvc:           credit_card.verification_value,
+        address_line1: address[:street1],
+        address_city:  address[:locality],
+        address_state: address[:region],
+        address_zip:   address[:postal_code]
       },
     )
   end
@@ -80,9 +85,10 @@ module Stripeable
   end
     
   def log_failure(card_token, e, error_message)
+    more = (e.class == Stripe::CardError) ? 'Your card was declined.' : 'The card was not charged.'
     self.success   = false
     self.reference = nil
-    self.message   = 'Something went wrong! The card was not charged.'
+    self.message   = "Something went wrong! #{more}"
     self.params    = log_failure_error(e, error_message)
     self.test      = stripe_test?(card_token)
   end

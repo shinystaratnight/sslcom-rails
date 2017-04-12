@@ -70,10 +70,11 @@ class FundedAccountsController < ApplicationController
         # do this before we attempt to deduct funds
         @funded_account.errors.add(:amount, "being loaded is not sufficient") if
             @account_total.cents <= 0 #should redirect to load funds page prepopulated with the amount difference
-        @funded_account.errors.add(:amount,
-          "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}" ) unless
-            !@funded_account.amount.nil? && @funded_account.amount.to_s.to_f >
-              Settings.minimum_deposit_amount
+        if @funded_account.amount && (@funded_account.amount.to_s.to_f < Settings.minimum_deposit_amount)
+          @funded_account.errors.add(:amount,
+            "minimum deposit load amount is #{Money.new(Settings.minimum_deposit_amount.to_i*100).format}"
+          )
+        end
       end
     end
     if(@funded_account.funding_source!=FundedAccount::NEW_CREDIT_CARD) #existing credit card

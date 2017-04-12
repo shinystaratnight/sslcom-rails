@@ -5,7 +5,6 @@ jQuery(function($) {
     <%=render partial: 'billing_profiles/profile_scripts'%>
     $('#funded_account_amount').keyup(function () {
       amount = this.value
-      this.value = this.value.replace(/((\.\d\d).*)/g, "$2").replace(/[^0-9\.]/g,'');
       $.update_balance_after_load();
     });
     $('#register_card_form').click(function(){
