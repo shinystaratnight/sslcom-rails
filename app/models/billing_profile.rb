@@ -20,7 +20,8 @@ class BillingProfile < ActiveRecord::Base
   TOP_COUNTRIES = ["United States", "United Kingdom", "Canada"]
   CREDIT_CARDS = ["Visa", "Master Card", "Discover", "American Express"]
   AMERICAN = "United States"
-
+  
+  GATEWAY = ENV['GATEWAY']
   # test - see http://developer.authorize.net/tools/errorgenerationguide/
   # TEST_ZIP_CODE = 46204 #46282 #decline
   TEST_AMOUNT = 80.50 # valid
@@ -111,9 +112,17 @@ class BillingProfile < ActiveRecord::Base
   end
   
   def self.gateway_stripe?
-    ENV['GATEWAY'] == 'stripe'
+    GATEWAY == 'stripe'
   end
-  
+   
+  def self.anet_public_keys
+    # public keys that can be displayed and used with Authorize.net Accept.js
+    {
+      client_key:   Rails.application.secrets.authorize_net_client_key,
+      api_login_id: Rails.application.secrets.authorize_net_key
+    }
+  end 
+    
   def users_can_manage
     Assignment.where(
       ssl_account_id: ssl_account.id, role_id: Role.can_manage_billing

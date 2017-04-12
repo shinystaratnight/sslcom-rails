@@ -10,4 +10,4 @@
 //= require jquery.tooltip.min
 //= require jCal
 //= require datejs
-//= require stripe_charge
+//= require merchant_validate_cc
