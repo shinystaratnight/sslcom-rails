@@ -143,6 +143,7 @@ class FundedAccountsController < ApplicationController
         if initial_reseller_deposit?
           account.reseller.finish_signup immutable_cart_item
         end
+        log_deposit
         OrderNotifier.deposit_completed(account, @deposit).deliver
         if @certificate_order
           @certificate_order.pay! @gateway_response.success?
@@ -293,5 +294,22 @@ class FundedAccountsController < ApplicationController
     end
     @funded_account.amount   = @funded_target
     @account_total.cents    -= @funded_withdrawal
+  end
+  
+  def log_deposit
+    unless @funded_account.deduct_order?
+      gateway = BillingProfile.gateway_stripe? ? 'Stripe' : 'Authorize.net'
+      notes   = [
+        "User #{current_user.login} has made a deposit",
+        "(order id: #{@gateway_response.order_id}) of $#{@funded_account.amount}",
+        "for team #{@ssl_account.get_team_name} through #{gateway} merchant."
+      ]
+      SystemAudit.create(
+        owner:  current_user,
+        target: @ssl_account.funded_account,
+        action: 'Made a deposit to funded account (FundedAccountsController#deposit_funds).',
+        notes:  notes.join(' ')
+      )
+    end
   end
 end

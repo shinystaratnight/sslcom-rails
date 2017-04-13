@@ -79,7 +79,7 @@ $(function($) {
       var form    = $(this),
           gateway = $('#credit_card_details').data('gateway');
       // Disable the submit button to prevent repeated clicks
-      form.find('button').prop('disabled', true);
+      form.find('input[type=submit]').prop('disabled', true);
       gateway=='stripe' ? createStripeToken() : sendPaymentDataToAnet(form);
       return false;
     }
