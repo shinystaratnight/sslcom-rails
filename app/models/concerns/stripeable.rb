@@ -85,10 +85,14 @@ module Stripeable
   end
     
   def log_failure(card_token, e, error_message)
-    more = (e.class == Stripe::CardError) ? 'Your card was declined.' : 'The card was not charged.'
+    message = if e.class == Stripe::CardError
+      'This transaction has been declined.'
+    else
+      'Something went wrong! The card was not charged.'
+    end
     self.success   = false
     self.reference = nil
-    self.message   = "Something went wrong! #{more}"
+    self.message   = message
     self.params    = log_failure_error(e, error_message)
     self.test      = stripe_test?(card_token)
   end
