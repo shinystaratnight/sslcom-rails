@@ -38,8 +38,9 @@
   jQuery(function($) {
     // Require CC target fields if form is already expanded upon redirect or render
     setTimeout(function() {
-      var button = $('#toggle_billing_profile_form');
-      if (button.length && button.attr('src').includes('hide')) {
+      var new_user_card = $('#new_user_section').length && $('#payment_method_credit_card').is(':checked'),
+          button        = $('#toggle_billing_profile_form');
+      if ((button.length && button.attr('src').includes('hide')) || new_user_card) {
         $.profileRequiredToggle('enable');
       }
     }, 2000);

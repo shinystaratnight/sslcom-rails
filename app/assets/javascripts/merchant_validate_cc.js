@@ -2,7 +2,7 @@ $(function($) {
   // Stripe Merhcant
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   stripeResponseHandler = function (status, response) {
-      var form = $('.edit_funded_account, .new_order');
+      var form = $('.edit_funded_account, .new_order, .new_funded_account');
       if (response.error) {
         form.find('.cc-error').remove();
         showError(response.error.message);
@@ -82,6 +82,14 @@ $(function($) {
       form.find('input[type=submit]').prop('disabled', true);
       gateway=='stripe' ? createStripeToken() : sendPaymentDataToAnet(form);
       return false;
+    }
+  });
+  
+  $('#payment_method_paypal, #payment_method_credit_card').on('click ', function() {
+    if ($(this).is(':checked')) {
+      $.profileRequiredToggle(
+        $(this).attr('id') == 'payment_method_paypal' ? 'disable' : 'enable'
+      );
     }
   });
 });
