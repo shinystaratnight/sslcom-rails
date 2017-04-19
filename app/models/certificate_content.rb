@@ -26,7 +26,7 @@ class CertificateContent < ActiveRecord::Base
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
     po_box address1 address2 address3 city state postal_code email phone ext fax)
 
-  TRADEMARKS = %w(google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock *.*.com
+  TRADEMARKS = %w(whatsapp google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock *.*.com
     *.*.org *.10million.org *.android.com *.aol.com *.azadegi.com *.balatarin.com *.comodo.com *.digicert.com
     *.globalsign.com *.google.com *.JanamFadayeRahbar.com *.logmein.com *.microsoft.com *.mossad.gov.il
     *.mozilla.org *.RamzShekaneBozorg.com *.SahebeDonyayeDigital.com *.skype.com *.startssl.com
