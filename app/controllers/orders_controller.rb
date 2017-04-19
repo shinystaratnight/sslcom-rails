@@ -298,6 +298,7 @@ class OrdersController < ApplicationController
   def create
     @order = Order.new(params[:order])
     @profile = @billing_profile = BillingProfile.new(params[:billing_profile])
+    too_many_declines = delay_transaction? && params[:payment_method] == 'credit_card'
     unless current_user
       @user = User.new(params[:user])
     else
@@ -315,7 +316,7 @@ class OrdersController < ApplicationController
         @credit_card = @profile.build_credit_card
       end
       apply_discounts(@order) #this needs to happen before the transaction but after the final incarnation of the order
-      if (@user ? @user.valid? : true) &&
+      if (@user ? @user.valid? : true) && !too_many_declines &&
           order_reqs_valid? && purchase_successful?
         save_user unless current_user
         save_billing_profile unless (params[:funding_source])
@@ -332,6 +333,9 @@ class OrdersController < ApplicationController
           format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)}
         end
       else
+        if too_many_declines
+          flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
+        end
         format.html { render :action => "new" }
       end
     end
@@ -430,11 +434,11 @@ class OrdersController < ApplicationController
 
   def purchase_successful?
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    @order.amount= BillingProfile::TEST_AMOUNT if (%w{development test}.include?(Rails.env) && defined?(BillingProfile::TEST_AMOUNT))
     @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
     options = @profile.build_info(Order::SSL_CERTIFICATE)
       .merge(stripe_card_token: params[:billing_profile][:stripe_card_token])
     @gateway_response = @order.purchase(@credit_card, options)
+    log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
     (@gateway_response.success?).tap do |success|
       if success
         flash.now[:notice] = @gateway_response.message

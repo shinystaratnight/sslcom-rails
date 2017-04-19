@@ -140,6 +140,33 @@ module OrdersHelper
     end
   end
   
+  def log_declined_transaction(transaction, last_four)
+    fa       = current_user.ssl_account.funded_account
+    declined = fa.card_recently_declined?
+    cards    = declined ? fa.card_declined[:cards] : []
+    fa.update(card_declined: nil) unless declined
+    if transaction && transaction.message.include?('This transaction has been declined')
+      fa.update(
+        card_declined: {
+          order_transaction_id: transaction.try(:id),
+          user_id:              current_user.try(:id),
+          cards:                cards.push(last_four),
+          declined_at:          DateTime.now,
+          controller:           "#{controller_name}##{action_name}",
+        }
+      )
+      fa.delay_transaction
+    end
+  end
+  
+  def delay_transaction?
+    fa       = current_user.ssl_account.funded_account if current_user
+    declined = fa && fa.card_recently_declined? if fa
+    next_try = fa.card_declined[:next_attempt] if declined
+    cards    = fa.card_declined[:cards] if declined
+    return false if !declined || (declined && cards && cards.any? && cards.count < 2)
+    declined && next_try && (next_try > DateTime.now)
+  end
 =begin
   def setup_certificate_order
     #adjusting duration to reflect number of days validity

@@ -34,6 +34,7 @@ class FundedAccountsController < ApplicationController
 
   # Deposit funds into the funded_account
   def deposit_funds
+    too_many_declines = delay_transaction?
     @reseller_initial_deposit = true if initial_reseller_deposit?
     @funded_account, @billing_profile = 
       FundedAccount.new(params[:funded_account]),
@@ -115,8 +116,10 @@ class FundedAccountsController < ApplicationController
         immutable_cart_item = ResellerTier.find_by_label(current_order.
             line_items.first.sellable.label)
       end
-      @gateway_response = @deposit.purchase(@credit_card, @profile.build_info("Deposit"))
-      if @gateway_response.success?
+      unless too_many_declines
+        @gateway_response = @deposit.purchase(@credit_card, @profile.build_info("Deposit"))
+      end
+      if @gateway_response && @gateway_response.success?
         @deposit.mark_paid!
         flash.now[:notice] = @gateway_response.message
         save_billing_profile if
@@ -157,13 +160,14 @@ class FundedAccountsController < ApplicationController
         end
         route ||= "success"
       else
+        log_declined_transaction(@gateway_response, @credit_card.number.last(4)) if @gateway_response
         @deposit.destroy
         if @funded
           @funded.destroy
           @account_total.cents = @funded_original # put original amount back on the funded account
         end
-        flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
-                    @gateway_response.message #not descriptive enough
+        flash[:error] = @gateway_response.message if @gateway_response
+        flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!' if too_many_declines
       end
       route ||= "allocate"
     end
