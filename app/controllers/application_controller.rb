@@ -248,7 +248,12 @@ class ApplicationController < ActionController::Base
   end
 
   def set_current_user
-    Authorization.current_user = current_user
+      Authorization.current_user = current_user
+      if current_user and current_user.ssl_accounts.blank?
+        current_user_session.destroy
+        Authorization.current_user=nil
+        return false
+      end
   end
 
   def setup_orders

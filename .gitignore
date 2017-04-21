@@ -19,3 +19,4 @@ tmp/
 /.idea/
 /config/initializers/session_store.rb
 .env
+config/local_env.yml
