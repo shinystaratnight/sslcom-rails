@@ -104,7 +104,7 @@ class CertificateContent < ActiveRecord::Base
             certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
           end
           if last_sent
-            certificate_order.receipt_recipients.uniq.each do |c|
+            certificate_order.valid_recipients_list.each do |c|
               OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
             end
           end

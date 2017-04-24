@@ -15,7 +15,7 @@ class OrderNotifier < ActionMailer::Base
     @certificate_order  = certificate_order.reload
     mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com #{certificate_order.certificate.description["certificate_type"]} Certificate Confirmation For #{certificate_order.subject} (Order ##{certificate_order.ref})",
           from:          Settings.from_email.orders,
-          to:    certificate_order.receipt_recipients
+          to:    certificate_order.valid_recipients_list
 
   end
 
@@ -24,7 +24,7 @@ class OrderNotifier < ActionMailer::Base
     @order        = order
     mail  subject: "SSL.com Confirmation for Order ##{order.reference_number}",
           from: Settings.from_email.orders,
-          to:    ssl_account.receipt_recipients.uniq
+          to:   to_valid_list(ssl_account.receipt_recipients)
   end
 
   def certificate_order_paid(contact, certificate_order, renewal=false)
@@ -129,7 +129,9 @@ class OrderNotifier < ActionMailer::Base
   def deposit_completed(ssl_account, deposit)
     @ssl_account= ssl_account
     @deposit    = deposit
-    mail from: Settings.from_email.orders, to: ssl_account.receipt_recipients, subject: "SSL.com Deposit Confirmation ##{deposit.reference_number}"
+    mail from:    Settings.from_email.orders, 
+         to:      to_valid_list(ssl_account.receipt_recipients),
+         subject: "SSL.com Deposit Confirmation ##{deposit.reference_number}"
   end
 
   def activation_confirmation(user)
@@ -185,5 +187,9 @@ class OrderNotifier < ActionMailer::Base
     @contact=contact
     @certificate_order=certificate_order
   end
-
+  
+  def to_valid_list(list)
+    return list.map(&:split).compact.flatten.uniq if list.is_a? Array
+    return list.split.uniq if list.is_a? String
+  end
 end

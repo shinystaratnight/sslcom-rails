@@ -1434,6 +1434,12 @@ class CertificateOrder < ActiveRecord::Base
     sa.orders << self.order
     sa.certificate_orders << self
   end
+  
+  def valid_recipients_list
+    return receipt_recipients unless receipt_recipients.is_a? Array
+    receipt_recipients.map(&:split).compact.flatten.uniq
+  end
+  
   private
 
   def fill_csr_fields(options, obj)
@@ -1455,7 +1461,7 @@ class CertificateOrder < ActiveRecord::Base
     if ssl_account.is_registered_reseller?
       OrderNotifier.reseller_certificate_order_paid(ssl_account, self).deliver
     else
-      receipt_recipients.each do |c|
+      valid_recipients_list.each do |c|
         OrderNotifier.certificate_order_paid(c, self).deliver
       end
     end
@@ -1491,12 +1497,14 @@ class CertificateOrder < ActiveRecord::Base
         reorder.save
         if notify=="success"
           begin
-            logger.info "Sending notification to #{receipt_recipients.join(",")}"
-            body = OrderNotifier.certificate_order_paid(receipt_recipients, co, true)
-            body.deliver unless body.to.empty?
+            logger.info "Sending notification to #{valid_recipients_list.join(",")}"
+            valid_recipients_list.each do |rec|
+              body = OrderNotifier.certificate_order_paid(rec, co, true)
+              body.deliver unless body.to.empty?
+            end
             RenewalNotification.create(certificate_order_id:
                 co.id, subject: body.subject,
-                body: body, recipients: receipt_recipients)
+                body: body, recipients: valid_recipients_list)
           rescue Exception=>e
             logger.error e.backtrace.inspect
             raise e
