@@ -554,7 +554,7 @@ class Order < ActiveRecord::Base
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
   def refund_merchant(amount, reason, user_id)
-    o  = deducted_from_id ? Order.find(deducted_from_id) : self
+    o  = get_order_charged
     ot = o.transactions.last if (o && o.transactions.last)
     new_refund = nil
     if o && payment_refundable?
@@ -572,7 +572,7 @@ class Order < ActiveRecord::Base
   end
   
   def get_merchant
-    o = deducted_from_id ? Order.find(deducted_from_id) : self
+    o = get_order_charged
     return 'na'         if o.payment_not_refundable?
     return 'paypal'     if o.payment_paypal?
     return 'stripe'     if o.payment_stripe?
@@ -582,10 +582,15 @@ class Order < ActiveRecord::Base
     return 'funded'     if o.payment_funded_account_partial? || o.payment_funded_account?
   end
   
+  def get_order_charged
+    deducted_from_id ? Order.find(deducted_from_id) : self
+  end
+  
   def get_total_merchant_amount
     merchant = get_merchant
-    return (transactions.last.amount * 100) if %w{stripe authnet}.include?(merchant)
-    return cents if merchant == 'paypal'
+    o = get_order_charged
+    return (o.transactions.last.amount * 100) if %w{stripe authnet}.include?(merchant)
+    return o.cents if merchant == 'paypal'
   end
   
   def get_total_merchant_refunds
