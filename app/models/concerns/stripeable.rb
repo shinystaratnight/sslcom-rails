@@ -79,6 +79,7 @@ module Stripeable
       balance_transaction: charge[:balance_transaction],
       created:             charge[:created],
       card_id:             charge[:source].id,
+      account_number:      charge[:source][:last4],
       card_amount:         charge[:amount],
       card_fingerprint:    charge[:source].fingerprint
     }

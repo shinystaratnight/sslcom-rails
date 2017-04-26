@@ -195,6 +195,7 @@ SslCom::Application.routes.draw do
         get :invoice
         get :refund
         get :change_state
+        get :refund_merchant
       end
     end
     resources :billing_profiles

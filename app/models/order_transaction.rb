@@ -3,6 +3,7 @@ class OrderTransaction < ActiveRecord::Base
   
   belongs_to  :order
   has_many    :renewal_attempts
+  has_many    :refunds, dependent: :destroy
 
   serialize :params
   serialize :avs
@@ -31,16 +32,13 @@ class OrderTransaction < ActiveRecord::Base
     end
     
     def purchase(amount, credit_card, options = {})
-      if BillingProfile.gateway_stripe?
-        OrderTransaction.stripe_purchase(amount, credit_card, options)
-        # if amount.cents==0.0 clause
+      if amount.cents==0.0
+        ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
       else
-        process('purchase', amount) do |gw|
-          if amount.cents==0.0
-            ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
-          else
-            gw.purchase(amount, credit_card, options)
-          end
+        if BillingProfile.gateway_stripe?
+          OrderTransaction.stripe_purchase(amount, credit_card, options)
+        else
+          process('purchase', amount){|gw| gw.purchase(amount, credit_card, options)}
         end
       end
     end

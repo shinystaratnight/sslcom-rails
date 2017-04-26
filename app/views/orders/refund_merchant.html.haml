@@ -1,0 +1,56 @@
+-ref_merchant     = @order.get_merchant
+-total_refund_amt = @order.get_total_merchant_refunds
+-order_amt        = @order.get_total_merchant_amount
+-max_refund       = Money.new(order_amt-total_refund_amt)
+-refunded         = Money.new(total_refund_amt).format
+-order_total      = Money.new(order_amt).format
+-fully_refunded   = max_refund.cents == 0 
+
+-if @refunds.any?
+  #validations
+    %table(cellspacing='0')
+      -message = fully_refunded ? "fully refunded #{order_total}" : "refunded #{refunded} of payment total #{order_total}"
+      %caption #{ref_merchant.capitalize} Refund History (#{message})
+      %tr.heading_row
+        %th Date
+        %th User
+        %th Amount
+        %th Status
+        %th Reference
+        %th Reason
+        %th Partial Refund
+      -@refunds.reverse.each do |r|
+        %tr
+          %td #{r.created_at}
+          %td #{r.user ? r.user.login : nil}
+          %td
+            %strong #{Money.new(r.amount).format}
+          %td 
+            %span{style: "color:#{r.successful? ? 'green' : 'red'}"} #{r.status}
+          %td #{r.successful? ? r.reference : r.message}
+          %td #{r.reason}
+          %td #{r.partial_refund ? "&#10003;".html_safe : nil}
+
+-unless fully_refunded
+  .reseller_registration_profile
+    %h3
+      Refund Merchant (#{ref_merchant.capitalize})
+      %span
+        =link_to("advanced options", checkout_orders_url) if current_page?(new_order_path)
+    #stylized.default_form
+      =form_tag refund_merchant_order_url(@ssl_slug, @order.reference_number), method: :get  do
+        =hidden_field_tag :type, 'create'
+        .clearfix
+          %label{for: 'refund_amount'}
+            Refund Merchant $:
+            %span.label_desc Maximum refund allowed #{max_refund.format}.
+          =number_field_tag :refund_amount, max_refund, min: 1, max: max_refund, step: :any, required: true
+        .clearfix
+          %label{for: 'refund_reason'}
+            Reason:
+            %span.label_desc *optional
+          =text_field_tag :refund_reason
+        .clearfix
+          .center{style: 'width:25%'}
+            =submit_tag 'Refund Merchant', class: 'button_blue'
+          

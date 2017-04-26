@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :refund, :change_state]
+  before_filter :find_order, :only => [:show, :invoice, :refund, :refund_merchant, :change_state]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
@@ -193,6 +193,22 @@ class OrdersController < ApplicationController
                                           notes).deliver if (defined?(li.sellable.external_order_number) && li.sellable.external_order_number)
       OrderNotifier.request_comodo_refund("refunds@ssl.com", $1, notes).deliver if li.sellable.try(:notes) =~ /DV#(\d+)/
     }
+  end
+  
+  def refund_merchant
+    unless @order.blank?
+      @refunds = @order.refunds
+      if params[:type] == 'create'
+        amount      = Money.new(params[:refund_amount].to_d * 100)
+        refund      = @order.refund_merchant(amount.cents, params[:refund_reason], current_user.id)
+        last_refund = @order.refunds.last
+        if refund && last_refund && last_refund.successful?
+          flash[:notice] = "Successfully refunded memrchant for amount #{amount.format}."
+        else
+          flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
+        end
+      end
+    end
   end
 
   def change_state

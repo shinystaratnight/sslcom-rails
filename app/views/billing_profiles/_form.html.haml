@@ -5,7 +5,8 @@
       -required = BillingProfile::REQUIRED_COLUMNS.include? column
       .clearfix
         -if column == "country"
-          =country_select_field_for form, column, BillingProfile::TOP_COUNTRIES, {:format=>"no_div", :required=>required}, {}
+          -country = params[:billing_profile][:country] if params[:billing_profile]
+          =country_select_field_for form, column, BillingProfile::TOP_COUNTRIES, {format: "no_div", required: required, selected: (country || 'United States')}
         -else
           =text_field_for form, column, (BillingProfile::EXTENDED_FIELDS.include? column)? ADDRESS_FIELD_SIZE : nil, nil, :format=>"no_div", :required=>required
 =render partial: 'billing_profiles/form_card', locals: {form: form, only_billing_profile: false}

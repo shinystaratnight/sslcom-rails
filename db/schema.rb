@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170417221448) do
+ActiveRecord::Schema.define(version: 20170425030847) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -832,6 +832,27 @@ ActiveRecord::Schema.define(version: 20170417221448) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "refunds", force: :cascade do |t|
+    t.string   "merchant",             limit: 255
+    t.string   "reference",            limit: 255
+    t.integer  "amount",               limit: 4
+    t.string   "status",               limit: 255
+    t.integer  "user_id",              limit: 4
+    t.integer  "order_id",             limit: 4
+    t.integer  "order_transaction_id", limit: 4
+    t.string   "reason",               limit: 255
+    t.boolean  "partial_refund",                     default: false
+    t.string   "message",              limit: 255
+    t.text     "merchant_response",    limit: 65535
+    t.boolean  "test"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "refunds", ["order_id"], name: "index_refunds_on_order_id", using: :btree
+  add_index "refunds", ["order_transaction_id"], name: "index_refunds_on_order_transaction_id", using: :btree
+  add_index "refunds", ["user_id"], name: "index_refunds_on_user_id", using: :btree
 
   create_table "reminder_triggers", force: :cascade do |t|
     t.integer  "name",       limit: 4

@@ -18,8 +18,9 @@ authorization do
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :admin_manage
-    has_permission_on :resellers,    :to => [:create, :read, :update]
-    has_permission_on :ssl_accounts, :to => [
+    has_permission_on :resellers,    to: [:create, :read, :update]
+    has_permission_on :orders,       to: :refund_merchant
+    has_permission_on :ssl_accounts, to: [
       :create,
       :read,
       :update,
@@ -403,6 +404,7 @@ privileges do
     :login_as,
     :manage,
     :manage_all,
+    :refund_merchant,
     :remove_from_account,
     :resend_account_invite,
     :search,

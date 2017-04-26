@@ -22,9 +22,12 @@
     =form.label :card_number, '*Card Number:'
     =form.text_field :card_number
   .clearfix
+    -if params[:billing_profile]
+      -exp_month = params[:billing_profile][:expiration_month]
+      -exp_year  = params[:billing_profile][:expiration_year]
     =form.label :expiration, '*Expiration:'
-    =form.select :expiration_month, options_for_select((1..12).to_a, 1)
-    =form.select :expiration_year, options_for_select((today_year..(today_year + 10)).to_a, today_year)
+    =form.select :expiration_month, options_for_select((1..12).to_a, (exp_month || 1))
+    =form.select :expiration_year, options_for_select((today_year..(today_year + 10)).to_a, (exp_year || today_year))
   .clearfix
     =form.label :security_code, '*Security Code:'
     =form.text_field :security_code, value: nil, size: 4

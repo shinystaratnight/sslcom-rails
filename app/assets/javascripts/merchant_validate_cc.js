@@ -1,4 +1,5 @@
 $(function($) {
+  // Card validation prior to making a purchase utilizing 2 merchants.
   // Stripe Merhcant
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   stripeResponseHandler = function (status, response) {
@@ -42,7 +43,6 @@ $(function($) {
       clientKey:  $('#credit_card_details').data('client-key'),
       apiLoginID: $('#credit_card_details').data('api-login-id')
     };
-    // Pass the card number and expiration date to Accept.js for submission to Authorize.Net.
     Accept.dispatchData(secureData, responseHandler);
 
     function responseHandler(response) {

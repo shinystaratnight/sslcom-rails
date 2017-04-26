@@ -14,6 +14,7 @@ class Order < ActiveRecord::Base
               :source_type => 'CertificateOrder', unscoped: true
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
+  has_many    :refunds, dependent: :destroy
   has_and_belongs_to_many    :discounts
 
   money :amount
@@ -549,34 +550,96 @@ class Order < ActiveRecord::Base
     end
   end
 
-  def refund(refund_amount=self.amount)
-    card_num = billing_profile.card_number
-    transaction do
-      if refund_amount != self.amount
-        # Different amounts: only a CREDIT will do
-        response = OrderTransaction.credit(
-                  refund_amount,
-                  self.transactions.last.reference,
-                  :card_number => card_num)
-        if UnsettledCreditError.match?( response )
-          raise UnsettledCreditError
-        end
-      else
-        # Same amount: try a VOID first, falling back to CREDIT if that fails
-        response = gateway.void( self.transactions.last.reference )
-
-        unless response.success?
-          response = OrderTransaction.credit(
-            refund_amount, self.transactions.last.reference, :card_number => card_num)
-        end
-      end
-      transactions.push(response)
-      full_refund!
-      response
+  # ============================================================================
+  # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
+  # ============================================================================
+  def refund_merchant(amount, reason, user_id)
+    o  = deducted_from_id ? Order.find(deducted_from_id) : self
+    ot = o.transactions.last if (o && o.transactions.last)
+    new_refund = nil
+    if o && payment_refundable?
+      params   = {
+        merchant: get_merchant,
+        user_id:  user_id,
+        order:    o,
+        amount:   amount,
+        reason:   reason,
+        order_transaction: ot
+      }
+      new_refund = Refund.refund_merchant(params)
     end
+    new_refund
   end
-
-
+  
+  def get_merchant
+    o = deducted_from_id ? Order.find(deducted_from_id) : self
+    return 'na'         if o.payment_not_refundable?
+    return 'paypal'     if o.payment_paypal?
+    return 'stripe'     if o.payment_stripe?
+    return 'authnet'    if o.payment_authnet?
+    return 'no_payment' if o.payment_not_required?
+    return 'zero_amt'   if o.payment_zero?
+    return 'funded'     if o.payment_funded_account_partial? || o.payment_funded_account?
+  end
+  
+  def get_total_merchant_amount
+    merchant = get_merchant
+    return (transactions.last.amount * 100) if %w{stripe authnet}.include?(merchant)
+    return cents if merchant == 'paypal'
+  end
+  
+  def get_total_merchant_refunds
+    refunds.where(status: 'success').map(&:amount).sum
+  end
+  
+  def payment_refundable?
+    target = get_merchant
+    !target.blank? && %w{stripe paypal authnet}.include?(target)
+  end
+  
+  def payment_not_required?
+    state == 'payment_not_required'
+  end
+  
+  def payment_not_refundable?
+    po_number || quote_number
+  end
+  
+  def payment_zero?
+    [billable_type, notes, po_number, quote_number].compact.empty? && 
+      cents == 0 && !payment_not_required?
+  end
+  
+  def payment_funded_account_partial?
+    description.include?('Funded Account Withdrawal')
+  end  
+  
+  def payment_funded_account?
+    billing_profile_id.nil? &&
+      po_number.nil? &&
+      quote_number.nil? &&
+      notes.blank? &&
+      transactions.empty? &&
+      deducted_from_id.nil? &&
+      state == 'paid'
+  end
+  
+  def payment_stripe?
+    !payment_not_refundable? && transactions.any? &&
+      !transactions.last.reference.blank? &&
+      transactions.last.reference.include?('ch_')
+  end  
+  
+  def payment_authnet?
+    !payment_not_refundable? && transactions.any? &&
+      !transactions.last.reference.blank? &&
+      transactions.last.reference.include?('#purchase')
+  end
+  
+  def payment_paypal?
+    !payment_not_refundable? && !notes.blank? && notes.include?('paidviapaypal')
+  end
+  
   # this builds non-deep certificate_orders(s) from the cookie params
   def self.certificates_order(options)
     options[:certificates].each do |c|
