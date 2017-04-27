@@ -593,6 +593,18 @@ class Order < ActiveRecord::Base
     return o.cents if merchant == 'paypal'
   end
   
+  def get_funded_account_amount
+    # order was partially paid by funded account?
+    found = Order.where('description LIKE ?', "%Funded Account Withdrawal%")
+      .where('notes LIKE ?', "%#{reference_number}%").last
+    found ? found.cents : 0
+  end
+  
+  def get_surplus_amount
+    # covered order amount and suplus credited to funded account?
+    get_total_merchant_amount - (cents - get_funded_account_amount)
+  end
+  
   def get_total_merchant_refunds
     refunds.where(status: 'success').map(&:amount).sum
   end

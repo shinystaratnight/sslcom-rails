@@ -21,6 +21,8 @@ class Refund < ActiveRecord::Base
       when 'paypal'
         refund.paypal_refund(params)
     end
+    refund.duplicate_refund if refund.persisted?
+    refund
   end
   
   def stripe_refund(params)
@@ -73,6 +75,16 @@ class Refund < ActiveRecord::Base
   
   def successful?
     status == 'success'
+  end
+  
+  def duplicate_refund
+    # If another order was deducted from this order (e.g.: Deposit), create a refund 
+    # record for both orders.
+    found = Order.where(deducted_from_id: order.id)
+    if self.persisted? && found.any?
+      copy = self.dup
+      copy.update(order_id: found.last.id)
+    end
   end
   
   private
