@@ -1,3 +1,5 @@
+# This class represent requests sent to the CA (ie Comodo or the SSL.com Root CA)
+
 class CaCertificateRequest < CaApiRequest
 
   def order_number

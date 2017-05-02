@@ -222,6 +222,7 @@ class ComodoApi
     end
   end
 
+  # mdc = multi domain certificate
   def self.mdc_status(certificate_order)
     comodo_options = params_domains_status(certificate_order)
     host = GET_MDC_DETAILS
