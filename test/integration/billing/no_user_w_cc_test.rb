@@ -52,7 +52,7 @@ describe 'Anonymous user' do
     select 'Visa',                           from: 'billing_profile_credit_card'
     select '1',                              from: 'billing_profile_expiration_month'
     select Date.today.year + 1,              from: 'billing_profile_expiration_year'
-    fill_in 'billing_profile_card_number',   with: '4007000000027'
+    fill_in 'billing_profile_card_number',   with: (BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027')
     fill_in 'billing_profile_security_code', with: '900'
 
     find('input[name="next"]').click

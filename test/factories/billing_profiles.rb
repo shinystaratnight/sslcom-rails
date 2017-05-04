@@ -9,7 +9,7 @@ FactoryGirl.define do
     postal_code       '12345'
     phone             '9161223444'
     credit_card       'Visa'
-    card_number       '4007000000027'
+    card_number       {BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027'}
     expiration_month  1
     expiration_year   {(Date.today + 3.years).year}
     security_code     '900' 
