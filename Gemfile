@@ -64,6 +64,7 @@ gem 'sass-rails'
 gem 'compass-rails'
 gem 'select2-rails'
 gem 'stripe'
+gem 'json-schema'
 
 group :development do
   gem 'foreman'
