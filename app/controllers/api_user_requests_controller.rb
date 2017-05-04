@@ -25,17 +25,18 @@ class ApiUserRequestsController < ApplicationController
 
   def create_v1_4
     if @result.save
+      template = "api_user_requests/create_v1_4"
       if @obj = @result.create_user
         # successfully charged
         if @obj.is_a?(User) && @obj.errors.empty?
-          template = "api_user_requests/create_v1_4"
           set_result_parameters(@result, @obj, template)
           @result.account_key=@obj.ssl_account.api_credential.account_key
           @result.secret_key=@obj.ssl_account.api_credential.secret_key
           # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @obj.admin_submitted = true
-          render(:template => template)
+          render template: template
         else
           @result = @obj #so that rabl can report errors
+          render template: template, status: 400
         end
       end
     else
@@ -49,21 +50,23 @@ class ApiUserRequestsController < ApplicationController
 
   def show_v1_4
     if @result.save
+      template = "api_user_requests/show_v1_4"
       if @obj = UserSession.create(params).user
         # successfully charged
         if @obj.is_a?(User) && @obj.errors.empty?
-          template = "api_user_requests/show_v1_4"
+          
           set_result_parameters(@result, @obj, template)
           @result.account_key=@obj.ssl_account.api_credential.account_key
           @result.secret_key=@obj.ssl_account.api_credential.secret_key
           @result.available_funds=Money.new(@obj.ssl_account.funded_account.cents).format
           # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @obj.admin_submitted = true
-          render(:template => template)
+          render template: template
         else
           @result = @obj #so that rabl can report errors
         end
       else
         @result.errors[:login] << "#{@result.login} not found or incorrect password"
+        render template: template, status: 400
       end
     else
       InvalidApiUserRequest.create parameters: params
