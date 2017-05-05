@@ -17,7 +17,9 @@
   %h2 Domain Validation
   %h3
     Please select the appropriate validation option for each domain and then click the 'Validate' button.
-    Only after you click 'Validate' will the actual validation be performed.
+    Only after you click 'Validate' will the actual validation be performed. You can also
+    =link_to "invite", new_managed_user_path({ssl_slug: @ssl_slug})
+    another user to complete the validation step.
     =link_to "How do I use this page?", Settings.dv_explanation_link, target: "_blank"
   %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
     %tr

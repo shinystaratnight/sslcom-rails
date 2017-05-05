@@ -28,7 +28,7 @@ class Csr < ActiveRecord::Base
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
   has_many    :certificate_orders, :through=>:certificate_content
-  serialize   :subject_alternative_names, :dependent => :destroy
+  serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
 
