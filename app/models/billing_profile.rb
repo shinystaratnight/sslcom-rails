@@ -46,8 +46,9 @@ class BillingProfile < ActiveRecord::Base
   end
 
   def masked_card_number
-    mask = (0..(card_number.size - 8)).inject("") {|array,n|array << '*'}
-    card_number.gsub(/(?<=\d{4})\d+(?=\d{4})/, mask)
+    card = card_number.gsub(/\s+/, '')
+    mask = (0..(card.size - 8)).inject('') {|array,n|array << '*'}
+    card.gsub(/(?<=\d{4})\d+(?=\d{4})/, mask)
   end
 
   def build_credit_card(options={})
