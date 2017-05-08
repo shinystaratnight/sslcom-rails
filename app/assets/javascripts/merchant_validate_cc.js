@@ -1,9 +1,10 @@
 $(function($) {
   // Card validation prior to making a purchase utilizing 2 merchants.
   // Stripe Merhcant
+  var forms = '.edit_funded_account, .new_order, .new_funded_account, .new_billing_profile';
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   stripeResponseHandler = function (status, response) {
-      var form = $('.edit_funded_account, .new_order, .new_funded_account');
+      var form = $(forms);
       if (response.error) {
         form.find('.cc-error').remove();
         showError(response.error.message);
@@ -74,7 +75,7 @@ $(function($) {
       .before('<div class="cc-error">' + message + '</div>');
   }
   
-  $('.edit_funded_account, .new_order, .new_funded_account').submit(function() {
+  $(forms).submit(function() {
     if ($('#billing_profile_card_number').attr('required')=='required') {
       var form    = $(this),
           gateway = $('#credit_card_details').data('gateway');
