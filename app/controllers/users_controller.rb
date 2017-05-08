@@ -89,12 +89,14 @@ class UsersController < ApplicationController
   end
 
   def cancel_reseller_signup
+    ssl        = current_user.ssl_account
+    owner_role = Role.get_owner_id
     if current_user.role_symbols.include? Role::RESELLER.to_sym
-      current_user.ssl_account.remove_role! "new_reseller"
-      current_user.ssl_account.reseller.destroy unless current_user.ssl_account.reseller.blank?
-      current_user.roles.delete Role.find_by_name(Role::RESELLER)
+      ssl.remove_role! 'new_reseller'
+      ssl.reseller.destroy unless ssl.reseller.blank?
+      current_user.update_account_role(ssl, Role::RESELLER, Role::OWNER)
     end
-    current_user.roles << Role.find_by_name(Role::OWNER) unless current_user.role_symbols.include?(Role::OWNER.to_sym)
+    current_user.set_roles_for_account(ssl, [owner_role]) unless current_user.duplicate_role?(owner_role)
     flash[:notice] = "reseller signup has been canceled"
     @user = current_user #for rable object reference
   end

@@ -212,9 +212,10 @@ class User < ActiveRecord::Base
     end
   end
 
-  def duplicate_role?(role_name, account=nil)
+  def duplicate_role?(role, target_ssl=nil)
     assignments.where(
-      ssl_account_id: account, role_id: Role.get_role_id(role_name)
+      ssl_account_id: (target_ssl.nil? ? ssl_account : target_ssl).id, 
+      role_id:        (role.is_a?(String) ? Role.get_role_id(role): Role.find(role))
     ).any?
   end
 
