@@ -40,7 +40,7 @@ module Stripeable
       description:          options[:description],
       statement_descriptor: options[:description],
       currency:             'usd',
-      receipt_email:        '',
+      receipt_email:        options[:owner_email]
     )
   end
   # Ceate Stripe card token if using an existing CC billing profile for purchase

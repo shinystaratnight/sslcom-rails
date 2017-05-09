@@ -117,7 +117,8 @@ class FundedAccountsController < ApplicationController
             line_items.first.sellable.label)
       end
       unless too_many_declines
-        @gateway_response = @deposit.purchase(@credit_card, @profile.build_info("Deposit"))
+        options = @profile.build_info("Deposit").merge(owner_email: @ssl_account.get_account_owner.email)
+        @gateway_response = @deposit.purchase(@credit_card, options)
       end
       if @gateway_response && @gateway_response.success?
         @deposit.mark_paid!
