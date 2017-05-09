@@ -34,7 +34,7 @@
         %li=link_to "completely cancel order", '#', onclick:  "refund_reason(false)"
         -if @order.amount.cents > 0
           %li=link_to "completely cancel order and make $#{@order.amount} available to customer", '#', onclick:  "refund_reason(true)"
-          -if %{stripe paypal authnet}.include?(ref_merchant)
+          -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
             %br
               %li
                 -refunded  = @order.get_total_merchant_refunds
