@@ -84,9 +84,7 @@ module OrdersHelper
   end
 
   def reseller_initial_deposit?
-    ssl_account.has_role?('new_reseller') &&
-      (ssl_account.reseller.enter_billing_information? ||
-        ssl_account.reseller.select_tier?)
+      ssl_account.reseller.enter_billing_information? || ssl_account.reseller.select_tier?
   end
 
   def reseller_tier_is_free?

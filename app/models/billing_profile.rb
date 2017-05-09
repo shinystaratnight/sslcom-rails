@@ -78,12 +78,7 @@ class BillingProfile < ActiveRecord::Base
   end
 
   def build_info(description)
-    owner = ssl_account.get_account_owner
-    {
-      billing_address: self.build_address,
-      description:     description,
-      owner_email:     (owner ? owner.email : nil)
-    }
+    {billing_address: self.build_address, description: description}
   end
 
   def american?
