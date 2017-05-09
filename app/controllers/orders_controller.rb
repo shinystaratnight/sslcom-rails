@@ -453,7 +453,7 @@ class OrdersController < ApplicationController
     @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
     options = @profile.build_info(Order::SSL_CERTIFICATE).merge(
         stripe_card_token: params[:billing_profile][:stripe_card_token],
-        owner_email: current_user.ssl_account.get_account_owner.email
+        owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
       )
     @gateway_response = @order.purchase(@credit_card, options)
     log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
