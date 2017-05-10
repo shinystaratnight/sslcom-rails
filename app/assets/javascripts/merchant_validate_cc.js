@@ -60,6 +60,7 @@ $(function($) {
   }
   
   function submitForm(form){
+    $('#waiting_bar').show();
     form.find('.cc-error').remove();
     form.get(0).submit();
     clearCardInfo();
@@ -82,6 +83,7 @@ $(function($) {
             gateway = $('#credit_card_details').data('gateway');
         // Disable the submit button to prevent repeated clicks
         form.find('input[type=submit]').prop('disabled', true);
+        $('#waiting_bar').hide();
         gateway=='stripe' ? createStripeToken() : sendPaymentDataToAnet(form);
         return false;
       }

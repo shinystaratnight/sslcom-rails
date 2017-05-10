@@ -375,7 +375,9 @@
       $(this).remove();
     });
     $("input[name='next']").click(function(){
-      $("#waiting_bar").show();
+      if (!$('#billing_section')) {
+        $('#waiting_bar').show();
+      }
     });
     //#{"$('#colorpicker').farbtastic('.color');" if Rails.env.development?}
     $("#cancel_reseller_signup").click(function(){
