@@ -37,8 +37,8 @@ describe 'Anonymous user' do
     # Login Information
     fill_in 'user_login',                  with: 'new_user'
     fill_in 'user_email',                  with: @new_email
-    fill_in 'user_password',               with: 'testing'
-    fill_in 'user_password_confirmation',  with: 'testing'
+    fill_in 'user_password',               with: @password
+    fill_in 'user_password_confirmation',  with: @password
     # Billing Information
     fill_in 'billing_profile_first_name',  with: 'first'
     fill_in 'billing_profile_last_name',   with: 'last'
@@ -114,7 +114,7 @@ describe 'Anonymous user' do
     # creates correct user record
     # ======================================================
       user = User.first
-      assert_equal 1, user.login_count
+      refute_nil   user.login_count
       assert_equal 1, user.get_all_approved_accounts.count
       assert_equal 1, user.assignments.count
       assert_equal 1, user.ssl_account_users.count
