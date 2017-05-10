@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   validates :email, email: true, uniqueness: true, #TODO look at impact on checkout
     format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
   validates :password, format: {
-    with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :require_password?,
+    with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :validate_password?,
     message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
   }
   accepts_nested_attributes_for :assignments
@@ -868,7 +868,7 @@ class User < ActiveRecord::Base
     User.where('login LIKE ?', old).update_all(login: new)
   end
   
-  def require_password?
-    !new_record? || (new_record? && crypted_password)
+  def validate_password?
+    (!new_record? || (new_record? && crypted_password)) && require_password?
   end
 end
