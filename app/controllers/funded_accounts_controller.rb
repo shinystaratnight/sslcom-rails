@@ -39,6 +39,11 @@ class FundedAccountsController < ApplicationController
     @funded_account, @billing_profile = 
       FundedAccount.new(params[:funded_account]),
       BillingProfile.new(params[:billing_profile])
+    # After discount, check if sufficient funds in funded account for final amount 
+    if @funded_account.deduct_order? && params[:discount_amount] && sufficient_funds?(params)
+      new_params = params.select{|k,v| %w{funded_account discount_code discount_amount}.include?(k)}
+      redirect_to apply_funds_path(new_params.deep_symbolize_keys) and return
+    end
     if @funded_account.order_type=='certificate'
       @certificate_order = @ssl_account.certificate_orders.current
     elsif @funded_account.order_type=='order'
@@ -284,7 +289,7 @@ class FundedAccountsController < ApplicationController
 
   def deduct_order_amounts(params)
     discount           = params[:discount_amount]
-    discount           = (discount && discount.to_f > 0) ? (discount.to_f * 100) : 0
+    discount           = (discount && discount.to_f > 0) ? to_cents(discount) : 0
     price_w_discount   = @funded_account.amount.cents - discount
     @funded_original   = @account_total.cents # existing amount on funded account
     @funded_withdrawal = @account_total.cents # credited toward purchase amount from funded account
@@ -316,5 +321,17 @@ class FundedAccountsController < ApplicationController
         notes:  notes.join(' ')
       )
     end
+  end
+  
+  def sufficient_funds?(params)
+    funded_amt   = @ssl_account.funded_account.amount.cents
+    order_amt    = to_cents(params[:funded_account][:amount])
+    discount     = params[:discount_amount]
+    discount_amt = (discount && discount.to_f > 0) ? to_cents(discount) : 0
+    (funded_amt - (order_amt - discount_amt)) >= 0
+  end
+  
+  def to_cents(amount)
+    Money.new(amount.to_f * 100).cents
   end
 end
