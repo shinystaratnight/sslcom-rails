@@ -31,9 +31,10 @@ class User < ActiveRecord::Base
     :main_ssl_account, :max_teams, :persist_notice
   validates :email, email: true, uniqueness: true, #TODO look at impact on checkout
     format: {with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, on: :create}
-  validates :password, :format =>
-      {:with => /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: ('!new_record? and require_password?'),
-      message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."}
+  validates :password, format: {
+    with: /\A(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}\z/, if: :require_password?,
+    message: "must be at least 8 characters long and include at least 1 of each of the following: uppercase, lowercase, number and special character such as ~`!@#$%^&*()-+={}[]|\;:\"<>,./?."
+  }
   accepts_nested_attributes_for :assignments
 
   acts_as_authentic do |c|
@@ -865,5 +866,9 @@ class User < ActiveRecord::Base
   def self.change_login(old, new)
     #requires SQL statement to change login
     User.where('login LIKE ?', old).update_all(login: new)
+  end
+  
+  def require_password?
+    !new_record? || (new_record? && crypted_password)
   end
 end
