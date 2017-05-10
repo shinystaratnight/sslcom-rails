@@ -76,13 +76,15 @@ $(function($) {
   }
   
   $(forms).submit(function() {
-    if ($('#billing_profile_card_number').attr('required')=='required') {
-      var form    = $(this),
-          gateway = $('#credit_card_details').data('gateway');
-      // Disable the submit button to prevent repeated clicks
-      form.find('input[type=submit]').prop('disabled', true);
-      gateway=='stripe' ? createStripeToken() : sendPaymentDataToAnet(form);
-      return false;
+    if ($('#billing_section').is(':visible')) {
+      if ($('#billing_profile_card_number').attr('required')=='required') {
+        var form    = $(this),
+            gateway = $('#credit_card_details').data('gateway');
+        // Disable the submit button to prevent repeated clicks
+        form.find('input[type=submit]').prop('disabled', true);
+        gateway=='stripe' ? createStripeToken() : sendPaymentDataToAnet(form);
+        return false;
+      }
     }
   });
   

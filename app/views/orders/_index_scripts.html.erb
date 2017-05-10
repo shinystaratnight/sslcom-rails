@@ -133,6 +133,9 @@ jQuery(function($) {
             if(data.record.user.status=='disabled')
               alert('This account has been disabled');
             else if(data.record.user.status=='enabled'){
+              if (!$('#billing_section').is(':visible') && !$('#new_user_section').is(':visible')) {
+                data.redirect_method='redirect';
+              }
               if(data.redirect_method=='submit'){
                   if(data.url)
                     $('form#new_order').attr("action", data.url);
