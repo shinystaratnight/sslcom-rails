@@ -12,7 +12,7 @@ describe 'Decline ssl account invite' do
     @existing_user_ssl   = @existing_user.ssl_account
     
     @existing_user.activate!(
-      user: {login: 'existing_user', password: 'testing', password_confirmation: 'testing'}
+      user: {login: 'existing_user', password: @password, password_confirmation: @password}
     )
 
     login_as(@current_owner, self.controller.cookies)

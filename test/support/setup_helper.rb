@@ -36,6 +36,7 @@ module SetupHelper
     create_reminder_triggers
     create_roles
     set_common_roles
+    @password = 'Testing@1'
   end
 
   def initialize_certificates
