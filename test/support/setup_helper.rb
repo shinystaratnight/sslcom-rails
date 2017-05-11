@@ -65,7 +65,13 @@ module SetupHelper
     invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     invited_user
   end
-
+  
+  def initialize_countries
+    Country.create(iso1_code: 'US', name_caps: 'UNITED STATES', name: 'United States', iso3_code: 'USA', num_code: 840)
+    Country.create(iso1_code: 'ZA', name_caps: 'SOUTH AFRICA', name: 'South Africa', iso3_code: 'ZAF', num_code: 710)
+    Country.create(iso1_code: 'CA', name_caps: 'CANADA', name: 'Canada', iso3_code: 'CAN', num_code: 124)
+  end
+  
   def initialize_certificate_csr_keys
 @nonwildcard_csr = <<EOS
 -----BEGIN CERTIFICATE REQUEST-----
