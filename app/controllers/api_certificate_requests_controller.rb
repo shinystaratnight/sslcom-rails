@@ -27,51 +27,20 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def set_result_parameters(result, acr, rendered)
-    result.ref = acr.ref
-    result.order_status = acr.status
-    result.order_amount = acr.order(true).amount.format
-    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(acr)
-    result.receipt_url = ORDERS_DOMAIN+order_path(acr.order)
-    result.smart_seal_url = ORDERS_DOMAIN+certificate_order_site_seal_path(certificate_order_id: acr.ref)
-    result.validation_url = ORDERS_DOMAIN+certificate_order_validation_path(acr)
-    result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+    ssl_slug               = acr.ssl_account.to_slug
+    result.ref             = acr.ref
+    result.order_status    = acr.status
+    result.order_amount    = acr.order.amount.format
+    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(ssl_slug, acr)
+    result.receipt_url     = ORDERS_DOMAIN+order_path(ssl_slug, acr.order)
+    result.smart_seal_url  = ORDERS_DOMAIN+certificate_order_site_seal_path(ssl_slug, acr.ref)
+    result.validation_url  = ORDERS_DOMAIN+certificate_order_validation_path(ssl_slug, acr)
+    result.registrant      = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
     result.update_attribute :response, rendered
   end
 
-  def create_v1_3
-    if @result.csr_obj && !@result.csr_obj.valid?
-      # we do this sloppy maneuver because the rabl template only reports errors
-      @result = @result.csr_obj
-    else
-      if @result.save
-        if @acr = @result.create_certificate_order
-          # successfully charged
-          if @acr.errors.empty?
-            template = "api_certificate_requests/success_create_v1_3"
-            @result.ref = @acr.ref
-            @result.order_status = "pending validation"
-            @result.order_amount = @acr.order.amount.format
-            @result.certificate_url = url_for(@acr)
-            @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
-            @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
-            @result.update_attribute :response, render_to_string(:template => template)
-            render(:template => template)
-          else
-            @result = @acr #so that rabl can report errors
-          end
-        end
-      else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-      end
-    end
-  rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
-  end
-
   def create_v1_4
+    @template = 'api_certificate_requests/create_v1_4'
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -79,29 +48,27 @@ class ApiCertificateRequestsController < ApplicationController
       if @result.valid? && @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
-          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            template = "api_certificate_requests/create_v1_4"
-            if @acr.certificate_content.csr && @result.debug=="true"
-              ccr = @acr.certificate_content.csr.ca_certificate_requests.first
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?      
+            if @acr.certificate_content.csr && @result.debug
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end
-            @rendered=render_to_string(:template => template)
+            @rendered=render_to_string(template: @template)
             set_result_parameters(@result, @acr, @rendered)
-            # @result.debug=(JSON.parse(@result.parameters)["debug"]=="true") # && @acr.admin_submitted = true
-            render(:template => template)
+            render_200_status
           else
             @result = @acr #so that rabl can report errors
+            render_400_status
           end
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        render_400_status
       end
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def update_v1_4
@@ -512,5 +479,19 @@ class ApiCertificateRequestsController < ApplicationController
 
   def decode_error
     render :text => "JSON request could not be parsed", :status => 400
+  end
+  
+  def render_200_status
+    render template: @template, status: 200
+  end
+  
+  def render_400_status
+    render template: @template, status: 400
+  end
+  
+  def render_500_error(e)
+    logger.error e.message
+    e.backtrace.each { |line| logger.error line }
+    error(500, 500, 'server error')
   end
 end

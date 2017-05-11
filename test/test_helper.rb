@@ -35,6 +35,7 @@ include SetupHelper
 include MailerHelper
 include Authorization::TestHelper
 include AuthorizationHelper
+include ApiSetupHelper
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation
