@@ -393,17 +393,18 @@ class Order < ActiveRecord::Base
   def purchase(credit_card, options = {})
     options[:order_id] = number
     transaction do
-
       authorization = OrderTransaction.purchase(final_amount, credit_card, options)
-      transactions.push(authorization)
+      
+      if authorization && authorization.is_a?(OrderTransaction)
+        transactions.push(authorization)
 
-      if authorization.success?
-        payment_authorized!
-      else
-        transaction_declined!
-        errors[:base] << authorization.message
+        if authorization.success?
+          payment_authorized!
+        else
+          transaction_declined!
+          errors[:base] << authorization.message
+        end
       end
-
       authorization
     end
   end

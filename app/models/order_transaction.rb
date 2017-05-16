@@ -32,7 +32,7 @@ class OrderTransaction < ActiveRecord::Base
     end
     
     def purchase(amount, credit_card, options = {})
-      if amount.cents==0.0
+      if amount.cents == 0
         ActiveMerchant::Billing::Response.new(true, "This transaction has been approved")
       else
         if BillingProfile.gateway_stripe?
