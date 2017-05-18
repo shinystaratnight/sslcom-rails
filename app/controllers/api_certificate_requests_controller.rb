@@ -436,7 +436,7 @@ class ApiCertificateRequestsController < ApplicationController
   private
 
   def set_test
-    @test = (request.subdomain==TEST_SUBDOMAIN) ? true : false
+    @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
   end
 
   def record_parameters
