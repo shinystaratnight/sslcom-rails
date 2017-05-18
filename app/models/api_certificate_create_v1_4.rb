@@ -101,12 +101,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                                                        duration: self.period.to_i/365)
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-    unless self.test
+    unless debug_mode?
       if false #credit_card
 
       else
-        errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-            (order.amount.cents > api_requestable.funded_account.amount.cents)
+        if order.amount.cents > api_requestable.funded_account.amount.cents
+          errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." 
+        end    
       end
     end
     if errors.blank?
@@ -250,13 +251,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def apply_funds(options)
     order = options[:order]
     funded_account = options[:ssl_account].funded_account
-    funded_account.cents -= order.cents unless @certificate_order.is_test
+    funded_account.cents -= order.cents unless debug_mode?
     if order.line_items.size > 0
       funded_account.deduct_order = true
       # order.save
       order.mark_paid!
       Authorization::Maintenance::without_access_control do
-        funded_account.save unless @certificate_order.is_test
+        funded_account.save unless debug_mode?
       end
       options[:certificate_order].pay! true
     end
@@ -394,5 +395,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def test_update_dcv
     a=ApiCertificateCreate_v1_4.find{|a|a.domains && (a.domains.keys.count) > 2 && a.ref && a.find_certificate_order.try(:external_order_number) && a.find_certificate_order.is_test?}
     a.comodo_auto_update_dcv(send_to_ca: false, certificate_order: a.find_certificate_order)
+  end
+  
+  def debug_mode?
+    self.test && !Rails.env.test?
   end
 end
