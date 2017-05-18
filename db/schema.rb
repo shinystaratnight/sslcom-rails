@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170425030847) do
+ActiveRecord::Schema.define(version: 20170515211433) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -138,7 +138,7 @@ ActiveRecord::Schema.define(version: 20170425030847) do
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   limit: 4
     t.string   "api_requestable_type", limit: 255
-    t.string   "request_url",          limit: 255
+    t.text     "request_url",          limit: 65535
     t.text     "parameters",           limit: 65535
     t.string   "method",               limit: 255
     t.text     "response",             limit: 65535
