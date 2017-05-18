@@ -355,8 +355,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           if !extra.empty?
             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
             errors[:contacts].last.merge!(msg)
-          elsif !CertificateContact.new(attrs.merge({roles: role})).valid?
-            r = CertificateContact.new(attrs.merge({roles: role}))
+          elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
+            r = CertificateContact.new(attrs.merge(roles: [role]))
             r.valid?
             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
           elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
@@ -371,7 +371,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     else
       errors[:contacts] << "parameter required"
     end
-    return false if errors[:contacts]
+    cur_err = errors[:contacts].reject(&:empty?)
+    errors.delete(:contacts)
+    errors.add(:contacts, cur_err) if cur_err.any?
+    errors.get(:contacts) ? false : true
   end
 
   def is_processing?
