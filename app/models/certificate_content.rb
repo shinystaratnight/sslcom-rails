@@ -335,6 +335,18 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def is_dv?
+    signed_certificates.last.is_dv? if signed_certificates.last
+  end
+
+  def is_ov?
+    signed_certificates.last.is_ov? if signed_certificates.last
+  end
+
+  def is_ev?
+    signed_certificates.last.is_ev? if signed_certificates.last
+  end
+
   private
 
   def domains_validation

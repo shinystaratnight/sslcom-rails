@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-#set :domain, '54.91.78.195' #Rails 4 staging
+# set :domain, '54.91.78.195' #Rails 4 staging
 set :domain, '184.73.226.63' #Rails 4 production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
@@ -57,7 +57,7 @@ set :deploy_via, :remote_cache
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :user, "ubuntu"
-set :branch, "ssl-30-test-suite-billing"
+set :branch, "master"
 set :use_sudo, false
 
 role :cache, domain
@@ -193,6 +193,8 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/javascripts #{release_path}/public/javascripts"
     run "ln -nfs #{shared_path}/stylesheets #{release_path}/public/stylesheets"
     run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
+    run "ln -nfs #{shared_path}/repository #{release_path}/public/certs"
+    run "ln -nfs #{shared_path}/config/local_env.yml #{release_path}/config/local_env.yml"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'

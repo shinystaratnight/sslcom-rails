@@ -56,12 +56,12 @@ SslCom::Application.configure do
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    :address    => "smtp.fusemail.net",
-    :port       => 25,
-    :domain     => "ssl.com",
-    :authentication => :login,
-    :user_name => "bob.livingston@ssl.gs",
-    :password => "Jama1Kama!"
+      :address    => "email-smtp.us-east-1.amazonaws.com",
+      :port       => 25,
+      :domain     => "ssl.com",
+      :authentication => :login,
+      :user_name => "AKIAJ5WH7ADNDQDO7NGA",
+      :password => "Ag4HcpR7fDRmO8U/FLM100PYXNISHWQVhxS+tEJBoLhE"
   }
 
   config.to_prepare do

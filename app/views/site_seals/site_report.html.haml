@@ -35,7 +35,7 @@
           This Web site can secure your private information using an #{Settings.community_name} issued SSL
           Certificate. Information exchanged with any address beginning with https is
           encrypted using SSL before transmission.
-    -if r && (co.certificate_content.validated? || co.certificate_content.issued?) && !co.certificate_content.csr.signed_certificate.is_dv?
+    -if r && (co.certificate_content.validated? || co.certificate_content.issued?) && !co.certificate_content.is_dv?
       %div
         %dl
           %dt.section_header identity verified

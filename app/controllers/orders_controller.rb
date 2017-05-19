@@ -234,11 +234,11 @@ class OrdersController < ApplicationController
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) || Order).not_test
+          (@ssl_account.try(:orders) || Order).unscoped.order("created_at desc").uniq
         else
-          current_user.ssl_account.orders.not_test
+          current_user.ssl_account.orders
         end
-      end
+      end.not_test
     stats(p, unpaginated)
 
     respond_to do |format|
@@ -248,7 +248,9 @@ class OrdersController < ApplicationController
   end
 
   def stats(p, unpaginated)
-    @total_amount=unpaginated.sum(:cents)
+    @negative = unpaginated.where{state >> ['fully_refunded','charged_back', 'canceled']}.sum(:cents)
+    @paid_via_deposit = unpaginated.where{billing_profile_id == nil }.sum(:cents)
+    @total_amount=unpaginated.sum(:cents)-@paid_via_deposit-@negative
     @total_count=unpaginated.count
     @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
