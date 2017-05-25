@@ -15,8 +15,8 @@ module ApiSetupHelper
       }
   end
   
-  # Basic request to buy a certificate, voucher/ref number is returned if successful
-  # product:
+  # SSL Certificates
+  #  product:
   #    100 (for EV UCC SSL)
   #    101 (for UCC SSL)
   #    103 (for High Assurance SSL)
@@ -25,16 +25,39 @@ module ApiSetupHelper
   #    105 (for Wildcard SSL)
   #    106 (for Basic SSL)
   #    107 (for Premium SSL)
-  # period:
+  #  period:
   #    365 or 730 for EV SSL certs
   #    30 or 90 for Free Trial SSL certs
   #    365, 730, 1095, 1461, or 1826 for all others
-  def api_get_request_for_voucher
-    @api_keys.merge(api_get_basic_ssl)
+  
+  # UCC SSL (ucc256sslcom)
+  def api_get_request_for_ucc
+    @api_keys.merge(product: 101, period: 365)
   end
   
-  def api_get_basic_ssl
-    {product: 106, period: 365}
+  # EV SSL (ev256sslcom)
+  def api_get_request_for_ev
+    @api_keys.merge(product: 102, period: 365)
+  end
+  
+  # High Assurance SSL (ov256sslcom)
+  def api_get_request_for_ov
+    @api_keys.merge(product: 103, period: 365)
+  end
+  
+  # Wildcard SSL (wc256sslcom)
+  def api_get_request_for_wildcard
+    @api_keys.merge(product: 105, period: 365)
+  end
+  
+  # Basic SSL (basic256sslcom)
+  def api_get_request_for_dv
+    @api_keys.merge(product: 106, period: 365)
+  end
+  
+  # Premium SSL (premium256sslcom)
+  def api_get_request_for_premium
+    @api_keys.merge(product: 107, period: 365)
   end
 
   # Certificate content registrant
@@ -81,6 +104,10 @@ module ApiSetupHelper
   
   def api_get_nonwildcard_csr_hash
     {csr: @nonwildcard_csr}
+  end
+  
+  def api_get_wildcard_csr_hash
+    {csr: @wildcard_csr}
   end
   
   # Applicant Representative used for callback. Only for OV certificates
@@ -149,7 +176,7 @@ module ApiSetupHelper
   #     HTTP_CSR_HASH
   #     HTTPS_CSR_HASH
   #     CNAME_CSR_HASH
-  def api_get_domains_with_csr
+  def api_get_domains_for_csr
     {
       domains: {
         'mail.ssltestdomain1.com': {dcv: 'HTTP_CSR_HASH'},
