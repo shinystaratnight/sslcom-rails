@@ -87,15 +87,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       # or make a certificate voucher
       co.preferred_payment_order = 'prepaid'
     end
-    domain_names = if self.domains.is_a? Hash
-                     self.domains.keys
-                   elsif self.domains.is_a? String
-                     [self.domains]
-                   else
-                     self.domains
-                   end
     certificate_content=CertificateContent.new(
-        csr: csr, server_software_id: self.server_software, domains: domain_names)
+        csr: csr, server_software_id: self.server_software, domains: get_domains)
     co.certificate_contents << certificate_content
     @certificate_order = Order.setup_certificate_order(certificate: certificate, certificate_order: co,
                                                        duration: self.period.to_i/365)
@@ -399,5 +392,19 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   
   def debug_mode?
     self.test && !Rails.env.test?
+  end
+  
+  def get_domains
+    if csr_obj && csr_obj.valid? && domains.nil?
+      self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}
+    end
+    
+    if domains.is_a? Hash
+     domains.keys
+    elsif domains.is_a? String
+     [domains]
+    else
+     domains
+    end
   end
 end
