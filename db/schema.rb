@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170515211433) do
+ActiveRecord::Schema.define(version: 20170530231345) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -386,6 +386,7 @@ ActiveRecord::Schema.define(version: 20170515211433) do
     t.text    "on_cancellation_job_options", limit: 65535
     t.boolean "queueing_complete",                         default: false, null: false
     t.boolean "blocked",                                   default: false, null: false
+    t.boolean "failure_cancels_group",                     default: true,  null: false
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
