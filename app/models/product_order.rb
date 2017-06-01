@@ -400,7 +400,7 @@ class ProductOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    if external_order_number && ca_certificate_requests.last.success?
+    if external_order_number && ca_certificate_requests.first.success?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)

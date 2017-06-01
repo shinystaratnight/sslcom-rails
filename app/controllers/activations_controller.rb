@@ -12,7 +12,6 @@ class ActivationsController < ApplicationController
     @user = User.find(params[:id])
     raise Exception if @user.active?
     if @user.activate!(params)
-      assign_ssl_links(@user)
       @user.deliver_activation_confirmation!
       flash[:notice] = "Your account has been activated."
       redirect_to account_path((@user.ssl_account ? @user.ssl_account.to_slug : {}))

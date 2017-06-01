@@ -85,7 +85,7 @@ class ApiUserRequestsController < ApplicationController
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             template = "api_certificate_requests/update_v1_4"
             if @acr.certificate_content.csr && @result.debug=="true"
-              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end

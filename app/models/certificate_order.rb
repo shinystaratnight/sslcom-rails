@@ -669,7 +669,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    if external_order_number && ca_certificate_requests.last.success?
+    if external_order_number && ca_certificate_requests.first.success?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
@@ -1283,9 +1283,7 @@ class CertificateOrder < ActiveRecord::Base
   def build_comodo_dcv(last_sent, params, options={})
     if certificate.is_ucc?
       dcv_methods_for_comodo=[]
-      new_domains, csr = (options[:certificate_content] ?
-          [options[:certificate_content].domains, options[:certificate_content].csr] : [self.domains, self.csr])
-      domains_for_comodo = (new_domains.blank? ? [csr.common_name] : ([csr.common_name]+new_domains)).flatten.uniq
+      domains_for_comodo=(options[:certificate_content] || self.certificate_content).all_domains
       domains_for_comodo.each do |d|
         if certificate_content.certificate_names.find_by_name(d)
           last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
