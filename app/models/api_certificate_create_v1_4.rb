@@ -396,7 +396,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   
   def get_domains
     if csr_obj && csr_obj.valid? && domains.nil?
-      self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}
+      self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access
     end
     
     if domains.is_a? Hash
