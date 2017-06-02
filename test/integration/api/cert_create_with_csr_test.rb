@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
-  # POST /certificates (WITH voucher/ref#)
   describe 'create_v1_4' do
     before do
       api_main_setup
@@ -15,12 +14,12 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
     #   valid registrant
     #   non-wildcard csr
     it 'status 200' do
-      req = api_get_request_for_voucher
+      req = api_get_request_for_dv
         .merge(api_get_server_software)
         .merge(api_get_csr_registrant)
         .merge(api_get_csr_contacts)
         .merge(api_get_nonwildcard_csr_hash)
-        .merge(api_get_domains_with_csr)
+        .merge(api_get_domains_for_csr)
 
       post api_certificate_create_v1_4_path(req)
       items = JSON.parse(body)
@@ -30,7 +29,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_equal '$78.10', items['order_amount']
+      assert_equal '$39.05', items['order_amount']
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
       refute_nil   items['ref']
@@ -46,7 +45,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       ca_request_2 = CaApiRequest.find_by_api_requestable_type 'Csr'
       csr          = Csr.first
       dcv          = DomainControlValidation
-      assert_equal (10000 - 7810), FundedAccount.last.cents
+      assert_equal (10000 - 3905), FundedAccount.last.cents
       assert_equal 2, CaApiRequest.count
       assert_equal 0, CaDcvRequest.count
       assert_equal 1, Order.count
