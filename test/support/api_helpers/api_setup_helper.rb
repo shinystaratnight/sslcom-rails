@@ -184,7 +184,7 @@ module ApiSetupHelper
   def api_get_domains_no_csr
     { domains: ['www.ssltestdomain1.com', 'www.ssltestdomain2.com'] }
   end
-  # for multi domain ucc ssl; csr is specified
+  # csr is specified
   #   dcv: The domain control validation method to be performed for a given domain.
   #   valid values for the dcv are:
   #     HTTP_CSR_HASH
@@ -199,20 +199,6 @@ module ApiSetupHelper
     }
   end
   
-  # for single domain ssl; csr is specified
-  #   dcv: The domain control validation method to be performed for a given domain.
-  #   valid values for the dcv are:
-  #     HTTP_CSR_HASH
-  #     HTTPS_CSR_HASH
-  #     CNAME_CSR_HASH
-  def api_get_domain_for_csr
-    {
-      domains: {
-        'mail.ssltestdomain1.com': {dcv: 'HTTP_CSR_HASH'},
-      }
-    }
-  end
-
   def api_get_wildcard_domains_for_csr
     {
       domains: {

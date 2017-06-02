@@ -129,22 +129,20 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_equal 3, api_get_sub_order_quantaty(@ucc_min_domains)
       assert_equal 0, api_get_sub_order_quantaty(@ucc_server_license)
       
-      # certificate names and csr created
+      # CSR mapped correctly
+      dcv     = DomainControlValidation
+      domains = %w{qlikdev.ezops.com mail.ssltestdomain1.com www.ssltestdomain2.com}.sort
       api_assert_non_wildcard_csr
-      common_name = CertificateName.where(is_common_name: true)
-      assert_equal 2, CertificateName.count # 2 domains from domains hash
-      assert_equal 1, common_name.count     # only one common name for first domain in hash 
-      assert_match api_get_domains_for_csr[:domains].keys.first.to_s, common_name.first.name
-      assert_equal api_get_domains_for_csr[:domains].keys.map(&:to_s).sort, CertificateName.pluck(:name).sort
       
-      # 2 dcvs created for 2 domains
-      dcv = DomainControlValidation
       assert_equal 2, dcv.count                                     # only 2 domains via domains hash should be validated
       assert_equal 0, dcv.where(csr_id: Csr.first.id).count         # extracted from csr
       assert_equal 2, dcv.where.not(certificate_name_id: nil).count # 2 domains provided via domains params, not from csr
       assert_equal 1, dcv.where(dcv_method: 'HTTP_CSR_HASH').count  # 1 domain, non-email
       assert_equal 1, dcv.where(dcv_method: 'email', email_address: 'admin@ssltestdomain2.com').count # 1 domain is an email
 
+      assert_equal 3, CertificateName.count # 2 domains provided, 1 from csr
+      assert_equal domains, CertificateName.pluck(:name).sort
+      
       api_ca_api_requests_when_csr
     end
     
@@ -210,15 +208,9 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
 
       # certificate names and csr created
       api_assert_non_wildcard_csr
-      
-      cert_name    = CertificateName.pluck(:name)
-      common_name  = CertificateName.where(is_common_name: true)
-      assert_equal 22, CertificateName.count
-      assert_equal 1, common_name.count
-      assert_match domains[:domains].keys.first.to_s, common_name.first.name
+      assert_equal 23, CertificateName.count
+      cert_name = CertificateName.pluck(:name)
       domains[:domains].keys.map(&:to_s).each {|name| assert cert_name.include?(name)}
-      
-      # dcv is not created since the requests are stored in delayed job.
       assert_equal 0, DomainControlValidation.count
       assert_equal 'new', Validation.last.workflow_state
       
@@ -230,6 +222,18 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_equal    jg.first.id, j.first.job_group_id
       domains[:domains].keys.map(&:to_s).each {|name| assert_includes(j.first.handler, name)}
     end
+    
+    # Params:     domains hash (500 domains)
+    # No Params:  CSR hash
+    # Should:     allow 500 domains
+    # ==========================================================================
+    # it 'status 400: 500 domain limit, NO CSR hash' do
+    #   @team.funded_account.update(cents: 9000000)
+    #   post api_certificate_create_v1_4_path(
+    #     @req.merge(domains: (1..500).to_a.map {|n| "ssltestdomain#{n}.com"})
+    #   )
+    #   items = JSON.parse(body)
+    # end
     
     # Params:    wildcard CSR hash
     # NO params: domians hash
@@ -282,56 +286,15 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_equal 0,  api_get_sub_order_quantaty(@ucc_server_license)
       assert_equal 1,  api_get_sub_order_quantaty(@ucc_wildcard)
       
-      # certificate name and CSR created
+      # certificate name and csr created
       api_assert_wildcard_csr
       assert_equal 1, CertificateName.count
-      assert_equal 1, CertificateName.where(is_common_name: true).count
       assert_match '*.rubricae.es', CertificateName.first.name
-      
-      # 1 dcv created for domain in CSR hash
       assert_equal 1, DomainControlValidation.count
       assert_equal 'new', Validation.last.workflow_state
       
       # CaApiRequest, 2 total
       api_ca_api_requests_when_csr
-    end
-    
-    # Params:     domains hash (over 500 domains)
-    # No Params:  CSR hash
-    # Should:     return status code 400
-    #             response should have domains error
-    # ==========================================================================
-    it 'status 400: over 500 domain max limit, NO CSR hash' do
-      @team.funded_account.update(cents: 9000000)
-      post api_certificate_create_v1_4_path(
-        @req.merge(domains: (1..501).to_a.map {|n| "ssltestdomain#{n}.com"})
-      )
-      items = JSON.parse(body)
-      
-      # response
-      refute       response.success?
-      assert_equal 400, status
-      assert_equal 1, items.count
-      refute_nil   items['errors']
-      assert_match 'You have exceeded the maximum of 500 domain(s) or subdomains for this certificate.', items['errors']['domains'].first
-      
-      # db records
-      assert_equal 1, CaApiRequest.count
-      assert_equal 0, CaDcvRequest.count
-      assert_equal 0, Order.count
-      assert_equal 0, Registrant.count
-      assert_equal 0, Validation.count
-      assert_equal 0, SiteSeal.count
-      assert_equal 0, CertificateOrder.count
-      assert_equal 0, CertificateContact.count
-      assert_equal 0, CertificateContent.count
-      assert_equal 0, SignedCertificate.count
-      assert_equal 0, SubOrderItem.count
-      assert_equal 0, LineItem.count
-      assert_equal 1, InvalidApiCertificateRequest.count
-      assert_match 'ssl.com', InvalidApiCertificateRequest.first.ca
-      assert_equal 0, Delayed::Job.count
-      assert_equal 0, Delayed::JobGroups::JobGroup.count
     end
   end
 end
