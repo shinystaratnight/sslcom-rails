@@ -129,20 +129,22 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_equal 3, api_get_sub_order_quantaty(@ucc_min_domains)
       assert_equal 0, api_get_sub_order_quantaty(@ucc_server_license)
       
-      # CSR mapped correctly
-      dcv     = DomainControlValidation
-      domains = %w{qlikdev.ezops.com mail.ssltestdomain1.com www.ssltestdomain2.com}.sort
+      # certificate names and csr created
       api_assert_non_wildcard_csr
+      common_name = CertificateName.where(is_common_name: true)
+      assert_equal 2, CertificateName.count # 2 domains from domains hash
+      assert_equal 1, common_name.count     # only one common name for first domain in hash 
+      assert_match api_get_domains_for_csr[:domains].keys.first.to_s, common_name.first.name
+      assert_equal api_get_domains_for_csr[:domains].keys.map(&:to_s).sort, CertificateName.pluck(:name).sort
       
+      # 2 dcvs created for 2 domains
+      dcv = DomainControlValidation
       assert_equal 2, dcv.count                                     # only 2 domains via domains hash should be validated
       assert_equal 0, dcv.where(csr_id: Csr.first.id).count         # extracted from csr
       assert_equal 2, dcv.where.not(certificate_name_id: nil).count # 2 domains provided via domains params, not from csr
       assert_equal 1, dcv.where(dcv_method: 'HTTP_CSR_HASH').count  # 1 domain, non-email
       assert_equal 1, dcv.where(dcv_method: 'email', email_address: 'admin@ssltestdomain2.com').count # 1 domain is an email
 
-      assert_equal 3, CertificateName.count # 2 domains provided, 1 from csr
-      assert_equal domains, CertificateName.pluck(:name).sort
-      
       api_ca_api_requests_when_csr
     end
     
@@ -208,9 +210,15 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
 
       # certificate names and csr created
       api_assert_non_wildcard_csr
-      assert_equal 23, CertificateName.count
-      cert_name = CertificateName.pluck(:name)
+      
+      cert_name    = CertificateName.pluck(:name)
+      common_name  = CertificateName.where(is_common_name: true)
+      assert_equal 22, CertificateName.count
+      assert_equal 1, common_name.count
+      assert_match domains[:domains].keys.first.to_s, common_name.first.name
       domains[:domains].keys.map(&:to_s).each {|name| assert cert_name.include?(name)}
+      
+      # dcv is not created since the requests are stored in delayed job.
       assert_equal 0, DomainControlValidation.count
       assert_equal 'new', Validation.last.workflow_state
       
@@ -286,10 +294,13 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_equal 0,  api_get_sub_order_quantaty(@ucc_server_license)
       assert_equal 1,  api_get_sub_order_quantaty(@ucc_wildcard)
       
-      # certificate name and csr created
+      # certificate name and CSR created
       api_assert_wildcard_csr
       assert_equal 1, CertificateName.count
+      assert_equal 1, CertificateName.where(is_common_name: true).count
       assert_match '*.rubricae.es', CertificateName.first.name
+      
+      # 1 dcv created for domain in CSR hash
       assert_equal 1, DomainControlValidation.count
       assert_equal 'new', Validation.last.workflow_state
       
