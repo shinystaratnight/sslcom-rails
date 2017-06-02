@@ -11,7 +11,7 @@
   ],
   "properties" : {
     "ref" : { "type" : "string" },
-    "registrant" : { "type" : ["string", "null"] },
+    "registrant" : { "type" : ["object", "string", "null"] },
     "order_status" : { "type" : "string" },
     "validations" : { "type" : ["string", "null"] },
     "order_amount" : { "type" : "string" },

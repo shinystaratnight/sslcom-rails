@@ -199,6 +199,24 @@ FactoryGirl.define do
           )
           value += 365
         end
+        # For wildcard domains
+        value = 365
+        (1..3).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_domain.id,
+            title:                    "#{n} Year Wildcard Domain",
+            status:                   "live",
+            description:              "#{n} Year Wildcard Domain",
+            text_only_description:    "#{n} Year Wildcard Domain",
+            amount:                   value*14,
+            display_order:            n,
+            item_type:                'ucc_domain',
+            value:                    value,
+            serial:                   "sslcomucc256ssl#{n}yrwcdm",
+            published_as:             "live",
+          )
+          value += 365
+        end
       end
     end
     

@@ -6,6 +6,7 @@ module ApiSetupHelper
       initialize_certificates
       initialize_certificate_csr_keys
       initialize_countries
+      api_initialize_pvi_ids
       @card_number  = BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027'
       @user         = create(:user, :owner)
       @team         = @user.ssl_account
@@ -15,6 +16,19 @@ module ApiSetupHelper
       }
   end
   
+  # ProductVariantItem ids
+  def api_initialize_pvi_ids
+    @ucc_min_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrdm').id
+    @ucc_max_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yradm').id
+    @ucc_server_license = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrsl').id
+    @ucc_wildcard       = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrwcdm').id
+  end
+  
+  # SubOrderItem quantaties for specific product_variant_item_id
+  def api_get_sub_order_quantaty(pvi_id)
+    SubOrderItem.where(product_variant_item_id: pvi_id).first.quantity
+  end
+    
   # SSL Certificates
   #  product:
   #    100 (for EV UCC SSL)
@@ -80,19 +94,19 @@ module ApiSetupHelper
   def api_get_csr_contacts
     {
       contacts: {
-        all: {                # all: administrative, billing, technical, validation
-          first_name:         'first_name',           # required
-          last_name:          'last_name',            # required
-          email:              'csr_test@domain.com',  # required
-          phone:              '9161223444',           # required
-          address1:           '123 H St.',
-          address2:           nil,
-          address3:           nil,
-          po_box:             nil,
-          city:               'Houston',
-          postal_code:        '77098',
-          organization:       'SSL Org',
-          country:            'US'                    # Applicant country code (ISO3166 2-character country code)
+        all: {          # all: administrative, billing, technical, validation
+          first_name:   'first_name',           # required
+          last_name:    'last_name',            # required
+          email:        'csr_test@domain.com',  # required
+          phone:        '9161223444',           # required
+          address1:     '123 H St.',
+          address2:     nil,
+          address3:     nil,
+          po_box:       nil,
+          city:         'Houston',
+          postal_code:  '77098',
+          organization: 'SSL Org',
+          country:      'US'                    # Applicant country code (ISO3166 2-character country code)
         }
       }
     }
@@ -183,5 +197,55 @@ module ApiSetupHelper
         'www.ssltestdomain2.com':  {dcv: 'admin@ssltestdomain2.com'}
       }
     }
+  end
+  
+  def api_get_wildcard_domains_for_csr
+    {
+      domains: {
+        '*.ssltestdomain1.com': {dcv: 'HTTP_CSR_HASH'},
+        '*.ssltestdomain2.com': {dcv: 'HTTP_CSR_HASH'}
+      }
+    }
+  end
+  
+  # Validate CaApiRequest when CSR hash is provided
+  # Two total: 1. SSL API create endpoint 
+  #            2. Comodo API AutoApplySSL endpoint
+  def api_ca_api_requests_when_csr
+    ca_request_1 = CaApiRequest.find_by_api_requestable_type 'SslAccount'
+    ca_request_2 = CaApiRequest.find_by_api_requestable_type 'Csr'
+
+    # request to SSL.com API certificate create action
+    assert_match 'ssl.com', ca_request_1.ca
+    assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
+    # request to comodo w/successful response
+    assert_match 'comodo', ca_request_2.ca
+    assert_includes ca_request_2.response, 'errorCode=0'
+    assert_includes ca_request_2.response, 'orderNumber='
+    assert_match 'CaCertificateRequest', ca_request_2.type
+    assert_match 'https://secure.comodo.net/products/!AutoApplySSL', ca_request_2.request_url
+  end
+  
+  def api_assert_non_wildcard_csr
+    csr = Csr.first
+    assert_equal 1, Csr.count
+    assert_match 'qlikdev.ezops.com', csr.common_name
+    assert_match 'EZOPS Inc', csr.organization
+    assert_match 'IT', csr.organization_unit
+    assert_match 'vishal@ezops.com', csr.email
+    assert_match 'sha256WithRSAEncryption', csr.sig_alg
+    refute_nil   csr.body
+  end
+  
+  def api_assert_wildcard_csr
+    csr = Csr.first
+    assert_equal 1, Csr.count
+    assert_equal 2048, csr.strength
+    assert_match '*.rubricae.es', csr.common_name
+    assert_match 'Promoland Media S.L.', csr.organization
+    assert_match 'Comunicaciones', csr.organization_unit
+    assert_match 'soporte@promoland.es', csr.email
+    assert_match 'sha256WithRSAEncryption', csr.sig_alg
+    refute_nil   csr.body
   end
 end
