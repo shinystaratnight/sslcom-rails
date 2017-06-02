@@ -156,16 +156,16 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    certificate_names.create(name: csr.common_name) if (csr && certificate_names.find_by_name(csr.common_name).blank?)
-    unless self.domains.blank?
-      cert_domains = self.domains.flatten
-      cert_domains.each do |domain|
-        certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
+    if domains.blank?
+      if csr && certificate_names.find_by_name(csr.common_name).blank?
+        certificate_names.create(name: csr.common_name, is_common_name: true)
       end
-      # # delete orphaned certificate_names
-      # certificate_names.map(&:name).each do |cn|
-      #   certificate_names.find_by_name(cn).destroy unless cert_domains.include?(cn)
-      # end
+    else
+      domains.flatten.each_with_index do |domain, i|
+        if certificate_names.find_by_name(domain).blank?
+          certificate_names.create(name: domain, is_common_name: (i == 0)) 
+        end
+      end
     end
   end
 
