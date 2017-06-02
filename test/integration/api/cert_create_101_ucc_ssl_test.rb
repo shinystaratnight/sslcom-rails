@@ -231,18 +231,6 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       domains[:domains].keys.map(&:to_s).each {|name| assert_includes(j.first.handler, name)}
     end
     
-    # Params:     domains hash (500 domains)
-    # No Params:  CSR hash
-    # Should:     allow 500 domains
-    # ==========================================================================
-    # it 'status 400: 500 domain limit, NO CSR hash' do
-    #   @team.funded_account.update(cents: 9000000)
-    #   post api_certificate_create_v1_4_path(
-    #     @req.merge(domains: (1..500).to_a.map {|n| "ssltestdomain#{n}.com"})
-    #   )
-    #   items = JSON.parse(body)
-    # end
-    
     # Params:    wildcard CSR hash
     # NO params: domians hash
     # Should:    allow wildcard domain
@@ -306,6 +294,44 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       
       # CaApiRequest, 2 total
       api_ca_api_requests_when_csr
+    end
+    
+    # Params:     domains hash (over 500 domains)
+    # No Params:  CSR hash
+    # Should:     return status code 400
+    #             response should have domains error
+    # ==========================================================================
+    it 'status 400: over 500 domain max limit, NO CSR hash' do
+      @team.funded_account.update(cents: 9000000)
+      post api_certificate_create_v1_4_path(
+        @req.merge(domains: (1..501).to_a.map {|n| "ssltestdomain#{n}.com"})
+      )
+      items = JSON.parse(body)
+      
+      # response
+      refute       response.success?
+      assert_equal 400, status
+      assert_equal 1, items.count
+      refute_nil   items['errors']
+      assert_match 'You have exceeded the maximum of 500 domain(s) or subdomains for this certificate.', items['errors']['domains'].first
+      
+      # db records
+      assert_equal 1, CaApiRequest.count
+      assert_equal 0, CaDcvRequest.count
+      assert_equal 0, Order.count
+      assert_equal 0, Registrant.count
+      assert_equal 0, Validation.count
+      assert_equal 0, SiteSeal.count
+      assert_equal 0, CertificateOrder.count
+      assert_equal 0, CertificateContact.count
+      assert_equal 0, CertificateContent.count
+      assert_equal 0, SignedCertificate.count
+      assert_equal 0, SubOrderItem.count
+      assert_equal 0, LineItem.count
+      assert_equal 1, InvalidApiCertificateRequest.count
+      assert_match 'ssl.com', InvalidApiCertificateRequest.first.ca
+      assert_equal 0, Delayed::Job.count
+      assert_equal 0, Delayed::JobGroups::JobGroup.count
     end
   end
 end
