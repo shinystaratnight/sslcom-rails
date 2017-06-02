@@ -73,6 +73,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #TODO add dcv validation
       end
     end
+    verify_domain_limits
   end
 
   def create_certificate_order
@@ -287,6 +288,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def is_ucc?
     serial =~ /\Aucc/ if serial
   end
+  
+  def is_premium?
+    serial =~ /\Apremium/ if serial
+  end
+  
+  def is_evucc?
+    serial =~ /\Aevucc/ if serial
+  end
 
   def is_not_ip
     true
@@ -405,6 +414,23 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
      [domains]
     else
      domains
+    end
+  end
+        
+  def verify_domain_limits
+    unless domains.nil?
+      max = if is_ucc? || is_wildcard? || is_evucc?
+        500
+      elsif is_dv? || is_ev? || is_ov?
+        1
+      elsif is_premium?
+        3
+      else
+        1
+      end
+      if domains.count > max
+        errors[:domains] << "You have exceeded the maximum of #{max} domain(s) or subdomains for this certificate."
+      end
     end
   end
 end
