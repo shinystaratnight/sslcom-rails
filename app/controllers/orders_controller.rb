@@ -452,7 +452,7 @@ class OrdersController < ApplicationController
 
   def purchase_successful?
     return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    @order.description = [Order::SSL_CERTIFICATE, @order.reference_number].join(" - ")
+    @order.description = Order::SSL_CERTIFICATE
     options = @profile.build_info(Order::SSL_CERTIFICATE).merge(
         stripe_card_token: params[:billing_profile][:stripe_card_token],
         owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
