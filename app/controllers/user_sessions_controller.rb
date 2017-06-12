@@ -87,19 +87,23 @@ class UserSessionsController < ApplicationController
         @user_session.errors[:base]<<("please visit
           #{resend_activation_users_url(:login => @user_session.attempted_record.login)}
           to have your activation notice resent")
+        log_failed_attempt(@user_session.user, params,flash[:notice])
         format.html {render :action => :new}
         format.js   {render :json=>@user_session.errors}
       elsif @user_session.user.blank? || (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
         unless @user_session.user.blank?
           if (!@user_session.user.blank? && @user_session.user.is_admin_disabled?)
             flash.now[:error] = "Ooops, it appears this account has been disabled." unless request.xhr?
+            log_failed_attempt(@user_session.user, params,flash.now[:error])
             @user_session.destroy
             @user_session=UserSession.new
           end
         end
+        log_failed_attempt(@user_session.user, params,@user_session.errors.to_json)
         format.html {render :action => :new}
         format.js   {render :json=>@user_session}
       else
+        log_failed_attempt(params[:user_session][:login], params,flash.now[:error])
         format.html {render :action => :new}
         format.js   {render :json=>@user_session.errors}
       end
@@ -130,5 +134,20 @@ private
         (user.ssl_account.billing_profiles.empty? ? '' :
         ',"billing_profiles":'+render_to_string(partial: '/orders/billing_profiles',
         locals: {ssl_account: user.ssl_account }).to_json)+'}'
+  end
+
+  def log_failed_attempt(user, params, reason)
+    SystemAudit.create(
+      if user
+        {owner:  user,
+         target: nil,
+         action: "Failed login attempt by #{user.login} from ip address #{request.remote_host}",
+         notes:  reason}
+      else
+        {owner:  nil,
+        target: nil,
+        action: "Failed login attempt by #{params[:user_session][:login]} from ip address #{request.remote_host}",
+        notes:  reason}
+    end)
   end
 end
