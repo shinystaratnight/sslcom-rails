@@ -169,6 +169,10 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def signed_certificate
+    signed_certificates.last
+  end
+
   def domains=(names)
     unless names.blank?
       names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}

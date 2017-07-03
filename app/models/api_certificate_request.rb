@@ -40,7 +40,9 @@ class ApiCertificateRequest < CaApiRequest
 
   DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain]
 
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS).uniq
+  REVOKE_ACCESSORS = [:account_key, :secret_key, :ref]
+
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
   before_validation(on: :create) do
     if self.account_key && self.secret_key
