@@ -26,6 +26,7 @@ class ApiCertificateRequestsController < ApplicationController
     OrderNotifier.api_executed(@rendered).deliver if @rendered
   end
 
+  # set which parameters will be displayed via the api response
   def set_result_parameters(result, acr, rendered)
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
@@ -49,6 +50,38 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.create_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?      
+            if @acr.certificate_content.csr && @result.debug
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+              @result.api_request=ccr.parameters
+              @result.api_response=ccr.response
+            end
+            @rendered=render_to_string(template: @template)
+            set_result_parameters(@result, @acr, @rendered)
+            render_200_status
+          else
+            @result = @acr #so that rabl can report errors
+            render_400_status
+          end
+        end
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+        render_400_status
+      end
+    end
+  rescue => e
+    render_500_error e
+  end
+
+  def revoke_v1_4
+    @template = 'api_certificate_requests/revoke_v1_4'
+    if @result.csr_obj && !@result.csr_obj.valid?
+      # we do this sloppy maneuver because the rabl template only reports errors
+      @result = @result.csr_obj
+    else
+      if @result.valid? && @result.save
+        if @acr = @result.create_certificate_order
+          # successfully charged
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
             if @acr.certificate_content.csr && @result.debug
               ccr = @acr.certificate_content.csr.ca_certificate_requests.last
               @result.api_request=ccr.parameters
@@ -450,6 +483,8 @@ class ApiCertificateRequestsController < ApplicationController
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
+              when /revoke/
+                ApiCertificateRevoke
               when "retrieve_v1_3", "show_v1_4", "index_v1_4"
                 ApiCertificateRetrieve
               when "api_parameters_v1_4"

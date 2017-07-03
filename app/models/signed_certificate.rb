@@ -511,6 +511,12 @@ class SignedCertificate < ActiveRecord::Base
     self.find_each {|s|s.update_column :decoded, s.decode}
   end
 
+  # get the serial through regular expression of the decoded cert
+  def decoded_serial
+    m=decoded.match(/Serial Number:\n(.*?)\n/m)
+    m[1].strip unless m.blank?
+  end
+
   private
 
   def proper_certificate?
@@ -550,6 +556,11 @@ class SignedCertificate < ActiveRecord::Base
       end
     end
     cert
+  end
+
+  # one time utility function to populate the serial column
+  def self.decode_all_serials
+    self.find_each {|s|s.update_column :serial, s.decoded_serial}
   end
 end
 
