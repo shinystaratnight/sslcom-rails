@@ -286,6 +286,14 @@ class SslAccount < ActiveRecord::Base
     to_sa.certificate_orders << from_sa.certificate_orders
   end
 
+  # to_sa - the ssl_account to migrate to
+  # ref_number - reference number of the order to migrate
+  def migrate_order(to_sa, ref_number)
+    o=self.orders.find_by_reference_number(ref_number)
+    to_sa.certificate_orders << o.certificate_orders
+    to_sa.orders << o
+  end
+
   def primary_user
     User.unscoped{users.first}
   end
