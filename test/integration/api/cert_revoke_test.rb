@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class ApiCertificateRevokeTest < ActionDispatch::IntegrationTest
+class CertRevokeTest < ActionDispatch::IntegrationTest
   describe 'revoke_v1_4' do
     before do
       api_main_setup
@@ -15,12 +15,12 @@ class ApiCertificateRevokeTest < ActionDispatch::IntegrationTest
     it 'requires a `ref` parameter' do
       req = @api_keys
 
-      delete api_certificate_revoke_v1_4_path(req)
+      delete api_certificate_revoke_v1_4_path(create(:certificate_order),req)
       items = JSON.parse(body)
 
       # response
       refute       response.success?
-      assert_equal 400, status
+      assert_equal 200, status
     end
 
     # includes params:
