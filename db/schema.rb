@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170703231345) do
+ActiveRecord::Schema.define(version: 20170714231345) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -207,6 +207,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.string   "label",                limit: 255
     t.string   "ref",                  limit: 255
     t.boolean  "agreement"
+    t.string   "ext_customer_ref",     limit: 255
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
@@ -251,6 +252,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.string   "auto_renew_status",     limit: 255
     t.string   "ca",                    limit: 255
     t.string   "external_order_number", limit: 255
+    t.string   "ext_customer_ref",      limit: 255
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
@@ -372,6 +374,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.boolean  "challenge_password"
     t.integer  "certificate_lookup_id",     limit: 4
     t.text     "decoded",                   limit: 65535
+    t.string   "ext_customer_ref",          limit: 255
   end
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
@@ -654,6 +657,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.string   "ext_affiliate_name",     limit: 255
     t.string   "ext_affiliate_id",       limit: 255
     t.boolean  "ext_affiliate_credited"
+    t.string   "ext_customer_ref",       limit: 255
   end
 
   add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree
@@ -802,6 +806,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.string   "display_order",         limit: 255
     t.datetime "created_at",                                            null: false
     t.datetime "updated_at",                                            null: false
+    t.string   "ext_customer_ref",      limit: 255
   end
 
   create_table "products_sub_products", force: :cascade do |t|
@@ -990,6 +995,7 @@ ActiveRecord::Schema.define(version: 20170703231345) do
     t.integer  "certificate_lookup_id",     limit: 4
     t.text     "decoded",                   limit: 65535
     t.text     "serial",                    limit: 65535, null: false
+    t.string   "ext_customer_ref",          limit: 255
   end
 
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree
