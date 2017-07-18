@@ -92,7 +92,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def cname_destination
-    "#{csr.sha1_hash}.comodoca.com"
+    "#{csr.dns_sha2_hash}.comodoca.com"
   end
 
   def non_wildcard_name
@@ -100,7 +100,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def dcv_contents
-    "#{csr.sha1_hash}\ncomodoca.com"
+    "#{csr.sha2_hash}\ncomodoca.com"
   end
 
   def csr
@@ -129,7 +129,7 @@ class CertificateName < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
@@ -162,7 +162,7 @@ class CertificateName < ActiveRecord::Base
         else
           r=open(dcv_url(false,prepend), redirect: false).read
         end
-        return "true" if !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
       if name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
@@ -177,7 +177,7 @@ class CertificateName < ActiveRecord::Base
     begin
       timeout(Surl::TIMEOUT_DURATION) do
         r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{csr.sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
       return false

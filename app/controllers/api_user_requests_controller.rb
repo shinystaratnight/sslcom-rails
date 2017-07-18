@@ -199,7 +199,7 @@ class ApiUserRequestsController < ApplicationController
         @result.instructions = ApiDcvMethods::INSTRUCTIONS
         unless @acr.csr.blank?
           @result.md5_hash = @acr.csr.md5_hash
-          @result.sha1_hash = @acr.csr.sha1_hash
+          @result.sha2_hash = @acr.csr.sha2_hash
         end
         @acr.domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
@@ -208,8 +208,8 @@ class ApiUserRequestsController < ApplicationController
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
                                                     "allow_https"=>"true",
-                                                    "contents"=>"#{@result.sha1_hash}\ncomodoca.com"}
-            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha1_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha1_hash}.comodoca.com."}
+                                                    "contents"=>"#{@result.sha2_hash}\ncomodoca.com"}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha2_hash}.comodoca.com."}
           end
         end
       end

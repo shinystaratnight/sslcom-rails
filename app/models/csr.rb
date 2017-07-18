@@ -177,7 +177,7 @@ class Csr < ActiveRecord::Base
   end
 
   def dcv_contents
-    "#{sha1_hash}\ncomodoca.com"
+    "#{sha2_hash}\ncomodoca.com"
   end
 
   def dcv_verified?
@@ -198,7 +198,7 @@ class Csr < ActiveRecord::Base
         else
           r = open(dcv_url).read(redirect: false)
         end
-        return http_or_s if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
@@ -225,7 +225,7 @@ class Csr < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        return "true" if !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return "true" if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
       return "false"
@@ -236,7 +236,7 @@ class Csr < ActiveRecord::Base
     begin
       timeout(Surl::TIMEOUT_DURATION) do
         r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{sha1_hash}") && r =~ Regexp.new("^comodoca.com"))
+        !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
       end
     rescue Exception=>e
       return false
@@ -329,6 +329,14 @@ class Csr < ActiveRecord::Base
 
   def sha1_hash
     Digest::SHA1.hexdigest(to_der).upcase unless body.blank?
+  end
+
+  def sha2_hash
+    Digest::SHA2.hexdigest(to_der).upcase unless body.blank?
+  end
+
+  def dns_sha2_hash
+    "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}"
   end
 
   def to_der

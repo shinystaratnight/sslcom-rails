@@ -30,13 +30,13 @@
       %td=link_to "click here to download file #{co.csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, co.csr)
     %tr
       %td cname
-      %td create CNAME in dns and point to #{co.csr.sha1_hash}.comodoca.com
+      %td create CNAME in dns and point to #{co.csr.dns_sha2_hash}.comodoca.com
     %tr
       %td md5 hash
       %td.md5_hash=co.csr.md5_hash
     %tr
-      %td sha1 hash
-      %td.sha1_hash=co.csr.sha1_hash
+      %td sha2 hash
+      %td.sha2_hash=co.csr.sha2_hash
   =form_tag(form_action+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
