@@ -341,10 +341,10 @@ jQuery(function($) {
         }
         //get cert order index
         instruction=$('span[alt="'+$(this).attr('name')+'"]')[0];
-        file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
+        file=$(this).attr("alt").replace("*.", "").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
         https = "https://"+file;
         http = "http://"+file;
-        wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
+        wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/.well-known/pki-validation/"+$('.md5_hash').text()+".txt";
         wwwhttps = "https://"+wwwfile;
         wwwhttp = "http://"+wwwfile;
         cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.sha1_hash').text()+".comodoca.com";
