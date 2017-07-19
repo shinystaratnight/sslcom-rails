@@ -347,7 +347,7 @@ jQuery(function($) {
         wwwfile=$(this).attr("alt").replace("*.", "www.").toLowerCase()+"/"+$('.md5_hash').text()+".txt";
         wwwhttps = "https://"+wwwfile;
         wwwhttp = "http://"+wwwfile;
-        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.sha1_hash').text()+".comodoca.com";
+        cname = $('.md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.sha2_hash').text()+".comodoca.com";
         if(/@/.test(methods[0])){
           $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
