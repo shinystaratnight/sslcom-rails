@@ -615,7 +615,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def subject
-    return unless certificate_content.try(:csr)
+    return "" unless certificate_content.try(:csr)
     csr = certificate_content.csr
     csr.signed_certificate.try(:common_name) || csr.common_name
   end
@@ -630,10 +630,10 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def domains
-    if certificate_content.domains.kind_of?(Array)
-      certificate_content.domains.flatten
+    if certificate_contents.first.domains.kind_of?(Array)
+      certificate_contents.first.domains.flatten
     else
-      certificate_content.domains
+      certificate_contents.first.domains
     end
   end
 
@@ -1280,13 +1280,13 @@ class CertificateOrder < ActiveRecord::Base
     # options.merge!('caCertificateID' => 401) #essentialssl
   end
 
-  def build_comodo_dcv(last_sent, params, options={})
+  def build_comodo_dcv(last_sent=(csr.domain_control_validations.last_method || csr.last_dcv), params={}, options={})
     if certificate.is_ucc?
       dcv_methods_for_comodo=[]
       domains_for_comodo=(options[:certificate_content] || self.certificate_content).all_domains
       domains_for_comodo.each do |d|
-        if certificate_content.certificate_names.find_by_name(d)
-          last = certificate_content.certificate_names.find_by_name(d).last_dcv_for_comodo
+        if certificate_contents.first.certificate_names.find_by_name(d)
+          last = certificate_contents.first.certificate_names.find_by_name(d).last_dcv_for_comodo
           dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
         end
       end
@@ -1362,23 +1362,24 @@ class CertificateOrder < ActiveRecord::Base
   # Get the most recent order_number as the one
   def external_order_number
     return read_attribute(:external_order_number) unless read_attribute(:external_order_number).blank?
-    all_csrs = certificate_contents.map(&:csr)
-    return nil if all_csrs.compact.blank?
-    sent_success_map = all_csrs.compact.map {|c|c.sent_success(true)}
-    sent_success_map.flatten.compact.uniq.first.order_number if
-        all_csrs && !sent_success_map.blank? &&
-        sent_success_map.flatten.compact.uniq.first
-    #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
+    unless csrs.compact.blank?
+      sent_success_map = csrs.compact.map {|c|c.sent_success(true)}
+      sent_success_map.flatten.compact.uniq.first.order_number if
+          csrs && !sent_success_map.blank? &&
+              sent_success_map.flatten.compact.uniq.first
+      #all_csrs.sent_success.order_number if all_csrs && all_csrs.sent_success
+    end
   end
 
   def external_order_number_meta(options={})
     if notes =~ /(DV|EV|OV)\#\d+/
-      if options[:external_order_number] && notes =~ /(DV|EV|OV)\##{options[:external_order_number].strip}/
-        return $1
-      elsif options[:validation_type] && notes =~ /#{options[:validation_type]}\#(\d+)/
-        return $1
+      if options[:external_order_number] && m = notes.match(/(DV|EV|OV)\##{options[:external_order_number]}/)
+        return m[1] unless m.blank?
+      elsif options[:validation_type] && m = notes.match(/#{options[:validation_type]}\#(\d+)/)
+        return m[1] unless m.blank?
       else
-        return external_order_number_meta(external_order_number: external_order_number)
+        external_order_number && m = notes.match(/(DV|EV|OV)\##{external_order_number}/)
+        return m[1] unless m.blank?
       end
     end
   end
