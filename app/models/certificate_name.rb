@@ -84,7 +84,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def dcv_url(secure=false, prepend="")
-    "http#{'s' if secure}://#{prepend+non_wildcard_name}/#{csr.md5_hash}.txt"
+    "http#{'s' if secure}://#{prepend+non_wildcard_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
   end
 
   def cname_origin
@@ -100,7 +100,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def dcv_contents
-    "#{csr.sha2_hash}\ncomodoca.com"
+    "#{csr.sha2_hash}\ncomodoca.com#{"\n#{csr.unique_value}" unless csr.unique_value.blank?}"
   end
 
   def csr
@@ -129,7 +129,8 @@ class CertificateName < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
@@ -162,7 +163,8 @@ class CertificateName < ActiveRecord::Base
         else
           r=open(dcv_url(false,prepend), redirect: false).read
         end
-        return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return "true" if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
       if name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
@@ -177,7 +179,8 @@ class CertificateName < ActiveRecord::Base
     begin
       timeout(Surl::TIMEOUT_DURATION) do
         r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
       return false

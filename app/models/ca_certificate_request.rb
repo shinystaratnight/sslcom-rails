@@ -21,9 +21,19 @@ class CaCertificateRequest < CaApiRequest
     CGI::parse(response)
   end
 
+  def response_value(key=nil)
+    codes = response_to_hash
+    key.blank? ? codes : (codes[key].blank? ? "" : codes[key][0])
+  end
+
   def response_error_code
     codes = response_to_hash
     codes['errorCode'].blank? ? "" : codes['errorCode'][0]
+  end
+
+  def response_unique_value
+    codes = response_to_hash
+    codes['uniqueValue'].blank? ? "" : codes['uniqueValue'][0]
   end
 
   def response_error_message

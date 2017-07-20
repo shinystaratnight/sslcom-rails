@@ -173,11 +173,11 @@ class Csr < ActiveRecord::Base
   end
 
   def dcv_url(secure=false)
-    "http#{'s' if secure}://#{non_wildcard_name}/#{md5_hash}.txt"
+    "http#{'s' if secure}://#{non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
   end
 
   def dcv_contents
-    "#{sha2_hash}\ncomodoca.com"
+    "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def dcv_verified?
@@ -198,7 +198,8 @@ class Csr < ActiveRecord::Base
         else
           r = open(dcv_url).read(redirect: false)
         end
-        return http_or_s if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return http_or_s if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+          (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
       end
     rescue Timeout::Error, OpenURI::HTTPError, RuntimeError
       retries-=1
@@ -225,7 +226,8 @@ class Csr < ActiveRecord::Base
         else
           r=open(dcv_url).read
         end
-        return "true" if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        return "true" if !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
       end
     rescue Exception=>e
       return "false"
@@ -236,7 +238,8 @@ class Csr < ActiveRecord::Base
     begin
       timeout(Surl::TIMEOUT_DURATION) do
         r=open("https://"+non_wildcard_name).read unless is_intranet?
-        !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com"))
+        !!(r =~ Regexp.new("^#{sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (self.unique_value.blank? ? true : r =~ Regexp.new("^#{self.unique_value}")))
       end
     rescue Exception=>e
       return false
@@ -336,7 +339,7 @@ class Csr < ActiveRecord::Base
   end
 
   def dns_sha2_hash
-    "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}"
+    "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def to_der
@@ -353,5 +356,9 @@ class Csr < ActiveRecord::Base
 
   def days_left
     SiteCheck.days_left(self.non_wildcard_name, true)
+  end
+
+  def unique_value(ca="comodo")
+    ca_certificate_requests.last.response_value("uniqueValue") if ca_certificate_requests.last
   end
 end

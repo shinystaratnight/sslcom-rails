@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 # set :domain, '54.204.18.222' #WP development
-# set :domain, '54.91.78.195' #Rails 4 staging
+# set :domain, '50.19.246.227' #Rails 4 staging
 set :domain, 'ra.sslpki.local' #Rails 4 production
 #set :domain, 'staging2.ssl.com' #development
 # set :domain, '54.83.39.189' # comodo extractor
