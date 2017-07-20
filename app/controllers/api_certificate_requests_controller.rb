@@ -370,6 +370,7 @@ class ApiCertificateRequestsController < ApplicationController
         unless @acr.csr.blank?
           @result.md5_hash = @acr.csr.md5_hash
           @result.sha2_hash = @acr.csr.sha2_hash
+          @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
         end
         @acr.domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
@@ -378,8 +379,8 @@ class ApiCertificateRequestsController < ApplicationController
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
                                                    {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
                                                     "allow_https"=>"true",
-                                                    "contents"=>"#{@result.sha2_hash}\ncomodoca.com"}
-            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha2_hash}.comodoca.com."}
+                                                    "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+            @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
           end
         end
       end
@@ -408,6 +409,7 @@ class ApiCertificateRequestsController < ApplicationController
           unless @acr.csr.blank?
             @result.md5_hash = @acr.csr.md5_hash
             @result.sha2_hash = @acr.csr.sha2_hash
+            @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
           end
           ([@acr.csr.common_name]+(@result.domains || [])).each do |domain|
             @result.dcv_methods.merge! domain=>{}
@@ -416,8 +418,8 @@ class ApiCertificateRequestsController < ApplicationController
               @result.dcv_methods[domain].merge! "http_csr_hash"=>
                  {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
                   "allow_https"=>"true",
-                  "contents"=>"#{@result.sha2_hash}\ncomodoca.com"}
-              @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.sha2_hash}.comodoca.com."}
+                  "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
+              @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
             end
           end
         end
