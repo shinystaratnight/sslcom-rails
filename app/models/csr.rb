@@ -339,7 +339,7 @@ class Csr < ActiveRecord::Base
   end
 
   def dns_sha2_hash
-    "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
+    "_#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def to_der
