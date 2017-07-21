@@ -338,8 +338,12 @@ class Csr < ActiveRecord::Base
     Digest::SHA2.hexdigest(to_der).upcase unless body.blank?
   end
 
+  def dns_md5_hash
+    "_#{md5_hash}"
+  end
+
   def dns_sha2_hash
-    "_#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
+    "#{sha2_hash[0..31]}.#{sha2_hash[32..63]}#{".#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
   def to_der

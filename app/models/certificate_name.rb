@@ -88,7 +88,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def cname_origin
-    "#{csr.md5_hash}.#{non_wildcard_name}"
+    "#{csr.dns_md5_hash}.#{non_wildcard_name}"
   end
 
   def cname_destination
