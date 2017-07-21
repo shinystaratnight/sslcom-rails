@@ -75,21 +75,17 @@ class ApiCertificateRequestsController < ApplicationController
   def revoke_v1_4
     @template = 'api_certificate_requests/revoke_v1_4'
     if @result.valid? && @result.save
-      if @acr = @result.find_certificate_order
-        # successfully charged
-        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-          if @acr.certificate_content.csr && @result.debug
-            ccr = @acr.certificate_content.csr.ca_certificate_requests.last
-            @result.api_request=ccr.parameters
-            @result.api_response=ccr.response
-          end
-          @rendered=render_to_string(template: @template)
-          set_result_parameters(@result, @acr, @rendered)
-          render_200_status
-        else
-          @result = @acr #so that rabl can report errors
-          render_400_status
+      @acr = @result.find_signed_certificates(@result.find_certificate_order)
+      if @acr.is_a?(Array) && @acr.errors.empty?
+        @acr.each do |signed_certificate|
+          signed_certificate.revoke
         end
+        @rendered=render_to_string(template: @template)
+        set_result_parameters(@result, @acr, @rendered)
+        render_200_status
+      else
+        @result = @acr #so that rabl can report errors
+        render_400_status
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"

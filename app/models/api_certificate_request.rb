@@ -73,7 +73,31 @@ class ApiCertificateRequest < CaApiRequest
           errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
         end
       else
-        self.api_requestable.certificate_orders.find_by_ref(self.ref) || (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}.")
+        self.api_requestable.certificate_orders.find_by_ref(self.ref) ||
+          (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}.")
+      end
+    end
+  end
+
+  # find signed certificates based on the `serials` api parameter
+  def find_signed_certificates(certificate_order=nil)
+    return nil if certificate_order.blank? && !self.admin_submitted
+    klass = (self.admin_submitted && certificate_order.blank?) ? SignedCertificate.unscoped :
+                certificate_order.signed_certificates
+    certs = []
+    ([]).tap do |certs|
+      if defined?(:serials) && self.serials
+        (self.serials.is_a?(Array) ? serials : [serials]).map do |serial|
+          if sc=klass.find_by_serial(serial)
+            certs<<sc
+          else
+            errors[:signed_certificate] <<
+                "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
+            break
+          end
+        end
+      else
+        certs<<klass
       end
     end
   end
