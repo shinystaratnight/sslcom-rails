@@ -7,7 +7,7 @@ FactoryGirl.define do
          create(:certificate, :uccssl).product_variant_groups.first.product_variant_items.first)
     end
     after(:create) do |co, evaluator|
-      co.certificate_contents << create(:certificate_content)
+      co.certificate_contents.create(csr: @nonwildcard_csr, certificate_order: co)
     end
   end
 end

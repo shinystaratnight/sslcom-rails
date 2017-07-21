@@ -74,31 +74,26 @@ class ApiCertificateRequestsController < ApplicationController
 
   def revoke_v1_4
     @template = 'api_certificate_requests/revoke_v1_4'
-    if @result.csr_obj && !@result.csr_obj.valid?
-      # we do this sloppy maneuver because the rabl template only reports errors
-      @result = @result.csr_obj
-    else
-      if @result.valid? && @result.save
-        if @acr = @result.create_certificate_order
-          # successfully charged
-          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            if @acr.certificate_content.csr && @result.debug
-              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
-              @result.api_request=ccr.parameters
-              @result.api_response=ccr.response
-            end
-            @rendered=render_to_string(template: @template)
-            set_result_parameters(@result, @acr, @rendered)
-            render_200_status
-          else
-            @result = @acr #so that rabl can report errors
-            render_400_status
+    if @result.valid? && @result.save
+      if @acr = @result.find_certificate_order
+        # successfully charged
+        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+          if @acr.certificate_content.csr && @result.debug
+            ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+            @result.api_request=ccr.parameters
+            @result.api_response=ccr.response
           end
+          @rendered=render_to_string(template: @template)
+          set_result_parameters(@result, @acr, @rendered)
+          render_200_status
+        else
+          @result = @acr #so that rabl can report errors
+          render_400_status
         end
-      else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-        render_400_status
       end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      render_400_status
     end
   rescue => e
     render_500_error e

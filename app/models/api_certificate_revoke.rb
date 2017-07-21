@@ -1,7 +1,6 @@
 class ApiCertificateRevoke < ApiCertificateRequest
   validates :account_key, :secret_key, :reason, presence: true
   validates :ref, presence: true
-  validates :serials, presence: true, unless: lambda{|c|c.ref}
   validates_presence_of :signed_certificate_exists
 
   attr_accessor :reason, :domains, :ext_status, :certificates, :order_status, :certificate_order,
