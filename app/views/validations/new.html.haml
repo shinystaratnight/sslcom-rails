@@ -64,7 +64,7 @@
         -ds = mdc_validation.domain_status
         -count_validated,count_domain=0,0
         -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each_with_index do |cn|
-          -if @certificate_order.certificate.is_ucc?;
+          -if @certificate_order.certificate.is_ucc?
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]
               -validated = (name && name["status"]=~/validated/i)
@@ -113,7 +113,7 @@
               %td.pretest{class: cn.name} n/a
               %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
-              %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
+              %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
               %td.status{class: cn.name}=name["status"].downcase if ds && name
             %tr
               %td
