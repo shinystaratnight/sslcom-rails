@@ -22,6 +22,7 @@ class ComodoApi
 
   def self.apply_for_certificate(certificate_order, options={})
     cc = options[:certificate_content] || certificate_order.certificate_content
+    options.merge!(ca_certificate_id: cc.csr.signed_certificate.comodo_ca_id) if cc.csr.signed_certificate
     comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
