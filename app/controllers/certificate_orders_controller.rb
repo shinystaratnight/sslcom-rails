@@ -26,9 +26,9 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, :require=>[:update]
-  filter_access_to :set_csr_signed_certificate_by_text, :update_csr, :parse_csr, :download, :start_over,
-    :renew, :reprocess, :admin_update, :change_ext_order_number, :developers, :developer,
-    :require=>[:create, :update, :delete]
+  filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
+                   :developers, :developer, :require=>[:update, :delete]
+  filter_access_to :renew, :parse_csr, :require=>[:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'request.subdomain==Reseller::SUBDOMAIN'
   before_filter :require_user_1, :only=>[:developers]
@@ -360,6 +360,10 @@ class CertificateOrdersController < ApplicationController
       format.html { redirect_to(certificate_orders_url) }
       format.xml  { head :ok }
     end
+  end
+
+  def developer
+
   end
 
   def download

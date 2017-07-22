@@ -467,6 +467,16 @@ class SignedCertificate < ActiveRecord::Base
         decoded =~ /SSL.com Premium EV CA/
   end
 
+  def comodo_ca_id
+    if is_ev?
+      Settings.ca_certificate_id_ev
+    elsif is_ov?
+      Settings.ca_certificate_id_ov
+    else
+      Settings.ca_certificate_id_dv
+    end
+  end
+
   def is_SHA2?
     decoded =~ /sha2/
   end
