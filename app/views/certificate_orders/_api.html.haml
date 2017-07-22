@@ -64,6 +64,10 @@
             %strong=link_to "Reprocess", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
           %li
             %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update", domain_override: api_domain)
+          %li
+            %strong=link_to "Revoke", "http://docs.sslcomapi.apiary.io/#reference/ssl-certificates/certificate-order/revoke-certificate", target: "_blank"
+          %li
+            %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "revoke", domain_override: api_domain)
         %li product:
         %ul
           %li

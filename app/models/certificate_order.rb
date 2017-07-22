@@ -751,6 +751,13 @@ class CertificateOrder < ActiveRecord::Base
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
+      when /revoke/
+        api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
+                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                   reason: "development test",
+                   ref: self.ref}
+        options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d "'+
+            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /create_w_csr/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
