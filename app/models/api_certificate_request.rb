@@ -40,7 +40,7 @@ class ApiCertificateRequest < CaApiRequest
 
   DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain]
 
-  REVOKE_ACCESSORS = [:account_key, :secret_key, :ref]
+  REVOKE_ACCESSORS = [:account_key, :secret_key, :ref, :reason, :serials]
 
   attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
