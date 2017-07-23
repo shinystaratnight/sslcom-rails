@@ -6,11 +6,11 @@ unless @result.errors.blank?
 else
   if @result.debug
     glue @result do
-      attributes :ref, :api_request, :api_response
+      attributes :status, :api_request, :api_response
     end
   else
     glue @result do
-      attributes :ref
+      attributes :status
     end
   end
 end
