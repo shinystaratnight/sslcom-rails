@@ -5,11 +5,13 @@ class ApiCertificateRequestsController < ApplicationController
   after_filter :notify
   layout false
 
+  # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include:
       [*(ApiCertificateRequest::ACCESSORS+
           ApiCertificateRequest::CREATE_ACCESSORS_1_4+
           ApiCertificateRequest::RETRIEVE_ACCESSORS+
           ApiCertificateRequest::REPROCESS_ACCESSORS+
+          ApiCertificateRequest::REVOKE_ACCESSORS+
           ApiCertificateRequest::DCV_EMAILS_ACCESSORS).uniq]
   respond_to :xml, :json
 
@@ -76,15 +78,15 @@ class ApiCertificateRequestsController < ApplicationController
     @template = 'api_certificate_requests/revoke_v1_4'
     if @result.valid? && @result.save
       @acr = @result.find_signed_certificates(@result.find_certificate_order)
-      if @acr.is_a?(Array) && @acr.errors.empty?
+      if @acr.is_a?(Array) && @result.errors.empty?
         @acr.each do |signed_certificate|
-          signed_certificate.revoke
+          # signed_certificate.revoke
         end
         @rendered=render_to_string(template: @template)
-        set_result_parameters(@result, @acr, @rendered)
+        @result.status = "revoked"
+        @result.update_attribute :response, @rendered
         render_200_status
       else
-        @result = @acr #so that rabl can report errors
         render_400_status
       end
     else

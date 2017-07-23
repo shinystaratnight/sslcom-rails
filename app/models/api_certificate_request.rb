@@ -71,10 +71,11 @@ class ApiCertificateRequest < CaApiRequest
           co
         else
           errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
+          nil
         end
       else
         self.api_requestable.certificate_orders.find_by_ref(self.ref) ||
-          (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}.")
+          (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}." ; nil)
       end
     end
   end

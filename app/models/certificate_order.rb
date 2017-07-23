@@ -739,34 +739,35 @@ class CertificateOrder < ActiveRecord::Base
                     secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
                     domains: api_domains}
         options[:caller].blank? ?
-          'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
-            api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
+            'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
+                api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /update/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-                   server_software: cc.server_software_id.to_s,
-                   domains: api_domains,
-                   contacts: api_contacts,
-                   csr: certificate_content.csr.body}.merge!(registrant_params)
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    server_software: cc.server_software_id.to_s,
+                    domains: api_domains,
+                    contacts: api_contacts,
+                    csr: certificate_content.csr.body}.merge!(registrant_params)
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /revoke/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-                   reason: "development test",
-                   ref: self.ref}
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    reason: "development test",
+                    serials:signed_certificates.map(&:serial),
+                    ref: self.ref}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /create_w_csr/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-                   product: certificate.api_product_code,
-                   period: certificate_duration(:comodo_api).to_s,
-                   server_software: cc.server_software_id.to_s,
-                   domains: api_domains,
-                   contacts: api_contacts,
-                   csr: certificate_content.csr.body}.merge!(registrant_params)
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    product: certificate.api_product_code,
+                    period: certificate_duration(:comodo_api).to_s,
+                    server_software: cc.server_software_id.to_s,
+                    domains: api_domains,
+                    contacts: api_contacts,
+                    csr: certificate_content.csr.body}.merge!(registrant_params)
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /create/
@@ -779,9 +780,9 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /show/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                   secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
-                   query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
-                   response_type: ("individually" unless signed_certificate.blank?)}
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
+                    response_type: ("individually" unless signed_certificate.blank?)}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /index/
@@ -792,7 +793,7 @@ class CertificateOrder < ActiveRecord::Base
       when /dcv_emails/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
                     secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
-                    merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
+            merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email" : api_params
       when /dcv_methods_wo_csr/

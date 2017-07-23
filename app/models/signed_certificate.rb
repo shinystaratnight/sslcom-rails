@@ -443,7 +443,10 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def openssl_x509
-    OpenSSL::X509::Certificate.new(body)
+    begin
+      OpenSSL::X509::Certificate.new(body)
+    rescue Exception
+    end
   end
 
   def issuer_dn
@@ -459,7 +462,7 @@ class SignedCertificate < ActiveRecord::Base
         end
         CertUtil.decode_certificate sc_pem, "pkcs7"
       else
-        openssl_x509.new(body).to_text
+        openssl_x509.to_text
       end
     rescue Exception
     end
@@ -527,7 +530,8 @@ class SignedCertificate < ActiveRecord::Base
 
   # get the serial through regular expression of the decoded cert
   def decoded_serial
-    m=decoded.match(/Serial Number:\n(.*?)\n/m)
+    # m=decoded.match(/Serial Number:\n(.*?)\n/m)
+    m=decoded.match(/Serial Number:(.*?)Signature/m)
     m[1].strip unless m.blank?
   end
 
@@ -572,16 +576,12 @@ class SignedCertificate < ActiveRecord::Base
     cert
   end
 
-  # one time utility function to populate the serial column
-  def self.decode_all_serials
-    self.find_each {|s|s.update_column :serial, s.decoded_serial}
-  end
-
   # one time utility function to populate the fingerprint column
-  def self.populate_all_fingerprints
+  def self.populate_fingerprints_serials
     self.find_each {|s|
       unless s.body.blank?
-        s.update_columns(fingerprint: OpenSSL::Digest::SHA1.new(s.openssl_x509.to_der).to_s, fingerprintSHA: "SHA1")
+        s.update_columns(serial: s.decoded_serial,
+           fingerprint: OpenSSL::Digest::SHA1.new(s.openssl_x509.to_der).to_s, fingerprintSHA: "SHA1") if s.openssl_x509
       end
     }
   end
