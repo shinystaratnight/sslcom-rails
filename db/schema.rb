@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170714231345) do
+ActiveRecord::Schema.define(version: 20170724150634) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -1008,6 +1008,7 @@ ActiveRecord::Schema.define(version: 20170714231345) do
     t.text     "decoded",                   limit: 65535
     t.text     "serial",                    limit: 65535, null: false
     t.string   "ext_customer_ref",          limit: 255
+    t.text     "status",                    limit: 65535, null: false
   end
 
   add_index "signed_certificates", ["csr_id"], name: "index_signed_certificates_on_csr_id", using: :btree

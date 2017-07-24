@@ -637,6 +637,23 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def revoke!(reason, owner=nil)
+    SystemAudit.create(owner: owner, target: self, notes: reason, action: "revocation")
+    unless self.external_order_number.blank?
+      OrderNotifier.request_comodo_refund("refunds@comodo.com", self.external_order_number, reason).deliver
+      OrderNotifier.request_comodo_refund("support@ssl.com", self.external_order_number, reason, "noreply@ssl.com").deliver
+      ComodoApi.revoke_ssl(certificate_order: self, refund_reason: reason)
+    end
+    if self.notes =~ /DV#(\d+)/
+      OrderNotifier.request_comodo_refund("refunds@comodo.com", $1, reason).deliver
+      OrderNotifier.request_comodo_refund("support@ssl.com", $1, reason, "noreply@ssl.com").deliver
+      ComodoApi.revoke_ssl(refund_reason: reason, external_order_number: $1)
+    end
+    signed_certificates.each do |sc|
+      sc.revoke!(reason)
+    end
+  end
+
   def wildcard_domains
     domains.find_all{|d|d=~/\A\*\./} unless domains.blank?
   end

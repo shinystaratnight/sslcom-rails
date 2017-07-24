@@ -498,6 +498,11 @@ class SignedCertificate < ActiveRecord::Base
     {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
   end
 
+  def ca
+    ca_id[:ca]
+    ca_id[:ca]
+  end
+
   def is_SHA2?
     decoded =~ /sha2/
   end
@@ -532,7 +537,18 @@ class SignedCertificate < ActiveRecord::Base
   def decoded_serial
     # m=decoded.match(/Serial Number:\n(.*?)\n/m)
     m=decoded.match(/Serial Number:(.*?)Signature/m)
-    m[1].strip unless m.blank?
+    unless m.blank?
+      if ca=="comodo"
+        "00"+m[1].strip.remove(":")
+      else
+        m[1].strip
+      end
+    end
+  end
+
+  def revoke!(reason)
+    update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: signed_certificate.serial,
+                                                             refund_reason: reason)
   end
 
   private

@@ -77,10 +77,19 @@ class ApiCertificateRequestsController < ApplicationController
   def revoke_v1_4
     @template = 'api_certificate_requests/revoke_v1_4'
     if @result.valid? && @result.save
-      @acr = @result.find_signed_certificates(@result.find_certificate_order)
+      co = @result.find_certificate_order
+      @acr = @result.find_signed_certificates(co)
       if @acr.is_a?(Array) && @result.errors.empty?
-        @acr.each do |signed_certificate|
-          # signed_certificate.revoke
+        if @result.serials.blank? #revoke the entire order
+          co.revoke(@result.reason)
+        else #revoke specific certs
+          @acr.each do |signed_certificate|
+            SystemAudit.create(owner: @result.api_credential, target: signed_certificate,
+                               notes: "api revocation from ip address #{request.remote_ip}", action: "revoked")
+            if signed_certificate.ca == "comodo"
+              signed_certificate.revoke! @result.reason
+            end
+          end
         end
         @rendered=render_to_string(template: @template)
         @result.status = "revoked"

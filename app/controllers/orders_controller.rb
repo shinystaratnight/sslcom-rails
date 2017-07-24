@@ -171,16 +171,7 @@ class OrdersController < ApplicationController
           @order.partial_refund!(params["partial"])
         end
         SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
-        if line_item.sellable.try("external_order_number")
-          OrderNotifier.request_comodo_refund("refunds@comodo.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", line_item.sellable.external_order_number, params["refund_reason"], "noreply@ssl.com").deliver
-          ComodoApi.revoke_ssl(certificate_order: line_item.sellable, refund_reason: params["refund_reason"])
-        end
-        if line_item.sellable.notes =~ /DV#(\d+)/
-          OrderNotifier.request_comodo_refund("refunds@comodo.com", $1, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", $1, params["refund_reason"], "noreply@ssl.com").deliver
-          ComodoApi.revoke_ssl(refund_reason: params["refund_reason"], external_order_number: $1)
-        end
+        line_item.sellable.revoke!(params["refund_reason"],current_user) if line_item.sellable.is_a?(CertificateOrder)
       end
     end
     redirect_to order_url(@order)

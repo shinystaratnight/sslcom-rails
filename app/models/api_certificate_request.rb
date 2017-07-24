@@ -45,8 +45,7 @@ class ApiCertificateRequest < CaApiRequest
   attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
   before_validation(on: :create) do
-    if self.account_key && self.secret_key
-      ac=ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key)
+    if ac=api_credential
       unless ac.blank?
         self.api_requestable = ac.ssl_account
       else
@@ -60,6 +59,11 @@ class ApiCertificateRequest < CaApiRequest
     if new_record?
       self.ca ||= "ssl.com"
     end
+  end
+
+  def api_credential
+    (self.account_key && self.secret_key) ?
+        ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
   end
 
   def find_certificate_order

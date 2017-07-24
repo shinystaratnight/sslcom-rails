@@ -237,7 +237,10 @@
                     %tr
                       %td(colspan="5" style="text-align: left;")
                         %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                        (server software: #{c.server_software.try :title})
+                        -if sc.try(:body).blank?
+                          (server software: #{c.server_software.try :title})
+                        -else
+                          (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         .certificate_details_box
