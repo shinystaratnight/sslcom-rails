@@ -477,6 +477,10 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  def ca_id
+    {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
+  end
+
   def is_SHA2?
     decoded =~ /sha2/
   end

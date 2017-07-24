@@ -130,12 +130,12 @@ class ComodoApi
     CaRetrieveCertificate.create(attr)
   end
 
-  def self.revoke_ssl(certificate_order,options={})
-    comodo_options = params_revoke(certificate_order, options)
+  def self.revoke_ssl(options={})
+    comodo_options = params_revoke(options)
     host = REVOKE_SSL_URL
     res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
+    attr = {request_url: host, parameters: comodo_options, method: "post", response: res.body, ca: "comodo",
+            api_requestable: options[:certificate_order]}
     CaRevokeCertificate.create(attr)
   end
 
@@ -249,9 +249,13 @@ class ComodoApi
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 
-  def self.params_revoke(certificate_order, options)
-    comodo_params = {'revocationReason' => options[:refund_reason],
-                     'orderNumber' => options[:external_order_number] || certificate_order.external_order_number}
+  def self.params_revoke(options)
+    target = if options[:serial]
+               {'serialNumber' => options[:serial]}
+             else
+               {'orderNumber' => options[:external_order_number] || options[:certificate_order].external_order_number}
+             end
+    comodo_params = {'revocationReason' => options[:refund_reason]}.merge(target)
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
   end
 

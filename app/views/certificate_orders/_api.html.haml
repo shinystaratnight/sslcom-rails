@@ -61,7 +61,7 @@
             %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update_dcv", domain_override: api_domain)
         -if co.external_order_number
           %li
-            %strong=link_to "Reprocess", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
+            %strong=link_to "Process CSR or Reissue", "http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D", target: "_blank"
           %li
             %textarea.selectAll{style: "width:95%;"}=co.to_api_string(action: "update", domain_override: api_domain)
         %li product:
