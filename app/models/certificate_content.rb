@@ -394,6 +394,9 @@ class CertificateContent < ActiveRecord::Base
         end
         errors.add(:signing_request, invalid_chars_msg) unless
             domain_validation_regex(is_wildcard || (is_ucc && !is_premium_ssl), csr.read_attribute(:common_name).gsub(/\x00/, ''))
+      else
+        if csr.is_fqdn?
+          errors.add(:signing_request, "cannot have a fully qualified domain name for code signing certificates")
       end
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if
