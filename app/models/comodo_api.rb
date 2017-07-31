@@ -135,7 +135,7 @@ class ComodoApi
     host = REVOKE_SSL_URL
     res = send_comodo(host, comodo_options)
     attr = {request_url: host, parameters: comodo_options, method: "post", response: res.body, ca: "comodo",
-            api_requestable: options[:certificate_order]}
+            api_requestable: options[:certificate_order] || options[:api_requestable]}
     CaRevokeCertificate.create(attr)
   end
 
@@ -251,7 +251,7 @@ class ComodoApi
 
   def self.params_revoke(options)
     target = if options[:serial]
-               {'serialNumber' => options[:serial]}
+               {'serialNumber' => options[:serial].upcase}
              else
                {'orderNumber' => options[:external_order_number] || options[:certificate_order].external_order_number}
              end

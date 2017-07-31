@@ -159,6 +159,9 @@ class OrdersController < ApplicationController
         end
         @order.full_refund!
         SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
+        @order.certificate_orders.each do |co|
+          co.revoke!(params["refund_reason"], current_user)
+        end
         notify_ca(params["refund_reason"])
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}

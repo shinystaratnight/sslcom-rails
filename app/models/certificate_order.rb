@@ -650,7 +650,7 @@ class CertificateOrder < ActiveRecord::Base
       ComodoApi.revoke_ssl(refund_reason: reason, external_order_number: $1)
     end
     signed_certificates.each do |sc|
-      sc.revoke!(reason)
+      sc.revoke!(reason) # this will result in redundant calls, but will catch all signed certificates under this order
     end
   end
 
