@@ -375,6 +375,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def is_sandbox?
+    request.subdomain=="sandbox"
+  end
+
   private
 
   #Saves a cookie using a hash

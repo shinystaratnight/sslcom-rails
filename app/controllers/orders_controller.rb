@@ -222,13 +222,13 @@ class OrdersController < ApplicationController
     unpaginated =
       if @search = params[:search]
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) || Order).unscoped.where{state << ['payment_declined']}.search(params[:search])
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(params[:search])
         else
           current_user.ssl_account.orders.not_new.search(params[:search])
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) || Order).unscoped.where{state << ['payment_declined']}.order("created_at desc")
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc")
         else
           current_user.ssl_account.orders
         end
