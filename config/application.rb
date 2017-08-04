@@ -72,7 +72,7 @@ module SslCom
 
     config.middleware.use OAuth::Rack::OAuthFilter
 
-    #config.force_ssl = true
+    # config.force_ssl = true
     unless Rails.env.test?
       config.middleware.use Rack::SslEnforcer,
         only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
