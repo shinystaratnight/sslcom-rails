@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, if: "request.subdomain=='sandbox' || request.subdomain=='sws-test'"
+  before_filter :set_database, :sandbox_notice, if: "request.subdomain=='sandbox' || request.subdomain=='sws-test'"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -23,6 +23,9 @@ class ApplicationController < ActionController::Base
   before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers
 
+  def sandbox_notice
+    flash[:notice] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+  end
   # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
   def set_mailer_host
     ActionMailer::Base.default_url_options[:host] = request.host_with_port
@@ -394,10 +397,6 @@ class ApplicationController < ActionController::Base
         flash[:info_activation] = true
       end
     end
-  end
-
-  def is_sandbox?
-    request.subdomain=="sandbox"
   end
 
   private

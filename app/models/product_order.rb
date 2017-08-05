@@ -428,6 +428,7 @@ class ProductOrder < ActiveRecord::Base
 
 
   def self.to_api_string(options={})
+    domain = options[:domain_override] || "https://sws-test.sslpki.com"
     options[:action]="create_ssl" if options[:action].blank?
     case options[:action]
       when /create_ssl/
@@ -436,25 +437,25 @@ class ProductOrder < ActiveRecord::Base
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://sws-test.sslpki.com/certificates"
+            "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://sws-test.sslpki.com/certificates"
+            "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://sws-test.sslpki.com/certificates"
+            "\" #{domain}/certificates"
     end
   end
 
-  def to_api_string(options={action: "update", domain_override: nil, caller: nil})
+  def to_api_string(options={action: "update"})
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     case options[:action]
