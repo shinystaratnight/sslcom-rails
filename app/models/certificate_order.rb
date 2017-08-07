@@ -729,21 +729,21 @@ class CertificateOrder < ActiveRecord::Base
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://#{domain}/certificates"
+            "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://#{domain}/certificates"
+            "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
              secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
-            "\" https://#{domain}/certificates"
+            "\" #{domain}/certificates"
     end
   end
 
