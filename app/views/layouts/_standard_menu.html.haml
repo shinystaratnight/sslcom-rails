@@ -2,8 +2,9 @@
 -current_slug = params[:ssl_slug] ? slug_params : {}
 #prog_nav_container
   %ul(id="prog_nav")
-    %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
-      =link_to "BUY", is_sandbox? ? developers_certificate_orders_url : certificates_path
+    -unless is_sandbox?
+      %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
+        =link_to "BUY", certificates_path
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)
     -unless is_sandbox?

@@ -27,6 +27,6 @@ class Website
 # Return regular connection hash but with database name changed
 # The database name is a attribute (column in the database)
   def website_connection
-    default_connection.dup.update(:database => self.database_name)
+    default_connection.dup.update(database: self.database_name)
   end
 end

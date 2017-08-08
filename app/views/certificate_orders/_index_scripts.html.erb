@@ -23,6 +23,19 @@ jQuery(function($) {
         }
         else
           window.location.replace("<%=filter_by_scope_certificate_orders_path(@ssl_slug, 'is_test')%>");
+      },
+      error: function(data, status){
+        if(data.errors){
+          $('.error').html("The following fields have errors:</br><ul>");
+          $.each(data.errors, function(i, item) {
+            // i = index
+            // item = data for a particular post
+            $('.error').append("<li>"+i+": "+item.toString()+"</li>");
+          });
+          $('.error').append("</ul>").show();
+        }
+        else
+          window.location.replace("<%=filter_by_scope_certificate_orders_path(@ssl_slug, 'is_test')%>");
       }
     });
 

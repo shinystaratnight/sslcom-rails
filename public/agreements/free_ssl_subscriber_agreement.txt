@@ -1,0 +1,234 @@
+1. Application of Terms
+
+1.1 These terms and conditions and schedules thereto, set out below govern the relationship between you (the 'Subscriber') and SSL Corp ('SSL').
+
+2. Definitions and Interpretations
+
+2.1. In this Agreement, unless the context requires otherwise, the following terms and expressions shall have the following meanings:
+
+"Business Day" means Monday to Friday inclusive excluding any days on which the banks in New York are closed for business (other than for trading in currency);
+"Certificate Period" means the time period during which a Digital Certificate remains valid and may be used as set out in the Schedule;
+"Charges" means the charges for the Subscriber Services as set out in Schedule 1 of this Agreement;
+"Commencement Date" means the date when SSL receives the Subscriber's request for Subscriber Services set out in the Enrolment Form and sent to SSL via the online registration process;
+"SSL CPS" means the SSL Certificate Practice Statement, a document setting out the working practices that SSL employs for the Subscriber Services and which defines the underlying certificate processes and Repository operations, as may be amended from time to time;
+"SSL Group Company" means an SSL subsidiary or holding company, or a subsidiary of that holding company;
+"Confidential Information" means all information obtained as a result of the parties entering into this agreement which relates to the provisions and subject matter of this Agreement (including but not limited to all Private Keys, personal identification numbers and passwords) and the business, systems or affairs of the other party and which is marked or designated in writing by the other party as being confidential.
+"CRL" means a certificate revocation list that contains details of Digital Signatures that have been revoked by SSL;
+"Digital Certificate" means a digitally signed electronic data file (conforming to the X509 version 3 ITU standard) issued by SSL in order to identify a person or entity seeking to conduct business over a communications network using a Digital Signature and which contains the identity of the person authorized to use the Digital Signature and a copy of their Public Key, a serial number, a time period during which the Digital Certificate may be used and a Digital Signature issued by SSL;
+"Digital Signature" means an encrypted electronic data file which is attached to or logically associated with other electronic data and which identifies and is uniquely linked to the signatory of the electronic data, is created using the signatory's Private Key and is linked in a way so as to make any subsequent changes to the electronic data detectable;
+"Domain Name" means a name registered with an Internet registration authority for use as part of a Subscriber's URL;
+"Enrolment Form" means an electronic form on SSL's website completed by the Subscriber by providing the Subscriber Data and which identifies the requirements for the Subscription Service;
+"Force Majeure Event" means, in relation to any party any circumstances beyond the reasonable control of that party including without prejudice to the generality of the foregoing any natural disaster, act or regulation of any governmental or supra-national authority, lack or shortage of materials supplied by a third party (other than where such circumstances arise due to lack of reasonable planning), war or natural emergency, accident, epidemic, fire or riot;
+"Insolvency Event" means, in respect of any company that is party to this Agreement, that such company has ceased to trade, been dissolved, suspended payment of its debts or is unable to meet its debts as they fall due, has become insolvent or gone into liquidation (unless such liquidation is for the purposes of a solvent reconstruction or amalgamation), entered into administration, administrative receivership, receivership, a voluntary arrangement, a scheme of arrangement with creditors or taken any steps for its winding-up.
+"Internet" means the global data communications network comprising interconnected networks using the TCP/IP standard;
+"Issue Date" means the date of issue of a Digital Certificate to the Subscriber;
+"Private Key" means a confidential encrypted electronic data file designed to interface with a Public Key using the same encryption algorithm and which may be used to create Digital Signatures, and decrypt files or messages which have been encrypted with a Public Key;
+"Public Key" means a publicly available encrypted electronic data file designed to interface with a Private Key using the same encryption algorithm and which may be used to verify Digital Signatures and encrypt files or messages;
+"Repository" means a publicly available collection of databases for storing and retrieving Digital Certificates, CRL's and other information relating to Digital Certificates and which may be accessed via SSL's website;
+"Schedule" means the schedule attached to this Agreement;
+"Scope of Use" shall have the meaning, if any, set out in Schedule 1 to this Agreement;
+"Site" means a place at which SSL agrees to provide the Subscription Service;
+"Selected Subscriber Data" means all of the Subscriber Data set out in the Schedule to this Agreement marked with the initials 'SSD'
+"Software" means any software provided by SSL to enable the Subscriber to access or use the Subscription Service;
+"Subscriber" means the individual or body corporate named on the Enrolment Form during the online registration process and anyone that acts or purports to act with that person's authority or permission;
+"Subscriber Data" means information about the Subscriber required by SSL to provide the Subscription Services, including without limitation, the information set out in the Schedule to this Agreement (which may or may not contain personal data for the purposes of the Data Protection Act 1998) which must be provided by the Subscriber on the Enrolment Form during the online registration process;
+"Subscription Service" means the Digital Certificate subscription services and any products (including Digital Certificates, Public Keys and Private Keys) described in the Schedule to this Agreement;
+"Third Party Data" means data, information or any other materials (in whatever form) not owned or generated by or on behalf of the Subscriber;
+"URL" means a uniform resource locator setting out the address of a webpage or other file on the Internet.
+
+2.2 Subject to Clause 16, references to 'indemnifying' any person against any circumstance include indemnifying and keeping him harmless from all actions, claims and proceedings from time to time made against him and all loss, damage, payments, cost or expenses suffered made or incurred by him as a consequence of that circumstance;
+
+2.3 The schedule to this Agreement forms part of this Agreement and shall have the same force and effect as if expressly set out in the body of this Agreement, and any reference to this Agreement shall include the schedule. To the extent that there is an inconsistency between the terms of the body of this Agreement and its schedule, the terms of the body of this Agreement shall prevail.
+
+3. Provision of Digital Certificate Subscription Services
+
+3.1 Provided that SSL is able to validate, to its satisfaction, the Subscriber Data, SSL shall accept a Subscriber's application for the Subscription Service (as such application is set out in the Enrolment Form) and shall provide the Subscriber with the Subscription Service set out in the Schedule in accordance with the terms of this Agreement and the Schedule, save that SSL reserves the right to refuse a Subscriber's application for the Subscription Service by notifying the Subscriber as soon as reasonably possible.
+
+3.2 Subscriber shall, in consideration for the provision of the Subscription Service and the licences granted under this Agreement, pay to SSL the Charges set out in the Schedule in accordance with clause 6 of this Agreement.
+
+4. Use of the Subscription Service
+
+4.1. The Subscription Service is provided by SSL for the Subscriber's own use and the Subscriber hereby agrees not to resell or attempt to resell (or provide in any form whether for consideration or not) the Subscription Service (or any part of it) to any third party and shall not allow any third party to use the Subscription Service without the written consent of SSL.
+
+4.2. The Subscriber shall:
+
+(i) Use or access the Subscription Service only in conjunction with the Software or other software that may be provided by SSL from time to time or specified by SSL to be appropriate for use in conjunction with the Subscription Service.
+(ii) be responsible, at its own expense, for access to the Internet and all other communications networks (if any) required in order to use the Subscription Service and for the provision of all computer and telecommunications equipment and software required to use the Subscription Service save where the same is not expressly provided under the terms of this Agreement;
+(iii) obtain and keep in force any authorization, permission or licence necessary for the Subscriber to use the Subscription Service save where SSL expressly agrees to obtain the same under the terms of this Agreement;
+(iv) remain responsible for the generation of any Subscriber's Private Key and shall take all reasonable precautions to prevent any violation of, loss of control over, or unauthorized disclosure of confidential information relating to the Subscription Service; and
+(v) shall be solely responsible for any transactions of any kind entered into between the Subscriber and any third party using or acting in reliance on the Subscription Service and acknowledges that SSL shall not be a party to, or be responsible in any way for, any such transaction.
+
+4.3. The Subscriber shall not use the Subscription Service to transmit (either by sending by email or uploading using any format of communications protocol), receive (either by soliciting an e-mail or downloading using any format of communications protocol), view or in any other way use any information which may be illegal, offensive, abusive, contrary to public morality, indecent, defamatory, obscene or menacing, or which is in breach of confidence, copyright or other intellectual property rights of any third party, cause distress, annoyance, denial of any service, disruption or inconvenience, send or provide advertising or promotional material or other form of unsolicited bulk correspondence or create a Private key which is identical or substantially similar to any Public Key.
+
+5. Licence of Digital Certificate Technology
+
+5.1. SSL grants the Subscriber a revocable, non-exclusive, non-transferrable personal licence to use any Digital Certificates provided in accordance with the Subscription Service, any Digital Signature generated using the Subscriber's Public Key and Private Key and any manuals or other documents relating to the above insofar as is necessary for the Subscriber to utilise the Subscription Services.
+
+5.2. The Subscriber shall not copy or decompile enhance, adapt or modify or attempt to do the same to the Digital Certificates, Public Keys and Private Keys, or any Digital Signature generated using any Public Key or Private Key; or any documents or manuals relating to the same without SSL's prior written consent.
+
+6. Charges and Payment Terms
+
+6.1. The Charges shall be due to be paid by the Subscriber on or before the Issue Date.
+
+6.2. SSL shall refund the Charges (including any Value Added Tax or any other appropriate sales, use tax or equivalent charge) paid to it by the Subscriber if within 20 Business Days of the Issue Date, the Subscriber has not used the Subscription Service and has, within this period, made a written request to SSL for revocation of the Digital Certificate issued to it or SSL revokes the Digital Certificate pursuant to Clause 7.3.
+
+7. Security
+
+7.1. The Subscriber shall take all reasonable measures to ensure the security and proper use of all personal identification numbers, Private Keys and passwords used in connection with the Subscription Service. The Subscriber shall also immediately inform SSL if there is any reason to believe that a personal identification number, Private Key or password has or is likely to become known to someone not authorized to use it, or is being, or is likely to be used in an unauthorized way, or if any of the Subscriber Data provided by the Subscriber using the on-line registration process or subsequently notified to SSL ceases to remain valid or correct or otherwise changes.
+
+7.2. The Subscriber shall have sole responsibility for all statements, acts and omissions which are made under any password provided by it to SSL.
+
+7.3. SSL reserves the right to revoke a Subscriber's Digital Certificate in the event that SSL has reasonable grounds to believe that:
+
+(i) a personal identification number, Private Key or password has, or is likely to become known to someone not authorized to use it, or is being or is likely to be used in an unauthorized way;
+(ii) a Subscriber's Digital Certificate has not been issued in accordance with the policies set out in the SSL CPS;
+(iii) the Subscriber has requested that its Digital Certificate be revoked;
+(iv) there has been, there is, or there is likely to be a violation of, loss of control over, or unauthorized disclosure of Confidential Information relating to the Subscription Service; or
+(v) the Subscriber Data is no longer correct or accurate, save that SSL has no obligation to monitor or investigate the accuracy of information in a Digital Certificate after the Issue Date of that Digital Certificate; or
+(vi) the Subscriber has used the Subscription Service with third party software not authorized by SSL for use with the Subscription Service. and SSL may, in its absolute discretion after revocation of a Digital Certificate, reissue a Digital Certificate to the Subscriber or terminate this Agreement in accordance with the provisions of Clause 15.
+
+7.4. The Subscriber agrees to discontinue all use of the Subscriber's Digital Certificate if the Subscriber's Digital Certificate is revoked in accordance with this Agreement, the Certificate Period expires, this Agreement is terminated, or any of the information constituting the Subscriber Data ceases to remain valid or correct or otherwise changes.
+
+8. Confidentiality
+
+8.1. Neither party shall use any Confidential Information other than for the purpose of performing its obligations under this Agreement save where Confidential Information is required for the provision of the Subscription Service.
+
+8.2. Each party shall procure that any person to whom Confidential Information is disclosed by it complies with the restrictions set out in this clause 8 as if such person were a party to this Agreement.
+
+8.3. Notwithstanding the previous provisions of this clause 8 either party may disclose Confidential Information if and to the extent required by law, for the purpose of any judicial proceedings or any securities exchange or regulatory or governmental body to which that party is subject, wherever situated, including (amongst other bodies) the London Stock Exchange Limited or the Panel on Take-overs and Mergers, whether or not the requirement for information has the force of law, and if and to the extent the information has come into the public domain through no fault of that party.
+
+8.4. The restrictions contained in this clause 8 shall continue to apply to each party for the duration of this Agreement and for the period of 5 years following the termination of this Agreement.
+
+9. Subscriber Data
+
+9.1. The Subscriber acknowledges that in order to provide the Subscription Service the Selected Subscriber Data shall be embedded in the Subscriber's Digital Certificates and the Subscriber hereby consents to the disclosure to third parties of such Selected Subscriber Data held therein.
+
+9.2. The Subscriber hereby grants SSL permission to examine, evaluate, process and in some circumstances transmit to third parties located outside the United States the Subscriber Data insofar as is reasonably necessary for SSL to provide the Subscription Service.
+
+9.3. SSL shall in performing its obligations under this Agreement, comply with the Data Protection Act 1998 and any legislation or guidelines which amends or replaces such legislation and shall take appropriate technical and organisational measures against the unauthorized or unlawful processing of personal data and against actual loss or destruction of or damage to such data.
+
+10. Intellectual Property Rights
+
+10.1. Unless otherwise agreed in writing, the parties agree that Digital Certificates, SSL Public Keys, and SSL Private Keys are the property of SSL and the Subscribers Private Keys are the property of the Subscriber.
+
+10.2. The Subscriber agrees not to use the SSL name, brand, get-up or logo in any way except with SSL's prior written consent.
+
+11. SSL Obligations
+
+SSL agrees to:
+
+(i) provide the Subscription Service with the reasonable skill and care of a competent provider of similar Digital Certificate services save that SSL does not undertake to provide a fault free service;
+(ii) investigate and verify prior to the Issue Date the accuracy of the information to be incorporated in the Digital Certificate in accordance with the procedures set out in the Schedule to this Agreement;
+(iii) use its reasonable endeavours to provide the Subscription Service by the date agreed in writing with the Subscriber but that SSL is under no obligation to meet any agreed date and has no liability to the Subscriber for failure to provide the Subscription Service (or any part thereof) by such date; and
+(iv) maintain a copy in the Repository and details in the CRL of each Digital Certificate which has been revoked or has expired for a reasonable period after the Digital Certificate's revocation or expiry.
+
+12. Subscriber Warranties, Representations and Indemnities
+
+12.1. The Subscriber warrants, represents and undertakes that:
+
+(i) all Subscriber Data is, and any other documents or information provided by the Subscriber are, and will remain accurate and will not include any information or material (or any part thereof), the accessing or use of which would be unlawful, contrary to public interest or otherwise likely to damage the business or reputation of SSL in any way;
+(ii) it has and will comply with all consumer and other legislation, instructions or guidelines issued by regulatory authorities, relevant licences and any other codes of practice which apply to the Subscriber or SSL (such codes of practice to be notified to the Subscriber by SSL in advance) and that the Subscriber has obtained all licences and consents necessary for performing its obligations to extend full co-operation at all times to third parties working from time to time with SSL; and
+(iii) it has full power and authority to enter into this Agreement and to perform all of its obligations under this Agreement.
+
+12.2. Subscriber shall promptly disclose in writing to SSL anything which constitutes a breach of, or is inconsistent with any of the warranties and undertakings in Clause 12.1.
+
+12.3. The Subscriber shall indemnify SSL against any claims or legal proceedings which are brought or threatened against SSL by any third party as a result of the Subscriber's breach of the provisions of this Agreement. SSL will notify the Subscriber of any such claims or proceedings and keep the Subscriber informed as to the progress of such claims or proceedings.
+
+12.4. The Subscriber agrees not to make any representations regarding the Subscription Services to any third party except as agreed in writing by SSL.
+
+13. Exclusion of Warranties
+
+Save as expressly provided under this Agreement all other warranties either expressed or implied are hereby excluded to the fullest extent permissible by law.
+
+14. Term and Termination
+
+14.1. This Agreement shall commence on the Commencement Date and shall continue for the Certificate Period unless terminated earlier in accordance with this Clause 14.
+
+14.2. Either party may terminate this Agreement for convenience by providing to the other 20 Business Day's written notice.
+
+14.3. This Agreement may be terminated forthwith or on the date specified in the notice:
+
+(i) by either party if the other commits any material breach of any term of this Agreement and which (in the case of a breach capable of being remedied) shall not have been remedied within 20 Business Days of a written request by the other party to remedy the same or by either party, if in respect of the other party, an Insolvency Event occurs or that other party ceases to carry on its business;
+(ii) by SSL in the event a Digital Certificate is revoked in accordance with the provisions of Clause 7.3 or if SSL is unable to validate, to its satisfaction, all or part of the Subscriber Data.
+
+15. Consequences of Termination
+
+If this Agreement is terminated by SSL under Clause 14 for any reason or under Clause 17.3 SSL may (in the event that a Subscriber's Digital Certificate has not already been revoked) revoke the Subscriber's Digital Certificate without further notice to the Subscriber and the Subscriber shall pay any Charges payable but not yet paid under this Agreement.
+
+16. Limitation of Liability
+
+16.1. Nothing in this Agreement shall exclude or limit the liability of either party for death or personal injury resulting from the negligence of that party or its directors, officers, employees, contractors or agents, or in respect of fraud or of any statements made fraudulently by either party;
+
+16.2. Subject to clause 16.1 SSL shall not be liable to the Subscriber whether in contract (including under any indemnity or warranty), in tort (including negligence), under statute or otherwise for any loss of profit, loss of revenue, loss of anticipated savings, loss or corruption of data, loss of contract or opportunity or loss of goodwill whether that loss is direct, indirect or consequential and if SSL shall be liable to the Subscriber in contract (including under any indemnity or warranty), in tort (including negligence), under statute or otherwise, SSL's maximum liability to the Subscriber shall be limited to the Charges paid by the Subscriber under this Agreement or $10,000, whichever is the greater.
+
+16.3. SSL shall not be liable to the Subscriber for any loss suffered by the Subscriber due to use of the Digital Certificate outside the Scope of Use or for transactions outside the Maximum Transaction Value.
+16.4. Without prejudice to Subscriber's rights to terminate this Agreement, Subscriber's sole remedy at law, in equity or otherwise in respect of any claim against SSL shall be limited to damages.
+
+17. Force Majeure
+
+17.1. Neither party hereto shall be liable for any breach of its obligations hereunder resulting from a Force Majeure Event.
+
+17.2. Each of the parties hereto agrees to give written notice forthwith to the other upon becoming aware of a Force Majeure Event such notice to contain details of the circumstances giving rise to the Force Majeure Event and its anticipated duration. If such duration is more than 20 days then the party not in default shall be entitled to terminate this agreement, with neither party having any liability to the other in respect of such termination.
+
+17.3. The party asserting a Force Majeure Event shall not be excused performance of its obligations unaffected by such a Force Majeure Event and shall endeavour to seek an alternative way of fulfilling its affected obligations without any materially adverse affect on the other party.
+
+18. Waiver
+
+The waiver by either party of a breach or default of any of the provisions of this Agreement by the other party shall not be construed as a waiver of any succeeding breach of the same or other provisions nor shall any delay or omission on the part of either party to exercise or avail itself of any right power or privilege that it has or may have hereunder operate as a waiver of any breach or default by the other party.
+
+19. Notices
+
+19.1. Notices shall be in writing, and shall be sent to the other party marked for the attention of the person either at the address set out in 19.2 below in the case of SSL, or the address of the Subscriber as set out on the Enrolment Form. Notices may be sent be first-class mail or facsimile transmission provided that facsimile transmissions are confirmed within 12 hours by first-class mailed confirmation of a copy. Correctly addressed notices sent by first-class mail shall be deemed to have been delivered 48 hours after posting and correctly directed facsimile transmissions shall be deemed to have been received 12 hours after dispatch.
+
+19.2 The address for SSL Corp is 3100 Richmond Ave Ste 503, Houston, Texas, 77098, Tel: +1-775-237-8434 (+1-SSL-CERTIFICATE), Fax: +1-832-201-7706 to be marked for the attention of The Digital Certificate Subscriber Agreement Administrator.
+
+20. Invalidity and Severability
+
+If any provision of this Agreement (not being of a fundamental nature to its operation) is judged to be invalid, illegal or unenforceable, the continuation in full force and effect of the remainder of the provisions will not be prejudiced.
+
+21. Entire Agreement
+
+21.1. This Agreement and Schedules and all documents referred to herein contain the entire and exclusive agreement and understanding between the parties on the subject matter contained herein and supersedes all prior agreements, understandings and arrangements relating thereto. No representation, undertaking or promise shall be taken to have been given or implied from anything said or written in negotiations between the parties prior to this Agreement except as may be expressly stated in this Agreement.
+
+21.2. Without prejudice to any liability for fraudulent misrepresentation, no party shall be under any liability or shall have any remedy in respect of misrepresentation or untrue statement unless and to the extent that a claim lies for breach of this Agreement.
+
+22. Assignment
+
+Neither party may assign or transfer or purport to assign or transfer a right or obligation under this Agreement without first obtaining the other party's written consent.
+
+23. Governing Law and Jurisdiction
+
+This Agreement and all matters arising from or connected with it, are governed by and shall be construed in accordance with US law and the parties hereby submit to the non-exclusive jurisdiction of Texas courts.
+
+24. Rights of Third Parties
+
+For the avoidance of doubt no third party shall be entitled to any rights under this Agreement which it may enter against SSL.
+
+Secure Server Certificate Schedule: Free SSL Product Type
+
+1 Definitions used in this Schedule
+'Fully Qualified Domain Name' means a URL that includes a second level Domain Name and that fully identifies a directory on the Server;
+'Root Domain Name' means the highest level of a URL that identifies multiple directories on the Server;
+'Secure Server Certificate' means the Digital Certificate produced pursuant to the Subscription Service described in this Schedule;
+'Certificate Signing Request' means an electronic data file created by the Subscriber using the Subscriber's installed SSL or TLS enabled web server software;
+'Server' means the Subscriber's server operating at either a Root Domain Name or Fully Qualified Domain Name provided by the Subscriber to SSL and which is crytographically bound to the public key set out in the Secure Server Certificate.
+
+2 The Subscription Service
+SSL shall provide a Secure Server Certificate designed for installation within the Subscriber's SSL enabled web server software and for use with an SSL v2.0 (or above) or TLS v 1.0 enabled web browser. The Secure Server Certificate shall either; cryptographically bind a Public Key to a the Server operating at a Fully Qualified Domain Name; or cryptographically bind a Public Key to a the Server operating at a Root Domain Name. In both cases, the Public Key is used in the SSL/TLS Protocol to authenticate the Server and establish an encrypted session between an SSL v2.0 enabled web browser and the Subscriber's Server.
+
+3 Scope of Use
+3.1 The Secure Server Certificate is provided for test purposes only. The Subscriber may only use the Secure Server Certificate for the purpose of testing the compatibility and suitability of SSL Secure Server Certificates.
+3.2 The Subscriber will not use the Secure Server Certificate to enter into any transactions of value without the explicit and written consent of SSL.
+3.3 SSL's maximum liability to the Subscriber shall be limited to the Charges paid by the Subscriber under this Agreement or $0.01 whichever is the greater.
+
+4 Charges
+There is no charge for the provision of the Secure Server Certificate pertaining to this schedule.
+
+5 Certificate Period
+The Certificate Period shall commence on the Issue Date and shall continue for the period of 30 days or until revocation of the Digital Certificates by SSL in accordance with the terms of this Agreement, whichever is earlier.
+
+6 Subscriber Data
+6.1 The Subscriber shall provide the following Subscriber Data: Certificate Signing Request (CSR) (SSD), Company Name (SSD), Street address 1, Street Address 2, PO Box, City (SSD), County/State (SSD), Postal/Zip code, Domain Name (SSD), an account username, an account password, Administrator contact details, and an acknowledgement of Subscriber's consent to the terms of this Agreement. Items marked as SSD will either be embedded into the Subscriber's Secure Server Certificate and all other data referenced in paragraph.
+6.2 The Subscriber acknowledges that in order to provide the Subscription Services the Subscriber Data provided by the Subscriber on the Enrolment Form during the on-line registration process may be held in the Directory and the Subscriber hereby consents to the disclosure to third parties of such Subscriber Data held therein.
+
+This subscriber agreement was last updated on April 10 2011.
