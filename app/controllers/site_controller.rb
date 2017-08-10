@@ -6,7 +6,8 @@ class SiteController < ApplicationController
   STANDARD_PAGES = %w(repository restful_api terms_of_use privacy_policy copyright about contact_us news
     buy_now top_level_domains_tlds)
 
-  caches_action :index, expires_in: 1.year, :cache_path => Proc.new { |c| c.params } unless Rails.env =~ /development/
+  caches_action :index, expires_in: 1.year,
+                :cache_path => Proc.new { |c| c.params } unless Rails.env =~ /development/ || "is_sandbox?"
 
   def index
     (redirect_to login_url and return) if is_sandbox?
