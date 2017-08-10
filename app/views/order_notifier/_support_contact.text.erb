@@ -8,7 +8,7 @@ Support
 SSL Corp
 <%=[Settings.mail_address1, Settings.mail_address2].join(", ")%>
 <%=[Settings.mail_city, Settings.mail_state, Settings.mail_zip].join(", ")%>
-<%unless is_sandbox?%>
+<%unless is_sandbox_or_test?%>
 Are you aware <%=Settings.community_name%> allows you to build more trust and transparency with your customers by displaying your <%=Settings.community_name%> Smart SeaL? Please visit <%=details_site_seals_url%> to learn more about the <%=Settings.community_name%> Smart SeaL.
 
 Also, learn more how you can increase your revenue stream by offering or integrating <%=Settings.community_name%> certificates, products and services into your product line. Please visit <%=resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)%> for more details about the <%=Settings.community_name%> Reseller Program

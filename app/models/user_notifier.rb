@@ -1,4 +1,5 @@
 class UserNotifier < ActionMailer::Base
+  helper :application
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods

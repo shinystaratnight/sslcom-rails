@@ -13,7 +13,12 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    request.subdomain=="sandbox"
+    request.try(:subdomain)=="sandbox"
+  end
+
+  def is_sandbox_or_test?
+    is_sandbox? or ActionMailer::Base.default_url_options[:host]=~/^sandbox\./ or
+        ActionMailer::Base.default_url_options[:host]=~/^sws-test\./
   end
 
   def api_domain(certificate_order=nil)
