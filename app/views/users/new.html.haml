@@ -6,25 +6,26 @@
     Enter a desired username and your email address. An activation email will
     be sent to this address. You will need to visit the link provided in the
     email to complete account registration.
-  -unless request.subdomain==Reseller::SUBDOMAIN
-    %p.interested_in_reselling
-      %strong NEW!
-      Earn commission revenue by becoming #{Settings.community_name} Referral Link Partner. It's easy and free. After creating your #{Settings.community_name} account
-      be sure to go to click 'Dashboard' and then 'Become an #{Settings.community_name} Referral Link Partner'.
-      %strong=link_to "Click here to find out more.", details_affiliates_url
-    %p.interested_in_reselling
-      -#
-        Interested in becoming an #{Settings.community_name} Reseller Partner and receiving volume
+  -unless is_sandbox?
+    -unless request.subdomain==Reseller::SUBDOMAIN
+      %p.interested_in_reselling
+        %strong NEW!
+        Earn commission revenue by becoming #{Settings.community_name} Referral Link Partner. It's easy and free. After creating your #{Settings.community_name} account
+        be sure to go to click 'Dashboard' and then 'Become an #{Settings.community_name} Referral Link Partner'.
+        %strong=link_to "Click here to find out more.", details_affiliates_url
+      %p.interested_in_reselling
+        -#
+          Interested in becoming an #{Settings.community_name} Reseller Partner and receiving volume
+          discounts on ssl certificate purchases?
+          =link_to "Click here to find out more.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
+          =#to find out more and to sign up
+          =#%em (initial deposit required).
+    -else
+      %p
+        Not Interested in becoming an #{Settings.community_name} reseller and receiving volume
         discounts on ssl certificate purchases?
-        =link_to "Click here to find out more.", details_resellers_url(:subdomain=>Reseller::SUBDOMAIN)
-        =#to find out more and to sign up
-        =#%em (initial deposit required).
-  -else
-    %p
-      Not Interested in becoming an #{Settings.community_name} reseller and receiving volume
-      discounts on ssl certificate purchases?
-      =link_to "Click here", new_account_url(:subdomain=>false)
-      to create a standard account for single certificate purchases.
+        =link_to "Click here", new_account_url(:subdomain=>false)
+        to create a standard account for single certificate purchases.
   =form_for @user, :url =>account_path do |f|
     =f.error_messages
     #stylized.default_form

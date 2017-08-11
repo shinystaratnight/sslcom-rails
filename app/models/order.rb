@@ -15,6 +15,7 @@ class Order < ActiveRecord::Base
   has_many    :payments
   has_many    :transactions, class_name: 'OrderTransaction', dependent: :destroy
   has_many    :refunds, dependent: :destroy
+  has_many    :order_transactions
   has_and_belongs_to_many    :discounts
 
   money :amount

@@ -7,7 +7,7 @@
   %tr.line_item(class="row_#{indx}")
     %td.description
       =row_description(cert)
-      -if cert.subject
+      -unless cert.subject.blank?
         (
         %em>=cert.subject
         )

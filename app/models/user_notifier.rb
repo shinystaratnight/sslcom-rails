@@ -1,8 +1,9 @@
 class UserNotifier < ActionMailer::Base
+  helper :application
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
-  default_url_options[:host] = Settings.actionmailer_host
+  # default_url_options[:host] = Settings.actionmailer_host
 
   def activation_instructions(user)
     @account_activation_url = register_url(user.perishable_token)

@@ -1,11 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
-session_params= if Rails.env=~/development/
-                  {key: '_ssl_com_session_10242016', domain: "ssl.local"}
-                else
-                  {key: '_ssl_com_session_10262016', domain: "ssl.com"}
-                end
-SslCom::Application.config.session_store :cookie_store, session_params
+SslCom::Application.config.session_store :cookie_store, key: '_my_app_session', domain: :all, tld_length: 2
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

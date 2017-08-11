@@ -12,6 +12,31 @@ module ApplicationHelper
     end
   end
 
+  def is_sandbox?
+    request.try(:subdomain)=="sandbox"
+  end
+
+  def is_sandbox_or_test?
+    is_sandbox? or ActionMailer::Base.default_url_options[:host]=~/^sandbox\./ or
+        ActionMailer::Base.default_url_options[:host]=~/^sws-test\./
+  end
+
+  def api_domain(certificate_order=nil)
+    unless certificate_order.blank?
+      if Rails.env=~/production/i
+        "https://" + (certificate_order.is_test ? Settings.test_api_domain : Settings.api_domain)
+      else
+        "https://" + (certificate_order.is_test ? Settings.dev_test_api_domain : Settings.dev_api_domain) +":3000"
+      end
+    else
+      if is_sandbox?
+        Rails.env=~/production/i ? "https://#{Settings.test_api_domain}" : "https://#{Settings.dev_test_api_domain}:3000"
+      else
+        Rails.env=~/production/i ? "https://#{Settings.api_domain}" : "https://#{Settings.dev_api_domain}:3000"
+      end
+    end
+  end
+
   def adjusted_position(position, certificate_order)
     position-(CertificateOrder::FULL_SIGNUP_PROCESS[:pages].count -
         certificate_order.signup_process[:pages].count)

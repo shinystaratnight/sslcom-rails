@@ -9,9 +9,11 @@ class ApplicationController < ActionController::Base
   rescue_from AbstractController::ActionNotFound, :with => :not_found
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user_session, :current_user, :is_reseller, :cookies,
+  helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
+  before_filter :set_database, :sandbox_notice, if: "request.subdomain=='sandbox' || request.subdomain=='sws-test'"
+  before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
   before_filter :identify_visitor, :record_visit,
@@ -21,7 +23,29 @@ class ApplicationController < ActionController::Base
   before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers
 
-#  hide_action :paginated_scope
+  def sandbox_notice
+    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+  end
+  # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
+  def set_mailer_host
+    ActionMailer::Base.default_url_options[:host] = request.host_with_port
+    ActionMailer::Base.default_url_options[:protocol] = 'https'
+  end
+
+  # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
+  # I use the entire domain, just change to find_by_subdomain and pass only the subdomain
+  def current_website
+    @website ||= Website.find_by_subdomain(request.subdomain)
+  end
+
+  def set_database
+    current_website.use_database
+  end
+
+  # Bonus - add view_path
+  def set_paths
+    self.prepend_view_path current_website.view_path unless current_website.view_path.blank?
+  end
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
@@ -32,7 +56,7 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url :subdomain=>Settings.root_subdomain
+      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
@@ -417,7 +441,7 @@ class ApplicationController < ActionController::Base
     unless (current_user || @current_admin)
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url
+      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
       return false
     end
   end

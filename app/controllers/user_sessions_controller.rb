@@ -141,12 +141,12 @@ private
       if user
         {owner:  user,
          target: nil,
-         action: "Failed login attempt by #{user.login} from ip address #{request.remote_host}",
+         action: "Failed login attempt by #{user.login} from ip address #{request.remote_ip}",
          notes:  reason}
       else
         {owner:  nil,
         target: nil,
-        action: "Failed login attempt by #{params[:user_session][:login]} from ip address #{request.remote_host}",
+        action: "Failed login attempt by #{params[:user_session][:login]} from ip address #{request.remote_ip}",
         notes:  reason}
     end)
   end

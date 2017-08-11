@@ -1,0 +1,23 @@
+{
+  "type" : "object",
+  "required" : [
+    "ref",
+    "order_status",
+    "order_amount",
+    "certificate_url",
+    "receipt_url",
+    "smart_seal_url",
+    "validation_url"
+  ],
+  "properties" : {
+    "ref" : { "type" : "string" },
+    "registrant" : { "type" : ["object", "string", "null"] },
+    "order_status" : { "type" : "string" },
+    "validations" : { "type" : ["string", "null"] },
+    "order_amount" : { "type" : "string" },
+    "certificate_url" : { "type" : "string" },
+    "receipt_url" : { "type" : "string" },
+    "smart_seal_url" : { "type" : "string" },
+    "validation_url" : { "type" : "string" }
+  }
+}

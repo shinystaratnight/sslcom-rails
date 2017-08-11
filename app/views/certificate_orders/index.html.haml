@@ -84,7 +84,7 @@
                             %li
                               %strong for developers
                             %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
-                            %li=link_to "developer tools", developers_certificate_orders_path
+                            %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
                             -if current_user.is_admin?
                               %li
                                 .notes_box

@@ -18,6 +18,7 @@ require 'authlogic/test_case'
 require 'rack_session_access/capybara'
 require 'declarative_authorization/maintenance'
 require 'selenium-webdriver'
+require 'json-schema'
 
 Capybara.app = Rack::ShowExceptions.new(SslCom::Application)
 
@@ -34,6 +35,7 @@ include SetupHelper
 include MailerHelper
 include Authorization::TestHelper
 include AuthorizationHelper
+include ApiSetupHelper
 
 DatabaseCleaner.clean_with :truncation
 DatabaseCleaner.strategy = :truncation

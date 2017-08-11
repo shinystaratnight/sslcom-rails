@@ -4,6 +4,7 @@ class DomainConstraint
   end
 
   def matches?(request)
-    @domains.include? request.host
+      return true if (Rails.env.test? || Rails.env.development?)
+      return @domains.include?(request.host) if Rails.env.production?
   end
 end

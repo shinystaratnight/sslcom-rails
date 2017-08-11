@@ -40,11 +40,12 @@ class ApiCertificateRequest < CaApiRequest
 
   DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain]
 
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS).uniq
+  REVOKE_ACCESSORS = [:account_key, :secret_key, :ref, :reason, :serials]
+
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
   before_validation(on: :create) do
-    if self.account_key && self.secret_key
-      ac=ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key)
+    if ac=api_credential
       unless ac.blank?
         self.api_requestable = ac.ssl_account
       else
@@ -60,6 +61,11 @@ class ApiCertificateRequest < CaApiRequest
     end
   end
 
+  def api_credential
+    (self.account_key && self.secret_key) ?
+        ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
+  end
+
   def find_certificate_order
     if defined?(:ref) && self.ref
       if self.api_requestable.users.find(&:is_admin?)
@@ -69,9 +75,34 @@ class ApiCertificateRequest < CaApiRequest
           co
         else
           errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
+          nil
         end
       else
-        self.api_requestable.certificate_orders.find_by_ref(self.ref) || (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}.")
+        self.api_requestable.certificate_orders.find_by_ref(self.ref) ||
+          (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}." ; nil)
+      end
+    end
+  end
+
+  # find signed certificates based on the `serials` api parameter
+  def find_signed_certificates(certificate_order=nil)
+    return nil if certificate_order.blank? && !self.admin_submitted
+    klass = (self.admin_submitted && certificate_order.blank?) ? SignedCertificate.unscoped :
+                certificate_order.signed_certificates
+    certs = []
+    ([]).tap do |certs|
+      if defined?(:serials) && self.serials
+        (self.serials.is_a?(Array) ? serials : [serials]).map do |serial|
+          if sc=klass.find_by_serial(serial)
+            certs<<sc
+          else
+            errors[:signed_certificate] <<
+                "Signed certificate not found for serial #{serial}#{" within certificate order ref #{certificate_order.ref}" if certificate_order}."
+            break
+          end
+        end
+      else
+        certs<<klass
       end
     end
   end

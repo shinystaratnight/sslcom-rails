@@ -159,6 +159,9 @@ class OrdersController < ApplicationController
         end
         @order.full_refund!
         SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
+        @order.certificate_orders.each do |co|
+          co.revoke!(params["refund_reason"], current_user)
+        end
         notify_ca(params["refund_reason"])
       else
         line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
@@ -171,16 +174,7 @@ class OrdersController < ApplicationController
           @order.partial_refund!(params["partial"])
         end
         SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
-        if line_item.sellable.try("external_order_number")
-          OrderNotifier.request_comodo_refund("refunds@comodo.com", line_item.sellable.external_order_number, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", line_item.sellable.external_order_number, params["refund_reason"], "noreply@ssl.com").deliver
-          ComodoApi.revoke_ssl(certificate_order: line_item.sellable, refund_reason: params["refund_reason"])
-        end
-        if line_item.sellable.notes =~ /DV#(\d+)/
-          OrderNotifier.request_comodo_refund("refunds@comodo.com", $1, params["refund_reason"]).deliver
-          OrderNotifier.request_comodo_refund("support@ssl.com", $1, params["refund_reason"], "noreply@ssl.com").deliver
-          ComodoApi.revoke_ssl(refund_reason: params["refund_reason"], external_order_number: $1)
-        end
+        line_item.sellable.revoke!(params["refund_reason"],current_user) if line_item.sellable.is_a?(CertificateOrder)
       end
     end
     redirect_to order_url(@order)
@@ -228,13 +222,13 @@ class OrdersController < ApplicationController
     unpaginated =
       if @search = params[:search]
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) || Order).unscoped.where{state << ['payment_declined']}.search(params[:search])
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(params[:search])
         else
           current_user.ssl_account.orders.not_new.search(params[:search])
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) || Order).unscoped.where{state << ['payment_declined']}.order("created_at desc")
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc")
         else
           current_user.ssl_account.orders
         end

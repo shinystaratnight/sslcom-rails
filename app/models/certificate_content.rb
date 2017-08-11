@@ -156,17 +156,21 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    certificate_names.create(name: csr.common_name) if (csr && certificate_names.find_by_name(csr.common_name).blank?)
-    unless self.domains.blank?
-      cert_domains = self.domains.flatten
-      cert_domains.each do |domain|
-        certificate_names.create(name: domain) if certificate_names.find_by_name(domain).blank?
+    if domains.blank?
+      if csr && certificate_names.find_by_name(csr.common_name).blank?
+        certificate_names.create(name: csr.common_name, is_common_name: true)
       end
-      # # delete orphaned certificate_names
-      # certificate_names.map(&:name).each do |cn|
-      #   certificate_names.find_by_name(cn).destroy unless cert_domains.include?(cn)
-      # end
+    else
+      domains.flatten.each_with_index do |domain, i|
+        if certificate_names.find_by_name(domain).blank?
+          certificate_names.create(name: domain, is_common_name: (i == 0)) 
+        end
+      end
     end
+  end
+
+  def signed_certificate
+    signed_certificates.last
   end
 
   def domains=(names)
@@ -208,10 +212,11 @@ class CertificateContent < ActiveRecord::Base
   def dcv_domains(options)
     i=0
     options[:domains].each do |k,v|
+      cur_email = options[:emails] ? options[:emails][k] : nil
       case v["dcv"]
         when /https?/i, /cname/i
           dcv=self.certificate_names.find_by_name(k).
-              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
+              domain_control_validations.create(dcv_method: v["dcv"], candidate_addresses: cur_email,
                 failure_action: v["dcv_failure_action"])
           if (v["dcv_failure_action"]=="remove" || options[:dcv_failure_action]=="remove")
             found=dcv.verify_http_csr_hash
@@ -219,16 +224,16 @@ class CertificateContent < ActiveRecord::Base
           end
           # assume the first name is the common name
           self.csr.domain_control_validations.
-              create(dcv_method: v["dcv"], candidate_addresses: options[:emails][k],
+              create(dcv_method: v["dcv"], candidate_addresses: cur_email,
                 failure_action: v["dcv_failure_action"]) if(i==0 && !certificate_order.certificate.is_ucc?)
         else
           self.certificate_names.find_by_name(k).
               domain_control_validations.create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: options[:emails][k])
+                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email)
           # assume the first name is the common name
           self.csr.domain_control_validations.
               create(dcv_method: "email", email_address: v["dcv"],
-                failure_action: v["dcv_failure_action"], candidate_addresses: options[:emails][k]) if(i==0 && !certificate_order.certificate.is_ucc?)
+                failure_action: v["dcv_failure_action"], candidate_addresses: cur_email) if(i==0 && !certificate_order.certificate.is_ucc?)
       end
       i+=1
     end

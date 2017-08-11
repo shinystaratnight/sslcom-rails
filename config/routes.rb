@@ -27,6 +27,7 @@ SslCom::Application.routes.draw do
   match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
 
   # api
+  # if using an api WITHOUT the version in the url, then a
   constraints DomainConstraint.new(
                   %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com
                   api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)) do
@@ -34,14 +35,14 @@ SslCom::Application.routes.draw do
           :as => :api_user_create_v1_4, via: [:post]
     match '/user/:login' => 'api_user_requests#show_v1_4',
           :as => :api_user_show_v1_4, via: [:get], login: /.+\/?/
-    match '/certificates/1.3/create' => 'api_certificate_requests#create_v1_3',
-          :as => :api_certificate_create_v1_3, via: [:post]
     match '/certificates' => 'api_certificate_requests#create_v1_4',
           :as => :api_certificate_create_v1_4, via: [:post]
     match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
           :as => :api_certificate_update_v1_4, via: [:put, :patch, :post], ref: /[a-z0-9\-]+/
     match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           :as => :api_certificate_show_v1_4, via: [:get], ref: /[a-z0-9\-]+/
+    match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
+          :as => :api_certificate_revoke_v1_4, via: [:delete]
     match '/certificates/' => 'api_certificate_requests#index_v1_4',
           :as => :api_certificate_index_v1_4, via: [:get, :post]
     match '/certificates/validations/email' => 'api_certificate_requests#dcv_emails_v1_3',
@@ -64,8 +65,6 @@ SslCom::Application.routes.draw do
           :as => :api_dcv_email_resend_v1_3, via: :get
     match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
           :as => :api_certificate_reprocess_v1_3, via: :get
-    match '/certificates/1.3/revoke' => 'api_certificate_requests#revoke_v1_3',
-          :as => :api_certificate_revoke_v1_3, via: :get
   end
 
   resources :password_resets, except: [:show]

@@ -36,17 +36,20 @@ module SetupHelper
     create_reminder_triggers
     create_roles
     set_common_roles
+    @password = 'Testing@1'
   end
 
   def initialize_certificates
-    create(:certificate, :basicssl) # non-wildcard
-    create(:certificate, :evssl)
-    create(:certificate, :uccssl)   # multi-domain + wildcard
-    create(:certificate, :wcssl)    # wildcard   
+    @uccssl=create(:certificate, :uccssl)     # 101 UCC SSL (ucc256sslcom), multi-domain, non-wildcard
+    @evssl=create(:certificate, :evssl)      # 102 EV SSL (ev256sslcom), 1-domain, non-wildcard
+    @ovssl=create(:certificate, :ovssl)      # 103 High Assurance SSL (ov256sslcom), 1-domain, non-wildcard
+    @wcssl=create(:certificate, :wcssl)      # 105 Wildcard SSL (wc256sslcom), 1-domain, unlimited-subdomains, wildcard
+    @basicssl=create(:certificate, :basicssl)   # 106 Basic SSL (basic256sslcom), 1-domain, non-wildcard
+    @premiumssl=create(:certificate, :premiumssl) # 107 Premium SSL (premium256sslcom), 1-domain, 3-subdomains, non-wildcard
   end
 
   def initialize_server_software
-    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each{|t| ServerSoftware.create(title: t)}
+    ['Apache-ModSSL', 'Oracle', 'Amazon Load Balancer'].each_with_index{|t, i| ServerSoftware.create(id: i+1, title: t)}
   end
 
   def create_and_approve_user(invited_ssl_acct, login=nil, roles=nil)
@@ -64,7 +67,13 @@ module SetupHelper
     invited_user.send(:approve_account, ssl_account_id: invited_ssl_acct.id)
     invited_user
   end
-
+  
+  def initialize_countries
+    Country.create(iso1_code: 'US', name_caps: 'UNITED STATES', name: 'United States', iso3_code: 'USA', num_code: 840)
+    Country.create(iso1_code: 'ZA', name_caps: 'SOUTH AFRICA', name: 'South Africa', iso3_code: 'ZAF', num_code: 710)
+    Country.create(iso1_code: 'CA', name_caps: 'CANADA', name: 'Canada', iso3_code: 'CAN', num_code: 124)
+  end
+  
   def initialize_certificate_csr_keys
 @nonwildcard_csr = <<EOS
 -----BEGIN CERTIFICATE REQUEST-----

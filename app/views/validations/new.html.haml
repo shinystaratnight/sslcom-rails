@@ -1,7 +1,6 @@
 -content_for :title, "Validation for #{@certificate_order.ref}"
 -co = @certificate_order
 -checkout_in_progress=co.validation_stage_checkout_in_progress?
--form_action = Rails.env=~/production/i ? "https://#{Settings.api_domain}" : "https://#{Settings.dev_test_api_domain}:3000"
 -if checkout_in_progress
   -i=adjusted_position(5, co)
   =order_progress_indicator(i, co.certificate)
@@ -43,7 +42,7 @@
     %tr
       %td cname sha2 hash
       %td.dns_sha2_hash=co.csr.dns_sha2_hash
-  =form_tag(form_action+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
+  =form_tag(api_domain+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
     -all_validated=false
@@ -64,7 +63,7 @@
         -ds = mdc_validation.domain_status
         -count_validated,count_domain=0,0
         -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each_with_index do |cn|
-          -if @certificate_order.certificate.is_ucc?;
+          -if @certificate_order.certificate.is_ucc?
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]
               -validated = (name && name["status"]=~/validated/i)
@@ -113,7 +112,7 @@
               %td.pretest{class: cn.name} n/a
               %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
               -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
-              %td.attempted_on{class: cn.name}=last_sent.blank? ? "n/a" : last_sent.created_at
+              %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
               %td.status{class: cn.name}=name["status"].downcase if ds && name
             %tr
               %td

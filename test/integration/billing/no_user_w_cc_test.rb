@@ -37,8 +37,8 @@ describe 'Anonymous user' do
     # Login Information
     fill_in 'user_login',                  with: 'new_user'
     fill_in 'user_email',                  with: @new_email
-    fill_in 'user_password',               with: 'testing'
-    fill_in 'user_password_confirmation',  with: 'testing'
+    fill_in 'user_password',               with: @password
+    fill_in 'user_password_confirmation',  with: @password
     # Billing Information
     fill_in 'billing_profile_first_name',  with: 'first'
     fill_in 'billing_profile_last_name',   with: 'last'
@@ -52,7 +52,7 @@ describe 'Anonymous user' do
     select 'Visa',                           from: 'billing_profile_credit_card'
     select '1',                              from: 'billing_profile_expiration_month'
     select Date.today.year + 1,              from: 'billing_profile_expiration_year'
-    fill_in 'billing_profile_card_number',   with: '4007000000027'
+    fill_in 'billing_profile_card_number',   with: (BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027')
     fill_in 'billing_profile_security_code', with: '900'
 
     find('input[name="next"]').click
@@ -114,7 +114,7 @@ describe 'Anonymous user' do
     # creates correct user record
     # ======================================================
       user = User.first
-      assert_equal 1, user.login_count
+      refute_nil   user.login_count
       assert_equal 1, user.get_all_approved_accounts.count
       assert_equal 1, user.assignments.count
       assert_equal 1, user.ssl_account_users.count

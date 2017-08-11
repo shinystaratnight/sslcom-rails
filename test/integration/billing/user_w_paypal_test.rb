@@ -42,13 +42,14 @@ describe 'Valid user' do
     find('img[title="paypal"]').click
 
     # Paypal Gateway page
-    page.must_have_content('$156.43 USD')
+    page.must_have_content('$150.43 USD')
     paypal_login
   end
 
   it 'creates correct records and view' do
     @co = Order.find_by(description: 'SSL Certificate Order')
     @pd = Order.find_by(description: 'Paypal Deposit')
+    @fa = Order.find_by(description: 'Funded Account Withdrawal')
 
     # user receives #certificate_order_prepaid notification email
     # ======================================================
@@ -60,17 +61,24 @@ describe 'Valid user' do
     
     # creates database records
     # ======================================================
-      assert_equal 2, Order.count
+      assert_equal 3, Order.count
+      assert_equal 2, Deposit.count # For Paypal Deposit and Funded Account Withdrawal
       assert_equal 0, OrderTransaction.count # only for CC purchase
       assert_equal 1, CertificateOrder.count
       assert_equal 1, CertificateContent.count
-      assert_equal 2, LineItem.count
+      assert_equal 3, LineItem.count
       assert_equal 1, ShoppingCart.count
     
-    # creates correct line_items associated w/2 orders
+    # creates correct line_items associated w/3 orders
     # ======================================================
       ssl_cert_line_items = @co.line_items.first
       paypal_line_item    = @pd.line_items.first
+      funded_acct_item    = @fa.line_items.first
+      
+      # CertificateOrder           $156.43
+      # Funded Account Credit     -$6.00    (Order w/description 'Funded Account Withdrawal')
+      # - - - - - - - - - - - - - - - - -
+      # Deposit                    $150.43  (After credit, remaining $ for payment)
       
       assert_equal @co.id, ssl_cert_line_items.order_id
       assert_equal 'CertificateOrder', ssl_cert_line_items.sellable_type
@@ -78,7 +86,11 @@ describe 'Valid user' do
       
       assert_equal @pd.id, paypal_line_item.order_id
       assert_equal 'Deposit', paypal_line_item.sellable_type
-      assert_equal 15643, paypal_line_item.cents
+      assert_equal 15043, paypal_line_item.cents
+      
+      assert_equal @fa.id, funded_acct_item.order_id
+      assert_equal 'Deposit', funded_acct_item.sellable_type
+      assert_equal 600, funded_acct_item.cents
     
     # creates correct order records
     # ======================================================

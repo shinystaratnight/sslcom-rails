@@ -73,6 +73,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #TODO add dcv validation
       end
     end
+    verify_domain_limits
   end
 
   def create_certificate_order
@@ -87,26 +88,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       # or make a certificate voucher
       co.preferred_payment_order = 'prepaid'
     end
-    domain_names = if self.domains.is_a? Hash
-                     self.domains.keys
-                   elsif self.domains.is_a? String
-                     [self.domains]
-                   else
-                     self.domains
-                   end
     certificate_content=CertificateContent.new(
-        csr: csr, server_software_id: self.server_software, domains: domain_names)
+        csr: csr, server_software_id: self.server_software, domains: get_domains)
     co.certificate_contents << certificate_content
     @certificate_order = Order.setup_certificate_order(certificate: certificate, certificate_order: co,
                                                        duration: self.period.to_i/365)
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-    unless self.test
+    unless debug_mode?
       if false #credit_card
 
       else
-        errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." if
-            (order.amount.cents > api_requestable.funded_account.amount.cents)
+        if order.amount.cents > api_requestable.funded_account.amount.cents
+          errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." 
+        end    
       end
     end
     if errors.blank?
@@ -250,13 +245,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def apply_funds(options)
     order = options[:order]
     funded_account = options[:ssl_account].funded_account
-    funded_account.cents -= order.cents unless @certificate_order.is_test
+    funded_account.cents -= order.cents unless debug_mode?
     if order.line_items.size > 0
       funded_account.deduct_order = true
       # order.save
       order.mark_paid!
       Authorization::Maintenance::without_access_control do
-        funded_account.save unless @certificate_order.is_test
+        funded_account.save unless debug_mode?
       end
       options[:certificate_order].pay! true
     end
@@ -292,6 +287,14 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def is_ucc?
     serial =~ /\Aucc/ if serial
+  end
+  
+  def is_premium?
+    serial =~ /\Apremium/ if serial
+  end
+  
+  def is_evucc?
+    serial =~ /\Aevucc/ if serial
   end
 
   def is_not_ip
@@ -355,8 +358,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           if !extra.empty?
             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
             errors[:contacts].last.merge!(msg)
-          elsif !CertificateContact.new(attrs.merge({roles: role})).valid?
-            r = CertificateContact.new(attrs.merge({roles: role}))
+          elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
+            r = CertificateContact.new(attrs.merge(roles: [role]))
             r.valid?
             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
           elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
@@ -371,7 +374,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     else
       errors[:contacts] << "parameter required"
     end
-    return false if errors[:contacts]
+    cur_err = errors[:contacts].reject(&:empty?)
+    errors.delete(:contacts)
+    errors.add(:contacts, cur_err) if cur_err.any?
+    errors.get(:contacts) ? false : true
   end
 
   def is_processing?
@@ -391,5 +397,40 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def test_update_dcv
     a=ApiCertificateCreate_v1_4.find{|a|a.domains && (a.domains.keys.count) > 2 && a.ref && a.find_certificate_order.try(:external_order_number) && a.find_certificate_order.is_test?}
     a.comodo_auto_update_dcv(send_to_ca: false, certificate_order: a.find_certificate_order)
+  end
+  
+  def debug_mode?
+    self.test && !Rails.env.test?
+  end
+  
+  def get_domains
+    if csr_obj && csr_obj.valid? && domains.nil?
+      self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access
+    end
+    
+    if domains.is_a? Hash
+     domains.keys
+    elsif domains.is_a? String
+     [domains]
+    else
+     domains
+    end
+  end
+        
+  def verify_domain_limits
+    unless domains.nil?
+      max = if is_ucc? || is_wildcard? || is_evucc?
+        500
+      elsif is_dv? || is_ev? || is_ov?
+        1
+      elsif is_premium?
+        3
+      else
+        1
+      end
+      if domains.count > max
+        errors[:domains] << "You have exceeded the maximum of #{max} domain(s) or subdomains for this certificate."
+      end
+    end
   end
 end

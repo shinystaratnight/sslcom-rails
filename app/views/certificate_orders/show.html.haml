@@ -109,7 +109,7 @@
                           %li
                             %strong for developers
                           %li=link_to "preformatted api strings", developer_certificate_order_path(@ssl_slug, co)
-                          %li=link_to "developer tools", developers_certificate_orders_path
+                          %li=link_to "developer tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
                           -if (@certificate_order.certificate_duration(:days).to_i > 1187) && (@certificate_order.created_at > Date.parse('Apr 1 2015'))
                             %li &nbsp;
                             %li
@@ -237,7 +237,10 @@
                     %tr
                       %td(colspan="5" style="text-align: left;")
                         %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                        (server software: #{c.server_software.try :title})
+                        -if sc.try(:body).blank?
+                          (server software: #{c.server_software.try :title})
+                        -else
+                          (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         .certificate_details_box

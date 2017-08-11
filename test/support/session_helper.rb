@@ -45,8 +45,8 @@ module SessionHelper
   end
 
   def paypal_login
-    email    = Settings.paypal_buyer_email
-    password = Settings.paypal_buyer_password
+    email    = ENV.fetch('PAYPAL_TEST_BUYER_EMAIL')
+    password = ENV.fetch('PAYPAL_TEST_BUYER_PASSWORD')
     sleep 5                          # Let Paypal login page load
     if first('#login_email')         # Older Paypal login view
       fill_in 'login_email',    with: email

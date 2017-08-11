@@ -2,22 +2,25 @@
 -current_slug = params[:ssl_slug] ? slug_params : {}
 #prog_nav_container
   %ul(id="prog_nav")
-    %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
-      =link_to "BUY", certificates_path
+    -unless is_sandbox?
+      %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
+        =link_to "BUY", certificates_path
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
       =link_to "Dashboard", account_path(slug_params)
-    -permitted_to? :read, :validations do
-      %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")
-        =link_to "Validations", validations_path(slug_params)
-    -unless current_user.ssl_account.affiliate.blank?
-      %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
-        =link_to "Affiliate", affiliate_path(current_user.ssl_account.affiliate)
+    -unless is_sandbox?
+      -permitted_to? :read, :validations do
+        %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")
+          =link_to "Validations", validations_path(slug_params)
+      -unless current_user.ssl_account.affiliate.blank?
+        %li(id="#{current_page?(affiliate_path(current_user.ssl_account.affiliate)) ? 't-intro' : 'manage_affiliate'}")
+          =link_to "Affiliate", affiliate_path(current_user.ssl_account.affiliate)
     -permitted_to? :index, :certificate_orders do
       %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
-        =link_to "Orders", certificate_orders_path(slug_params)
-    -permitted_to? :read, :orders do
-      %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
-        =link_to "Transactions", orders_path(slug_params)
+        =link_to "Orders", is_sandbox? ? filter_by_scope_certificate_orders_path(@ssl_slug, "is_test") : certificate_orders_path(slug_params)
+    -unless is_sandbox?
+      -permitted_to? :read, :orders do
+        %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
+          =link_to "Transactions", orders_path(slug_params)
     -if current_user.get_all_approved_accounts.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
         =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
@@ -26,6 +29,7 @@
     -permitted_to? :read, :users do
       %li(id="#{(is_on?("users",current_slug) && !@prev) ? 't-intro' : 'manage_users'}")
         =link_to "Users", users_path(slug_params)
-    -permitted_to? :edit_settings, current_user.ssl_account do
-      %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
-        =link_to "Settings", edit_settings_ssl_account_path(slug_params)
+    -unless is_sandbox?
+      -permitted_to? :edit_settings, current_user.ssl_account do
+        %li(id="#{is_on?("edit_settings_ssl_account",current_slug) ? 't-intro' : 'manage_settings'}")
+          =link_to "Settings", edit_settings_ssl_account_path(slug_params)

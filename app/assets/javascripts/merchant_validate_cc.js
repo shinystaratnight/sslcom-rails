@@ -1,7 +1,7 @@
 $(function($) {
   // Card validation prior to making a purchase utilizing 2 merchants.
-  // Stripe Merhcant
   var forms = '.edit_funded_account, .new_order, .new_funded_account, .new_billing_profile';
+  // Stripe Merhcant
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   stripeResponseHandler = function (status, response) {
       var form = $(forms);

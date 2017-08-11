@@ -1,3 +1,4 @@
+require 'digest/md5'
 require 'zip/zip'
 require 'openssl'
 #require 'zip/zipfilesystem'
@@ -46,6 +47,7 @@ class SignedCertificate < ActiveRecord::Base
   after_create do |s|
     s.csr.certificate_content.issue!
     s.update_attribute :decoded, s.decode
+    s.update_column :serial, s.decoded_serial
   end
 
   after_save do |s|
@@ -134,8 +136,8 @@ class SignedCertificate < ActiveRecord::Base
           end
         end
         self[:signature] = parsed.subject_key_identifier
-        self[:fingerprint] = parsed.serial
-        self[:fingerprintSHA] = parsed.signature_algorithm
+        self[:fingerprint] = OpenSSL::Digest::SHA1.new(parsed.to_der).to_s
+        self[:fingerprintSHA] = "SHA1"
         self[:effective_date] = parsed.not_before
         self[:expiration_date] = parsed.not_after
         self[:subject_alternative_names] = parsed.subject_alternative_names
@@ -203,6 +205,10 @@ class SignedCertificate < ActiveRecord::Base
   def expired?
     return false unless expiration_date
     expiration_date < (Time.new)
+  end
+
+  def issuer
+    openssl_x509.issuer.to_s
   end
 
   def create_signed_cert_zip_bundle(options={})
@@ -436,6 +442,17 @@ class SignedCertificate < ActiveRecord::Base
     body.starts_with?(BEGIN_PKCS7_TAG) ? 'PKCS#7' : 'X.509'
   end
 
+  def openssl_x509
+    begin
+      OpenSSL::X509::Certificate.new(body)
+    rescue Exception
+    end
+  end
+
+  def issuer_dn
+    openssl_x509.issuer.to_s(OpenSSL::X509::Name::RFC2253)
+  end
+
   def decode
     begin
       if self.file_type=='PKCS#7'
@@ -445,7 +462,7 @@ class SignedCertificate < ActiveRecord::Base
         end
         CertUtil.decode_certificate sc_pem, "pkcs7"
       else
-        OpenSSL::X509::Certificate.new(body).to_text
+        openssl_x509.to_text
       end
     rescue Exception
     end
@@ -481,6 +498,11 @@ class SignedCertificate < ActiveRecord::Base
     {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
   end
 
+  def ca
+    ca_id[:ca]
+    ca_id[:ca]
+  end
+
   def is_SHA2?
     decoded =~ /sha2/
   end
@@ -509,6 +531,24 @@ class SignedCertificate < ActiveRecord::Base
 
   def self.decode_all
     self.find_each {|s|s.update_column :decoded, s.decode}
+  end
+
+  # get the serial through regular expression of the decoded cert
+  def decoded_serial
+    # m=decoded.match(/Serial Number:\n(.*?)\n/m)
+    m=decoded.match(/Serial Number:(.*?)Signature/m)
+    unless m.blank?
+      if ca=="comodo"
+        "00"+m[1].strip.remove(":")
+      else
+        m[1].strip
+      end
+    end
+  end
+
+  def revoke!(reason)
+    update_column(:status, "revoked") if ComodoApi.revoke_ssl(serial: self.serial, api_requestable: self,
+                                                             refund_reason: reason)
   end
 
   private
@@ -550,6 +590,16 @@ class SignedCertificate < ActiveRecord::Base
       end
     end
     cert
+  end
+
+  # one time utility function to populate the fingerprint column
+  def self.populate_fingerprints_serials
+    self.find_each {|s|
+      unless s.body.blank?
+        s.update_columns(serial: s.decoded_serial,
+           fingerprint: OpenSSL::Digest::SHA1.new(s.openssl_x509.to_der).to_s, fingerprintSHA: "SHA1") if s.openssl_x509
+      end
+    }
   end
 end
 

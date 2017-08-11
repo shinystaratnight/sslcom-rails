@@ -39,8 +39,8 @@ describe 'Valid user' do
     # New Login Information
     fill_in 'user_login',                  with: 'new_user'
     fill_in 'user_email',                  with: @new_email
-    fill_in 'user_password',               with: 'testing'
-    fill_in 'user_password_confirmation',  with: 'testing'
+    fill_in 'user_password',               with: @password
+    fill_in 'user_password_confirmation',  with: @password
 
     # Payment Method: Paypal checkbox
     find('#payment_method_paypal').click

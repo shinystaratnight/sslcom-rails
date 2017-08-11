@@ -18,6 +18,7 @@ module Rails
       super.merge({
                       :Port => 3000,
                       :SSLEnable => true,
+                      :SSLVerifyClient => OpenSSL::SSL::VERIFY_NONE,
                       :SSLCertName => [["CN", "www.ssl.local"]]
                   })
     end

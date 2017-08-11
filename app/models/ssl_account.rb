@@ -12,6 +12,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :validations, through: :certificate_orders
   has_many  :site_seals, through: :certificate_orders
   has_many  :certificate_contents, through: :certificate_orders
+  has_many  :signed_certificates, through: :certificate_contents
   has_many  :certificate_contacts, through: :certificate_contents
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
@@ -283,6 +284,14 @@ class SslAccount < ActiveRecord::Base
   def self.migrate_orders(from_sa, to_sa)
     to_sa.orders << from_sa.orders
     to_sa.certificate_orders << from_sa.certificate_orders
+  end
+
+  # to_sa - the ssl_account to migrate to
+  # ref_number - reference number of the order to migrate
+  def migrate_order(to_sa, ref_number)
+    o=self.orders.find_by_reference_number(ref_number)
+    to_sa.certificate_orders << o.certificate_orders
+    to_sa.orders << o
   end
 
   def primary_user
