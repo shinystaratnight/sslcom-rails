@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
   after_filter :set_access_control_headers
 
   def sandbox_notice
-    flash[:notice] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
   end
   # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
   def set_mailer_host

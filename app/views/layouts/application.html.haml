@@ -32,10 +32,6 @@
     =yield :js
   %body
     =render partial: "layouts/facebook" if Rails.env=~/production/i
-    -if show_short_links?
-      #answers(style="text-align: center;width: 100%; background-color: orange; padding: 2px 0; font-family: sans-serif; font-size: 1.2em; font-weight: bold;")
-        Have a question or solution?
-        =link_to "Be sure to visit the #{Settings.community_name} IT Security Q&A free community site.", "http://answers.ssl.com", style: "text-decoration: underline; color: #111"
     #wrapper
       -if (current_user.blank?) || yield(:header)=='public' || yield(:header)=='public_wo_container'
         -unless request.subdomain==Reseller::SUBDOMAIN

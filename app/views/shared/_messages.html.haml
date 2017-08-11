@@ -1,4 +1,4 @@
-- %w(info notice error warning info_activation).each do |type|
+- %w(info notice error warning info_activation sandbox).each do |type|
   - if flash[type.to_sym]
     -if type == 'info_activation'
       -lines = render_activation_messages
