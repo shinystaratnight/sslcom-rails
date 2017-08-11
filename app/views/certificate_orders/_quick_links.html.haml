@@ -22,12 +22,12 @@
         -if DEPLOYMENT_CLIENT=~/ssl.com/
           %li=link_to "Premium SSL", filter_by_certificate_orders_path(@ssl_slug, "premium")
         %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "wildcard")
-      -else
-        %li=link_to 'Test Orders', filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
         %li &nbsp;
         -if permitted_to?(:show, :signed_certificates)
           %li Developers:
           %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
+      -else
+        %li=link_to 'Test Orders', filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
       -if current_user.is_system_admins?
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
