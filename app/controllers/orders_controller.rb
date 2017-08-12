@@ -432,9 +432,9 @@ class OrdersController < ApplicationController
     certificate_order=CertificateOrder.new(params[:certificate_order])
     @certificate_order=Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)
     determine_eligibility_to_buy(@certificate, certificate_order)
-    @certificate_order.renewal_id=
-        instance_variable_get("@#{CertificateOrder::RENEWING}").id if
-        instance_variable_get("@#{CertificateOrder::RENEWING}")
+    if instance_variable_get("@#{CertificateOrder::RENEWING}")
+      @certificate_order.renewal_id=instance_variable_get("@#{CertificateOrder::RENEWING}").id
+    end
     @certificate_order.valid?
   end
 
