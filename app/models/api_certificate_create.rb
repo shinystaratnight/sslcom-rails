@@ -79,6 +79,7 @@ class ApiCertificateCreate < ApiCertificateRequest
     certificate_order.certificate_contents << certificate_content
     @certificate_order = Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order,
       duration: self.period)
+    @certificate_order.renewal = self.api_requestable.certificate_orders.find_by_ref(self.renewal_id) if self.renewal_id
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
     unless self.test

@@ -3,7 +3,7 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_ref
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
@@ -58,6 +58,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
   validates_presence_of :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate  :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
     self.period = period.to_s unless period.blank?
@@ -255,6 +256,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
       options[:certificate_order].pay! true
     end
+  end
+
+  def renewal_exists
+    self.errors[:renewal_id] << "renewal_id #{self.renewal_id} does not exist or is invalid" if
+        self.api_requestable.certificate_orders.find_by_ref(self.renewal_id).blank?
   end
 
   def serial

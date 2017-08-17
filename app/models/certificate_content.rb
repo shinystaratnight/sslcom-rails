@@ -26,6 +26,9 @@ class CertificateContent < ActiveRecord::Base
   RESELLER_FIELDS_TO_COPY = %w(first_name last_name
     po_box address1 address2 address3 city state postal_code email phone ext fax)
 
+  # terms in this list that are submitted as domains for an ssl will be kicked back
+  BARRED_SSL_TERMS = %w(\A\. \.onion\z \.local\z)
+
   TRADEMARKS = %w(whatsapp google apple paypal github amazon cloudapp microsoft amzn ssltools certchat certlock *.*.com
     *.*.org *.10million.org *.android.com *.aol.com *.azadegi.com *.balatarin.com *.comodo.com *.digicert.com
     *.globalsign.com *.google.com *.JanamFadayeRahbar.com *.logmein.com *.microsoft.com *.mossad.gov.il
@@ -56,7 +59,7 @@ class CertificateContent < ActiveRecord::Base
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
     :if => :certificate_order_has_csr_and_signing_request
-  validate :domains_validation, :if=>"certificate_order.certificate.is_ucc?"
+  validate :domains_validation
   validate :csr_validation, :if=>"new? && csr"
   #end
 
@@ -319,11 +322,40 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def self.is_tld?(name)
-    PublicSuffix.valid?(name.downcase)
+    PublicSuffix.valid?(name.downcase) if name
   end
 
   def self.is_intranet?(name)
-    name=~/\d{,3}\.\d{,3}\.\d{,3}\.\d{,3}/ ? !!(name=~INTRANET_IP_REGEX) : !is_tld?(name)
+    (name=~/\d{,3}\.\d{,3}\.\d{,3}\.\d{,3}/ ? is_intranet_ip?(name) : !is_tld?(name)) if name
+  end
+
+  def self.is_intranet_ip?(name)
+    !!(name=~INTRANET_IP_REGEX) if name
+  end
+
+  def self.is_ip_address?(name)
+    name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
+  end
+
+  def self.is_server_name?(name)
+    name.index(/\./)==nil if name
+  end
+
+  def self.top_level_domain(name)
+    if is_fqdn?(name)
+      name=~(/(?:.*?\.)(.+)/)
+      $1
+    end
+  end
+
+  def self.non_wildcard_name(name)
+    name.gsub(/\A\*\./, "").downcase unless name.blank?
+  end
+
+  def self.is_fqdn?(name)
+    unless is_ip_address?(name) && is_server_name?(name)
+      name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0
+    end if name
   end
 
   def to_ref
@@ -340,31 +372,55 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
-  def is_dv?
-    signed_certificates.last.is_dv? if signed_certificates.last
-  end
-
-  def is_ov?
-    signed_certificates.last.is_ov? if signed_certificates.last
-  end
-
-  def is_ev?
-    signed_certificates.last.is_ev? if signed_certificates.last
+  # each domain needs to go through this
+  def domain_validation(domain)
+    is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
+    is_free = certificate_order.certificate.is_free?
+    is_ucc = certificate_order.certificate.is_ucc?
+    is_code_signing = certificate_order.certificate.is_code_signing?
+    is_client = certificate_order.certificate.is_client?
+    is_premium_ssl = certificate_order.certificate.is_premium_ssl?
+    invalid_chars_msg = "#{domain} has invalid characters. Only the following characters
+          are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the domain or subject"
+    if CertificateContent.is_ip_address?(domain) && CertificateContent.is_intranet?(domain)
+      errors.add(:domain, " #{domain} must be an Internet-accessible IP Address")
+    else
+      unless is_code_signing || is_client
+        #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
+        asterisk_found = (domain=~/\A\*\./)==0
+        if ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
+          errors.add(:domain, "cannot begin with *. since the order does not allow wildcards")
+        elsif CertificateContent.is_intranet?(domain)
+          errors.add(:domain,
+                     "#{domain} was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
+        elsif certificate_order.certificate.is_dv? && CertificateContent.is_ip_address?(domain)
+          errors.add(:domain, "#{domain} was determined to be for an ip address. This is only allowed on OV or EV ssl orders.")
+        elsif !!(domain=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
+          errors.add(:domain, "#{domain} is a restricted tld")
+        end
+        errors.add(:domain, invalid_chars_msg) unless
+            domain_validation_regex(is_wildcard || (is_ucc && !is_premium_ssl), domain.gsub(/\x00/, ''))
+        BARRED_SSL_TERMS.each do |barred|
+          errors.add(:domain, "#{domain} contains non-compliant form") if domain =~ Regexp.new(barred)
+        end
+        errors.add(:domain, "#{domain} contains more than one * character") if (domain.scan /\*/).count > 1
+        errors
+      end
+    end
   end
 
   private
 
   def domains_validation
-    is_wildcard = certificate_order.certificate.allow_wildcard_ucc?
-    invalid_chars_msg = "domain has invalid characters. Only the following characters
-      are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
-    unless domains.blank?
-      errors.add(:additional_domains, invalid_chars_msg) unless domains.reject{|domain|
-        domain_validation_regex(is_wildcard, domain)}.empty?
+    unless all_domains.blank?
+      all_domains.each do |domain|
+        domain_validation(domain)
+      end
     end
   end
 
   def csr_validation
+    allow_wildcard_ucc=certificate_order.certificate.allow_wildcard_ucc?
     is_wildcard = certificate_order.certificate.is_wildcard?
     is_free = certificate_order.certificate.is_free?
     is_ucc = certificate_order.certificate.is_ucc?
@@ -372,36 +428,18 @@ class CertificateContent < ActiveRecord::Base
     is_client = certificate_order.certificate.is_client?
     is_premium_ssl = certificate_order.certificate.is_premium_ssl?
     invalid_chars_msg = "domain has invalid characters. Only the following characters
-          are allowed [A-Za-z0-9.-#{'*' if is_wildcard}] in the domain or subject"
+          are allowed [A-Za-z0-9.-#{'*' if(is_ucc || is_wildcard)}] in the subject"
     if csr.common_name.blank?
       errors.add(:signing_request, 'is missing the common name (CN) field or is invalid and cannot be parsed')
-    elsif csr.is_ip_address? && !csr.is_intranet?
-      errors.add(:signing_request, 'may not have a domain name that is an Internet-accessible IP Address')
-    elsif csr.country=~Regexp.union(Country::BLACKLIST)
-      errors.add(:signing_request, "may not have a domain name that is a restricted tld")
     else
       unless is_code_signing || is_client
         #errors.add(:signing_request, 'is missing the organization (O) field') if csr.organization.blank?
         asterisk_found = (csr.common_name=~/\A\*\./)==0
         if is_wildcard && !asterisk_found
           errors.add(:signing_request, "is wildcard certificate order, so it must begin with *.")
-        elsif ((!is_ucc && !is_wildcard) || is_premium_ssl) && asterisk_found
-          errors.add(:signing_request,
-                     "cannot begin with *. since the order does not allow wildcards")
-        elsif csr.is_intranet?
-          errors.add(:signing_request,
-                     "for '#{csr.common_name}' was determined to be for an intranet or internal site. These have been phased out and are no longer allowed.")
-        elsif is_free && csr.is_ip_address?
-          errors.add(:signing_request,
-                     "for '#{csr.common_name}' was determined to be for an ip address. These have been phased out and are no longer allowed.")
-        elsif !!(csr.common_name=~Regexp.new("\\.("+Country::BLACKLIST.join("|")+")$",true))
-          errors.add(:signing_request, "may not have a domain name that is a restricted tld")
+        elsif ((!(is_ucc && allow_wildcard_ucc) && !is_wildcard)) && asterisk_found
+          errors.add(:signing_request, "cannot begin with *. since the order does not allow wildcards")
         end
-        errors.add(:signing_request, invalid_chars_msg) unless
-            domain_validation_regex(is_wildcard || (is_ucc && !is_premium_ssl), csr.read_attribute(:common_name).gsub(/\x00/, ''))
-      else
-        if csr.is_fqdn?
-          errors.add(:signing_request, "cannot have a fully qualified domain name for code signing certificates")
       end
       errors.add(:signing_request, "must have a 2048 bit key size.
         Please submit a new ssl.com certificate signing request with the proper key size.") if

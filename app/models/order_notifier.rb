@@ -1,4 +1,5 @@
 class OrderNotifier < ActionMailer::Base
+  helper :application
   include ActionView::Helpers::TextHelper
   include ActionView::Helpers::SanitizeHelper
   helper CertificateOrdersHelper
