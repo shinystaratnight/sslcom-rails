@@ -10,8 +10,28 @@ class BillingProfilesController < ApplicationController
   before_filter :require_user
 
   def index
-    @billing_profiles = @ssl_account.billing_profiles
     @billing_profile  = BillingProfile.new
+    p = {:page => params[:page]}
+    unpaginated =
+        if @search = params[:search]
+          if current_user.is_system_admins?
+            (@ssl_account.try(:billing_profiles) ? BillingProfile.unscoped{@ssl_account.try(:billing_profiles)} :
+                 BillingProfile.unscoped).search(params[:search])
+          else
+            current_user.ssl_account.billing_profiles.search(params[:search])
+          end
+        else
+          if current_user.is_system_admins?
+            (@ssl_account.try(:billing_profiles) ? BillingProfile.unscoped{@ssl_account.try(:billing_profiles)} : BillingProfile.unscoped).order("created_at desc")
+          else
+            current_user.ssl_account.billing_profiles
+          end
+        end
+    @billing_profiles=unpaginated.paginate(p)
+    respond_to do |format|
+      format.html { render :action => :index}
+      format.xml  { render :xml => @billing_profiles }
+    end
   end
 
   def destroy

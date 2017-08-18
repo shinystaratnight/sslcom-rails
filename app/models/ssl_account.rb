@@ -323,7 +323,7 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.prep_dev_db(ranges=[])
+  def self.prep_dev_db(ranges=[[]])
     require "declarative_authorization/maintenance"
     SentReminder.unscoped.delete_all
     TrackedUrl.unscoped.delete_all

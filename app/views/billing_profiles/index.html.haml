@@ -1,8 +1,17 @@
 -title = 'Billing Profiles'
 -content_for :title, title
 =render partial: 'funded_accounts/index_scripts'
+#search_bar
+  =form_tag :billing_profiles, :method=>:get do
+    order #
+    =text_field_tag :search, @search
+    =submit_tag 'search'
 #validations
   %table(cellspacing='0')
+    -if will_paginate @billing_profiles
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @billing_profiles
     %caption
       =title
     %tr.heading_row
@@ -11,7 +20,7 @@
       %th(scope='col')Expiry Date
       %th(scope='col')
     -@billing_profiles.reject{|bp|bp.expired?}.each do |profile|
-      -if permitted_to? :edit, profile
+      -if permitted_to?(:edit, profile) || current_user.is_system_admins?
         %tr[profile]
           %td= profile.credit_card
           %td= profile.masked_card_number

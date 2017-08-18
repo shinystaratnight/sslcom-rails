@@ -539,7 +539,8 @@ class SignedCertificate < ActiveRecord::Base
     m=decoded.match(/Serial Number:(.*?)Signature/m)
     unless m.blank?
       if ca=="comodo"
-        "00"+m[1].strip.remove(":")
+        m[1].strip.remove(":")
+        # "00"+m[1].strip.remove(":") # need to clear this up with Comodo
       else
         m[1].strip
       end

@@ -2,7 +2,7 @@ class ApiCertificateRequestsController < ApplicationController
   include SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
-  after_filter :notify
+  after_filter :notify_saved_result
   layout false
 
   # parameters listed here made available as attributes in @result
@@ -17,6 +17,7 @@ class ApiCertificateRequestsController < ApplicationController
 
   TEST_SUBDOMAIN = "sws-test"
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
+  SANDBOX_DOMAIN = "https://sandbox.ssl.com"
   SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
   ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
 
@@ -24,22 +25,24 @@ class ApiCertificateRequestsController < ApplicationController
     render :text => exception.to_s, :status => 422
   end
 
-  def notify
+  def notify_saved_result
+    @rendered=render_to_string(template: @template)
+    @result.update_attribute :response, @rendered
     OrderNotifier.api_executed(@rendered).deliver if @rendered
   end
 
   # set which parameters will be displayed via the api response
-  def set_result_parameters(result, acr, rendered)
+  def set_result_parameters(result, acr)
     ssl_slug               = acr.ssl_account.to_slug
     result.ref             = acr.ref
     result.order_status    = acr.status
     result.order_amount    = acr.order.amount.format
-    result.certificate_url = ORDERS_DOMAIN+certificate_order_path(ssl_slug, acr)
-    result.receipt_url     = ORDERS_DOMAIN+order_path(ssl_slug, acr.order)
-    result.smart_seal_url  = ORDERS_DOMAIN+certificate_order_site_seal_path(ssl_slug, acr.ref)
-    result.validation_url  = ORDERS_DOMAIN+certificate_order_validation_path(ssl_slug, acr)
+    domain = api_result_domain(acr)
+    result.certificate_url = domain+certificate_order_path(ssl_slug, acr)
+    result.receipt_url     = domain+order_path(ssl_slug, acr.order)
+    result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
+    result.validation_url  = domain+certificate_order_validation_path(ssl_slug, acr)
     result.registrant      = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
-    result.update_attribute :response, rendered
   end
 
   def create_v1_4
@@ -57,8 +60,8 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
             end
+            set_result_parameters(@result, @acr)
             @rendered=render_to_string(template: @template)
-            set_result_parameters(@result, @acr, @rendered)
             render_200_status
           else
             @result = @acr #so that rabl can report errors
@@ -91,9 +94,7 @@ class ApiCertificateRequestsController < ApplicationController
             end
           end
         end
-        @rendered=render_to_string(template: @template)
         @result.status = "revoked"
-        @result.update_attribute :response, @rendered
         render_200_status
       else
         render_400_status
@@ -115,7 +116,7 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.update_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            template = "api_certificate_requests/update_v1_4"
+            @template = "api_certificate_requests/update_v1_4"
             if @acr.certificate_content.csr && @result.debug=="true"
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
@@ -125,10 +126,10 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
-            @rendered=render_to_string(:template => template)
-            set_result_parameters(@result, @acr, @rendered)
+            set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
-            render(:template => template)
+            @rendered=render_to_string(:template => @template)
+            render_200_status
           else
             @result = @acr #so that rabl can report errors
           end
@@ -147,10 +148,10 @@ class ApiCertificateRequestsController < ApplicationController
     if @result.save
       if @certificate_order.is_a?(CertificateOrder)
         @certificate_order.api_validate(@result)
-        template = "api_certificate_requests/success_retrieve_v1_3"
+        @template = "api_certificate_requests/success_retrieve_v1_3"
         @result.order_status = @certificate_order.status
-        @result.update_attribute :response, render_to_string(:template => template)
-        render(:template => template) and return
+        @result.update_attribute :response, render_to_string(:template => @template)
+        render(:template => @template) and return
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
@@ -162,7 +163,7 @@ class ApiCertificateRequestsController < ApplicationController
     if @result.save
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        template = "api_certificate_requests/show_v1_4"
+        @template = "api_certificate_requests/show_v1_4"
         @result.order_date = @acr.created_at
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
@@ -189,9 +190,8 @@ class ApiCertificateRequestsController < ApplicationController
           @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
                                                     layout: false))
         end
-        @rendered=render_to_string(:template => template)
-        @result.update_attribute :response, @rendered
-        render(:template => template) and return
+        @rendered=render_to_string(:template => @template)
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -207,11 +207,9 @@ class ApiCertificateRequestsController < ApplicationController
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
-        template = "api_certificate_requests/api_parameters_v1_4"
+        @template = "api_certificate_requests/api_parameters_v1_4"
         @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
-        @rendered=render_to_string(:template => template)
-        @result.update_attribute :response, @rendered
-        render(:template => template) and return
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -254,7 +252,7 @@ class ApiCertificateRequestsController < ApplicationController
       @acrs = @result.find_certificate_orders(params[:search])
       if @acrs.is_a?(ActiveRecord::Relation)# && @acrs.errors.empty?
         @results=[]
-        template = "api_certificate_requests/index_v1_4"
+        @template = "api_certificate_requests/index_v1_4"
         @acrs.each do |acr|
           result = ApiCertificateRetrieve.new(ref: acr.ref)
           result.order_date = acr.created_at
@@ -284,9 +282,7 @@ class ApiCertificateRequestsController < ApplicationController
           end
           @results<<result
         end
-        @rendered=render_to_string(:template => template)
-        @result.update_attribute :response, @rendered
-        render(:template => template) and return
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -299,14 +295,14 @@ class ApiCertificateRequestsController < ApplicationController
 
   def reprocess_v1_3
     if @result.csr_obj && !@result.csr_obj.valid?
-      # we do this sloppy maneuver because the rabl template only reports errors
+      # we do this sloppy maneuver because the rabl @template only reports errors
       @result = @result.csr_obj
     else
       if @result.save
         if @acr = @result.create_certificate_order
           # successfully charged
           if @acr.errors.empty?
-            template = "api_certificate_requests/success_create_v1_3"
+            @template = "api_certificate_requests/success_create_v1_3"
             @result.ref = @acr.ref
             @result.order_status = "pending validation"
             @result.order_amount = @acr.order.amount.format
@@ -314,8 +310,8 @@ class ApiCertificateRequestsController < ApplicationController
             @result.receipt_url = url_for(@acr.order)
             @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
             @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
-            @result.update_attribute :response, render_to_string(:template => template)
-            render(:template => template)
+            @result.update_attribute :response, render_to_string(:template => @template)
+            render(:template => @template)
           else
             @result = @acr #so that rabl can report errors
           end
@@ -328,10 +324,10 @@ class ApiCertificateRequestsController < ApplicationController
 
   def retrieve_v1_3
     if @result.save && @certificate_order.is_a?(CertificateOrder)
-      template = "api_certificate_requests/success_retrieve_v1_3"
+      @template = "api_certificate_requests/success_retrieve_v1_3"
       @result.order_status = @certificate_order.status
-      @result.update_attribute :response, render_to_string(:template => template)
-      render(:template => template) and return
+      @result.update_attribute :response, render_to_string(:template => @template)
+      render(:template => @template) and return
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
@@ -351,9 +347,8 @@ class ApiCertificateRequestsController < ApplicationController
         end
       end
       unless @result.email_addresses.blank?
-        template = "api_certificate_requests/dcv_emails_v1_3"
-        @result.update_attribute :response, render_to_string(:template => template)
-        render(:template => template) and return
+        @template = "api_certificate_requests/dcv_emails_v1_3"
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -364,7 +359,7 @@ class ApiCertificateRequestsController < ApplicationController
     if @result.save  #save the api request
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        template = "api_certificate_requests/dcv_methods_v1_4"
+        @template = "api_certificate_requests/dcv_methods_v1_4"
       end
       @result.dcv_methods={}
       if @acr.domains
@@ -387,8 +382,7 @@ class ApiCertificateRequestsController < ApplicationController
         end
       end
       unless @result.dcv_methods.blank?
-        @result.update_attribute :response, render_to_string(:template => template)
-        render(:template => template) and return
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -400,7 +394,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_methods_csr_hash_v1_4
-    template = "api_certificate_requests/dcv_methods_v1_4"
+    @template = "api_certificate_requests/dcv_methods_v1_4"
     if @result.save  #save the api request
       @acr = CertificateOrder.new
       @acr.certificate_contents.build.build_csr(body: @result.csr)
@@ -427,8 +421,7 @@ class ApiCertificateRequestsController < ApplicationController
           end
         end
         unless @result.dcv_methods.blank?
-          @result.update_attribute :response, render_to_string(:template => template)
-          render(:template => template) and return
+          render(:template => @template) and return
         end
       else
         @result=@acr.csr  #so that rabl can report errors
@@ -447,9 +440,8 @@ class ApiCertificateRequestsController < ApplicationController
     if @result.save
       @result.sent_at=Time.now
       unless @result.email_addresses.blank?
-        template = "api_certificate_requests/success_dcv_email_resend_v1_3"
-        @result.update_attribute :response, render_to_string(:template => template)
-        render(:template => template) and return
+        @template = "api_certificate_requests/success_dcv_email_resend_v1_3"
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -461,9 +453,8 @@ class ApiCertificateRequestsController < ApplicationController
     if @result.save
       @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
       unless @result.email_addresses.blank?
-        template = "api_certificate_requests/success_dcv_emails_v1_3"
-        @result.update_attribute :response, render_to_string(:template => template)
-        render(:template => template) and return
+        @template = "api_certificate_requests/success_dcv_emails_v1_3"
+        render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -533,5 +524,21 @@ class ApiCertificateRequestsController < ApplicationController
     logger.error e.message
     e.backtrace.each { |line| logger.error line }
     error(500, 500, 'server error')
+  end
+
+  def api_result_domain(certificate_order=nil)
+    unless certificate_order.blank?
+      if Rails.env=~/production/i
+        "https://" + (certificate_order.is_test ? Settings.sandbox_domain : Settings.portal_domain)
+      else
+        "https://" + (certificate_order.is_test ? Settings.dev_sandbox_domain : Settings.dev_portal_domain) +":3000"
+      end
+    else
+      if is_sandbox?
+        Rails.env=~/production/i ? "https://#{Settings.sandbox_domain}" : "https://#{Settings.dev_sandbox_domain}:3000"
+      else
+        Rails.env=~/production/i ? "https://#{Settings.portal_domain}" : "https://#{Settings.dev_portal_domain}:3000"
+      end
+    end
   end
 end

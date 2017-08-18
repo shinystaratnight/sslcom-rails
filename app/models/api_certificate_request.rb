@@ -11,7 +11,7 @@ class ApiCertificateRequest < CaApiRequest
       :registered_state_or_province_name, :registered_country_name, :incorporation_date,
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
-      :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options]
+      :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id]
 
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -42,6 +42,7 @@ class ApiCertificateRequest < CaApiRequest
 
   REVOKE_ACCESSORS = [:account_key, :secret_key, :ref, :reason, :serials]
 
+  # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
   attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
   before_validation(on: :create) do
@@ -66,20 +67,20 @@ class ApiCertificateRequest < CaApiRequest
         ApiCredential.find_by_account_key_and_secret_key(self.account_key, self.secret_key) : nil
   end
 
-  def find_certificate_order
-    if defined?(:ref) && self.ref
+  def find_certificate_order(field=:ref)
+    if defined?(field) && self.send(field)
       if self.api_requestable.users.find(&:is_admin?)
         self.admin_submitted = true
-        if co=CertificateOrder.find_by_ref(self.ref)
+        if co=CertificateOrder.find_by_ref(self.send(field))
           self.api_requestable = co.ssl_account
           co
         else
-          errors[:certificate_order] << "Certificate order not found for ref #{self.ref}."
+          errors[:certificate_order] << "Certificate order not found for ref #{self.send(field)}."
           nil
         end
       else
-        self.api_requestable.certificate_orders.find_by_ref(self.ref) ||
-          (errors[:certificate_order] << "Certificate order not found for ref #{self.ref}." ; nil)
+        self.api_requestable.certificate_orders.find_by_ref(self.send(field)) ||
+          (errors[:certificate_order] << "Certificate order not found for ref #{self.send(field)}." ; nil)
       end
     end
   end
