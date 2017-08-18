@@ -135,17 +135,15 @@ class Csr < ActiveRecord::Base
   end
 
   def is_ip_address?
-    common_name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if common_name
+    CertificateContent.is_ip_address?(common_name)
   end
 
   def is_server_name?
-    common_name.index(/\./)==nil if common_name
+    CertificateContent.is_server_name?(common_name)
   end
 
   def is_fqdn?
-    unless is_ip_address? && is_server_name?
-      common_name.index(/\A[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?\z/ix)==0 if common_name
-    end
+    CertificateContent(common_name)
   end
 
   def is_intranet?
@@ -157,10 +155,7 @@ class Csr < ActiveRecord::Base
   end
 
   def top_level_domain
-    if is_fqdn?
-      common_name=~(/(?:.*?\.)(.+)/)
-      $1
-    end
+    CertificateContent.top_level_domain(common_name)
   end
 
   def last_dcv
@@ -169,7 +164,7 @@ class Csr < ActiveRecord::Base
   end
 
   def non_wildcard_name
-    common_name.gsub(/\A\*\./, "").downcase unless common_name.blank?
+    CertificateContent.non_wildcard_name(common_name)
   end
 
   def dcv_url(secure=false)
