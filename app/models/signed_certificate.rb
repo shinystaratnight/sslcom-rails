@@ -131,8 +131,8 @@ class SignedCertificate < ActiveRecord::Base
         street=field_array("street", parsed.subject.to_s)
         unless street.blank?
           street.each_with_index do |s, i|
-            self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
             break if i>=2
+            self["address#{i+1}".to_sym] = field_array("street", parsed.subject.to_s)[0]
           end
         end
         self[:signature] = parsed.subject_key_identifier
