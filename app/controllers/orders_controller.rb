@@ -197,7 +197,7 @@ class OrdersController < ApplicationController
         refund      = @order.refund_merchant(amount.cents, params[:refund_reason], current_user.id)
         last_refund = @order.refunds.last
         if refund && last_refund && last_refund.successful?
-          flash[:notice] = "Successfully refunded memrchant for amount #{amount.format}."
+          flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -461,6 +461,12 @@ class OrdersController < ApplicationController
         @order.discounts.each do |discount|
           Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
         end
+        SystemAudit.create(
+            owner:  current_user,
+            target: @order,
+            action: "purchase successful",
+            notes:  ""
+        )
       else
         flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
             @gateway_response.message #no descriptive enough

@@ -21,22 +21,36 @@
   -u=@order.billable.primary_user
   -ref_merchant = @order.get_merchant
   %div(style="border: solid 1px red; margin: 5px 0 10px; padding: 5px")
-    %em admin only:
-    %ul
-      %li=remote_login_link(u)
-      %li=link_to 'user dashboard', admin_show_user_path(u)
-      %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
-      -unless @order.rejected?
-        %li=link_to "reject order", '#', onclick:  "change_state('reject')"
-      -if @order.fully_refunded?
-        %li=link_to "unrefund order", '#', onclick:  "change_state('unrefund')"
-      -else
-        %li=link_to "completely cancel order", '#', onclick:  "refund_reason(false)"
-        -if @order.amount.cents > 0
-          %li=link_to "completely cancel order and make $#{@order.amount} available to customer", '#', onclick:  "refund_reason(true)"
-          -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
-            %br
-              %li
-                -refunded  = @order.get_total_merchant_refunds
-                -link_text = "refund merchant (#{ref_merchant.capitalize}) *refunded: #{Money.new(refunded).format}"
-                =link_to "<strong>#{link_text}</strong>".html_safe, refund_merchant_order_path(@ssl_slug, @order, type: :new)
+    %table
+      %tr
+        %td(width="70%")
+          %em admin only:
+          %ul
+            %li=remote_login_link(u)
+            %li=link_to 'user dashboard', admin_show_user_path(u)
+            %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
+            -unless @order.rejected?
+              %li=link_to "reject order", '#', onclick:  "change_state('reject')"
+            -if @order.fully_refunded?
+              %li=link_to "unrefund order", '#', onclick:  "change_state('unrefund')"
+            -else
+              %li=link_to "completely cancel order", '#', onclick:  "refund_reason(false)"
+              -if @order.amount.cents > 0
+                %li=link_to "completely cancel order and make $#{@order.amount} available to customer", '#', onclick:  "refund_reason(true)"
+                -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
+                  %br
+                    %li
+                      -refunded  = @order.get_total_merchant_refunds
+                      -link_text = "refund merchant (#{ref_merchant.capitalize}) *refunded: #{Money.new(refunded).format}"
+                      =link_to "<strong>#{link_text}</strong>".html_safe, refund_merchant_order_path(@ssl_slug, @order, type: :new)
+        %td(width="30%")
+          %table
+            %tr
+              %td
+                %em audit log
+            %tr
+              %td
+                -audits=(@order.system_audits.empty? ? "n/a" : "###")+"\n"
+                -@order.system_audits.each do |audit|
+                  -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                =text_area_tag :audits, audits, :size=>"30x10"

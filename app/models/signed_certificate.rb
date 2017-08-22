@@ -44,10 +44,14 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
+  before_create do |s|
+    s.decoded=s.decode
+    s.serial=s.decoded_serial
+    s.status ||= "issued"
+  end
+
   after_create do |s|
     s.csr.certificate_content.issue!
-    s.update_attribute :decoded, s.decode
-    s.update_column :serial, s.decoded_serial
   end
 
   after_save do |s|

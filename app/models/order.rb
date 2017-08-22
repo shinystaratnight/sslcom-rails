@@ -273,7 +273,7 @@ class Order < ActiveRecord::Base
         line_items.each {|li|li.sellable.refund! if(
           li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
       end
-      event :partial_refund, transitions_to: :paid do |ref|
+      event :partial_refund, transitions_to: :partial_refunded do |ref|
         li=line_items.find {|li|li.sellable.try(:ref)==ref}
         if li
           decrement! :cents, li.cents
@@ -306,8 +306,27 @@ class Order < ActiveRecord::Base
       end
     end
 
+    state :partially_refunded do
+      event :full_refund, transitions_to: :fully_refunded do |complete=true|
+        line_items.each {|li|li.sellable.refund! if(
+          li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
+      end
+      event :unrefund, transitions_to: :paid do |complete=true|
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).unrefund! if li.sellable_type=="CertificateOrder"} if complete
+      end
+      event :charge_back, transitions_to: :charged_back do |complete=true|
+        line_items.each {|li|li.sellable.charge_back!} if complete
+      end
+      event :reject, :transitions_to => :rejected do |complete=true|
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).reject! if li.sellable_type=="CertificateOrder"} if complete
+      end
+    end
+
     state :charged_back
     state :rejected
+    state :partially_refunded
 
     state :payment_declined do
       event :give_away, transitions_to: :payment_not_required
@@ -570,6 +589,17 @@ class Order < ActiveRecord::Base
       }
       new_refund = Refund.refund_merchant(params)
     end
+    if self.amount.cents == self.refunds.where{status == "success"}.sum(:amount)
+      full_refund!
+    elsif self.amount.cents < self.refunds.where{status == "success"}.sum(:amount)
+      partial_refund! unless self.partially_refunded?
+    end
+    SystemAudit.create(
+        owner:  User.find(user_id),
+        target: new_refund,
+        action: "Refund created for order #{o.reference_number}. It is now #{o.current_state}",
+        notes:  "Originating order is #{self.reference_number}."
+    )
     new_refund
   end
   
