@@ -21,7 +21,6 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :signed_certificates, :through=>:csrs
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
-  has_many    :system_audits, :as => :target, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
@@ -415,7 +414,6 @@ class CertificateOrder < ActiveRecord::Base
       (options[:round] ? days.round : days)
     end
   end
-
 
   # :actual is based on the duration of the signed cert, :order is the duration based on the certificate order
   def total_days(options={round: false, duration: :order})

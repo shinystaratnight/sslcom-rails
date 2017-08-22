@@ -21,6 +21,7 @@ class User < ActiveRecord::Base
   has_many  :approved_ssl_accounts,
             foreign_key: :ssl_account_id, source: "ssl_account", through: :approved_ssl_account_users
   has_many  :refunds
+  has_many  :system_audits, :as => :target, :dependent => :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
   
