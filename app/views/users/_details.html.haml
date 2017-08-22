@@ -129,3 +129,9 @@
                       =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id)),data:{confirm: "Remove #{u.login} from team #{ssl.company_name}?"}
                     ]
                   %li &nbsp;
+          .certificate_details_box
+            %strong audit log
+            -audits=(u.system_audits.empty? ? "n/a" : "###")+"\n"
+            -u.system_audits.each do |audit|
+              -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+            =text_area_tag :audits, audits, :size=>"30x10"
