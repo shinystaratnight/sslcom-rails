@@ -359,6 +359,16 @@ class Certificate < ActiveRecord::Base
     product.include?('high_assurance')
   end
 
+  def comodo_ca_id
+    if is_ev?
+      Settings.ca_certificate_id_ev
+    elsif is_ov?
+      Settings.ca_certificate_id_ov
+    else
+      Settings.ca_certificate_id_dv
+    end
+  end
+
   def is_browser_generated_capable?
     is_code_signing? || is_client?
   end

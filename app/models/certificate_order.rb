@@ -381,6 +381,9 @@ class CertificateOrder < ActiveRecord::Base
     signed_certificates.sort{|a,b|a.created_at<=>b.created_at}.last
   end
 
+  def comodo_ca_id
+    (signed_certificate || certificate).comodo_ca_id
+  end
   # def signed_certificates(index=nil)
   #   all_csrs = certificate_contents.map(&:csr).flatten.compact
   #   unless all_csrs.blank?
