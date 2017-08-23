@@ -596,8 +596,8 @@ class Order < ActiveRecord::Base
     end
     SystemAudit.create(
         owner:  User.find(user_id),
-        target: new_refund,
-        action: "Refund created for order #{o.reference_number}. It is now #{o.current_state}",
+        target: o,
+        action: "Refund #{new_refund.id} created for order #{o.reference_number}. It is now #{o.current_state}",
         notes:  "Originating order is #{self.reference_number}."
     )
     new_refund

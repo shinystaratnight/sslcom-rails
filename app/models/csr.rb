@@ -167,8 +167,9 @@ class Csr < ActiveRecord::Base
     CertificateContent.non_wildcard_name(common_name)
   end
 
-  def dcv_url(secure=false)
-    "http#{'s' if secure}://#{non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
+  # secure is for https, domain is to override the csr subject
+  def dcv_url(secure=false, domain=nil)
+    "http#{'s' if secure}://#{domain || non_wildcard_name}/.well-known/pki-validation/#{md5_hash}.txt"
   end
 
   def dcv_contents
