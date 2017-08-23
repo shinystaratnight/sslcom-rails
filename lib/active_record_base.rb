@@ -6,8 +6,9 @@ module ActiveRecord
       klass.send :has_many, :target_system_audits, :as => :target, class_name: "SystemAudit"
     end
 
+    # UNION in Rails 4 https://stackoverflow.com/questions/6686920/activerecord-query-union
     def system_audits
-      target_system_audits.merge owner_system_audits
+      SystemAudit.from("(#{target_system_audits.to_sql} UNION #{owner_system_audits.to_sql}) AS system_audits")
     end
   end
 end
