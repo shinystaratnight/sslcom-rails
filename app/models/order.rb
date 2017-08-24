@@ -216,11 +216,11 @@ class Order < ActiveRecord::Base
     if (params[:discount_code])
       self.temp_discounts =[]
       if current_user and !current_user.is_system_admins?
-        self.temp_discounts<<Discount.viable(current_user.ssl_account).find_by_ref(params[:discount_code]).id if
-            Discount.viable(current_user.ssl_account).find_by_ref(params[:discount_code])
+        self.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id if
+            current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
       else
-        self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if
-            Discount.viable.find_by_ref(params[:discount_code])
+        self.temp_discounts<<Discount.viable.general.find_by_ref(params[:discount_code]).id if
+            Discount.viable.general.find_by_ref(params[:discount_code])
       end
     end
   end
