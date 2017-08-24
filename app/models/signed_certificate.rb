@@ -504,7 +504,6 @@ class SignedCertificate < ActiveRecord::Base
 
   def ca
     ca_id[:ca]
-    ca_id[:ca]
   end
 
   def is_SHA2?

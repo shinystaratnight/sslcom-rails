@@ -29,6 +29,9 @@ class SignedCertificatesController < ApplicationController
     @signed_certificate.csr = Csr.find(params[:csr_id])
     respond_to do |format|
       if @signed_certificate.save
+        SystemAudit.create(owner: current_user, target: @signed_certificate,
+                           notes: "manually saved certificate",
+                           action: "SignedCertificateController#create")
         format.html {
           flash[:notice] = 'Signed certificate was successfully created.'
           redirect_to(@signed_certificate.certificate_order) }

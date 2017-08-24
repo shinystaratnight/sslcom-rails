@@ -2,9 +2,9 @@ class Website
 
   attr_accessor :database_name
 
-  def self.find_by_subdomain(subdomain)
+  def self.sandbox_db
     @website=Website.new
-    @website.database_name="sandbox_ssl_com" #subdomain
+    @website.database_name="sandbox_ssl_com"
     @website
   end
 

@@ -215,7 +215,13 @@ class Order < ActiveRecord::Base
   def apply_discounts(params)
     if (params[:discount_code])
       self.temp_discounts =[]
-      self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
+      if current_user and !current_user.is_system_admins?
+        self.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id if
+            current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
+      else
+        self.temp_discounts<<Discount.viable.general.find_by_ref(params[:discount_code]).id if
+            Discount.viable.general.find_by_ref(params[:discount_code])
+      end
     end
   end
 
@@ -596,8 +602,8 @@ class Order < ActiveRecord::Base
     end
     SystemAudit.create(
         owner:  User.find(user_id),
-        target: new_refund,
-        action: "Refund created for order #{o.reference_number}. It is now #{o.current_state}",
+        target: o,
+        action: "Refund #{new_refund.id} created for order #{o.reference_number}. It is now #{o.current_state}",
         notes:  "Originating order is #{self.reference_number}."
     )
     new_refund

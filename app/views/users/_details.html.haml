@@ -55,33 +55,35 @@
                           ssl_account_id: current_user.ssl_account.id, from_user: current_user)
         -if permitted_to? :enable_disable, u
           .half_width_box
-            .adjust_status
-            =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
-              -if current_user.is_system_admins?
-                -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
-              -else
-                -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
-              %ul
-                %li
-                  %strong user enabled?
-                %li
-                  =ed.radio_button :status, 'enabled'
-                  enabled
-                %li
-                  =ed.radio_button :status, 'disabled'
-                  disabled
-              -#
-                .account_type
-                  =form_for u, :url=>admin_update_user_url(u) do |f|
+            %table
+              %tr
+                %td(width="70%")
+                  .adjust_status
+                    =form_for u, url: enable_disable_users_path(id: u.id) do |ed|
+                      -if current_user.is_system_admins?
+                        -u.status = u.is_admin_disabled? ? 'disabled' : 'enabled'
+                      -else
+                        -u.status = u.is_disabled?(current_user.ssl_account) ? 'disabled' : 'enabled'
+                      %ul
+                        %li
+                          %strong user enabled?
+                        %li
+                          =ed.radio_button :status, 'enabled'
+                          enabled
+                        %li
+                          =ed.radio_button :status, 'disabled'
+                          disabled
+                %td(width="30%")
+                  -if current_user.is_system_admins?
                     %ul
                       %li
-                        %strong account type
+                        %strong audit log
+                    %ul
                       %li
-                        =f.radio_button :status, 'enabled'
-                        customer
-                      %li
-                        =f.radio_button :status, 'disabled'
-                        reseller tier 1
+                        -audits=(u.system_audits.empty? ? "n/a" : "###")+"\n"
+                        -u.system_audits.each do |audit|
+                          -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
+                        =text_area_tag :audits, audits, :size=>"30x10"
         -if current_user.is_system_admins?
           .full_width_box
             .adjust_status
@@ -129,9 +131,3 @@
                       =link_to "leave", remove_from_account_managed_user_path(u, slug_params.merge(ssl_account_id: ssl.id)),data:{confirm: "Remove #{u.login} from team #{ssl.company_name}?"}
                     ]
                   %li &nbsp;
-          .certificate_details_box
-            %strong audit log
-            -audits=(u.system_audits.empty? ? "n/a" : "###")+"\n"
-            -u.system_audits.each do |audit|
-              -audits << "date: #{audit.created_at}\nuser: #{audit.owner.try :login}\naction: #{audit.action}\n###\n"
-            =text_area_tag :audits, audits, :size=>"30x10"

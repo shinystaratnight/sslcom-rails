@@ -61,7 +61,6 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_response=ccr.response
             end
             set_result_parameters(@result, @acr)
-            @rendered=render_to_string(template: @template)
             render_200_status
           else
             @result = @acr #so that rabl can report errors
@@ -108,6 +107,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def update_v1_4
+    @template = "api_certificate_requests/update_v1_4"
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -116,7 +116,6 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.update_certificate_order
           # successfully charged
           if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-            @template = "api_certificate_requests/update_v1_4"
             if @acr.certificate_content.csr && @result.debug=="true"
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
@@ -128,7 +127,6 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.order_status = ccr.response_certificate_status
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
-            @rendered=render_to_string(:template => @template)
             render_200_status
           else
             @result = @acr #so that rabl can report errors
@@ -145,10 +143,10 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_validate_v1_4
+    @template = "api_certificate_requests/success_retrieve_v1_3"
     if @result.save
       if @certificate_order.is_a?(CertificateOrder)
         @certificate_order.api_validate(@result)
-        @template = "api_certificate_requests/success_retrieve_v1_3"
         @result.order_status = @certificate_order.status
         @result.update_attribute :response, render_to_string(:template => @template)
         render(:template => @template) and return
@@ -160,10 +158,10 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def show_v1_4
+    @template = "api_certificate_requests/show_v1_4"
     if @result.save
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        @template = "api_certificate_requests/show_v1_4"
         @result.order_date = @acr.created_at
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
@@ -190,7 +188,6 @@ class ApiCertificateRequestsController < ApplicationController
           @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
                                                     layout: false))
         end
-        @rendered=render_to_string(:template => @template)
         render(:template => @template) and return
       end
     else
@@ -247,12 +244,12 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def index_v1_4
+    @template = "api_certificate_requests/index_v1_4"
     @result.end = DateTime.now if @result.end.blank?
     if @result.save
       @acrs = @result.find_certificate_orders(params[:search])
       if @acrs.is_a?(ActiveRecord::Relation)# && @acrs.errors.empty?
         @results=[]
-        @template = "api_certificate_requests/index_v1_4"
         @acrs.each do |acr|
           result = ApiCertificateRetrieve.new(ref: acr.ref)
           result.order_date = acr.created_at
@@ -294,6 +291,7 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def reprocess_v1_3
+    @template = "api_certificate_requests/success_create_v1_3"
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl @template only reports errors
       @result = @result.csr_obj
@@ -302,7 +300,6 @@ class ApiCertificateRequestsController < ApplicationController
         if @acr = @result.create_certificate_order
           # successfully charged
           if @acr.errors.empty?
-            @template = "api_certificate_requests/success_create_v1_3"
             @result.ref = @acr.ref
             @result.order_status = "pending validation"
             @result.order_amount = @acr.order.amount.format
@@ -356,10 +353,10 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_methods_v1_4
+    @template = "api_certificate_requests/dcv_methods_v1_4"
     if @result.save  #save the api request
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        @template = "api_certificate_requests/dcv_methods_v1_4"
       end
       @result.dcv_methods={}
       if @acr.domains
@@ -374,7 +371,7 @@ class ApiCertificateRequestsController < ApplicationController
           @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
           unless @acr.csr.blank?
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                                                   {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
+                                                   {"http"=>"#{@acr.csr.dcv_url(domain)}",
                                                     "allow_https"=>"true",
                                                     "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
             @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
@@ -413,7 +410,7 @@ class ApiCertificateRequestsController < ApplicationController
             @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
             unless @acr.csr.blank?
               @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                 {"http"=>"http://#{domain}/#{@result.md5_hash}.txt",
+                 {"http"=>"#{@acr.csr.dcv_url(domain)}",
                   "allow_https"=>"true",
                   "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
               @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
@@ -450,10 +447,10 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   def dcv_revoke_v1_3
+    @template = "api_certificate_requests/success_dcv_emails_v1_3"
     if @result.save
       @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
       unless @result.email_addresses.blank?
-        @template = "api_certificate_requests/success_dcv_emails_v1_3"
         render(:template => @template) and return
       end
     else
