@@ -215,7 +215,13 @@ class Order < ActiveRecord::Base
   def apply_discounts(params)
     if (params[:discount_code])
       self.temp_discounts =[]
-      self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if Discount.viable.find_by_ref(params[:discount_code])
+      if current_user and !current_user.is_system_admins?
+        self.temp_discounts<<Discount.viable(current_user.ssl_account).find_by_ref(params[:discount_code]).id if
+            Discount.viable(current_user.ssl_account).find_by_ref(params[:discount_code])
+      else
+        self.temp_discounts<<Discount.viable.find_by_ref(params[:discount_code]).id if
+            Discount.viable.find_by_ref(params[:discount_code])
+      end
     end
   end
 

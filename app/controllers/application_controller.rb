@@ -33,9 +33,9 @@ class ApplicationController < ActionController::Base
   end
 
   # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
-  # I use the entire domain, just change to find_by_subdomain and pass only the subdomain
+  # I use the entire domain, just change to sandbox_db and pass only the subdomain
   def current_website
-    @website ||= Website.find_by_subdomain(request.subdomain)
+    @website ||= Website.sandbox_db
   end
 
   def set_database

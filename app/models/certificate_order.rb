@@ -696,7 +696,8 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def self.retrieve_ca_certs(start, finish)
+  def self.retrieve_ca_certs(start, finish, options=nil)
+    Website.sandbox_db.use_database if options[:db]=="sandbox"
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
@@ -1638,7 +1639,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   # cron job that flags unused certificate_order credits as expired after a period of time (1 year)
-  def self.expire_credits
+  def self.expire_credits(options)
+    Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
   end
 end
