@@ -701,6 +701,9 @@ class CertificateOrder < ActiveRecord::Base
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
+    SystemAudit.create(owner: nil, target: nil,
+                       notes: "",
+                       action: "CertificateOrder#retrieve_ca_certs(#{start},#{finish},#{options.to_s})")
   end
 
   def self.find_not_new(options=nil)
@@ -1642,5 +1645,8 @@ class CertificateOrder < ActiveRecord::Base
   def self.expire_credits(options)
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     CertificateOrder.unflagged_expired_credits.update_all(is_expired: true)
+    SystemAudit.create(owner: nil, target: nil,
+                       notes: "",
+                       action: "CertificateOrder#expire_credits(#{options.to_s})")
   end
 end
