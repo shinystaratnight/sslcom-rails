@@ -28,7 +28,7 @@ class ApiCertificateRequestsController < ApplicationController
   def notify_saved_result
     @rendered=render_to_string(template: @template)
     @result.update_attribute :response, @rendered
-    OrderNotifier.api_executed(@rendered).deliver if @rendered
+    OrderNotifier.api_executed(@rendered, api_domain).deliver if @rendered
   end
 
   # set which parameters will be displayed via the api response

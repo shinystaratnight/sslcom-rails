@@ -162,9 +162,9 @@ class OrderNotifier < ActionMailer::Base
     @subject    += "#{Settings.community_name} User information"
   end
 
-  def api_executed(rendered)
+  def api_executed(rendered, api_domain)
     @rendered = rendered
-    mail  subject: "SSL.com api command executed",
+    mail  subject: "SSL.com api command executed (#{api_domain}",
           from: "noreply@ssl.com",
           to:    "api@ssl.com"
   end
