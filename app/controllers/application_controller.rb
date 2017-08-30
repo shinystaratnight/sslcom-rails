@@ -98,12 +98,15 @@ class ApplicationController < ActionController::Base
   def apply_discounts(order)
     if (params[:discount_code])
       order.temp_discounts =[]
+      general_discount = Discount.viable.general.find_by_ref(params[:discount_code])
       if current_user and !current_user.is_system_admins?
-        order.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id if
-            current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
-      else
-        order.temp_discounts<<Discount.viable.general.find_by_ref(params[:discount_code]).id if
-            Discount.viable.general.find_by_ref(params[:discount_code])
+        if current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
+          order.temp_discounts<<current_user.ssl_account.discounts.find_by_ref(params[:discount_code]).id
+        elsif general_discount
+          order.temp_discounts<<general_discount.id
+        end
+      elsif general_discount
+        order.temp_discounts<<general_discount.id
       end
     end
   end
