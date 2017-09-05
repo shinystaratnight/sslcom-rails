@@ -113,7 +113,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def total_amount_paid
-    Money.new(orders.select{|op|op.current_state==:paid}.inject(0) do
+    Money.new(orders.not_test.inject(0) do
         |sum, o| sum+=o.cents end)
   end
 
@@ -122,7 +122,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def self.top_paid(include=[:users, :orders])
-    all(:include=>include).sort {|a,b|
+    includes(include).sort {|a,b|
       a.total_amount_paid <=> b.total_amount_paid}
   end
 

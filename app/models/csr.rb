@@ -359,6 +359,6 @@ class Csr < ActiveRecord::Base
   end
 
   def unique_value(ca="comodo")
-    ca_certificate_requests.last.response_value("uniqueValue") if ca_certificate_requests.last
+    ca_certificate_requests.first.response_value("uniqueValue") if ca_certificate_requests.first
   end
 end
