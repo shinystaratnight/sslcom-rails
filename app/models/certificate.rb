@@ -438,11 +438,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def product_root
-    product.gsub(/\dtr\z/,"")
+    get_root(self.product)
   end
 
   def serial_root
-    serial.gsub(/\dtr\z/,"")
+    get_root(self.serial)
   end
 
   def untiered
@@ -454,9 +454,8 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.root_products
-    Certificate.available.sort{|a,b|
-    a.display_order['all'] <=> b.display_order['all']}.reject{|c|
-      c.product=~/\dtr/}
+    Certificate.base_products.sort{|a,b|
+    a.display_order['all'] <=> b.display_order['all']}
   end
 
   def self.tiered_products(tier)
@@ -558,6 +557,7 @@ class Certificate < ActiveRecord::Base
         new_cert.serial="#{self.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
       end
     end
+    new_cert.product="#{self.product}-#{options[:reseller_tier_label]}tr"
     new_cert.save
     self.product_variant_groups.each do |pvg|
       new_pvg = pvg.dup
@@ -585,6 +585,16 @@ class Certificate < ActiveRecord::Base
       end
     end
     new_cert
+  end
+
+  def get_root(extract_from)
+    if extract_from =~ /\dtr\z/
+      extract_from.gsub(/\dtr\z/,"")
+    elsif extract_from =~ /\-\w+?tr\z/
+      extract_from.gsub(/\-\w+?tr\z/,"")
+    else
+      extract_from
+    end
   end
 
   private
@@ -930,5 +940,4 @@ class Certificate < ActiveRecord::Base
       end
     end
   end
-
 end
