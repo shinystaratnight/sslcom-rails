@@ -233,8 +233,8 @@ class SslAccount < ActiveRecord::Base
     self.save
   end
 
-  def reseller_suffix
-    (reseller && reseller.reseller_tier) ? reseller.reseller_tier.label+"tr" : ""
+  def tier_suffix
+    (reseller && reseller.reseller_tier) ? ResellerTier.tier_suffix(reseller.reseller_tier.label) : ""
   end
 
   #def order_transactions

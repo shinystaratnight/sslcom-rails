@@ -41,6 +41,10 @@ class ResellerTier < ActiveRecord::Base
     amount <= 0
   end
 
+  def self.tier_suffix(label)
+    "#{'-' unless label =~/\A\d\z/}"+label + 'tr' #add '-' for non single digit tier due to flexible labeling
+  end
+
   def product_variant_items
     certificates.all.map(&:product_variant_groups).flatten.map(&:product_variant_items).flatten
   end
