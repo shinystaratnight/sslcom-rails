@@ -1,5 +1,5 @@
 -tier_reseller = "Tier #{tier.label} Reseller Partners"
--compare_tier = Certificate.base_products.map(&:product_variant_items).flatten
+-compare_tier = Certificate.base_products.available.map(&:product_variant_items).flatten
 #reseller_tiers
   %table(cellspacing="0")
     %caption

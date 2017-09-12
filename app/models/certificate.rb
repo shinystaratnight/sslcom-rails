@@ -454,7 +454,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.root_products
-    Certificate.base_products.sort{|a,b|
+    Certificate.base_products.available.sort{|a,b|
     a.display_order['all'] <=> b.display_order['all']}
   end
 

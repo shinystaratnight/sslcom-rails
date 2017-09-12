@@ -28,7 +28,7 @@ class ResellerTier < ActiveRecord::Base
     options[:reseller_ids].each do |id|
       tier.resellers << Reseller.find(id)
     end
-    Certificate.base_products.each do |cert|
+    Certificate.base_products.available.each do |cert|
       tier.certificates << cert.duplicate(discount_rate: options[:discount_rate], reseller_tier_label: options[:label])
     end
   end
