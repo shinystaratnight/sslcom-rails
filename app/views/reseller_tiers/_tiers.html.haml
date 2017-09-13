@@ -11,7 +11,7 @@
       %th(scope="col") Pricing
       -if current_user && reseller_initial_deposit?
         %th(scope="col") Choose
-    -ResellerTier.all.each_with_index do |tier, i|
+    -ResellerTier.general.each_with_index do |tier, i|
       %tr(class="#{(i.odd?) ? 'alt' : ''}")
         %td=tier.label
         %td=tier.description['ideal_for']

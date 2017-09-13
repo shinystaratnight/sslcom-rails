@@ -26,6 +26,17 @@ class ProductVariantItem < ActiveRecord::Base
     item_type=='server_license'
   end
 
+  def reseller_tier_of?(compare)
+    if serial =~(/tr\z/)
+      compare.serial==base_serial
+    end
+  end
+
+  def reseller_tier_label
+    serial.slice(/.+(?=(\d)tr)/) || serial.slice(/.+(?=(\-\w+?)tr)/)
+    $1
+  end
+
   private
 
   # A one time method to add wildcard domains as a separate charge item
@@ -54,4 +65,11 @@ class ProductVariantItem < ActiveRecord::Base
     end
     out
   end
+
+  # remove reseller_tier
+  def base_serial
+    serial.slice(/.+(?=\dtr)/) || serial.slice(/.+(?=\-.+?tr)/)
+  end
+
+
 end

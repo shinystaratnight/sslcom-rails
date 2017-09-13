@@ -206,6 +206,7 @@ class Certificate < ActiveRecord::Base
                           "sslcom_ev_ca_bundle.txt_amazon"=>%w(SSLcomPremiumEVCA_2.crt USERTrustRSAAddTrustCA.crt)}}}}
 
 
+  scope :base_products, ->{where{reseller_tier_id == nil}}
   scope :available, ->{where{(product != 'mssl') & (serial =~ "%sslcom%") & (title << Settings.excluded_titles)}}
   scope :sitemap, ->{where{(product != 'mssl') & (product !~ '%tr')}}
   scope :for_sale, ->{where{(product != 'mssl') & (serial =~ "%sslcom%")}}
@@ -437,11 +438,11 @@ class Certificate < ActiveRecord::Base
   end
 
   def product_root
-    product.gsub(/\dtr\z/,"")
+    get_root(self.product)
   end
 
   def serial_root
-    serial.gsub(/\dtr\z/,"")
+    get_root(self.serial)
   end
 
   def untiered
@@ -453,9 +454,8 @@ class Certificate < ActiveRecord::Base
   end
 
   def self.root_products
-    Certificate.available.sort{|a,b|
-    a.display_order['all'] <=> b.display_order['all']}.reject{|c|
-      c.product=~/\dtr/}
+    Certificate.base_products.available.sort{|a,b|
+    a.display_order['all'] <=> b.display_order['all']}
   end
 
   def self.tiered_products(tier)
@@ -538,6 +538,65 @@ class Certificate < ActiveRecord::Base
     try(:description_with_tier) ? certificate_type(self) : description_with_tier
   end
 
+  # this method duplicates, modifies or adds reseller tiers to a certificate
+  # deep level copying function, copies own attributes and then duplicates the sub groups and items
+  # options[:new_serial] - new serial number, the numbered reseller tier will be preserved
+  # options[:old_pvi_serial] - old product_variant_item serial number
+  # options[:new_pvi_serial] - new product_variant_item serial number
+  # options[:reseller_tier_label] - label of the reseller tier to create or update
+  # options[:discount_rate] - reduce price by this much
+  def duplicate(options)
+    now=DateTime.now
+    new_cert = self.dup
+    if options[:new_serial] # changing serial
+      new_cert.serial=self.serial.gsub(/.+?([\d|\-\w]+tr)?\z/, options[:new_serial]+'\1')
+    elsif options[:reseller_tier_label]
+      if Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
+        new_cert = Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # update
+      else
+        new_cert.serial="#{self.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+      end
+    end
+    new_cert.product="#{self.product}-#{options[:reseller_tier_label]}tr"
+    new_cert.save
+    self.product_variant_groups.each do |pvg|
+      new_pvg = pvg.dup
+      new_cert.product_variant_groups << new_pvg
+      pvg.product_variant_items.each do |pvi|
+        new_pvi=pvi.dup
+        if options[:old_pvi_serial] and options[:new_pvi_serial]
+          new_pvi.serial=pvi.serial.gsub(options[:old_pvi_serial], options[:new_pvi_serial])
+        elsif options[:reseller_tier_label]
+          if ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
+            new_pvi = ProductVariantItem.find_by_serial("#{pvi.serial}-#{options[:reseller_tier_label]}tr") # update
+          else
+            new_pvi.serial="#{pvi.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
+          end
+        end
+        new_pvi.amount=((new_pvi.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+        new_pvg.product_variant_items << new_pvi
+        unless pvi.sub_order_item.blank?
+          if new_pvi.sub_order_item.blank?
+            new_pvi.sub_order_item=pvi.sub_order_item.dup
+          end
+          new_pvi.sub_order_item.amount=((new_pvi.sub_order_item.amount || 0)*options[:discount_rate]).ceil if options[:discount_rate]
+          new_pvi.sub_order_item.save
+        end
+      end
+    end
+    new_cert
+  end
+
+  def get_root(extract_from)
+    if extract_from =~ /\dtr\z/
+      extract_from.gsub(/\dtr\z/,"")
+    elsif extract_from =~ /\-\w+?tr\z/
+      extract_from.gsub(/\-\w+?tr\z/,"")
+    else
+      extract_from
+    end
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers
@@ -546,48 +605,26 @@ class Certificate < ActiveRecord::Base
     certificates.each {|certificate| certificate.update_column :product, certificate.product.gsub(oldname, newname)}
   end
 
-  #deep level copying function, copies own attributes and then duplicates the sub groups and items
-  def duplicate(new_serial, old_pvi_serial, new_pvi_serial)
-    now=DateTime.now
-    new_cert = self.dup
-    new_cert.attributes = {created_at: now, updated_at: now,
-                           serial: self.serial.gsub(/.+?(\dtr)?\z/, new_serial+'\1')}
-    new_cert.save
-    self.product_variant_groups.each do |pvg|
-      new_pvg = pvg.dup
-      new_pvg.attributes = {created_at: now, updated_at: now}
-      new_cert.product_variant_groups << new_pvg
-      pvg.product_variant_items.each do |pvi|
-        new_pvi=pvi.dup
-        new_pvi.attributes = {created_at: now, updated_at: now, serial: pvi.serial.gsub(old_pvi_serial, new_pvi_serial)}
-        new_pvg.product_variant_items << new_pvi
-        unless pvi.sub_order_item.blank?
-          new_pvi.sub_order_item=pvi.sub_order_item.dup
-          new_pvi.sub_order_item.attributes = {created_at: now, updated_at: now}
-          new_pvi.sub_order_item.save
-        end
-      end
-    end
-    new_cert
-  end
-
-  def duplicate_tiers(new_serial, old_pvi_serial, new_pvi_serial)
+  # this method duplicates the base certificate product along with all reseller_tiers
+  def duplicate_w_tiers(options)
     sr = "#{self.serial_root}%"
-    Certificate.where{serial =~ sr}.map {|c|c.duplicate(new_serial, old_pvi_serial, new_pvi_serial)}
+    Certificate.where{serial =~ sr}.map {|c|
+      c.duplicate(options)}
   end
 
   # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
   def self.create_sslcom_products
     %w(evucc ucc ev ov dv wc).each do |serial|
       s = self.serial+"%"
-      Certificate.where{serial =~ s}.first.duplicate_tiers serial+"256sslcom"
+      Certificate.where{serial =~ s}.first.duplicate_w_tiers serial+"256sslcom"
     end
   end
 
   # one-time call to create ssl.com premium products
   def self.create_premium_ssl
     c=Certificate.available.find_by_product "ucc"
-    certs = c.duplicate_tiers "premium256sslcom", "ucc256ssl", "premium256ssl"
+    certs = c.duplicate_w_tiers new_serial: "premium256sslcom", old_pvi_serial: "ucc256ssl",
+                              new_pvi_serial: "premium256ssl"
     title = "Premium Multi-subdomain SSL"
     description={
         "certificate_type" => "Premium SSL",
@@ -663,7 +700,7 @@ class Certificate < ActiveRecord::Base
 
   def self.create_basic_ssl
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_tiers "basic256sslcom", "ov256ssl", "basic256ssl"
+    certs = c.duplicate_w_tiers new_serial: "basic256sslcom", old_pvi_serial: "ov256ssl", new_pvi_serial: "basic256ssl"
     title = "Basic SSL"
     description={
         "certificate_type" => "Basic SSL",
@@ -703,7 +740,8 @@ class Certificate < ActiveRecord::Base
   
   def self.create_code_signing
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_tiers "codesigning256sslcom", "ov256ssl", "codesigning256ssl"
+    certs = c.duplicate_w_tiers new_serial: "codesigning256sslcom", old_pvi_serial: "ov256ssl",
+                              new_pvi_serial: "codesigning256ssl"
     title = "Code Signing"
     description={
         "certificate_type" => title,
@@ -800,7 +838,8 @@ class Certificate < ActiveRecord::Base
                }}]
     products.each do |p|
       c=Certificate.available.find_by_product "high_assurance"
-      certs = c.duplicate_tiers "#{p[:serial_root]}256sslcom", "ov256ssl", "#{p[:serial_root]}256ssl"
+      certs = c.duplicate_w_tiers(new_serial: "#{p[:serial_root]}256sslcom",
+                                old_pvi_serial: "ov256ssl", new_pvi_serial: "#{p[:serial_root]}256ssl")
       title = p[:title]
       description={
           "certificate_type" => title,
@@ -901,5 +940,4 @@ class Certificate < ActiveRecord::Base
       end
     end
   end
-
 end

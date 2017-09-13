@@ -113,7 +113,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def total_amount_paid
-    Money.new(orders.select{|op|op.current_state==:paid}.inject(0) do
+    Money.new(orders.not_test.inject(0) do
         |sum, o| sum+=o.cents end)
   end
 
@@ -122,7 +122,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   def self.top_paid(include=[:users, :orders])
-    all(:include=>include).sort {|a,b|
+    includes(include).sort {|a,b|
       a.total_amount_paid <=> b.total_amount_paid}
   end
 
@@ -233,8 +233,8 @@ class SslAccount < ActiveRecord::Base
     self.save
   end
 
-  def reseller_suffix
-    (reseller && reseller.reseller_tier) ? reseller.reseller_tier.label+"tr" : ""
+  def tier_suffix
+    (reseller && reseller.reseller_tier) ? ResellerTier.tier_suffix(reseller.reseller_tier.label) : ""
   end
 
   #def order_transactions
@@ -324,7 +324,7 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.prep_dev_db(ranges=[[]])
+  def self.prep_dev_db(ranges=[[]],size)
     require "declarative_authorization/maintenance"
     SentReminder.unscoped.delete_all
     TrackedUrl.unscoped.delete_all
@@ -361,11 +361,11 @@ class SslAccount < ActiveRecord::Base
     end
     # Obfuscate IDs
     i=100000
-    ApiCredential.unscoped.find_each{|a|
+    ApiCredential.unscoped.find_each(batch_size: size){|a|
       a.update_columns account_key: i, secret_key: i
       i+=1}
     i=10000
-    SiteSeal.unscoped.find_each{|s|
+    SiteSeal.unscoped.find_each(batch_size: size){|s|
       s.update_column :ref,i
       i+=1}
     # Obfuscate IDs
@@ -375,31 +375,31 @@ class SslAccount < ActiveRecord::Base
         []
       end
     end
-    SslAccount.unscoped.find_each{|s|
+    SslAccount.unscoped.find_each(batch_size: size){|s|
       s.acct_number=i
       s.save validate: false
       i+=1}
     i=10000
     # scramble usernames, emails
-    User.unscoped.find_each {|u|
+    User.unscoped.find_each(batch_size: size) {|u|
       u.update_columns(login: i, email: "test@#{i.to_s}.com")
       u.password = "123456AsDF#"
       u.save
       i+=1
     }
     i=10000
-    CertificateOrder.unscoped.find_each{|co|
+    CertificateOrder.unscoped.find_each(batch_size: size){|co|
       co.ref = "co-"+i.to_s
       co.external_order_number = "000000"
       co.save
       i+=1
     }
     i=10000
-    SignedCertificate.unscoped.find_each{|sc|
+    SignedCertificate.unscoped.find_each(batch_size: size){|sc|
       sc.update_column :organization, (i+=1).to_s
     }
     i=10000
-    Csr.unscoped.find_each{|c|
+    Csr.unscoped.find_each(batch_size: size){|c|
       c.organization = i.to_s
       c.organization_unit = i.to_s
       c.state = i.to_s
@@ -408,11 +408,11 @@ class SslAccount < ActiveRecord::Base
       i+=1
     }
     i=10000
-    Order.unscoped.find_each{|o|
+    Order.unscoped.find_each(batch_size: size){|o|
       o.update_column :reference_number, (i+=1).to_s
     }
     # obfuscate credit card numbers
-    BillingProfile.unscoped.find_each{|bp|
+    BillingProfile.unscoped.find_each(batch_size: size){|bp|
       bp.card_number="4222222222222"
       bp.first_name = "Bob"
       bp.last_name = "Spongepants"
@@ -423,7 +423,7 @@ class SslAccount < ActiveRecord::Base
       bp.save}
     # delete visitor tracking IDs,
     # scramble user and contact e-mail addresses,
-    [Contact, Reseller].each { |klass| klass.unscoped.find_each{|c|
+    [Contact, Reseller].each { |klass| klass.unscoped.find_each(batch_size: size){|c|
       c.first_name = "Bob"
       c.last_name = "Spongepants#{c.id}"
       c.email = "bob@spongepants#{c.id}.com"
@@ -436,12 +436,13 @@ class SslAccount < ActiveRecord::Base
       c.phone = "#{c.id}"
       c.fax = "#{c.id}"
       c.save validate: false}}
-    Authorization::Maintenance::without_access_control {
-      SslAccount.select{|sa|sa.primary_user.blank?}.map(&:destroy)
-    }
-    CertificateOrder.select{|co|co.ssl_account.blank?}.map(&:destroy)
-    CertificateOrder.select{|co|co.certificate_content.issued? && !co.certificate_content.expired? &&
-        (co.certificate_content.csr.blank? || co.certificate_content.csr.signed_certificate.blank?)}.map(&:destroy)
+    CertificateOrder.unscoped.where{ssl_account_id==nil}.delete_all
+    has_sa = CertificateOrder.unscoped.joins{ssl_account}.pluck :id
+    all = CertificateOrder.unscoped.pluck :id
+    no_sa = all - has_sa
+    CertificateOrder.unscoped.where{id >> no_sa}.delete_all
+    # CertificateOrder.unscoped.select{|co|co.certificate_content.issued? && !co.certificate_content.expired? &&
+    #     (co.certificate_content.csr.blank? || co.certificate_content.csr.signed_certificate.blank?)}.map(&:destroy)
   end
 
   SETTINGS_SECTIONS.each do |item|

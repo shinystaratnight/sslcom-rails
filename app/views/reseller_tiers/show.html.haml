@@ -3,9 +3,10 @@
 %div(class="#{(@popup == true) ? 'reseller_tier_pricing_popup' : 'reseller_registration_select_tier'}")
   =error_messages_for :reseller_tier
   %h3 View Pricing for #{tier_reseller}
-  %p
-    The table below reflects the pricing available to #{tier_reseller} based
-    upon an initial deposit of #{@reseller_tier.price.format}.
+  -if @reseller_tier.price
+    %p
+      The table below reflects the pricing available to #{tier_reseller} based
+      upon an initial deposit of #{@reseller_tier.price.format}.
   -if @popup == true
     %p
       %em

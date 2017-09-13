@@ -366,6 +366,10 @@ class CertificateOrdersController < ApplicationController
 
   end
 
+  def developers
+    not_found and return unless is_sandbox?
+  end
+
   def download
     t=File.new(@certificate_order.certificate_content.csr.signed_certificate.
       create_signed_cert_zip_bundle({components: true, is_windows: is_client_windows?}), "r")

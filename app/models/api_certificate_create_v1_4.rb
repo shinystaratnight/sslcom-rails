@@ -78,7 +78,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def create_certificate_order
-    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.reseller_suffix)
+    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.tier_suffix)
     co_params = {duration: period, is_test: self.test}
     co = api_requestable.certificate_orders.build(co_params)
     if self.csr
