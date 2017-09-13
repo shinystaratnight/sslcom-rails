@@ -22,6 +22,7 @@ module ApiSetupHelper
     @ucc_max_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yradm').id
     @ucc_server_license = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrsl').id
     @ucc_wildcard       = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrwcdm').id
+    @basic_domains      = ProductVariantItem.find_by_serial('sslcombasic256ssl1yr').id
   end
   
   # SubOrderItem quantaties for specific product_variant_item_id
