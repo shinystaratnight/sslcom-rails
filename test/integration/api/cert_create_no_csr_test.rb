@@ -39,7 +39,7 @@ class CertCreateNoCsrTest < ActionDispatch::IntegrationTest
       items = JSON.parse(body)
       
       # db records
-      assert_equal (10000 - 3905), FundedAccount.last.cents
+      assert_equal (10000 - 7810), FundedAccount.last.cents
       assert_equal 1, CaApiRequest.count
       assert_equal 1, Order.count
       assert_equal 1, Validation.count

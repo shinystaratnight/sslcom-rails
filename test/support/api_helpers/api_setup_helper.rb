@@ -14,8 +14,15 @@ module ApiSetupHelper
         account_key: @team.api_credential.account_key,
         secret_key:  @team.api_credential.secret_key
       }
+      set_api_host
   end
-  
+
+  def set_api_host
+    api_host = "api-test.certassure.local"
+    host! api_host
+    Capybara.app_host = "http://www." + api_host
+  end
+
   # ProductVariantItem ids
   def api_initialize_pvi_ids
     @ucc_min_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrdm').id

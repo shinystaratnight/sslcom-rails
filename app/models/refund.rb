@@ -185,9 +185,9 @@ class Refund < ActiveRecord::Base
   def paypal_gateway
     s = ::Rails.application.secrets
     ActiveMerchant::Billing::PaypalExpressGateway.new(
-    login:     s.paypal_username,
-    password:  s.paypal_password,
-    signature: s.paypal_signature
+      login:     s.paypal_username,
+      password:  s.paypal_password,
+      signature: s.paypal_signature
     )
   end
   

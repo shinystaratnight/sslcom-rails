@@ -13,12 +13,14 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
         .merge(api_get_server_software)
         .merge(api_get_csr_registrant)
         .merge(api_get_csr_contacts)
+      @amount_int = 7810
+      @amount_str = '$78.10'
     end
     
     # Params:       domains hash (w/1 nonwildcard domain)
     # NO params:    CSR hash
     # Should:       save domains from array in CertificateContent, 1 total
-    #               charge for 1 domain @ $39.05
+    #               charge for 1 domain @ $78.10
     # Should NOT:   create 1 certificate name
     #               create csr
     # ==========================================================================
@@ -34,7 +36,7 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 200, status
       assert_equal 9, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
-      assert_equal '$39.05', items['order_amount']
+      assert_equal @amount_str, items['order_amount']
       refute_nil   items['ref']
       refute_nil   items['certificate_url']
       refute_nil   items['receipt_url']
@@ -61,9 +63,9 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 0, Delayed::JobGroups::JobGroup.count
       assert_equal 'new', Validation.last.workflow_state
       assert_equal 'new', SiteSeal.last.workflow_state
-      
-      # Deduct for 1 domain @ $39.05 (serial: sslcombasic256ssl1yr)
-      assert_equal (100000 - 3905), FundedAccount.last.cents
+
+      # Deduct for 1 domain @ $78.10 (serial: sslcombasic256ssl1yr)
+      assert_equal (100000 - @amount_int), FundedAccount.last.cents
       assert_equal 1, api_get_sub_order_quantaty(@basic_domains)
       
       # csr and dcv NOT created
@@ -74,7 +76,7 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
     # Params:       domains hash (w/1 nonwildcard domain)
     # NO params:    nonwildcard CSR hash
     # Should:       save domains from array in CertificateContent, 1 total
-    #               charge for 1 domain @ $39.05
+    #               charge for 1 domain @ $78.10
     #               create 1 certificate name
     #               create 1 dcv
     #               create 1 csv
@@ -91,7 +93,7 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_equal '$39.05', items['order_amount'] # 1 domain at $39.05
+      assert_equal @amount_str, items['order_amount'] # 1 domain at $78.10
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
       refute_nil   items['ref']
@@ -119,9 +121,9 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 0, CaDcvRequest.count
       assert_equal 0, Delayed::Job.count
       assert_equal 0, Delayed::JobGroups::JobGroup.count
-      
-      # Deduct for 1 domain @ $39.05 (serial: sslcombasic256ssl1yr)
-      assert_equal (100000 - 3905), FundedAccount.last.cents
+
+      # Deduct for 1 domain @ $78.10 (serial: sslcombasic256ssl1yr)
+      assert_equal (100000 - @amount_int), FundedAccount.last.cents
       assert_equal 1, api_get_sub_order_quantaty(@basic_domains)
       
       # certificate name and csr created
@@ -145,7 +147,7 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
     # Params:    nonwildcard CSR hash
     # NO params: domians hash
     # Should:    save domains from array in CertificateContent, 1 total
-    #            charge for 1 domain @ $39.05
+    #            charge for 1 domain @ $78.10
     #            create 1 certificate name
     #            create 1 dcv
     #            create 1 csv
@@ -162,7 +164,7 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_equal '$39.05', items['order_amount'] # 1 domain at $39.05
+      assert_equal @amount_str, items['order_amount'] # 1 domain at $78.10
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
       refute_nil   items['ref']
@@ -190,9 +192,9 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 0, CaDcvRequest.count
       assert_equal 0, Delayed::Job.count
       assert_equal 0, Delayed::JobGroups::JobGroup.count
-      
-      # Deduct for 1 domain @ $39.05 (serial: sslcombasic256ssl1yr)
-      assert_equal (100000 - 3905), FundedAccount.last.cents
+
+      # Deduct for 1 domain @ $78.10 (serial: sslcombasic256ssl1yr)
+      assert_equal (100000 - @amount_int), FundedAccount.last.cents
       assert_equal 1, api_get_sub_order_quantaty(@basic_domains)
       
       # certificate name (as CN) and csr created
@@ -251,7 +253,6 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
     # Should:     return status code 400
     #             response should have domains error
     # ==========================================================================
-    focus
     it 'status 400: domains hash (over max limit), NO CSR hash' do
       @team.funded_account.update(cents: 9000000)
       post api_certificate_create_v1_4_path(
@@ -264,9 +265,8 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 400, status
       assert_equal 1, items.count
       refute_nil   items['errors']
-      binding.pry
-      assert_match 'cannot begin with *. since the order does not allow wildcards', items['errors']['signing_request'].first
-      
+      assert_match 'You have exceeded the maximum of 1 domain(s) or subdomains for this certificate.', items['errors']['domains'].first
+
       # db records
       assert_equal 1, CaApiRequest.count
       assert_equal 0, CaDcvRequest.count
@@ -280,9 +280,9 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       assert_equal 0, SignedCertificate.count
       assert_equal 0, SubOrderItem.count
       assert_equal 0, LineItem.count
-      assert_equal 0, InvalidApiCertificateRequest.count
+      assert_equal 1, InvalidApiCertificateRequest.count
       assert_equal 0, Delayed::Job.count
       assert_equal 0, Delayed::JobGroups::JobGroup.count
-    end    
+    end
   end
 end

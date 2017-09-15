@@ -38,6 +38,25 @@ module SessionHelper
     Capybara.current_session.driver.browser.manage.delete_all_cookies
   end
 
+  def fill_in_cert_registrant
+    registrant_id = 'certificate_order_certificate_contents_attributes_0_registrant_attributes'
+    fill_in "#{registrant_id}_company_name", with: 'EZOPS Inc'
+    fill_in "#{registrant_id}_address1",     with: '123 H St.'
+    fill_in "#{registrant_id}_city",         with: 'Houston'
+    fill_in "#{registrant_id}_state",        with: 'TX'
+    fill_in "#{registrant_id}_postal_code",  with: '12345'
+    find('input[alt="edit ssl certificate order"]').click
+  end
+
+  def fill_in_cert_contacts
+    contacts_id = 'certificate_content_certificate_contacts_attributes_0'
+    fill_in "#{contacts_id}_first_name", with: 'first'
+    fill_in "#{contacts_id}_last_name",  with: 'last'
+    fill_in "#{contacts_id}_email",      with: 'test_contact@domain.com'
+    fill_in "#{contacts_id}_phone",      with: '1233334444'
+    find('input[alt="Bl submit button"]').click
+  end
+
   def update_cookie(cookie, user)
     value = "#{user.persistence_token}::#{user.send(user.class.primary_key)}"
     cookie.to_h['user_credentials'].merge!(value: value)

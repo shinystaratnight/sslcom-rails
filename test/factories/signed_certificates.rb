@@ -14,7 +14,14 @@ FactoryGirl.define do
   trait :nonwildcard_csr do
     after :build do |sc|
       initialize_certificate_csr_keys
-      sc.body = @nonwildcard_csr.strip
+      sc.body = @nonwildcard_certificate.strip
+    end
+  end
+
+  trait :nonwildcard_certificate_sslcom do
+    after :build do |sc|
+      initialize_certificate_csr_keys
+      sc.body = @nonwildcard_certificate_sslcom.strip
     end
   end
 end

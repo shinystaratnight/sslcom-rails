@@ -9,8 +9,8 @@ describe 'Valid user' do
     initialize_certificates
     @year_3_id = ProductVariantItem.find_by(serial: "sslcombasic256ssl3yr").id
     @new_email = 'new_user@ssl.com'
-    @amount    = '$156.43'
-    
+    @amount    = '$156.21'
+
     assert_equal 0, BillingProfile.count
     assert_equal 0, FundedAccount.count
     assert_equal 0, User.count
@@ -21,9 +21,9 @@ describe 'Valid user' do
     
     # Buy Certificate
     visit buy_certificate_path 'basicssl'
-    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
-    page.must_have_content("#{@amount} USD") # $52.14 * 3 years
-    
+    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.07/yr
+    page.must_have_content("#{@amount} USD") # $52.07 * 3 years
+
     # Shopping Cart
     find('#next_submit input').click
     page.must_have_content("#{@amount} USD")
@@ -47,7 +47,7 @@ describe 'Valid user' do
     find('input[name="next"]').click
     
     # Paypal Gateway page
-    page.must_have_content('$156.43 USD')
+    page.must_have_content("#{@amount} USD")
     paypal_login
     
     login_as(User.first, self.controller.cookies)
@@ -70,8 +70,8 @@ describe 'Valid user' do
       assert_includes email_subject, @co.reference_number
       assert_match    @new_email, email_to
       assert_match    'orders@ssl.com', email_from
-      assert_includes email_body, "Order Amount: $156.43"
-    
+      assert_includes email_body, "Order Amount: #{@amount}"
+
     # creates database records
     # ======================================================
       assert_equal 1, User.count
@@ -93,14 +93,14 @@ describe 'Valid user' do
       
       assert_equal @co.id, ssl_cert_line_items.order_id
       assert_equal 'CertificateOrder', ssl_cert_line_items.sellable_type
-      assert_equal 15643, ssl_cert_line_items.cents
-    
+      assert_equal 15621, ssl_cert_line_items.cents
+
     # creates correct order record
     # ======================================================
       assert_equal 'SslAccount', @co.billable_type
       assert_equal 'paid', @co.state
       assert_equal 'active', @co.status
-      assert_equal 15643, @co.cents
+      assert_equal 15621, @co.cents
       refute_nil   @co.reference_number
       assert_nil   @co.billing_profile_id        # not using CC
       assert_includes @co.notes, 'paidviapaypal' # paid through Paypal
@@ -111,12 +111,12 @@ describe 'Valid user' do
       assert_equal User.first.id, co.ssl_account_id
       assert_equal 'paid', co.workflow_state
       assert_equal 1, co.line_item_qty
-      assert_equal 15643, co.amount
-    
+      assert_equal 15621, co.amount
+
     # orders history page
     # ======================================================
       page.must_have_content('SSL Certificate Order')
       page.must_have_content(@co.reference_number)
-      page.must_have_content('($156.43)')
+      page.must_have_content("(#{@amount})")
   end
 end

@@ -14,6 +14,7 @@ describe 'Valid user' do
     @year_3_id          = ProductVariantItem.find_by(serial: "sslcombasic256ssl3yr").id
     login_as(@logged_in_user, self.controller.cookies)
     @funded_account     = @logged_in_ssl_acct.funded_account
+    @amount             = '$156.21'
 
     # Add any funds to funded account so Paypal displays as option.
     @funded_account.cents = 600
@@ -25,24 +26,24 @@ describe 'Valid user' do
     
     # Buy Certificate
     visit buy_certificate_path 'basicssl'
-    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
-    page.must_have_content('$156.43 USD') # $52.14 * 3 years
-    
+    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.07/yr
+    page.must_have_content "#{@amount} USD" # $52.07 * 3 years
+
     # Shopping Cart
     find('#next_submit input').click
-    page.must_have_content('$156.43 USD')
+    page.must_have_content "#{@amount} USD"
 
     # Checkout
     click_on 'Checkout'
     page.must_have_content('Funding Sources')
     page.must_have_content('Paypal')
     page.must_have_content(@billing_profile.last_digits)
-    page.must_have_content('Order Amount: charged in $USD $156.43 USD')
+    page.must_have_content("Order Amount: charged in $USD #{@amount} USD")
     find("#funded_account_funding_source_paypal").click
     find('img[title="paypal"]').click
 
     # Paypal Gateway page
-    page.must_have_content('$150.43 USD')
+    page.must_have_content '$150.21 USD'
     paypal_login
   end
 
@@ -57,8 +58,8 @@ describe 'Valid user' do
       assert_includes email_subject, @co.reference_number
       assert_match    @logged_in_user.email, email_to
       assert_match    'orders@ssl.com', email_from
-      assert_includes email_body, "Order Amount: $156.43"
-    
+      assert_includes email_body, "Order Amount: #{@amount}"
+
     # creates database records
     # ======================================================
       assert_equal 3, Order.count
@@ -82,12 +83,12 @@ describe 'Valid user' do
       
       assert_equal @co.id, ssl_cert_line_items.order_id
       assert_equal 'CertificateOrder', ssl_cert_line_items.sellable_type
-      assert_equal 15643, ssl_cert_line_items.cents
-      
+      assert_equal 15621, ssl_cert_line_items.cents
+
       assert_equal @pd.id, paypal_line_item.order_id
       assert_equal 'Deposit', paypal_line_item.sellable_type
-      assert_equal 15043, paypal_line_item.cents
-      
+      assert_equal 15021, paypal_line_item.cents
+
       assert_equal @fa.id, funded_acct_item.order_id
       assert_equal 'Deposit', funded_acct_item.sellable_type
       assert_equal 600, funded_acct_item.cents
@@ -97,7 +98,7 @@ describe 'Valid user' do
       assert_equal 'SslAccount', @co.billable_type
       assert_equal 'paid', @co.state
       assert_equal 'active', @co.status
-      assert_equal 15643, @co.cents
+      assert_equal 15621, @co.cents
       refute_nil   @co.reference_number
       assert_nil   @co.billing_profile_id # not using CC
 
@@ -113,8 +114,8 @@ describe 'Valid user' do
       assert_equal @logged_in_ssl_acct.id, co.ssl_account_id
       assert_equal 'paid', co.workflow_state
       assert_equal 1, co.line_item_qty
-      assert_equal 15643, co.amount
-    
+      assert_equal 15621, co.amount
+
     # Shopping cart is empty and belongs to user
     # ======================================================
       assert_equal 1, ShoppingCart.count
@@ -125,10 +126,10 @@ describe 'Valid user' do
     # ======================================================
       page.must_have_content('SSL Certificate Order')
       page.must_have_content(@co.reference_number)
-      page.must_have_content('$156.43')
+      page.must_have_content(@amount)
 
       page.must_have_content('Paypal Deposit')
       page.must_have_content(@pd.reference_number)
-      page.must_have_content('($156.43)')
+      page.must_have_content("(#{@amount})")
   end
 end

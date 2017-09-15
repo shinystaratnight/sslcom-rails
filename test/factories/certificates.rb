@@ -25,7 +25,7 @@ FactoryGirl.define do
                             }.with_indifferent_access}
 
       after(:create) do |certificate|
-        value = 365
+        value = 730
         group_duration = certificate.product_variant_groups.create(
           title:                 'Duration',
           status:                'live',
