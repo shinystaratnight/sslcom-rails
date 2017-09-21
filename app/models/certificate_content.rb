@@ -206,7 +206,11 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    (certificate_names.map(&:name)+[csr.try(:common_name)]+(domains.blank? ? [] : domains)).flatten.uniq.compact
+    all = []
+    all << certificate_names.map(&:name)
+    all << csr.try(:common_name)
+    all << (domains.blank? ? [] : domains)
+    all.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
   end
 
   def certificate_names_by_domains
