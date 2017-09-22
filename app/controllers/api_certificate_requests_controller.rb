@@ -405,7 +405,7 @@ class ApiCertificateRequestsController < ApplicationController
             @result.dns_md5_hash = @acr.csr.dns_md5_hash
             @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
           end
-          ([@acr.csr.common_name]+(@result.all_domains || [])).uniq.each do |domain|
+          ([@acr.csr.common_name]+(@result.domains || [])).uniq.each do |domain|
             @result.dcv_methods.merge! domain=>{}
             @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
             unless @acr.csr.blank?

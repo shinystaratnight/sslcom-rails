@@ -27,6 +27,7 @@ class ComodoApi
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?
     host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
+    url = URI.parse(host)
     con = Net::HTTP.new(url.host, 443)
     con.verify_mode = OpenSSL::SSL::VERIFY_PEER
     con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu

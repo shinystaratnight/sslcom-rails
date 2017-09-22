@@ -368,7 +368,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             r = CertificateContact.new(attrs.merge(roles: [role]))
             r.valid?
             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-          elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
+          elsif attrs[:country].blank? or Country.find_by_iso1_code(attrs[:country].upcase).blank?
             msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
             errors[:contacts].last.merge!(msg)
           end
