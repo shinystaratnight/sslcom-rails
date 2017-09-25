@@ -4,6 +4,109 @@ FactoryGirl.define do
     published_as 'live'
     roles        'Registered'
     
+  
+    # 100 Enterprise EV UCC/SAN SSL (evucc256sslcom)
+    # ==========================================================================
+    trait :evuccssl do
+      reseller_tier_id      nil
+      title                 'Enterprise EV Multi-domain UCC SSL'
+      summary               nil
+      text_only_summary     nil
+      text_only_description nil
+      allow_wildcard_ucc    false
+      serial                'evucc256sslcom'
+      product               'evucc'
+      icons                 {{main: 'ev_bar_lg.jpg'}}
+      display_order         {{all: 2, index: 5}}
+      description           {{certificate_type: "Enterprise EV UCC",
+                              points:           "<div class='check'>highest rated trust available</div>\n<div class='check'>enables green navigation bar</div>\n<div class='check'>results in higher sales conversion</div>\n<div class='check'>$250,000 USD insurance guarranty</div>\n<div class='check'>secure up to 2000 additional domains</div>\n<div class='check'>works on MS Exchange or OWA</div>\n<div class='check'>activates SSL Secure Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>\n<div class='check'>quick issuance</div>\n<div class='check'>30 day unconditional refund</div>\n<div class='check'>24 hour support</div>\n<div class='check'>dedicated support representative</div>\n<div class='check'>unlimited reissuances</div>\n<div class='check'>daily site scan monitoring</div>\n",
+                              validation_level: "Class 3 DoD",
+                              summary:          "for Exchange and Communications Server\n",
+                              abbr:             "EV UCC SSL"
+                            }.with_indifferent_access}
+                            
+      after(:create) do |certificate|
+        
+        # Domains
+        value = 365
+        amount = 13300
+        group_duration = certificate.product_variant_groups.create(
+          title:                 'Domains',
+          status:                'live',
+          description:           'Domain Names',
+          text_only_description: 'Domain Names',
+          display_order:          2,
+          serial:                 nil,
+          published_as:           'live',
+        )
+        (1..2).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_duration.id,
+            title:                    "#{n} Year Domain For 3 Domains (ea domain)",
+            status:                   "live",
+            description:              "#{n} year domain for 3 domains (ea domain)",
+            text_only_description:    "#{n} year domain for 3 domains (ea domain)",
+            amount:                   (n==1 ? amount : amount*1.6),
+            display_order:            n,
+            item_type:                'ucc_domain',
+            value:                    value,
+            serial:                   "sslcomevucc256ssl#{n}yrdm",
+            published_as:             "live",
+          )
+          value += 365
+        end
+        
+        value = 365
+        amount = 12900
+        (1..2).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_duration.id,
+            title:                    "#{n} Year Domain For Domains 4-200 (ea domain)",
+            status:                   "live",
+            description:              "#{n} year domain for domains 4-200 (ea domain)",
+            text_only_description:    "#{n} year domain for domains 4-200 (ea domain)",
+            amount:                   (n==1 ? amount : amount*1.6),
+            display_order:            n,
+            item_type:                'ucc_domain',
+            value:                    value,
+            serial:                   "sslcomevucc256ssl#{n}yradm",
+            published_as:             "live",
+          )
+          value += 365
+        end
+        
+        # Server Licenses
+        group_server = certificate.product_variant_groups.create(
+          title:                 'Server Licenses',
+          status:                'live',
+          description:           'Server Licenses',
+          text_only_description: 'Server Licenses',
+          display_order:          3,
+          serial:                 nil,
+          published_as:           'live',
+        )
+        
+        value = 365
+        amount = 1000
+        (1..2).to_a.each do |n|
+          ProductVariantItem.create(
+            product_variant_group_id: group_server.id,
+            title:                    "#{n} Year Additional Server License",
+            status:                   "live",
+            description:              "#{n} year additional server license",
+            text_only_description:    "#{n} year additional server license",
+            amount:                   (n==1 ? amount : amount*1.8),
+            display_order:            n,
+            item_type:                'server_license',
+            value:                    value,
+            serial:                   "sslcomevucc256ssl#{n}yrsl",
+            published_as:             "live",
+          )
+          value += 365
+        end
+      end
+    end
+    
     # Basic SSL (basic256sslcom)
     # ==========================================================================
     trait :basicssl do

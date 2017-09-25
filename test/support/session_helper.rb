@@ -56,7 +56,32 @@ module SessionHelper
     fill_in "#{contacts_id}_phone",      with: '1233334444'
     find('input[alt="Bl submit button"]').click
   end
-
+  
+  def issue_certificate(csr_id)
+    create(
+      :signed_certificate,
+      :nonwildcard_certificate_sslcom,
+      csr_id: csr_id
+    )
+  end
+  
+  def get_last_certificate_content
+    CertificateContent.order(id: :desc).first
+  end
+  
+  # reprocess/rekey a certificate through 'Orders' index
+  def rekey_certificate(domains_str=nil)
+    visit certificate_orders_path
+    click_on "change domain(s)/rekey"
+    check "previous_csr"
+    if domains_str
+      fill_in "certificate_order_certificate_contents_attributes_0_additional_domains", with: domains_str
+    end
+    find("#next_submit").click
+    find('input[alt="edit ssl certificate order"]').click
+    find('input[alt="Bl submit button"]').click
+  end
+  
   def update_cookie(cookie, user)
     value = "#{user.persistence_token}::#{user.send(user.class.primary_key)}"
     cookie.to_h['user_credentials'].merge!(value: value)

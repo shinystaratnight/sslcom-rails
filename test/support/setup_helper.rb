@@ -40,6 +40,7 @@ module SetupHelper
   end
 
   def initialize_certificates
+    create(:certificate, :evuccssl)   # 100 EV UCC/SAN SSL (evucc256sslcom), multi-domain, non-wildcard
     create(:certificate, :uccssl)     # 101 UCC SSL (ucc256sslcom), multi-domain, wildcard
     create(:certificate, :evssl)      # 102 EV SSL (ev256sslcom), 1-domain, non-wildcard
     create(:certificate, :ovssl)      # 103 High Assurance SSL (ov256sslcom), 1-domain, non-wildcard
