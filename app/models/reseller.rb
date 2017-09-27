@@ -1,5 +1,6 @@
 class Reseller < ActiveRecord::Base
   belongs_to  :ssl_account
+  has_many    :orders, through: :ssl_account
   belongs_to  :reseller_tier
   easy_roles  :roles
 
