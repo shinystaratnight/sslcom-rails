@@ -46,13 +46,11 @@ class ApiCertificateRequest < CaApiRequest
   attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
 
   before_validation(on: :create) do
-    if ac=api_credential
-      unless ac.blank?
-        self.api_requestable = ac.ssl_account
-      else
-        errors[:login] << "account_key not found or wrong secret_key"
-        return false
-      end
+    ac=api_credential
+    unless ac.blank?
+      self.api_requestable = ac.ssl_account
+    else
+      errors[:login] << "account_key not found or wrong secret_key"
     end
   end
 

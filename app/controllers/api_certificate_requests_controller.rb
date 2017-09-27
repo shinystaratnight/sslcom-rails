@@ -254,7 +254,7 @@ class ApiCertificateRequestsController < ApplicationController
           result = ApiCertificateRetrieve.new(ref: acr.ref)
           result.order_date = acr.created_at
           result.order_status = acr.status
-          result.domains = acr.domains
+          result.domains = acr.all_domains
           result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
           result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
           result.description = acr.description
@@ -359,14 +359,14 @@ class ApiCertificateRequestsController < ApplicationController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
       end
       @result.dcv_methods={}
-      if @acr.domains
+      if @acr.all_domains
         @result.instructions = ApiDcvMethods::INSTRUCTIONS
         unless @acr.csr.blank?
           @result.md5_hash = @acr.csr.md5_hash
           @result.sha2_hash = @acr.csr.sha2_hash
           @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
         end
-        @acr.domains.each do |domain|
+        @acr.all_domains.each do |domain|
           @result.dcv_methods.merge! domain=>{}
           @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
           unless @acr.csr.blank?
@@ -405,7 +405,7 @@ class ApiCertificateRequestsController < ApplicationController
             @result.dns_md5_hash = @acr.csr.dns_md5_hash
             @result.dns_sha2_hash = @acr.csr.dns_sha2_hash
           end
-          ([@acr.csr.common_name]+(@result.domains || [])).each do |domain|
+          ([@acr.csr.common_name]+(@result.domains || [])).uniq.each do |domain|
             @result.dcv_methods.merge! domain=>{}
             @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
             unless @acr.csr.blank?

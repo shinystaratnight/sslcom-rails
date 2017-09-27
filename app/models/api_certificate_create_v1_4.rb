@@ -57,7 +57,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
-  validates_presence_of :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
   validate  :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
@@ -368,8 +368,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             r = CertificateContact.new(attrs.merge(roles: [role]))
             r.valid?
             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-          elsif Country.find_by_iso1_code(attrs[:country].upcase).blank?
-            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of #{attrs[:country]}."}
+          elsif attrs[:country].blank? or Country.find_by_iso1_code(attrs[:country].upcase).blank?
+            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs[:country]}'"}
             errors[:contacts].last.merge!(msg)
           end
         else

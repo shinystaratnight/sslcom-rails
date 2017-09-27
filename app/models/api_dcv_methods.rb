@@ -4,5 +4,5 @@ class ApiDcvMethods < ApiCertificateRequest
 
   attr_accessor :dcv_methods, :instructions, :md5_hash, :sha1_hash, :sha2_hash, :dns_sha2_hash, :dns_md5_hash
 
-  INSTRUCTIONS="https://support.ssl.com/Knowledgebase/Article/View/29/0/alternative-methods-of-domain-control-validation-dcv"
+  INSTRUCTIONS="https://www.ssl.com/faqs/ssl-dv-validation-requirements/"
 end

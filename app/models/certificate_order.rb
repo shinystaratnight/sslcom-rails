@@ -233,18 +233,18 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, ->{where({:workflow_state=>'paid'} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
+  scope :unused_credits, ->{unscoped.where{(workflow_state=='paid') & (is_expired==false) &
+      (external_order_number == nil)}}
 
-  scope :unflagged_expired_credits, ->{not_new.joins{certificate_contents.csr.outer}.
-      where{(created_at < Settings.cert_expiration_threshold_days.to_i.days.ago) & (csrs.id==nil)}
-  }
+  scope :unflagged_expired_credits, ->{unused_credits.
+      where{created_at < Settings.cert_expiration_threshold_days.to_i.days.ago}}
 
-  scope :unused_purchased_credits, ->{where({:workflow_state=>'paid'} & {:amount.gt=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
+  scope :unused_purchased_credits, ->{unused_credits.where{amount > 0}}
 
-  scope :unused_free_credits, ->{where({:workflow_state=>'paid'} & {:amount.eq=> 0} & {is_expired: false} &
-    {:certificate_contents=>{:workflow_state.eq=>"new"}})}
+  scope :unused_free_credits, ->{unused_credits.where{amount == 0}}
+
+  scope :falsely_expired, -> {unscoped.where{(workflow_state=='paid') & (is_expired==true) &
+      (external_order_number != nil)}}
 
   scope :range, lambda{|start, finish|
     if start.is_a?(String)
