@@ -52,6 +52,7 @@ class Minitest::Spec
     DatabaseCleaner.start
     @headless = Headless.new
     @headless.start
+    Delayed::Worker.delay_jobs = false
   end
 
   after :each do

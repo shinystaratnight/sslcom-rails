@@ -4,11 +4,6 @@ class OrderNotifier < ActionMailer::Base
   include ActionView::Helpers::SanitizeHelper
   helper CertificateOrdersHelper
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
-  if Rails.const_defined?('Console')
-    default_url_options[:host] = Settings.actionmailer_host
-  # elsif is_sandbox_or_test?
-  #   default_url_options[:host] = "sandbox.ssl.com"
-  end
 
   def test
     p caller[0] =~ /`([^']*)'/ and $1
@@ -40,12 +35,21 @@ class OrderNotifier < ActionMailer::Base
           to:   contact
   end
 
-  def dcv_sent(contact, certificate_order, last_sent)
+  def dcv_sent(contact, certificate_order, last_sent, host=nil)
+    # host: only passed when called from delayed_job since dynamic default_url_options 
+    # are not set when job runs.
     setup(contact, certificate_order)
-    @last_sent=last_sent
-    mail  subject:       "#{'(TEST) ' if certificate_order.is_test?}SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})",
-          from:          Settings.from_email.orders,
-          to:    contact
+    @host      = host
+    @last_sent = last_sent
+    param      = {certificate_order_id: @certificate_order.ref}
+    @validation_url = if @host
+      File.join(@host, new_certificate_order_validation_path(param))
+    else
+      new_certificate_order_validation_url(param)
+    end  
+    mail  subject: "#{'(TEST) ' if certificate_order.is_test?}SSL.com Validation Request Will Be Sent for #{certificate_order.subject} (Order ##{certificate_order.ref})",
+          from:    Settings.from_email.orders,
+          to:      contact
 
   end
 

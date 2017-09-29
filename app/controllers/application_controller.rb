@@ -28,7 +28,14 @@ class ApplicationController < ActionController::Base
   end
   # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
   def set_mailer_host
-    ActionMailer::Base.default_url_options[:host] = request.host_with_port
+    host = if Rails.const_defined?('Console')
+      Settings.actionmailer_host
+    elsif is_sandbox_or_test?
+      'sandbox.ssl.com'
+    else
+      request.host_with_port
+    end
+    ActionMailer::Base.default_url_options[:host] = host
     ActionMailer::Base.default_url_options[:protocol] = 'https'
   end
 
@@ -708,6 +715,12 @@ class ApplicationController < ActionController::Base
     if current_user.get_all_approved_accounts.include?(@ssl_account)
       current_user.set_default_ssl_account(@ssl_account)
     end
+  end
+  
+  def is_sandbox_or_test?
+    host = ActionMailer::Base.default_url_options[:host]
+    sandbox = request && request.try(:subdomain)=='sandbox'
+    sandbox || host=~/^sandbox\./ || host=~/^sws-test\./
   end
 
   class Helper
