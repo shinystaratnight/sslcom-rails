@@ -2,6 +2,7 @@ class CertUtil
   CONVERT_PKCS7_TO_PEM=->(pem, pkcs7){%x"openssl pkcs7 -print_certs -in #{pkcs7} -out #{pem}"}
   CONVERT_PEM_TO_PKCS7=->(pem, pkcs7, chain){%x"openssl crl2pkcs7 -nocrl -certfile #{pem} -out #{pkcs7} -certfile #{chain}"}
   DECODE_CERTIFICATE=->(cert_file, format){%x"openssl #{format} -in #{cert_file} -text -noout #{'-print_certs' if format=='pkcs7'}"}
+  CONNECT_HTTPS=->(host, port="443", protocol="tls1_2"){%x"openssl s_client -connect #{host}:#{port} -#{protocol}"}
 
   def self.pkcs7_to_pem(pem, out)
     CONVERT_PKCS7_TO_PEM.call pem, out

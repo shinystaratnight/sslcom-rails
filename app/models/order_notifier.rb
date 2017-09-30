@@ -6,8 +6,8 @@ class OrderNotifier < ActionMailer::Base
   extend  ActionView::Helpers::SanitizeHelper::ClassMethods
   if Rails.const_defined?('Console')
     default_url_options[:host] = Settings.actionmailer_host
-  elsif is_sandbox_or_test?
-    default_url_options[:host] = "sandbox.ssl.com"
+  # elsif is_sandbox_or_test?
+  #   default_url_options[:host] = "sandbox.ssl.com"
   end
 
   def test
