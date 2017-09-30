@@ -425,9 +425,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         
   def verify_domain_limits
     unless domains.nil?
-      max = if is_ucc? || is_wildcard? || is_evucc?
+      max = if is_ucc? || is_evucc?
         500
-      elsif is_dv? || is_ev? || is_ov?
+      elsif is_dv? || is_ev? || is_ov? || is_wildcard?
         1
       elsif is_premium?
         3

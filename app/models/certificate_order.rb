@@ -233,7 +233,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :free, ->{not_new.where(:amount => 0)}
 
-  scope :unused_credits, ->{unscoped.where{(workflow_state=='paid') & (is_expired==false) &
+  scope :unused_credits, ->{where{(workflow_state=='paid') & (is_expired==false) &
       (external_order_number == nil)}}
 
   scope :unflagged_expired_credits, ->{unused_credits.
