@@ -25,11 +25,13 @@ module ApiSetupHelper
 
   # ProductVariantItem ids
   def api_initialize_pvi_ids
-    @ucc_min_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrdm').id
-    @ucc_max_domains    = ProductVariantItem.find_by_serial('sslcomucc256ssl1yradm').id
-    @ucc_server_license = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrsl').id
-    @ucc_wildcard       = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrwcdm').id
-    @basic_domains      = ProductVariantItem.find_by_serial('sslcombasic256ssl1yr').id
+    @ev_ucc_to3_domains   = ProductVariantItem.find_by_serial('sslcomevucc256ssl1yrdm').id
+    @ev_ucc_over3_domains = ProductVariantItem.find_by_serial('sslcomevucc256ssl1yradm').id
+    @ucc_min_domains      = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrdm').id
+    @ucc_max_domains      = ProductVariantItem.find_by_serial('sslcomucc256ssl1yradm').id
+    @ucc_server_license   = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrsl').id
+    @ucc_wildcard         = ProductVariantItem.find_by_serial('sslcomucc256ssl1yrwcdm').id
+    @basic_domains        = ProductVariantItem.find_by_serial('sslcombasic256ssl1yr').id
   end
   
   # SubOrderItem quantaties for specific product_variant_item_id
@@ -51,6 +53,11 @@ module ApiSetupHelper
   #    365 or 730 for EV SSL certs
   #    30 or 90 for Free Trial SSL certs
   #    365, 730, 1095, 1461, or 1826 for all others
+  
+  # EV UCC SSL (evucc256sslcom)
+  def api_get_request_for_evucc
+    @api_keys.merge(product: 100, period: 365)
+  end
   
   # UCC SSL (ucc256sslcom)
   def api_get_request_for_ucc
@@ -81,7 +88,25 @@ module ApiSetupHelper
   def api_get_request_for_premium
     @api_keys.merge(product: 107, period: 365)
   end
-
+  
+  def api_get_new_billing_info
+    {
+      first_name:       'cc_first_name',
+      last_name:        'cc_last_name',
+      number:           @card_number,
+      exp_year:         Date.today.year+5,
+      exp_month:        1,
+      security_code:    999,
+      street_address_1: '123 H St.',
+      street_address_2: 'Suite A',
+      street_address_3: nil,
+      city:             'Houston',
+      state:            'Texas',
+      postal_code:      12345,
+      country:          'US'
+    }
+  end
+  
   # Certificate content registrant
   def api_get_csr_registrant
     {

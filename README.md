@@ -14,8 +14,8 @@
 
 ### Run Delayed Job
 1. In another tab, SSH into the box `vagrant ssh`
-2. Navigate to `/vagrant` and run `rake jobs:start`
-3. To terminate delayed job server, run `rake jobs:stop` or press `Ctr+C`
+2. Navigate to `/vagrant` and run `script/delayed_job start`
+3. To terminate delayed job server, run `script/delayed_job stop` or press `Ctr+C`
 
 ### `synced_folders` Template
 ```
