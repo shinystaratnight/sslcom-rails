@@ -92,22 +92,25 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     certificate_content=CertificateContent.new(
         csr: csr, server_software_id: self.server_software, domains: get_domains)
     co.certificate_contents << certificate_content
-    @certificate_order = Order.setup_certificate_order(certificate: certificate, certificate_order: co,
-                                                       duration: self.period.to_i/365)
+    @certificate_order = Order.setup_certificate_order(
+      certificate: certificate,
+      certificate_order: co,
+      duration: self.period.to_i/365
+    )
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-    unless debug_mode?
-      if false #credit_card
 
-      else
-        if order.amount.cents > api_requestable.funded_account.amount.cents
-          errors[:funded_account] << "Not enough funds in the account to complete this purchase. Please deposit more funds." 
-        end    
-      end
-    end
     if errors.blank?
-      if certificate_content.valid? &&
-          apply_funds(certificate_order: @certificate_order, ssl_account: api_requestable, order: order)
+      if certificate_content.valid?
+        unless debug_mode?
+          apply_funds(
+            certificate_order: @certificate_order,
+            ssl_account:       api_requestable,
+            order:             order
+          )
+        end
+        return self unless errors.blank?
+        
         if csr && certificate_content.save
           setup_certificate_content(
               certificate_order: @certificate_order,
@@ -245,17 +248,60 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def apply_funds(options)
     order = options[:order]
-    funded_account = options[:ssl_account].funded_account
-    funded_account.cents -= order.cents unless debug_mode?
     if order.line_items.size > 0
-      funded_account.deduct_order = true
-      # order.save
-      order.mark_paid!
-      Authorization::Maintenance::without_access_control do
-        funded_account.save unless debug_mode?
+      paid = if parameters_to_hash['billing_profile'].nil?
+        apply_to_funded_account(options)
+      else
+        apply_to_billing_profile(options)
       end
-      options[:certificate_order].pay! true
+      if paid
+        order.mark_paid!
+        options[:certificate_order].pay!(true)
+      end
     end
+  end
+  
+  def apply_to_funded_account(options)
+    applied = false
+    order = options[:order]
+    funded_account = options[:ssl_account].funded_account
+    if funded_account.cents < order.cents
+      self.errors[:funded_account] = "Not enough funds in the account to complete this purchase! Please deposit additional #{Money.new(order.cents - funded_account.cents).format}."
+    end
+    if errors[:funded_account].blank?
+      self.errors.delete :billing_profile
+      self.errors.delete :funded_account
+      funded_account.cents -= order.cents
+      funded_account.deduct_order = true
+      applied = true
+      Authorization::Maintenance::without_access_control do
+        funded_account.save
+      end
+    end
+    applied
+  end
+  
+  def apply_to_billing_profile(options)
+    response = false
+    last_digits = parameters_to_hash['billing_profile']
+    if last_digits
+      profile = options[:ssl_account].billing_profiles.find_by(last_digits: last_digits)
+      if profile
+        gateway_response = options[:order].purchase(
+          profile.build_credit_card,
+          profile.build_info(Order::SSL_CERTIFICATE)
+            .merge(owner_email: options[:ssl_account].get_account_owner.email)
+        )
+        if gateway_response.success?
+          response = true
+        else
+          self.errors[:billing_profile] = gateway_response.message
+        end
+      else
+        self.errors[:billing_profile] = "Could not find billing profile ending in #{billing_profile} for this account!"
+      end
+    end
+    response
   end
 
   def renewal_exists
@@ -268,11 +314,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def is_ev?
-    serial =~ /\Aev/ if serial
+    (serial.include?('ev') && !is_evucc?) if serial
   end
 
   def is_dv?
-    (serial =~ /\Adv/ || serial =~ /\Abasic/) if serial
+    (serial.include?('dv') || is_basic?) if serial
   end
 
   def is_ov?
@@ -280,27 +326,27 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def is_free?
-    serial =~ /\Adv/ if serial
+    is_dv?
   end
 
   def is_basic?
-    serial =~ /\Abasic/ if serial
+    serial.include?('basic') if serial
   end
 
   def is_wildcard?
-    serial =~ /\Awc/ if serial
+    serial.include?('wc') if serial
   end
 
   def is_ucc?
-    serial =~ /\Aucc/ if serial
+    (serial.include?('ucc') && !is_evucc?) if serial
   end
   
   def is_premium?
-    serial =~ /\Apremium/ if serial
+    serial.include?('premium') if serial
   end
   
   def is_evucc?
-    serial =~ /\Aevucc/ if serial
+    serial.include?('evucc') if serial
   end
 
   def is_not_ip
