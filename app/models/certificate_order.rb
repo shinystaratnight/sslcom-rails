@@ -687,7 +687,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    if external_order_number && ca_certificate_requests.first.success?
+    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
@@ -696,11 +696,11 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
-  def self.retrieve_ca_certs(start, finish, options=nil)
+  def self.retrieve_ca_certs(start, finish, options={})
     Website.sandbox_db.use_database if options[:db]=="sandbox"
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
-    cos.each{|co|CertificateOrder.find_by_ref(co.ref).retrieve_ca_cert(true)}
+    cos.each{|co|CertificateOrder.unscoped.find_by_ref(co.ref).retrieve_ca_cert(true)}
     SystemAudit.create(owner: nil, target: nil,
                        notes: "",
                        action: "CertificateOrder#retrieve_ca_certs(#{start},#{finish},#{options.to_s})")
