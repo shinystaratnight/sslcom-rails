@@ -74,7 +74,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #TODO add dcv validation
       end
     end
-    verify_domain_limits
+    # verify_domain_limits
   end
 
   def create_certificate_order
@@ -102,13 +102,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
     if errors.blank?
       if certificate_content.valid?
-        unless debug_mode?
-          apply_funds(
-            certificate_order: @certificate_order,
-            ssl_account:       api_requestable,
-            order:             order
-          )
-        end
+        apply_funds(
+          certificate_order: @certificate_order,
+          ssl_account:       api_requestable,
+          order:             order
+        )
         return self unless errors.blank?
         
         if csr && certificate_content.save
