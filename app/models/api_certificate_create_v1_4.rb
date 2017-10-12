@@ -263,7 +263,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     applied = false
     order = options[:order]
     funded_account = options[:ssl_account].funded_account
-    if funded_account.cents < order.cents
+    if funded_account.cents < order.cents && !debug_mode?
       self.errors[:funded_account] = "Not enough funds in the account to complete this purchase! Please deposit additional #{Money.new(order.cents - funded_account.cents).format}."
     end
     if errors[:funded_account].blank?
