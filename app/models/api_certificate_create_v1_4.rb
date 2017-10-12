@@ -102,13 +102,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
     if errors.blank?
       if certificate_content.valid?
-        unless debug_mode?
-          apply_funds(
-            certificate_order: @certificate_order,
-            ssl_account:       api_requestable,
-            order:             order
-          )
-        end
+        apply_funds(
+          certificate_order: @certificate_order,
+          ssl_account:       api_requestable,
+          order:             order
+        )
         return self unless errors.blank?
         order.save
         if csr && certificate_content.save
