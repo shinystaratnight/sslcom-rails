@@ -15,7 +15,7 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
-  after_update :certificate_names_from_domains
+  after_update :certificate_names_from_domains, unless: :certificate_names_created?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -197,8 +197,16 @@ class CertificateContent < ActiveRecord::Base
         certificate_names.create(name: csr.common_name, is_common_name: true)
       end
     else
-      domains.flatten.each_slice(100) do |domain_slice|
-        Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
+      if domains.length <= 20
+        domains.flatten.each_with_index do |domain, i|
+          if certificate_names.find_by_name(domain).blank?
+            certificate_names.create(name: domain, is_common_name: (i == 0)) 
+          end
+        end
+      else
+        domains.flatten.each_slice(100) do |domain_slice|
+          Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
+        end
       end
     end
   end
@@ -452,6 +460,15 @@ class CertificateContent < ActiveRecord::Base
   
   def validate_domains?
     (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
+  end
+  
+  def certificate_names_created?
+    self.reload
+    return true if domains.blank?
+    new_domains     = parse_unique_domains(domains)
+    current_domains = parse_unique_domains(certificate_names.pluck(:name))
+    common          = current_domains & new_domains
+    common.length == new_domains.length && (current_domains.length == new_domains.length)
   end
   
   def parse_unique_domains(target_domains)

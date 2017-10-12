@@ -78,7 +78,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def create_certificate_order
-    certificate = Certificate.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.tier_suffix)
+    certificate = Certificate.available.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.tier_suffix)
     co_params = {duration: period, is_test: self.test}
     co = api_requestable.certificate_orders.build(co_params)
     if self.csr
@@ -310,13 +310,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def serial
     PRODUCTS[self.product.to_s] if product
   end
-
+  
+  def target_certificate
+    @target_certificate ||= (Certificate.find_by(serial: serial) if serial)
+  end
+  
   def is_ev?
-    (serial.include?('ev') && !is_evucc?) if serial
+    (target_certificate.serial.include?('ev') && !is_evucc?) if target_certificate
   end
 
   def is_dv?
-    (serial.include?('dv') || is_basic?) if serial
+    if target_certificate
+      !target_certificate.product.include?('free') &&
+      (is_basic? || target_certificate.serial.include?('dv'))
+    end
   end
 
   def is_ov?
@@ -324,27 +331,30 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def is_free?
-    is_dv?
+    if target_certificate
+      target_certificate.serial.include?('dv') &&
+        target_certificate.product.include?('free')
+    end
   end
 
   def is_basic?
-    serial.include?('basic') if serial
+    target_certificate.serial.include?('basic') if target_certificate
   end
 
   def is_wildcard?
-    serial.include?('wc') if serial
+    target_certificate.serial.include?('wc') if target_certificate
   end
 
   def is_ucc?
-    (serial.include?('ucc') && !is_evucc?) if serial
+    (target_certificate.serial.include?('ucc') && !is_evucc?) if target_certificate
   end
   
   def is_premium?
-    serial.include?('premium') if serial
+    target_certificate.serial.include?('premium') if target_certificate
   end
   
   def is_evucc?
-    serial.include?('evucc') if serial
+    target_certificate.serial.include?('evucc') if target_certificate
   end
 
   def is_not_ip
