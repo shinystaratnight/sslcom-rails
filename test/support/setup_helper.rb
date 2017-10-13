@@ -44,6 +44,7 @@ module SetupHelper
     create(:certificate, :uccssl)     # 101 UCC SSL (ucc256sslcom), multi-domain, wildcard
     create(:certificate, :evssl)      # 102 EV SSL (ev256sslcom), 1-domain, non-wildcard
     create(:certificate, :ovssl)      # 103 High Assurance SSL (ov256sslcom), 1-domain, non-wildcard
+    create(:certificate, :freessl)    # 104 Free SSL (dv256), 1-domain,  non-wildcard
     create(:certificate, :wcssl)      # 105 Wildcard SSL (wc256sslcom), 1-domain, unlimited-subdomains, wildcard
     create(:certificate, :basicssl)   # 106 Basic SSL (basic256sslcom), 1-domain, non-wildcard
     create(:certificate, :premiumssl) # 107 Premium SSL (premium256sslcom), 1-domain, 3-subdomains, non-wildcard
