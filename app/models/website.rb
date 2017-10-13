@@ -4,7 +4,7 @@ class Website
 
   def self.sandbox_db
     @website=Website.new
-    @website.database_name="sandbox_ssl_com"
+    @website.database_name=ENV.fetch('SANDBOX_DATABASE') || "sandbox_ssl_com"
     @website
   end
 
