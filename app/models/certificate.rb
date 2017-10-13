@@ -590,8 +590,8 @@ class Certificate < ActiveRecord::Base
   def get_root(extract_from)
     if extract_from =~ /\dtr\z/
       extract_from.gsub(/\dtr\z/,"")
-    elsif extract_from =~ /\-\w+?tr\z/
-      extract_from.gsub(/\-\w+?tr\z/,"")
+    elsif extract_from =~ /\-.+?tr\z/
+      extract_from.gsub(/\-.+?tr\z/,"")
     else
       extract_from
     end
