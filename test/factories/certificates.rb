@@ -107,7 +107,7 @@ FactoryGirl.define do
       end
     end
     
-    # Basic SSL (basic256sslcom)
+    # 106 Basic SSL (basic256sslcom)
     # ==========================================================================
     trait :basicssl do
       reseller_tier_id      nil
@@ -158,7 +158,7 @@ FactoryGirl.define do
       end
     end
 
-    # EV SSL (ev256sslcom)
+    # 102 EV SSL (ev256sslcom)
     # ==========================================================================
     trait :evssl do
       reseller_tier_id      nil
@@ -209,7 +209,7 @@ FactoryGirl.define do
       end  
     end
     
-    # UCC SSL (ucc256sslcom)
+    # 101 UCC SSL (ucc256sslcom)
     # ==========================================================================
     trait :uccssl do
       reseller_tier_id      nil
@@ -399,7 +399,7 @@ FactoryGirl.define do
       end
     end
     
-    # High Assurance SSL (ov256sslcom)
+    # 103 High Assurance SSL (ov256sslcom)
     # ==========================================================================
     trait :ovssl do
       reseller_tier_id      nil
@@ -447,6 +447,53 @@ FactoryGirl.define do
           )
           value += 365
         end
+      end
+    end
+    
+    # 104 Free SSL (ov256sslcom)
+    # ==========================================================================
+    trait :freessl do
+      reseller_tier_id      nil
+      title                 'Free SSL'
+      summary               "90-day Basic SSL trial\n"
+      text_only_summary     nil
+      text_only_description nil
+      allow_wildcard_ucc    nil
+      serial                'dv256sslcom'
+      product               'free'
+      icons                 {{main: 'silver_lock_lg.gif'}}
+      display_order         {{all: 5, index: 3}}
+      description           {{certificate_type: "Free",
+                              points:           "<div class='check'>great for testing or development</div>\n<div class='check'>is free with no cost to you</div>\n<div class='check'>activates SSL Site Seal</div>\n<div class='check'>2048 bit public key encryption</div>\n<div class='check'>quick issuance</div>\n",
+                              validation_level: "Class 1 DoD",
+                              summary:          "90-day Basic SSL trial\n",
+                              abbr:             "Free SSL"
+                            }.with_indifferent_access}
+
+      after(:create) do |certificate|
+        group = certificate.product_variant_groups.create(
+          title:                 'Duration',
+          status:                'live',
+          description:           'Duration',
+          text_only_description: 'Duration',
+          display_order:          1,
+          serial:                 nil,
+          published_as:           'live',
+        )
+      
+        ProductVariantItem.create(
+          product_variant_group_id: group.id,
+          title:                    "90 Days",
+          status:                   "live",
+          description:              "90 days",
+          text_only_description:    "90 days",
+          amount:                   0,
+          display_order:            1,
+          item_type:                'duration',
+          value:                    90,
+          serial:                   "dv256ssl1yr",
+          published_as:             "live",
+        )
       end
     end
     
