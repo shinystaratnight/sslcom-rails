@@ -74,6 +74,11 @@ module ApiSetupHelper
     @api_keys.merge(product: 103, period: 365)
   end
   
+  # Free SSL 
+  def api_get_request_for_free
+    @api_keys.merge(product: 104, period: 90)
+  end
+  
   # Wildcard SSL (wc256sslcom)
   def api_get_request_for_wildcard
     @api_keys.merge(product: 105, period: 365)

@@ -249,5 +249,125 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       # OrderTransaction - declined
       assert_equal 0, OrderTransaction.count
     end
+    
+    # Params:       domains hash (w/dvc)
+    # Should:       save 1 domain in CertificateContent, 1 total
+    #               order should be $0
+    # Should NOT:   charge the funded account
+    #               charge the billing profile
+    # ==========================================================================
+    it 'status 200: Free SSL, no charge' do
+      req = api_get_request_for_free
+        .merge(api_get_server_software)
+        .merge(api_get_csr_registrant)
+        .merge(api_get_csr_contacts)
+        
+      post api_certificate_create_v1_4_path(req
+        .merge(domains: {'www.ssltestdomain2.com':  {dcv: 'admin@ssltestdomain2.com'}})
+      )
+      items = JSON.parse(body)
+      
+      # response
+      assert       match_response_schema('cert_create_voucher')
+      assert       response.success?
+      assert_equal 200, status
+      assert_equal 9, items.count
+      assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
+      assert_equal '$0.00', items['order_amount']
+      refute_nil   items['ref']
+      refute_nil   items['certificate_url']
+      refute_nil   items['receipt_url']
+      refute_nil   items['smart_seal_url']
+      refute_nil   items['validation_url']
+      assert_nil   items['registrant']
+      assert_nil   items['validations']
+      
+      # db records
+      assert_equal 1, CaApiRequest.count
+      assert_equal 1, Order.count
+      assert_equal 1, Validation.count
+      assert_equal 1, SiteSeal.count
+      assert_equal 1, CertificateOrder.count
+      assert_equal 1, CertificateContent.count
+      assert_equal 1, SubOrderItem.count
+      assert_equal 1, LineItem.count
+      assert_equal 1, CertificateContent.count
+      assert_equal 1, CertificateContent.last.domains.count
+      assert_equal 0, InvalidApiCertificateRequest.count
+      
+      # Funded Account is NOT charged
+      assert_equal 100000, FundedAccount.last.cents
+      
+      # Order is paid
+      o = Order.first
+      assert_equal 0, o.cents
+      assert_equal @team.id, o.billable_id
+      assert_match 'paid', o.state
+      assert_match 'SslAccount', o.billable_type
+      
+      # OrderTransaction - credit card was not charged
+      assert_equal 0, OrderTransaction.count
+    end
+  
+    # Params:       domains hash (w/dvc)
+    #               billing_profile
+    # Should:       save 1 domain in CertificateContent, 1 total
+    #               order should be $0
+    # Should NOT:   charge the funded account
+    #               charge the billing profile
+    # ==========================================================================
+    it 'status 200: Free SSL w/billing_profile, no charge' do
+      req = api_get_request_for_free
+        .merge(api_get_server_software)
+        .merge(api_get_csr_registrant)
+        .merge(api_get_csr_contacts)
+        
+      post api_certificate_create_v1_4_path(req
+        .merge(domains: {'www.ssltestdomain2.com':  {dcv: 'admin@ssltestdomain2.com'}})
+        .merge(billing_profile: @billing_profile.last_digits)
+      )
+      items = JSON.parse(body)
+      
+      # response
+      assert       match_response_schema('cert_create_voucher')
+      assert       response.success?
+      assert_equal 200, status
+      assert_equal 9, items.count
+      assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
+      assert_equal '$0.00', items['order_amount']
+      refute_nil   items['ref']
+      refute_nil   items['certificate_url']
+      refute_nil   items['receipt_url']
+      refute_nil   items['smart_seal_url']
+      refute_nil   items['validation_url']
+      assert_nil   items['registrant']
+      assert_nil   items['validations']
+      
+      # db records
+      assert_equal 1, CaApiRequest.count
+      assert_equal 1, Order.count
+      assert_equal 1, Validation.count
+      assert_equal 1, SiteSeal.count
+      assert_equal 1, CertificateOrder.count
+      assert_equal 1, CertificateContent.count
+      assert_equal 1, SubOrderItem.count
+      assert_equal 1, LineItem.count
+      assert_equal 1, CertificateContent.count
+      assert_equal 1, CertificateContent.last.domains.count
+      assert_equal 0, InvalidApiCertificateRequest.count
+      
+      # Funded Account is NOT charged
+      assert_equal 100000, FundedAccount.last.cents
+      
+      # Order is paid
+      o = Order.first
+      assert_equal 0, o.cents
+      assert_equal @team.id, o.billable_id
+      assert_match 'paid', o.state
+      assert_match 'SslAccount', o.billable_type
+      
+      # OrderTransaction - credit card was not charged
+      assert_equal 0, OrderTransaction.count
+    end
   end
 end
