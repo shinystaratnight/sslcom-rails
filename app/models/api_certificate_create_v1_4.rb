@@ -108,7 +108,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
           order:             order
         )
         return self unless errors.blank?
-        
+        order.save
         if csr && certificate_content.save
           setup_certificate_content(
               certificate_order: @certificate_order,
@@ -258,7 +258,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       end
     end
   end
-  
+
   def apply_to_funded_account(options)
     applied = false
     order = options[:order]
@@ -278,7 +278,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     end
     applied
   end
-  
+
   def apply_to_billing_profile(options)
     response = false
     last_digits = parameters_to_hash['billing_profile']
@@ -348,11 +348,11 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def is_ucc?
     (target_certificate.serial.include?('ucc') && !is_evucc?) if target_certificate
   end
-  
+
   def is_premium?
     target_certificate.serial.include?('premium') if target_certificate
   end
-  
+
   def is_evucc?
     target_certificate.serial.include?('evucc') if target_certificate
   end
@@ -458,16 +458,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     a=ApiCertificateCreate_v1_4.find{|a|a.domains && (a.domains.keys.count) > 2 && a.ref && a.find_certificate_order.try(:external_order_number) && a.find_certificate_order.is_test?}
     a.comodo_auto_update_dcv(send_to_ca: false, certificate_order: a.find_certificate_order)
   end
-  
+
   def debug_mode?
     self.test && !Rails.env.test?
   end
-  
+
   def get_domains
     if csr_obj && csr_obj.valid? && domains.nil?
       self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access
     end
-    
+
     if domains.is_a? Hash
      domains.keys
     elsif domains.is_a? String
@@ -476,7 +476,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
      domains
     end
   end
-        
+
   def verify_domain_limits
     unless domains.nil?
       max = if is_ucc? || is_evucc?
