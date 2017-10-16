@@ -46,7 +46,7 @@
                 = form.label :login, "*Login<span class='label_desc'>this will be your username</span>".html_safe
                 = form.text_field :login
               .clearfix
-                = form.label :password, "*Password<span class='label_desc'>min. size 4 chars</span>".html_safe
+                = form.label :password, "*Password".html_safe
                 = form.password_field :password
           #new_user_section
             =fields_for :user, @user do |form|
@@ -58,11 +58,24 @@
                 = form.label :email, "*Email<span class='label_desc'>must be a valid address</span>".html_safe
                 = form.text_field :email
               .clearfix
-                = form.label :password, "*Password<span class='label_desc'>min. size 4 chars</span>".html_safe
+                = form.label :password, "*Password<span class='label_desc'>min. size 8 chars</span>".html_safe
                 = form.password_field :password
               .clearfix#password_confirm_field
                 = form.label :password_confirmation, "*Password again<span class='label_desc'>type the password again</span>".html_safe
                 = form.password_field :password_confirmation
+              .clearfix
+                %strong
+                  *Password requires:
+                minimum of 8 characters which must include a minimum of:
+                %ul
+                  %li
+                    1 lower case letter [a-z] and
+                  %li
+                    1 upper case letter [A-Z] and
+                  %li
+                    1 numeric character [0-9] and
+                  %li
+                    1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
         -if current_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}

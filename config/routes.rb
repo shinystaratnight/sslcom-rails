@@ -30,7 +30,7 @@ SslCom::Application.routes.draw do
   # api
   # if using an api WITHOUT the version in the url, then a
   constraints DomainConstraint.new(
-                  %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com
+                  %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com sandbox.ssl.local
                   api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)) do
     match '/users' => 'api_user_requests#create_v1_4',
           :as => :api_user_create_v1_4, via: [:post]
