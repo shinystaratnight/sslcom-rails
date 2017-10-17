@@ -63,11 +63,10 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_response=ccr.response
             end
             set_result_parameters(@result, @acr)
-            render_200_status
           else
             @result = @acr #so that rabl can report errors
-            render_400_status
           end
+          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -96,10 +95,8 @@ class ApiCertificateRequestsController < ApplicationController
           end
         end
         @result.status = "revoked"
-        render_200_status
-      else
-        render_400_status
       end
+      render_200_status
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       render_400_status
@@ -129,19 +126,17 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.order_status = ccr.response_certificate_status
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
-            render_200_status
           else
             @result = @acr #so that rabl can report errors
           end
+          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_validate_v1_4
@@ -196,9 +191,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def api_parameters_v1_4
@@ -214,9 +207,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def scan
@@ -287,9 +278,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def reprocess_v1_3
@@ -387,9 +376,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_methods_csr_hash_v1_4
@@ -430,9 +417,7 @@ class ApiCertificateRequestsController < ApplicationController
     end
     render action: :dcv_methods_v1_4
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_email_resend_v1_3
