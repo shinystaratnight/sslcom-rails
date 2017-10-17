@@ -1,4 +1,4 @@
-class ApiUserRequestsController < ApplicationController
+class Api::V1::ApiUserRequestsController < Api::V1::APIController
   before_filter :set_test, :record_parameters
   # before_filter :find_user, :only => [:show_v1_4]
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token

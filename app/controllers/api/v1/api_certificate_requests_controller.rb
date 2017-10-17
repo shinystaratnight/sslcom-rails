@@ -1,4 +1,4 @@
-class ApiCertificateRequestsController < ApplicationController
+class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
   skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
