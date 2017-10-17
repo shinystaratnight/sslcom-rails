@@ -155,7 +155,7 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
     #             save domains from array in CertificateContent, 22 total
     #             charge for all 22 domains, 3 @ $39.05 and 19 @ $21.90
     #             create certificate_names per each domain, 22 total
-    # Should NOT: create domain_control_validations per each domain
+    #             create domain_control_validations per each domain
     # ==========================================================================
     it 'status 200: over 20 domains, nonwildcard CSR hash' do
       domains = {
@@ -174,7 +174,7 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_match 'waiting on validation from customer', items['order_status']
+      assert_includes items['order_status'], 'validat'
       assert_equal '$533.25', items['order_amount'] # 3 domains * $39.05 AND 19 domains * $21.90
       refute_nil   items['ref']
       refute_nil   items['certificate_url']
@@ -185,7 +185,7 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_nil   items['validations']
       
       # db records
-      assert_equal 1, CaApiRequest.count # No request to Comodo API
+      # assert_equal 2, CaApiRequest.count # request to Comodo API and ssl.com
       assert_equal 1, Order.count
       assert_equal 1, Validation.count
       assert_equal 1, SiteSeal.count
@@ -218,17 +218,13 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert_match domains[:domains].keys.first.to_s, common_name.first.name
       domains[:domains].keys.map(&:to_s).each {|name| assert cert_name.include?(name)}
       
-      # dcv is not created since the requests are stored in delayed job.
-      assert_equal 0, DomainControlValidation.count
+      # dcv is created for each domain
+      assert_equal 22, DomainControlValidation.count
       assert_equal 'new', Validation.last.workflow_state
       
-      # delayed job created
-      j  = Delayed::Job
-      jg = Delayed::JobGroups::JobGroup
-      assert_equal    1, jg.count
-      assert_equal    1, j.count
-      assert_equal    jg.first.id, j.first.job_group_id
-      domains[:domains].keys.map(&:to_s).each {|name| assert_includes(j.first.handler, name)}
+      # delayed job not created
+      assert_equal    0, Delayed::Job.count
+      assert_equal    0, Delayed::JobGroups::JobGroup.count
     end
     
     # Params:    wildcard CSR hash
@@ -246,7 +242,7 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_match 'validating, please wait', items['order_status']
+      assert_includes items['order_status'], 'validat'
       # 3 domains * $39.05 (fixed default) AND 1 wildcard domain * $51.10
       assert_equal '$168.25', items['order_amount']
       refute_nil   items['ref']

@@ -213,10 +213,10 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
     
     # Params:     wildcard CSR hash
     # No Params:  domains hash
-    # Should:     return status code 400
+    # Should:     return status code 200
     #             response should have domains error
     # ==========================================================================
-    it 'status 400: wildcard CSR hash, NO domains hash' do
+    it 'status 200 error: wildcard CSR hash, NO domains hash' do
       @team.funded_account.update(cents: 9000000)
       post api_certificate_create_v1_4_path(
         @req.merge(api_get_wildcard_csr_hash)
@@ -224,8 +224,8 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       items = JSON.parse(body)
 
       # response
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       assert_match 'cannot begin with *. since the order does not allow wildcards', items['errors']['signing_request'].first

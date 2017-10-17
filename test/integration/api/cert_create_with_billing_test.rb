@@ -152,7 +152,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
     # Should NOT:   charge the funded account
     #               charge the billing profile
     # ==========================================================================
-    it 'status 400: DECLINED billing_profile' do
+    it 'status 200: DECLINED billing_profile' do
       post api_certificate_create_v1_4_path(@req
         .merge(domains: (1..5).to_a.map {|n| "ssltestdomain#{n}.com"})
         .merge(billing_profile: @billing_profile_invalid.last_digits)
@@ -160,8 +160,8 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       items = JSON.parse(body)
 
       # response
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       assert_match 'This transaction has been declined.', items['errors']['billing_profile'].first
@@ -211,7 +211,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
     # Should NOT:   charge the funded account
     #               charge the billing profile
     # ==========================================================================
-    it 'status 400: INVALID funded_account' do
+    it 'status 200: INVALID funded_account' do
       @team.funded_account.update(cents: 50000)
       
       post api_certificate_create_v1_4_path(@req
@@ -220,8 +220,8 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       items = JSON.parse(body)
 
       # response
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       assert_includes items['errors']['funded_account'].first, 'Please deposit additional $157.00.'
