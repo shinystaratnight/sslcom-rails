@@ -1,30 +1,23 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
-  skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
   after_filter :notify_saved_result
-  layout false
 
   # parameters listed here made available as attributes in @result
-  wrap_parameters ApiCertificateRequest, include:
-      [*(ApiCertificateRequest::ACCESSORS+
-          ApiCertificateRequest::CREATE_ACCESSORS_1_4+
-          ApiCertificateRequest::RETRIEVE_ACCESSORS+
-          ApiCertificateRequest::REPROCESS_ACCESSORS+
-          ApiCertificateRequest::REVOKE_ACCESSORS+
-          ApiCertificateRequest::DCV_EMAILS_ACCESSORS).uniq]
-  respond_to :xml, :json
+  wrap_parameters ApiCertificateRequest, include: [*( 
+    ApiCertificateRequest::ACCESSORS+
+    ApiCertificateRequest::CREATE_ACCESSORS_1_4+
+    ApiCertificateRequest::RETRIEVE_ACCESSORS+
+    ApiCertificateRequest::REPROCESS_ACCESSORS+
+    ApiCertificateRequest::REVOKE_ACCESSORS+
+    ApiCertificateRequest::DCV_EMAILS_ACCESSORS
+  ).uniq]
 
-  TEST_SUBDOMAIN = "sws-test"
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
   SANDBOX_DOMAIN = "https://sandbox.ssl.com"
   SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
   ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
-
-  rescue_from MultiJson::DecodeError do |exception|
-    render :text => exception.to_s, :status => 422
-  end
-
+  
   def notify_saved_result
     @rendered=render_to_string(template: @template)
     unless @rendered.is_a?(String) && @rendered.include?('errors')
@@ -490,24 +483,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def find_certificate_order
     @certificate_order=@result.find_certificate_order
-  end
-
-  def decode_error
-    render :text => "JSON request could not be parsed", :status => 400
-  end
-  
-  def render_200_status
-    render template: @template, status: 200
-  end
-  
-  def render_400_status
-    render template: @template, status: 400
-  end
-  
-  def render_500_error(e)
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, 'server error')
   end
 
   def api_result_domain(certificate_order=nil)
