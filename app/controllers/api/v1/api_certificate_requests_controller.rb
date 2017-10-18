@@ -80,8 +80,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           co.revoke(@result.reason)
         else #revoke specific certs
           @acr.each do |signed_certificate|
-            SystemAudit.create(owner: @result.api_credential, target: signed_certificate,
-                               notes: "api revocation from ip address #{request.remote_ip}", action: "revoked")
+            SystemAudit.create(
+              owner:  @result.api_credential,
+              target: signed_certificate,
+              notes:  "api revocation from ip address #{request.remote_ip}",
+              action: "revoked"
+            )
             if signed_certificate.ca == "comodo"
               signed_certificate.revoke! @result.reason
             end
@@ -175,8 +179,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.effective_date = @acr.signed_certificate.effective_date
           @result.expiration_date = @acr.signed_certificate.expiration_date
           @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-          @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
-                                                    layout: false))
+          @result.site_seal_code = ERB::Util.json_escape(render_to_string(
+            partial: 'site_seals/site_seal_code.html.haml',
+            locals: {co: @acr},
+            layout: false
+          ))
         end
         render(:template => @template) and return
       end
@@ -440,10 +447,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   private
-
-  def set_test
-    @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
-  end
 
   def record_parameters
     klass = case params[:action]

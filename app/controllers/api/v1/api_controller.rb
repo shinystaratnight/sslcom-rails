@@ -1,6 +1,9 @@
 class Api::V1::APIController < ActionController::API
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
+  include ActionController::Rendering
+  include ActionController::ImplicitRender
+  include ActionView::Rendering
   
   before_filter :activate_authlogic
     
