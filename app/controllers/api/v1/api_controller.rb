@@ -30,7 +30,7 @@ class Api::V1::APIController < ActionController::API
   end
   
   def render_400_status
-    render template: @template, status: 400
+    render template: @template, status: 200
   end
   
   def render_500_error(e)
