@@ -195,6 +195,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/repository #{release_path}/public/repository"
     run "ln -nfs #{shared_path}/repository #{release_path}/public/certs"
     run "ln -nfs #{shared_path}/config/local_env.yml #{release_path}/config/local_env.yml"
+    run "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'
