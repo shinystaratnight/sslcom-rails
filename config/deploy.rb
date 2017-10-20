@@ -1,4 +1,4 @@
-set :rvm_ruby_string, '2.3.3-p222'                     # Or:
+# set :rvm_ruby_string, '2.3.3-p222'                     # Or:
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
@@ -25,19 +25,25 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-# set :domain, '54.204.18.222' #WP development
-# set :domain, '50.19.246.227' #Rails 4 staging
-set :domain, 'ra.sslpki.local' #Rails 4 production
-#set :domain, 'staging2.ssl.com' #development
-# set :domain, '54.83.39.189' # comodo extractor
 
-# set :application, "sws-test.sslpki.com" # test api
-# set :application, "sws.sslpki.com" # api
-# set :domain, '174.129.43.244' # sws.sslpki.com api
-
-# set :application, "certassure_com"
-# set :domain, '107.21.244.70'
-
+server = "staging"
+case server
+  when /staging/
+    set :user, "ubuntu"
+    set :branch, "staging"
+    set :domain, '50.19.246.227' #Rails 4 staging
+    set :deploy_to, "/home/ubuntu/sites/#{application}"
+  when /production/
+    set :user, "ubuntu"
+    set :branch, "master"
+    set :domain, 'ra.sslpki.local'
+    set :deploy_to, "/home/ubuntu/sites/#{application}"
+  when /production_api/
+    set :user, "leo"
+    set :branch, "master"
+    set :domain, 'sws-a1.sslpki.local'
+    set :deploy_to, "/srv/www/#{application}"
+end
 
 #set :deploy_via, :copy
 #set :copy_strategy, :export
@@ -48,7 +54,6 @@ set :domain, 'ra.sslpki.local' #Rails 4 production
 # Git
 set :scm, :git
 set :repository, "git@github.com:SSLcom/sslcom-rails.git"
-set :deploy_to, "/home/ubuntu/sites/#{application}"
 set :deploy_via, :remote_cache
 
 # NOTE: for some reason Capistrano requires you to have both the public and
@@ -56,8 +61,6 @@ set :deploy_via, :remote_cache
 # extension ".pub".
 ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
-set :user, "ubuntu"
-set :branch, "master"
 set :use_sudo, false
 
 role :cache, domain
@@ -205,6 +208,6 @@ after 'deploy:update', 'deploy:symlink_shared'
 
 
 #whenever
-set :whenever_command, "bundle exec whenever"
+# set :whenever_command, "bundle exec whenever"
 # disable this on production web
 #require "whenever/capistrano"

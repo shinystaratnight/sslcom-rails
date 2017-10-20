@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
-  after_filter :set_access_control_headers
+  after_filter :set_access_control_headers, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
   def sandbox_notice
     flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
@@ -56,7 +56,9 @@ class ApplicationController < ActionController::Base
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
     headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
   def permission_denied
