@@ -9,11 +9,11 @@ class CertCreateNoCsrTest < ActionDispatch::IntegrationTest
       @req = api_get_request_for_dv
     end
     
-    it 'status 400: not enough funds' do
+    it 'status 200 error: not enough funds' do
       post api_certificate_create_v1_4_path(@req)
       items = JSON.parse(body)
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       refute_nil   items['errors']['funded_account']
@@ -26,7 +26,8 @@ class CertCreateNoCsrTest < ActionDispatch::IntegrationTest
       refute       response.success?
       assert_equal 400, status
       assert_equal 1, items.count
-      assert_equal 3, items['errors'].count
+      assert_equal 4, items['errors'].count
+      refute_nil   items['errors']['login'] # didn't provide secret_key
       refute_nil   items['errors']['secret_key']
       refute_nil   items['errors']['period']
       refute_nil   items['errors']['product']

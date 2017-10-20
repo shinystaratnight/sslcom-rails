@@ -1,30 +1,23 @@
-class ApiCertificateRequestsController < ApplicationController
+class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
-  skip_filter :identify_visitor, :record_visit, :verify_authenticity_token
   after_filter :notify_saved_result
-  layout false
 
   # parameters listed here made available as attributes in @result
-  wrap_parameters ApiCertificateRequest, include:
-      [*(ApiCertificateRequest::ACCESSORS+
-          ApiCertificateRequest::CREATE_ACCESSORS_1_4+
-          ApiCertificateRequest::RETRIEVE_ACCESSORS+
-          ApiCertificateRequest::REPROCESS_ACCESSORS+
-          ApiCertificateRequest::REVOKE_ACCESSORS+
-          ApiCertificateRequest::DCV_EMAILS_ACCESSORS).uniq]
-  respond_to :xml, :json
+  wrap_parameters ApiCertificateRequest, include: [*( 
+    ApiCertificateRequest::ACCESSORS+
+    ApiCertificateRequest::CREATE_ACCESSORS_1_4+
+    ApiCertificateRequest::RETRIEVE_ACCESSORS+
+    ApiCertificateRequest::REPROCESS_ACCESSORS+
+    ApiCertificateRequest::REVOKE_ACCESSORS+
+    ApiCertificateRequest::DCV_EMAILS_ACCESSORS
+  ).uniq]
 
-  TEST_SUBDOMAIN = "sws-test"
   ORDERS_DOMAIN = "https://#{Settings.community_domain}"
   SANDBOX_DOMAIN = "https://sandbox.ssl.com"
   SCAN_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/cipherscan #{parameters} #{url}"}
   ANALYZE_COMMAND=->(parameters, url){%x"echo QUIT | cipherscan/analyze.py #{parameters} #{url}"}
-
-  rescue_from MultiJson::DecodeError do |exception|
-    render :text => exception.to_s, :status => 422
-  end
-
+  
   def notify_saved_result
     @rendered=render_to_string(template: @template)
     unless @rendered.is_a?(String) && @rendered.include?('errors')
@@ -63,11 +56,10 @@ class ApiCertificateRequestsController < ApplicationController
               @result.api_response=ccr.response
             end
             set_result_parameters(@result, @acr)
-            render_200_status
           else
             @result = @acr #so that rabl can report errors
-            render_400_status
           end
+          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
@@ -88,18 +80,20 @@ class ApiCertificateRequestsController < ApplicationController
           co.revoke(@result.reason)
         else #revoke specific certs
           @acr.each do |signed_certificate|
-            SystemAudit.create(owner: @result.api_credential, target: signed_certificate,
-                               notes: "api revocation from ip address #{request.remote_ip}", action: "revoked")
+            SystemAudit.create(
+              owner:  @result.api_credential,
+              target: signed_certificate,
+              notes:  "api revocation from ip address #{request.remote_ip}",
+              action: "revoked"
+            )
             if signed_certificate.ca == "comodo"
               signed_certificate.revoke! @result.reason
             end
           end
         end
         @result.status = "revoked"
-        render_200_status
-      else
-        render_400_status
       end
+      render_200_status
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       render_400_status
@@ -129,19 +123,17 @@ class ApiCertificateRequestsController < ApplicationController
             # @result.order_status = ccr.response_certificate_status
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
-            render_200_status
           else
             @result = @acr #so that rabl can report errors
           end
+          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_validate_v1_4
@@ -187,8 +179,11 @@ class ApiCertificateRequestsController < ApplicationController
           @result.effective_date = @acr.signed_certificate.effective_date
           @result.expiration_date = @acr.signed_certificate.expiration_date
           @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-          @result.site_seal_code = ERB::Util.json_escape(render_to_string(partial: 'site_seals/site_seal_code.html.haml',:locals=>{:co=>@acr},
-                                                    layout: false))
+          @result.site_seal_code = ERB::Util.json_escape(render_to_string(
+            partial: 'site_seals/site_seal_code.html.haml',
+            locals: {co: @acr},
+            layout: false
+          ))
         end
         render(:template => @template) and return
       end
@@ -196,9 +191,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def api_parameters_v1_4
@@ -214,9 +207,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def scan
@@ -287,9 +278,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def reprocess_v1_3
@@ -387,9 +376,7 @@ class ApiCertificateRequestsController < ApplicationController
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_methods_csr_hash_v1_4
@@ -430,9 +417,7 @@ class ApiCertificateRequestsController < ApplicationController
     end
     render action: :dcv_methods_v1_4
   rescue => e
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, "server error")
+    render_500_error e
   end
 
   def dcv_email_resend_v1_3
@@ -462,10 +447,6 @@ class ApiCertificateRequestsController < ApplicationController
   end
 
   private
-
-  def set_test
-    @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
-  end
 
   def record_parameters
     klass = case params[:action]
@@ -505,24 +486,6 @@ class ApiCertificateRequestsController < ApplicationController
 
   def find_certificate_order
     @certificate_order=@result.find_certificate_order
-  end
-
-  def decode_error
-    render :text => "JSON request could not be parsed", :status => 400
-  end
-  
-  def render_200_status
-    render template: @template, status: 200
-  end
-  
-  def render_400_status
-    render template: @template, status: 400
-  end
-  
-  def render_500_error(e)
-    logger.error e.message
-    e.backtrace.each { |line| logger.error line }
-    error(500, 500, 'server error')
   end
 
   def api_result_domain(certificate_order=nil)

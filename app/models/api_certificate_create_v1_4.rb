@@ -74,7 +74,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #TODO add dcv validation
       end
     end
-    # verify_domain_limits
+    verify_domain_limits
   end
 
   def create_certificate_order

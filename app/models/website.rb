@@ -4,7 +4,7 @@ class Website
 
   def self.sandbox_db
     @website=Website.new
-    @website.database_name=ENV.fetch('SANDBOX_DATABASE') || "sandbox_ssl_com"
+    @website.database_name=get_database_name
     @website
   end
 
@@ -18,6 +18,11 @@ class Website
   end
 
   private
+  
+  def self.get_database_name
+    target_db = ENV.fetch('SANDBOX_DATABASE') if ENV['SANDBOX_DATABASE'].present?
+    target_db || 'sandbox_ssl_com'
+  end
 
 # Regular database.yml configuration hash
   def default_connection

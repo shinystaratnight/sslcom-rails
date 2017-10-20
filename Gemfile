@@ -65,6 +65,7 @@ gem 'compass-rails'
 gem 'select2-rails'
 gem 'stripe'
 gem 'json-schema'
+gem 'rails-api'
 
 group :development do
   gem 'foreman'

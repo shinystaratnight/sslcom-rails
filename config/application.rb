@@ -62,7 +62,10 @@ module SslCom
     # config.generators do |g|
     #   g.fixture_replacement :machinist
     # end
-
+    
+    # Rails Api
+    config.api_only = false
+    
     #turn off strong parameters
     config.action_controller.permit_all_parameters = true
 
