@@ -21,7 +21,7 @@ class ApplicationController < ActionController::Base
   before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
-  after_filter :set_access_control_headers, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
+  after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
   def sandbox_notice
     flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
