@@ -59,13 +59,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-        render_400_status
       end
     end
+    render_200_status
   rescue => e
     render_500_error e
   end
@@ -93,11 +92,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
         @result.status = "revoked"
       end
-      render_200_status
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-      render_400_status
     end
+    render_200_status
   rescue => e
     render_500_error e
   end
@@ -126,12 +124,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             @result = @acr #so that rabl can report errors
           end
-          render_200_status
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
+    render_200_status
   rescue => e
     render_500_error e
   end

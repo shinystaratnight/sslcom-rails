@@ -25,11 +25,10 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
           @result = @obj #so that rabl can report errors
         end
       end
-      render_200_status
     else
       InvalidApiUserRequest.create parameters: params
-      render_400_status
     end
+    render_200_status
   rescue => e
     render_500_error e
   end
@@ -50,11 +49,10 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
       else
         @result.errors[:login] << "#{@result.login} not found or incorrect password"
       end
-      render_200_status
     else
       InvalidApiUserRequest.create parameters: params
-      render_400_status
     end
+    render_200_status
   rescue => e
     render_500_error e
   end
