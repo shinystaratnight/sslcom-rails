@@ -2,28 +2,19 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_name.rb" line="53" mnemonic="4" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="140" mnemonic="9" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="186" mnemonic="8" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="141" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="187" mnemonic="8" />
     <bookmark url="file://$PROJECT_DIR$/app/helpers/application_helper.rb" line="287" mnemonic="5" />
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="550" mnemonic="6" />
-    <bookmark url="file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" line="348" mnemonic="1" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="388" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="434" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/lib/active_record.rb" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/lib/acts_as_billable/lib/address.rb" afterPath="$PROJECT_DIR$/app/models/address.rb" />
+    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="CORS header">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.generators" afterPath="$PROJECT_DIR$/.idea/.generators" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/paypal_express_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/paypal_express_controller.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/helpers/paypal_express_helper.rb" afterPath="$PROJECT_DIR$/app/helpers/paypal_express_helper.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/billing_profile.rb" afterPath="$PROJECT_DIR$/app/models/billing_profile.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/application.rb" afterPath="$PROJECT_DIR$/config/application.rb" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/routes.rb" afterPath="$PROJECT_DIR$/config/routes.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,169 +29,272 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1433558499414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1428084191886" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_valid__ssl_com_rails3.coverage" NAME="ApiCredential is valid: ssl_com_rails3 Coverage Results" MODIFIED="1400509623757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1432701157695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1428084191886" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL: ssl_com_rails3 Coverage Results" MODIFIED="1400454091340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController Get #show shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1400882183149" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1433558499414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1421859367439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1432701157695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1428081782998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1431016051714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1421859367439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
     <option name="GROUP_SCHEMA" value="true" />
     <option name="GROUP_CONTENTS" value="false" />
     <option name="SORT_POSITIONED" value="false" />
     <option name="SHOW_TABLE_DETAILS" value="true" />
     <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <expand />
+    <select />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="ExportTestResults" outputFolder="$USER_HOME$/Downloads" userTempatePath="" />
   <component name="FavoritesManager">
     <favorites_list name="ssl_com_rails3" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="order.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <file leaf-file-name="cert_create_101_ucc_ssl_test.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/test/integration/api/cert_create_101_ucc_ssl_test.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="112">
-              <caret line="442" column="0" selection-start-line="442" selection-start-column="0" selection-end-line="442" selection-end-column="0" />
+            <state relative-caret-position="216">
+              <caret line="223" column="6" lean-forward="true" selection-start-line="223" selection-start-column="6" selection-end-line="223" selection-end-column="6" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="workflow.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow.rb">
+      <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="47" column="11" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="11" />
+            <state relative-caret-position="294">
+              <caret line="35" column="19" lean-forward="true" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="19" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="active_record.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/active_record.rb">
+      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="132">
-              <caret line="6" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+            <state relative-caret-position="126">
+              <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="kernel.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/kernel.rb">
+      <file leaf-file-name="api_constraint.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/constraints/api_constraint.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="21">
+              <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_controller.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="84">
+              <caret line="4" column="42" lean-forward="true" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="update_v1_4.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="money.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/money.rb">
+      <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-              <folding />
+            <state relative-caret-position="399">
+              <caret line="64" column="9" lean-forward="true" selection-start-line="64" selection-start-column="9" selection-end-line="64" selection-end-column="9" />
+              <folding>
+                <marker date="1508775488458" expanded="true" signature="47:21248" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="2022:2841" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="2082:2841" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="2256:2841" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="2298:2841" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="5366:5409" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="5434:5957" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="5504:5919" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="5526:5911" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="5974:8263" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="6032:8220" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="6098:8127" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="6783:7126" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="7135:8067" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="8290:8893" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="8295:8850" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="8361:8757" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="8905:9284" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="8938:9021" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="8959:9013" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="9037:9278" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="9067:9122" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9139:9195" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9214:9270" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9299:9663" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="9332:9418" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="9353:9410" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="9434:9657" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="9464:9513" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9530:9580" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9599:9649" ph="{ ... }" />
+                <marker date="1508775488458" expanded="true" signature="9681:12067" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="9793:12024" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="9878:11931" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="9980:11871" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="10532:10879" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="10890:11832" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="12089:13268" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="12157:13262" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="12332:13254" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="12356:13155" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="12442:13143" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="13289:13739" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="13294:13701" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="13762:14503" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="13767:14497" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="13919:14237" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="14086:14227" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="14244:14404" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="14527:16226" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="14592:16183" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="14681:14744" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="14780:15990" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="14867:15054" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="15085:15980" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="15288:15968" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="15997:16090" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="16259:18161" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="16324:18081" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="16470:17988" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="16535:17803" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="16630:16882" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="16976:17791" ph="do ... end" />
+                <marker date="1508775488458" expanded="true" signature="17185:17777" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="17812:17909" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="18190:18553" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="18195:18515" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="18248:18422" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="18576:19010" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="18648:18972" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="18782:18879" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="19046:20495" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="19059:19906" ph="case ... end" />
+                <marker date="1508775488458" expanded="true" signature="20525:20585" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="20633:21244" ph=" ... end" />
+                <marker date="1508775488458" expanded="true" signature="20638:21238" ph="unless ... end" />
+                <marker date="1508775488458" expanded="true" signature="20676:20941" ph="if ... end" />
+                <marker date="1508775488458" expanded="true" signature="20957:21230" ph="if ... end" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="array.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/array.rb">
+      <file leaf-file-name="create_v1_4.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="asset_tag_helper.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/asset_tag_helper.rb">
+      <file leaf-file-name="parse_csr.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/parse_csr.rabl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="105">
+              <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="active_record.rb" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lib/active_record.rb">
+      <file leaf-file-name="routes.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/routes.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="110">
-              <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/application.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="273">
-              <caret line="108" column="31" selection-start-line="108" selection-start-column="31" selection-end-line="108" selection-end-column="31" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="remodel.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/remodel.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
+            <state relative-caret-position="-3357">
+              <caret line="54" column="57" lean-forward="false" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>i</find>
+      <find>$PROJECT_DIR$</find>
+      <find>\</find>
+      <find>subca_mapping</find>
+      <find>COMODO_API_TEST_USERNAME</find>
+      <find>def.+?headers</find>
+      <find>via: :</find>
+      <find>def.+?400</find>
+      <find>def create_</find>
+      <find>parse</find>
+      <find>headers</find>
+      <find>def render</find>
+      <find>set_access_control_headers</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>/</replace>
+      <replace>via: [:options, :</replace>
+    </replaceStrings>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -215,20 +309,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="sp-98-api-scope" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/config/environments/production.rb" />
-        <option value="$PROJECT_DIR$/config.ru" />
-        <option value="$PROJECT_DIR$/app/stylesheets/main.sass" />
-        <option value="$PROJECT_DIR$/config/ssl/www_ssl_com_11102014.key" />
-        <option value="$PROJECT_DIR$/config/ssl/www_ssl_com_11102014.crt" />
-        <option value="$PROJECT_DIR$/app/views/user_sessions/new.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb" />
         <option value="$PROJECT_DIR$/config/initializers/in_place_editing.rb" />
         <option value="$PROJECT_DIR$/bin/rails" />
         <option value="$PROJECT_DIR$/config/initializers/session_store.rb" />
@@ -256,16 +343,13 @@
         <option value="$PROJECT_DIR$/app/models/certificate.rb" />
         <option value="$PROJECT_DIR$/app/models/product_variant_group.rb" />
         <option value="$PROJECT_DIR$/app/models/csr.rb" />
-        <option value="$PROJECT_DIR$/config/database.yml" />
         <option value="$PROJECT_DIR$/app/models/discount.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/order.rb" />
         <option value="$PROJECT_DIR$/app/views/funded_accounts/_certificate_order_detail.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
         <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
         <option value="$PROJECT_DIR$/app/models/country.rb" />
         <option value="$PROJECT_DIR$/app/controllers/paypal_express_controller.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/models/billing_profile.rb" />
         <option value="$PROJECT_DIR$/app/helpers/paypal_express_helper.rb" />
@@ -273,6 +357,16 @@
         <option value="$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/active_record.rb" />
         <option value="$PROJECT_DIR$/lib/active_record.rb" />
         <option value="$PROJECT_DIR$/config/application.rb" />
+        <option value="$PROJECT_DIR$/Vagrantfile" />
+        <option value="$PROJECT_DIR$/.vagrant/machines/default/virtualbox/synced_folders" />
+        <option value="$PROJECT_DIR$/config/local_env.yml" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/test/integration/api/cert_create_101_ucc_ssl_test.rb" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
       </list>
     </option>
   </component>
@@ -289,11 +383,11 @@
     <option name="FILTER_DEBUG" value="true" />
     <option name="CUSTOM_FILTER" />
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-9" />
     <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1048" />
+    <option name="width" value="738" />
+    <option name="height" value="978" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -303,10 +397,22 @@
             <id />
           </State>
           <State>
+            <id>CoffeeScript</id>
+          </State>
+          <State>
+            <id>GeneralCoffeeScript</id>
+          </State>
+          <State>
+            <id>GeneralJavaScript</id>
+          </State>
+          <State>
             <id>JavaScript</id>
           </State>
           <State>
             <id>Potentially confusing code constructsJavaScript</id>
+          </State>
+          <State>
+            <id>TypeScript</id>
           </State>
         </expanded-state>
         <selected-state>
@@ -316,16 +422,6 @@
         </selected-state>
       </profile-state>
     </entry>
-  </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
-    <OptionsSetting value="true" id="Add" />
-    <OptionsSetting value="true" id="Remove" />
-    <OptionsSetting value="true" id="Checkout" />
-    <OptionsSetting value="true" id="Update" />
-    <OptionsSetting value="true" id="Status" />
-    <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectReloadState">
     <option name="STATE" value="0" />
@@ -345,98 +441,85 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="vendor" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="lib" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sslcom-rails" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="config" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="initializers" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="constraints" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="v1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="api" type="462c0819:PsiDirectoryNode" />
+              <item name="v1" type="462c0819:PsiDirectoryNode" />
+              <item name="api_certificate_requests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="certificate_orders" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="certificates" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="RailsProjectView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="zeus.debugging.info.shown" value="true" />
     <property name="last_opened_file_path" value="C:/RailsInstaller/Ruby2.2.0/bin/ruby.exe" />
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
@@ -463,24 +546,29 @@
     <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
     <property name="RailsGeneratorsPopup.hiddenIncluded" value="false" />
     <property name="com.intellij.ide.scratch.ScratchpadManager" value="CoffeeScript" />
-    <property name="settings.editor.selected.configurable" value="org.jetbrains.plugins.ruby.settings.RubyActiveModuleSdkConfigurable" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.vagrant" />
     <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\views\api\v1" />
+      <recent name="C:\Users\leo\git\sslcom-rails\app\models" />
+      <recent name="C:\Users\leo\git\sslcom-rails\config\initializers" />
+      <recent name="C:\Users\leo\git\sslcom-rails\config" />
+      <recent name="C:\Users\leo\git\sslcom-rails\lib" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\leo\git\sslcom-rails\lib\preferences" />
       <recent name="C:\Users\leo\git\sslcom-rails\lib" />
       <recent name="$PROJECT_DIR$/config/database" />
       <recent name="$PROJECT_DIR$/app/views/certificate_orders" />
       <recent name="$PROJECT_DIR$/app/models" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\leo\git\sslcom-rails\app\models" />
-      <recent name="C:\Users\leo\git\sslcom-rails\config\initializers" />
-      <recent name="C:\Users\leo\git\sslcom-rails\config" />
-      <recent name="C:\Users\leo\git\sslcom-rails\lib" />
-      <recent name="$PROJECT_DIR$/config/client/certassure" />
     </key>
   </component>
   <component name="RestClientSettings">
@@ -1356,24 +1444,44 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="IRB console.Rails console: ssl_com_rails3">
-    <configuration default="false" name="Docker Deployment" type="docker-deploy" factoryName="Docker Deployment" temporary="true" server-name="Docker">
-      <deployment type="docker-image">
-        <settings>
-          <option name="JSONFilePath" value="" />
-          <option name="command" value="" />
-          <option name="containerName" value="" />
-          <option name="entrypoint" value="" />
-          <option name="imageTag" value="sha256:771ab256cd538ef6311de4258f9cf803f400b4c49c76e660427d5b66e12aad9d" />
-          <option name="portBindingsExpanded" value="true" />
-          <option name="startBrowserSettings">
-            <browser start="true" url="http://192.168.99.100" />
-          </option>
-        </settings>
-      </deployment>
-      <method />
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Capistrano.deploy: ssl_com_rails3">
+    <configuration name="All tests in api: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="$MODULE_DIR$/test/integration/api" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/{*_test,test_*,*_spec}.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="ALL_IN_FOLDER" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
     </configuration>
-    <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+    <configuration name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
       <module name="ssl_com_rails3" />
       <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
       <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
@@ -1386,40 +1494,106 @@
       <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
       <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console" />
       <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
-      <method />
     </configuration>
-    <configuration default="false" name="IRB console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+    <configuration name="Run test 'CertRevokeTest': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
       <module name="ssl_com_rails3" />
-      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
-      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
-      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+    </configuration>
+    <configuration name="Run test 'api_certificate_revoke_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+    </configuration>
+    <configuration name="Run test 'cert_create_with_csr_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_create_with_csr_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+    </configuration>
+    <configuration default="true" type="RailsRunConfigurationType" factoryName="Rails">
+      <predefined_log_file id="RUBY_RAILS_SERVER" enabled="true" />
+      <module name="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$PROJECT_DIR$" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$APPLICATION_HOME_DIR$/rb/testing/runner/irb.rb" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="--prompt simple" />
-      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
-      <method />
-    </configuration>
-    <configuration default="false" name="rails:update: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
-      <module name="ssl_com_rails3" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="rails:update" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-      <method />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="Default" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
     </configuration>
     <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
       <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
@@ -1497,26 +1671,6 @@
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
       <method />
     </configuration>
-    <configuration default="true" type="RailsRunConfigurationType" factoryName="Rails">
-      <predefined_log_file id="RUBY_RAILS_SERVER" enabled="true" />
-      <module name="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs />
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="Default" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
-      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
-      <method />
-    </configuration>
     <configuration default="true" type="RakeRunConfigurationType" factoryName="Rake">
       <module name="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1588,16 +1742,6 @@
     <configuration default="true" type="docker-deploy" factoryName="Docker Deployment">
       <method />
     </configuration>
-    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
-      <node-interpreter>project</node-interpreter>
-      <node-options />
-      <gulpfile />
-      <tasks />
-      <arguments />
-      <pass-parent-envs>true</pass-parent-envs>
-      <envs />
-      <method />
-    </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
       <command value="run-script" />
       <scripts />
@@ -1618,7 +1762,7 @@
       <recursive>false</recursive>
       <method />
     </configuration>
-    <configuration default="false" name="docker-whale" type="docker-deploy" factoryName="Docker Deployment" server-name="Docker">
+    <configuration name="docker-whale" type="docker-deploy" factoryName="Docker Deployment" server-name="Docker">
       <deployment type="docker-image">
         <settings>
           <option name="JSONFilePath" value="" />
@@ -1642,44 +1786,109 @@
           </option>
         </settings>
       </deployment>
-      <method />
     </configuration>
-    <list size="21">
-      <item index="0" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
-      <item index="1" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
-      <item index="2" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
-      <item index="3" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
-      <item index="4" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
-      <item index="5" class="java.lang.String" itemvalue="Docker Deployment.docker-whale" />
-      <item index="6" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="7" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
-      <item index="8" class="java.lang.String" itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
-      <item index="9" class="java.lang.String" itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="11" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="12" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="13" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
-      <item index="14" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
-      <item index="15" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
-      <item index="16" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
-      <item index="17" class="java.lang.String" itemvalue="Docker Deployment.Docker Deployment" />
-      <item index="18" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
-      <item index="19" class="java.lang.String" itemvalue="IRB console.IRB console: ssl_com_rails3" />
-      <item index="20" class="java.lang.String" itemvalue="Rake.rails:update: ssl_com_rails3" />
+    <configuration name="requires a `ref` parameter: ssl_com_rails3 (1)" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="/test_\d+_requires a `ref` parameter/" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_METHOD" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+    </configuration>
+    <configuration name="requires a `ref` parameter: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="/test_\d+_requires a `ref` parameter/" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_METHOD" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+    </configuration>
+    <list size="31">
+      <item index="0" class="java.lang.String" itemvalue="Capistrano.deploy: ssl_com_rails3" />
+      <item index="1" class="java.lang.String" itemvalue="Capistrano.deploy:cleanup: ssl_com_rails3" />
+      <item index="2" class="java.lang.String" itemvalue="Capistrano.deploy:restart: ssl_com_rails3" />
+      <item index="3" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="6" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="7" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="8" class="java.lang.String" itemvalue="Docker Deployment.docker-whale" />
+      <item index="9" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+      <item index="10" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="11" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
+      <item index="12" class="java.lang.String" itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="15" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="16" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="17" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="18" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
+      <item index="19" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+      <item index="20" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in billing: ssl_com_rails3" />
+      <item index="21" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in integration: ssl_com_rails3" />
+      <item index="22" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'api_certificate_revoke_test': ssl_com_rails3" />
+      <item index="23" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
+      <item index="24" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
+      <item index="25" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
+      <item index="26" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in api: ssl_com_rails3" />
+      <item index="27" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'CertRevokeTest': ssl_com_rails3" />
+      <item index="28" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'cert_create_with_csr_test': ssl_com_rails3" />
+      <item index="29" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3" />
+      <item index="30" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3 (1)" />
     </list>
     <recent_temporary>
-      <list size="3">
-        <item index="0" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
-        <item index="1" class="java.lang.String" itemvalue="Rake.rails:update: ssl_com_rails3" />
-        <item index="2" class="java.lang.String" itemvalue="IRB console.IRB console: ssl_com_rails3" />
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in api: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'cert_create_with_csr_test': ssl_com_rails3" />
+        <item index="3" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3 (1)" />
+        <item index="4" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'CertRevokeTest': ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SpringUtil" SPRING_PRE_LOADER_OPTION="true" />
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="windows-1252" />
+    <option name="myConnectionType" value="CURRENT_VAGRANT" />
+    <option name="myConnectionId" value="" />
+  </component>
   <component name="SvnConfiguration">
-    <configuration />
+    <configuration>C:\Users\leo\AppData\Roaming\Subversion</configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -1718,48 +1927,11 @@
       <workItem from="1464107029612" duration="11640000" />
       <workItem from="1464210291632" duration="2135000" />
       <workItem from="1464231937200" duration="16356000" />
-    </task>
-    <task id="LOCAL-00296" summary="show subscribe agreement option in api">
-      <created>1427840632237</created>
-      <option name="number" value="00296" />
-      <option name="presentableId" value="LOCAL-00296" />
-      <option name="project" value="LOCAL" />
-      <updated>1427840632238</updated>
-    </task>
-    <task id="LOCAL-00297" summary="added dynamic pricing for aaron">
-      <created>1427910834026</created>
-      <option name="number" value="00297" />
-      <option name="presentableId" value="LOCAL-00297" />
-      <option name="project" value="LOCAL" />
-      <updated>1427910834028</updated>
-    </task>
-    <task id="LOCAL-00298" summary="adjusted hard limit to 39 months when submitting to comodo">
-      <created>1428083961265</created>
-      <option name="number" value="00298" />
-      <option name="presentableId" value="LOCAL-00298" />
-      <option name="project" value="LOCAL" />
-      <updated>1428083961266</updated>
-    </task>
-    <task id="LOCAL-00299" summary="39 month fix">
-      <created>1428087136204</created>
-      <option name="number" value="00299" />
-      <option name="presentableId" value="LOCAL-00299" />
-      <option name="project" value="LOCAL" />
-      <updated>1428087136204</updated>
-    </task>
-    <task id="LOCAL-00300" summary="39 month fix">
-      <created>1428087192930</created>
-      <option name="number" value="00300" />
-      <option name="presentableId" value="LOCAL-00300" />
-      <option name="project" value="LOCAL" />
-      <updated>1428087192930</updated>
-    </task>
-    <task id="LOCAL-00301" summary="39 month fix">
-      <created>1428088113445</created>
-      <option name="number" value="00301" />
-      <option name="presentableId" value="LOCAL-00301" />
-      <option name="project" value="LOCAL" />
-      <updated>1428088113446</updated>
+      <workItem from="1508277269077" duration="1281000" />
+      <workItem from="1508351127249" duration="5232000" />
+      <workItem from="1508430064659" duration="6756000" />
+      <workItem from="1508445839297" duration="7158000" />
+      <workItem from="1508515499659" duration="17506000" />
     </task>
     <task id="LOCAL-00302" summary="show subscriber agreement">
       <created>1428184343256</created>
@@ -2062,64 +2234,118 @@
       <option name="project" value="LOCAL" />
       <updated>1464114302241</updated>
     </task>
-    <option name="localTasksCounter" value="345" />
+    <task id="LOCAL-00345" summary="changed deploy">
+      <created>1508532384625</created>
+      <option name="number" value="00345" />
+      <option name="presentableId" value="LOCAL-00345" />
+      <option name="project" value="LOCAL" />
+      <updated>1508532384629</updated>
+    </task>
+    <task id="LOCAL-00346" summary="CORS header for API calls">
+      <created>1508535840010</created>
+      <option name="number" value="00346" />
+      <option name="presentableId" value="LOCAL-00346" />
+      <option name="project" value="LOCAL" />
+      <updated>1508535840010</updated>
+    </task>
+    <task id="LOCAL-00347" summary="put OPTIONS in apir routes to fix CORS issues">
+      <created>1508537144532</created>
+      <option name="number" value="00347" />
+      <option name="presentableId" value="LOCAL-00347" />
+      <option name="project" value="LOCAL" />
+      <updated>1508537144532</updated>
+    </task>
+    <task id="LOCAL-00348" summary="rename parser rabl file due to errors thrown">
+      <created>1508538741314</created>
+      <option name="number" value="00348" />
+      <option name="presentableId" value="LOCAL-00348" />
+      <option name="project" value="LOCAL" />
+      <updated>1508538741314</updated>
+    </task>
+    <task id="LOCAL-00349" summary="return status 200">
+      <created>1508539108129</created>
+      <option name="number" value="00349" />
+      <option name="presentableId" value="LOCAL-00349" />
+      <option name="project" value="LOCAL" />
+      <updated>1508539108129</updated>
+    </task>
+    <task id="LOCAL-00350" summary="refactor api views location">
+      <created>1508775470048</created>
+      <option name="number" value="00350" />
+      <option name="presentableId" value="LOCAL-00350" />
+      <option name="project" value="LOCAL" />
+      <updated>1508775470048</updated>
+    </task>
+    <option name="localTasksCounter" value="351" />
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 03m 05s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 04m 26s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 06m 38s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 13m 57s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 21m 58s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 34m 41s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 43m 15s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 47m 27s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 50m 37s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+    <history-entry file="All_tests_in_api__ssl_com_rails3 - 2017.10.20 at 15h 51m 39s.xml">
+      <configuration name="All tests in api: ssl_com_rails3" configurationId="TestUnitRunConfigurationType" />
+    </history-entry>
+  </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="186496000" />
+    <option name="totallyTimeSpent" value="224429000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21137339" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33442265" sideWeight="0.4613734" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3689218" sideWeight="0.5364583" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.073497854" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41120508" sideWeight="0.79926276" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50305086" sideWeight="0.48961127" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41285402" sideWeight="0.43454936" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33333334" sideWeight="0.33385417" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5022676" sideWeight="0.4875" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5442177" sideWeight="0.38541666" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.061979167" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41043085" sideWeight="0.79583335" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20107238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4164905" sideWeight="0.625" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.41285402" sideWeight="0.56545067" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41285402" sideWeight="0.56545067" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4117647" sideWeight="0.608985" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970807" sideWeight="0.49862638" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32881355" sideWeight="0.4997227" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.49509802" sideWeight="0.17526345" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4117647" sideWeight="0.608985" order="14" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.50508475" sideWeight="0.4997227" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45762712" sideWeight="0.65224624" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32881355" sideWeight="0.4997227" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3264075" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3294509" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41288134" sideWeight="0.8125347" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19855796" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.46936274" sideWeight="0.82473654" order="4" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -2135,12 +2361,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="added cancan permissions" />
-    <MESSAGE value="country code restrictions in csr. external order number kept getting over written upon reprocess - fixed" />
-    <MESSAGE value="fixed row line description" />
-    <MESSAGE value="apache fix" />
-    <MESSAGE value="deployed Developer's Corner" />
-    <MESSAGE value="Developer's Corner" />
     <MESSAGE value="fixed renewal ucc order page" />
     <MESSAGE value="developer tools launched" />
     <MESSAGE value="for EV orders, notify them of the EV guidelines if DV orders submitted." />
@@ -2160,7 +2380,13 @@
     <MESSAGE value="Rails 4 upgrade, pagination and sum fixes" />
     <MESSAGE value="Rails 4 upgrade, squeel (refactored &quot;order&quot; query)&#10;link_to_function deprecation (mostly in application_helper.rb)&#10;many more..." />
     <MESSAGE value="Rails 4 upgrade" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rails 4 upgrade" />
+    <MESSAGE value="changed deploy" />
+    <MESSAGE value="CORS header for API calls" />
+    <MESSAGE value="put OPTIONS in apir routes to fix CORS issues" />
+    <MESSAGE value="rename parser rabl file due to errors thrown" />
+    <MESSAGE value="return status 200" />
+    <MESSAGE value="refactor api views location" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor api views location" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2186,11 +2412,6 @@
           <option name="timeStamp" value="1230" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/api_user_requests_controller.rb</url>
-          <line>51</line>
-          <option name="timeStamp" value="1629" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
           <line>100</line>
           <option name="timeStamp" value="1912" />
@@ -2209,11 +2430,6 @@
           <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
           <line>562</line>
           <option name="timeStamp" value="2045" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/controllers/api_certificate_requests_controller.rb</url>
-          <line>354</line>
-          <option name="timeStamp" value="2080" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/bundler/gems/subdomain-fu-3752799a02c0/lib/subdomain_fu/url_rewriter.rb</url>
@@ -2284,406 +2500,508 @@
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/models/discount.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="74" selection-start-line="5" selection-start-column="74" selection-end-line="5" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2244">
-          <caret line="102" column="72" selection-start-line="102" selection-start-column="64" selection-end-line="102" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/_certificate_order_detail.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="15" column="78" selection-start-line="15" selection-start-column="78" selection-end-line="15" selection-end-column="78" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/user_sessions_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/money-2.1.0/lib/money/money.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="74" column="0" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/country.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="10" column="21" selection-start-line="10" selection-start-column="21" selection-end-line="10" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/allocate_funds.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/funded_accounts_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1166">
-          <caret line="53" column="6" selection-start-line="53" selection-start-column="6" selection-end-line="53" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="836">
-          <caret line="38" column="14" selection-start-line="38" selection-start-column="14" selection-end-line="38" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/declarative_authorization-0.5.7/lib/tasks/authorization_tasks.rake">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="32" column="43" selection-start-line="32" selection-start-column="43" selection-end-line="32" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/funded_account.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="21" selection-start-line="1" selection-start-column="21" selection-end-line="1" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/declarative_authorization-0.5.7/lib/declarative_authorization/in_model.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="149" column="17" selection-start-line="149" selection-start-column="17" selection-end-line="149" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="255" column="102" selection-start-line="255" selection-start-column="102" selection-end-line="255" selection-end-column="102" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="25" column="6" selection-start-line="25" selection-start-column="6" selection-end-line="25" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_money/README">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_money/test/money_test.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/acts_as_money.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_money/install.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/vendor/plugins/acts_as_money/Rakefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/activerecord-4.2.6/lib/active_record/connection_adapters/postgresql/schema_definitions.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="193">
-          <caret line="86" column="12" selection-start-line="86" selection-start-column="12" selection-end-line="86" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/line_item.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_money/acts_as_money.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="61">
-          <caret line="4" column="25" selection-start-line="4" selection-start-column="25" selection-end-line="4" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1034">
-          <caret line="132" column="47" selection-start-line="132" selection-start-column="47" selection-end-line="132" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/acts_as_billable.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/deposit.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/README">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="9" column="5" selection-start-line="9" selection-start-column="4" selection-end-line="9" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/lib/acts_as_sellable.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/lib/acts_as_billable.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/base.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/encryptor-3.0.0/lib/encryptor.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/in_words.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/paypal_express_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/paypal_express_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="239">
-          <caret line="64" column="0" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/orders/index.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="728">
-          <caret line="46" column="0" selection-start-line="46" selection-start-column="0" selection-end-line="46" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/init.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/install.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/Rakefile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/address.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-          <folding />
+          <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/billing_profile.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="212">
-          <caret line="66" column="38" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
-          <folding />
+          <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1488">
-          <caret line="429" column="34" selection-start-line="429" selection-start-column="34" selection-end-line="429" selection-end-column="34" />
-          <folding />
+          <caret line="429" column="34" lean-forward="false" selection-start-line="429" selection-start-column="34" selection-end-line="429" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Gemfile">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="418">
-          <caret line="19" column="23" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
+          <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/remodel.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="8" column="8" selection-start-line="8" selection-start-column="8" selection-end-line="8" selection-end-column="8" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="47" column="11" selection-start-line="47" selection-start-column="11" selection-end-line="47" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/active_record.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="6" column="23" selection-start-line="0" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/remodel.rb" />
+    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow.rb" />
+    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/active_record.rb" />
     <entry file="file://$PROJECT_DIR$/lib/kernel.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/money.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="154">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="147">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/array.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/asset_tag_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9282">
+          <caret line="442" column="0" lean-forward="false" selection-start-line="442" selection-start-column="0" selection-end-line="442" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/active_record.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/private_key">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/action_provision">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/action_set_name">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/id">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/index_uuid">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/vagrant_cwd">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="25" lean-forward="false" selection-start-line="0" selection-start-column="25" selection-end-line="0" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/rails">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="23" column="7" lean-forward="false" selection-start-line="23" selection-start-column="7" selection-end-line="23" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ca_api_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="42" lean-forward="false" selection-start-line="0" selection-start-column="30" selection-end-line="0" selection-end-column="42" />
+          <folding>
+            <marker date="1508448205027" expanded="true" signature="27:7224" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="3382:3562" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="3411:3556" ph="unless ... end" />
+            <marker date="1508448205027" expanded="true" signature="3583:3646" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="3590:3640" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="3668:3816" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="3858:4474" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="3863:4468" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="3908:4460" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="4000:4251" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="4595:5342" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="4840:5336" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="4857:5328" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="4957:5286" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="4979:5274" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="5381:5890" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="5446:5667" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="5728:5884" ph="if ... end" />
+            <marker date="1508448205027" expanded="true" signature="5901:5978" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="6013:7007" ph=" ... end" />
+            <marker date="1508448205027" expanded="true" signature="6262:6909" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="6343:6883" ph="do ... end" />
+            <marker date="1508448205027" expanded="true" signature="6383:6404" ph="{ ... }" />
+            <marker date="1508448205027" expanded="true" signature="6581:6873" ph="unless ... end" />
+            <marker date="1508448205027" expanded="true" signature="7020:7220" ph=" ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_credential.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Vagrantfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1659">
+          <caret line="79" column="0" lean-forward="false" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/synced_folders">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="104" lean-forward="false" selection-start-line="0" selection-start-column="62" selection-end-line="0" selection-end-column="104" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/client/certassure/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="104">
+          <caret line="79" column="87" lean-forward="false" selection-start-line="79" selection-start-column="87" selection-end-line="79" selection-end-column="87" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="70">
+          <caret line="171" column="24" lean-forward="true" selection-start-line="171" selection-start-column="24" selection-end-line="171" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="777">
+          <caret line="37" column="22" lean-forward="false" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/integration/api/cert_create_106_basic_ssl_test.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="850">
+          <caret line="263" column="0" lean-forward="false" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
+          <folding>
+            <marker date="1508535029928" expanded="true" signature="54:11791" ph=" ... end" />
+            <marker date="1508535029928" expanded="true" signature="91:188" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="214:11787" ph="do ... end" />
+            <marker date="1508535029928" expanded="true" signature="581:945" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="2963:3374" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="6114:6525" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="8823:8923" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="9381:10268" ph="do ... end" />
+            <marker date="1508535029928" expanded="true" signature="10278:10539" ph="##..." />
+            <marker date="1508535029928" expanded="true" signature="10604:11781" ph="do ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/support/session_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/integration/api/cert_create_no_csr_test.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+          <folding>
+            <marker date="1508535029933" expanded="true" signature="48:2295" ph=" ... end" />
+            <marker date="1508535029933" expanded="true" signature="154:2291" ph="do ... end" />
+            <marker date="1508535029933" expanded="true" signature="991:1196" ph="do ... end" />
+            <marker date="1508535029933" expanded="true" signature="1236:2285" ph="do ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/secret_token.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/application.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="273">
-          <caret line="108" column="31" selection-start-line="108" selection-start-column="31" selection-end-line="108" selection-end-column="31" />
+        <state relative-caret-position="142">
+          <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
+          <folding>
+            <marker date="1508535029899" expanded="true" signature="143:274" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="424:4045" ph=" ... end" />
+            <marker date="1508535029899" expanded="true" signature="444:4041" ph=" ... end" />
+            <marker date="1508535029899" expanded="true" signature="710:1011" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="1104:1207" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="1331:1897" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="1955:2246" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="2429:2706" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="2788:2863" ph="do ... end" />
+            <marker date="1508535029899" expanded="true" signature="2951:3275" ph="unless ... end" />
+            <marker date="1508535029899" expanded="true" signature="3407:3639" ph="do ... end" />
+            <marker date="1508535029899" expanded="true" signature="3422:3631" ph="do ... end" />
+            <marker date="1508535029899" expanded="true" signature="4619:4737" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="4891:5015" ph="##..." />
+            <marker date="1508535029899" expanded="true" signature="5196:5297" ph="##..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="9" column="20" lean-forward="false" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+    <entry file="file://$PROJECT_DIR$/config/secrets.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="442" column="0" selection-start-line="442" selection-start-column="0" selection-end-line="442" selection-end-column="0" />
+        <state relative-caret-position="499">
+          <caret line="55" column="14" lean-forward="false" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/active_record.rb">
+    <entry file="file://$PROJECT_DIR$/config/local_env.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="110">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        <state relative-caret-position="756">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/integration/api/cert_create_with_billing_test.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48">
+          <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
+          <folding>
+            <marker date="1508535029939" expanded="true" signature="8906:9909" ph="do ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test/integration/api/cert_create_101_ucc_ssl_test.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="223" column="6" lean-forward="true" selection-start-line="223" selection-start-column="6" selection-end-line="223" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/parse_csr.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3357">
+          <caret line="54" column="57" lean-forward="false" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="399">
+          <caret line="64" column="9" lean-forward="true" selection-start-line="64" selection-start-column="9" selection-end-line="64" selection-end-column="9" />
+          <folding>
+            <marker date="1508775488458" expanded="true" signature="47:21248" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="2022:2841" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="2082:2841" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="2256:2841" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="2298:2841" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="5366:5409" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="5434:5957" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="5504:5919" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="5526:5911" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="5974:8263" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="6032:8220" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="6098:8127" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="6783:7126" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="7135:8067" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="8290:8893" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="8295:8850" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="8361:8757" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="8905:9284" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="8938:9021" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="8959:9013" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="9037:9278" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="9067:9122" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9139:9195" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9214:9270" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9299:9663" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="9332:9418" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="9353:9410" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="9434:9657" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="9464:9513" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9530:9580" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9599:9649" ph="{ ... }" />
+            <marker date="1508775488458" expanded="true" signature="9681:12067" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="9793:12024" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="9878:11931" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="9980:11871" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="10532:10879" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="10890:11832" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="12089:13268" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="12157:13262" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="12332:13254" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="12356:13155" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="12442:13143" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="13289:13739" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="13294:13701" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="13762:14503" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="13767:14497" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="13919:14237" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="14086:14227" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="14244:14404" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="14527:16226" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="14592:16183" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="14681:14744" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="14780:15990" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="14867:15054" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="15085:15980" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="15288:15968" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="15997:16090" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="16259:18161" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="16324:18081" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="16470:17988" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="16535:17803" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="16630:16882" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="16976:17791" ph="do ... end" />
+            <marker date="1508775488458" expanded="true" signature="17185:17777" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="17812:17909" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="18190:18553" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="18195:18515" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="18248:18422" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="18576:19010" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="18648:18972" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="18782:18879" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="19046:20495" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="19059:19906" ph="case ... end" />
+            <marker date="1508775488458" expanded="true" signature="20525:20585" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="20633:21244" ph=" ... end" />
+            <marker date="1508775488458" expanded="true" signature="20638:21238" ph="unless ... end" />
+            <marker date="1508775488458" expanded="true" signature="20676:20941" ph="if ... end" />
+            <marker date="1508775488458" expanded="true" signature="20957:21230" ph="if ... end" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/constraints/api_constraint.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="4" column="42" lean-forward="true" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="35" column="19" lean-forward="true" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
           <folding />
         </state>
       </provider>
