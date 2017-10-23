@@ -9,12 +9,18 @@
     <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="434" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="CORS header">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.generators" afterPath="$PROJECT_DIR$/.idea/.generators" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
+    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/api_parameters_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_3.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/dcv_emails_v1_3.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/dcv_methods_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/index_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/revoke_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/success_retrieve_v1_3.rabl" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -114,7 +120,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="true">
+      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="126">
@@ -134,7 +140,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_controller.rb" pinned="false" current-in-tab="false">
+      <file leaf-file-name="api_controller.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="84">
@@ -494,6 +500,13 @@
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="views" type="462c0819:PsiDirectoryNode" />
+              <item name="api_certificate_requests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="views" type="462c0819:PsiDirectoryNode" />
               <item name="certificate_orders" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -564,11 +577,11 @@
       <recent name="C:\Users\leo\git\sslcom-rails\lib" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\leo\RubymineProjects\sslcom-rails\app\views" />
       <recent name="C:\Users\leo\git\sslcom-rails\lib\preferences" />
       <recent name="C:\Users\leo\git\sslcom-rails\lib" />
       <recent name="$PROJECT_DIR$/config/database" />
       <recent name="$PROJECT_DIR$/app/views/certificate_orders" />
-      <recent name="$PROJECT_DIR$/app/models" />
     </key>
   </component>
   <component name="RestClientSettings">
@@ -1456,7 +1469,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Capistrano.deploy: ssl_com_rails3">
+  <component name="RunManager" selected="Capistrano.deploy:cleanup: ssl_com_rails3">
     <configuration name="All tests in api: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
       <module name="ssl_com_rails3" />
@@ -1931,14 +1944,7 @@
       <workItem from="1508351127249" duration="5232000" />
       <workItem from="1508430064659" duration="6756000" />
       <workItem from="1508445839297" duration="7158000" />
-      <workItem from="1508515499659" duration="17506000" />
-    </task>
-    <task id="LOCAL-00302" summary="show subscriber agreement">
-      <created>1428184343256</created>
-      <option name="number" value="00302" />
-      <option name="presentableId" value="LOCAL-00302" />
-      <option name="project" value="LOCAL" />
-      <updated>1428184343257</updated>
+      <workItem from="1508515499659" duration="17880000" />
     </task>
     <task id="LOCAL-00303" summary="will report issues if send to comodo is not successful for new orders.">
       <created>1428337423936</created>
@@ -2276,7 +2282,14 @@
       <option name="project" value="LOCAL" />
       <updated>1508775470048</updated>
     </task>
-    <option name="localTasksCounter" value="351" />
+    <task id="LOCAL-00351" summary="CORS header">
+      <created>1508776168838</created>
+      <option name="number" value="00351" />
+      <option name="presentableId" value="LOCAL-00351" />
+      <option name="project" value="LOCAL" />
+      <updated>1508776168838</updated>
+    </task>
+    <option name="localTasksCounter" value="352" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2312,11 +2325,10 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="224429000" />
+    <option name="totallyTimeSpent" value="224803000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33333334" sideWeight="0.33385417" order="11" side_tool="false" content_ui="tabs" />
@@ -2325,7 +2337,7 @@
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5442177" sideWeight="0.38541666" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.061979167" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41043085" sideWeight="0.79583335" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20107238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -2361,7 +2373,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="fixed renewal ucc order page" />
     <MESSAGE value="developer tools launched" />
     <MESSAGE value="for EV orders, notify them of the EV guidelines if DV orders submitted." />
     <MESSAGE value="email certs" />
@@ -2386,7 +2397,8 @@
     <MESSAGE value="rename parser rabl file due to errors thrown" />
     <MESSAGE value="return status 200" />
     <MESSAGE value="refactor api views location" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor api views location" />
+    <MESSAGE value="CORS header" />
+    <option name="LAST_COMMIT_MESSAGE" value="CORS header" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2974,14 +2986,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="4" column="42" lean-forward="true" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -3002,6 +3006,14 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="4" column="42" lean-forward="true" selection-start-line="4" selection-start-column="42" selection-end-line="4" selection-end-column="42" />
           <folding />
         </state>
       </provider>
