@@ -6,7 +6,8 @@ class Api::V1::APIController < ActionController::API
   include ActionView::Rendering
   
   before_filter :activate_authlogic
-    
+  after_filter :set_access_control_headers
+
   TEST_SUBDOMAIN = 'sws-test'
   
   respond_to :json
@@ -37,5 +38,12 @@ class Api::V1::APIController < ActionController::API
     logger.error e.message
     e.backtrace.each { |line| logger.error line }
     error(500, 500, 'server error')
+  end
+
+  def set_access_control_headers
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+    headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 end
