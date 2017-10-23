@@ -24,7 +24,7 @@ class ValidationsController < ApplicationController
 
   def new
     if @certificate_order.certificate_content.contacts_provided?
-        @certificate_order.certificate_content.pend_validation!
+      @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
     elsif @certificate_order.certificate_content.issued?
       checkout={checkout: "true"}
       respond_to do |format|
@@ -188,7 +188,7 @@ class ValidationsController < ApplicationController
         end
         checkout={}
         if @certificate_order.certificate_content.contacts_provided?
-          @certificate_order.certificate_content.pend_validation! if @other_party_validation_request.blank?
+          @certificate_order.certificate_content.pend_validation!(host: request.host_with_port) if @other_party_validation_request.blank?
           checkout={checkout: "true"}
         end
         @validation_histories = @certificate_order.validation_histories
@@ -237,7 +237,7 @@ class ValidationsController < ApplicationController
         if vrs.all?(&:approved?)
           cc.validate! unless cc.validated?
         else
-          cc.pend_validation! unless cc.pending_validation?
+          cc.pend_validation!(host: request.host_with_port) unless cc.pending_validation?
         end
         notify_customer(vrs) if params[:email_customer]
         #include the username making this adjustment
@@ -253,7 +253,7 @@ class ValidationsController < ApplicationController
   def send_to_ca
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
     result = co.apply_for_certificate
-    co.certificate_content.pend_validation!(send_to_ca: false) if result.order_number && !co.certificate_content.pending_validation?
+    co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}

@@ -4,8 +4,9 @@ require 'open-uri'
 
 class ComodoApi
   CREDENTIALS={
-      'loginName' => Settings.comodo_api_username,
-      'loginPassword' => Settings.comodo_api_password}
+    'loginName' => Rails.application.secrets.comodo_api_username,
+    'loginPassword' => Rails.application.secrets.comodo_api_password
+  }
 
   CODE_SIGNING_PRODUCT={"1"=>"x_PPP=1511", "2"=>"x_PPP=1512", "3"=>"x_PPP=1509"}
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)

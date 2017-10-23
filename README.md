@@ -12,7 +12,13 @@
 8. Navigate to `/vagrant` and run `./start-local`
 9. Navigate to `https://www.ssl.local:3000/` in your browser and it should work!
 
+### Run Delayed Job
+1. In another tab, SSH into the box `vagrant ssh`
+2. Navigate to `/vagrant` and run `script/delayed_job start`
+3. To terminate delayed job server, run `script/delayed_job stop` or press `Ctr+C`
+
 ### `synced_folders` Template
 ```
 {"virtualbox":{"/vagrant":{"guestpath":"/vagrant","hostpath":"INSERT_PATH_HERE","disabled":false,"__vagrantfile":true}}}
 ```
+

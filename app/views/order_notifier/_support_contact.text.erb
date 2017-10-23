@@ -8,12 +8,17 @@ Support
 SSL Corp
 <%=[Settings.mail_address1, Settings.mail_address2].join(", ")%>
 <%=[Settings.mail_city, Settings.mail_state, Settings.mail_zip].join(", ")%>
-<%unless is_sandbox_or_test?%>
-Are you aware <%=Settings.community_name%> allows you to build more trust and transparency with your customers by displaying your <%=Settings.community_name%> Smart SeaL? Please visit <%=details_site_seals_url%> to learn more about the <%=Settings.community_name%> Smart SeaL.
+<% unless is_sandbox_or_test? %>
+  <% 
+    details_link = @host ? File.join(@host, details_site_seals_path) : details_site_seals_url
+    param = { subdomain: Reseller::SUBDOMAIN }
+    reseller_link = @host ? File.join(@host, resellers_root_path(param)) : resellers_root_url(param)
+  %>
+  Are you aware <%=Settings.community_name%> allows you to build more trust and transparency with your customers by displaying your <%=Settings.community_name%> Smart SeaL? Please visit <%=details_link%> to learn more about the <%=Settings.community_name%> Smart SeaL.
 
-Also, learn more how you can increase your revenue stream by offering or integrating <%=Settings.community_name%> certificates, products and services into your product line. Please visit <%=resellers_root_url(:subdomain=>Reseller::SUBDOMAIN)%> for more details about the <%=Settings.community_name%> Reseller Program
+  Also, learn more how you can increase your revenue stream by offering or integrating <%=Settings.community_name%> certificates, products and services into your product line. Please visit <%=reseller_link%> for more details about the <%=Settings.community_name%> Reseller Program
 
-Running Windows, IIS, Exchange, or OWA? Try out the free SSLTool Mananger for Windows - http://www.ssltools.com/manager
+  Running Windows, IIS, Exchange, or OWA? Try out the free SSLTool Mananger for Windows - http://www.ssltools.com/manager
 
-<%=Settings.community_name%> is your source for industry strength SSL certificates and trust solutions.
+  <%=Settings.community_name%> is your source for industry strength SSL certificates and trust solutions.
 <%end%>

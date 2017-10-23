@@ -21,14 +21,21 @@ class ApplicationController < ActionController::Base
   before_filter :finish_reseller_signup, if: "current_user"
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
-  after_filter :set_access_control_headers
+  after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
 
   def sandbox_notice
     flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
   end
   # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
   def set_mailer_host
-    ActionMailer::Base.default_url_options[:host] = request.host_with_port
+    host = if Rails.const_defined?('Console')
+      Settings.actionmailer_host
+    elsif is_sandbox_or_test?
+      'sandbox.ssl.com'
+    else
+      request.host_with_port
+    end
+    ActionMailer::Base.default_url_options[:host] = host
     ActionMailer::Base.default_url_options[:protocol] = 'https'
   end
 
@@ -49,7 +56,9 @@ class ApplicationController < ActionController::Base
 
   def set_access_control_headers
     headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
     headers['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
   def permission_denied
@@ -711,6 +720,12 @@ class ApplicationController < ActionController::Base
     if current_user.get_all_approved_accounts.include?(@ssl_account)
       current_user.set_default_ssl_account(@ssl_account)
     end
+  end
+  
+  def is_sandbox_or_test?
+    host = ActionMailer::Base.default_url_options[:host]
+    sandbox = request && request.try(:subdomain)=='sandbox'
+    sandbox || host=~/^sandbox\./ || host=~/^sws-test\./
   end
 
   class Helper

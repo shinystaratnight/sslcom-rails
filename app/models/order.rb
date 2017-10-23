@@ -630,7 +630,7 @@ class Order < ActiveRecord::Base
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
-    return (o.transactions.last.amount * 100) if %w{stripe authnet}.include?(merchant)
+    return (cents - get_funded_account_amount) if %w{stripe authnet}.include?(merchant)
     return o.cents if merchant == 'paypal'
   end
   

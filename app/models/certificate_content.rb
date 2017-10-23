@@ -1,5 +1,7 @@
 class CertificateContent < ActiveRecord::Base
   include V2MigrationProgressAddon
+  include Workflow
+  
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
   has_one     :ssl_account, through: :certificate_order
   has_many    :users, through: :certificate_order
@@ -13,7 +15,7 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
 
-  after_update :certificate_names_from_domains
+  after_update :certificate_names_from_domains, unless: :certificate_names_created?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -37,7 +39,7 @@ class CertificateContent < ActiveRecord::Base
     azadegi\.com Comodo\sRoot\sCA CyberTrust\sRoot\sCA DigiCert\sRoot\sCA Equifax\sRoot\sCA friends\.walla\.co\.il
     GlobalSign\sRoot\sCA login\.live\.com login\.yahoo\.com my\.screenname\.aol\.com secure\.logmein\.com
     Thawte\sRoot\sCA twitter\.com VeriSign\sRoot\sCA wordpress\.com www\.10million\.org www\.balatarin\.com
-    cia\.gov cybertrust\.com equifax\.com facebook\.com globalsign\.com \.ssl\.com
+    cia\.gov cybertrust\.com equifax\.com facebook\.com globalsign\.com (\.|^)ssl\.com$
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org live\.com global\strustee)
 
@@ -53,22 +55,49 @@ class CertificateContent < ActiveRecord::Base
 
   serialize :domains
 
-  #unless MIGRATING_FROM_LEGACY
   validates_presence_of :server_software_id, :signing_request,
     :if => "certificate_order_has_csr && !ajax_check_csr"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
     :if => :certificate_order_has_csr_and_signing_request
-  validate :domains_validation
-  validate :csr_validation, :if=>"new? && csr"
-  #end
+  validate :domains_validation, if: :validate_domains?
+  validate :csr_validation, if: "new? && csr"
 
   attr_accessor  :additional_domains #used to html format results to page
   attr_accessor  :ajax_check_csr
+  attr_accessor  :rekey_certificate
 
   preference  :reprocessing, default: false
+  
+  CertificateNamesJob = Struct.new(:cc_id, :domains) do
+    def perform
+      cc = CertificateContent.find cc_id
+      domains.flatten.each_with_index do |domain, i|
+        if cc.certificate_names.find_by_name(domain).blank?
+          cc.certificate_names.create(name: domain, is_common_name: (i == 0))
+        end
+      end
+    end
+  end
 
-  include Workflow
+  DcvSentNotifyJob = Struct.new(:cc_id, :host) do
+    def perform
+      cc = CertificateContent.find cc_id
+      co = cc.certificate_order
+      last_sent = unless co.certificate.is_ucc?
+        cc.csr.domain_control_validations.last_sent
+      else
+        cc.certificate_names.map{|cn| cn.domain_control_validations.last_sent}
+          .flatten.compact
+      end
+      unless last_sent.blank?
+        co.valid_recipients_list.each do |c|
+          OrderNotifier.dcv_sent(c, co, last_sent, host).deliver_now if host
+        end
+      end
+    end
+  end
+  
   workflow do
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
@@ -97,18 +126,22 @@ class CertificateContent < ActiveRecord::Base
         unless csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
           unless self.infringement.empty? # possible trademark problems
-            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver
+            OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
           else
             certificate_order.apply_for_certificate(options)
           end
-          last_sent=unless certificate_order.certificate.is_ucc?
-            csr.domain_control_validations.last_sent
+          if options[:host]
+            Delayed::Job.enqueue DcvSentNotifyJob.new(id, options[:host])
           else
-            certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
-          end
-          if last_sent
-            certificate_order.valid_recipients_list.each do |c|
-              OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
+            last_sent=unless certificate_order.certificate.is_ucc?
+              csr.domain_control_validations.last_sent
+            else
+              certificate_names.map{|cn|cn.domain_control_validations.last_sent}.flatten.compact
+            end
+            unless last_sent.blank?
+              certificate_order.valid_recipients_list.each do |c|
+                OrderNotifier.dcv_sent(c,certificate_order,last_sent).deliver!
+              end
             end
           end
         end
@@ -164,9 +197,15 @@ class CertificateContent < ActiveRecord::Base
         certificate_names.create(name: csr.common_name, is_common_name: true)
       end
     else
-      domains.flatten.each_with_index do |domain, i|
-        if certificate_names.find_by_name(domain).blank?
-          certificate_names.create(name: domain, is_common_name: (i == 0)) 
+      if domains.length <= 20
+        domains.flatten.each_with_index do |domain, i|
+          if certificate_names.find_by_name(domain).blank?
+            certificate_names.create(name: domain, is_common_name: (i == 0)) 
+          end
+        end
+      else
+        domains.flatten.each_slice(100) do |domain_slice|
+          Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
         end
       end
     end
@@ -194,7 +233,12 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def domains
-    (read_attribute(:domains).kind_of?(Array) && read_attribute(:domains).flatten==["0"]) ? [] : read_attribute(:domains)
+    cur_domains = read_attribute(:domains)
+    if cur_domains.kind_of?(Array) && cur_domains.flatten==["0"]
+      []
+    else
+      parse_unique_domains(cur_domains)
+    end
   end
 
   def additional_domains=(html_domains)
@@ -206,7 +250,9 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def all_domains
-    (certificate_names.map(&:name)+[csr.try(:common_name)]+(domains.blank? ? [] : domains)).flatten.uniq.compact
+    parse_unique_domains(
+      (domains.blank? ? [] : domains) + [csr.try(:common_name)] + certificate_names.map(&:name)
+    )
   end
 
   def certificate_names_by_domains
@@ -411,13 +457,39 @@ class CertificateContent < ActiveRecord::Base
   end
 
   private
-
+  
+  def validate_domains?
+    (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
+  end
+  
+  def certificate_names_created?
+    self.reload
+    return false if domains.blank? && !certificate_name_from_csr?
+    new_domains     = parse_unique_domains(domains)
+    current_domains = parse_unique_domains(certificate_names.pluck(:name))
+    common          = current_domains & new_domains
+    common.length == new_domains.length && (current_domains.length == new_domains.length)
+  end
+  
+  def certificate_name_from_csr?
+    certificate_names.count == 1 && 
+      csr.common_name &&
+      certificate_names.first.name == csr.common_name &&
+      certificate_names.first.is_common_name
+  end
+  
+  def parse_unique_domains(target_domains)
+    return [] if target_domains.blank?
+    target_domains.flatten.compact.map(&:downcase).map(&:strip).reject(&:blank?).uniq
+  end
+  
   def domains_validation
     unless all_domains.blank?
       all_domains.each do |domain|
         domain_validation(domain)
       end
     end
+    self.rekey_certificate = false unless domains.blank?
   end
 
   def csr_validation

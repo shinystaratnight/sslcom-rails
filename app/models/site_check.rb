@@ -43,7 +43,7 @@ class SiteCheck < ActiveRecord::Base
       context.ca_file="/usr/lib/ssl/certs/ca-certificates.crt"
       context.verify_mode = OpenSSL::SSL::VERIFY_NONE
     end
-    timeout(10) do
+    Timeout.timeout(10) do
       u,p = url.split ":"
       tcp_client = TCPSocket.new(u, p || 443)
       self.ssl_client = OpenSSL::SSL::SSLSocket.new tcp_client, context

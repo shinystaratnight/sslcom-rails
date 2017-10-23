@@ -6,6 +6,8 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       api_main_setup
       @team.funded_account.update(cents: 10000)
       assert_equal 0, InvalidApiCertificateRequest.count
+      @amount_str = '$78.10'
+      @amount_int = 7810
     end
 
     # includes params:
@@ -29,7 +31,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_equal '$39.05', items['order_amount']
+      assert_equal @amount_str, items['order_amount']
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
       refute_nil   items['ref']
@@ -45,7 +47,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       ca_request_2 = CaApiRequest.find_by_api_requestable_type 'Csr'
       csr          = Csr.first
       dcv          = DomainControlValidation
-      assert_equal (10000 - 3905), FundedAccount.last.cents
+      assert_equal (10000 - @amount_int), FundedAccount.last.cents
       assert_equal 2, CaApiRequest.count
       assert_equal 0, CaDcvRequest.count
       assert_equal 1, Order.count
@@ -85,16 +87,16 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
 
     # includes params:
     #   4 valid contacts
-    #   2 domains in addition to csr domain
+    #   1 domain in addition to csr domain
     #   valid registrant
     #   non-wildcard csr
     it 'status 200' do
       req = api_get_request_for_dv
-                .merge(api_get_server_software)
-                .merge(api_get_csr_registrant)
-                .merge(api_get_csr_contacts)
-                .merge(api_get_nonwildcard_csr_hash)
-                .merge(api_get_domains_for_csr)
+        .merge(api_get_server_software)
+        .merge(api_get_csr_registrant)
+        .merge(api_get_csr_contacts)
+        .merge(api_get_nonwildcard_csr_hash)
+        .merge(api_get_domain_for_csr)
 
       post api_certificate_create_v1_4_path(req)
       items = JSON.parse(body)
@@ -104,7 +106,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 9, items.count
-      assert_equal '$39.05', items['order_amount']
+      assert_equal @amount_str, items['order_amount']
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
       refute_nil   items['ref']
@@ -120,7 +122,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       ca_request_2 = CaApiRequest.find_by_api_requestable_type 'Csr'
       csr          = Csr.first
       dcv          = DomainControlValidation
-      assert_equal (10000 - 3905), FundedAccount.last.cents
+      assert_equal (10000 - @amount_int), FundedAccount.last.cents
       assert_equal 2, CaApiRequest.count
       assert_equal 0, CaDcvRequest.count
       assert_equal 1, Order.count
@@ -143,14 +145,13 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert_match 'sha256WithRSAEncryption', csr.sig_alg
       refute_nil   csr.body
 
-      assert_equal 3, dcv.count
+      assert_equal 2, dcv.count
       assert_equal 1, dcv.where(csr_id: csr.id).count # extracted from csr
-      assert_equal 2, dcv.where.not(certificate_name_id: nil).count # 2 domains provided via domains params, not from csr
+      assert_equal 1, dcv.where.not(certificate_name_id: nil).count # 1 domain provided via domains params, not from csr
       assert_equal 2, dcv.where(dcv_method: 'HTTP_CSR_HASH').count  # 2 domain names, one provided and one from csr
-      assert_equal 1, dcv.where(dcv_method: 'email', email_address: 'admin@ssltestdomain2.com').count # 1 domain is an email
 
-      assert_equal 3, CertificateName.count # 2 domains provided, 1 from csr
-      assert_equal %w{qlikdev.ezops.com mail.ssltestdomain1.com www.ssltestdomain2.com}.sort, CertificateName.pluck(:name).sort
+      assert_equal 1, CertificateName.count # 1 domains provided, ignore one from csr
+      assert_equal ['mail.ssltestdomain1.com'], CertificateName.pluck(:name)
       assert_match 'ssl.com', ca_request_1.ca
       assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
       assert_match 'comodo', ca_request_2.ca

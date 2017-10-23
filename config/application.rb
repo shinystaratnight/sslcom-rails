@@ -62,7 +62,10 @@ module SslCom
     # config.generators do |g|
     #   g.fixture_replacement :machinist
     # end
-
+    
+    # Rails Api
+    config.api_only = false
+    
     #turn off strong parameters
     config.action_controller.permit_all_parameters = true
 
@@ -78,7 +81,10 @@ module SslCom
         only: [%r(^/certificates/.*?/buy), %r(^/login), %r{^/account(/new)?}, %r(^/user_session/new), %r{^/users?/new(/affiliates)?},
           %r(^/password_resets/new), %r(^/orders/new), %r(^/secure/allocate_funds), %r(^/certificate_orders/.*)]
     end
-
+    
+    # Delayed Job
+    config.active_job.queue_adapter = :delayed_job
+    
     config.middleware.insert_before 0, "Rack::Cors" do
       allow do
         origins '*'
@@ -95,7 +101,7 @@ module SslCom
     config.sass.preferred_syntax = :sass
     config.sass.line_comments = false
     config.sass.cache = false
-
+    config.action_mailer.default_url_options = { :host => "www.ssl.com" }
     self.paths['config/database'] = 'config/client/certassure/database.yml' if DEPLOYMENT_CLIENT=~/certassure/i && Rails.root.to_s=~/Development/
   end
 end

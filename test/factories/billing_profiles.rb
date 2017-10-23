@@ -14,4 +14,16 @@ FactoryGirl.define do
     expiration_year   {(Date.today + 3.years).year}
     security_code     '900' 
   end
+  
+  trait :expired do
+    expiration_year   {Date.today.year - 1}
+  end
+  
+  trait :declined do
+    if BillingProfile.gateway_stripe?
+      card_number '4000000000000002'
+    else
+      postal_code '46282' # Authorize.net general decline
+    end
+  end
 end

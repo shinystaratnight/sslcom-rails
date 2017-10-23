@@ -27,45 +27,52 @@ SslCom::Application.routes.draw do
   match 'site_check' => 'site_checks#new', :as => :site_check, via: [:get, :post]
   match 'site_checks' => 'site_checks#create', :as => :site_checks, via: [:get, :post]
 
-  # api
-  # if using an api WITHOUT the version in the url, then a
+  # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-                  %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com
-                  api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)) do
-    match '/users' => 'api_user_requests#create_v1_4',
-          :as => :api_user_create_v1_4, via: [:post]
-    match '/user/:login' => 'api_user_requests#show_v1_4',
-          :as => :api_user_show_v1_4, via: [:get], login: /.+\/?/
-    match '/certificates' => 'api_certificate_requests#create_v1_4',
-          :as => :api_certificate_create_v1_4, via: [:post]
-    match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
-          :as => :api_certificate_update_v1_4, via: [:put, :patch, :post], ref: /[a-z0-9\-]+/
-    match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
-          :as => :api_certificate_show_v1_4, via: [:get], ref: /[a-z0-9\-]+/
-    match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
-          :as => :api_certificate_revoke_v1_4, via: [:delete]
-    match '/certificates/' => 'api_certificate_requests#index_v1_4',
-          :as => :api_certificate_index_v1_4, via: [:get, :post]
-    match '/certificates/validations/email' => 'api_certificate_requests#dcv_emails_v1_3',
-          :as => :api_dcv_emails_v1_4, via: [:get]
-    match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
-          :as => :api_dcv_methods_v1_4, via: [:get]
-    match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4',
-          :as => :api_parameters_v1_4, via: [:get]
-    match '/scan/:url' => 'api_certificate_requests#scan', :as => :api_scan, via: [:get],
-          :constraints => { :url => /[^\/]+/ }
-    match '/analyze/:url' => 'api_certificate_requests#analyze', :as => :api_analyze, via: [:get],
-          :constraints => { :url => /[^\/]+/ }
-    match '/certificates/validations/csr_hash' => 'api_certificate_requests#dcv_methods_csr_hash_v1_4',
-          :as => :api_dcv_methods_csr_hash_v1_4, via: [:post]
-    match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
-          :as => :api_certificate_retrieve_v1_3, via: :get
-    match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
-          :as => :api_dcv_emails_v1_3, via: [:get, :post]
-    match '/certificates/1.3/dcv_email_resend' => 'api_certificate_requests#dcv_email_resend_v1_3',
-          :as => :api_dcv_email_resend_v1_3, via: :get
-    match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
-          :as => :api_certificate_reprocess_v1_3, via: :get
+    %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com sandbox.ssl.local
+    api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)
+  ) do
+    scope module: :api do
+      scope module: :v1, constraints: APIConstraint.new(version: 1) do
+        # Users
+        match '/users' => 'api_user_requests#create_v1_4',
+          as: :api_user_create_v1_4, via: [:options, :post]
+        match '/user/:login' => 'api_user_requests#show_v1_4',
+          as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
+        
+        # Certificates
+        match '/certificates' => 'api_certificate_requests#create_v1_4',
+          as: :api_certificate_create_v1_4, via: [:options, :post]
+        match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
+          as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
+          as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
+          as: :api_certificate_revoke_v1_4, via: [:options, :delete]
+        match '/certificates/' => 'api_certificate_requests#index_v1_4',
+          as: :api_certificate_index_v1_4, via: [:options, :get, :post]
+        match '/certificates/validations/email' => 'api_certificate_requests#dcv_emails_v1_3',
+          as: :api_dcv_emails_v1_4, via: [:options, :get]
+        match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
+          as: :api_dcv_methods_v1_4, via: [:options, :get]
+        match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4',
+          as: :api_parameters_v1_4, via: [:options, :get]
+        match '/scan/:url' => 'api_certificate_requests#scan',
+          as: :api_scan, via: [:options, :get], constraints: { :url => /[^\/]+/ }
+        match '/analyze/:url' => 'api_certificate_requests#analyze',
+          as: :api_analyze, via: [:options, :get], constraints: { url: /[^\/]+/ }
+        match '/certificates/validations/csr_hash' => 'api_certificate_requests#dcv_methods_csr_hash_v1_4',
+          as: :api_dcv_methods_csr_hash_v1_4, via: [:options, :post]
+        match '/certificates/1.3/retrieve' => 'api_certificate_requests#retrieve_v1_3',
+          as: :api_certificate_retrieve_v1_3, via: [:options, :get]
+        match '/certificates/1.3/dcv_emails' => 'api_certificate_requests#dcv_emails_v1_3',
+          as: :api_dcv_emails_v1_3, via: [:options, :get, :post]
+        match '/certificates/1.3/dcv_email_resend' => 'api_certificate_requests#dcv_email_resend_v1_3',
+          as: :api_dcv_email_resend_v1_3, via: [:options, :get]
+        match '/certificates/1.3/reprocess' => 'api_certificate_requests#reprocess_v1_3',
+          as: :api_certificate_reprocess_v1_3, via: [:options, :get]
+      end
+    end
   end
 
   resources :password_resets, except: [:show]
@@ -110,7 +117,7 @@ SslCom::Application.routes.draw do
         get :reprocessing
         get :search
         get :developers
-        post :parse_csr
+        match :parse_csr, via: [:post, :options]
       end
 
       member do

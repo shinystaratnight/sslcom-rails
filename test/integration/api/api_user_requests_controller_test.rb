@@ -3,6 +3,7 @@ require 'test_helper'
 class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
   describe 'api_user_show_v1_4' do
     before do
+      set_api_host
       initialize_roles
       @user = create(:user, :owner)
       @team = @user.ssl_account
@@ -27,12 +28,12 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
       assert_match Money.new(@team.funded_account.cents).format, items['available_funds']
     end
 
-    it 'status 400' do
+    it 'status 200: login error' do
       get api_user_show_v1_4_path('fake', password: 'fake@password1')
       items = JSON.parse(body)
 
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       refute_nil   items['errors']['login']
@@ -42,6 +43,7 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
   
   describe 'create_v1_4' do
     before do
+      set_api_host
       initialize_roles
       assert_equal 0, User.count
     end
@@ -68,7 +70,7 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
       assert_match cred.secret_key, items['secret_key']
     end
 
-    it 'status 400' do
+    it 'status 200: password error' do
       request = {
         login:    'ssl_demo',
         email:    'api@ssl.com',
@@ -77,8 +79,8 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
       post api_user_create_v1_4_path(request)
       items = JSON.parse(body)
 
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       refute_nil   items['errors']['password']

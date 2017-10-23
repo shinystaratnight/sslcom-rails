@@ -10,8 +10,8 @@ describe 'Anonymous user' do
     create(:certificate, :basicssl)
     @year_3_id = ProductVariantItem.find_by(serial: "sslcombasic256ssl3yr").id
     @new_email = 'new_user@ssl.com'
-    @amount    = '$156.43'
-    
+    @amount    = '$156.21'
+
     assert_equal 0, BillingProfile.count
     assert_equal 0, FundedAccount.count
     assert_equal 0, User.count
@@ -21,8 +21,8 @@ describe 'Anonymous user' do
     assert_equal 0, ShoppingCart.count
     
     visit buy_certificate_path 'basicssl'
-    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.14/yr
-    page.must_have_content("#{@amount} USD") # $52.14 * 3 years
+    find("#product_variant_item_#{@year_3_id}").click # 3 Years $52.07/yr
+    page.must_have_content("#{@amount} USD") # $52.07 * 3 years
     # Shopping Cart
     find('#next_submit input').click
     page.must_have_content("#{@amount} USD")
@@ -99,7 +99,7 @@ describe 'Anonymous user' do
       assert_equal 'SslAccount', o.billable_type
       assert_equal 'paid', o.state
       assert_equal 'active', o.status
-      assert_equal 15643, o.cents
+      assert_equal 15621, o.cents
       assert_equal OrderTransaction.first.order_id, o.id
       refute_nil   o.reference_number
 
@@ -109,7 +109,7 @@ describe 'Anonymous user' do
       assert_equal User.first.ssl_account.id, co.ssl_account_id
       assert_equal 'paid', co.workflow_state
       assert_equal 1, co.line_item_qty
-      assert_equal 15643, co.amount
+      assert_equal 15621, co.amount
 
     # creates correct user record
     # ======================================================
@@ -131,7 +131,7 @@ describe 'Anonymous user' do
       page.must_have_content('Show Order Transaction')
       page.must_have_content("date of order: #{Order.first.created_at.strftime('%Y-%m-%d')}")
       page.must_have_content(BillingProfile.first.last_digits)
-      page.must_have_content('$156.43')
+      page.must_have_content('$156.21')
   end
 end
 

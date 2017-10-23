@@ -27,7 +27,11 @@ module MailerHelper
     urls   = URI.extract(str)
     ignore = ['Team:', 'Roles:', 'Note:']
     urls.delete_if{|d| ignore.include?(d)}
-    urls   = urls.first.gsub('http://www.ssl.com', '') if urls.any?
+    if urls.any?
+      urls = urls.first
+        .gsub('http://www.ssl.com', '')
+        .gsub(/https:\/\/127.0.0.1:\d+/, '')
+    end
   end
 
   private

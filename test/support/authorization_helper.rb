@@ -203,7 +203,7 @@ module AuthorizationHelper
     find('input[alt="Bl submit button"]').click
     # Create SignedCertificate for non wildcard
     # =========================================================
-    create(:signed_certificate, :nonwildcard_csr, 
+    create(:signed_certificate, :nonwildcard_certificate_sslcom, 
       csr_id: Csr.where.not(certificate_content_id: nil).first.id
     )
   end
