@@ -1,4 +1,5 @@
 class Api::V1::APIController < ActionController::API
+  include SerializerHelper
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::Rendering

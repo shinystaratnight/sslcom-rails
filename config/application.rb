@@ -32,7 +32,7 @@ module SslCom
     # Config::Integration::Rails::Railtie.preload
 
     # Add additional load paths for your own custom dirs
-    %w(observers mailers middleware).each do |dir|
+    %w(observers mailers middleware serializers).each do |dir|
       config.autoload_paths << "#{config.root}/app/#{dir}"
     end
 
@@ -70,6 +70,7 @@ module SslCom
     config.action_controller.permit_all_parameters = true
 
     config.generators do |g|
+      g.fixture_replacement :factory_girl
       g.test_framework :minitest, spec: true, fixture: false
     end
 
@@ -85,13 +86,13 @@ module SslCom
     # Delayed Job
     config.active_job.queue_adapter = :delayed_job
     
-    config.middleware.insert_before 0, "Rack::Cors" do
+    config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
         resource '/certificate/*',
-                 :headers => :any,
-                 :methods => [:get, :post, :delete, :put, :options, :head],
-                 :max_age => 0
+          headers: :any,
+          methods: [:get, :post, :delete, :put, :options, :head],
+          max_age: 0
       end
     end
 
