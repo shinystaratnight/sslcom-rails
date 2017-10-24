@@ -63,7 +63,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    render json: (@result.errors.empty? ? serialize_model(@result) : serialize_object_errors(@result))
+    render_200_status_noschema
   rescue => e
     render_500_error e
   end

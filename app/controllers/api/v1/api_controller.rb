@@ -27,6 +27,16 @@ class Api::V1::APIController < ActionController::API
     Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
   end
   
+  def render_200_status_noschema
+    json = if @result.errors.empty?
+      serialize_model(@result)['data']['attributes']
+        .transform_keys{ |key| key.gsub('-', '_') }
+    else
+      {errors: @result.errors}
+    end
+    render json: json, status: 200
+  end
+  
   def render_200_status
     render template: @template, status: 200
   end
