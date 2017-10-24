@@ -1,7 +1,7 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
-  after_filter :notify_saved_result
+  after_filter :notify_saved_result, except: :create_v1_4
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
@@ -43,7 +43,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   def create_v1_4
     @template = 'api_certificate_requests/create_v1_4'
     if @result.csr_obj && !@result.csr_obj.valid?
-      # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
     else
       if @result.valid? && @result.save
@@ -57,14 +56,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             end
             set_result_parameters(@result, @acr)
           else
-            @result = @acr #so that rabl can report errors
+            @result = @acr
           end
         end
       else
         InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
       end
     end
-    render_200_status
+    render json: (@result.errors.empty? ? serialize_model(@result) : serialize_object_errors(@result))
   rescue => e
     render_500_error e
   end
