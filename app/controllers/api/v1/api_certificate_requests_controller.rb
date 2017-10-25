@@ -33,6 +33,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     result.order_status    = acr.status
     result.order_amount    = acr.order.amount.format
     domain = api_result_domain(acr)
+    result.external_order_number = acr.ext_customer_ref
     result.certificate_url = domain+certificate_order_path(ssl_slug, acr)
     result.receipt_url     = domain+order_path(ssl_slug, acr.order)
     result.smart_seal_url  = domain+certificate_order_site_seal_path(ssl_slug, acr.ref)
@@ -161,6 +162,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.description = @acr.description
         @result.product = @acr.certificate.api_product_code
         @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement=~/[Yy]/
+        @result.external_order_number = @acr.ext_customer_ref
         if @acr.certificate.is_ucc?
           @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
           @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
@@ -249,6 +251,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
           result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
           result.description = acr.description
+          result.external_order_number = acr.ext_customer_ref
           if acr.certificate.is_ucc?
             result.domains_qty_purchased = acr.purchased_domains('all').to_s
             result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
