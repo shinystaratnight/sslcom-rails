@@ -1,3 +1,5 @@
+require 'will_paginate/array'
+
 class Api::V1::APIController < ActionController::API
   include SerializerHelper
   include ActionController::Cookies

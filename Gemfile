@@ -67,6 +67,7 @@ gem 'stripe'
 gem 'json-schema'
 gem 'rails-api'
 gem 'jsonapi-serializers'
+gem 'api-pagination'
 
 group :development do
   gem 'foreman'
