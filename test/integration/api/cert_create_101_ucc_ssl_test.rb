@@ -294,19 +294,19 @@ class CertCreate101UccSslTest < ActionDispatch::IntegrationTest
     
     # Params:     domains hash (over 500 domains)
     # No Params:  CSR hash
-    # Should:     return status code 400
+    # Should:     return status code 200
     #             response should have domains error
     # ==========================================================================
-    it 'status 400: over 500 domain max limit, NO CSR hash' do
+    it 'status 200: over 500 domain max limit, NO CSR hash' do
       @team.funded_account.update(cents: 9000000)
       post api_certificate_create_v1_4_path(
         @req.merge(domains: (1..501).to_a.map {|n| "ssltestdomain#{n}.com"})
       )
       items = JSON.parse(body)
-      
+
       # response
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       assert_match 'You have exceeded the maximum of 500 domain(s) or subdomains for this certificate.', items['errors']['domains'].first

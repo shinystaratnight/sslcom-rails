@@ -66,6 +66,7 @@ gem 'select2-rails'
 gem 'stripe'
 gem 'json-schema'
 gem 'rails-api'
+gem 'jsonapi-serializers'
 
 group :development do
   gem 'foreman'
