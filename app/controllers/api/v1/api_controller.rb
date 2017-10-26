@@ -18,6 +18,11 @@ class Api::V1::APIController < ActionController::API
   
   private
   
+  def error(status, code, message)
+    json = {response_type: 'ERROR', response_code: code, message: message}.to_json
+    render json: json, status: status
+  end
+  
   def set_test
     @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
   end
