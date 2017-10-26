@@ -12,6 +12,7 @@ class Api::V1::ApiCertificateCreate_v1_4Serializer < Api::V1::BaseSerializer
   attribute :api_request
   attribute :api_response
   attribute :debug
+  attribute :external_order_number
   
   def attributes
     attrs = super

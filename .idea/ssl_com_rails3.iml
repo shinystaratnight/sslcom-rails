@@ -470,21 +470,6 @@
         <ConfigurationWrapper RunnerId="RubyRunner" />
         <method />
       </configuration>
-      <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console">
-        <module name="ssl_com_rails3" />
-        <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-        <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-        <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
-        <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
-        <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
-        <envs />
-        <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-        <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-        <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
-        <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console" />
-        <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
-        <method />
-      </configuration>
       <configuration default="false" name="POST on /certificates/v1/apply" type="RSpecRunConfigurationType" factoryName="RSpec">
         <predefined_log_file id="RUBY_RSPEC" enabled="true" />
         <module name="ssl_com_rails3" />
@@ -917,7 +902,7 @@
     <orderEntry type="library" scope="PROVIDED" name="better_errors (v2.1.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.13.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.15.4, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cancan (v1.6.10, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.15.9, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -981,6 +966,7 @@
     <orderEntry type="library" scope="PROVIDED" name="io-like (v0.3.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.6.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.2.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="json-schema (v2.8.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jwt (v1.5.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="launchy (v2.4.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="libv8 (v3.16.14.17, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -1031,6 +1017,7 @@
     <orderEntry type="library" scope="PROVIDED" name="rack_session_access (v0.1.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="radix62 (v1.0.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails (v4.2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rails-api (v0.4.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-deprecated_sanitizer (v1.0.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-dom-testing (v1.0.7, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rails-html-sanitizer (v1.0.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -1068,6 +1055,7 @@
     <orderEntry type="library" scope="PROVIDED" name="sprockets (v3.7.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sprockets-rails (v3.2.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="squeel (v1.2.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="stripe (v2.1.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="terminal-notifier-guard (v1.7.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="therubyracer (v0.12.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="thor (v0.19.4, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
