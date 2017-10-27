@@ -250,10 +250,10 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
     
     # Params:     domains hash (over the limit of 1 domain)
     # No Params:  domains hash
-    # Should:     return status code 400
+    # Should:     return status code 200
     #             response should have domains error
     # ==========================================================================
-    it 'status 400: domains hash (over max limit), NO CSR hash' do
+    it 'status 200 error: domains hash (over max limit), NO CSR hash' do
       @team.funded_account.update(cents: 9000000)
       post api_certificate_create_v1_4_path(
         @req.merge(domains: %w{basicssldomain1.com basicssldomain1.com})
@@ -261,8 +261,8 @@ class CertCreate106BasicSslTest < ActionDispatch::IntegrationTest
       items = JSON.parse(body)
 
       # response
-      refute       response.success?
-      assert_equal 400, status
+      assert       response.success?
+      assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
       assert_match 'You have exceeded the maximum of 1 domain(s) or subdomains for this certificate.', items['errors']['domains'].first

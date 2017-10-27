@@ -1,4 +1,7 @@
+require 'will_paginate/array'
+
 class Api::V1::APIController < ActionController::API
+  include SerializerHelper
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::Rendering
@@ -18,12 +21,27 @@ class Api::V1::APIController < ActionController::API
   
   private
   
+  def error(status, code, message)
+    json = {response_type: 'ERROR', response_code: code, message: message}.to_json
+    render json: json, status: status
+  end
+  
   def set_test
     @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
   end
   
   def activate_authlogic
     Authlogic::Session::Base.controller = Authlogic::ControllerAdapters::RailsAdapter.new(self)
+  end
+  
+  def render_200_status_noschema
+    json = if @result.errors.empty?
+      serialize_model(@result)['data']['attributes']
+        .transform_keys{ |key| key.gsub('-', '_') }
+    else
+      {errors: @result.errors}
+    end
+    render json: json, status: 200
   end
   
   def render_200_status

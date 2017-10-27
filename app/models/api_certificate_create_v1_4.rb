@@ -74,12 +74,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         #TODO add dcv validation
       end
     end
-    verify_domain_limits
+    # verify_domain_limits
   end
 
   def create_certificate_order
     certificate = Certificate.available.find_by_serial(PRODUCTS[self.product.to_s]+api_requestable.tier_suffix)
-    co_params = {duration: period, is_test: self.test}
+    co_params = {duration: period, is_test: self.test, ext_customer_ref: external_order_number}
     co = api_requestable.certificate_orders.build(co_params)
     if self.csr
       # process csr
@@ -128,6 +128,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     @certificate_order=self.find_certificate_order
     if @certificate_order.is_a?(CertificateOrder)
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
       # choose the right ca_certificate_id for submit to Comodo
       @certificate_order.is_test=self.test
       #assume updating domain validation, already sent to comodo

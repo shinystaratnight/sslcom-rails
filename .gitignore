@@ -16,7 +16,8 @@ tmp/
 .DS_Store
 .vagrant/machines/default/virtualbox/creator_uid
 .vagrant/machines/default/virtualbox/synced_folders
-/.idea/
+/.idea/*
 /config/initializers/session_store.rb
 .env
 config/local_env.yml
+config/deploy.rb

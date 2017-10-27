@@ -10,8 +10,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="copied views. Need to DRY it up">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/serializers/api/v1/api_certificate_retrieve_serializer.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile" afterPath="$PROJECT_DIR$/Gemfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" afterPath="$PROJECT_DIR$/app/models/api_certificate_retrieve.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/serializers/api/v1/api_certificate_create_v1_4_serializer.rb" afterPath="$PROJECT_DIR$/app/serializers/api/v1/api_certificate_create_v1_4_serializer.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/serializers/api/v1/base_serializer.rb" afterPath="$PROJECT_DIR$/app/serializers/api/v1/base_serializer.rb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/deploy.rb" afterPath="$PROJECT_DIR$/config/deploy.rb" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -94,58 +104,18 @@
       <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="294">
-              <caret line="35" column="19" lean-forward="true" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="168">
-              <caret line="23" column="42" lean-forward="false" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="42" />
+              <caret line="23" column="32" lean-forward="true" selection-start-line="23" selection-start-column="32" selection-end-line="23" selection-end-column="32" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="api_constraint.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/constraints/api_constraint.rb">
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="21">
-              <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="api_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="168">
-              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="site_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="36" lean-forward="true" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="update_v1_4.rabl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="252">
+              <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -154,88 +124,114 @@
       <file leaf-file-name="api_certificate_requests_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="399">
-              <caret line="64" column="9" lean-forward="true" selection-start-line="64" selection-start-column="9" selection-end-line="64" selection-end-column="9" />
+            <state relative-caret-position="110">
+              <caret line="477" column="29" lean-forward="false" selection-start-line="477" selection-start-column="29" selection-end-line="477" selection-end-column="29" />
               <folding>
-                <marker date="1508775488458" expanded="true" signature="47:21248" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="2022:2841" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="2082:2841" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="2256:2841" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="2298:2841" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="5366:5409" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="5434:5957" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="5504:5919" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="5526:5911" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="5974:8263" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="6032:8220" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="6098:8127" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="6783:7126" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="7135:8067" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="8290:8893" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="8295:8850" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="8361:8757" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="8905:9284" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="8938:9021" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="8959:9013" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="9037:9278" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="9067:9122" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9139:9195" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9214:9270" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9299:9663" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="9332:9418" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="9353:9410" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="9434:9657" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="9464:9513" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9530:9580" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9599:9649" ph="{ ... }" />
-                <marker date="1508775488458" expanded="true" signature="9681:12067" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="9793:12024" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="9878:11931" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="9980:11871" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="10532:10879" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="10890:11832" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="12089:13268" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="12157:13262" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="12332:13254" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="12356:13155" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="12442:13143" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="13289:13739" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="13294:13701" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="13762:14503" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="13767:14497" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="13919:14237" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="14086:14227" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="14244:14404" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="14527:16226" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="14592:16183" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="14681:14744" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="14780:15990" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="14867:15054" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="15085:15980" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="15288:15968" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="15997:16090" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="16259:18161" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="16324:18081" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="16470:17988" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="16535:17803" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="16630:16882" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="16976:17791" ph="do ... end" />
-                <marker date="1508775488458" expanded="true" signature="17185:17777" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="17812:17909" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="18190:18553" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="18195:18515" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="18248:18422" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="18576:19010" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="18648:18972" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="18782:18879" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="19046:20495" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="19059:19906" ph="case ... end" />
-                <marker date="1508775488458" expanded="true" signature="20525:20585" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="20633:21244" ph=" ... end" />
-                <marker date="1508775488458" expanded="true" signature="20638:21238" ph="unless ... end" />
-                <marker date="1508775488458" expanded="true" signature="20676:20941" ph="if ... end" />
-                <marker date="1508775488458" expanded="true" signature="20957:21230" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="47:21718" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="2947:2990" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="3009:4014" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="3069:3949" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="3201:3856" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="3255:3811" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="3398:3799" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="3677:3785" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4033:5383" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="4093:5318" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4267:5310" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4313:5211" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4399:5199" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4465:4713" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="4726:4957" ph="##..." />
+                <marker date="1509041551596" expanded="true" signature="5408:5931" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="5478:5893" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="5500:5885" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="5948:8299" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="6006:8256" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="6072:8163" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="6819:7162" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="7171:8103" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="8326:8929" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="8331:8886" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="8397:8793" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="8941:9320" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="8974:9057" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="8995:9049" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="9073:9314" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="9103:9158" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9175:9231" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9250:9306" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9335:9699" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="9368:9454" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="9389:9446" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="9470:9693" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="9500:9549" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9566:9616" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9635:9685" ph="{ ... }" />
+                <marker date="1509041551596" expanded="true" signature="9717:12537" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="12391:12401" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="12391:12494" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="12559:13738" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="12627:13732" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="12802:13724" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="12826:13625" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="12912:13613" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="13759:14209" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="13764:14171" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="14232:14973" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="14237:14967" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="14389:14707" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="14556:14697" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="14714:14874" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="14997:16696" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="15062:16653" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="15151:15214" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="15250:16460" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="15337:15524" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="15555:16450" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="15758:16438" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="16467:16560" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="16729:18631" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="16794:18551" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="16940:18458" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="17005:18273" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="17100:17352" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="17446:18261" ph="do ... end" />
+                <marker date="1509041551596" expanded="true" signature="17655:18247" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="18282:18379" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="18660:19023" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="18665:18985" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="18718:18892" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="19046:19480" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="19118:19442" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="19252:19349" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="19516:20965" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="19529:20376" ph="case ... end" />
+                <marker date="1509041551596" expanded="true" signature="20995:21055" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="21103:21714" ph=" ... end" />
+                <marker date="1509041551596" expanded="true" signature="21108:21708" ph="unless ... end" />
+                <marker date="1509041551596" expanded="true" signature="21146:21411" ph="if ... end" />
+                <marker date="1509041551596" expanded="true" signature="21427:21700" ph="if ... end" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_create_v1_4.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="42">
+              <caret line="2" column="41" lean-forward="false" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_request.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="105">
+              <caret line="47" column="6" lean-forward="false" selection-start-line="47" selection-start-column="6" selection-end-line="47" selection-end-column="6" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -243,28 +239,48 @@
       <file leaf-file-name="create_v1_4.rabl" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
+            <state relative-caret-position="105">
+              <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_reprocess.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_reprocess.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-189">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="parse_csr.rabl" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/parse_csr.rabl">
+      <file leaf-file-name="update_v1_4.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+            <state relative-caret-position="252">
+              <caret line="12" column="81" lean-forward="false" selection-start-line="12" selection-start-column="81" selection-end-line="12" selection-end-column="81" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="routes.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <file leaf-file-name="update_v1_4.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3357">
-              <caret line="54" column="57" lean-forward="false" selection-start-line="54" selection-start-column="57" selection-end-line="54" selection-end-column="57" />
+            <state relative-caret-position="252">
+              <caret line="12" column="102" lean-forward="false" selection-start-line="12" selection-start-column="102" selection-end-line="12" selection-end-column="102" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="create_v1_4.rabl" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="252">
+              <caret line="12" column="102" lean-forward="false" selection-start-line="12" selection-start-column="102" selection-end-line="12" selection-end-column="102" />
               <folding />
             </state>
           </provider>
@@ -288,6 +304,22 @@
       <find>set_access_control_headers</find>
       <find>CAA</find>
       <find>def render</find>
+      <find>job</find>
+      <find>reprocess requested</find>
+      <find>perform validation</find>
+      <find>GATEWAY</find>
+      <find>search_with_csr</find>
+      <find>pids</find>
+      <find>def create_v</find>
+      <find>external_or</find>
+      <find>def index</find>
+      <find>index</find>
+      <find>def show</find>
+      <find>external_order_number</find>
+      <find>update</find>
+      <find>update_certificate_order</find>
+      <find>wrap_parameters</find>
+      <find>def error</find>
     </findStrings>
     <replaceStrings>
       <replace>/</replace>
@@ -307,25 +339,13 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="sp-98-api-scope" />
+        <entry key="$PROJECT_DIR$" value="sp-102-json-api-serializer" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/config/initializers/in_place_editing.rb" />
-        <option value="$PROJECT_DIR$/bin/rails" />
-        <option value="$PROJECT_DIR$/config/initializers/session_store.rb" />
-        <option value="$PROJECT_DIR$/config/initializers/preferences.rb" />
-        <option value="$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/preferences-0.4.2/lib/preferences/preference_definition.rb" />
-        <option value="$PROJECT_DIR$/lib/preferences.rb" />
-        <option value="$PROJECT_DIR$/lib/preferences/lib/preferences/preference_definition.rb" />
-        <option value="$PROJECT_DIR$/app/models/funded_account.rb" />
-        <option value="$PROJECT_DIR$/app/views/ssl_accounts/_settings_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/deposit.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
         <option value="$PROJECT_DIR$/app/views/users/index.html.haml" />
         <option value="$PROJECT_DIR$/app/views/users/_standard.html.haml" />
         <option value="$PROJECT_DIR$/app/views/funded_accounts/_certificate_order_row.haml" />
@@ -361,10 +381,22 @@
         <option value="$PROJECT_DIR$/config/settings.yml" />
         <option value="$PROJECT_DIR$/config/database.yml" />
         <option value="$PROJECT_DIR$/test/integration/api/cert_create_101_ucc_ssl_test.rb" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
         <option value="$PROJECT_DIR$/config/routes.rb" />
         <option value="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+        <option value="$PROJECT_DIR$/config/initializers/secret_token.rb" />
+        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/index_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/index_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/show_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
+        <option value="$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -421,11 +453,8 @@
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectReloadState">
-    <option name="STATE" value="0" />
-  </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator currentView="Scope" currentSubView="Project Files" proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -439,74 +468,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Project Files">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="sslcom-rails" type="cbb8eebc:String" user="sslcom-rails" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="sslcom-rails" type="cbb8eebc:String" user="sslcom-rails" />
+              <item name=".idea" type="cbb8eebc:String" user=".idea" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="constraints" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="v1" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="api" type="462c0819:PsiDirectoryNode" />
-              <item name="v1" type="462c0819:PsiDirectoryNode" />
-              <item name="api_certificate_requests" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="api_certificate_requests" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="certificate_orders" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="app" type="462c0819:PsiDirectoryNode" />
-              <item name="views" type="462c0819:PsiDirectoryNode" />
-              <item name="certificates" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
@@ -518,7 +501,6 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="RailsProjectView" />
     </panes>
   </component>
@@ -1497,32 +1479,8 @@
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
       <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
-      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console development" />
       <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
-    </configuration>
-    <configuration name="Run test 'CertRevokeTest': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
     </configuration>
     <configuration name="Run test 'api_certificate_revoke_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
@@ -1540,30 +1498,6 @@
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-    </configuration>
-    <configuration name="Run test 'cert_create_with_csr_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_create_with_csr_test.rb" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
@@ -1767,6 +1701,48 @@
       <recursive>false</recursive>
       <method />
     </configuration>
+    <configuration name="delayed_job:restart: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="delayed_job:restart" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+    </configuration>
+    <configuration name="delayed_job:start: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="delayed_job:start" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+    </configuration>
+    <configuration name="deploy:start: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="deploy:start" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+    </configuration>
     <configuration name="docker-whale" type="docker-deploy" factoryName="Docker Deployment" server-name="Docker">
       <deployment type="docker-image">
         <settings>
@@ -1792,55 +1768,7 @@
         </settings>
       </deployment>
     </configuration>
-    <configuration name="requires a `ref` parameter: ssl_com_rails3 (1)" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="/test_\d+_requires a `ref` parameter/" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_METHOD" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-    </configuration>
-    <configuration name="requires a `ref` parameter: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="/test_\d+_requires a `ref` parameter/" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_METHOD" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-    </configuration>
-    <list size="31">
+    <list size="30">
       <item index="0" class="java.lang.String" itemvalue="Capistrano.deploy: ssl_com_rails3" />
       <item index="1" class="java.lang.String" itemvalue="Capistrano.deploy:cleanup: ssl_com_rails3" />
       <item index="2" class="java.lang.String" itemvalue="Capistrano.deploy:restart: ssl_com_rails3" />
@@ -1850,36 +1778,35 @@
       <item index="6" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
       <item index="7" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
       <item index="8" class="java.lang.String" itemvalue="Docker Deployment.docker-whale" />
-      <item index="9" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
-      <item index="10" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
-      <item index="11" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
-      <item index="12" class="java.lang.String" itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
-      <item index="13" class="java.lang.String" itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
-      <item index="14" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
-      <item index="15" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
-      <item index="16" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
-      <item index="17" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
-      <item index="18" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
-      <item index="19" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
-      <item index="20" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in billing: ssl_com_rails3" />
-      <item index="21" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in integration: ssl_com_rails3" />
-      <item index="22" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'api_certificate_revoke_test': ssl_com_rails3" />
-      <item index="23" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
-      <item index="24" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
-      <item index="25" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
+      <item index="9" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="10" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
+      <item index="11" class="java.lang.String" itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
+      <item index="12" class="java.lang.String" itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="15" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="16" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="17" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
+      <item index="18" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+      <item index="19" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in billing: ssl_com_rails3" />
+      <item index="20" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in integration: ssl_com_rails3" />
+      <item index="21" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'api_certificate_revoke_test': ssl_com_rails3" />
+      <item index="22" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
+      <item index="23" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
+      <item index="24" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
+      <item index="25" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
       <item index="26" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in api: ssl_com_rails3" />
-      <item index="27" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'CertRevokeTest': ssl_com_rails3" />
-      <item index="28" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'cert_create_with_csr_test': ssl_com_rails3" />
-      <item index="29" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3" />
-      <item index="30" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3 (1)" />
+      <item index="27" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+      <item index="28" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
+      <item index="29" class="java.lang.String" itemvalue="Capistrano.deploy:start: ssl_com_rails3" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in api: ssl_com_rails3" />
-        <item index="1" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3" />
-        <item index="2" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'cert_create_with_csr_test': ssl_com_rails3" />
-        <item index="3" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.requires a `ref` parameter: ssl_com_rails3 (1)" />
-        <item index="4" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'CertRevokeTest': ssl_com_rails3" />
+        <item index="0" class="java.lang.String" itemvalue="Capistrano.deploy:start: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item index="3" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+        <item index="4" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in api: ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
@@ -1936,21 +1863,8 @@
       <workItem from="1508351127249" duration="5232000" />
       <workItem from="1508430064659" duration="6756000" />
       <workItem from="1508445839297" duration="7158000" />
-      <workItem from="1508515499659" duration="19236000" />
-    </task>
-    <task id="LOCAL-00304" summary="fixed api issue">
-      <created>1428526983428</created>
-      <option name="number" value="00304" />
-      <option name="presentableId" value="LOCAL-00304" />
-      <option name="project" value="LOCAL" />
-      <updated>1428526983429</updated>
-    </task>
-    <task id="LOCAL-00305" summary="api fix">
-      <created>1428545766706</created>
-      <option name="number" value="00305" />
-      <option name="presentableId" value="LOCAL-00305" />
-      <option name="project" value="LOCAL" />
-      <updated>1428545766706</updated>
+      <workItem from="1508515499659" duration="28506000" />
+      <workItem from="1508859465100" duration="22726000" />
     </task>
     <task id="LOCAL-00306" summary="fixed validate frequent resubmit issue">
       <created>1428594591332</created>
@@ -2281,7 +2195,21 @@
       <option name="project" value="LOCAL" />
       <updated>1508776555534</updated>
     </task>
-    <option name="localTasksCounter" value="353" />
+    <task id="LOCAL-00353" summary="set_access_control_headers in application_controller as a temp fix">
+      <created>1508779110400</created>
+      <option name="number" value="00353" />
+      <option name="presentableId" value="LOCAL-00353" />
+      <option name="project" value="LOCAL" />
+      <updated>1508779110400</updated>
+    </task>
+    <task id="LOCAL-00354" summary="allow reseller to store their own ext_customer_ref to each order and also update it">
+      <created>1508967760672</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1508967760676</updated>
+    </task>
+    <option name="localTasksCounter" value="355" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2317,36 +2245,48 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="226159000" />
+    <option name="totallyTimeSpent" value="259089000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
+    <frame x="-9" y="41" width="1938" height="1048" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1122449" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17293233" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33333334" sideWeight="0.33385417" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5022676" sideWeight="0.4875" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5442177" sideWeight="0.38541666" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.061979167" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2484375" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5" sideWeight="0.49462944" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41043085" sideWeight="0.79583335" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20107238" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5" sideWeight="0.50537056" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4180328" sideWeight="0.56390977" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2008593" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4180328" sideWeight="0.43609023" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41285402" sideWeight="0.56545067" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41217798" sideWeight="0.5520945" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33333334" sideWeight="0.33385417" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5022676" sideWeight="0.5125" order="9" side_tool="true" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4117647" sideWeight="0.608985" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5" sideWeight="0.50751877" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4180328" sideWeight="0.56390977" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4180328" sideWeight="0.43609023" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1122449" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17293233" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32970807" sideWeight="0.49862638" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41043085" sideWeight="0.79583335" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2008593" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.41217798" sideWeight="0.5520945" order="4" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2366,9 +2306,6 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="for EV orders, notify them of the EV guidelines if DV orders submitted." />
-    <MESSAGE value="email certs" />
-    <MESSAGE value="code signing cert signup page" />
     <MESSAGE value="code_signing api" />
     <MESSAGE value="client certificates api" />
     <MESSAGE value="api integration for email and code signing certificates" />
@@ -2391,7 +2328,10 @@
     <MESSAGE value="refactor api views location" />
     <MESSAGE value="CORS header" />
     <MESSAGE value="copied views. Need to DRY it up" />
-    <option name="LAST_COMMIT_MESSAGE" value="copied views. Need to DRY it up" />
+    <MESSAGE value="set_access_control_headers in application_controller as a temp fix" />
+    <MESSAGE value="allow reseller to store their own ext_customer_ref to each order and also update it" />
+    <MESSAGE value="api pagination" />
+    <option name="LAST_COMMIT_MESSAGE" value="api pagination" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2410,11 +2350,6 @@
           <url>file://$PROJECT_DIR$/app/controllers/password_resets_controller.rb</url>
           <line>6</line>
           <option name="timeStamp" value="831" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/certificate_name.rb</url>
-          <line>199</line>
-          <option name="timeStamp" value="1230" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
@@ -2486,11 +2421,16 @@
           <line>9</line>
           <option name="timeStamp" value="2197" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb</url>
+          <line>106</line>
+          <option name="timeStamp" value="2199" />
+        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="2199" />
+      <option name="time" value="2203" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="IrbRunConfigurationType">
@@ -2499,128 +2439,11 @@
         <watch expression="host" />
       </configuration>
       <configuration name="RailsRunConfigurationType">
-        <watch expression="self.errors" language="ruby" />
-        <watch expression="self.cents" language="ruby" />
+        <watch expression="options[:ssl_account]" />
       </configuration>
     </watches-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/install.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/acts_as_billable/Rakefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/address.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="6" lean-forward="false" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/billing_profile.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="212">
-          <caret line="66" column="38" lean-forward="false" selection-start-line="66" selection-start-column="38" selection-end-line="66" selection-end-column="38" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1488">
-          <caret line="429" column="34" lean-forward="false" selection-start-line="429" selection-start-column="34" selection-end-line="429" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="19" column="23" lean-forward="false" selection-start-line="19" selection-start-column="23" selection-end-line="19" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/remodel.rb" />
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow.rb" />
-    <entry file="file://$USER_HOME$/.RubyMine2016.1/system/ruby_stubs/-1926413708/-332434372/gems/workflow-1.2.0/lib/workflow/adapters/active_record.rb" />
-    <entry file="file://$PROJECT_DIR$/lib/kernel.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/money.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="147">
-          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/array.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/asset_tag_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9282">
-          <caret line="442" column="0" lean-forward="false" selection-start-line="442" selection-start-column="0" selection-end-line="442" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/active_record.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/private_key">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/action_provision">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/action_set_name">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/id">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.vagrant/machines/default/virtualbox/index_uuid">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -2646,41 +2469,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="42" lean-forward="false" selection-start-line="0" selection-start-column="30" selection-end-line="0" selection-end-column="42" />
-          <folding>
-            <marker date="1508448205027" expanded="true" signature="27:7224" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="3382:3562" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="3411:3556" ph="unless ... end" />
-            <marker date="1508448205027" expanded="true" signature="3583:3646" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="3590:3640" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="3668:3816" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="3858:4474" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="3863:4468" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="3908:4460" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="4000:4251" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="4595:5342" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="4840:5336" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="4857:5328" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="4957:5286" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="4979:5274" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="5381:5890" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="5446:5667" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="5728:5884" ph="if ... end" />
-            <marker date="1508448205027" expanded="true" signature="5901:5978" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="6013:7007" ph=" ... end" />
-            <marker date="1508448205027" expanded="true" signature="6262:6909" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="6343:6883" ph="do ... end" />
-            <marker date="1508448205027" expanded="true" signature="6383:6404" ph="{ ... }" />
-            <marker date="1508448205027" expanded="true" signature="6581:6873" ph="unless ... end" />
-            <marker date="1508448205027" expanded="true" signature="7020:7220" ph=" ... end" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2688,7 +2476,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2696,7 +2483,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1659">
           <caret line="79" column="0" lean-forward="false" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2704,7 +2490,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="104" lean-forward="false" selection-start-line="0" selection-start-column="62" selection-end-line="0" selection-end-column="104" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2712,7 +2497,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="104">
           <caret line="79" column="87" lean-forward="false" selection-start-line="79" selection-start-column="87" selection-end-line="79" selection-end-column="87" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2720,7 +2504,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="70">
           <caret line="171" column="24" lean-forward="true" selection-start-line="171" selection-start-column="24" selection-end-line="171" selection-end-column="24" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2728,7 +2511,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="777">
           <caret line="37" column="22" lean-forward="false" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2736,18 +2518,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="850">
           <caret line="263" column="0" lean-forward="false" selection-start-line="263" selection-start-column="0" selection-end-line="263" selection-end-column="0" />
-          <folding>
-            <marker date="1508535029928" expanded="true" signature="54:11791" ph=" ... end" />
-            <marker date="1508535029928" expanded="true" signature="91:188" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="214:11787" ph="do ... end" />
-            <marker date="1508535029928" expanded="true" signature="581:945" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="2963:3374" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="6114:6525" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="8823:8923" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="9381:10268" ph="do ... end" />
-            <marker date="1508535029928" expanded="true" signature="10278:10539" ph="##..." />
-            <marker date="1508535029928" expanded="true" signature="10604:11781" ph="do ... end" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2755,7 +2525,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="37" column="0" lean-forward="false" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2763,28 +2532,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
           <caret line="28" column="0" lean-forward="false" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding>
-            <marker date="1508535029933" expanded="true" signature="48:2295" ph=" ... end" />
-            <marker date="1508535029933" expanded="true" signature="154:2291" ph="do ... end" />
-            <marker date="1508535029933" expanded="true" signature="991:1196" ph="do ... end" />
-            <marker date="1508535029933" expanded="true" signature="1236:2285" ph="do ... end" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/initializers/secret_token.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2792,31 +2539,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="142">
           <caret line="135" column="0" lean-forward="false" selection-start-line="135" selection-start-column="0" selection-end-line="135" selection-end-column="0" />
-          <folding>
-            <marker date="1508535029899" expanded="true" signature="143:274" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="424:4045" ph=" ... end" />
-            <marker date="1508535029899" expanded="true" signature="444:4041" ph=" ... end" />
-            <marker date="1508535029899" expanded="true" signature="710:1011" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="1104:1207" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="1331:1897" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="1955:2246" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="2429:2706" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="2788:2863" ph="do ... end" />
-            <marker date="1508535029899" expanded="true" signature="2951:3275" ph="unless ... end" />
-            <marker date="1508535029899" expanded="true" signature="3407:3639" ph="do ... end" />
-            <marker date="1508535029899" expanded="true" signature="3422:3631" ph="do ... end" />
-            <marker date="1508535029899" expanded="true" signature="4619:4737" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="4891:5015" ph="##..." />
-            <marker date="1508535029899" expanded="true" signature="5196:5297" ph="##..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="9" column="20" lean-forward="false" selection-start-line="9" selection-start-column="20" selection-end-line="9" selection-end-column="20" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2824,15 +2546,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="499">
           <caret line="55" column="14" lean-forward="false" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/local_env.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2840,9 +2553,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="48">
           <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
-          <folding>
-            <marker date="1508535029939" expanded="true" signature="8906:9909" ph="do ... end" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -2850,7 +2560,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
           <caret line="223" column="6" lean-forward="true" selection-start-line="223" selection-start-column="6" selection-end-line="223" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2858,7 +2567,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2870,9 +2578,187 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl">
+    <entry file="file://$PROJECT_DIR$/app/constraints/api_constraint.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21">
+          <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
+          <caret line="0" column="36" lean-forward="false" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1239">
+          <caret line="59" column="24" lean-forward="false" selection-start-line="59" selection-start-column="24" selection-end-line="59" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/secret_token.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/session_store.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="882">
+          <caret line="42" column="1" lean-forward="false" selection-start-line="42" selection-start-column="1" selection-end-line="42" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/local_env.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Capfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="87" column="86" lean-forward="false" selection-start-line="87" selection-start-column="86" selection-end-line="87" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="101" column="41" lean-forward="false" selection-start-line="101" selection-start-column="41" selection-end-line="101" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/serializers/api/v1/base_serializer.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/serializers/api/v1/api_certificate_create_v1_4_serializer.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="24" lean-forward="true" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20170703231345_add_serial_to_signed_certificates.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="0" lean-forward="true" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="734" column="11" lean-forward="false" selection-start-line="734" selection-start-column="11" selection-end-line="734" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/db/migrate/20170714231345_add_external_customer_id.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="39" lean-forward="false" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="199" column="0" lean-forward="false" selection-start-line="199" selection-start-column="0" selection-end-line="199" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="38" column="21" lean-forward="false" selection-start-line="38" selection-start-column="21" selection-end-line="38" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/index_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="8" column="3" lean-forward="true" selection-start-line="8" selection-start-column="3" selection-end-line="8" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/website.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/index_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="266" lean-forward="true" selection-start-line="7" selection-start-column="266" selection-end-line="7" selection-end-column="290" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/show_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="271" lean-forward="false" selection-start-line="7" selection-start-column="271" selection-end-line="7" selection-end-column="271" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/show_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="7" column="248" lean-forward="false" selection-start-line="7" selection-start-column="248" selection-end-line="7" selection-end-column="248" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/update_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="12" column="81" lean-forward="false" selection-start-line="12" selection-start-column="81" selection-end-line="12" selection-end-column="81" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="12" column="102" lean-forward="false" selection-start-line="12" selection-start-column="102" selection-end-line="12" selection-end-column="102" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_reprocess.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-189">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
@@ -2880,135 +2766,141 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="399">
-          <caret line="64" column="9" lean-forward="true" selection-start-line="64" selection-start-column="9" selection-end-line="64" selection-end-column="9" />
+        <state relative-caret-position="110">
+          <caret line="477" column="29" lean-forward="false" selection-start-line="477" selection-start-column="29" selection-end-line="477" selection-end-column="29" />
           <folding>
-            <marker date="1508775488458" expanded="true" signature="47:21248" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="2022:2841" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="2082:2841" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="2256:2841" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="2298:2841" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="5366:5409" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="5434:5957" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="5504:5919" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="5526:5911" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="5974:8263" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="6032:8220" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="6098:8127" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="6783:7126" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="7135:8067" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="8290:8893" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="8295:8850" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="8361:8757" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="8905:9284" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="8938:9021" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="8959:9013" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="9037:9278" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="9067:9122" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9139:9195" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9214:9270" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9299:9663" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="9332:9418" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="9353:9410" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="9434:9657" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="9464:9513" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9530:9580" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9599:9649" ph="{ ... }" />
-            <marker date="1508775488458" expanded="true" signature="9681:12067" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="9793:12024" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="9878:11931" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="9980:11871" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="10532:10879" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="10890:11832" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="12089:13268" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="12157:13262" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="12332:13254" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="12356:13155" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="12442:13143" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="13289:13739" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="13294:13701" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="13762:14503" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="13767:14497" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="13919:14237" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="14086:14227" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="14244:14404" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="14527:16226" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="14592:16183" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="14681:14744" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="14780:15990" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="14867:15054" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="15085:15980" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="15288:15968" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="15997:16090" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="16259:18161" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="16324:18081" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="16470:17988" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="16535:17803" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="16630:16882" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="16976:17791" ph="do ... end" />
-            <marker date="1508775488458" expanded="true" signature="17185:17777" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="17812:17909" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="18190:18553" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="18195:18515" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="18248:18422" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="18576:19010" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="18648:18972" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="18782:18879" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="19046:20495" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="19059:19906" ph="case ... end" />
-            <marker date="1508775488458" expanded="true" signature="20525:20585" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="20633:21244" ph=" ... end" />
-            <marker date="1508775488458" expanded="true" signature="20638:21238" ph="unless ... end" />
-            <marker date="1508775488458" expanded="true" signature="20676:20941" ph="if ... end" />
-            <marker date="1508775488458" expanded="true" signature="20957:21230" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="47:21718" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="2947:2990" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="3009:4014" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="3069:3949" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="3201:3856" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="3255:3811" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="3398:3799" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="3677:3785" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4033:5383" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="4093:5318" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4267:5310" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4313:5211" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4399:5199" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4465:4713" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="4726:4957" ph="##..." />
+            <marker date="1509041551596" expanded="true" signature="5408:5931" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="5478:5893" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="5500:5885" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="5948:8299" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="6006:8256" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="6072:8163" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="6819:7162" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="7171:8103" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="8326:8929" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="8331:8886" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="8397:8793" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="8941:9320" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="8974:9057" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="8995:9049" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="9073:9314" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="9103:9158" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9175:9231" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9250:9306" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9335:9699" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="9368:9454" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="9389:9446" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="9470:9693" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="9500:9549" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9566:9616" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9635:9685" ph="{ ... }" />
+            <marker date="1509041551596" expanded="true" signature="9717:12537" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="12391:12401" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="12391:12494" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="12559:13738" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="12627:13732" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="12802:13724" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="12826:13625" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="12912:13613" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="13759:14209" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="13764:14171" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="14232:14973" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="14237:14967" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="14389:14707" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="14556:14697" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="14714:14874" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="14997:16696" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="15062:16653" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="15151:15214" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="15250:16460" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="15337:15524" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="15555:16450" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="15758:16438" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="16467:16560" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="16729:18631" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="16794:18551" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="16940:18458" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="17005:18273" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="17100:17352" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="17446:18261" ph="do ... end" />
+            <marker date="1509041551596" expanded="true" signature="17655:18247" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="18282:18379" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="18660:19023" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="18665:18985" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="18718:18892" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="19046:19480" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="19118:19442" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="19252:19349" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="19516:20965" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="19529:20376" ph="case ... end" />
+            <marker date="1509041551596" expanded="true" signature="20995:21055" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="21103:21714" ph=" ... end" />
+            <marker date="1509041551596" expanded="true" signature="21108:21708" ph="unless ... end" />
+            <marker date="1509041551596" expanded="true" signature="21146:21411" ph="if ... end" />
+            <marker date="1509041551596" expanded="true" signature="21427:21700" ph="if ... end" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/constraints/api_constraint.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21">
-          <caret line="1" column="19" lean-forward="false" selection-start-line="1" selection-start-column="6" selection-end-line="1" selection-end-column="19" />
+        <state relative-caret-position="42">
+          <caret line="2" column="41" lean-forward="false" selection-start-line="2" selection-start-column="41" selection-end-line="2" selection-end-column="41" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/update_v1_4.rabl">
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="105">
+          <caret line="47" column="6" lean-forward="false" selection-start-line="47" selection-start-column="6" selection-end-line="47" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api_certificate_requests/create_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="12" column="102" lean-forward="false" selection-start-line="12" selection-start-column="102" selection-end-line="12" selection-end-column="102" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/create_v1_4.rabl">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="5" column="4" lean-forward="false" selection-start-line="5" selection-start-column="4" selection-end-line="5" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="35" column="19" lean-forward="true" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/site_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="36" lean-forward="true" selection-start-line="0" selection-start-column="36" selection-end-line="0" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="168">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+          <caret line="23" column="32" lean-forward="true" selection-start-line="23" selection-start-column="32" selection-end-line="23" selection-end-column="32" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="168">
-          <caret line="23" column="42" lean-forward="false" selection-start-line="23" selection-start-column="16" selection-end-line="23" selection-end-column="42" />
+        <state relative-caret-position="252">
+          <caret line="18" column="8" lean-forward="false" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
           <folding />
         </state>
       </provider>

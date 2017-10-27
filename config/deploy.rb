@@ -2,7 +2,6 @@
 #set :rvm_ruby_string, ENV['GEM_HOME'].gsub(/.*\//,"") # Read from local system
 
 # Load RVM's capistrano plugin.
-require "rvm/capistrano"
 
 set :rails_env, ENV['rails_env'] || ENV['RAILS_ENV'] || 'production'
 
@@ -28,21 +27,27 @@ set :application, "ssl_com"
 
 server = "staging"
 case server
-  when /staging/
+  when "staging"
+    require "rvm/capistrano"
     set :user, "ubuntu"
     set :branch, "staging"
     set :domain, '50.19.246.227' #Rails 4 staging
     set :deploy_to, "/home/ubuntu/sites/#{application}"
-  when /production/
+    # NOTE: for some reason Capistrano requires you to have both the public and
+    # the private key in the same folder, the public key should have the
+    # extension ".pub".
+    ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
+  when "production"
     set :user, "ubuntu"
     set :branch, "master"
     set :domain, 'ra.sslpki.local'
     set :deploy_to, "/home/ubuntu/sites/#{application}"
-  when /production_api/
+  when "production_api"
     set :user, "leo"
     set :branch, "master"
     set :domain, 'sws-a1.sslpki.local'
     set :deploy_to, "/srv/www/#{application}"
+    ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
 end
 
 #set :deploy_via, :copy
@@ -55,11 +60,6 @@ end
 set :scm, :git
 set :repository, "git@github.com:SSLcom/sslcom-rails.git"
 set :deploy_via, :remote_cache
-
-# NOTE: for some reason Capistrano requires you to have both the public and
-# the private key in the same folder, the public key should have the
-# extension ".pub".
-ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
 
 set :use_sudo, false
 
@@ -199,6 +199,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/repository #{release_path}/public/certs"
     run "ln -nfs #{shared_path}/config/local_env.yml #{release_path}/config/local_env.yml"
     run "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
+    run "ln -nfs #{shared_path}/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'
