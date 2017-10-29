@@ -1,0 +1,2 @@
+class Blacklist < Blocklist
+end
