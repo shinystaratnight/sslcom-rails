@@ -1,4 +1,5 @@
 .bundle
+Vagrantfile
 db/*.sqlite3
 config/database.yml
 config/secrets.yml

@@ -324,7 +324,8 @@ class SslAccount < ActiveRecord::Base
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db
-  def self.prep_dev_db(ranges=[[]],size)
+  # SslAccount.convert_db_to_development
+  def self.convert_db_to_development(ranges=[["08/01/2016","09/01/2016"],["08/01/2017","09/01/2017"]],size=1000)
     require "declarative_authorization/maintenance"
     SentReminder.unscoped.delete_all
     TrackedUrl.unscoped.delete_all
@@ -343,7 +344,7 @@ class SslAccount < ActiveRecord::Base
       end
       %w(User SslAccount SiteSeal BillingProfile CertificateOrder Order DomainControlValidation
         CertificateContent CertificateName Csr SignedCertificate Contact Validation ValidationHistory ValidationHistoryValidation
-        ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit Api ApiCertificateRequest
+        ValidationRulingValidationHistory Assignment Preference ShoppingCart SiteCheck Permission SystemAudit
         ApiCredential CaApiRequest Reseller).each {|table|
           sql = (['created_at BETWEEN ? AND ?']*ranges.count).join(" OR ")
           table.constantize.unscoped.where.not(sql, *(ranges.flatten)).delete_all
