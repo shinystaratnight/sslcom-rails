@@ -550,7 +550,8 @@ class Certificate < ActiveRecord::Base
     new_cert = self.dup
     new_cert.product="#{self.product}"
     if options[:new_serial] # changing serial
-      new_cert.serial=self.serial.gsub(/.*?((\d+|\-.+?)tr)?\z/, options[:new_serial]+'\1')
+      m=self.serial.match(/.*?((\d+|\-.+?)tr)\z/)
+      new_cert.serial=options[:new_serial]+(m.blank? ? "" : m[1])
     elsif options[:reseller_tier_label]
       new_cert.product<<"-#{options[:reseller_tier_label]}tr"
       if Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
@@ -806,8 +807,8 @@ class Certificate < ActiveRecord::Base
 
   def self.create_ev_code_signing
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_standard_tiers new_serial: "evcodesigning", old_pvi_serial: "ov256ssl",
-                              new_pvi_serial: "evcodesigning"
+    certs = c.duplicate_standard_tiers new_serial: "evcodesigningsslcom", old_pvi_serial: "ov256ssl",
+                              new_pvi_serial: "evcodesigningsslcom"
     title = "EV Code Signing"
     description={
         "certificate_type" => title,
