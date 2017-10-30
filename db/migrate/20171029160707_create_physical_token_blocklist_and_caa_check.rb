@@ -12,7 +12,7 @@ class CreatePhysicalTokenBlocklistAndCaaCheck < ActiveRecord::Migration
     end
 
     create_table :caa_check do |t|
-      t.references  :checkable, :polymorphic=>true #CertificateName but any other entity w/ domain
+      t.references  :checkable, :polymorphic=>true # CertificateName but any other entity w/ domain
       t.string      :domain, required: true
       t.string      :request
       t.text        :result
