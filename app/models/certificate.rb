@@ -807,8 +807,8 @@ class Certificate < ActiveRecord::Base
 
   def self.create_ev_code_signing
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_standard_tiers new_serial: "evcodesigningsslcom", old_pvi_serial: "ov256ssl",
-                              new_pvi_serial: "evcodesigningsslcom"
+    certs = c.duplicate_standard_tiers new_serial: "evcodesigning256sslcom", old_pvi_serial: "ov256ssl",
+                              new_pvi_serial: "evcodesigning256ssl"
     title = "EV Code Signing"
     description={
         "certificate_type" => title,
@@ -835,9 +835,9 @@ class Certificate < ActiveRecord::Base
     price_adjusts={sslcomevcodesigning256ssl1yr: [34900, 59800, 74700],
                    sslcomevcodesigning256ssl1yr1tr: [34900, 59800, 74700],
                    sslcomevcodesigning256ssl1yr2tr: [27920, 47840, 59760],
-                   sslcomevcodesigning256ssl1yr3tr: [20940, 35880, 44820],
-                   sslcomevcodesigning256ssl1yr4tr: [14658, 25116, 31374],
-                   sslcomevcodesigning256ssl1yr5tr: [8795, 15070, 18824]
+                   sslcomevcodesigning256ssl1yr3tr: [26175, 44850, 56025],
+                   sslcomevcodesigning256ssl1yr4tr: [24430, 41860, 52290],
+                   sslcomevcodesigning256ssl1yr5tr: [20940, 35880, 44820]
     }
     price_adjusts.each do |k,v|
       serials=[]
@@ -860,6 +860,8 @@ class Certificate < ActiveRecord::Base
         end
       }
     end
+    # delete 4 and 5 year durations carried over from high assurance
+    ProductVariantItem.where{(serial=~"%evcodesigning256ssl5yr%") | (serial=~"%evcodesigning256ssl4yr%")}.delete_all
   end
 
   def self.create_email_certs
