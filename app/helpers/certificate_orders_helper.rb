@@ -187,4 +187,15 @@ module CertificateOrdersHelper
      other: ["Other platforms", download_certificate_order_url(@ssl_slug, certificate_order), SignedCertificate::OTHER_INSTALL_LINK],
      bundle: ["CA bundle (intermediate certs)", server_bundle_csr_signed_certificate_url(@ssl_slug, csr, sc), SignedCertificate::OTHER_INSTALL_LINK]}
   end
+  
+  # When validation instructions are generated for a certificate name,
+  # remove "www" for Basic SSL, High Assurance SSL, and Enterprise EV SSL certs 
+  # that have a "www.subdomain.domain.com" in the CN of the CSR
+  def render_domain_for_instructions(certificate_order, target_domain)
+    c = certificate_order.certificate
+    remove = c.is_ev? || c.is_ov? || c.is_personal? || c.is_dv_or_basic? || c.is_free?
+    length = target_domain.split('.').length
+    target_domain = target_domain.remove(/\Awww./) if remove && length > 3
+    target_domain
+  end
 end

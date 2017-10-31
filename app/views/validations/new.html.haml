@@ -77,7 +77,7 @@
               %tr[cn]
                 %td=check_box_tag cn.id, false, nil, class: "check_box"
                 %td=cn.name
-                %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+                %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_")),prompt: 'Please select a validation method', disabled: validated, alt: render_domain_for_instructions(co, cn.name))
                 -#%td description
                 %td.pretest{class: cn.name} n/a
                 %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
@@ -107,7 +107,7 @@
               %td=check_box_tag cn.id, false, nil, class: "check_box"
               %td
                 =cn.name
-              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds ? name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_") : dcv.try(:dcv_method)),prompt: 'Please select a validation method', disabled: validated, alt: cn.name)
+              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds ? name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_") : dcv.try(:dcv_method)),prompt: 'Please select a validation method', disabled: validated, alt: render_domain_for_instructions(co, cn.name))
               -#%td description
               %td.pretest{class: cn.name} n/a
               %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
@@ -128,7 +128,7 @@
           %tr[cn]
             %td=check_box_tag cn.id, false, nil, class: "check_box"
             %td=cn.name
-            %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address), prompt: 'Please select a validation method', alt: cn.name
+            %td=select_tag "domains[#{cn.name}][dcv]", grouped_options_for_select(opts, le.blank? ? nil : le.email_address), prompt: 'Please select a validation method', alt: render_domain_for_instructions(co, cn.name)
             -#%td description
             %td.pretest{class: cn.name} n/a
             %td.attempt{class: cn.name} validation not performed yet

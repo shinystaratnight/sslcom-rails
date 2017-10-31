@@ -395,7 +395,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_dv_or_basic?
-    (serial =~ /\Adv/ || serial =~ /\Abasic/) if serial
+    product.include?('basic') || product.include?('dv')
   end
 
   def is_free?
@@ -548,16 +548,18 @@ class Certificate < ActiveRecord::Base
   def duplicate(options)
     now=DateTime.now
     new_cert = self.dup
+    new_cert.product="#{self.product}"
     if options[:new_serial] # changing serial
-      new_cert.serial=self.serial.gsub(/.+?([\d|\-\w]+tr)?\z/, options[:new_serial]+'\1')
+      m=self.serial.match(/.*?((\d+|\-.+?)tr)\z/)
+      new_cert.serial=options[:new_serial]+(m.blank? ? "" : m[1])
     elsif options[:reseller_tier_label]
+      new_cert.product<<"-#{options[:reseller_tier_label]}tr"
       if Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # adding reseller tier
         new_cert = Certificate.find_by_serial("#{self.serial}-#{options[:reseller_tier_label]}tr") # update
       else
         new_cert.serial="#{self.serial}-#{options[:reseller_tier_label]}tr" # create reseller tier
       end
     end
-    new_cert.product="#{self.product}-#{options[:reseller_tier_label]}tr"
     new_cert.save
     self.product_variant_groups.each do |pvg|
       new_pvg = pvg.dup
@@ -597,6 +599,21 @@ class Certificate < ActiveRecord::Base
     end
   end
 
+  # this method duplicates the base certificate product along with all reseller_tiers
+  def duplicate_w_tiers(options)
+    sr = "#{self.serial_root}%"
+    Certificate.where{serial =~ sr}.map {|c|
+      c.duplicate(options)}
+  end
+
+  # this method duplicates the base certificate product along with all standard 5 reseller_tiers
+  def duplicate_standard_tiers(options)
+    standard = "#{self.serial_root}%"
+    custom = "#{self.serial_root}-%"
+    Certificate.where{serial =~ standard}.where{serial !~ custom}.map {|c|
+      c.duplicate(options)}
+  end
+
   private
 
   # renames 'product' field for certificate including the reseller tiers
@@ -605,25 +622,18 @@ class Certificate < ActiveRecord::Base
     certificates.each {|certificate| certificate.update_column :product, certificate.product.gsub(oldname, newname)}
   end
 
-  # this method duplicates the base certificate product along with all reseller_tiers
-  def duplicate_w_tiers(options)
-    sr = "#{self.serial_root}%"
-    Certificate.where{serial =~ sr}.map {|c|
-      c.duplicate(options)}
-  end
-
   # one-time call to create ssl.com product lines to supplant Comodo Essential SSL
   def self.create_sslcom_products
     %w(evucc ucc ev ov dv wc).each do |serial|
       s = self.serial+"%"
-      Certificate.where{serial =~ s}.first.duplicate_w_tiers serial+"256sslcom"
+      Certificate.where{serial =~ s}.first.duplicate_standard_tiers serial+"256sslcom"
     end
   end
 
   # one-time call to create ssl.com premium products
   def self.create_premium_ssl
     c=Certificate.available.find_by_product "ucc"
-    certs = c.duplicate_w_tiers new_serial: "premium256sslcom", old_pvi_serial: "ucc256ssl",
+    certs = c.duplicate_standard_tiers new_serial: "premium256sslcom", old_pvi_serial: "ucc256ssl",
                               new_pvi_serial: "premium256ssl"
     title = "Premium Multi-subdomain SSL"
     description={
@@ -700,7 +710,7 @@ class Certificate < ActiveRecord::Base
 
   def self.create_basic_ssl
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_w_tiers new_serial: "basic256sslcom", old_pvi_serial: "ov256ssl", new_pvi_serial: "basic256ssl"
+    certs = c.duplicate_standard_tiers new_serial: "basic256sslcom", old_pvi_serial: "ov256ssl", new_pvi_serial: "basic256ssl"
     title = "Basic SSL"
     description={
         "certificate_type" => "Basic SSL",
@@ -740,7 +750,7 @@ class Certificate < ActiveRecord::Base
   
   def self.create_code_signing
     c=Certificate.available.find_by_product "high_assurance"
-    certs = c.duplicate_w_tiers new_serial: "codesigning256sslcom", old_pvi_serial: "ov256ssl",
+    certs = c.duplicate_standard_tiers new_serial: "codesigning256sslcom", old_pvi_serial: "ov256ssl",
                               new_pvi_serial: "codesigning256ssl"
     title = "Code Signing"
     description={
@@ -775,6 +785,63 @@ class Certificate < ActiveRecord::Base
     price_adjusts.each do |k,v|
       serials=[]
       1.upto(10){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
+      serials.each_with_index {|s, i|
+        if ProductVariantItem.find_by_serial(s)
+          ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])
+        else
+          if s.last(3)=~/\d+tr/ #assume a reseller tier
+            pvg = certs.find{|c|c.serial.last(3)==s.last(3)}.product_variant_groups.last
+          else #assume non reseller
+            pvg = certs.first.product_variant_groups.last
+          end
+          pvi = pvg.product_variant_items.last
+          years = i+1
+          pvg.product_variant_items.create(serial: s, amount: v[i], title: pvi.title.gsub(/\d/,years.to_s),
+            status: pvi.status, description: pvi.description.gsub(/\d/,years.to_s),
+            text_only_description: pvi.text_only_description.gsub(/\d/,years.to_s), display_order: years.to_s,
+            item_type: pvi.item_type, value: 365*years, published_as: pvi.published_as)
+        end
+      }
+    end
+  end
+
+  def self.create_ev_code_signing
+    c=Certificate.available.find_by_product "high_assurance"
+    certs = c.duplicate_standard_tiers new_serial: "evcodesigningsslcom", old_pvi_serial: "ov256ssl",
+                              new_pvi_serial: "evcodesigningsslcom"
+    title = "EV Code Signing"
+    description={
+        "certificate_type" => title,
+                  "points" => "<div class='check'>extended validation</div>
+                               <div class='check'>results in higher sales conversion</div>
+                               <div class='check'>$2 million USD insurance guaranty</div>
+                               <div class='check'>works with Microsfot Smartscreen</div>
+                               <div class='check'>2048 bit public key encryption</div>
+                               <em style='color:#333;display:block;padding:5px 20px;'>also comes with the following</em>
+                               <div class='check'>quick issuance</div>
+                               <div class='check'>30 day unconditional refund</div>
+                               <div class='check'>stored on fips 140-2 USB token</div>
+                               <div class='check'>24 hour support</div>",
+        "validation_level" => "extended",
+                 "summary" => "for securing installable apps and plugins",
+                    "abbr" => title
+    }
+    certs.each do |c|
+      c.update_attributes title: title,
+                          description: description,
+                          product: c.product.gsub(/\Ahigh_assurance/, "ev-code-signing"),
+                          icons: c.icons.merge!("main"=> "gold_lock_lg.gif")
+    end
+    price_adjusts={sslcomevcodesigning256ssl1yr: [34900, 59800, 74700],
+                   sslcomevcodesigning256ssl1yr1tr: [34900, 59800, 74700],
+                   sslcomevcodesigning256ssl1yr2tr: [27920, 47840, 59760],
+                   sslcomevcodesigning256ssl1yr3tr: [20940, 35880, 44820],
+                   sslcomevcodesigning256ssl1yr4tr: [14658, 25116, 31374],
+                   sslcomevcodesigning256ssl1yr5tr: [8795, 15070, 18824]
+    }
+    price_adjusts.each do |k,v|
+      serials=[]
+      1.upto(3){|i|serials<<k.to_s.gsub(/1yr/, i.to_s+"yr")}
       serials.each_with_index {|s, i|
         if ProductVariantItem.find_by_serial(s)
           ProductVariantItem.find_by_serial(s).update_attribute(:amount, v[i])
