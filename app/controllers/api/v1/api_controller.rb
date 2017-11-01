@@ -12,6 +12,7 @@ class Api::V1::APIController < ActionController::API
   after_filter :set_access_control_headers
 
   TEST_SUBDOMAIN = 'sws-test'
+  PER_PAGE_DEFAULT = 10
   
   respond_to :json
   
@@ -37,7 +38,6 @@ class Api::V1::APIController < ActionController::API
   def render_200_status_noschema
     json = if @result.errors.empty?
       serialize_model(@result)['data']['attributes']
-        .transform_keys{ |key| key.gsub('-', '_') }
     else
       {errors: @result.errors}
     end
