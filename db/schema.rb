@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171029160707) do
+ActiveRecord::Schema.define(version: 20171101154146) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(version: 20171029160707) do
     t.boolean  "is_common_name"
     t.datetime "created_at",                         null: false
     t.datetime "updated_at",                         null: false
+    t.string   "acme_account_id",        limit: 255
   end
 
   create_table "certificate_orders", force: :cascade do |t|
@@ -279,6 +280,8 @@ ActiveRecord::Schema.define(version: 20171029160707) do
     t.string   "ca",                    limit: 255
     t.string   "external_order_number", limit: 255
     t.string   "ext_customer_ref",      limit: 255
+    t.string   "validation_type",       limit: 255
+    t.string   "acme_account_id",       limit: 255
   end
 
   add_index "certificate_orders", ["created_at"], name: "index_certificate_orders_on_created_at", using: :btree
@@ -1086,13 +1089,14 @@ ActiveRecord::Schema.define(version: 20171029160707) do
   add_index "ssl_account_users", ["user_id"], name: "index_ssl_account_users_on_user_id", using: :btree
 
   create_table "ssl_accounts", force: :cascade do |t|
-    t.string   "acct_number",  limit: 255
-    t.string   "roles",        limit: 255, default: "--- []"
+    t.string   "acct_number",            limit: 255
+    t.string   "roles",                  limit: 255, default: "--- []"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "status",       limit: 255
-    t.string   "ssl_slug",     limit: 255
-    t.string   "company_name", limit: 255
+    t.string   "status",                 limit: 255
+    t.string   "ssl_slug",               limit: 255
+    t.string   "company_name",           limit: 255
+    t.string   "issue_dv_no_validation", limit: 255
   end
 
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree
