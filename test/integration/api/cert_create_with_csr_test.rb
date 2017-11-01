@@ -30,7 +30,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create') # json schema
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_equal @amount_str, items['order_amount']
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
@@ -105,7 +105,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create') # json schema
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_equal @amount_str, items['order_amount']
       assert_match 'validating, please wait', items['order_status']
       assert_nil   items['validations']
@@ -116,6 +116,7 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       refute_nil   items['receipt_url']
       refute_nil   items['smart_seal_url']
       refute_nil   items['validation_url']
+      assert_nil   items['external_order_number']
 
       # db records
       ca_request_1 = CaApiRequest.find_by_api_requestable_type 'SslAccount'
