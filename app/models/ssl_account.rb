@@ -283,7 +283,7 @@ class SslAccount < ActiveRecord::Base
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
   def self.move_orders(from_sa, to_sa, refs=[])
-    unless co.blank?
+    unless refs.blank?
       refs.each do |ref|
         if co = from_sa.certificate_orders.find_by_ref(ref)
           to_sa.certificate_orders << co
