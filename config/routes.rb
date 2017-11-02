@@ -55,6 +55,8 @@ SslCom::Application.routes.draw do
           as: :api_dcv_emails_v1_4, via: [:options, :get]
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
           as: :api_dcv_methods_v1_4, via: [:options, :get]
+        match '/certificate/:ref/pretest' => 'api_certificate_requests#pretest_v1_4',
+              as: :pretest_v1_4, via: [:options, :get]
         match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4',
           as: :api_parameters_v1_4, via: [:options, :get]
         match '/scan/:url' => 'api_certificate_requests#scan',

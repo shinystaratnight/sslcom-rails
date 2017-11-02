@@ -42,8 +42,10 @@ class ApiCertificateRequest < CaApiRequest
 
   REVOKE_ACCESSORS = [:account_key, :secret_key, :ref, :reason, :serials]
 
+  PRETEST_ACCESSOR = [:is_passed]
+
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR).uniq
 
   before_validation(on: :create) do
     ac=api_credential

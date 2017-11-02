@@ -114,11 +114,11 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               ccr = @acr.certificate_content.csr.ca_certificate_requests.first
               @result.api_request=ccr.parameters
               @result.api_response=ccr.response
-            end
-            # @result.error_code=ccr.response_error_code
+            end# @result.error_code=ccr.response_error_code
             # @result.error_message=ccr.response_error_message
             # @result.eta=ccr.response_certificate_eta
             # @result.order_status = ccr.response_certificate_status
+
             set_result_parameters(@result, @acr)
             @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
           else
@@ -365,6 +365,18 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     end
   end
 
+  def pretest_v1_4
+    @template = "api_certificate_requests/pretest_v1_4"
+    if @result.save && find_certificate_order.is_a?(CertificateOrder)
+      http_to_s = dcv_verify(params[:protocol])
+      @result.is_passed = http_to_s
+
+      render_200_status_noschema
+    end
+  rescue => e
+    render_500_error e
+  end
+
   def dcv_methods_v1_4
     @template = "api_certificate_requests/dcv_methods_v1_4"
     if @result.save  #save the api request
@@ -490,7 +502,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 ApiDcvEmailResend
               when "dcv_emails_v1_3", "dcv_revoke_v1_3"
                 ApiDcvEmails
-              when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4"
+              when "dcv_methods_v1_4", "dcv_revoke_v1_3", "dcv_methods_csr_hash_v1_4", "pretest_v1_4"
                 ApiDcvMethods
             end
     @result=klass.new(_wrap_parameters(params)['api_certificate_request'] || params[:api_certificate_request])
@@ -508,6 +520,57 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def find_certificate_order
     @certificate_order=@result.find_certificate_order
+  end
+
+  def csr
+    @csr || @certificate_order.csr
+  end
+
+  def dcv_verify(protocol)
+    prepend=""
+    begin
+      Timeout.timeout(60) do
+        if protocol=="https"
+          uri = URI.parse(dcv_url(true,prepend))
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+          request = Net::HTTP::Get.new(uri.request_uri)
+          r = http.request(request).body
+        elsif protocol=="cname"
+          txt = Resolv::DNS.open do |dns|
+            records = dns.getresources(cname_origin, Resolv::DNS::Resource::IN::CNAME)
+          end
+          return cname_destination==txt.last.name.to_s
+        else
+          r=open(dcv_url(false,prepend), redirect: false).read
+        end
+        return true if !!(r =~ Regexp.new("^#{csr.sha2_hash}") && r =~ Regexp.new("^comodoca.com") &&
+            (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
+      end
+    rescue Exception=>e
+      if csr.common_name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
+        prepend="www."
+        retry
+      end
+      return false
+    end
+  end
+
+  def dcv_url(secure=false, prepend="")
+    "http#{'s' if secure}://#{prepend+non_wildcard_name}/.well-known/pki-validation/#{csr.md5_hash}.txt"
+  end
+
+  def cname_origin
+    "#{csr.dns_md5_hash}.#{non_wildcard_name}"
+  end
+
+  def cname_destination
+    "#{csr.dns_sha2_hash}.comodoca.com"
+  end
+
+  def non_wildcard_name
+    csr.common_name.gsub(/\A\*\./, "").downcase
   end
 
   def api_result_domain(certificate_order=nil)
