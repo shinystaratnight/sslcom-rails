@@ -54,13 +54,14 @@ class CertCreateNoCsrTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create_voucher')
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
       refute_nil   items['ref']
       refute_nil   items['certificate_url']
       refute_nil   items['receipt_url']
       refute_nil   items['smart_seal_url']
       refute_nil   items['validation_url']
+      assert_nil   items['external_order_number']
     end
   end
 end

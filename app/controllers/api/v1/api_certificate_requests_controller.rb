@@ -1,5 +1,6 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
-  include SiteSealsHelper
+  include ActionController::Helpers
+  helper SiteSealsHelper
   before_filter :set_test, :record_parameters, except: [:scan,:analyze]
   after_filter :notify_saved_result, except: :create_v1_4
 
@@ -288,10 +289,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @results << result
         end
         if client_app
-          results = paginate @results,
-            per_page: (params[:per_page] || 15),
-            page:     (params[:page] || 1)
-          render json: serialize_models(results)
+          page     = params[:page] || 1
+          per_page = params[:per_page] || PER_PAGE_DEFAULT
+          results  = paginate @results, per_page: per_page.to_i, page: page.to_i
+          render json: serialize_models(results,
+            meta: { orders_count: @results.count, page: page, per_page: per_page }
+          )
         else
           render(template: @template) and return
         end

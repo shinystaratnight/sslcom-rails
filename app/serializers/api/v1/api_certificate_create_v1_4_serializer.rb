@@ -17,7 +17,7 @@ class Api::V1::ApiCertificateCreate_v1_4Serializer < Api::V1::BaseSerializer
   def attributes
     attrs = super
     if object.debug.nil?
-      attrs = attrs.delete_if {|key, value| %w{api-request api-response debug}.include?(key)}
+      attrs = attrs.delete_if {|key, value| %w{api_request api_response debug}.include?(key)}
     end
     attrs
   end
