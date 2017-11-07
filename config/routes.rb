@@ -40,6 +40,10 @@ SslCom::Application.routes.draw do
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
         
+        # Teams
+        match '/teams/add_contact' => 'teams#add_contact',
+          as: :api_team_add_contact, via: [:put, :patch, :post]
+
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
           as: :api_certificate_create_v1_4, via: [:options, :post]

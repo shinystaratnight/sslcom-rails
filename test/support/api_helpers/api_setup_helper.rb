@@ -17,6 +17,18 @@ module ApiSetupHelper
       set_api_host
   end
 
+  def api_min_setup
+    Authorization.ignore_access_control(true)
+    initialize_roles
+    @user         = create(:user, :owner)
+    @team         = @user.ssl_account
+    @api_keys     = {
+      account_key: @team.api_credential.account_key,
+      secret_key:  @team.api_credential.secret_key
+    }
+    set_api_host
+  end
+  
   def set_api_host
     api_host = "api-test.certassure.local"
     host! api_host
@@ -128,24 +140,29 @@ module ApiSetupHelper
     }
   end
   
+  def api_get_contact
+    {
+      first_name:   'first_name',           # required
+      last_name:    'last_name',            # required
+      email:        'csr_test@domain.com',  # required
+      phone:        '9161223444',           # required
+      address1:     '123 H St.',
+      address2:     nil,
+      address3:     nil,
+      po_box:       nil,
+      city:         'Houston',
+      state:        'TX',
+      postal_code:  '77098',
+      organization: 'SSL Org',
+      country:      'US'                    # Applicant country code (ISO3166 2-character country code)
+    }
+  end
+  
   # Required only if csr is specified, otherwise contacts will be ignored.
   def api_get_csr_contacts
     {
       contacts: {
-        all: {          # all: administrative, billing, technical, validation
-          first_name:   'first_name',           # required
-          last_name:    'last_name',            # required
-          email:        'csr_test@domain.com',  # required
-          phone:        '9161223444',           # required
-          address1:     '123 H St.',
-          address2:     nil,
-          address3:     nil,
-          po_box:       nil,
-          city:         'Houston',
-          postal_code:  '77098',
-          organization: 'SSL Org',
-          country:      'US'                    # Applicant country code (ISO3166 2-character country code)
-        }
+        all: api_get_contact # all: administrative, billing, technical, validation
       }
     }
   end

@@ -1,0 +1,41 @@
+{
+  "type" : "object",
+  "required" : [
+    "title",
+    "first_name",
+    "last_name",
+    "company_name",
+    "department",
+    "po_box",
+    "address1",
+    "address2",
+    "address3",
+    "city",
+    "state",
+    "country",
+    "postal_code",
+    "email",
+    "phone",
+    "ext",
+    "fax"
+  ],
+  "properties" : {
+    "title" : { "type" : ["string", "null"] },
+    "first_name" : { "type" : "string" },
+    "last_name" : { "type" : "string" },
+    "company_name" : { "type" : ["string", "null"] },
+    "department" : { "type" : ["string", "null"] },
+    "po_box" : { "type" : ["string", "null"] },
+    "address1" : { "type" : ["string", "null"] },
+    "address2" : { "type" : ["string", "null"] },
+    "address3" : { "type" : ["string", "null"] },
+    "city" : { "type" : ["string", "null"] },
+    "state" : { "type" : ["string", "null"] },
+    "country" : { "type" : ["string", "null"] },
+    "postal_code" : { "type" : ["string", "null"] },
+    "email" : { "type" : "string" },
+    "phone" : { "type" : "string" },
+    "ext" : { "type" : ["string", "null"] },
+    "fax" : { "type" : ["string", "null"] }
+  }
+}
