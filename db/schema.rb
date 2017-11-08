@@ -357,6 +357,7 @@ ActiveRecord::Schema.define(version: 20171110052748) do
     t.string   "contactable_type", limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "registrant_type",  limit: 4
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree

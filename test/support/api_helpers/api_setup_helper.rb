@@ -140,6 +140,26 @@ module ApiSetupHelper
     }
   end
   
+  def api_get_registrant
+    {
+      company_name: 'ABC Company',          # required IF organization
+      first_name:   'first_name',           
+      last_name:    'last_name',            
+      email:        'csr_test@domain.com',  # required
+      phone:        '9161223444',           
+      address1:     '123 H St.',            # required
+      address2:     nil,
+      address3:     nil,
+      po_box:       nil,
+      city:         'Houston',              # required
+      state:        'TX',                   # required
+      postal_code:  '77098',                # required
+      organization: 'SSL Org',
+      country:      'US',                   # required: Country code (ISO3166 2-character country code)
+      registrant_type: Registrant::registrant_types[:organization]
+    }
+  end
+  
   def api_get_contact
     {
       first_name:   'first_name',           # required

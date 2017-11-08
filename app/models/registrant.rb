@@ -1,4 +1,7 @@
 class Registrant < Contact
+  
+  enum registrant_type: { individual: 0, organization: 1 }
+  
   unless MIGRATING_FROM_LEGACY
     validates_acceptance_of :validation,
       :if=>Proc.new { |r|
@@ -25,5 +28,15 @@ class Registrant < Contact
         r.contactable.certificate_order.certificate.is_code_signing? ||
         r.contactable.certificate_order.certificate.is_client_enterprise? ||
         r.contactable.certificate_order.certificate.is_client_business? }
+  end
+  
+  validates :address1, :city, :state, :country, :postal_code, :email, presence: true,
+    if: proc { |r| r.reusable? && (r.organization? || r.individual?) }
+  validates :company_name, presence: true, if: proc { |r| r.reusable? && r.organization? }
+
+  protected
+  
+  def reusable?
+    contactable.is_a?(SslAccount) && !registrant_type.nil?
   end
 end

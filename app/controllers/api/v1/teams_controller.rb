@@ -10,6 +10,15 @@ class Api::V1::TeamsController < Api::V1::APIController
     render_200_status_noschema
   end
   
+  def add_registrant
+    @result = Registrant.create(params
+      .merge(contactable_id: @team.id, contactable_type: 'SslAccount')
+      .merge(registrant_type: Registrant::registrant_types.key(params[:registrant_type].to_i))
+      .permit(permit_contact_params.push(:registrant_type))
+    )
+    render_200_status_noschema
+  end
+  
   private
   
   def permit_contact_params
@@ -33,8 +42,7 @@ class Api::V1::TeamsController < Api::V1::APIController
       :fax,
       :roles,
       :contactable_id,
-      :contactable_type,
-      roles: []
+      :contactable_type
     ]
-  end  
+  end
 end

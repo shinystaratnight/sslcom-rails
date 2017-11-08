@@ -18,7 +18,6 @@ class AddContactTest < ActionDispatch::IntegrationTest
       assert       response.success?
       assert_equal 200, status
       assert_equal 17, items.count
-      assert_equal @amount_str, items['order_amount']
       assert_nil   items['title']
       refute_nil   items['first_name']
       refute_nil   items['last_name']
