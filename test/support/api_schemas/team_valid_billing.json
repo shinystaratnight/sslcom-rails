@@ -1,0 +1,19 @@
+{
+  "type" : "object",
+  "required" : [
+    "first_name",
+    "last_name",
+    "credit_card",
+    "last_digits",
+    "expiration_year",
+    "expiration_month"
+  ],
+  "properties" : {
+    "first_name" : { "type" : "string" },
+    "last_name" : { "type" : "string" },
+    "credit_card" : { "type" : "string" },
+    "last_digits" : { "type" : "string" },
+    "expiration_year" : { "type" : "integer" },
+    "expiration_month" : { "type" : "integer" }
+  }
+}

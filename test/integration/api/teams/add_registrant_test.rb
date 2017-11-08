@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class AddRegistrantTest < ActionDispatch::IntegrationTest
-  describe 'add_contact' do
+  describe 'add_registrant' do
     before do
       api_min_setup
       assert_equal 0, InvalidApiCertificateRequest.count
@@ -52,7 +52,9 @@ class AddRegistrantTest < ActionDispatch::IntegrationTest
       assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
-      refute_nil   items['errors']['company_name'].first
+      refute_nil   items['errors']['company_name'].first # company_name required
+      assert_nil   items['errors']['first_name']         # first and last names NOT required
+      assert_nil   items['errors']['last_name']
       refute_nil   items['errors']['address1'].first
       refute_nil   items['errors']['city'].first
       refute_nil   items['errors']['state'].first
@@ -78,7 +80,9 @@ class AddRegistrantTest < ActionDispatch::IntegrationTest
       assert_equal 200, status
       assert_equal 1, items.count
       refute_nil   items['errors']
-      assert_nil   items['errors']['company_name']
+      assert_nil   items['errors']['company_name']     # company_name NOT required
+      refute_nil   items['errors']['first_name'].first # first and last names required
+      refute_nil   items['errors']['last_name'].first
       refute_nil   items['errors']['address1'].first
       refute_nil   items['errors']['city'].first
       refute_nil   items['errors']['state'].first

@@ -33,7 +33,8 @@ class Registrant < Contact
   validates :address1, :city, :state, :country, :postal_code, :email, presence: true,
     if: proc { |r| r.reusable? && (r.organization? || r.individual?) }
   validates :company_name, presence: true, if: proc { |r| r.reusable? && r.organization? }
-
+  validates :first_name, :last_name, presence: true, if: proc { |r| r.reusable? && r.individual? }
+  
   protected
   
   def reusable?

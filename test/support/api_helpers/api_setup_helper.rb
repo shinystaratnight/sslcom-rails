@@ -7,7 +7,7 @@ module ApiSetupHelper
       initialize_certificate_csr_keys
       initialize_countries
       api_initialize_pvi_ids
-      @card_number  = BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027'
+      @card_number  = api_set_card_number
       @user         = create(:user, :owner)
       @team         = @user.ssl_account
       @api_keys     = {
@@ -20,6 +20,7 @@ module ApiSetupHelper
   def api_min_setup
     Authorization.ignore_access_control(true)
     initialize_roles
+    @card_number  = api_set_card_number
     @user         = create(:user, :owner)
     @team         = @user.ssl_account
     @api_keys     = {
@@ -27,6 +28,10 @@ module ApiSetupHelper
       secret_key:  @team.api_credential.secret_key
     }
     set_api_host
+  end
+  
+  def api_set_card_number
+    BillingProfile.gateway_stripe? ? '4242424242424242' : '4007000000027'
   end
   
   def set_api_host
@@ -110,17 +115,18 @@ module ApiSetupHelper
     {
       first_name:       'cc_first_name',
       last_name:        'cc_last_name',
-      number:           @card_number,
-      exp_year:         Date.today.year+5,
-      exp_month:        1,
-      security_code:    999,
-      street_address_1: '123 H St.',
-      street_address_2: 'Suite A',
-      street_address_3: nil,
+      credit_card:      'Visa',
+      card_number:      @card_number,
+      expiration_year:  Date.today.year+5,
+      expiration_month: 1,
+      security_code:    900,
+      address_1:        '123 H St.',
+      address_2:        'Suite A',
       city:             'Houston',
       state:            'Texas',
       postal_code:      12345,
-      country:          'US'
+      country:          'US',
+      phone:            '9161223444'
     }
   end
   

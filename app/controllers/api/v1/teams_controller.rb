@@ -19,6 +19,13 @@ class Api::V1::TeamsController < Api::V1::APIController
     render_200_status_noschema
   end
   
+  def add_billing_profile
+    @result = @team.billing_profiles.create(
+      params.permit(BillingProfile::REQUIRED_COLUMNS.map(&:to_sym))
+    )
+    render_200_status_noschema
+  end
+    
   private
   
   def permit_contact_params
