@@ -158,11 +158,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.order_date = @acr.created_at
         @result.order_status = @acr.status
         @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
+        @result.contacts = @acr.certificate_content.certificate_contacts if (@acr.certificate_content && @acr.certificate_content.certificate_contacts)
         @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
         @result.description = @acr.description
         @result.product = @acr.certificate.api_product_code
         @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement=~/[Yy]/
         @result.external_order_number = @acr.ext_customer_ref
+        @result.server_software = @acr.server_software.id if @acr.server_software
+
         if @acr.certificate.is_ucc?
           @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
           @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
@@ -170,6 +173,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.domains_qty_purchased = "1"
           @result.wildcard_qty_purchased = @acr.certificate.is_wildcard? ? "1" : "0"
         end
+
         if (@acr.signed_certificate && @result.query_type!="order_status_only")
           @result.certificates =
               @acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
@@ -184,6 +188,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             locals: {co: @acr},
             layout: false
           ))
+        elsif (@acr.csr)
+          @result.certificates = @acr.csr.body
+          @result.common_name = @acr.csr.common_name
         end
         render(:template => @template) and return
       end
@@ -258,8 +265,10 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           result.common_name =  sc ? sc.common_name : nil
           result.product_type = c.product
           result.period =       acr.certificate_contents.first.duration
-          
-          unless client_app
+
+          if client_app
+            result.expiration_date = sc ? sc.expiration_date : nil
+          else
             result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
             result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
             if c.is_ucc?
@@ -532,7 +541,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   def dcv_verify(protocol)
     prepend=""
     begin
-      Timeout.timeout(60) do
+      Timeout.timeout(Surl::TIMEOUT_DURATION) do
         if protocol=="https"
           uri = URI.parse(dcv_url(true,prepend))
           http = Net::HTTP.new(uri.host, uri.port)
