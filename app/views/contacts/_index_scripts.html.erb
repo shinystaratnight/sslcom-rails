@@ -28,6 +28,60 @@ jQuery(function($) {
       if($(check_boxes[i+1]).attr("checked"))
         $(form_types[i+1]).hide();
     }
+    
+    function populate_contact(form_id, label, data) {
+      $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
+    }
+    
+    $('.saved_contacts').change(function() {
+      var form_id = $(this).parents()['1']['id'];
+      
+      var list = [
+        ['title', 'title'],
+        ['company', 'company_name'],
+        ['department', 'address1'],
+        ['po_box', 'po_box'],
+        ['address1', 'address1'],
+        ['address2', 'address2'],
+        ['address3', 'address3'],
+        ['city', 'city'],
+        ['state', 'state'],
+        ['postal_code', 'postal_code'],
+        ['country', 'country'],
+        ['postal_code', 'postal_code'],
+        ['email', 'email'],
+        ['phone', 'phone'],
+        ['first_name', 'first_name'],
+        ['last_name', 'last_name'],
+        ['fax', 'fax'],
+        ['ext', 'ext']
+      ];
+      list.forEach(function(el) {
+        populate_contact(
+          form_id, el[0], $('#' + form_id + ' #saved_contacts option:selected').data(el[1])
+        );
+      });
+    });
+    
+    $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
+      if ($(this).val()=='Registrant') {
+        $('#contact_registrant_type').parent().removeClass('hidden');
+        $('#contact_department, #contact_company_name').parent().addClass('hidden');
+      } else {
+        $('#contact_registrant_type').parent().addClass('hidden');
+        $('#contact_department, #contact_company_name').parent().removeClass('hidden');
+      }
+    });
+    
+    $('#contact_registrant_type').change(function() {
+      if ($(this).val()==<%= Registrant::registrant_types[:individual] %>) {
+        $('#contact_department, #contact_company_name').parent().addClass('hidden');
+        $('#contact_first_name, #contact_last_name').parent().removeClass('hidden');
+      } else {
+        $('#contact_department, #contact_company_name').parent().removeClass('hidden');
+        $('#contact_first_name, #contact_last_name').parent().addClass('hidden');
+      }
+    });
   });
 });
 </script>

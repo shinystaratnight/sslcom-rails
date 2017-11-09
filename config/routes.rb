@@ -154,7 +154,13 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
-      resources :contacts, :only=>:index
+      resources :contacts, only: :index
+    end
+    
+    resources :contacts, except: :index do
+      collection do
+        get :saved_contacts
+      end
     end
 
     resources :csrs do

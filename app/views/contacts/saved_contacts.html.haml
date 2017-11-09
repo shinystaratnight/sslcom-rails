@@ -1,0 +1,36 @@
+-will_paginate @all_contacts
+-content_for :title, 'Saved Contacts'
+#validations
+  %table{cellspacing: '0'}
+    -if will_paginate @all_contacts
+      %tfoot
+        %tr
+          %td(colspan='6')=will_paginate @all_contacts
+    -if permitted_to?(:create, Contact.new)
+      %br
+      %tr
+        =link_to "+ Create Contact", new_contact_path(saved_contact: true), class: 'button_blue button_index'
+    %tr.heading_row
+      %th Name
+      %th Company
+      %th Address
+      %th Type
+      %th Reg Type
+      %th Created
+      %th{colspan: 3} Actions
+    -@all_contacts.each do |c|
+      -reg_type = c.registrant_type
+      %tr
+        %td #{c.last_name}, #{c.first_name} 
+        %td #{c.company_name}
+        %td #{c.po_box || c.address1} #{c.city}
+        %td
+          %strong
+            #{c.type=='Registrant' ? c.type : 'Contact'}
+        %td #{(reg_type==0 || reg_type.blank?) ? 'N/A' : reg_type}
+        %td #{c.created_at.strftime('%b %d, %Y')}
+        %td=link_to "view", contact_path(@ssl_slug, c.id, saved_contact: true)
+        - if permitted_to?(:edit, c.becomes(Contact))
+          %td=link_to "edit", edit_contact_path(@ssl_slug, c.id, saved_contact: true)
+          %td=link_to "delete", contact_path(@ssl_slug, c.id, saved_contact: true), method: :delete, |
+        data: {confirm: 'Are you sure you want to delete this contact?'}

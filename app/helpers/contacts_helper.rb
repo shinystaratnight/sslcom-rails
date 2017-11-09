@@ -16,4 +16,22 @@ module ContactsHelper
     render '/contacts/certificate_contact', :f => c,
       :contact_role=>role
   end
+  
+  def render_saved_contacts(list)
+    list.inject([]) do |contacts, c|
+      main_info = {}
+      full_name = "#{c.last_name}, #{c.first_name}"
+      company   = c.company_name
+      remove    = %w{id notes type roles contactable_id contactable_type created_at updated_at registrant_type}
+      c.attributes.each {|key, val| main_info["data-#{key}"] = val}
+      main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
+      option = if c.type == 'Registrant'
+        c.individual? ? "#{full_name} (individual)" : "#{company} (organization)"
+      else
+        [full_name, company].join(' | ')
+      end
+      contacts << [option, c.id, main_info]
+      contacts.sort
+    end
+  end
 end
