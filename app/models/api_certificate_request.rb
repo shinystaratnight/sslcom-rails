@@ -116,7 +116,7 @@ class ApiCertificateRequest < CaApiRequest
         CertificateOrder.not_new.send(is_test)
       else
         self.api_requestable.certificate_orders.not_new.send(is_test)
-      end.limit(20)
+      end
     co = co.search_with_csr(search) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co

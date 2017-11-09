@@ -247,16 +247,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @template   = "api_certificate_requests/index_v1_4"
     @result.end = DateTime.now if @result.end.blank?
     client_app  = params[:client_app]
-    
+
     if @result.save
-      @acrs = @result.find_certificate_orders(params[:search])
+      @orders = @result.find_certificate_orders(params[:search])
+
+      page     = params[:page] || 1
+      per_page = params[:per_page] || PER_PAGE_DEFAULT
+      @acrs    = paginate @orders, per_page: per_page.to_i, page: page.to_i
+
       if @acrs.is_a?(ActiveRecord::Relation)
         @results = []
         @acrs.each do |acr|
           c = acr.certificate
           sc = acr.signed_certificate
           cc = acr.certificate_content
-          
+
           result = ApiCertificateRetrieve.new(ref: acr.ref)
           result.order_date =   acr.created_at
           result.order_status = acr.status
@@ -271,6 +276,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           else
             result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
             result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+
             if c.is_ucc?
               result.domains_qty_purchased = acr.purchased_domains('all').to_s
               result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
@@ -278,6 +284,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
               result.domains_qty_purchased = '1'
               result.wildcard_qty_purchased = c.is_wildcard? ? '1' : '0'
             end
+
             if (sc && result.query_type!='order_status_only')
               signed_certificate_format = sc.to_format(
                   response_type:     @result.response_type, #assume comodo issued cert
@@ -298,11 +305,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @results << result
         end
         if client_app
-          page     = params[:page] || 1
-          per_page = params[:per_page] || PER_PAGE_DEFAULT
-          results  = paginate @results, per_page: per_page.to_i, page: page.to_i
-          render json: serialize_models(results,
-            meta: { orders_count: @results.count, page: page, per_page: per_page }
+          render json: serialize_models(@results,
+            meta: { orders_count: @orders.count, page: page, per_page: per_page }
           )
         else
           render(template: @template) and return
