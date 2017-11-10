@@ -1,4 +1,4 @@
-class Website
+class Website < ActiveRecord::Base
 
   attr_accessor :database_name
 
