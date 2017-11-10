@@ -1,0 +1,2 @@
+class Sandbox < Website
+end

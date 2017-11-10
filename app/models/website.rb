@@ -1,4 +1,5 @@
 class Website < ActiveRecord::Base
+  belongs_to :db
 
   attr_accessor :database_name
 
