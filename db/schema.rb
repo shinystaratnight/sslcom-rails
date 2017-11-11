@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171101154146) do
+ActiveRecord::Schema.define(version: 20171110052748) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -412,6 +412,13 @@ ActiveRecord::Schema.define(version: 20171101154146) do
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
+
+  create_table "dbs", force: :cascade do |t|
+    t.string "name",     limit: 255
+    t.string "host",     limit: 255
+    t.string "username", limit: 255
+    t.string "password", limit: 255
+  end
 
   create_table "delayed_job_groups", force: :cascade do |t|
     t.text    "on_completion_job",           limit: 65535
@@ -1378,6 +1385,15 @@ ActiveRecord::Schema.define(version: 20171101154146) do
 
   add_index "visitor_tokens", ["guid", "affiliate_id"], name: "index_visitor_tokens_on_guid_and_affiliate_id", using: :btree
   add_index "visitor_tokens", ["guid"], name: "index_visitor_tokens_on_guid", using: :btree
+
+  create_table "websites", force: :cascade do |t|
+    t.string  "host",        limit: 255
+    t.string  "api_host",    limit: 255
+    t.string  "name",        limit: 255
+    t.string  "description", limit: 255
+    t.string  "type",        limit: 255
+    t.integer "db_id",       limit: 4
+  end
 
   create_table "whois_lookups", force: :cascade do |t|
     t.integer  "csr_id",            limit: 4
