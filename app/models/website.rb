@@ -1,11 +1,16 @@
+# This allows a reseller to white-label the RA portal. It allows for optional seperate db
 class Website < ActiveRecord::Base
   belongs_to :db
 
   attr_accessor :database_name
 
-  def self.sandbox_db
-    @website=Website.new
-    @website.database_name=get_database_name
+  def self.sandbox_db(domain=nil)
+    if domain and @website=Website.find_by_host(domain)
+      @website.database_name=@website.db.name
+    else
+      @website=Website.new
+      @website.database_name=get_database_name
+    end
     @website
   end
 
