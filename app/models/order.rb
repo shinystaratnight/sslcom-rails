@@ -279,7 +279,7 @@ class Order < ActiveRecord::Base
         line_items.each {|li|li.sellable.refund! if(
           li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
       end
-      event :partial_refund, transitions_to: :partial_refunded do |ref|
+      event :partial_refund, transitions_to: :partially_refunded do |ref|
         li=line_items.find {|li|li.sellable.try(:ref)==ref}
         if li
           decrement! :cents, li.cents
