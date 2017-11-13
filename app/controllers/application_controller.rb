@@ -50,7 +50,7 @@ class ApplicationController < ActionController::Base
     site=Website.where{(host == domain) | (api_host == domain)}
     unless site.blank?
       current_website(site.last.host).use_database
-      sandbox_notice if site.instance_of? Sandbox
+      sandbox_notice if site.last.instance_of? Sandbox
     end
   end
 
@@ -421,7 +421,7 @@ class ApplicationController < ActionController::Base
   end
 
   def is_sandbox?
-    request.subdomain=="sandbox"
+    request.subdomain=="sandbox" or !Sandbox.where{(host == domain) | (api_host == domain)}.blank?
   end
 
   private
@@ -726,7 +726,7 @@ class ApplicationController < ActionController::Base
   
   def is_sandbox_or_test?
     host = ActionMailer::Base.default_url_options[:host]
-    sandbox = request && request.try(:subdomain)=='sandbox'
+    sandbox = (request && request.try(:subdomain)=='sandbox') or Website.sandbox_db(request.host).instance_of?(Sandbox)
     sandbox || host=~/^sandbox\./ || host=~/^sws-test\./
   end
 

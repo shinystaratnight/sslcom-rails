@@ -1,5 +1,5 @@
 SslCom::Application.configure do
-  MIGRATING_FROM_LEGACY = true
+  MIGRATING_FROM_LEGACY = false
   # Settings specified here will take precedence over those in config/environment.rb
 
   # The test environment is used exclusively to run your application's

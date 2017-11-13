@@ -13,7 +13,8 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    request.try(:subdomain)=="sandbox"
+    domain = request.try(:host)
+    !Sandbox.where{(host == domain) | (api_host == domain)}.blank?#request.try(:subdomain)=="sandbox"
   end
 
   def is_sandbox_or_test?
