@@ -2,16 +2,8 @@
 class Website < ActiveRecord::Base
   belongs_to :db
 
-  attr_accessor :database_name
-
-  def self.sandbox_db(domain=nil)
-    if domain and @website=Website.find_by_host(domain)
-      @website.database_name=@website.db.name
-    else
-      @website=Website.new
-      @website.database_name=get_database_name
-    end
-    @website
+  def self.current_site(domain)
+    self.where{(host == domain) | (api_host == domain)}.last
   end
 
   def use_database
@@ -25,11 +17,6 @@ class Website < ActiveRecord::Base
 
   private
   
-  def self.get_database_name
-    target_db = ENV.fetch('SANDBOX_DATABASE') if ENV['SANDBOX_DATABASE'].present?
-    target_db || 'sandbox_ssl_com'
-  end
-
 # Regular database.yml configuration hash
   def default_connection
     @default_config ||= ActiveRecord::Base.connection.instance_variable_get("@config").dup
@@ -38,6 +25,6 @@ class Website < ActiveRecord::Base
 # Return regular connection hash but with database name changed
 # The database name is a attribute (column in the database)
   def website_connection
-    default_connection.dup.update(database: self.database_name)
+    default_connection.dup.update(database: self.db.name)
   end
 end

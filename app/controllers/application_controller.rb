@@ -41,17 +41,13 @@ class ApplicationController < ActionController::Base
 
   # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
   # I use the entire domain, just change to sandbox_db and pass only the subdomain
-  def current_website(host=nil)
-    @website ||= Website.sandbox_db(host)
+  def current_website
+    @website ||= Website.current_site(request.host)
   end
 
   def set_database
-    domain=request.host
-    site=Website.where{(host == domain) | (api_host == domain)}
-    unless site.blank?
-      current_website(site.last.host).use_database
-      sandbox_notice if site.last.instance_of? Sandbox
-    end
+    current_website.use_database
+    sandbox_notice if @website.instance_of?(Sandbox)
   end
 
   # Bonus - add view_path
@@ -726,7 +722,7 @@ class ApplicationController < ActionController::Base
   
   def is_sandbox_or_test?
     host = ActionMailer::Base.default_url_options[:host]
-    sandbox = (request && request.try(:subdomain)=='sandbox') or Website.sandbox_db(request.host).instance_of?(Sandbox)
+    sandbox = (request && request.try(:subdomain)=='sandbox') or !Sandbox.current_site(request.host).blank?
     sandbox || host=~/^sandbox\./ || host=~/^sws-test\./
   end
 
