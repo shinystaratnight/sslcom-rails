@@ -15,6 +15,26 @@ class Website < ActiveRecord::Base
     ActiveRecord::Base.establish_connection(default_connection)
   end
 
+  # production api
+  def api_domain
+    api_host
+  end
+
+  # production test api
+  def test_api_domain
+    api_host
+  end
+
+  # development api
+  def dev_api_domain
+    api_host
+  end
+
+  #development text api
+  def dev_test_api_domain
+    api_host
+  end
+
   private
   
 # Regular database.yml configuration hash
