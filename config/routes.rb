@@ -29,8 +29,7 @@ SslCom::Application.routes.draw do
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-    %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com sandbox.ssl.local
-    api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)
+    (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)).uniq
   ) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1) do
