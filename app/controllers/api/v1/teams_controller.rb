@@ -25,6 +25,16 @@ class Api::V1::TeamsController < Api::V1::APIController
     )
     render_200_status_noschema
   end
+  
+  def saved_contacts
+    json = serialize_models(@team.saved_contacts)
+    render json: json, status: 200
+  end
+  
+  def saved_registrants
+    json = serialize_models(@team.saved_registrants)
+    render json: json, status: 200
+  end
     
   private
   
