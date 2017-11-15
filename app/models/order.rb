@@ -331,8 +331,13 @@ class Order < ActiveRecord::Base
     end
 
     state :charged_back
-    state :rejected
-    state :partially_refunded
+
+    state :rejected do
+      event :unreject, transitions_to: :paid do |complete=true|
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
+      end
+    end
 
     state :payment_declined do
       event :give_away, transitions_to: :payment_not_required
