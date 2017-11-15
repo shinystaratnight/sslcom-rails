@@ -417,8 +417,7 @@ class ApplicationController < ActionController::Base
   end
 
   def is_sandbox?
-    domain = request.host
-    request.subdomain=="sandbox" or !Sandbox.where{(host == domain) | (api_host == domain)}.blank?
+    Sandbox.exists?(request.try(:host))
   end
 
   private

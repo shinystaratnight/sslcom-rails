@@ -28,7 +28,7 @@ class Api::V1::APIController < ActionController::API
   end
   
   def set_test
-    @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
+    @test = Sandbox.exists?(request.host) || %w{development test}.include?(Rails.env)
   end
   
   def activate_authlogic
