@@ -35,7 +35,7 @@ module ApiSetupHelper
   end
   
   def set_api_host
-    api_host = "api-test.certassure.local"
+    api_host = "sws.sslpki.local"
     host! api_host
     Capybara.app_host = "http://www." + api_host
   end
