@@ -160,12 +160,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         @result.menu = {}
 
-        # byebug
-        @result.menu[:certificate_details_tab] = permitted_to?(:show, @acr)
-        # @result.menu[:validation_status_tab] = permitted_to?(:show, @acr.validation)
-        # @result.menu[:smart_seal_tab] = permitted_to?(:show, @acr.site_seal)
-        # @result.menu[:transaction_receipt_tab] = permitted_to?(:show, @acr.order)
-
         @result.menu[:certificate_details_tab] = true
         @result.menu[:validation_status_tab] = true
         @result.menu[:smart_seal_tab] = true
