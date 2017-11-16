@@ -41,12 +41,16 @@ SslCom::Application.routes.draw do
         
         # Teams
         match '/teams/add_contact' => 'teams#add_contact',
-          as: :api_team_add_contact, via: [:post]
+          as: :api_team_add_contact, via: :post
         match '/teams/add_registrant' => 'teams#add_registrant',
-          as: :api_team_add_registrant, via: [:post]
+          as: :api_team_add_registrant, via: :post
         match '/teams/add_billing_profile' => 'teams#add_billing_profile',
-          as: :api_team_add_billing_profile, via: [:post]
-          
+          as: :api_team_add_billing_profile, via: :post
+        match '/teams/saved_contacts' => 'teams#saved_contacts',
+          as: :api_team_saved_contacts, via: :get
+        match '/teams/saved_registrants' => 'teams#saved_registrants',
+          as: :api_team_saved_registrants, via: :get
+            
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
           as: :api_certificate_create_v1_4, via: [:options, :post]

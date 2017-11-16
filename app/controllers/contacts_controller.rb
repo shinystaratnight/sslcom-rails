@@ -13,8 +13,10 @@ class ContactsController < ApplicationController
   end
 
   def saved_contacts
-    @all_contacts = current_user.ssl_account.all_saved_contacts
-      .order(:last_name).paginate(page: params[:page])
+    if current_user
+      @all_contacts = current_user.ssl_account.all_saved_contacts
+        .order(:last_name).paginate(page: params[:page])
+    end
     respond_to :html
   end
 
@@ -50,17 +52,18 @@ class ContactsController < ApplicationController
   end
   
   def create
-    @contact = Contact.new(
-      params[:contact].merge(
-        contactable_id: current_user.ssl_account.id,
-        contactable_type: 'SslAccount'
-      )
+    registrant = params[:contact][:type]=='Registrant'
+    new_params = set_registrant_type(params).merge(
+      contactable_id: current_user.ssl_account.id,
+      contactable_type: 'SslAccount'
     )
+    @contact = registrant ? Registrant.new(new_params) : CertificateContact.new(new_params)
     respond_to do |format|
       if @contact.save
         flash[:notice] = 'Contact was successfully created.'
-        format.html { redirect_to contact_path(@ssl_slug, @contact.id, saved_contact: true) }
+        format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
       else
+        @contact = @contact.becomes(Contact)
         format.html { render :new }
       end
     end
@@ -72,7 +75,7 @@ class ContactsController < ApplicationController
     respond_to do |format|
       if @contact.update_attributes new_params
         flash[:notice] = 'Contact was successfully updated.'
-        format.html { redirect_to contact_path(@ssl_slug, @contact.id, saved_contact: true) }
+        format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
       else
         format.html { render :edit }
       end
@@ -83,7 +86,7 @@ class ContactsController < ApplicationController
    @contact = Contact.find(params[:id])
    @contact.destroy
    respond_to do |format|
-     flash[:notice] = "Contact '#{@contact.first_name} #{@contact.last_name}' was successfully deleted."
+     flash[:notice] = "Contact was successfully deleted."
      format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
    end
   end

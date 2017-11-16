@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./"
+  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./ || Rails.env.test?"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
