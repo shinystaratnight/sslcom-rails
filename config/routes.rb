@@ -58,6 +58,8 @@ SslCom::Application.routes.draw do
           as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/detail' => 'api_certificate_requests#detail_v1_4',
+              as: :api_certificate_detail_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
           as: :api_certificate_revoke_v1_4, via: [:options, :delete]
         match '/certificates/' => 'api_certificate_requests#index_v1_4',
@@ -66,6 +68,8 @@ SslCom::Application.routes.draw do
           as: :api_dcv_emails_v1_4, via: [:options, :get]
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
           as: :api_dcv_methods_v1_4, via: [:options, :get]
+        match '/certificate/:ref/pretest' => 'api_certificate_requests#pretest_v1_4',
+              as: :pretest_v1_4, via: [:options, :get]
         match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4',
           as: :api_parameters_v1_4, via: [:options, :get]
         match '/scan/:url' => 'api_certificate_requests#scan',
@@ -357,4 +361,5 @@ SslCom::Application.routes.draw do
   match '/:controller(/:action(/:id))', via: [:get, :post]
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
+  get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
 end

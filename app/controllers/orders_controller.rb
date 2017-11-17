@@ -127,7 +127,8 @@ class OrdersController < ApplicationController
 
   def lookup_discount
     if current_user and !current_user.is_system_admins?
-      @discount=current_user.ssl_account.discounts.find_by_ref(params[:discount_code])
+      @discount=current_user.ssl_account.discounts.find_by_ref(params[:discount_code]) ||
+          Discount.viable.general.find_by_ref(params[:discount_code])
     else
       @discount=Discount.viable.general.find_by_ref(params[:discount_code])
     end

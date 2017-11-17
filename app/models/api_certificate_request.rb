@@ -36,14 +36,19 @@ class ApiCertificateRequest < CaApiRequest
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
     :show_subscriber_agreement]
 
+  DETAILED_ACCESSORS = [:menu, :main, :sub_main, :certificate_content, :in_limit, :download, :domain_validation,
+                        :validation_document, :visit, :certificate_contents, :api_commands]
+
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
   DCV_EMAILS_ACCESSORS = [:account_key, :secret_key, :domain]
 
   REVOKE_ACCESSORS = [:account_key, :secret_key, :ref, :reason, :serials]
 
+  PRETEST_ACCESSOR = [:is_passed]
+
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS).uniq
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS).uniq
 
   before_validation(on: :create) do
     ac=api_credential
@@ -114,7 +119,7 @@ class ApiCertificateRequest < CaApiRequest
         CertificateOrder.not_new.send(is_test)
       else
         self.api_requestable.certificate_orders.not_new.send(is_test)
-      end.limit(20)
+      end
     co = co.search_with_csr(search) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co

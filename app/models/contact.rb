@@ -14,7 +14,7 @@ class Contact < ActiveRecord::Base
 
   def to_api_query
     {}.tap do |result|
-      (ALIAS_FIELDS.keys+%w(postal_code country)).each do |k,v|
+      (ALIAS_FIELDS.keys+%w(postal_code country email)).each do |k,v|
         result.merge!(k=>self.send(k))
       end
     end
