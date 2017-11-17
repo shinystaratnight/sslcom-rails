@@ -1,4 +1,5 @@
 class Certificate < ActiveRecord::Base
+  include ValidationType
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable

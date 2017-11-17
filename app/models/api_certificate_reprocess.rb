@@ -1,6 +1,7 @@
 require "declarative_authorization/maintenance"
 
 class ApiCertificateReprocess < ApiCertificateRequest
+  include ValidationType
   attr_accessor :csr_obj, :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
