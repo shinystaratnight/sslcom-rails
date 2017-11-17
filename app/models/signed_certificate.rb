@@ -4,6 +4,7 @@ require 'openssl'
 #require 'zip/zipfilesystem'
 
 class SignedCertificate < ActiveRecord::Base
+  include ValidationType
 #  using_access_control
   serialize :organization_unit
   serialize :subject_alternative_names
@@ -519,16 +520,6 @@ class SignedCertificate < ActiveRecord::Base
       "SHA2"
     else
       "SHA1"
-    end
-  end
-
-  def validation_type
-    if is_dv?
-      "dv"
-    elsif is_ev?
-      "ev"
-    elsif is_ov?
-      "ov"
     end
   end
 

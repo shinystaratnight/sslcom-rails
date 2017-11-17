@@ -8,7 +8,7 @@ class SslcomCaApi
     'loginPassword' => Rails.application.secrets.comodo_api_password
   }
 
-  DEV_HOST = "http://192.168.100.5:8080/restapi-1.0-SNAPSHOT"
+  DEV_HOST = "http://192.168.100.5:8080/restapi"
 
   APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
@@ -25,8 +25,7 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     cc = options[:certificate_content] || certificate_order.certificate_content
     options.merge!(ca_certificate_id: cc.csr.signed_certificate.comodo_ca_id) if cc.csr.signed_certificate
-    comodo_options = certificate_order.options_for_ca(options).
-        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+    comodo_options = cc.to_ejbca_api_json
     #reprocess or new?
     host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
     url = URI.parse(host)
