@@ -68,6 +68,7 @@ gem 'json-schema'
 gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
+# gem 'pedump'
 
 group :development do
   gem 'foreman'
