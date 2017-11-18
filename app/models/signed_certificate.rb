@@ -575,11 +575,11 @@ class SignedCertificate < ActiveRecord::Base
       cert = cert + END_TAG + "\n"
     else
       unless cert =~ Regexp.new(BEGIN_TAG)
-        cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
+        cert.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"")
         cert = BEGIN_TAG + "\n" + cert.strip
       end
       unless cert =~ Regexp.new(END_TAG)
-        cert.gsub!(/-+END CERTIFICATE-+/,"")
+        cert.gsub!(/-+END.+?CERTIFICATE-+/,"")
         cert = cert + "\n" unless cert=~/\n\Z\z/
         cert = cert + END_TAG + "\n"
       end

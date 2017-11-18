@@ -22,31 +22,26 @@ class SslcomCaApi
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
-  def self.apply_for_certificate(certificate_order, options={})
-    cc = options[:certificate_content] || certificate_order.certificate_content
+  def self.apply_for_certificate(certificate_content, options={})
+    cc = options[:certificate_content] || certificate_content
     options.merge!(ca_certificate_id: cc.csr.signed_certificate.comodo_ca_id) if cc.csr.signed_certificate
-    comodo_options = cc.to_ejbca_api_json
     #reprocess or new?
-    host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
-    url = URI.parse(host)
-    con = Net::HTTP.new(url.host, 443)
-    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
-    con.use_ssl = true
-    cc.csr.touch
-    res = unless [false,"false"].include? options[:send_to_ca]
-            con.start do |http|
-              http.request_post(url.path, comodo_options)
-            end
-          end
-    ccr=cc.csr.ca_certificate_requests.create(request_url: host,
-      parameters: comodo_options, method: "post", response: res.try(:body), ca: "comodo")
-    unless ccr.success?
-      OrderNotifier.problem_ca_sending("comodo@ssl.com", certificate_order,"comodo").deliver
+    # host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
+    host = APPLY_SSL_URL
+    uri = URI.parse(host)
+    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+    req.body = cc.to_ejbca_api_json
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end unless options[:send_to_ca]
+    api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
+      parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
+    unless api_log_entry.user_name
+      OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     else
-      certificate_order.update_column(:external_order_number, ccr.order_number) if ccr.order_number
+      cc.update_column(:ref, api_log_entry.user_name) unless api_log_entry.blank?
     end
-    ccr
+    api_log_entry
   end
 
   def self.domain_control_email_choices(obj_or_domain)
