@@ -110,7 +110,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def body=(certificate)
     return if certificate.blank?
-    self[:body] = enclose_with_tags(certificate.strip)
+    self[:body] = SignedCertificate.enclose_with_tags(certificate.strip)
     unless Settings.csr_parser=="remote"
       begin
         parsed =  if certificate=~ /PKCS7/
@@ -565,7 +565,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
-  def enclose_with_tags(cert)
+  def self.enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7
       cert.gsub!(/-+BEGIN PKCS7-+/,"")
