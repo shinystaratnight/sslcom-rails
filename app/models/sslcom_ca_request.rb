@@ -13,4 +13,8 @@ class SslcomCaRequest < CaApiRequest
   def x509_certificates
     OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags certificate_chain).certificates
   end
+
+  def end_entity_certificate
+    x509_certificates.first
+  end
 end
