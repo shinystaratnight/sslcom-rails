@@ -9,4 +9,8 @@ class SslcomCaRequest < CaApiRequest
   def certificate_chain
     (@parsed || JSON.parse(response))["certificate_chain"]
   end
+
+  def x509_certificates
+    OpenSSL::PKCS7.new(SignedCertificate.enclose_with_tags certificate_chain).certificates
+  end
 end
