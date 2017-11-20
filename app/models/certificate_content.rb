@@ -318,15 +318,6 @@ class CertificateContent < ActiveRecord::Base
     (signed_certificate || certificate).validation_type
   end
 
-  def to_ejbca_api_json
-    {subject_dn:"CN=#{csr.common_name || ''}",
-     ca_name:"ManagementCA",
-     certificate_profile:"#{validation_type.upcase}_RSA_SERVER_CERT",
-     end_entity_profile:"#{validation_type.upcase}_SERVER_CERT_EE",
-     subject_alt_name: all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
-     pkcs10: Csr.remove_begin_end_tags(csr.body)}.to_json if csr
-  end
-
   CONTACT_ROLES.each do |role|
     define_method("#{role}_contacts") do
       certificate_contacts(true).select{|c|c.has_role? role}
