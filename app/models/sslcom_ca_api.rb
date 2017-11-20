@@ -3,6 +3,11 @@ require 'net/https'
 require 'open-uri'
 
 class SslcomCaApi
+
+  # DV_ECC_SERVER_CERT is linked to the
+  # CertLockECCSSLsubCA
+  # SSLcom-SubCA-SSL-ECC-384-R1
+
   CREDENTIALS={
     'loginName' => Rails.application.secrets.comodo_api_username,
     'loginPassword' => Rails.application.secrets.comodo_api_password
@@ -10,30 +15,54 @@ class SslcomCaApi
 
   DEV_HOST = "http://192.168.100.5:8080/restapi"
 
-  APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
-  REPLACE_SSL_URL="https://secure.comodo.net/products/!AutoReplaceSSL"
-  PLACE_ORDER_URL="https://secure.comodo.net/products/!PlaceOrder"
-  RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
-  AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
-  REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
+  APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
+  REVOKE_SSL_URL=DEV_HOST+"/v1/certificate/revoke"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
-  GET_MDC_DETAILS="https://secure.comodo.net/products/!GetMDCDomainDetails"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
+  def self.sig_alg_parameter(csr)
+    case csr.sig_alg
+      when /rsa/i
+        "RSA"
+      when /ecdsa/i
+        "ECC"
+      when /dsa/i
+        "DSA"
+    end
+  end
+
+  # create json parameter string for REST call to EJBCA
+  # cc - certificate_content
+  def self.ssl_cert_json(cc)
+    {subject_dn:"CN=#{cc.csr.common_name || ''}",
+     ca_name:"ManagementCA",
+     certificate_profile:"#{cc.validation_type.upcase}_#{sig_alg_parameter(cc.csr)}_SERVER_CERT",
+     end_entity_profile:"#{cc.validation_type.upcase}_SERVER_CERT_EE",
+     subject_alt_name: cc.all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
+     pkcs10: Csr.remove_begin_end_tags(cc.csr.body)}.to_json if cc.csr
+  end
+
+  # create json parameter string for REST call to EJBCA
+  # cc - certificate_content
+  def self.revoke_cert_json(signed_certificate,reason)
+    {subject_dn: signed_certificate.openssl_x509.subject.to_s,
+     certificate_serial_number: signed_certificate.openssl_x509.serial,
+     revocation_reason: reason}.to_json
+  end
+
   def self.apply_for_certificate(certificate_content, options={})
     cc = options[:certificate_content] || certificate_content
-    options.merge!(ca_certificate_id: cc.csr.signed_certificate.comodo_ca_id) if cc.csr.signed_certificate
     #reprocess or new?
     # host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body = cc.to_ejbca_api_json
+    req.body = ssl_cert_json(cc)
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
-    end unless options[:send_to_ca]
+    end
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
     unless api_log_entry.user_name
@@ -45,77 +74,24 @@ class SslcomCaApi
     api_log_entry
   end
 
-  def self.domain_control_email_choices(obj_or_domain)
-    is_a_obj = (obj_or_domain.is_a?(Csr) or obj_or_domain.is_a?(CertificateName)) ? true : false
-    comodo_options = {'domainName' => is_a_obj ? obj_or_domain.try(:common_name) : obj_or_domain}.
-        merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    host = "https://secure.comodo.net/products/!GetDCVEmailAddressList"
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo"}
-    if is_a_obj
-      dcv=obj_or_domain.ca_dcv_requests.create(attr)
-      obj_or_domain.domain_control_validations.create(
-        candidate_addresses: dcv.email_address_choices, subject: dcv.domain_name)
-      dcv
+  def self.revoke_ssl(signed_certificate, reason)
+    host = REVOKE_SSL_URL
+    uri = URI.parse(host)
+    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+    req.body =     {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
+                    certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
+                    revocation_reason: reason}.to_json
+    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+      http.request(req)
+    end
+    api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
+       parameters: req.body, method: "post", response: res.message, ca: "sslcom")
+    unless api_log_entry.response=="OK"
+      OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
     else
-      CaDcvRequest.new(attr)
+      signed_certificate.revoke! reason
     end
-  end
-
-  def self.resend_dcv(options)
-    owner = options[:dcv].csr || options[:dcv].certificate_name
-    comodo_options = {'dcvEmailAddress' => options[:dcv].email_address,
-                      'orderNumber'=> owner.certificate_content.certificate_order.external_order_number}.
-                      merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    host = RESEND_DCV_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
-    CaDcvResendRequest.create(attr)
-  end
-
-  # this is the only way to update multi domain dcv after the order is submitted
-  def self.auto_update_dcv(options={})
-    options[:send_to_ca]=true unless options[:send_to_ca]==false
-    if options[:dcv].certificate_name #assume ucc
-      owner = options[:dcv].certificate_name
-      order_number = owner.certificate_content.certificate_order.external_order_number
-      is_ucc=owner.certificate_content.certificate_order.certificate.is_ucc?
-      domain_name = owner.name
-      dcv_method=owner.last_dcv_for_comodo_auto_update_dcv
-    else #assume single domain
-      owner = options[:dcv]
-      order_number = owner.csr.certificate_content.certificate_order.external_order_number
-      is_ucc=owner.csr.certificate_content.certificate_order.certificate.is_ucc?
-      domain_name = owner.csr.common_name
-      dcv_method=CertificateName.to_comodo_method(owner.dcv_method)
-    end
-    comodo_options = {'orderNumber'=> order_number,
-                      'newMethod'=>dcv_method}
-    comodo_options.merge!('domainName'=>domain_name) if (is_ucc) #domain is no necessary for single name certs
-    comodo_options.merge!('newDCVEmailAddress' => options[:dcv].email_address) if (options[:dcv].dcv_method=="email")
-    comodo_options=comodo_options.merge!(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
-    if options[:send_to_ca] && order_number
-      host = AUTO_UPDATE_URL
-      res = send_comodo(host, comodo_options)
-      attr = {request_url: host,
-              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
-      CaDcvResendRequest.create(attr)
-    else
-      comodo_options
-    end
-  end
-
-  def self.send_comodo(host, options={})
-    url = URI.parse(host)
-    con = Net::HTTP.new(url.host, 443)
-    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
-    con.use_ssl = true
-    res = con.start do |http|
-      http.request_post(url.path, options)
-    end
+    api_log_entry
   end
 
   def self.collect_ssl(certificate_order, options={})
@@ -125,61 +101,6 @@ class SslcomCaApi
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
     CaRetrieveCertificate.create(attr)
-  end
-
-  def self.revoke_ssl(options={})
-    comodo_options = params_revoke(options)
-    host = REVOKE_SSL_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host, parameters: comodo_options, method: "post", response: res.body, ca: "comodo",
-            api_requestable: options[:certificate_order] || options[:api_requestable]}
-    CaRevokeCertificate.create(attr)
-  end
-
-  def self.apply_apac(certificate_order,options={})
-    certificate = certificate_order.certificate
-    registrant=certificate_order.certificate_content.registrant
-    comodo_options = { # basic
-        'ap' => 'SecureSocketsLaboratories',
-        "reseller" => "Y",
-        "1_PPP"=> ppp_parameter(certificate_order),
-        "emailAddress"=>certificate_order.csr.common_name,
-        "loginName"=>certificate_order.ref,
-        "loginPassword"=>certificate_order.order.reference_number,
-        "1_csr"=>certificate_order.csr.body,
-        "caCertificateID"=> Settings.ca_certificate_id_client,
-        "1_signatureHash"=>"PREFER_SHA2"}
-    comodo_options.merge!( # pro
-        "forename"=>registrant.first_name,
-        "surname"=>registrant.last_name) unless certificate.product_root=~/basic/i
-    comodo_options.merge!( # business
-        "title"=>registrant.title,
-        "organizationName"=>registrant.company_name,
-        "postOfficeBox"=>registrant.po_box,
-        "streetAddress1"=>registrant.address1,
-        "streetAddress2"=>registrant.address2,
-        "streetAddress3"=>registrant.address3,
-        "localityName"=>registrant.city,
-        "stateOrProvinceName"=>registrant.state,
-        "postalCode"=>registrant.postal_code,
-        "country"=>registrant.country,
-        "telephoneNumber"=>registrant.phone,
-        'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)) if
-          certificate.product_root=~/enterprise\z/i || certificate.product_root=~/business\z/i
-    comodo_options.merge!( # enterprise
-        "organizationalUnitName"=>registrant.department) if certificate.product_root=~/enterprise\z/i
-    comodo_options=comodo_options.map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
-    if options[:send_to_ca]
-      host = PLACE_ORDER_URL
-      res = send_comodo(host, comodo_options)
-      attr = {request_url: host,
-              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-      CaCertificateRequest.create(attr)
-    else
-      comodo_options
-    end
-    # "title forename surname emailAddress x_PPP x_csr"
-    # "title forename surname emailAddress organizationName organizationalUnitName streetAddress1 streetAddress2 streetAddress3 x_PPP x_csr localityName stateOrProvinceName postalCode countryName "
   end
 
   def self.apply_code_signing(certificate_order,options={}.reverse_merge!(send_to_ca: true))
@@ -220,16 +141,6 @@ class SslcomCaApi
     end
   end
 
-  # mdc = multi domain certificate
-  def self.mdc_status(certificate_order)
-    comodo_options = params_domains_status(certificate_order)
-    host = GET_MDC_DETAILS
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-    CaMdcStatus.create(attr)
-  end
-
   def self.params_collect(certificate_order, options={})
     comodo_params = {'queryType' => 2, "showExtStatus" => "Y",
                      'baseOrderNumber' => certificate_order.external_order_number}
@@ -254,49 +165,6 @@ class SslcomCaApi
              end
     comodo_params = {'revocationReason' => options[:refund_reason]}.merge(target)
     comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-  end
-
-  def self.ppp_parameter(certificate_order)
-    certificate = certificate_order.certificate
-    if certificate.is_code_signing?
-      case certificate_order.certificate_duration(:years)
-        when "1"
-          "1511"
-        when "2"
-          "1512"
-        when "3"
-          "1509"
-      end
-    elsif certificate.is_client?
-      if certificate.is_client_basic?
-        case certificate_order.certificate_duration(:years)
-          when "1"
-            "5029"
-          when "2"
-            "5030"
-          when "3"
-            "5031"
-        end
-      elsif certificate.is_client_pro?
-        case certificate_order.certificate_duration(:years)
-          when "1"
-            "5032"
-          when "2"
-            "5033"
-          when "3"
-            "5034"
-        end
-      elsif certificate.is_client_business? || certificate.is_client_enterprise?
-        case certificate_order.certificate_duration(:years)
-          when "1"
-            "5035"
-          when "2"
-            "5036"
-          when "3"
-            "5037"
-        end
-      end
-    end
   end
 
 #  def self.test

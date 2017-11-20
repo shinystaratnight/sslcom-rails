@@ -16,6 +16,7 @@ class SignedCertificate < ActiveRecord::Base
   validates :csr_id, :presence=>true, :on=>:save
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
+  has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
@@ -37,6 +38,14 @@ class SignedCertificate < ActiveRecord::Base
 
   APACHE_BUNDLE = "ca-bundle-client.crt"
   AMAZON_BUNDLE = "ca-chain-amazon.crt"
+
+  OID_DV = "2.23.140.1.2.1"
+  OID_OV = "2.23.140.1.2.2"
+  OID_IV = "2.23.140.1.2.3"
+  OID_EV = "2.23.140.1.1"
+  OID_EVCS = "2.23.140.1.3"
+  OID_CS = "2.23.140.1.4.1"
+  OID_TEST = "2.23.140.2.1"
 
 
   after_initialize do
@@ -474,19 +483,31 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_dv?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com DV CA/ ||
-        decoded =~ /Domain Control Validated/ ||
-        decoded =~ /EssentialSSL/
+    !!(decoded.include?(OID_DV))
   end
 
   def is_ov?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com OV CA/ ||
-        decoded =~ /High Assurance CA/
+    !!(decoded.include?(OID_OV))
   end
 
   def is_ev?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com EV CA/  ||
-        decoded =~ /SSL.com Premium EV CA/
+    !!(decoded.include?(OID_EV))
+  end
+
+  def is_iv?
+    !!(decoded.include?(OID_IV))
+  end
+
+  def is_evcs?
+    !!(decoded.include?(OID_EVCS))
+  end
+
+  def is_cs?
+    !!(decoded.include?(OID_CS))
+  end
+
+  def is_test_certificate?
+    !!(decoded.include?(OID_TEST))
   end
 
   def comodo_ca_id
