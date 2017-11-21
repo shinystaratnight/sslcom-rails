@@ -7,6 +7,7 @@ class SslcomCaApi
   # DV_ECC_SERVER_CERT is linked to the
   # CertLockECCSSLsubCA
   # SSLcom-SubCA-SSL-ECC-384-R1
+  # ManagementCA
 
   CREDENTIALS={
     'loginName' => Rails.application.secrets.comodo_api_username,
@@ -34,14 +35,14 @@ class SslcomCaApi
   end
 
   # create json parameter string for REST call to EJBCA
-  # cc - certificate_content
-  def self.ssl_cert_json(cc)
-    {subject_dn:"CN=#{cc.csr.common_name || ''}",
-     ca_name:"ManagementCA",
-     certificate_profile:"#{cc.validation_type.upcase}_#{sig_alg_parameter(cc.csr)}_SERVER_CERT",
-     end_entity_profile:"#{cc.validation_type.upcase}_SERVER_CERT_EE",
-     subject_alt_name: cc.all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
-     pkcs10: Csr.remove_begin_end_tags(cc.csr.body)}.to_json if cc.csr
+  def self.ssl_cert_json(options)
+    {subject_dn:"CN=#{options[:cc].csr.common_name || ''}",
+     ca_name:"CertLock-SubCA-SSL-RSA-4096",
+     certificate_profile:"#{options[:cc].validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT",
+     end_entity_profile:"#{options[:cc].validation_type.upcase}_SERVER_CERT_EE",
+     duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
+     subject_alt_name: options[:cc].all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
+     pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr
   end
 
   # create json parameter string for REST call to EJBCA
@@ -59,16 +60,16 @@ class SslcomCaApi
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body = ssl_cert_json(cc)
+    req.body = ssl_cert_json(cc: cc)
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
     end
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
-    unless api_log_entry.user_name
+    unless api_log_entry.username
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     else
-      cc.update_column(:ref, api_log_entry.user_name) unless api_log_entry.blank?
+      cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s
     end
     api_log_entry
