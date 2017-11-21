@@ -468,7 +468,7 @@ class CertificateOrder < ActiveRecord::Base
         when 5
           1826
       end
-    elsif unit==:comodo_api
+    elsif [:comodo_api,:sslcom_api].include? unit
       case years.gsub(/[^\d]+/,"").to_i
         when 1
           365

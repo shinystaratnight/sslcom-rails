@@ -2,8 +2,8 @@
 
 class SslcomCaRequest < CaApiRequest
   @parsed
-  def user_name
-    (@parsed || JSON.parse(response))["user_name"]
+  def username
+    (@parsed || JSON.parse(response))["username"]
   end
 
   def certificate_chain
