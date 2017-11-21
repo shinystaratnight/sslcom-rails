@@ -719,35 +719,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
-  def reprocess_v1_3
-    set_template "success_create_v1_3"
-    if @result.csr_obj && !@result.csr_obj.valid?
-      # we do this sloppy maneuver because the rabl @template only reports errors
-      @result = @result.csr_obj
-    else
-      if @result.save
-        if @acr = @result.create_certificate_order
-          # successfully charged
-          if @acr.errors.empty?
-            @result.ref = @acr.ref
-            @result.order_status = "pending validation"
-            @result.order_amount = @acr.order.amount.format
-            @result.certificate_url = url_for(@acr)
-            @result.receipt_url = url_for(@acr.order)
-            @result.smart_seal_url = certificate_order_site_seal_url(certificate_order_id: @acr.ref)
-            @result.validation_url = certificate_order_validation_url(certificate_order_id: @acr.ref)
-            @result.update_attribute :response, render_to_string(:template => @template)
-            render(:template => @template)
-          else
-            @result = @acr #so that rabl can report errors
-          end
-        end
-      else
-        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
-      end
-    end
-  end
-
   def retrieve_v1_3
     if @result.save && @certificate_order.is_a?(CertificateOrder)
       set_template "success_retrieve_v1_3"
@@ -904,8 +875,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 ApiCertificateCreate
               when "create_v1_4", "update_v1_4", "contacts_v1_4"
                 ApiCertificateCreate_v1_4
-              when "reprocess_v1_3"
-                ApiCertificateCreate
               when /revoke/
                 ApiCertificateRevoke
               when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "show_upload_v1_4", "upload_v1_4"
