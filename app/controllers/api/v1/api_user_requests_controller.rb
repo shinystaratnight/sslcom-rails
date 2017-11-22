@@ -15,7 +15,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
 
   def create_v1_4
     if @result.save
-      @template = "api_user_requests/create_v1_4"
+      set_template "create_v1_4"
       if @obj = @result.create_user
         if @obj.is_a?(User) && @obj.errors.empty?
           set_result_parameters(@result, @obj, @template)
@@ -35,7 +35,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
 
   def show_v1_4
     if @result.save
-      @template = "api_user_requests/show_v1_4"
+      set_template "show_v1_4"
       if @obj = UserSession.create(params).user
         # successfully charged
         if @obj.is_a?(User) && @obj.errors.empty?
@@ -75,5 +75,9 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
     @result.parameters = params.to_json
     @result.raw_request = request.raw_post
     @result.request_method = request.request_method
+  end
+  
+  def set_template(filename)
+    @template = File.join('api/v1/api_user_requests/', filename)
   end
 end

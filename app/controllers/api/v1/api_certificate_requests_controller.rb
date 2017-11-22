@@ -45,7 +45,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def create_v1_4
-    @template = 'api_certificate_requests/create_v1_4'
+    set_template 'create_v1_4'
     if @result.csr_obj && !@result.csr_obj.valid?
       @result = @result.csr_obj
     else
@@ -73,7 +73,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def revoke_v1_4
-    @template = 'api_certificate_requests/revoke_v1_4'
+    set_template 'revoke_v1_4'
     if @result.valid? && @result.save
       co = @result.find_certificate_order
       @acr = @result.find_signed_certificates(co)
@@ -104,7 +104,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def update_v1_4
-    @template = "api_certificate_requests/update_v1_4"
+    set_template "update_v1_4"
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl template only reports errors
       @result = @result.csr_obj
@@ -153,7 +153,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def dcv_validate_v1_4
-    @template = "api_certificate_requests/success_retrieve_v1_3"
+    set_template "success_retrieve_v1_3"
     if @result.save
       if @certificate_order.is_a?(CertificateOrder)
         @certificate_order.api_validate(@result)
@@ -168,7 +168,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def detail_v1_4
-    @template = "api_certificate_requests/detail_v1_4"
+    set_template "detail_v1_4"
 
     if @result.save
       @acr = @result.find_certificate_order
@@ -411,7 +411,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def show_v1_4
-    @template = "api_certificate_requests/show_v1_4"
+    set_template "show_v1_4"
 
     if @result.save
       @acr = @result.find_certificate_order
@@ -609,7 +609,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         api_domain = "https://" + (@acr.is_test ? Settings.test_api_domain : Settings.api_domain)
-        @template = "api_certificate_requests/api_parameters_v1_4"
+        set_template "api_parameters_v1_4"
         @result.parameters = @acr.to_api_string(action: @result.api_call, domain_override: api_domain, caller: "api")
         render(:template => @template) and return
       end
@@ -647,7 +647,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def index_v1_4
-    @template   = "api_certificate_requests/index_v1_4"
+    set_template "index_v1_4"
     @result.end = DateTime.now if @result.end.blank?
     client_app  = params[:client_app]
 
@@ -720,7 +720,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def reprocess_v1_3
-    @template = "api_certificate_requests/success_create_v1_3"
+    set_template "success_create_v1_3"
     if @result.csr_obj && !@result.csr_obj.valid?
       # we do this sloppy maneuver because the rabl @template only reports errors
       @result = @result.csr_obj
@@ -750,7 +750,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def retrieve_v1_3
     if @result.save && @certificate_order.is_a?(CertificateOrder)
-      @template = "api_certificate_requests/success_retrieve_v1_3"
+      set_template "success_retrieve_v1_3"
       @result.order_status = @certificate_order.status
       @result.update_attribute :response, render_to_string(:template => @template)
       render(:template => @template) and return
@@ -773,7 +773,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         end
       end
       unless @result.email_addresses.blank?
-        @template = "api_certificate_requests/dcv_emails_v1_3"
+        set_template "dcv_emails_v1_3"
         render(:template => @template) and return
       end
     else
@@ -782,7 +782,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def pretest_v1_4
-    @template = "api_certificate_requests/pretest_v1_4"
+    set_template "pretest_v1_4"
     if @result.save && find_certificate_order.is_a?(CertificateOrder)
       http_to_s = dcv_verify(params[:protocol])
       @result.is_passed = http_to_s
@@ -794,7 +794,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def dcv_methods_v1_4
-    @template = "api_certificate_requests/dcv_methods_v1_4"
+    set_template "dcv_methods_v1_4"
     if @result.save  #save the api request
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
@@ -830,7 +830,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def dcv_methods_csr_hash_v1_4
-    @template = "api_certificate_requests/dcv_methods_v1_4"
+    set_template "dcv_methods_v1_4"
     if @result.save  #save the api request
       @acr = CertificateOrder.new
       @acr.certificate_contents.build.build_csr(body: @result.csr)
@@ -874,7 +874,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save
       @result.sent_at=Time.now
       unless @result.email_addresses.blank?
-        @template = "api_certificate_requests/success_dcv_email_resend_v1_3"
+        set_template "success_dcv_email_resend_v1_3"
         render(:template => @template) and return
       end
     else
@@ -884,7 +884,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def dcv_revoke_v1_3
-    @template = "api_certificate_requests/success_dcv_emails_v1_3"
+    set_template "success_dcv_emails_v1_3"
     if @result.save
       @result.email_addresses=ComodoApi.domain_control_email_choices(@result.domain_name).email_address_choices
       unless @result.email_addresses.blank?
@@ -1080,5 +1080,9 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     certificate_order.validation.validation_histories << @val_history
     @val_history.save
     @val_history
+  end
+  
+  def set_template(filename)
+    @template = File.join('api/v1/api_certificate_requests/', filename)
   end
 end
