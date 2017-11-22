@@ -901,6 +901,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @result.parameters = params.to_json
     @result.raw_request = request.raw_post
     @result.request_method = request.request_method
+    @result.saved_registrant ||= params[:saved_registrant] if params[:saved_registrant]
   end
 
   def find_certificate_order

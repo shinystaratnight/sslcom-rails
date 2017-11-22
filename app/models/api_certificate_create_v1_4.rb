@@ -3,7 +3,7 @@ require "declarative_authorization/maintenance"
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant
 
   NON_EV_PERIODS = %w(365 730 1095 1461 1826)
   EV_PERIODS = %w(365 730)
@@ -61,6 +61,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validate  :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
+    retrieve_registrant
     self.period = period.to_s unless period.blank?
     self.product = product.to_s unless product.blank?
     if new_record?
@@ -486,6 +487,27 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     errors.delete(:contacts)
     errors.add(:contacts, cur_err) if cur_err.any?
     errors.get(:contacts) ? false : true
+  end
+  
+  def retrieve_registrant
+    id = self.saved_registrant
+    if id
+      found = Registrant.find_by(id: id.to_i)
+      if found
+        self.organization_name = found.company_name
+        self.organization_unit_name = found.department
+        self.post_office_box = found.po_box
+        self.street_address_1 = found.address1
+        self.street_address_2 = found.address2
+        self.street_address_3 = found.address3
+        self.locality_name = found.city
+        self.state_or_province_name = found.state
+        self.postal_code = found.postal_code
+        self.country_name = found.country
+      else
+        errors[:saved_registrant].push(id: "Registrant with id=#{id} does not exist.")
+      end
+    end
   end
   
   def retrieve_saved_contact(attributes, extra_attributes=[])
