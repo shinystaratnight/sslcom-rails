@@ -8,19 +8,23 @@ class ManagedUsersController < ApplicationController
   end
 
   def create
-    user_exists   = User.get_user_by_email(params[:user][:email])
+    ssl_account_ids = params[:user][:ssl_account_ids].reject(&:blank?).map(&:to_i).compact
+    user_exists = User.get_user_by_email(params[:user][:email])
     if user_exists && user_exists.is_admin_disabled?
-      disabled_user_invited(user_exists, params[:user][:ssl_account_ids])
+      disabled_user_invited(user_exists, ssl_account_ids)
       redirect_to users_path(ssl_slug: @ssl_slug)
-    else  
-      @ssl_accounts = SslAccount.where(
-        id: params[:user][:ssl_account_ids].reject(&:blank?).compact
-      )
+    else
+      manage_invites = current_user.total_teams_can_manage_users.map(&:id) & ssl_account_ids
+      @ssl_accounts = manage_invites.any? ? SslAccount.where(id: manage_invites) : []
       ignore_teams = user_exists_for_teams(params[:user][:email])
       ignore_teams = ignore_teams.map(&:get_team_name).join(', ') unless ignore_teams.empty?
       if @ssl_accounts.empty?
-        @user         = User.new
-        flash[:error] = "User #{params[:user][:email]} already exists for these teams: #{ignore_teams}!"
+        @user = User.new
+        flash[:error] = if manage_invites.blank? && ssl_account_ids.any?
+          "You do not have permission to invite users to #{ssl_account_ids.count} team(s)!"
+        else
+          "User #{params[:user][:email]} already exists for these teams: #{ignore_teams}!"
+        end
         render :new
       else
         new_params  = params.merge(root_url: root_url, from_user: current_user)
