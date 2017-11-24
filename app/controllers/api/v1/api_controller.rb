@@ -9,9 +9,10 @@ class Api::V1::APIController < ActionController::API
   include ActionView::Rendering
   
   before_filter :activate_authlogic
-  after_filter :set_access_control_headers
+  after_filter  :set_access_control_headers
 
   TEST_SUBDOMAIN = 'sws-test'
+  PER_PAGE_DEFAULT = 10
   
   respond_to :json
   
@@ -27,7 +28,7 @@ class Api::V1::APIController < ActionController::API
   end
   
   def set_test
-    @test = request.subdomain==TEST_SUBDOMAIN || %w{development test}.include?(Rails.env)
+    @test = Sandbox.exists?(request.host) || %w{development test}.include?(Rails.env)
   end
   
   def activate_authlogic
@@ -37,7 +38,6 @@ class Api::V1::APIController < ActionController::API
   def render_200_status_noschema
     json = if @result.errors.empty?
       serialize_model(@result)['data']['attributes']
-        .transform_keys{ |key| key.gsub('-', '_') }
     else
       {errors: @result.errors}
     end
@@ -63,5 +63,14 @@ class Api::V1::APIController < ActionController::API
     headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  end  
+  
+  def has_api_access?
+    ak = params[:account_key]
+    sk = params[:secret_key]
+    return false if ak.blank? || sk.blank?
+    @team ||= SslAccount.joins(:api_credential)
+      .where(api_credential: {account_key: ak, secret_key: sk}).last
+    !@team.nil?
   end
 end

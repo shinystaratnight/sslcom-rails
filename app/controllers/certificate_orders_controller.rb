@@ -126,6 +126,7 @@ class CertificateOrdersController < ApplicationController
         @registrant.email = csr.email
         @registrant.country = csr.country
       end
+      @saved_registrants = current_user.ssl_account.saved_registrants
     else
       not_found
     end

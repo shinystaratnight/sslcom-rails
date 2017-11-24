@@ -37,32 +37,40 @@
             %h4 API Parameter
         %tr
           %td=radio_button_tag :product, 106,'checked'
-          %td Basic SSL
+          %td Basic SSL/TLS
           %td 106
         %tr
           %td=radio_button_tag :product, 105
-          %td Wildcard SSL
+          %td Wildcard SSL/TLS
           %td 105
         %tr
           %td=radio_button_tag :product, 103
-          %td High Assurance SSL
+          %td High Assurance SSL/TLS
           %td 103
         %tr
           %td=radio_button_tag :product, 107
-          %td Premium SSL
+          %td Premium SSL/TLS
           %td 107
         %tr
           %td=radio_button_tag :product, 101
-          %td UCC/SAN SSL
+          %td UCC/SAN SSL/TLS
           %td 101
         %tr
           %td=radio_button_tag :product, 102
-          %td EV SSL
+          %td EV SSL/TLS
           %td 102
         %tr
           %td=radio_button_tag :product, 100
-          %td EV UCC/SAN SSL
+          %td EV UCC/SAN SSL/TLS
           %td 100
+        %tr
+          %td=radio_button_tag :product, 350
+          %td OV Code Signing
+          %td 350
+        %tr
+          %td=radio_button_tag :product, 360
+          %td EV Code Signing (* up to 3 years)
+          %td 360
       %table#at_a_glance_header{style: "float: none"}
         %thead
           %td(colspan="2" )
@@ -79,8 +87,8 @@
           %td 730
         %tr
           %td=radio_button_tag :period, 1095
-          %td 1095 (not valid for EV)
-          %td 1095 (not valid for EV)
+          %td 1095 (not valid for EV SSL/TLS)
+          %td 1095 (not valid for EV SSL/TLS)
       =submit_tag "Create Test Order"
   %h3 2) API Call Method
   %p

@@ -190,12 +190,11 @@ module CertificateOrdersHelper
   
   # When validation instructions are generated for a certificate name,
   # remove "www" for Basic SSL, High Assurance SSL, and Enterprise EV SSL certs 
-  # that have a "www.subdomain.domain.com" in the CN of the CSR
-  def render_domain_for_instructions(certificate_order, target_domain)
-    c = certificate_order.certificate
-    remove = c.is_ev? || c.is_ov? || c.is_personal? || c.is_dv_or_basic? || c.is_free?
-    length = target_domain.split('.').length
-    target_domain = target_domain.remove(/\Awww./) if remove && length > 3
+  # in the CN of the CSR
+  def render_domain_for_instructions(certificate_order, target_domain)  
+    unless certificate_order.certificate.is_multi?
+      target_domain = target_domain.remove(/\Awww./)
+    end
     target_domain
   end
 end

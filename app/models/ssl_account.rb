@@ -17,7 +17,6 @@ class SslAccount < ActiveRecord::Base
   has_one   :reseller, :dependent => :destroy
   accepts_nested_attributes_for :reseller, :allow_destroy=>false
   has_one   :affiliate, :dependent => :destroy
-  has_one   :contact, :as => :contactable
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
   has_many  :transactions, through: :orders
@@ -31,6 +30,9 @@ class SslAccount < ActiveRecord::Base
   has_many  :unscoped_users, through: :ssl_account_users
   has_many  :assignments
   has_many  :discounts, as: :benefactor, dependent: :destroy
+  has_many  :saved_contacts, as: :contactable, class_name: 'CertificateContact', dependent: :destroy
+  has_many  :saved_registrants, as: :contactable, class_name: 'Registrant', dependent: :destroy
+  has_many  :all_saved_contacts, as: :contactable, class_name: 'Contact', dependent: :destroy
 
   unless MIGRATING_FROM_LEGACY
     #has_many  :orders, :as=>:billable, :after_add=>:build_line_items
@@ -107,7 +109,7 @@ class SslAccount < ActiveRecord::Base
   def self.human_attribute_name(attr, options={})
      HUMAN_ATTRIBUTES[attr.to_sym] || super
   end
-
+  
   def generate_funded_account
     self.funded_account = FundedAccount.new(:cents=>0)
   end
@@ -282,14 +284,23 @@ class SslAccount < ActiveRecord::Base
 
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
-  def self.migrate_orders(from_sa, to_sa)
-    to_sa.orders << from_sa.orders
-    to_sa.certificate_orders << from_sa.certificate_orders
+  def self.move_orders(from_sa, to_sa, refs=[])
+    unless refs.blank?
+      refs.each do |ref|
+        if co = from_sa.certificate_orders.find_by_ref(ref)
+          to_sa.certificate_orders << co
+          to_sa.orders << co.orders
+        end
+      end
+    else
+      to_sa.orders << from_sa.orders
+      to_sa.certificate_orders << from_sa.certificate_orders
+    end
   end
 
   # to_sa - the ssl_account to migrate to
   # ref_number - reference number of the order to migrate
-  def migrate_order(to_sa, ref_number)
+  def move_order(to_sa, ref_number)
     o=self.orders.find_by_reference_number(ref_number)
     to_sa.certificate_orders << o.certificate_orders
     to_sa.orders << o

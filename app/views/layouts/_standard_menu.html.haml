@@ -6,7 +6,9 @@
       %li(id="#{current_page?(certificates_url) ? 't-intro' : 'manage_certificates'}" style="color:green")
         =link_to "BUY", certificates_path
     %li(id="#{is_on?("account",current_slug) ? 't-intro' : 'dashboard' }")
-      =link_to "Dashboard", account_path(slug_params)
+      =link_to "Dashboard", account_path(slug_params)  
+    %li
+      =link_to "Contacts", saved_contacts_contacts_path(slug_params)
     -unless is_sandbox?
       -permitted_to? :read, :validations do
         %li(id="#{(is_on?("validations",current_slug) && !@prev) ? 't-intro' : 'manage_validations'}")

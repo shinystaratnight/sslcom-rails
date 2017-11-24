@@ -29,8 +29,7 @@ SslCom::Application.routes.draw do
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-    %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com sandbox.ssl.local
-    api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)
+    (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
   ) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1) do
@@ -40,6 +39,18 @@ SslCom::Application.routes.draw do
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
         
+        # Teams
+        match '/teams/add_contact' => 'teams#add_contact',
+          as: :api_team_add_contact, via: :post
+        match '/teams/add_registrant' => 'teams#add_registrant',
+          as: :api_team_add_registrant, via: :post
+        match '/teams/add_billing_profile' => 'teams#add_billing_profile',
+          as: :api_team_add_billing_profile, via: :post
+        match '/teams/saved_contacts' => 'teams#saved_contacts',
+          as: :api_team_saved_contacts, via: :get
+        match '/teams/saved_registrants' => 'teams#saved_registrants',
+          as: :api_team_saved_registrants, via: :get
+            
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
           as: :api_certificate_create_v1_4, via: [:options, :post]
@@ -47,6 +58,8 @@ SslCom::Application.routes.draw do
           as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/detail' => 'api_certificate_requests#detail_v1_4',
+              as: :api_certificate_detail_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
           as: :api_certificate_revoke_v1_4, via: [:options, :delete]
         match '/certificates/' => 'api_certificate_requests#index_v1_4',
@@ -55,6 +68,8 @@ SslCom::Application.routes.draw do
           as: :api_dcv_emails_v1_4, via: [:options, :get]
         match '/certificate/:ref/validations/methods' => 'api_certificate_requests#dcv_methods_v1_4',
           as: :api_dcv_methods_v1_4, via: [:options, :get]
+        match '/certificate/:ref/pretest' => 'api_certificate_requests#pretest_v1_4',
+              as: :pretest_v1_4, via: [:options, :get]
         match '/certificate/:ref/api_parameters/:api_call' => 'api_certificate_requests#api_parameters_v1_4',
           as: :api_parameters_v1_4, via: [:options, :get]
         match '/scan/:url' => 'api_certificate_requests#scan',
@@ -146,7 +161,13 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
-      resources :contacts, :only=>:index
+      resources :contacts, only: :index
+    end
+    
+    resources :contacts, except: :index do
+      collection do
+        get :saved_contacts
+      end
     end
 
     resources :csrs do
@@ -340,4 +361,5 @@ SslCom::Application.routes.draw do
   match '/:controller(/:action(/:id))', via: [:get, :post]
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
+  get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
 end

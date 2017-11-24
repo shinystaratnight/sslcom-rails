@@ -42,7 +42,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create_voucher')
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
       assert_equal '$657.00', items['order_amount'] # 3 domains * $133.00 AND 2 domains * $129.00
       refute_nil   items['ref']
@@ -52,7 +52,8 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       refute_nil   items['validation_url']
       assert_nil   items['registrant']
       assert_nil   items['validations']
-      
+      assert_nil   items['external_order_number']
+
       # db records
       assert_equal 1, CaApiRequest.count
       assert_equal 1, Order.count
@@ -106,7 +107,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create_voucher')
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
       assert_equal '$657.00', items['order_amount'] # 3 domains * $133.00 AND 2 domains * $129.00
       refute_nil   items['ref']
@@ -116,7 +117,8 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       refute_nil   items['validation_url']
       assert_nil   items['registrant']
       assert_nil   items['validations']
-      
+      assert_nil   items['external_order_number']
+
       # db records
       assert_equal 1, CaApiRequest.count
       assert_equal 1, Order.count
@@ -271,7 +273,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create_voucher')
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
       assert_equal '$0.00', items['order_amount']
       refute_nil   items['ref']
@@ -281,6 +283,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       refute_nil   items['validation_url']
       assert_nil   items['registrant']
       assert_nil   items['validations']
+      assert_nil   items['external_order_number']
       
       # db records
       assert_equal 1, CaApiRequest.count
@@ -332,7 +335,7 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       assert       match_response_schema('cert_create_voucher')
       assert       response.success?
       assert_equal 200, status
-      assert_equal 9, items.count
+      assert_equal 10, items.count
       assert_match 'unused. waiting on certificate signing request (csr) from customer', items['order_status']
       assert_equal '$0.00', items['order_amount']
       refute_nil   items['ref']
@@ -342,7 +345,8 @@ class CertCreateWithBillingTest < ActionDispatch::IntegrationTest
       refute_nil   items['validation_url']
       assert_nil   items['registrant']
       assert_nil   items['validations']
-      
+      assert_nil   items['external_order_number']
+
       # db records
       assert_equal 1, CaApiRequest.count
       assert_equal 1, Order.count

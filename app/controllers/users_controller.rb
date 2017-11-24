@@ -156,8 +156,8 @@ class UsersController < ApplicationController
 
   def edit_password
     @user ||= @current_user
-    permission_denied if (!@current_user.is_admin? && @current_user != @user)
-    @chpwd = (admin_op?)? false : true
+    permission_denied if !@current_user.is_admin? && (@current_user != @user)
+    @chpwd = !admin_op?
   end
 
   def edit_email
@@ -187,8 +187,8 @@ class UsersController < ApplicationController
     elsif edit_email
       render :action => :edit_email
     else
-      @chpwd = !(current_user.is_system_admins?)
-      render :action => :edit_password
+      @chpwd = !admin_op?
+      render :edit_password
     end
   end
 

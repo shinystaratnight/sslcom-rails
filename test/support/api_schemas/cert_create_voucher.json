@@ -18,6 +18,7 @@
     "certificate_url" : { "type" : "string" },
     "receipt_url" : { "type" : "string" },
     "smart_seal_url" : { "type" : "string" },
-    "validation_url" : { "type" : "string" }
+    "validation_url" : { "type" : "string" },
+    "external_order_number" : { "type" : ["string", "null"] }
   }
 }

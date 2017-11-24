@@ -28,6 +28,92 @@ jQuery(function($) {
       if($(check_boxes[i+1]).attr("checked"))
         $(form_types[i+1]).hide();
     }
+    
+    function populate_contact(form_id, label, data) {
+      $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
+    }
+    
+    // Saved Contacts and Registrant Forms: 
+    // toggle form fields based on contact_type and registrant_type (organization vs. individual)
+    $('.saved_contacts').change(function() {
+      var form_id = $(this).parents()['1']['id'];
+      
+      var list = [
+        ['title', 'title'],
+        ['company', 'company_name'],
+        ['department', 'address1'],
+        ['po_box', 'po_box'],
+        ['address1', 'address1'],
+        ['address2', 'address2'],
+        ['address3', 'address3'],
+        ['city', 'city'],
+        ['state', 'state'],
+        ['postal_code', 'postal_code'],
+        ['country', 'country'],
+        ['postal_code', 'postal_code'],
+        ['email', 'email'],
+        ['phone', 'phone'],
+        ['first_name', 'first_name'],
+        ['last_name', 'last_name'],
+        ['fax', 'fax'],
+        ['ext', 'ext']
+      ];
+      list.forEach(function(el) {
+        populate_contact(
+          form_id, el[0], $('#' + form_id + ' #saved_contacts option:selected').data(el[1])
+        );
+      });
+    });
+    
+    function hide_org_fields() {
+      $("label[for='company_name']").parent().addClass('hidden');
+      $("label[for='department']").parent().addClass('hidden');
+    }
+    function show_org_fields() {
+      $("label[for='department']").parent().removeClass('hidden');
+      $("label[for='company_name']").parent().removeClass('hidden');
+    }
+    function hide_indiv_fields() {
+      $("label[for='first_name']").parent().addClass('hidden');
+      $("label[for='last_name']").parent().addClass('hidden');
+    }
+    function show_indiv_fields() {
+      $("label[for='first_name']").parent().removeClass('hidden');
+      $("label[for='last_name']").parent().removeClass('hidden');
+    }
+    function show_registrant_type() {
+      $('#contact_registrant_type').parent().removeClass('hidden');
+    }
+    function show_registrant_fields() {
+      if ($('#contact_registrant_type').val()==<%= Registrant::registrant_types[:individual] %>) {
+        hide_org_fields();
+        show_indiv_fields();
+      } else {
+        show_org_fields();
+        hide_indiv_fields();
+      }
+    }
+    
+    if ( ($('#edit_saved_contact').length || $('#new_saved_contact').length)
+      && $('#contact_type').val()=='Registrant') {
+      show_registrant_type();
+      show_registrant_fields();
+    }
+    
+    $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
+      if ($(this).val()=='Registrant') {
+        $('#contact_registrant_type').parent().removeClass('hidden');
+        show_registrant_fields();
+      } else {
+        $('#contact_registrant_type').parent().addClass('hidden');
+        show_org_fields();
+        show_indiv_fields();
+      }
+    });
+    
+    $('#contact_registrant_type').change(function() {
+      show_registrant_fields();
+    });
   });
 });
 </script>
