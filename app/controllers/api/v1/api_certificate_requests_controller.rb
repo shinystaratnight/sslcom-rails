@@ -480,7 +480,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       page     = params[:page] || 1
       per_page = params[:per_page] || PER_PAGE_DEFAULT
-      @orders = @result.find_certificate_orders(params[:search],page.to_i*per_page.to_i,per_page.to_i)
+      @orders = @result.find_certificate_orders(params[:search],(page.to_i-1)*per_page.to_i,per_page.to_i)
 
       @results = []
       @orders.each do |acr|
@@ -529,13 +529,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
         end
         @results << result
-        if client_app
-          render json: serialize_models(@results,
-            meta: { orders_count: @orders.count, page: page, per_page: per_page }
-          )
-        else
-          render(template: @template) and return
-        end
+      end
+      if client_app
+        render json: serialize_models(@results,
+          meta: { orders_count: @orders.count, page: page, per_page: per_page }
+        )
+      else
+        render(template: @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
