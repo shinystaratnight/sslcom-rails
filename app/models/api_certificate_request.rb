@@ -111,7 +111,7 @@ class ApiCertificateRequest < CaApiRequest
     end
   end
 
-  def find_certificate_orders(search)
+  def find_certificate_orders(search,offset,limit)
     is_test = self.test ? "is_test" : "not_test"
     co =
       if self.api_requestable.users.find(&:is_admin?)
