@@ -464,6 +464,16 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def subject_dn(options)
+    cert = options[:certificate] || self.certificate
+    dn=["CN=#{options[:common_name] || csr.common_name}"]
+    if cert.is_ov? or cert.is_ev?
+      dn << "O=#{registant.company_name}"
+    end
+    dn << options[:custom_fields] if options[:custom_fields]
+    dn.join(",")
+  end
+
   private
   
   def validate_domains?
