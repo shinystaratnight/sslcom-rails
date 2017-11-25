@@ -34,10 +34,13 @@ class ApiCertificateRequest < CaApiRequest
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
-    :show_subscriber_agreement]
+    :show_subscriber_agreement, :product_name]
 
   DETAILED_ACCESSORS = [:menu, :main, :sub_main, :certificate_content, :in_limit, :download, :domain_validation,
-                        :validation_document, :visit, :certificate_contents, :api_commands]
+                        :validation_document, :visit, :certificate_contents, :api_commands, :success_message]
+
+  UPLOAD_ACCESSORS = [:checkout_in_progress, :is_dv, :is_dv_or_basic, :is_ev, :community_name, :all_domains,
+                      :acceptable_file_types, :other_party_request, :subject, :validation_rules]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 
@@ -48,7 +51,7 @@ class ApiCertificateRequest < CaApiRequest
   PRETEST_ACCESSOR = [:is_passed]
 
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS).uniq
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS).uniq
 
   before_validation(on: :create) do
     ac=api_credential
