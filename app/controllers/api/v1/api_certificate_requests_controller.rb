@@ -23,7 +23,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   def notify_saved_result
     @rendered=render_to_string(template: @template)
     unless @rendered.is_a?(String) && @rendered.include?('errors')
-      @result.update_attribute :response, @rendered
+      # commenting this out, it's causing encoding issues and can grow out of control
+      # @result.update_attribute :response, @rendered
       OrderNotifier.api_executed(@rendered, request.host_with_port).deliver if @rendered
     end
   end
