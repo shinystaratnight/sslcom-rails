@@ -43,12 +43,30 @@ class SslcomCaApi
         'EV_SERVER_CERT_EE'
     end unless cc.certificate.blank?
   end
+
+  def self.ca_name(options)
+    if options[:ca]=="certlock"
+      case options[:cc].certificate.product
+        when /^ev-code-signing/
+          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
+              'CertLockEVECCSSLsubCA'
+        when /^code-signing/
+          'CS_CERT_EE'
+        when /^(basic|free)/
+          'DV_SERVER_CERT_EE'
+        when /^(wildcard|high_assurance|ucc)/
+          'OV_SERVER_CERT_EE'
+        when /^(ev)/
+          'EV_SERVER_CERT_EE'
+      end unless cc.certificate.blank?
+    end
+  end
   # create json parameter string for REST call to EJBCA
   def self.ssl_cert_json(options)
     {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
      ca_name:"CertLock-SubCA-SSL-RSA-4096",
      certificate_profile:"#{options[:cc].validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT",
-     end_entity_profile:"#{options[:cc].validation_type.upcase}_SERVER_CERT_EE",
+     end_entity_profile: end_entity_profile(options[:cc]),
      duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
      subject_alt_name: options[:cc].all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
      pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr

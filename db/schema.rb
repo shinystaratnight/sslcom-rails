@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171110052748) do
+ActiveRecord::Schema.define(version: 20171126210209) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -174,6 +174,16 @@ ActiveRecord::Schema.define(version: 20171110052748) do
     t.text     "result",         limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "cas", force: :cascade do |t|
+    t.string  "ref",           limit: 255
+    t.string  "friendly_name", limit: 255
+    t.string  "profile_name",  limit: 255
+    t.string  "algorithm",     limit: 255
+    t.integer "size",          limit: 4
+    t.string  "description",   limit: 255
+    t.string  "profile_type",  limit: 255
   end
 
   create_table "certificate_api_requests", force: :cascade do |t|
@@ -1241,6 +1251,17 @@ ActiveRecord::Schema.define(version: 20171110052748) do
     t.string   "single_access_token", limit: 255,                 null: false
     t.string   "perishable_token",    limit: 255,                 null: false
     t.string   "status",              limit: 255
+    t.integer  "login_count",         limit: 4,   default: 0,     null: false
+    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
+    t.datetime "last_request_at"
+    t.datetime "current_login_at"
+    t.datetime "last_login_at"
+    t.string   "current_login_ip",    limit: 255
+    t.string   "last_login_ip",       limit: 255
+    t.boolean  "active",                          default: false, null: false
+    t.string   "openid_identifier",   limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "first_name",          limit: 255
     t.string   "last_name",           limit: 255
     t.string   "phone",               limit: 255
@@ -1253,21 +1274,6 @@ ActiveRecord::Schema.define(version: 20171110052748) do
     t.string   "city",                limit: 255
     t.string   "state",               limit: 255
     t.string   "country",             limit: 255
-    t.string   "ext",                 limit: 255
-    t.string   "fax",                 limit: 255
-    t.string   "website",             limit: 255
-    t.string   "tax_number",          limit: 255
-    t.integer  "login_count",         limit: 4,   default: 0,     null: false
-    t.integer  "failed_login_count",  limit: 4,   default: 0,     null: false
-    t.datetime "last_request_at"
-    t.datetime "current_login_at"
-    t.datetime "last_login_at"
-    t.string   "current_login_ip",    limit: 255
-    t.string   "last_login_ip",       limit: 255
-    t.boolean  "active",                          default: false, null: false
-    t.string   "openid_identifier",   limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.boolean  "is_auth_token"
     t.integer  "default_ssl_account", limit: 4
     t.integer  "max_teams",           limit: 4
