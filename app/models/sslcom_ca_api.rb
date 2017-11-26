@@ -9,20 +9,15 @@ class SslcomCaApi
   # SSLcom-SubCA-SSL-ECC-384-R1
   # ManagementCA
 
-  CREDENTIALS={
-    'loginName' => Rails.application.secrets.comodo_api_username,
-    'loginPassword' => Rails.application.secrets.comodo_api_password
-  }
-
   DEV_HOST = "http://192.168.100.5:8080/restapi"
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
   REVOKE_SSL_URL=DEV_HOST+"/v1/certificate/revoke"
-  COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
+  # using the csr, determine the algorithm used
   def self.sig_alg_parameter(csr)
     case csr.sig_alg
       when /rsa/i
@@ -34,6 +29,20 @@ class SslcomCaApi
     end
   end
 
+  def self.end_entity_profile(cc)
+    case cc.certificate.product
+      when /^ev-code-signing/
+        'EV_CS_CERT_EE'
+      when /^code-signing/
+        'CS_CERT_EE'
+      when /^(basic|free)/
+        'DV_SERVER_CERT_EE'
+      when /^(wildcard|high_assurance|ucc)/
+        'OV_SERVER_CERT_EE'
+      when /^(ev)/
+        'EV_SERVER_CERT_EE'
+    end unless cc.certificate.blank?
+  end
   # create json parameter string for REST call to EJBCA
   def self.ssl_cert_json(options)
     {subject_dn:"CN=#{options[:cc].csr.common_name || ''}",
@@ -55,8 +64,6 @@ class SslcomCaApi
 
   def self.apply_for_certificate(certificate_content, options={})
     cc = options[:certificate_content] || certificate_content
-    #reprocess or new?
-    # host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
@@ -95,78 +102,6 @@ class SslcomCaApi
     api_log_entry
   end
 
-  def self.collect_ssl(certificate_order, options={})
-    comodo_options = params_collect(certificate_order, options)
-    host = COLLECT_SSL_URL
-    res = send_comodo(host, comodo_options)
-    attr = {request_url: host,
-      parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-    CaRetrieveCertificate.create(attr)
-  end
-
-  def self.apply_code_signing(certificate_order,options={}.reverse_merge!(send_to_ca: true))
-    registrant=certificate_order.certificate_content.registrant
-    comodo_options = {
-        "loginName"=>certificate_order.ref,
-        "loginPassword"=>certificate_order.order.reference_number,
-        "emailAddress"=>registrant.email,
-        'ap' => 'SecureSocketsLaboratories',
-        "reseller" => "Y",
-        "1_contactEmailAddress"=>registrant.email,
-        "organizationName"=>registrant.company_name,
-        "organizationalUnitName"=>registrant.department,
-        "postOfficeBox"=>registrant.po_box,
-        "streetAddress1"=>registrant.address1,
-        "streetAddress2"=>registrant.address2,
-        "streetAddress3"=>registrant.address3,
-        "localityName"=>registrant.city,
-        "stateOrProvinceName"=>registrant.state,
-        "postalCode"=>registrant.postal_code,
-        "country"=>registrant.country,
-        "dunsNumber"=>"",
-        "companyNumber"=>"",
-        "1_csr"=>certificate_order.csr.body,
-        "caCertificateID"=>Settings.ca_certificate_id_code_signing,
-        "1_signatureHash"=>"PREFER_SHA2",
-        "1_PPP"=> ppp_parameter(certificate_order),
-        'orderNumber' => (options[:external_order_number] || certificate_order.external_order_number)}
-    comodo_options=comodo_options.map { |k, v| "#{k}=#{CGI::escape(v) if v}" }.join("&")
-    if options[:send_to_ca]
-      host = PLACE_ORDER_URL
-      res = send_comodo(host, comodo_options)
-      attr = {request_url: host,
-              parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: certificate_order}
-      CaCertificateRequest.create(attr)
-    else
-      comodo_options
-    end
-  end
-
-  def self.params_collect(certificate_order, options={})
-    comodo_params = {'queryType' => 2, "showExtStatus" => "Y",
-                     'baseOrderNumber' => certificate_order.external_order_number}
-    comodo_params.merge!("queryType" => 1, "responseType" => RESPONSE_TYPE[options[:response_type]]) if options[:response_type]
-    comodo_params.merge!("queryType" => 1, "responseType" => RESPONSE_TYPE[options[:response_type]],
-                         "responseEncoding" => RESPONSE_ENCODING[options[:response_encoding]].to_i) if ["zip", "pkcs7"].include?(options[:response_type]) &&
-        options[:response_encoding]=="binary"
-    # comodo_params.merge!("showMDCDomainDetail"=>"Y", "showMDCDomainDetail2"=>"Y") if certificate_order.certificate.is_ucc?
-    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-  end
-
-  def self.params_domains_status(certificate_order)
-    comodo_params = {'showStatusDetails' => "Y", 'orderNumber' => certificate_order.external_order_number}
-    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-  end
-
-  def self.params_revoke(options)
-    target = if options[:serial]
-               {'serialNumber' => options[:serial].upcase}
-             else
-               {'orderNumber' => options[:external_order_number] || options[:certificate_order].external_order_number}
-             end
-    comodo_params = {'revocationReason' => options[:refund_reason]}.merge(target)
-    comodo_params.merge(CREDENTIALS).map { |k, v| "#{k}=#{v}" }.join("&")
-  end
 
 #  def self.test
 #    ssl_util = Savon::Client.new "http://ccm-host/ws/EPKIManagerSSL?wsdl"

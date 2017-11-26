@@ -284,23 +284,21 @@ class SslAccount < ActiveRecord::Base
 
   # from_sa - the ssl_account to migrate from
   # to_sa - the ssl_account to migrate to
-  def self.move_orders(from_sa, to_sa, refs=[])
+  def self.migrate_orders(from_sa, to_sa, refs=[])
     unless refs.blank?
       refs.each do |ref|
         if co = from_sa.certificate_orders.find_by_ref(ref)
-          to_sa.certificate_orders << co
-          to_sa.orders << co.orders
+          from_sa.migrate_order to_sa, co.order.reference_number
         end
       end
     else
-      to_sa.orders << from_sa.orders
-      to_sa.certificate_orders << from_sa.certificate_orders
+      to_sa.orders << from_sa.orders.each{|o|from_sa.migrate_order(to_sa, o.reference_number)}
     end
   end
 
   # to_sa - the ssl_account to migrate to
   # ref_number - reference number of the order to migrate
-  def move_order(to_sa, ref_number)
+  def migrate_order(to_sa, ref_number)
     o=self.orders.find_by_reference_number(ref_number)
     to_sa.certificate_orders << o.certificate_orders
     to_sa.orders << o
