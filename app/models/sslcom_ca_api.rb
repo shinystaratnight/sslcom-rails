@@ -45,21 +45,13 @@ class SslcomCaApi
   end
   # create json parameter string for REST call to EJBCA
   def self.ssl_cert_json(options)
-    {subject_dn:"CN=#{options[:cc].csr.common_name || ''}",
+    {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
      ca_name:"CertLock-SubCA-SSL-RSA-4096",
      certificate_profile:"#{options[:cc].validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT",
      end_entity_profile:"#{options[:cc].validation_type.upcase}_SERVER_CERT_EE",
      duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
      subject_alt_name: options[:cc].all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
      pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr
-  end
-
-  # create json parameter string for REST call to EJBCA
-  # cc - certificate_content
-  def self.revoke_cert_json(signed_certificate,reason)
-    {subject_dn: signed_certificate.openssl_x509.subject.to_s,
-     certificate_serial_number: signed_certificate.openssl_x509.serial,
-     revocation_reason: reason}.to_json
   end
 
   def self.apply_for_certificate(certificate_content, options={})
