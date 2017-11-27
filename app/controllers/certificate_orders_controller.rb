@@ -22,12 +22,12 @@ class CertificateOrdersController < ApplicationController
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer]
   filter_access_to :all
-  filter_access_to :read, :update, :delete, :show, :edit, attribute_check: true
+  filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, :require=>[:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
-                   :developers, :developer, :require=>[:update, :delete]
+                   :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, :require=>[:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   before_filter :require_user, :if=>'request.subdomain==Reseller::SUBDOMAIN'
@@ -429,7 +429,9 @@ class CertificateOrdersController < ApplicationController
   end
 
   def load_certificate_order
-    @certificate_order=CertificateOrder.unscoped{CertificateOrder.find_by_ref(params[:id])}
+    @certificate_order=CertificateOrder.unscoped{
+      (current_user.is_system_admins? ? CertificateOrder :
+              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
   end
 
   def setup_registrant
