@@ -465,7 +465,7 @@ class ApplicationController < ActionController::Base
     unless (current_user || @current_admin)
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
+      redirect_to new_user_session_url subdomain: request.subdomain
       return false
     end
   end

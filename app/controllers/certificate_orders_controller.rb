@@ -18,7 +18,7 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
-  before_filter :load_certificate_order,
+  before_filter :require_user, :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer]
   filter_access_to :all
@@ -40,6 +40,10 @@ class CertificateOrdersController < ApplicationController
 
   def search
     index
+  end
+
+  def require_user_1
+    require_user
   end
 
   # GET /certificate_orders
@@ -427,7 +431,7 @@ class CertificateOrdersController < ApplicationController
   def load_certificate_order
     @certificate_order=CertificateOrder.unscoped{
       (current_user.is_system_admins? ? CertificateOrder :
-              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])}
+              current_user.ssl_account.certificate_orders).find_by_ref(params[:id])} if current_user
   end
 
   def setup_registrant
