@@ -261,6 +261,105 @@ namespace :cas do
                       size: 4096,
                       description: "",
                       profile_type: "ca_name"
+                  },
+                  {
+                      ref: "2000",
+                      friendly_name: "",
+                      profile_name: "DV_RSA_SERVER_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "2001",
+                      friendly_name: "",
+                      profile_name: "OV_RSA_SERVER_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "2002",
+                      friendly_name: "",
+                      profile_name: "EV_RSA_SERVER_CERT",
+                      algorithm: "rsa",
+                      size: 4096,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "2003",
+                      friendly_name: "",
+                      profile_name: "DV_ECC_SERVER_CERT",
+                      algorithm: "ecc",
+                      size: 384,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "2004",
+                      friendly_name: "",
+                      profile_name: "OV_ECC_SERVER_CERT",
+                      algorithm: "ecc",
+                      size: 384,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "2005",
+                      friendly_name: "",
+                      profile_name: "EV_ECC_SERVER_CERT",
+                      algorithm: "ecc",
+                      size: 384,
+                      description: "",
+                      profile_type: "certificate_profile"
+                  },
+                  {
+                      ref: "3000",
+                      friendly_name: "",
+                      profile_name: "DV_SERVER_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      profile_type: "end_entity_profile"
+                  },
+                  {
+                      ref: "3001",
+                      friendly_name: "",
+                      profile_name: "OV_SERVER_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      profile_type: "end_entity_profile"
+                  },
+                  {
+                      ref: "3002",
+                      friendly_name: "",
+                      profile_name: "EV_SERVER_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      profile_type: "end_entity_profile"
+                  },
+                  {
+                      ref: "3003",
+                      friendly_name: "",
+                      profile_name: "CS_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      profile_type: "end_entity_profile"
+                  },
+                  {
+                      ref: "3004",
+                      friendly_name: "",
+                      profile_name: "EV_CS_CERT_EE",
+                      algorithm: "",
+                      size: 4096,
+                      description: "",
+                      profile_type: "end_entity_profile"
                   }])
   end
 end
