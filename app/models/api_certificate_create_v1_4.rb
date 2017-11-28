@@ -168,6 +168,47 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self
   end
 
+  def update_certificate_content_contacts
+    @certificate_order=self.find_certificate_order
+    if @certificate_order.is_a?(CertificateOrder)
+      contacts = self.contacts
+      # if !@certificate_order.certificate_content ||
+      #     (@certificate_order.certificate_content && @certificate_order.certificate_content.issued?)
+      #   byebug
+      #   cc = @certificate_order.certificate_contents.build
+      #
+      #   if cc.save
+      #     CertificateContent::CONTACT_ROLES.each do |role|
+      #       byebug
+      #       c = CertificateContact.new(contacts[role])
+      #       c.clear_roles
+      #       c.add_role! role
+      #       unless c.valid?
+      #         errors[:contacts] << {role.to_sym => c.errors}
+      #       else
+      #         cc.certificate_contacts << c
+      #         cc.update_attribute(role+"_checkbox", true) unless
+      #             role==CertificateContent::ADMINISTRATIVE_ROLE
+      #       end
+      #     end
+      #   end
+      #   byebug
+      # else
+        c = @certificate_order.certificate_content.certificate_contacts
+        c.each do |contact|
+          role = contact.roles[0]
+          if role
+            contact.update_attributes(contacts[role])
+          end
+          unless contact.valid?
+            errors[:contacts] << {role.to_sym => c[role].errors}
+          end
+        end
+      # end
+    end
+    self
+  end
+
   # this update dcv method to comodo for each domain
   def comodo_auto_update_dcv(options={send_to_ca: true})
     self.domains.keys.map do |domain|
@@ -415,7 +456,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       CertificateContent::CONTACT_ROLES.each do |role|
         if (contacts[role] || contacts["all"])
           attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts["all"],"all"]
-          extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country)).flatten
+          extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country department)).flatten
           if !extra.empty?
             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
             errors[:contacts].last.merge!(msg)

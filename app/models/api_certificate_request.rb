@@ -37,10 +37,10 @@ class ApiCertificateRequest < CaApiRequest
     :show_subscriber_agreement, :product_name]
 
   DETAILED_ACCESSORS = [:menu, :main, :sub_main, :certificate_content, :in_limit, :download, :domain_validation,
-                        :validation_document, :visit, :certificate_contents, :api_commands, :success_message]
+                        :validation_document, :visit, :certificate_contents, :api_commands]
 
   UPLOAD_ACCESSORS = [:checkout_in_progress, :is_dv, :is_dv_or_basic, :is_ev, :community_name, :all_domains,
-                      :acceptable_file_types, :other_party_request, :subject, :validation_rules]
+                      :acceptable_file_types, :other_party_request, :subject, :validation_rules, :success_message]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 

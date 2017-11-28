@@ -136,6 +136,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def contacts_v1_4
+    @template = "api_certificate_requests/contats_v1_4"
+
+    if @result.save
+      if @acr = @result.update_certificate_content_contacts
+        @result.success_message = 'Contacts were successfully updated.'
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def dcv_validate_v1_4
     @template = "api_certificate_requests/success_retrieve_v1_3"
     if @result.save
@@ -200,6 +215,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.certificate_content[:csr_blank] = @acr.certificate_content.csr.blank?
           @result.certificate_content[:fields] = {}
           @result.certificate_content[:fields][:is_signed] = true
+
           if @acr.certificate_content.csr.signed_certificate.blank?
             csr = @acr.certificate_content.csr
             @result.certificate_content[:fields][:is_signed] = false
@@ -219,17 +235,28 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
             csr, sc = @acr.csr, @acr.signed_certificate
-            @result.download = {
-                iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
-                cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
-                apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
-                amazon: ["Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
-                nginx: ["Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
-                v8_nodejs: ["V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-                java: ["Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
-                other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
-                bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
-            }
+            # @result.download = {
+            #     iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
+            #     cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
+            #     apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
+            #     amazon: ["Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
+            #     nginx: ["Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
+            #     v8_nodejs: ["V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+            #     java: ["Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
+            #     other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
+            #     bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
+            # }
+            @result.download = [
+                ["iis7", "Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
+                ["cpanel", "WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
+                ["apache", "Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
+                ["amazon", "Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
+                ["nginx", "Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
+                ["v8_nodejs", "V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+                ["java", "Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
+                ["other", "Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
+                ["bundle", "CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
+            ]
           end
 
           unless (@acr.certificate_content.csr.blank? ||
@@ -287,13 +314,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             @result.certificate_contents[cc.label][:sc] = {}
             sc = cc.csr.try(:signed_certificate)
-            @result.certificate_contents[cc.label][:sc][:body] = sc.body
-            @result.certificate_contents[cc.label][:sc][:serial] = sc.serial
-            @result.certificate_contents[cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
-            @result.certificate_contents[cc.label][:sc][:decoded] = sc.decoded
-            @result.certificate_contents[cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
-
-            # @result.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
+            if sc
+              @result.certificate_contents[cc.label][:sc][:body] = sc.body
+              @result.certificate_contents[cc.label][:sc][:serial] = sc.serial
+              @result.certificate_contents[cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
+              @result.certificate_contents[cc.label][:sc][:decoded] = sc.decoded
+              @result.certificate_contents[cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
+              # @result.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
+            end
           end
 
           @result.api_commands = {}
@@ -876,7 +904,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4"
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
