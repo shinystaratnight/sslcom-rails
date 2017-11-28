@@ -29,6 +29,7 @@ class SslcomCaApi
     end
   end
 
+  # end entity profile details what will be in the certificate
   def self.end_entity_profile(cc)
     case cc.certificate.product
       when /^ev-code-signing/
@@ -47,20 +48,16 @@ class SslcomCaApi
   def self.ca_name(options)
     if options[:ca]=="certlock"
       case options[:cc].certificate.product
-        when /^ev-code-signing/
+        when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
               'CertLockEVECCSSLsubCA'
-        when /^code-signing/
-          'CS_CERT_EE'
-        when /^(basic|free)/
-          'DV_SERVER_CERT_EE'
-        when /^(wildcard|high_assurance|ucc)/
-          'OV_SERVER_CERT_EE'
-        when /^(ev)/
-          'EV_SERVER_CERT_EE'
+        else
+          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+              'CertLockECCSSLsubCA'
       end unless cc.certificate.blank?
     end
   end
+
   # create json parameter string for REST call to EJBCA
   def self.ssl_cert_json(options)
     {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
