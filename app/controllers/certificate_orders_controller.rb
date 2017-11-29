@@ -20,7 +20,7 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :require_user, :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer]
+                      :change_ext_order_number, :admin_update, :developer, :developers]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
@@ -30,8 +30,6 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, :require=>[:create]
   filter_access_to :auto_renew, require: [:admin_manage]
-  before_filter :require_user, :if=>'request.subdomain==Reseller::SUBDOMAIN'
-  before_filter :require_user_1, :only=>[:developers]
   #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
@@ -432,6 +430,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order=CertificateOrder.unscoped{
       (current_user.is_system_admins? ? CertificateOrder :
               current_user.ssl_account.certificate_orders).find_by_ref(params[:id])} if current_user
+    render :text => "404 Not Found", :status => 404 unless @certificate_order
   end
 
   def setup_registrant
