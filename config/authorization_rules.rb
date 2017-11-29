@@ -421,7 +421,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check
