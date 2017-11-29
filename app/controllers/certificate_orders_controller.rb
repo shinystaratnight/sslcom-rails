@@ -40,10 +40,6 @@ class CertificateOrdersController < ApplicationController
     index
   end
 
-  def require_user_1
-    require_user
-  end
-
   # GET /certificate_orders
   # GET /certificate_orders.xml
   def index
