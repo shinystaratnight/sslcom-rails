@@ -58,8 +58,17 @@ SslCom::Application.routes.draw do
           as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        
+        match '/certificate/:ref/contacts' => 'api_certificate_requests#contacts_v1_4',
+          as: :api_certificate_contacts_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
+
         match '/certificate/:ref/detail' => 'api_certificate_requests#detail_v1_4',
               as: :api_certificate_detail_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/validation/document_upload' => 'api_certificate_requests#show_upload_v1_4',
+              as: :api_certificate_show_upload_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/validation/document_upload' => 'api_certificate_requests#upload_v1_4',
+              as: :api_certificate_upload_v1_4, via: [:options, :post], ref: /[a-z0-9\-]+/
+
         match '/certificate/:ref' => 'api_certificate_requests#revoke_v1_4',
           as: :api_certificate_revoke_v1_4, via: [:options, :delete]
         match '/certificates/' => 'api_certificate_requests#index_v1_4',
@@ -361,5 +370,5 @@ SslCom::Application.routes.draw do
   match '/:controller(/:action(/:id))', via: [:get, :post]
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
-  get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
+  get '/certificate-download' => 'api_certificate_requests#download_v1_4'
 end

@@ -3,7 +3,9 @@ class ContactsController < ApplicationController
   filter_access_to :all
 
   def index
-    @certificate_content = current_user.ssl_account.certificate_contents.find params[:certificate_content_id]
+    @certificate_content =
+      (current_user.is_system_admins? ? CertificateContent :
+          current_user.ssl_account.certificate_contents).find params[:certificate_content_id]
     @certificate_order = @certificate_content.certificate_order
     @saved_contacts = current_user.ssl_account.saved_contacts
     respond_to do |format|

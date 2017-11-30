@@ -1,8 +1,8 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
-  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
+  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4, :upload_v1_4]
+  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4, :upload_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
@@ -137,6 +137,21 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def contacts_v1_4
+    @template = "api_certificate_requests/contats_v1_4"
+
+    if @result.save
+      if @acr = @result.update_certificate_content_contacts
+        @result.success_message = 'Contacts were successfully updated.'
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def dcv_validate_v1_4
     @template = "api_certificate_requests/success_retrieve_v1_3"
     if @result.save
@@ -160,6 +175,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
         @result.menu = {}
+
+        # byebug
+        # @result.menu[:certificate_details_tab] = permitted_to?(:show, @acr)
+        # @result.menu[:validation_status_tab] = permitted_to?(:show, @acr.validation)
+        # @result.menu[:smart_seal_tab] = permitted_to?(:show, @acr.site_seal)
+        # @result.menu[:transaction_receipt_tab] = permitted_to?(:show, @acr.order)
 
         @result.menu[:certificate_details_tab] = true
         @result.menu[:validation_status_tab] = true
@@ -195,6 +216,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.certificate_content[:csr_blank] = @acr.certificate_content.csr.blank?
           @result.certificate_content[:fields] = {}
           @result.certificate_content[:fields][:is_signed] = true
+
           if @acr.certificate_content.csr.signed_certificate.blank?
             csr = @acr.certificate_content.csr
             @result.certificate_content[:fields][:is_signed] = false
@@ -214,17 +236,28 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
             csr, sc = @acr.csr, @acr.signed_certificate
-            @result.download = {
-                iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
-                cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
-                apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
-                amazon: ["Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
-                nginx: ["Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
-                v8_nodejs: ["V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
-                java: ["Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
-                other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
-                bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
-            }
+            # @result.download = {
+            #     iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
+            #     cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
+            #     apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
+            #     amazon: ["Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
+            #     nginx: ["Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
+            #     v8_nodejs: ["V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+            #     java: ["Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
+            #     other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
+            #     bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
+            # }
+            @result.download = [
+                ["iis7", "Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
+                ["cpanel", "WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
+                ["apache", "Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
+                ["amazon", "Amazon", certificate_file("amazon_bundle", @acr), SignedCertificate::AMAZON_INSTALL_LINK],
+                ["nginx", "Nginx", certificate_file("nginx", @acr), SignedCertificate::NGINX_INSTALL_LINK],
+                ["v8_nodejs", "V8+Node.js", certificate_file("nginx", @acr), SignedCertificate::V8_NODEJS_INSTALL_LINK],
+                ["java", "Java/Tomcat", certificate_file("other", @acr), SignedCertificate::JAVA_INSTALL_LINK],
+                ["other", "Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
+                ["bundle", "CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
+            ]
           end
 
           unless (@acr.certificate_content.csr.blank? ||
@@ -282,13 +315,14 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
             @result.certificate_contents[cc.label][:sc] = {}
             sc = cc.csr.try(:signed_certificate)
-            @result.certificate_contents[cc.label][:sc][:body] = sc.body
-            @result.certificate_contents[cc.label][:sc][:serial] = sc.serial
-            @result.certificate_contents[cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
-            @result.certificate_contents[cc.label][:sc][:decoded] = sc.decoded
-            @result.certificate_contents[cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
-
-            # @result.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
+            if sc
+              @result.certificate_contents[cc.label][:sc][:body] = sc.body
+              @result.certificate_contents[cc.label][:sc][:serial] = sc.serial
+              @result.certificate_contents[cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
+              @result.certificate_contents[cc.label][:sc][:decoded] = sc.decoded
+              @result.certificate_contents[cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
+              # @result.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
+            end
           end
 
           @result.api_commands = {}
@@ -390,6 +424,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
         @result.description = @acr.description
         @result.product = @acr.certificate.api_product_code
+        @result.product_name = @acr.certificate.product
         @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement=~/[Yy]/
         @result.external_order_number = @acr.ext_customer_ref
         @result.server_software = @acr.server_software.id if @acr.server_software
@@ -420,6 +455,145 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.certificates = @acr.csr.body
           @result.common_name = @acr.csr.common_name
         end
+
+        render(:template => @template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+  rescue => e
+    render_500_error e
+  end
+
+  def show_upload_v1_4
+    @template = "api_certificate_requests/show_upload_v1_4"
+
+    if @result.save
+      @acr = @result.find_certificate_order
+
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        @result.ref = @acr.ref
+        @result.subject = @acr.subject
+        @result.checkout_in_progress = @acr.validation_stage_checkout_in_progress?
+        @result.other_party_request = false
+        @result.community_name = Settings.community_name
+        @result.is_dv = @acr.certificate.is_dv?
+        @result.is_dv_or_basic = @acr.certificate.is_dv_or_basic?
+        @result.is_ev = @acr.certificate.is_ev?
+        @result.all_domains = @acr.all_domains.join(', ')
+        @result.acceptable_file_types = ValidationHistory.acceptable_file_types
+        @result.validation_rules = @acr.validation.validation_rules.sort{|a,b|a.id<=>b.id}
+
+        render(:template => @template) and return
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+  rescue => e
+    render_500_error e
+  end
+
+  def upload_v1_4
+    @template = "api_certificate_requests/upload_v1_4"
+
+    if @result.save
+      @acr = @result.find_certificate_order
+
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        count = 0
+        error = []
+        message = ""
+        @files = params[:fileUpload] || []
+
+        @files.each do |file|
+          if file.respond_to?(:original_filename) && file.original_filename.include?("zip")
+            FileUtils.mkdir_p "#{Rails.root}/tmp/zip/temp" if !File.exist?("#{Rails.root}/tmp/zip/temp")
+
+            if file.size > Settings.max_content_size.to_i.megabytes
+              break error = <<-EOS
+            Too Large: zip file #{file.original_filename} is larger than
+            #{help.number_to_human_size(Settings.max_content_size.to_i.megabytes)}
+              EOS
+            end
+
+            @zip_file_name=file.original_filename
+            File.open("#{Rails.root}/tmp/zip/#{file.original_filename}", "wb") do |f|
+              f.write(file.read)
+            end
+
+            zf = Zip::ZipFile.open("#{Rails.root}/tmp/zip/#{file.original_filename}")
+            if zf.size > Settings.max_num_releases.to_i
+              break error = <<-EOS
+            Too Many Files: zip file #{file.original_filename} contains more than
+            #{Settings.max_num_releases.to_i} files.
+              EOS
+            end
+
+            zf.each do |entry|
+              begin
+                fpath = File.join("#{Rails.root}/tmp/zip/temp/",entry.name.downcase)
+
+                if(File.exists?(fpath))
+                  File.delete(fpath)
+                end
+
+                zf.extract(entry, fpath)
+                @created_releases << create_with_attachment(LocalFile.new(fpath))
+
+                count += 1
+              rescue Errno::ENOENT, Errno::EISDIR
+                error = "Invalid contents: zip entries with directories not allowed"
+                break
+              ensure
+                if (File.exists?(fpath))
+                  if File.directory?(fpath)
+                    FileUtils.remove_dir fpath, :force=>true
+                  else
+                    FileUtils.remove_file fpath, :force=>true
+                  end
+                end
+
+                @created_releases.each {|release| release.destroy} unless error.blank?
+              end
+            end
+            File.delete(zf.name) if (File.exists?(zf.name))
+            @created_releases.each do |doc|
+              doc.errors.each{|attr, msg|
+                error << "#{attr} #{msg}: " }
+            end
+          else
+            vh = create_with_attachment(LocalFile.new(file.path, file.original_filename), @acr)
+            vh.errors.each{|attr, msg|
+              error << "#{attr} #{msg}: " }
+            count += 1 if vh
+            error << "Error: Document for #{file.original_filename} was not
+          created. Please notify system admin at #{Settings.support_email}" unless vh
+          end
+        end
+
+        if error.blank?
+          unless @files.blank?
+
+            files_were = (count > 1 or count == 0)? "documents were" : "document was"
+            @result.success_message = "#{i.in_words.capitalize} (#{i}) #{files_were}
+            successfully saved."
+
+            @acr.confirmation_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+              OrderNotifier.validation_documents_uploaded(c, @acr, @files).deliver
+            end
+
+            OrderNotifier.validation_documents_uploaded(Settings.notify_address, @acr, @files).deliver
+            OrderNotifier.validation_documents_uploaded_comodo("evdocs@comodo.com", @acr, @files).
+                deliver if (@acr.certificate.is_ev? && @acr.ca_name=="comodo")
+          end
+
+          # checkout={}
+          # if @acr.certificate_content.contacts_provided?
+          #   @message.certificate_content.pend_validation!(host: request.host_with_port) if @other_party_validation_request.blank?
+          #   checkout={checkout: "true"}
+          # end
+        end
+        @result.errors = error
 
         render(:template => @template) and return
       end
@@ -728,13 +902,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4"
                 ApiCertificateCreate_v1_4
               when "reprocess_v1_3"
                 ApiCertificateCreate
               when /revoke/
                 ApiCertificateRevoke
-              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4"
+              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "show_upload_v1_4", "upload_v1_4"
                 ApiCertificateRetrieve
               when "api_parameters_v1_4"
                 ApiParameters
@@ -899,5 +1073,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     end
 
     path[(path.rindex('/') + 1)..path.length]
+  end
+
+  def create_with_attachment(file, certificate_order)
+    @val_history = ValidationHistory.new(:document => file)
+    certificate_order.validation.validation_histories << @val_history
+    @val_history.save
+    @val_history
   end
 end
