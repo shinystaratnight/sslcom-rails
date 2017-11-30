@@ -20,7 +20,7 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :require_user, :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer, :developers]
+                      :change_ext_order_number, :admin_update, :developer]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read

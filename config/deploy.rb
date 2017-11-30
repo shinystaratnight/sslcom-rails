@@ -25,7 +25,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 
-server = "sandbox2"
+server = "production"
 case server
   when "sandbox2"
     require "rvm/capistrano"

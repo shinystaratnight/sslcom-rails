@@ -4,7 +4,7 @@ require 'openssl'
 #require 'zip/zipfilesystem'
 
 class SignedCertificate < ActiveRecord::Base
-  include ValidationType
+  include CertificateType
 #  using_access_control
   serialize :organization_unit
   serialize :subject_alternative_names
@@ -479,44 +479,6 @@ class SignedCertificate < ActiveRecord::Base
         openssl_x509.to_text
       end
     rescue Exception
-    end
-  end
-
-  def is_dv?
-    !!(decoded.include?(OID_DV))
-  end
-
-  def is_ov?
-    !!(decoded.include?(OID_OV))
-  end
-
-  def is_ev?
-    !!(decoded.include?(OID_EV))
-  end
-
-  def is_iv?
-    !!(decoded.include?(OID_IV))
-  end
-
-  def is_evcs?
-    !!(decoded.include?(OID_EVCS))
-  end
-
-  def is_cs?
-    !!(decoded.include?(OID_CS))
-  end
-
-  def is_test_certificate?
-    !!(decoded.include?(OID_TEST))
-  end
-
-  def comodo_ca_id
-    if is_ev?
-      Settings.ca_certificate_id_ev
-    elsif is_ov?
-      Settings.ca_certificate_id_ov
-    else
-      Settings.ca_certificate_id_dv
     end
   end
 

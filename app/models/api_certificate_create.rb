@@ -5,21 +5,20 @@ class ApiCertificateCreate < ApiCertificateRequest
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url,
     :order_number, :order_amount, :order_status
 
-  NON_EV_PERIODS = %w(365 730 1095 1461 1826)
-  EV_PERIODS = %w(365 730)
+  NON_EV_SSL_PERIODS = %w(365 730 1095 1461 1826)
+  EV_SSL_PERIODS = %w(365 730)
+  EV_CS_PERIODS = %w(365 730 1095)
   FREE_PERIODS = %w(30 90)
-
-  PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
 
   DCV_METHODS = %w(email http_csr_hash cname_csr_hash https_csr_hash)
 
   validates :account_key, :secret_key, :csr, presence: true
   validates :period, presence: true, format: /\d+/,
-    inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
+    inclusion: {in: ApiCertificateRequest::NON_EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{NON_EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|!(c.is_ev? || c.is_dv?)}
   validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
+    inclusion: {in: ApiCertificateRequest::EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev?}
   # validates :server_count, presence: true, if: lambda{|c|c.is_wildcard?}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
@@ -45,7 +44,7 @@ class ApiCertificateCreate < ApiCertificateRequest
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validates :product, presence: true, format: {with: /\d{3}/},
-            inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
+            inclusion: {in: PRODUCTS.keys.map(&:to_s),
             message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}
   validates :is_customer_validated, format: {with: /(y|n|yes|no|true|false|1|0)/i}
   validates :is_customer_validated, presence: true, unless: lambda{|c|c.is_dv? && c.csr_obj.is_intranet?}
@@ -154,30 +153,6 @@ class ApiCertificateCreate < ApiCertificateRequest
       end
       options[:certificate_order].pay! true
     end
-  end
-
-  def serial
-    PRODUCTS[self.product.to_sym] if product
-  end
-
-  def is_ev?
-    serial =~ /\Aev/ if serial
-  end
-
-  def is_dv?
-    serial =~ /\Adv/ if serial
-  end
-
-  def is_wildcard?
-    serial =~ /\Awc/ if serial
-  end
-
-  def is_ucc?
-    serial =~ /\Aucc/ if serial
-  end
-
-  def is_not_ip
-    true
   end
 
   def verify_dcv_email_address

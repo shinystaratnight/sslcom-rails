@@ -1,8 +1,16 @@
 class ApiCertificateRequest < CaApiRequest
+  include CertificateType
   attr_accessor :csr_obj, :current_user, :test, :action, :admin_submitted
 
   ORDER_STATUS = ["waiting for domain control validation",
                 "waiting for documents", "pending validation", "validated", "issued", "revoked", "canceled"]
+
+  PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
+
+  NON_EV_SSL_PERIODS = %w(365 730 1095 1461 1826)
+  EV_SSL_PERIODS = %w(365 730)
+  EV_CS_PERIODS = %w(365 730 1095)
+  FREE_PERIODS = %w(30 90)
 
   CREATE_ACCESSORS_1_4 = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -153,5 +161,29 @@ class ApiCertificateRequest < CaApiRequest
 
   def retry
     %x"curl -k -H 'Accept: application/json' -H 'Content-type: application/json' -X #{request_method.upcase} -d '#{parameters}' #{request_url.gsub(".com",".local:3000").gsub("http:","https:")}"
+  end
+
+  def serial
+    PRODUCTS[self.product.to_s] if product
+  end
+
+  def target_certificate
+    @target_certificate ||= (Certificate.find_by(serial: serial) if serial)
+  end
+
+  %W(is_premium_ssl? is_dv_or_basic? is_basic? is_multi? is_document_signing? is_personal? is_wildcard?
+      is_ucc? is_free? is_premium_ssl? is_evucc? is_wildcard?).each do |name|
+    define_method(name) do
+      target_certificate.send(name) if target_certificate
+    end
+  end
+  alias_method "is_premium?".to_sym, "is_premium_ssl?".to_sym
+
+  def is_smime?
+    target_certificate.product =~ /^smime/ if target_certificate
+  end
+
+  def is_not_ip
+    true
   end
 end

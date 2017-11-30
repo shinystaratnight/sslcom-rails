@@ -32,15 +32,15 @@ class SslcomCaApi
   # end entity profile details what will be in the certificate
   def self.end_entity_profile(cc)
     case cc.certificate.product
-      when /^ev-code-signing/
+      when /\Aev-code-signing/
         'EV_CS_CERT_EE'
-      when /^code-signing/
+      when /\Acode-signing/
         'CS_CERT_EE'
-      when /^(basic|free)/
+      when /\A(basic|free)/
         'DV_SERVER_CERT_EE'
-      when /^(wildcard|high_assurance|ucc)/
+      when /\A(wildcard|high_assurance|ucc)/
         'OV_SERVER_CERT_EE'
-      when /^(ev)/
+      when /\A(ev)/
         'EV_SERVER_CERT_EE'
     end unless cc.certificate.blank?
   end
