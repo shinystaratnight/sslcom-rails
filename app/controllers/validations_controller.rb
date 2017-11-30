@@ -252,7 +252,7 @@ class ValidationsController < ApplicationController
 
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    if options[:ca]=="certlock"
+    if options[:ca]==SslcomCaApi::CERTLOCK_CA
       result = SslcomCaApi.apply_for_certificate(co, ca: options[:ca])
     else
       result = co.apply_for_certificate

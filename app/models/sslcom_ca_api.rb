@@ -11,6 +11,8 @@ class SslcomCaApi
 
   DEV_HOST = "http://192.168.100.5:8080/restapi"
 
+  CERTLOCK_CA = "certlock"
+
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
   REVOKE_SSL_URL=DEV_HOST+"/v1/certificate/revoke"
@@ -55,7 +57,7 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:ca]=="certlock"
+    if options[:ca]==SslcomCaApi::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
@@ -77,11 +79,12 @@ class SslcomCaApi
   # create json parameter string for REST call to EJBCA
   def self.issue_cert_json(options)
     {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
-     ca_name: ca_name(cc: options[:cc], ca: "certlock"),
+     ca_name: ca_name(cc: options[:cc], ca: SslcomCaApi::CERTLOCK_CA),
      certificate_profile: certificate_profile(cc: options[:cc]),
      end_entity_profile: end_entity_profile(options[:cc]),
      duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
-     subject_alt_name: options[:cc].all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
+     subject_alt_name: options[:cc].all_domains.map{|domain| options[:cc].certificate.is_smime? ? "rfc822Name=" :
+                                                                 "dNSName=" +domain.downcase}.join(","),
      pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr
   end
 

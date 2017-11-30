@@ -61,6 +61,10 @@ module CertificateType
     end
   end
 
+  def is_smime?
+    (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\Asmime/
+  end
+
   def comodo_ca_id
     if is_ev?
       Settings.ca_certificate_id_ev

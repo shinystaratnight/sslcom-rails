@@ -179,10 +179,6 @@ class ApiCertificateRequest < CaApiRequest
   end
   alias_method "is_premium?".to_sym, "is_premium_ssl?".to_sym
 
-  def is_smime?
-    target_certificate.product =~ /^smime/ if target_certificate
-  end
-
   def is_not_ip
     true
   end

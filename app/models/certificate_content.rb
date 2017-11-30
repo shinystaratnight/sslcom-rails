@@ -464,12 +464,114 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  # 1- End Entity Profile : DV_SERVER_CERT_EE and Certificate Profile: DV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 2- End Entity Profile : OV_SERVER_CERT_EE and Certificate Profile: OV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 3- End Entity Profile : EV_SERVER_CERT_EE and Certificate Profile: EV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  # 2.5.4.15 (businessCategory)- Required
+  # serialNumber - Required
+  # 1.3.6.1.4.1.311.60.2.1.1 (Jurisdiction Locality) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.2 (Jurisdiction State or Province) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.3 (Jurisdiction Country) - Required
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  # 2.5.4.15 (businessCategory)- Required
+  # serialNumber - Required
+  # 1.3.6.1.4.1.311.60.2.1.1 (Jurisdiction Locality) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.2 (Jurisdiction State or Province) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.3 (Jurisdiction Country) - Required
+  #
+  # Subject Alternative Name
+  #
+  # This extension is not required for this profile
+  #
+  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_CERT
+  #
+  #  Subject DN
+  #
+  #  CN (Common name) - Required
+  #  OU (Organizational Unit) - Optional
+  #  O (Organization) - Required
+  #  streetAddress - Optional
+  #  L (Locality) - Optional
+  #  ST (State or Province) - Optional
+  #  postalCode - Optional
+  #  C (Country) - Required
+  #
+  #  Subject Alternative Name
+  #
+  #  permanentIdentifier - Required
+  #
+  #
+  #  Note:-
+  #
+  #  Subject DN format : "subject_dn": "CN=saad.com,O=SSL.COM,C=US". The names in open and closing parenthisis are just for description e.g. CN (common name). Here (common name) is for description. You only need to pass CN in subject DN. Those names that do not have any parenthisis will be passed as it is in subject DN.
+  #      Subject alternative name format : "subject_alt_name": "dNSName=foo2.bar.com, dNSName=foo2.bar.com"
+
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
     unless cert.is_dv?
       dn << "O=#{registrant.company_name}"
       dn << "C=#{registrant.country}"
+      if cert.is_ev?
+        dn << "serialNumber=#{registrant.country}"
+        dn << "2.5.4.15=#{registrant.country}"
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{registrant.country}"
+      end
     end
     dn << options[:custom_fields] if options[:custom_fields]
     dn.join(",")
