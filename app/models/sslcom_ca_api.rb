@@ -31,18 +31,27 @@ class SslcomCaApi
 
   # end entity profile details what will be in the certificate
   def self.end_entity_profile(cc)
-    case cc.certificate.product
-      when /\Aev-code-signing/
+    if cc.certificate.is_evcs?
         'EV_CS_CERT_EE'
-      when /\Acode-signing/
+    elsif cc.certificate.is_cs?
         'CS_CERT_EE'
-      when /\A(basic|free)/
+    elsif cc.certificate.is_dv?
         'DV_SERVER_CERT_EE'
-      when /\A(wildcard|high_assurance|ucc)/
+    elsif cc.certificate.is_ov?
         'OV_SERVER_CERT_EE'
-      when /\A(ev)/
+    elsif cc.certificate.is_ev?
         'EV_SERVER_CERT_EE'
     end unless cc.certificate.blank?
+  end
+
+  def self.certificate_profile(options)
+    if options[:cc].certificate.is_evcs?
+      "EV_RSA_CS_CERT"
+    elsif options[:cc].certificate.is_cs?
+      "RSA_CS_CERT"
+    else
+      "#{options[:cc].certificate.validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT"
+    end
   end
 
   def self.ca_name(options)
@@ -54,23 +63,23 @@ class SslcomCaApi
         else
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
               'CertLockECCSSLsubCA'
-      end unless cc.certificate.blank?
+      end unless options[:cc].certificate.blank?
     end
   end
 
   # create json parameter string for REST call to EJBCA
   def self.ssl_cert_json(options)
     {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
-     ca_name:"CertLock-SubCA-SSL-RSA-4096",
-     certificate_profile:"#{options[:cc].validation_type.upcase}_#{sig_alg_parameter(options[:cc].csr)}_SERVER_CERT",
+     ca_name: ca_name(cc: options[:cc], ca: "certlock"),
+     certificate_profile: certificate_profile(cc: options[:cc]),
      end_entity_profile: end_entity_profile(options[:cc]),
      duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
      subject_alt_name: options[:cc].all_domains.map{|domain|"dNSName=#{domain}"}.join(","),
      pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr
   end
 
-  def self.apply_for_certificate(certificate_content, options={})
-    cc = options[:certificate_content] || certificate_content
+  def self.apply_for_certificate(certificate_order, options={})
+    cc = options[:certificate_content] || certificate_order.certificate_content
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')

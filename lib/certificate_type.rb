@@ -39,6 +39,7 @@ module CertificateType
     end
   end
 
+  # implies non EV
   def is_cs?
     if self.is_a? SignedCertificate
       !!(decoded.include?(SignedCertificate::OID_CS))
@@ -46,7 +47,11 @@ module CertificateType
       (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(code[_\-]signing)/
     end
   end
-  alias_method "is_code_signing?".to_sym, "is_cs?".to_sym
+
+  # this covers both ev and non ev code signing
+  def is_code_signing?
+    is_cs? or is_evcs?
+  end
 
   def is_test_certificate?
     if self.is_a? SignedCertificate
@@ -69,6 +74,10 @@ module CertificateType
   def validation_type
     if is_dv?
       "dv"
+    elsif is_cs?
+      "cs"
+    elsif is_evcs?
+      "evcs"
     elsif is_ev?
       "ev"
     elsif is_ov?
