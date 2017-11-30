@@ -1,7 +1,7 @@
 require "declarative_authorization/maintenance"
 
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
-  include ValidationType
+  include CertificateType
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
     :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id
@@ -39,7 +39,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       lambda{|c|['create_v1_4'].include?(c.action)}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
+            if: "csr and Settings.require_server_software_w_csr_submit"
   validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}

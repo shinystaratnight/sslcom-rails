@@ -598,6 +598,10 @@ class CertificateOrder < ActiveRecord::Base
     certificate_contents.last
   end
 
+  def registrant
+    certificate_content.registrant
+  end
+
   def csr
     certificate_content.csr
   end

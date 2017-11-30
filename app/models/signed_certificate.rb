@@ -225,6 +225,10 @@ class SignedCertificate < ActiveRecord::Base
     openssl_x509.issuer.to_s
   end
 
+  def is_sslcom_ca?
+    issuer.include?("O=SSL Corporation")
+  end
+
   def create_signed_cert_zip_bundle(options={})
     options[:is_windows]=false unless Settings.allow_windows_cr #having issues with \r\n so stick with linux format
     co=csr.certificate_content.certificate_order

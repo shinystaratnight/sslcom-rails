@@ -164,7 +164,7 @@
                     %li
                       %strong
                         process certificate signing request
-                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"
+                    %li=link_to 'send to comodo ca', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"
                     %li
                       #processing_ca
                         =image_tag 'waiting_bar_medium.gif'

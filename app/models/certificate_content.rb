@@ -56,7 +56,7 @@ class CertificateContent < ActiveRecord::Base
   serialize :domains
 
   validates_presence_of :server_software_id, :signing_request,
-    :if => "certificate_order_has_csr && !ajax_check_csr"
+    :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
     :if => :certificate_order_has_csr_and_signing_request
@@ -467,8 +467,9 @@ class CertificateContent < ActiveRecord::Base
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
     dn=["CN=#{options[:common_name] || csr.common_name}"]
-    if cert.is_ov? or cert.is_ev? or cert.is_cs? or cert.is_evcs?
+    unless cert.is_dv?
       dn << "O=#{registrant.company_name}"
+      dn << "C=#{registrant.country}"
     end
     dn << options[:custom_fields] if options[:custom_fields]
     dn.join(",")

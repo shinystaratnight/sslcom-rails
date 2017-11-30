@@ -250,10 +250,14 @@ class ValidationsController < ApplicationController
     end
   end
 
-  def send_to_ca
+  def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result = co.apply_for_certificate
-    co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
+    if options[:ca]=="certlock"
+      result = SslcomCaApi.apply_for_certificate(co, ca: options[:ca])
+    else
+      result = co.apply_for_certificate
+      co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
+    end
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}

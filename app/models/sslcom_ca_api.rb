@@ -67,8 +67,15 @@ class SslcomCaApi
     end
   end
 
+  # revoke json parameter string for REST call to EJBCA
+  def self.revoke_cert_json(signed_certificate, reason)
+    {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
+     certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
+     revocation_reason: reason}.to_json
+  end
+
   # create json parameter string for REST call to EJBCA
-  def self.ssl_cert_json(options)
+  def self.issue_cert_json(options)
     {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
      ca_name: ca_name(cc: options[:cc], ca: "certlock"),
      certificate_profile: certificate_profile(cc: options[:cc]),
@@ -83,7 +90,7 @@ class SslcomCaApi
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body = ssl_cert_json(cc: cc)
+    req.body = issue_cert_json(cc: cc)
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
     end
@@ -99,23 +106,23 @@ class SslcomCaApi
   end
 
   def self.revoke_ssl(signed_certificate, reason)
-    host = REVOKE_SSL_URL
-    uri = URI.parse(host)
-    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body =     {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),
-                    certificate_serial_number: signed_certificate.openssl_x509.serial.to_s(16).downcase,
-                    revocation_reason: reason}.to_json
-    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
+    if signed_certificate.is_sslcom_ca?
+      host = REVOKE_SSL_URL
+      uri = URI.parse(host)
+      req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+      req.body = revoke_cert_json(signed_certificate, reason)
+      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
+        http.request(req)
+      end
+      api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
+                                                                            parameters: req.body, method: "post", response: res.message, ca: "sslcom")
+      unless api_log_entry.response=="OK"
+        OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
+      else
+        signed_certificate.revoke! reason
+      end
+      api_log_entry
     end
-    api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
-       parameters: req.body, method: "post", response: res.message, ca: "sslcom")
-    unless api_log_entry.response=="OK"
-      OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
-    else
-      signed_certificate.revoke! reason
-    end
-    api_log_entry
   end
 
 
