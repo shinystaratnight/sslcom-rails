@@ -29,8 +29,7 @@ SslCom::Application.routes.draw do
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-    %w(sws.sslpki.local sws-test.sslpki.local sws.sslpki.com sws-test.sslpki.com sandbox.ssl.local
-    api.certassure.local api-test.certassure.local api.certassure.com api-test.certassure.com)
+    (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
   ) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1) do
@@ -40,6 +39,18 @@ SslCom::Application.routes.draw do
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
         
+        # Teams
+        match '/teams/add_contact' => 'teams#add_contact',
+          as: :api_team_add_contact, via: :post
+        match '/teams/add_registrant' => 'teams#add_registrant',
+          as: :api_team_add_registrant, via: :post
+        match '/teams/add_billing_profile' => 'teams#add_billing_profile',
+          as: :api_team_add_billing_profile, via: :post
+        match '/teams/saved_contacts' => 'teams#saved_contacts',
+          as: :api_team_saved_contacts, via: :get
+        match '/teams/saved_registrants' => 'teams#saved_registrants',
+          as: :api_team_saved_registrants, via: :get
+            
         # Certificates
         match '/certificates' => 'api_certificate_requests#create_v1_4',
           as: :api_certificate_create_v1_4, via: [:options, :post]
@@ -159,7 +170,13 @@ SslCom::Application.routes.draw do
     end
 
     resources :certificate_contents do
-      resources :contacts, :only=>:index
+      resources :contacts, only: :index
+    end
+    
+    resources :contacts, except: :index do
+      collection do
+        get :saved_contacts
+      end
     end
 
     resources :csrs do

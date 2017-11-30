@@ -68,6 +68,18 @@ authorization do
   # ============================================================================ 
   role :account_admin do
     includes :base
+    
+    #
+    # Contacts
+    #
+    has_permission_on :contacts, to: [
+      :edit,
+      :update,
+      :show,
+      :destroy
+    ] do
+      if_attribute :contactable_id => is {user.ssl_account.id}
+    end
     #
     # SslAccounts
     #
@@ -143,6 +155,17 @@ authorization do
     # SslAccounts
     #
     has_permission_on :ssl_accounts, :to => [:create, :validate_ssl_slug]
+    #
+    # Contacts
+    #
+    has_permission_on :contacts, to: [
+      :edit,
+      :update,
+      :show,
+      :destroy
+    ] do
+      if_attribute :contactable_id => is {user.ssl_account.id}
+    end
   end
 
   # ============================================================================
@@ -308,6 +331,9 @@ authorization do
   # USER Role: basics permissions inherited by all roles
   # ============================================================================
   role :user do
+    # 
+    # Users
+    # 
     has_permission_on :users, :to => [
       :dont_show_again,
       :edit,
@@ -338,6 +364,14 @@ authorization do
     has_permission_on :users, :to => :set_default_team do
       if_attribute ssl_account: is_in {user.ssl_accounts}
     end
+    # 
+    # Contacts
+    #
+    has_permission_on :contacts, to: [
+      :new,
+      :create,
+      :saved_contacts
+    ]
   end
 
   # ============================================================================
@@ -362,6 +396,11 @@ authorization do
       :lookup_discount,
       :show_cart
     ]
+    has_permission_on :contacts, to: [
+      :new,
+      :create,
+      :saved_contacts
+    ]
     #
     # Users
     # 
@@ -382,7 +421,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check

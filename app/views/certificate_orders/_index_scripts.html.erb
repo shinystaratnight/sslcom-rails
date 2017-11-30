@@ -47,6 +47,37 @@ jQuery(function($) {
       }
     });
     <%end%>
+    
+    function populate_contact(label, data) {
+      $("label[for='" + label + "']").siblings('input').val(data);
+    }
+    
+    $('#saved_contacts').change(function() {
+      var list = [
+        ['title', 'title'],
+        ['company', 'company_name'],
+        ['department', 'address1'],
+        ['po_box', 'po_box'],
+        ['address1', 'address1'],
+        ['address2', 'address2'],
+        ['address3', 'address3'],
+        ['city', 'city'],
+        ['state', 'state'],
+        ['postal_code', 'postal_code'],
+        ['country', 'country'],
+        ['postal_code', 'postal_code'],
+        ['email', 'email'],
+        ['phone', 'phone'],
+        ['first_name', 'first_name'],
+        ['last_name', 'last_name'],
+        ['fax', 'fax'],
+        ['ext', 'ext']
+      ];
+      list.forEach(function(el) {
+        populate_contact(el[0], $('#saved_contacts option:selected').data(el[1]));
+      });
+    });
+    
     $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');

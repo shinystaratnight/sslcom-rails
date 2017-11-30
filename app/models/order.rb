@@ -282,7 +282,7 @@ class Order < ActiveRecord::Base
         line_items.each {|li|li.sellable.refund! if(
           li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
       end
-      event :partial_refund, transitions_to: :partial_refunded do |ref|
+      event :partial_refund, transitions_to: :partially_refunded do |ref|
         li=line_items.find {|li|li.sellable.try(:ref)==ref}
         if li
           decrement! :cents, li.cents
@@ -334,8 +334,13 @@ class Order < ActiveRecord::Base
     end
 
     state :charged_back
-    state :rejected
-    state :partially_refunded
+
+    state :rejected do
+      event :unreject, transitions_to: :paid do |complete=true|
+        line_items.each {|li|
+          CertificateOrder.unscoped.find(li.sellable_id).unreject! if li.sellable_type=="CertificateOrder"} if complete
+      end
+    end
 
     state :payment_declined do
       event :give_away, transitions_to: :payment_not_required

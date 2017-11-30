@@ -6,7 +6,8 @@ class Contact < ActiveRecord::Base
                   street_address_1: :address1, street_address_2: :address2,
                   street_address_3: :address3, locality: :city, state_or_province: :state, post_office_box: :po_box}
   EXCLUDED_FIELDS = %w(id roles type contactable_id contactable_type created_at updated_at notes)
-
+  EXCLUDED_SAVED  = %w(id roles contactable_id contactable_type notes)
+  
   ALIAS_FIELDS.each do |k,v|
     alias_attribute k, v
   end
