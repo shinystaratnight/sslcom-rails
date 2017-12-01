@@ -317,10 +317,12 @@ class Certificate < ActiveRecord::Base
     product_variant_groups.first.product_variant_items.last
   end
 
+  # is is true for SAN and EV SAN certs
   def is_ucc?
-    product =~ /\A(ucc|premiumssl)/
+    product.include?('ucc') || product.include?('premiumssl')
   end
 
+  # true for EV SAN only
   def is_evucc?
     product =~ /\Aevucc/
   end
