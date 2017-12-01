@@ -31,6 +31,8 @@
             %li=link_to "chargeback order", '#', onclick:  "change_state('charge_back')"
             -unless @order.rejected?
               %li=link_to "reject order", '#', onclick:  "change_state('reject')"
+            -else
+              %li=link_to "unreject order", '#', onclick:  "change_state('unreject')"
             -if @order.fully_refunded?
               %li=link_to "unrefund order", '#', onclick:  "change_state('unrefund')"
             -else

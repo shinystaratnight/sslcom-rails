@@ -25,8 +25,19 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 
-server = "staging"
+server = "sandbox2"
 case server
+  when "sandbox2"
+    require "rvm/capistrano"
+    set :application, 'ssl_com_test'
+    set :user, "ubuntu"
+    set :branch, "staging"
+    set :domain, '50.19.246.227' #Rails 4 staging
+    set :deploy_to, "/home/ubuntu/sites/#{application}"
+    # NOTE: for some reason Capistrano requires you to have both the public and
+    # the private key in the same folder, the public key should have the
+    # extension ".pub".
+    ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
   when "staging"
     require "rvm/capistrano"
     set :user, "ubuntu"
@@ -38,10 +49,12 @@ case server
     # extension ".pub".
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
   when "production"
+    require "rvm/capistrano"
     set :user, "ubuntu"
     set :branch, "master"
     set :domain, 'ra.sslpki.local'
     set :deploy_to, "/home/ubuntu/sites/#{application}"
+    ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
     set :user, "leo"
     set :branch, "master"
@@ -70,69 +83,69 @@ role :db, domain, :primary => true # This is where Rails migrations will run
 # role :db, "your slave db-server here"
 
 #need to override to talk to passenger and passenger only knows restart
-  namespace :passenger do
+namespace :passenger do
 
-    desc <<-DESC
+  desc <<-DESC
       Restarts your application. \
       This works by creating an empty `restart.txt` file in the `tmp` folder
       as requested by Passenger server.
-    DESC
-    task :restart, :roles => :app, :except => { :no_release => true } do
-      run "touch #{current_path}/tmp/restart.txt"
-    end
+  DESC
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    run "touch #{current_path}/tmp/restart.txt"
+  end
 
-    desc <<-DESC
+  desc <<-DESC
       Starts the application servers. \
       Please note that this task is not supported by Passenger server.
-    DESC
-    task :start, :roles => :app do
-      logger.info ":start task not supported by Passenger server"
-    end
+  DESC
+  task :start, :roles => :app do
+    logger.info ":start task not supported by Passenger server"
+  end
 
-    desc <<-DESC
+  desc <<-DESC
       Stops the application servers. \
       Please note that this task is not supported by Passenger server.
-    DESC
-    task :stop, :roles => :app do
-      logger.info ":stop task not supported by Passenger server"
-    end
-
+  DESC
+  task :stop, :roles => :app do
+    logger.info ":stop task not supported by Passenger server"
   end
 
-  namespace :memcached do
-    desc "Flushes memcached local instance"
-    task :flush, :roles => [:app] do
-      run("cd #{current_path} && bundle exec rake memcached:flush")
-    end
+end
+
+namespace :memcached do
+  desc "Flushes memcached local instance"
+  task :flush, :roles => [:app] do
+    run("cd #{current_path} && bundle exec rake memcached:flush")
   end
+end
 
-  namespace :deploy do
+namespace :deploy do
 
-    desc <<-DESC
+  desc <<-DESC
       Restarts your application. \
       Overwrites default :restart task for Passenger server.
-    DESC
-    task :restart, :roles => :app, :except => { :no_release => true } do
-      passenger.restart
-    end
+  DESC
+  task :restart, :roles => :app, :except => { :no_release => true } do
+    passenger.restart
+  end
 
-    desc <<-DESC
+  desc <<-DESC
       Starts the application servers. \
       Overwrites default :start task for Passenger server.
-    DESC
-    task :start, :roles => :app do
-      passenger.start
-    end
+  DESC
+  task :start, :roles => :app do
+    passenger.start
+  end
 
-    desc <<-DESC
+  desc <<-DESC
       Stops the application servers. \
       Overwrites default :start task for Passenger server.
-    DESC
-    task :stop, :roles => :app do
-      passenger.stop
-    end
-
+  DESC
+  task :stop, :roles => :app do
+    passenger.stop
   end
+
+end
 
 # bundler
 namespace :bundler do
@@ -141,8 +154,8 @@ namespace :bundler do
   end
 
   task :symlink_vendor do
-  shared_gems = File.join(shared_path, 'vendor/bundler_gems')
-  release_gems = "#{release_path}/vendor/bundler_gems/"
+    shared_gems = File.join(shared_path, 'vendor/bundler_gems')
+    release_gems = "#{release_path}/vendor/bundler_gems/"
     %w(cache gems specifications).each do |sub_dir|
       shared_sub_dir = File.join(shared_gems, sub_dir)
       run("mkdir -p #{shared_sub_dir} && mkdir -p #{release_gems} && ln -s #{shared_sub_dir} #{release_gems}/#{sub_dir}")

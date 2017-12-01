@@ -1,0 +1,6 @@
+- if @saved_contacts.any?
+  .clearfix
+    -saved_contacts = render_saved_contacts(@saved_contacts)
+    =label_tag 'saved_contacts'
+    =select_tag :saved_contacts, options_for_select(saved_contacts), |
+    include_blank: true, class: 'saved_contacts'

@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, :sandbox_notice, if: "request.subdomain=='sandbox' || request.subdomain=='sws-test'"
+  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./ || request.host=~/^reseller\.ssl\./ || Rails.env.test?"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -42,11 +42,12 @@ class ApplicationController < ActionController::Base
   # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
   # I use the entire domain, just change to sandbox_db and pass only the subdomain
   def current_website
-    @website ||= Website.sandbox_db
+    @website ||= Website.current_site(request.host)
   end
 
   def set_database
     current_website.use_database
+    sandbox_notice if @website.instance_of?(Sandbox)
   end
 
   # Bonus - add view_path
@@ -419,7 +420,7 @@ class ApplicationController < ActionController::Base
   end
 
   def is_sandbox?
-    request.subdomain=="sandbox"
+    Sandbox.exists?(request.try(:host))
   end
 
   private
@@ -461,10 +462,10 @@ class ApplicationController < ActionController::Base
   end
 
   def require_user
-    unless (current_user || @current_admin)
+    if current_user.blank?
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
+      redirect_to new_user_session_url subdomain: request.subdomain
       return false
     end
   end
@@ -724,7 +725,7 @@ class ApplicationController < ActionController::Base
   
   def is_sandbox_or_test?
     host = ActionMailer::Base.default_url_options[:host]
-    sandbox = request && request.try(:subdomain)=='sandbox'
+    sandbox = (request && request.try(:subdomain)=='sandbox') or !Sandbox.current_site(request.host).blank?
     sandbox || host=~/^sandbox\./ || host=~/^sws-test\./
   end
 

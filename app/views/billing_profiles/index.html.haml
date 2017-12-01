@@ -23,7 +23,7 @@
       -if permitted_to?(:edit, profile) || current_user.is_system_admins?
         %tr[profile]
           %td= profile.credit_card
-          %td= profile.masked_card_number
+          %td= current_user.is_super_user? ? profile.card_number : profile.masked_card_number
           %td= "%02d/%04d" % [profile.expiration_month, profile.expiration_year]
           %td= destroy_credit_card_link profile
 -if permitted_to? :index, :billing_profiles

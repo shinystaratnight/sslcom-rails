@@ -369,7 +369,10 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     state :charged_back
-    state :rejected
+
+    state :rejected do #only refund a canceled order
+      event :unreject, :transitions_to => :paid
+    end
   end
 
   def certificate
@@ -810,7 +813,8 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /index/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}
+                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    per_page: "10", page: "1"}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /dcv_emails/
@@ -1295,7 +1299,7 @@ class CertificateOrder < ActiveRecord::Base
         end
         if certificate.is_ucc?
           params.merge!(
-            'primaryDomainName'=>csr.common_name,
+            'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
           params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years

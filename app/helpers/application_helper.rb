@@ -13,7 +13,7 @@ module ApplicationHelper
   end
 
   def is_sandbox?
-    request.try(:subdomain)=="sandbox"
+    Sandbox.exists?(request.try(:host))
   end
 
   def is_sandbox_or_test?
@@ -22,17 +22,18 @@ module ApplicationHelper
   end
 
   def api_domain(certificate_order=nil)
+    api_source=@website || Settings
     unless certificate_order.blank?
       if Rails.env=~/production/i
-        "https://" + (certificate_order.is_test ? Settings.test_api_domain : Settings.api_domain)
+        "https://" + (certificate_order.is_test ? api_source.test_api_domain : api_source.api_domain)
       else
-        "https://" + (certificate_order.is_test ? Settings.dev_test_api_domain : Settings.dev_api_domain) +":3000"
+        "https://" + (certificate_order.is_test ? api_source.dev_test_api_domain : api_source.dev_api_domain) +":3000"
       end
     else
       if is_sandbox?
-        Rails.env=~/production/i ? "https://#{Settings.test_api_domain}" : "https://#{Settings.dev_test_api_domain}:3000"
+        Rails.env=~/production/i ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env=~/production/i ? "https://#{Settings.api_domain}" : "https://#{Settings.dev_api_domain}:3000"
+        Rails.env=~/production/i ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
       end
     end
   end

@@ -1,0 +1,10 @@
+-if permitted_to?(:new, @contact)
+  .reseller_registration_profile
+    %h3 Create Contact or Registrant
+    =error_messages_for :contact
+    =form_for @contact, html: {id: 'new_saved_contact'} do |f|
+      #stylized.default_form
+        =render 'saved_contact_fields', f: f
+      #button_container
+        #next_submit=image_submit_tag "bl_submit_button.gif"
+=render :partial => '/contacts/index_scripts'

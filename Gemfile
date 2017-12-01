@@ -68,6 +68,7 @@ gem 'json-schema'
 gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
+gem 'rubyzip', '~> 1.2.1'
 
 group :development do
   gem 'foreman'
