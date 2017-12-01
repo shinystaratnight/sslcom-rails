@@ -1,6 +1,6 @@
 class CreatePhysicalTokenBlocklistAndCaaCheck < ActiveRecord::Migration
   def change
-    create_table :blocklist do |t|
+    create_table :blocklists do |t|
       t.string     :type, required: true # blacklist or whitelist
       t.string     :domain, required: true
       t.integer    :validation
@@ -11,7 +11,7 @@ class CreatePhysicalTokenBlocklistAndCaaCheck < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :caa_check do |t|
+    create_table :caa_checks do |t|
       t.references  :checkable, :polymorphic=>true # CertificateName but any other entity w/ domain
       t.string      :domain, required: true
       t.string      :request
@@ -20,7 +20,7 @@ class CreatePhysicalTokenBlocklistAndCaaCheck < ActiveRecord::Migration
     end
 
     #this is mostly for EV CS be could extend to anything else that requires phyical tokens to be sent
-    create_table :physical_token do |t|
+    create_table :physical_tokens do |t|
       t.references  :certificate_order # makes for faster searching istead of using 'through: :signed_certificates'
       t.references  :signed_certificate
       t.string      :tracking_number

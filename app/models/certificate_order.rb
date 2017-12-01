@@ -28,6 +28,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :ca_mdc_statuses, as: :api_requestable
   #has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
   #            as: :api_requestable, dependent: :destroy
+  has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
+  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr

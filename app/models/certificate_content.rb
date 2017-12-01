@@ -568,9 +568,9 @@ class CertificateContent < ActiveRecord::Base
       dn << "O=#{registrant.company_name}"
       dn << "C=#{registrant.country}"
       if cert.is_ev?
-        dn << "serialNumber=#{registrant.country}"
-        dn << "2.5.4.15=#{registrant.country}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{registrant.country}"
+        dn << "serialNumber=#{certificate_order.jois.last.company_number}"
+        dn << "2.5.4.15=#{certificate_order.jois.last.business_category}"
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{certificate_order.jois.last.country}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]
