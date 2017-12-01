@@ -53,8 +53,10 @@ SslCom::Application.routes.draw do
 
         match '/certificate/:ref/detail' => 'api_certificate_requests#detail_v1_4',
               as: :api_certificate_detail_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
-        match '/certificate/:ref/validation/document_upload' => 'api_certificate_requests#show_upload_v1_4',
-              as: :api_certificate_show_upload_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/detail/site_seal' => 'api_certificate_requests#update_site_seal_v1_4',
+              as: :api_certificate_update_site_seal_v1_4, via: [:options, :post], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/validation/document_upload' => 'api_certificate_requests#view_upload_v1_4',
+              as: :api_certificate_view_upload_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
         match '/certificate/:ref/validation/document_upload' => 'api_certificate_requests#upload_v1_4',
               as: :api_certificate_upload_v1_4, via: [:options, :post], ref: /[a-z0-9\-]+/
 
@@ -353,5 +355,5 @@ SslCom::Application.routes.draw do
   match '/:controller(/:action(/:id))', via: [:get, :post]
   #match "*path" => redirect("/?utm_source=any&utm_medium=any&utm_campaign=404_error")
 
-  get '/certificate-download' => 'api_certificate_requests#download_v1_4'
+  get '/certificate-download' => 'api/v1/api_certificate_requests#download_v1_4'
 end
