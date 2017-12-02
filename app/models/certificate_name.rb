@@ -22,8 +22,6 @@ class CertificateName < ActiveRecord::Base
   end
   attr_accessor :csr
 
-  CAA_COMMAND=->(name){%x"echo QUIT | caatest #{name}"}
-
   def is_ip_address?
     name.index(/\A(?:[0-9]{1,3}\.){3}[0-9]{1,3}\z/)==0 if name
   end
@@ -207,7 +205,7 @@ class CertificateName < ActiveRecord::Base
   end
 
   def caa_lookup
-    CAA_COMMAND.call name
+    CaaCheck::CAA_COMMAND.call name
   end
 
 end
