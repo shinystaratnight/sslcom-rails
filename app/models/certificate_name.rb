@@ -110,6 +110,10 @@ class CertificateName < ActiveRecord::Base
     @csr || certificate_content.csr
   end
 
+  def name
+    read_attribute(:name).downcase
+  end
+
   def dcv_verified?(options={})
     # if blank then try both
     if options[:http_or_s].blank?
