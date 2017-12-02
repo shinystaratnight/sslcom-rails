@@ -12,11 +12,11 @@
         %span.destination
           reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
     .clearfix
-      =f.check_box :preferred_processed_include_cert_admin, checked: f.object.prefers_processed_include_cert_admin?
+      =f.check_box :preferred_processed_include_cert_admin, checked: f.object.prefers_processed_include_cert_admin == '1'
       %span.destination
         include certificate's administrative contact (if provided)
     .clearfix
-      =f.check_box :preferred_processed_include_cert_tech, checked: f.object.prefers_processed_include_cert_tech?
+      =f.check_box :preferred_processed_include_cert_tech, checked: f.object.prefers_processed_include_cert_tech == '1'
       %span.destination
         include certificate's technical contact (if provided)
     .clearfix
@@ -40,11 +40,11 @@
         %span.destination
           reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
     .clearfix
-      =f.check_box :preferred_receipt_include_cert_admin, checked: f.object.prefers_receipt_include_cert_admin?
+      =f.check_box :preferred_receipt_include_cert_admin, checked: f.object.prefers_receipt_include_cert_admin == '1'
       %span.destination
         include certificate's administrative contact (if provided)
     .clearfix
-      =f.check_box :preferred_receipt_include_cert_bill, checked: f.object.prefers_receipt_include_cert_bill?
+      =f.check_box :preferred_receipt_include_cert_bill, checked: f.object.prefers_receipt_include_cert_bill == '1'
       %span.destination
         include certificate's billing contact (if provided)
     .clearfix
@@ -68,11 +68,11 @@
         %span.destination
           reseller address (currently #{ssl_account.reseller.email.shorten(15,false)})
     .clearfix
-      =f.check_box :preferred_confirmation_include_cert_admin, checked: f.object.prefers_confirmation_include_cert_admin?
+      =f.check_box :preferred_confirmation_include_cert_admin, checked: f.object.prefers_confirmation_include_cert_admin == '1'
       %span.destination
         include certificate's administrative contact (if provided)
     .clearfix
-      =f.check_box :preferred_confirmation_include_cert_bill, checked: f.object.prefers_confirmation_include_cert_bill?
+      =f.check_box :preferred_confirmation_include_cert_bill, checked: f.object.prefers_confirmation_include_cert_bill == '1'
       %span.destination
         include certificate's billing contact (if provided)
     .clearfix
