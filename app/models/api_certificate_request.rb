@@ -44,8 +44,8 @@ class ApiCertificateRequest < CaApiRequest
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
     :show_subscriber_agreement]
 
-  DETAILED_ACCESSORS = [:menu, :main, :sub_main, :certificate_content, :in_limit, :download, :domain_validation,
-                        :validation_document, :visit, :certificate_contents, :api_commands]
+  DETAILED_ACCESSORS = [:menu, :sub_main, :cert_details, :smart_seal, :id, :artifacts_status,
+                        :publish_to_site_seal, :viewing_method, :publish_to_site_seal_approval, :is_admin]
 
   DCV_EMAIL_RESEND_ACCESSORS = [:account_key, :secret_key, :ref, :email_address]
 

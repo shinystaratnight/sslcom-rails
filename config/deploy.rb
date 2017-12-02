@@ -32,7 +32,7 @@ case server
     set :application, 'ssl_com_test'
     set :user, "ubuntu"
     set :branch, "staging"
-    set :domain, '50.19.246.227' #Rails 4 staging
+    set :domain, '172.16.1.12' #Rails 4 staging
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the
@@ -42,7 +42,7 @@ case server
     require "rvm/capistrano"
     set :user, "ubuntu"
     set :branch, "staging"
-    set :domain, '50.19.246.227' #Rails 4 staging
+    set :domain, '172.16.1.12' #Rails 4 staging
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the

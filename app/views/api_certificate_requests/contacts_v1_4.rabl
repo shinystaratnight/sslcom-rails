@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :ref, :menu, :sub_main, :cert_details, :smart_seal, :is_admin
+    attributes :success_message
   end
 end
