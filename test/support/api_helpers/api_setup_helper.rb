@@ -149,10 +149,10 @@ module ApiSetupHelper
   def api_get_registrant
     {
       company_name: 'ABC Company',          # required IF organization
-      first_name:   'first_name',           
-      last_name:    'last_name',            
+      first_name:   'first_name',           # required IF individual
+      last_name:    'last_name',            # required IF individual
       email:        'csr_test@domain.com',  # required
-      phone:        '9161223444',           
+      phone:        '9161223444',           # required
       address1:     '123 H St.',            # required
       address2:     nil,
       address3:     nil,
@@ -161,7 +161,7 @@ module ApiSetupHelper
       state:        'TX',                   # required
       postal_code:  '77098',                # required
       organization: 'SSL Org',
-      country:      'US',                   # required: Country code (ISO3166 2-character country code)
+      country:      'US',                   # required: country code (ISO3166 2-character country code)
       registrant_type: Registrant::registrant_types[:organization]
     }
   end
@@ -170,17 +170,38 @@ module ApiSetupHelper
     {
       first_name:   'first_name',           # required
       last_name:    'last_name',            # required
-      email:        'csr_test@domain.com',  # required
+      email:        'example@domain.com',   # required
       phone:        '9161223444',           # required
-      address1:     '123 H St.',
+      address1:     '123 H St.',            # required
       address2:     nil,
       address3:     nil,
       po_box:       nil,
-      city:         'Houston',
-      state:        'TX',
-      postal_code:  '77098',
+      city:         'Houston',              # required
+      state:        'TX',                   # required
+      postal_code:  '77098',                # required
+      country:      'US',                   # required: Country code (ISO3166 2-character country code)
       organization: 'SSL Org',
-      country:      'US'                    # Applicant country code (ISO3166 2-character country code)
+      organization_unit: 'Software Department'
+    }
+  end
+  
+  def api_create_contact
+    {
+      first_name:   'first_name',           # required
+      last_name:    'last_name',            # required
+      company_name: 'SSL Org',
+      department:   'Software Department',
+      email:        'example@domain.com',   # required
+      phone:        '9161223444',           # required
+      address1:     '123 H St.',            # required
+      address2:     nil,
+      address3:     nil,
+      po_box:       nil,
+      city:         'Houston',              # required
+      state:        'TX',                   # required
+      postal_code:  '77098',                # required
+      organization: 'SSL Org',
+      country:      'US'                    # required: Country code (ISO3166 2-character country code)
     }
   end
   
