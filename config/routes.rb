@@ -154,6 +154,7 @@ SslCom::Application.routes.draw do
         get :reprocess
         get :auto_renew
         post :start_over
+        get :sslcom_ca
         match :admin_update, via: [:put, :patch]
         get :change_ext_order_number
       end

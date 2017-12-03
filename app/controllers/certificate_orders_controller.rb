@@ -20,7 +20,7 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :require_user, :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer]
+                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
@@ -30,6 +30,7 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, :require=>[:create]
   filter_access_to :auto_renew, require: [:admin_manage]
+  # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
   #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
@@ -75,6 +76,9 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  def sslcom_ca
+
+  end
 
   def renew
     action = CertificateOrder::RENEWING

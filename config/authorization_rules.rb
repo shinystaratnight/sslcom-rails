@@ -12,12 +12,12 @@ authorization do
   role :sysadmin do
     includes :user
     has_permission_on :authorization_rules, :to => :read
-    has_permission_on :site_seals, :validation_rules,
-      :to => :admin_manage, except: :delete
+    has_permission_on :site_seals, :validation_rules, :certificate_orders,
+      :to => :sysadmin_manage, except: :delete
     has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls,
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
-      :to => :admin_manage
+      :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
     has_permission_on :orders,       to: :refund_merchant
     has_permission_on :ssl_accounts, to: [
@@ -31,7 +31,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => :admin_manage
+    has_permission_on :users, :to => :sysadmin_manage
   end
 
   # ============================================================================
@@ -429,28 +429,34 @@ privileges do
   privilege :create, includes: :new
   privilege :delete, includes: :destroy
   privilege :admin_manage, includes: [
-    :adjust_funds,
     :admin_activate,
     :admin_index,
     :admin_show,
     :admin_update,
     :change_ext_order_number,
-    :change_login,
     :edit,
     :edit_settings,
     :edit_password,
     :enable_disable,
-    :login_as,
     :manage,
     :manage_all,
-    :refund_merchant,
     :remove_from_account,
     :resend_account_invite,
     :search,
-    :set_default_team_max,
     :update_company_name,
-    :update_roles,
     :update_settings,
     :update_ssl_slug
+  ]
+  privilege :sysadmin_manage, includes: [
+    :admin_manage,
+    :adjust_funds,
+    :change_ext_order_number,
+    :change_login,
+    :login_as,
+    :refund_merchant,
+    :search,
+    :set_default_team_max,
+    :sslcom_ca,
+    :update_roles
   ]
 end
