@@ -1,17 +1,18 @@
 -if current_user.is_system_admins?
   .reseller_registration_profile
-    %h3 Issue SSL.com Certificate for Certificate Order #{@certificate_order.ref} (#{@certificate_order.certificate.validation_type.upcase})
-    =form_tag sslcom_ca_certificate_order_path(@certificate_order) do
+    %h3 Issue SSL.com Signed Certificate for ref# #{@certificate_order.ref} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
+    =form_tag send_to_ca_certificate_order_validation_url(certificate_order_id: @certificate_order.ref), remote: true, method: :post, id: "send_to_ca", "data-type"=>"json" do
+      =hidden_field_tag :ca, SslcomCaApi::CERTLOCK_CA
       #stylized.default_form
         %div(class='fields')
           .clearfix
             %label{for: 'cn'}
               *CN (Common name):
-            -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_cs?
+            -if for_evcs? or for_cs?
               =text_field_tag :cn, @certificate_order.csr.common_name
             -else
               %h3=@certificate_order.csr.common_name
-          -if @certificate_order.certificate.is_ov? or @certificate_order.certificate.is_ev? or @certificate_order.certificate.is_cs? or @certificate_order.certificate.is_evcs?
+          -if for_ov? or for_ev? or for_cs? or for_evcs?
             .clearfix
               %label{for: 'o'}
                 *O (Organization):
@@ -40,7 +41,7 @@
                 Postal Code:
                 %span.label_desc postal code or zip
               =text_field_tag :postal_code
-            -if @certificate_order.certificate.is_ov? or @certificate_order.certificate.is_ev?
+            -if for_ov? or for_ev?
               .clearfix
                 %label{for: 'postal_address'}
                   Postal Address:
@@ -51,7 +52,7 @@
                 Street Address:
                 %span.label_desc street address
               =text_field_tag :street_address
-          -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_ev?
+          -if for_evcs? or for_ev?
             .clearfix
               %label{for: 'business_category'}
                 *Business Category:
@@ -76,7 +77,7 @@
                 Jurisdiction Province:
                 %span.label_desc joi province, state or country
               =text_field_tag :joi_province
-          -if @certificate_order.certificate.is_cs?
+          -if for_cs?
             .clearfix
               %label{for: 'permanant_identifier'}
                 *Permanent Identifier:
@@ -85,7 +86,7 @@
             %label{for: 'csr'}
               *CSR (Certificate Signing Request):
             =text_area_tag :csr, @certificate_order.certificate_content.csr.body
-          -unless @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_cs?
+          -unless for_evcs? or for_cs?
             .clearfix
               %label{for: 'san'}
                 *SAN (Subject Alternative Names):

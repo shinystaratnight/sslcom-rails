@@ -161,7 +161,7 @@ SslCom::Application.routes.draw do
 
       resource :validation do
         post :upload, :send_dcv_email
-        get :send_to_ca
+        match :send_to_ca, via: [:get, :post]
         member do
           get :document_upload
         end

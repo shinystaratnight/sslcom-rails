@@ -252,10 +252,8 @@ class ValidationsController < ApplicationController
 
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    if options[:ca]==SslcomCaApi::CERTLOCK_CA
-      result = SslcomCaApi.apply_for_certificate(co, ca: options[:ca])
-    else
-      result = co.apply_for_certificate
+    result = co.apply_for_certificate(params)
+    unless options[:ca]==SslcomCaApi::CERTLOCK_CA
       co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
     end
     respond_to do |format|

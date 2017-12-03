@@ -22,5 +22,3 @@
   -if co.external_order_number
     %li ext order number: #{co.external_order_number}
   %li=link_to "change ext order number", '#', onclick:  "change_ext_order_#{co.id}()"
--if current_user && current_user.is_system_admins? && co.csr && co.registrant
-  %li=link_to 'send to SSL.com CA', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"

@@ -197,4 +197,44 @@ module CertificateOrdersHelper
     end
     target_domain
   end
+
+  def for_ev?
+    @certificate_order.certificate.is_ev? unless ["ov","dv"].include?(params[:downstep])
+  end
+
+  # EV SSL can downstep to OV
+  def for_ov?
+    (@certificate_order.certificate.is_ov? unless ["dv"].include?(params[:downstep])) or downstepped_to_ov?
+  end
+
+  # EV and OV SSL can downstep to DV
+  def for_dv?
+    @certificate_order.certificate.is_dv? or downstepped_to_dv?
+  end
+
+  def downstepped_to_dv?
+    (@certificate_order.certificate.is_ev? or
+        @certificate_order.certificate.is_ov?) and params[:downstep]=="dv"
+  end
+
+  def downstepped_to_ov?
+    @certificate_order.certificate.is_ev? and params[:downstep]=="ov"
+  end
+
+  def downstepped_to_cs?
+    @certificate_order.certificate.is_evcs? and params[:downstep]=="cs"
+  end
+
+  def downstepped?
+    downstepped_to_cs? or downstepped_to_dv? or downstepped_to_ov?
+  end
+
+  def for_evcs?
+    @certificate_order.certificate.is_evcs? unless ["cs"].include?(params[:downstep])
+  end
+
+  # EV CS can downstep to CS
+  def for_cs?
+    @certificate_order.certificate.is_cs? or downstepped_to_cs?
+  end
 end

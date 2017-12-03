@@ -692,7 +692,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
+    if options[:ca]==SslcomCaApi::CERTLOCK_CA
+      SslcomCaApi.apply_for_certificate(self, ca: options[:ca])
+    else
+      ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
+    end
   end
 
   def retrieve_ca_cert(email_customer=false)
