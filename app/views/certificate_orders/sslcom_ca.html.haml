@@ -48,7 +48,7 @@
                 =text_field_tag :postal_address
             .clearfix
               %label{for: 'street_address'}
-                *Street Address:
+                Street Address:
                 %span.label_desc street address
               =text_field_tag :street_address
           -if @certificate_order.certificate.is_evcs? or @certificate_order.certificate.is_ev?
@@ -76,6 +76,11 @@
                 Jurisdiction Province:
                 %span.label_desc joi province, state or country
               =text_field_tag :joi_province
+          -if @certificate_order.certificate.is_cs?
+            .clearfix
+              %label{for: 'permanant_identifier'}
+                *Permanent Identifier:
+              =text_field_tag :permanant_identifier
           .clearfix
             %label{for: 'csr'}
               *CSR (Certificate Signing Request):
