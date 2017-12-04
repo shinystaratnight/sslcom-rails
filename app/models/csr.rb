@@ -10,6 +10,7 @@ class Csr < ActiveRecord::Base
   has_many    :signed_certificates, :dependent => :destroy
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
+  has_many    :ca_api_requests, as: :api_requestable
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
   has_many    :domain_control_validations, :dependent => :destroy do

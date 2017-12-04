@@ -107,6 +107,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :csr_submitted do
+      event :issue, :transitions_to => :issued
       event :provide_info, :transitions_to => :info_provided
       event :reprocess, :transitions_to => :reprocess_requested
       event :cancel, :transitions_to => :canceled
@@ -552,8 +553,6 @@ class CertificateContent < ActiveRecord::Base
   #  C (Country) - Required
   #
   #  Subject Alternative Name
-  #
-  #  permanentIdentifier - Required
   #
   #
   #  Note:-

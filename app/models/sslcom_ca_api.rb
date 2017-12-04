@@ -12,6 +12,8 @@ class SslcomCaApi
   DEV_HOST = "http://192.168.100.5:8080/restapi"
 
   CERTLOCK_CA = "certlock"
+  SSLCOM_CA = "sslcom"
+  MANAGEMENT_CA = "management_ca"
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
@@ -32,18 +34,18 @@ class SslcomCaApi
   end
 
   # end entity profile details what will be in the certificate
-  def self.end_entity_profile(cc)
-    if cc.certificate.is_evcs?
+  def self.end_entity_profile(options)
+    if options[:cc].certificate.is_evcs?
         'EV_CS_CERT_EE'
-    elsif cc.certificate.is_cs?
+    elsif options[:cc].certificate.is_cs?
         'CS_CERT_EE'
-    elsif cc.certificate.is_dv?
+    elsif options[:cc].certificate.is_dv?
         'DV_SERVER_CERT_EE'
-    elsif cc.certificate.is_ov?
+    elsif options[:cc].certificate.is_ov?
         'OV_SERVER_CERT_EE'
-    elsif cc.certificate.is_ev?
+    elsif options[:cc].certificate.is_ev?
         'EV_SERVER_CERT_EE'
-    end unless cc.certificate.blank?
+    end unless options[:cc].certificate.blank?
   end
 
   def self.certificate_profile(options)
@@ -65,14 +67,29 @@ class SslcomCaApi
         else
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
               'CertLockECCSSLsubCA'
-      end unless options[:cc].certificate.blank?
-    end
+      end
+    elsif options[:ca]==SslcomCaApi::SSLCOM_CA
+      case options[:cc].certificate.validation_type
+        when "ev"
+          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
+              'SSLcom-SubCA-EV-SSL-ECC-384-R1'
+        when "evcs"
+          'SSLcom-SubCA-EV-CodeSigning-RSA-4096-R2'
+        when "cs"
+          'SSLcom-SubCA-CodeSigning-RSA-4096-R1'
+        else
+          sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
+              'SSLcom-SubCA-SSL-ECC-384-R1'
+      end
+    else
+      'ManagementCA'
+    end unless options[:cc].certificate.blank?
   end
 
   def self.subject_dn(options={})
     dn=["CN=#{options[:cn]}"]
     dn << "O=#{options[:o]}" unless options[:o].blank?
-    dn << "O=#{options[:ou]}" unless options[:ou].blank?
+    dn << "OU=#{options[:ou]}" unless options[:ou].blank?
     dn << "C=#{options[:country]}" unless options[:country].blank?
     dn << "L=#{options[:city]}" unless options[:city].blank?
     dn << "ST=#{options[:state]}" unless options[:state].blank?
@@ -80,20 +97,24 @@ class SslcomCaApi
     dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
     dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
     dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
-    dn << "permanantIdentifier=#{options[:permanant_identifier]}" unless options[:permanant_identifier].blank?
     dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
     dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
     dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
     dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
-                                          =text_area_tag :csr, @certificate_order.certificate_content.csr.body
-                                             =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+                                          # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
+                                          #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
 
 
     dn.join(",")
   end
 
   def self.subject_alt_name(options)
-    "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
+    cert = options[:cc].certificate
+    if cert.is_smime?
+      "rfc822Name="
+    elsif !cert.is_evcs? and !cert.is_cs?
+      "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
+    end
   end
 
   # revoke json parameter string for REST call to EJBCA
@@ -105,18 +126,22 @@ class SslcomCaApi
 
   # create json parameter string for REST call to EJBCA
   def self.issue_cert_json(options)
-    {subject_dn: options[:subject_dn] || options[:cc].subject_dn,
-     ca_name: ca_name(cc: options[:cc], ca: SslcomCaApi::CERTLOCK_CA),
-     certificate_profile: certificate_profile(cc: options[:cc]),
-     end_entity_profile: end_entity_profile(options[:cc]),
-     duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
-     subject_alt_name: options[:cc].all_domains.map{|domain| options[:cc].certificate.is_smime? ? "rfc822Name=" :
-                                                                 "dNSName=" +domain.downcase}.join(","),
-     pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}.to_json if options[:cc].csr
+    cert = options[:cc].certificate
+    if options[:cc].csr
+      dn={subject_dn: options[:action]=="send_to_ca" ? subject_dn(options) : # req sent via RA form
+                       (options[:subject_dn] || options[:cc].subject_dn),
+       ca_name: ca_name(options),
+       certificate_profile: certificate_profile(options),
+       end_entity_profile: end_entity_profile(options),
+       duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
+       pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}
+      dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_evcs? or cert.is_cs?
+      dn.to_json
+    end
   end
 
   def self.apply_for_certificate(certificate_order, options={})
-    options.merge! cc: (options[:certificate_content] || certificate_order.certificate_content)
+    options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')

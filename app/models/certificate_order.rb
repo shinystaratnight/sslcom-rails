@@ -20,6 +20,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs
   has_many    :ca_certificate_requests, :through=>:csrs
+  has_many    :ca_api_requests, :through=>:csrs
+  has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
@@ -692,8 +694,8 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if options[:ca]==SslcomCaApi::CERTLOCK_CA
-      SslcomCaApi.apply_for_certificate(self, ca: options[:ca])
+    if [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? options[:ca]
+      SslcomCaApi.apply_for_certificate(self, options)
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
     end
