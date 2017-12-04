@@ -1,4 +1,4 @@
-- if @saved_contacts.any?
+- if @saved_contacts && @saved_contacts.any?
   .clearfix
     -saved_contacts = render_saved_contacts(@saved_contacts)
     =label_tag 'saved_contacts'

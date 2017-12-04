@@ -36,8 +36,8 @@ class ApiCertificateRequest < CaApiRequest
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
     :show_subscriber_agreement, :product_name]
 
-  DETAILED_ACCESSORS = [:menu, :main, :sub_main, :certificate_content, :in_limit, :download, :domain_validation,
-                        :validation_document, :visit, :certificate_contents, :api_commands]
+  DETAILED_ACCESSORS = [:menu, :sub_main, :cert_details, :smart_seal, :id, :artifacts_status,
+                        :publish_to_site_seal, :viewing_method, :publish_to_site_seal_approval, :is_admin]
 
   UPLOAD_ACCESSORS = [:checkout_in_progress, :is_dv, :is_dv_or_basic, :is_ev, :community_name, :all_domains,
                       :acceptable_file_types, :other_party_request, :subject, :validation_rules, :success_message]
@@ -114,7 +114,8 @@ class ApiCertificateRequest < CaApiRequest
     end
   end
 
-  def find_certificate_orders(search,offset,limit)
+  # def find_certificate_orders(search,offset,limit)
+  def find_certificate_orders(search)
     is_test = self.test ? "is_test" : "not_test"
     co =
       if self.api_requestable.users.find(&:is_admin?)
@@ -122,7 +123,8 @@ class ApiCertificateRequest < CaApiRequest
         CertificateOrder.not_new.send(is_test)
       else
         self.api_requestable.certificate_orders.not_new.send(is_test)
-      end.offset(offset).limit(limit)
+      end
+      # end.offset(offset).limit(limit)
     co = co.search_with_csr(search) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co

@@ -5,7 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :email_addresses
+    attributes :id, :artifacts_status, :publish_to_site_seal, :viewing_method, :publish_to_site_seal_approval
   end
 end
-

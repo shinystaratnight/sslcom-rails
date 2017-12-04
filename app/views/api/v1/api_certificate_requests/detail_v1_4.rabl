@@ -5,6 +5,6 @@ unless @result.errors.blank?
   end
 else
   glue @result do
-    attributes :ref, :menu, :main, :sub_main, :certificate_content, :in_limit, :registrant, :download, :domain_validation, :validation_document, :visit, :contacts, :certificate_contents, :api_commands
+    attributes :ref, :menu, :sub_main, :cert_details, :smart_seal, :is_admin
   end
 end
