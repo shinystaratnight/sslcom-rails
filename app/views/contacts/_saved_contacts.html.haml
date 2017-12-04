@@ -2,5 +2,9 @@
   .clearfix
     -saved_contacts = render_saved_contacts(@saved_contacts)
     =label_tag 'saved_contacts'
-    =select_tag :saved_contacts, options_for_select(saved_contacts), |
+    =select_tag :saved_contacts, options_for_select(saved_contacts, saved_contact), |
     include_blank: true, class: 'saved_contacts'
+    %br
+    %br
+    =link_to 'Update saved contact', '#', class: 'link-contact-update hidden'
+    =link_to 'Cancel', '#', class: 'link-update-cancel hidden'

@@ -408,6 +408,7 @@ ActiveRecord::Schema.define(version: 20171227203946) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
