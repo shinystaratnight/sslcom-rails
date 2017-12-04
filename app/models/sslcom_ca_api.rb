@@ -69,7 +69,7 @@ class SslcomCaApi
     end
   end
 
-  def subject_dn(options={})
+  def self.subject_dn(options={})
     dn=["CN=#{options[:cn]}"]
     dn << "O=#{options[:o]}" unless options[:o].blank?
     dn << "O=#{options[:ou]}" unless options[:ou].blank?
@@ -92,7 +92,7 @@ class SslcomCaApi
     dn.join(",")
   end
 
-  def subject_alt_name(options)
+  def self.subject_alt_name(options)
     "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
   end
 
@@ -116,11 +116,11 @@ class SslcomCaApi
   end
 
   def self.apply_for_certificate(certificate_order, options={})
-    cc = options[:certificate_content] || certificate_order.certificate_content
+    options.merge! cc: (options[:certificate_content] || certificate_order.certificate_content)
     host = APPLY_SSL_URL
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body = issue_cert_json(cc: cc)
+    req.body = issue_cert_json(options)
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
     end

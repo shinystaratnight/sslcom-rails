@@ -25,3 +25,4 @@ config/local_env.yml
 config/deploy.rb
 /Vagrantfile
 /config/deploy.rb
+/.idea/
