@@ -15,7 +15,7 @@ class ValidationsController < ApplicationController
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
-  filter_access_to :send_to_ca, require: :admin_manage
+  filter_access_to :send_to_ca, require: :sysadmin_manage
   in_place_edit_for :validation_history, :notes
 
   def search

@@ -69,6 +69,33 @@ class SslcomCaApi
     end
   end
 
+  def subject_dn(options={})
+    dn=["CN=#{options[:cn]}"]
+    dn << "O=#{options[:o]}" unless options[:o].blank?
+    dn << "O=#{options[:ou]}" unless options[:ou].blank?
+    dn << "C=#{options[:country]}" unless options[:country].blank?
+    dn << "L=#{options[:city]}" unless options[:city].blank?
+    dn << "ST=#{options[:state]}" unless options[:state].blank?
+    dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
+    dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
+    dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
+    dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
+    dn << "permanantIdentifier=#{options[:permanant_identifier]}" unless options[:permanant_identifier].blank?
+    dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
+    dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
+    dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
+    dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
+                                          =text_area_tag :csr, @certificate_order.certificate_content.csr.body
+                                             =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+
+
+    dn.join(",")
+  end
+
+  def subject_alt_name(options)
+    "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
+  end
+
   # revoke json parameter string for REST call to EJBCA
   def self.revoke_cert_json(signed_certificate, reason)
     {issuer_dn: signed_certificate.openssl_x509.issuer.to_s.split("/").reject(&:empty?).join(","),

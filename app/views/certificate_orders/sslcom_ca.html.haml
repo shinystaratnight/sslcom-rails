@@ -3,6 +3,8 @@
     %h3 Issue SSL.com Signed Certificate for ref# #{@certificate_order.ref} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
     =form_tag send_to_ca_certificate_order_validation_url(certificate_order_id: @certificate_order.ref), remote: true, method: :post, id: "send_to_ca", "data-type"=>"json" do
       =hidden_field_tag :ca, SslcomCaApi::CERTLOCK_CA
+      -if downstepped?
+        =hidden_field_tag :downstepped, params[:downstep]
       #stylized.default_form
         %div(class='fields')
           .clearfix
@@ -71,12 +73,12 @@
               %label{for: 'joi_locality'}
                 Jurisdiction Locality:
                 %span.label_desc joi city
-              =text_field_tag :postal_address
+              =text_field_tag :postal_locality
             .clearfix
               %label{for: 'joi_province'}
                 Jurisdiction Province:
                 %span.label_desc joi province, state or country
-              =text_field_tag :joi_province
+              =text_field_tag :joi_state
           -if for_cs?
             .clearfix
               %label{for: 'permanant_identifier'}
