@@ -154,7 +154,7 @@
                                         -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
                                       -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
                                       =link_cluster([ul,m,s])
-                            -if cn
+                            -if cn  and !co.certificate.is_code_signing?
                               =render partial: 'visit', locals: {cn: cn}
                             -if cc.server_software
                               %li

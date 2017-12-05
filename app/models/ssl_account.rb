@@ -165,7 +165,8 @@ class SslAccount < ActiveRecord::Base
 
   def unrenewed_signed_certificates(renew_threshold=nil)
     unique_signed_certificates.select{|sc|
-      sc.certificate_order.renewal.blank? || renew_threshold ? (sc.certificate_order.renewal.created_at < renew_threshold.days.ago) : false}
+      sc.certificate_order.renewal.blank? || (renew_threshold ?
+          (sc.certificate_order.renewal.created_at < renew_threshold.days.ago) : false)}
   end
 
   def renewed_signed_certificates
@@ -328,6 +329,147 @@ class SslAccount < ActiveRecord::Base
 
   def to_slug
     ssl_slug || acct_number
+  end
+
+  def expiring_certificates
+    exp_dates=ReminderTrigger.all.map do|rt|
+      preferred_reminder_notice_triggers(rt).to_i
+    end.sort{|a,b|b<=>a} # order from highest to lowest value
+    results=[]
+    unrenewed_signed_certificates.compact.each do |sc|
+      sed = sc.expiration_date
+      unless sed.blank?
+        exp_dates.each_with_index do |ed, i|
+          # determine if valid to send reminders and/or rebill at this point
+          if (i < exp_dates.count-1 && # be sure we don't over iterate
+              sed < ed.to_i.days.from_now && # is signed certificate expiration between exp intervals?
+              sed >= exp_dates[i+1].days.from_now)
+            results << Struct::Expiring.new(ed,exp_dates[i+1],sc) unless
+                renewed?(sc, exp_dates.first.to_i)
+            break
+          end
+        end
+      end
+    end
+    results
+  end
+
+  def expired_certificates(intervals)
+    year_in_days = 365
+    (Array.new(intervals.count){|i|i=[]}).tap do |results|
+      unrenewed_signed_certificates.compact.each do |sc|
+        sed = sc.expiration_date
+        unless sed.blank?
+          #go 10 years back
+          10.times do |i|
+            years = year_in_days * (i+1)
+            adj_int = intervals.map{|i|i+years}
+            adj_int.each_with_index do |ed, i|
+              if i < adj_int.count-1 &&
+                  sed < ed.to_i.days.ago &&
+                  sed >= adj_int[i+1].days.ago
+                results[i] << Struct::Expiring.new(ed,adj_int[i+1],sc) unless
+                    renewed?(sc, intervals.last)
+                break
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
+  #Reminder.preparing_recipients to locate point of injection for do-not-send list
+  def self.send_reminders
+    ActiveRecord::Base.logger.level = Logger::INFO
+    logger.info "Sending SSL.com cert reminders. Type 'Q' and press Enter to exit this program"
+    SslAccount.unscoped.order('created_at').includes(
+        [:stored_preferences, {:certificate_orders =>
+                                   [:orders, :certificate_contents=>
+                                       {:csr=>:signed_certificates}]}]).find_in_batches(batch_size: 250) do |s|
+      #find expired certs based on triggers.
+      logger.info "filtering out expired certs"
+      e_certs=s.map{|s|s.expiring_certificates}.reject{|e|e.empty?}.flatten
+      digest={}
+      self.send_and_create_reminders(e_certs, digest)
+      #find expired certs from n*1 years ago from ssl_accounts that do not have
+      #recent purchase history
+      remove = e_certs.map(&:cert).flatten.map(&:ssl_account).uniq
+      #should also filter out ssl_accounts who have recently logged in. We don't
+      #want to constantly email them even if they have expired certs from a several
+      #years ago
+      s = s - remove
+      digest.clear
+      intervals = [-30, -7, 16, 31] #0 represents this day, n * 1 years ago
+      e_certs = s.map{|s|s.expired_certificates(intervals)}.
+          transpose.map{|ec|ec.reject{|e|e==[]}.flatten}.flatten.compact
+      self.send_and_create_reminders(e_certs, digest, true, intervals)
+    end
+    logger.info "exiting ssl reminder app"
+  end
+
+  def self.send_and_create_reminders(expired_certs, digest, past=false,
+      interval=nil)
+    expired_certs.each do |ec|
+      exempt_list = %w(
+          hepsi danskhosting webcruit
+          epsa\.com\.co
+          magicexterminating suburbanexterminating)
+      exempt_certs = ->(domain, exempt){exempt.find do |e|
+        domain=~eval("/#{e}/")
+      end}
+      if true #this should be a function testing for message digest
+        detect_abort
+        c = ec.cert
+        contacts=[c.csr.certificate_content.technical_contact,
+                  c.csr.certificate_content.administrative_contact]
+        contacts.uniq.compact.each do |contact|
+          logger.info "adding contact to digest"
+          unless contact.email.blank? || SentReminder.exists?(trigger_value:
+                                                                  [ec.before, ec.after].join(", "),
+                                                              expires_at: c.expiration_date, subject: c.common_name,
+                                                              recipients: contact.email) ||
+              exempt_certs.(c.common_name, exempt_list)
+            dk=contact.to_digest_key
+            if digest[dk].blank?
+              digest.merge!({dk => [ec]})
+            else
+              digest[dk] << ec
+            end
+          end
+        end
+      else #currently doesn't get used
+        unless ec.cert.expiration_date.blank?
+          ec.cert.send_expiration_reminder(ec)
+        else
+          logger.error "blank expiration date for #{ec.cert.common_name}"
+        end
+      end
+    end
+    unless digest.empty?
+      digest.each do |d|
+        detect_abort
+        u_certs = d[1].map(&:cert).map(&:common_name).uniq.compact
+        begin
+          unless u_certs.empty?
+            logger.info "Sending reminder"
+            body = past ? Reminder.past_expired_digest_notice(d, interval) :
+                       Reminder.digest_notice(d)
+            body.deliver unless body.to.empty?
+          end
+          d[1].each do |ec|
+            logger.info "create SentReminder"
+            SentReminder.create(trigger_value: [ec.before, ec.after].join(", "),
+                                expires_at: ec.cert.expiration_date, signed_certificate_id:
+                                    ec.cert.id, subject: ec.cert.common_name,
+                                body: body, recipients: d[0].split(",").last)
+          end
+        rescue Exception=>e
+          logger.error e.backtrace.inspect
+          raise e
+        end
+      end
+    end
   end
 
   private
@@ -495,6 +637,14 @@ class SslAccount < ActiveRecord::Base
     end
   end
 
+  def renewed?(sc, renew_date)
+    eds=SignedCertificate.where(:common_name=>sc.common_name).
+        map(&:expiration_date).compact.sort
+    eds.detect do |ed|
+      ed > renew_date.days.from_now
+    end
+  end
+
   def build_line_items(order)
     #only do for prepaid, because 1-off certificate_orders when added are not
     #necessarily paid for already
@@ -513,4 +663,31 @@ class SslAccount < ActiveRecord::Base
     Preference.where{(owner_type=="SslAccount") & (owner_id << ids)}.delete_all
   end
 
+  def self.quit?
+    q_pressed="Q pressed"
+    begin
+      #See if a 'Q' has been typed yet
+      while c = STDIN.read_nonblock(1)
+        logger.info q_pressed
+        puts q_pressed
+        return true if c == 'Q'
+      end
+      #No 'Q' found
+      false
+    rescue Errno::EINTR
+      false
+    rescue Errno::EAGAIN
+      # nothing was ready to be read
+      false
+    rescue EOFError
+      # quit on the end of the input stream
+      # (user hit CTRL-D)
+      true
+    end
+  end
+
+  #disable for deploying to cron
+  def self.detect_abort
+    #abort('Exit: user terminated') if Rails.env=~/production/i && quit?
+  end
 end
