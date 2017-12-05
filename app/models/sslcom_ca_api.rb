@@ -112,7 +112,7 @@ class SslcomCaApi
     cert = options[:cc].certificate
     if cert.is_smime?
       "rfc822Name="
-    elsif !cert.is_evcs? and !cert.is_cs?
+    elsif !cert.is_code_signing?
       "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
     end
   end
@@ -135,7 +135,7 @@ class SslcomCaApi
        end_entity_profile: end_entity_profile(options),
        duration: "#{options[:cc].certificate_order.certificate_duration(:sslcom_api)}:0:0" || options[:duration],
        pkcs10: Csr.remove_begin_end_tags(options[:cc].csr.body)}
-      dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_evcs? or cert.is_cs?
+      dn.merge!(subject_alt_name: subject_alt_name(options)) unless cert.is_code_signing?
       dn.to_json
     end
   end
