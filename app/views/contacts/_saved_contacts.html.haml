@@ -1,10 +1,20 @@
-- if @saved_contacts && @saved_contacts.any?
+-contacts_exist = @saved_contacts && @saved_contacts.any?
+-if Contact.optional_contacts?
   .clearfix
-    -saved_contacts = render_saved_contacts(@saved_contacts)
-    =label_tag 'saved_contacts'
-    =select_tag :saved_contacts, options_for_select(saved_contacts, saved_contact), |
-    include_blank: true, class: 'saved_contacts'
-    %br
-    %br
-    =link_to 'Update saved contact', '#', class: 'link-contact-update hidden'
-    =link_to 'Cancel', '#', class: 'link-update-cancel hidden'
+    -if contacts_exist && saved_contacts
+      -pre_select = child_contacts.map(&:parent_id)
+      =label_tag 'available_contacts'
+      -saved_contacts = render_saved_contacts(@saved_contacts)
+      =select_tag :saved_contacts, options_for_select(saved_contacts, pre_select), |
+      { multiple: true, size: @saved_contacts.count }
+-else 
+  -if contacts_exist
+    .clearfix
+      -saved_contacts = render_saved_contacts(@saved_contacts)
+      =label_tag 'saved_contacts'
+      =select_tag :saved_contacts, options_for_select(saved_contacts, saved_contact), |
+      include_blank: true, class: 'saved_contacts'
+      %br
+      %br
+      =link_to 'Update saved contact', '#', class: 'link-contact-update hidden'
+      =link_to 'Cancel', '#', class: 'link-update-cancel hidden'

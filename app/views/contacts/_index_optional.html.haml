@@ -1,0 +1,22 @@
+=error_messages_for :certificate_content
+=form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
+  #stylized.default_form
+    -CertificateContent::CONTACT_ROLES.each do |role|
+      -saved_contacts  = @certificate_content.contacts_for_form_opt(role, :saved)
+      -child_contacts  = @certificate_content.contacts_for_form_opt(role, :child)
+      -custom_contacts = @certificate_content.contacts_for_form_opt(role, :custom)
+
+      %div{id: "#{role}_section", class: "sub_container", data: {role: role}}
+        =render partial: "contacts/#{role}_contact"
+        =render partial: 'contacts/saved_contacts', |
+        locals: {saved_contacts: saved_contacts, child_contacts: child_contacts}
+        =render partial: 'contacts/index_optional_custom', |
+        locals: {custom_contacts: custom_contacts, role: role}
+        =link_to "Create New Contact", '#', class: 'button_blue button_medium_blue', |
+        id: 'btn_create_new_contact'
+  
+  #button_container
+    #auto_adjust
+      -if @certificate_content.info_provided?
+        =image_tag "cancel_bl.gif", id: "start_over"
+      =image_submit_tag "bl_submit_button.gif"

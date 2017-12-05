@@ -1,7 +1,9 @@
-=render partial: 'contacts/saved_contacts', locals: {saved_contact: f.object.parent_id}
+-unless Contact.optional_contacts?
+  =render partial: 'contacts/saved_contacts', locals: {saved_contact: f.object.parent_id}
 %div(class='fields')
   =f.hidden_field :parent_id, class: 'parent_id'
-  =f.hidden_field :update_parent, class: 'update_parent'
+  -unless Contact.optional_contacts?
+    =f.hidden_field :update_parent, class: 'update_parent'
   .clearfix
     %label{:for=>"first_name"}
       *First Name:

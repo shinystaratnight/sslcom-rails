@@ -5792,8 +5792,66 @@ span.notifications-teams
   button
     margin: 3px 0 10px 10px
 
-.link-contact-update, .link-update-cancel
+.link-contact-update,
+.link-update-cancel
   float: left
   font-size: 1.4rem
   font-weight: 700
   margin: 1.5rem 0 1rem -31rem
+
+.edit_certificate_content
+  .select2-container
+    margin-bottom: 1rem !important
+  .select2-selection__choice
+    font-size: 1.2rem
+
+/* Optional/dynamic contacts is turned on: custom styles */    
+#lnk-update-saved
+  font-size: 1.3rem
+  font-weight: 700
+  margin: 1.5rem 0 1rem 21rem
+  padding-bottom: 1rem
+
+#btn_cancel_saved_contact,
+#btn_cancel_role_contact,
+  margin-left: 18rem !important
+
+#btn_edit_saved_contact,
+#btn_create_role_contact,
+#btn_update_role_contact
+  margin-left: 1rem !important
+
+#btn_create_new_contact,
+.button_medium_blue
+  font-size: 1.4rem
+  margin-left: 21rem !important
+  text-align: center
+  padding: 5px
+  width: 25%
+  
+#opt_contacts_container
+  #edit_saved_contact
+    .edit_saved_contact_errors
+      font-size: 1.5rem
+      padding: 0.5rem
+      background-color: red
+      color: white
+    label
+      font-weight: 600
+    margin-left: -4.5rem !important
+    width: 120% !important
+    border: solid 1px #69AFFD
+    @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
+    @include border-radius(5px)
+    
+    .button_red
+      font-weight: 600
+      color: #FFFFFF
+      margin-right: -18rem
+      background-color: #FC0D1B
+      margin-left: 10rem
+      border-radius: 3px
+      border: none
+      padding: 6px 11px
+      cursor: pointer
+  

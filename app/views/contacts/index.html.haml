@@ -8,20 +8,8 @@
   %p
     Please provide point of contacts
     -if @certificate_order.subject
-      for #{@certificate_order.subject.downcase}
-  =error_messages_for :certificate_content
-  =form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
-    #stylized.default_form
-      -i = 0
-      =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form.compact do |c|
-        -role=c.object.roles.last
-        -i+=1
-        =render :partial=>"/contacts/#{role}_contact", :locals=>{:f=>f}
-        %div(id="certificate_content_#{role}_form")
-          =render_contact_fields(c, role)
-    #button_container
-      #auto_adjust
-        -if @certificate_content.info_provided?
-          =image_tag "cancel_bl.gif", id: "start_over"
-        =image_submit_tag "bl_submit_button.gif"
-=render :partial => '/contacts/index_scripts'
+      for #{@certificate_order.subject.downcase}.
+    -partial = Contact.optional_contacts? ? 'optional' : 'required'
+    #opt_contacts_container
+      =render partial: "/contacts/index_#{partial}"
+=render partial: "/contacts/index_scripts#{partial=='optional' ? '_optional' : ''}"

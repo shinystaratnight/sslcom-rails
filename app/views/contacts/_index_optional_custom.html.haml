@@ -1,0 +1,7 @@
+.clearfix
+  -if custom_contacts.any?
+    -pre_select = custom_contacts.map(&:id)
+    -custom_contacts = render_saved_contacts(custom_contacts)
+    =label_tag "#{role.capitalize} Contacts"
+    =select_tag :custom_contacts, options_for_select(custom_contacts, pre_select), |
+    { multiple: true, size: custom_contacts.count }

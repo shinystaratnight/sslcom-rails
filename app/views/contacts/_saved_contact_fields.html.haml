@@ -1,12 +1,19 @@
 %div(class='fields')
-  .clearfix
-    %label{for: 'type'}
-      Type:
-    =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
-  .clearfix.hidden
-    %label{for: 'registrant_type'}
-      Registrant Type:
-    =f.select :registrant_type, Registrant::registrant_types
+  -if new_contact == :new_contact
+    =f.hidden_field :roles, value: contact_role
+    .clearfix
+      %label{for: 'save_for_later'}
+        Save to Available Contacts:
+      =f.check_box :save_for_later 
+  -unless filter
+    .clearfix
+      %label{for: 'type'}
+        Type:
+      =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
+    .clearfix.hidden
+      %label{for: 'registrant_type'}
+        Registrant Type:
+      =f.select :registrant_type, Registrant::registrant_types
   .clearfix
     %label{for: 'first_name'}
       *First Name:

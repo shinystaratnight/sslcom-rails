@@ -420,7 +420,24 @@ class CertificateContent < ActiveRecord::Base
     # "cc-"+created_at.to_i.to_s(16)
     certificate_order.ref+"-"+certificate_order.certificate_contents.index(self).to_s
   end
-
+  
+  def contacts_for_form_opt(roles, type=nil)
+    unless self.certificate_contacts.blank?
+      case type
+        when :custom  # contacts that are NOT duplicated from saved contacts
+          certificate_contacts(true).select{|c| c.has_role?(roles) && c.parent_id.nil? }
+        when :child   # contacts that were duplicated from saved contacts
+          certificate_contacts(true).select{|c| c.has_role?(roles) && !c.parent_id.nil? }
+        when :saved   # saved contacts for the team
+          ssl_account.saved_contacts
+        else          # contacts, BOTH child and custom
+          certificate_contacts(true).select{|c| c.has_role?(roles)}
+      end
+    else
+      []
+    end
+  end
+  
   def contacts_for_form
     unless self.certificate_contacts.blank?
       CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}

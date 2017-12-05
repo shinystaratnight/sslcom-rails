@@ -42,4 +42,8 @@ class Contact < ActiveRecord::Base
     end
     # attributes.except(*EXCLUDED_FIELDS)
   end
+  
+  def self.optional_contacts?
+    Settings.dynamic_contact_count == "on"
+  end
 end
