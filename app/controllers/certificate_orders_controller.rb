@@ -115,14 +115,14 @@ class CertificateOrdersController < ApplicationController
       unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
         redirect_to certificate_order_path(@ssl_slug, @certificate_order)
       else
-        csr = @certificate_order.certificate_content.csr
+        @csr = @certificate_order.certificate_content.csr
         setup_registrant()
-        @registrant.company_name = csr.organization
-        @registrant.department = csr.organization_unit
-        @registrant.city = csr.locality
-        @registrant.state = csr.state
-        @registrant.email = csr.email
-        @registrant.country = csr.country
+        @registrant.company_name = @csr.organization
+        @registrant.department = @csr.organization_unit
+        @registrant.city = @csr.locality
+        @registrant.state = @csr.state
+        @registrant.email = @csr.email
+        @registrant.country = @csr.country
       end
       @saved_registrants = current_user.ssl_account.saved_registrants
     else

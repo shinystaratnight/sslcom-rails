@@ -135,7 +135,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "blocklists", force: :cascade do |t|
+  create_table "blocklist", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
     t.integer  "validation",  limit: 4
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
 
-  create_table "caa_checks", force: :cascade do |t|
+  create_table "caa_check", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
     t.string   "checkable_type", limit: 255
     t.string   "domain",         limit: 255
@@ -776,7 +776,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
     t.datetime "updated_at",              null: false
   end
 
-  create_table "physical_tokens", force: :cascade do |t|
+  create_table "physical_token", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
     t.string   "tracking_number",       limit: 255

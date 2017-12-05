@@ -14,6 +14,7 @@ class CertificateContent < ActiveRecord::Base
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
+  accepts_nested_attributes_for :csr, :allow_destroy => false
 
   after_update :certificate_names_from_domains, unless: :certificate_names_created?
 

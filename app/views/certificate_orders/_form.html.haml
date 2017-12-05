@@ -1,5 +1,5 @@
 =f.fields_for :certificate_contents, @certificate_content do |cc|
-  =cc.fields_for :registrant, @registrant do |rf|
+  =cc.fields_for :csr, @csr do |csr|
     .subheading
       -if @certificate_order.certificate.is_client?
         Certificate Contents
@@ -21,7 +21,11 @@
         -else
           *Website:
         %span.label_desc the subject or common name
-      .displayed_csr_field=@certificate_content.csr.common_name
+      -if @certificate_order.certificate.is_code_signing?
+        =csr.text_field :common_name
+      -else
+        .displayed_csr_field=@certificate_content.csr.common_name
+  =cc.fields_for :registrant, @registrant do |rf|
     -if @certificate_order.certificate.requires_company_info?
       .clearfix
         %label{:for=>"company"}
@@ -100,7 +104,7 @@
             *Company Number:
             %span.label_desc registration number of company
           =rf.text_field :company_number
-    -if @certificate_order.certificate.is_browser_generated_capable?
+    -if %w(ov ev evcs cs).include? @certificate_order.certificate.validation_type
       -if @certificate_order.certificate.is_code_signing?
         .subheading Administrative Contact
         %p.description
