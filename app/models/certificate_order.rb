@@ -271,7 +271,7 @@ class CertificateOrder < ActiveRecord::Base
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
-  VERIFICATION_STEP = 'Provide Verification'
+  VERIFICATION_STEP = 'Perform Validation'
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%W(Submit\ CSR Payment
     Registrant Contacts #{VERIFICATION_STEP} Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
@@ -582,7 +582,7 @@ class CertificateOrder < ActiveRecord::Base
       else
         PREPAID_FULL_SIGNUP_PROCESS
       end
-    elsif cert.is_browser_generated_capable?
+    elsif cert.is_client?
       PREPAID_EXPRESS_SIGNUP_PROCESS
     else
       PREPAID_FULL_SIGNUP_PROCESS

@@ -560,6 +560,14 @@ class ApplicationController < ActionController::Base
     current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
   end
 
+  def validation_destination(options)
+    co = options[:certificate_order]
+    slug = options[:ssl_slug]
+    co.certificate.is_code_signing? ?
+        document_upload_certificate_order_validation_url(certificate_order_id: co.ref) :
+        new_certificate_order_validation_path(*[ssl_slug, co.ref].compact)
+  end
+
   def identify_visitor
     cookies[:guid] = {:value=>UUIDTools::UUID.random_create.to_s, :path => "/",
       :expires => 2.years.from_now} unless cookies[:guid]
