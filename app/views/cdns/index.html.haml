@@ -1,0 +1,71 @@
+-title = "CDN Management"
+-content_for :title, title
+-api_key = @results[:api_key]
+-resources = @results[:resources]
+-#%ul.nav.nav-tabs
+-#  %li.nav-item
+-#    %a.nav-link.active Resoruces
+-#  %li.nav-item
+-#    %a.nav-link Settings
+#cdns
+  %hr
+  %div
+    .sub-cont
+      =form_tag :method=>:post do
+        %div.reg-api-key.clearfix
+          .field-label API Key:
+          .field-cont
+            =text_field_tag :api_key, api_key
+            =submit_tag 'Save'
+  %hr
+  -if api_key
+    %div
+      .sub-title Resources
+      #resources
+        %table(cellspacing="0")
+          %tr.heading_row
+            %th Alias
+            %th Origin
+            %th Hostname
+            %th Created
+            %th Use?
+            %th Delete?
+          -if resources.length > 0
+            -resources.each do |resource|
+              %tr
+                %td
+                  =resource['alias']
+                %td
+                  =resource['origin']
+                %td
+                  =resource['hostname']
+                %td
+                  =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
+                %td
+                  =radio_button_tag :used, true
+                %td
+                  =check_box_tag :deleted
+          -else
+            %tr
+              %td(colspan="6")
+                There is no resources
+        =button_to 'Save'
+      %hr
+      %div
+        .sub-title Create Resource
+        .sub-cont
+          =form_tag :id=>'create_resource', :method=>:post do
+            %div.reg-resource.clearfix
+              .field-label Resource Origin:
+              .field-cont
+                =text_field_tag :resource_origin, :id=>'new_resource_origin'
+                .note
+                  Which website should we mirror on the CDN?
+            %div.reg-resource.clearfix
+              .field-label Resource Name:
+              .field-cont
+                =text_field_tag :resource_name, :id=>'new_resource_name'
+                .note
+                  Something to identify this resource by (e.g. mysite.a.cdnify.io)
+            =submit_tag 'Save', :id=>'btn_create_resource'
+      %hr

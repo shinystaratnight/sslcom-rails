@@ -2,6 +2,7 @@ require 'apis/certificates_api_app'
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
+  resources :cdns, except: [:new, :edit]
   resources :oauth_clients
 
   match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request, via: [:get, :post]
@@ -291,6 +292,8 @@ SslCom::Application.routes.draw do
   scope '(/team/:ssl_slug)', module: false do
     concerns :teamable
   end
+
+  resources :cdns
 
   resources :users, except: :index do
     collection do

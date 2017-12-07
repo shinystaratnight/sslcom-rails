@@ -69,6 +69,7 @@ gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
 gem 'rubyzip', '~> 1.2.1'
+gem 'bootstrap', '~> 4.0.0.alpha6'
 
 group :development do
   gem 'foreman'
@@ -80,6 +81,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
+  gem 'byebug'
 end
 
 group :development, :test do
@@ -114,3 +116,5 @@ end
 group :assets do
   gem 'uglifier'
 end
+
+gem 'httparty'
