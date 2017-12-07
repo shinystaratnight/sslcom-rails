@@ -135,7 +135,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "blocklist", force: :cascade do |t|
+  create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
     t.integer  "validation",  limit: 4
@@ -166,7 +166,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
 
-  create_table "caa_check", force: :cascade do |t|
+  create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
     t.string   "checkable_type", limit: 255
     t.string   "domain",         limit: 255
@@ -370,11 +370,14 @@ ActiveRecord::Schema.define(version: 20171201154843) do
     t.integer  "registrant_type",       limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
-    t.date     "incorporation_country"
+    t.string   "incorporation_country", limit: 255
+    t.string   "incorporation_state",   limit: 255
+    t.string   "incorporation_city",    limit: 255
     t.string   "assumed_name",          limit: 255
     t.string   "business_category",     limit: 255
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
+    t.string   "registration_service",  limit: 255
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
@@ -776,7 +779,7 @@ ActiveRecord::Schema.define(version: 20171201154843) do
     t.datetime "updated_at",              null: false
   end
 
-  create_table "physical_token", force: :cascade do |t|
+  create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
     t.string   "tracking_number",       limit: 255
