@@ -256,6 +256,11 @@ authorization do
       }
     end
 
+    has_permission_on :physical_tokens, :to => [:read] do
+      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
+      }
+    end
+
     has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
       if_permitted_to :update, :certificate_order
     end

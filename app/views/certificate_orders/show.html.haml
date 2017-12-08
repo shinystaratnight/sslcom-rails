@@ -174,19 +174,31 @@
                             -if current_user.is_system_admins?
                               %li
                                 =link_to 'edit registrant', edit_certificate_order_url(id: @certificate_order.ref, registrant: true)
-                          -unless @certificate_order.physical_tokens.blank?
-                            %li.category_border
-                            %li
-                              %strong physical tokens
-                            -@certificate_order.physical_tokens.each do |token|
-                              -unless token.in_possession?
-                                %li=link_to "activate #{token.make_and_model}"+token.name ? " (#{token.name})" : ''
                           -else
                             %li
                               -if @cc.workflow_state=="csr_submitted"
                                 =link_to 'provide info (required)', edit_certificate_order_path(@certificate_order)
                               -else
                                 none
+                          -unless @certificate_order.physical_tokens.active.blank?
+                            %li.category_border
+                            %li
+                              %strong physical tokens
+                            -@certificate_order.physical_tokens.active.each do |token|
+                              -display="#{token.model_number}"+(token.name.blank? ? '' : " (#{token.name})")
+                              -unless token.in_possession?
+                                %li
+                                  %a{style:"cursor: pointer;", onclick: "activate_physical_token('#{@certificate_order.ref}','#{token.id}','#{token.name}')"}="activate #{display}"
+                                  -if current_user.is_system_admins?
+                                    |
+                                    =link_to "delete", certificate_order_physical_token_path(@certificate_order,token), method: :delete,
+                                      data: {confirm: 'Are you sure you want to delete this token?'}
+                              -else
+                                %li
+                                  #{display}
+                                  %ul
+                                    %li PIN - #{token.activation_pin}
+                                    %li Serial - #{token.serial_number}
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?

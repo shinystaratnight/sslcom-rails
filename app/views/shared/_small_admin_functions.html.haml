@@ -26,4 +26,3 @@
   -if co.certificate.is_evcs?
     %li
       =link_to "add physical token", new_certificate_order_physical_token_path(co)
-      =link_to "delete" if current_user.is_system_admins?
