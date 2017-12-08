@@ -24,4 +24,6 @@
       %li ext order number: #{co.external_order_number}
     %li=link_to "change ext order number", '#', onclick:  "change_ext_order_#{co.id}()"
   -if co.certificate.is_evcs?
-    %li=link_to "add physical token", new_certificate_order_physical_token_path(co)
+    %li
+      =link_to "add physical token", new_certificate_order_physical_token_path(co)
+      =link_to "delete" if current_user.is_system_admins?
