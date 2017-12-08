@@ -74,6 +74,7 @@ module SslCom
     config.generators do |g|
       g.fixture_replacement :factory_girl
       g.test_framework :minitest, spec: true, fixture: false
+      g.jbuilder            false
     end
 
     config.middleware.use OAuth::Rack::OAuthFilter

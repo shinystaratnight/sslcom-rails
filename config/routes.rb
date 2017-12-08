@@ -133,6 +133,7 @@ SslCom::Application.routes.draw do
   concern :teamable do
     resource :user_session
     resources :certificate_orders do
+      resources :physical_tokens
       collection do
         get :credits
         get :pending

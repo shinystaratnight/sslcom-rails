@@ -14,7 +14,7 @@ authorization do
     has_permission_on :authorization_rules, :to => :read
     has_permission_on :site_seals, :validation_rules, :certificate_orders,
       :to => :sysadmin_manage, except: :delete
-    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls,
+    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage

@@ -156,6 +156,12 @@ class SslcomCaApi
     else
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s
+      SystemAudit.create(
+          owner:  current_user,
+          target: api_log_entry,
+          notes:  "issued signed certificate for certificate order #{co.ref}",
+          action: "SslcomCaApi#apply_for_certificate"
+      )
     end
     api_log_entry
   end

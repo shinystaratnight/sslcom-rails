@@ -90,7 +90,7 @@
                                 .notes_box
                                   =form_for co, :url=>admin_update_certificate_order_url(co) do |f|
                                     %li
-                                      %strong notes (viewable only by #{Settings.community_name} team)
+                                      %strong notes for admins only
                                     %li
                                       =f.text_area :notes, cols: 40, rows: 10
                                 .certificate_details_box
