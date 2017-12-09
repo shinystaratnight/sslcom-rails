@@ -1,0 +1,48 @@
+Dear <%=@name%>
+
+You are receiving this courtesy email because you have ordered or purchased your certificate(s) from SSL.com.
+
+This is a reminder that the SSL.com certificate(s) for the domains named below have expired or are expiring:
+
+<%@e_certs.each_with_index do |e_cert, i| -%>
+  <%
+    cert = e_cert.cert
+    days_in_year = 365
+    seconds_in_year = 31556926
+    #days_expired=cert.expiration_date.strftime('%j').to_i
+    #days_today=Date.today.strftime('%j').to_i
+    #add_on = (days_today < days_expired) ? 1 : 0
+    y_i = ((Time.now - cert.expiration_date)/seconds_in_year).to_i
+    y_r = ((Time.now - cert.expiration_date)/seconds_in_year) - y_i
+    #a y_r value close to .9 means the date is approaching while .1
+    #means the date has just recently passed
+    add_on = (0.5 < y_r) ? 1 : 0
+    num=
+        if (@first.days.ago.to_i..@last.days.from_now.to_i) ===
+            cert.expiration_date.to_i
+          0
+        else
+          ((Time.now - cert.expiration_date)/seconds_in_year).to_i + add_on
+        end
+    if Time.now < (cert.expiration_date+num.years) -%>
+    <%=(i+=1).to_s+") "+cert.common_name%> expires in <%=time_ago_in_words(cert.expiration_date+num.years)%> on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://www.ssl.com/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+  <%else-%>
+    <%=(i+=1).to_s+") "+cert.common_name%> expired <%=time_ago_in_words(cert.expiration_date+num.years) %> ago on <%=(cert.expiration_date+num.years).strftime("%b %d, %Y")%> (renew here: https://www.ssl.com/certificate_orders/<%=cert.certificate_order.ref%>/renew - ref # <%=cert.certificate_order.ref%>)
+  <%end -%>
+<%end -%>
+
+When renewing, any remaining time from your expiring SSL/TLS certificate, up to 90 days, will be added to your renewal certificate so that you do not lose any SSL/TLS coverage.
+
+If you need to reset your username or password, please visit https://www.ssl.com/password_resets/new
+
+Thank you for choosing SSL.com - we look forward to continuing to provide you with the most cost-effective certificates in the market.
+
+Kind Regards,
+
+SSL.com
+Toll Free: 877-SSL-Secure (877-775-7328)
+Intl: SSL-Certificates (+1-775-237-8434)
+
+
+
+<%=render partial: "email_prefs"%>

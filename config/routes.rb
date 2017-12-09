@@ -29,7 +29,7 @@ SslCom::Application.routes.draw do
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-    (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
+    (%w(sws.sslpki.com sws.sslpki.local)).uniq
   ) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1) do
@@ -133,6 +133,11 @@ SslCom::Application.routes.draw do
   concern :teamable do
     resource :user_session
     resources :certificate_orders do
+      resources :physical_tokens do
+        member do
+          get :activate
+        end
+      end
       collection do
         get :credits
         get :pending
@@ -154,13 +159,14 @@ SslCom::Application.routes.draw do
         get :reprocess
         get :auto_renew
         post :start_over
+        get :sslcom_ca
         match :admin_update, via: [:put, :patch]
         get :change_ext_order_number
       end
 
       resource :validation do
         post :upload, :send_dcv_email
-        get :send_to_ca
+        match :send_to_ca, via: [:get, :post]
         member do
           get :document_upload
         end

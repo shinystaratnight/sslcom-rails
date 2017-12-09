@@ -935,10 +935,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             (csr.unique_value.blank? ? true : r =~ Regexp.new("^#{csr.unique_value}")))
       end
     rescue Exception=>e
-      if csr.common_name=~/\A\*/ && prepend.blank? && protocol!="cname" #do another go round for wildcard by prepending www.
-        prepend="www."
-        retry
-      end
       return false
     end
   end

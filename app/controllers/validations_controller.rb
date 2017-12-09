@@ -15,7 +15,7 @@ class ValidationsController < ApplicationController
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
-  filter_access_to :send_to_ca, require: :admin_manage
+  filter_access_to :send_to_ca, require: :sysadmin_manage
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -23,6 +23,10 @@ class ValidationsController < ApplicationController
   end
 
   def new
+    # if CS then go to doc upload
+    if @certificate_order.certificate.is_code_signing?
+      redirect_to document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) and return
+    end
     if @certificate_order.certificate_content.contacts_provided?
       @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
     elsif @certificate_order.certificate_content.issued?
@@ -192,7 +196,7 @@ class ValidationsController < ApplicationController
           checkout={checkout: "true"}
         end
         @validation_histories = @certificate_order.validation_histories
-        format.html { redirect_to certificate_order_path({id: @certificate_order.id}.merge!(checkout))}
+        format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         format.xml { render :xml => @release,
           :status => :created,
           :location => @release }
@@ -250,10 +254,12 @@ class ValidationsController < ApplicationController
     end
   end
 
-  def send_to_ca
+  def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result = co.apply_for_certificate
-    co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
+    result = co.apply_for_certificate(params)
+    unless [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? params[:ca]
+      co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
+    end
     respond_to do |format|
       format.js {render :json=>{:result=>render_to_string(:partial=>
           'sent_ca_result', locals: {ca_response: result})}}

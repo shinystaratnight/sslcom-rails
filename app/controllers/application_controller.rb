@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
+      redirect_to new_user_session_path
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
@@ -465,7 +465,7 @@ class ApplicationController < ActionController::Base
     if current_user.blank?
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain
+      redirect_to new_user_session_path
       return false
     end
   end
@@ -558,6 +558,14 @@ class ApplicationController < ActionController::Base
     cookies.delete(:cart)
     cookies.delete(:aid_li)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
+  end
+
+  def validation_destination(options)
+    co = options[:certificate_order]
+    slug = options[:ssl_slug]
+    co.certificate.is_code_signing? ?
+        document_upload_certificate_order_validation_url(certificate_order_id: co.ref) :
+        new_certificate_order_validation_path(*[ssl_slug, co.ref].compact)
   end
 
   def identify_visitor

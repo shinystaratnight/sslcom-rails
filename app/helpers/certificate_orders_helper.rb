@@ -38,6 +38,7 @@ module CertificateOrdersHelper
   end
 
   def expires_on(certificate_content)
+    return "n/a" if certificate_content.csr.blank?
     (certificate_content.new? ||
         certificate_content.csr.signed_certificate.blank? ||
         certificate_content.csr.signed_certificate.expiration_date.blank?)?
@@ -49,7 +50,8 @@ module CertificateOrdersHelper
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
       certificate_order.expired? ? "expired" :
-          link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order))
+          link_to(certificate_order.certificate.admin_submit_csr?  ? 'provide info' :
+                      'submit csr', edit_certificate_order_path(@ssl_slug, certificate_order))
     elsif certificate_order.expired?
       'expired'
     else
@@ -64,7 +66,7 @@ module CertificateOrdersHelper
           link_to('submit csr', edit_certificate_order_path(@ssl_slug, certificate_order)) if
               permitted_to?(:update, certificate_order)
         when "contacts_provided", "pending_validation", "validated"
-          link_to 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
+          link_to certificate_order.certificate.admin_submit_csr? ? 'upload documents' : 'perform validation', new_certificate_order_validation_path(@ssl_slug, certificate_order) if
               permitted_to?(:update, certificate_order.validation) # assume multi domain
         when "issued"
           if certificate_content.expiring?
@@ -107,7 +109,7 @@ module CertificateOrdersHelper
     return if certificate_content.blank?
     co=certificate_content.certificate_order
     if co && certificate_content.new?
-      co.is_expired? ? 'expired' : 'waiting for csr'
+      co.is_expired? ? 'expired' : (co.certificate.admin_submit_csr? ? 'info required' : 'waiting for csr')
     elsif certificate_content.expired?
       'expired'
     elsif certificate_content.preferred_reprocessing?
@@ -148,6 +150,7 @@ module CertificateOrdersHelper
 
   def expires_on_class(certificate_content)
     return if certificate_content.new? ||
+        certificate_content.csr.blank? ||
       certificate_content.csr.signed_certificate.blank? ||
       certificate_content.csr.signed_certificate.expiration_date.blank?
     if certificate_content.certificate_order
@@ -196,5 +199,45 @@ module CertificateOrdersHelper
       target_domain = target_domain.remove(/\Awww./)
     end
     target_domain
+  end
+
+  def for_ev?
+    @certificate_order.certificate.is_ev? unless ["ov","dv"].include?(params[:downstep])
+  end
+
+  # EV SSL can downstep to OV
+  def for_ov?
+    (@certificate_order.certificate.is_ov? unless ["dv"].include?(params[:downstep])) or downstepped_to_ov?
+  end
+
+  # EV and OV SSL can downstep to DV
+  def for_dv?
+    @certificate_order.certificate.is_dv? or downstepped_to_dv?
+  end
+
+  def downstepped_to_dv?
+    (@certificate_order.certificate.is_ev? or
+        @certificate_order.certificate.is_ov?) and params[:downstep]=="dv"
+  end
+
+  def downstepped_to_ov?
+    @certificate_order.certificate.is_ev? and params[:downstep]=="ov"
+  end
+
+  def downstepped_to_cs?
+    @certificate_order.certificate.is_evcs? and params[:downstep]=="cs"
+  end
+
+  def downstepped?
+    downstepped_to_cs? or downstepped_to_dv? or downstepped_to_ov?
+  end
+
+  def for_evcs?
+    @certificate_order.certificate.is_evcs? unless ["cs"].include?(params[:downstep])
+  end
+
+  # EV CS can downstep to CS
+  def for_cs?
+    @certificate_order.certificate.is_cs? or downstepped_to_cs?
   end
 end

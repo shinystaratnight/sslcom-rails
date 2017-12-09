@@ -66,5 +66,5 @@
   .clearfix
     %label{:for=>"country"}
       Country:
-    =f.select :country, Country.all.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
+    =f.select :country, Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
   =f.hidden_field "roles][" , { :id => "roles", :value => contact_role }

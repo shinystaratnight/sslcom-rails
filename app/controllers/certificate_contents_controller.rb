@@ -38,8 +38,8 @@ class CertificateContentsController < ApplicationController
         end
         if @certificate_content.info_provided?
           @certificate_content.provide_contacts!
-          format.html { redirect_to new_certificate_order_validation_path(
-            @ssl_slug, @certificate_content.certificate_order)
+          format.html { redirect_to validation_destination(slug: @ssl_slug,
+                                                           certificate_order: @certificate_content.certificate_order)
           }
         else
           flash[:notice] = 'Contacts were successfully updated.'
