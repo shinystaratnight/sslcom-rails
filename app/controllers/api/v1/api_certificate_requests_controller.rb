@@ -1,8 +1,8 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4, :upload_v1_4]
-  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4, :upload_v1_4]
+  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
+  after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
   wrap_parameters ApiCertificateRequest, include: [*( 
@@ -138,7 +138,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def contacts_v1_4
-    @template = "api_certificate_requests/contats_v1_4"
+    @template = "api_certificate_requests/contacts_v1_4"
 
     if @result.save
       if @acr = @result.update_certificate_content_contacts
@@ -187,56 +187,59 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         @result.menu[:smart_seal_tab] = true
         @result.menu[:transaction_receipt_tab] = true
 
+        @result.is_admin = false
+
+        @result.sub_main = {}
+        @result.sub_main[:certificate_type] = certificate_type(@acr)
+        @result.sub_main[:certificate_duration] = @acr.certificate_duration
+        @result.sub_main[:validation_level] = @acr.certificate.description["validation_level"]
+
+        if @acr.is_unused_credit? || @acr.certificate_content.csr.blank? || @acr.certificate_content.csr.signed_certificate.blank?
+          @result.sub_main[:issued_date] = 'Pending'
+        else
+          @result.sub_main[:issued_date] = @acr.certificate_content.csr.signed_certificate.created_at.strftime("%b %d, %Y")
+        end
+
+        if @acr.is_unused_credit? || @acr.certificate_content.csr.blank?
+          @result.sub_main[:requested_date] = 'N/A'
+        else
+          @result.sub_main[:requested_date] = @acr.certificate_content.csr.created_at.strftime("%b %d, %Y")
+        end
+
         if @result.menu[:certificate_details_tab]
-          @result.main = {}
-          @result.main[:subject] = @acr.signed_certificate ? @acr.signed_certificate.common_name : nil
-          @result.main[:order_status] = @acr.status
-          @result.main[:order_date] = @acr.created_at
-          @result.main[:expiry_date] = @acr.signed_certificate ?
+          @result.cert_details = {}
+          @result.cert_details[:main] = {}
+          @result.cert_details[:main][:subject] = @acr.signed_certificate ? @acr.signed_certificate.common_name : nil
+          @result.cert_details[:main][:order_status] = @acr.status
+          @result.cert_details[:main][:order_date] = @acr.created_at
+          @result.cert_details[:main][:expiry_date] = @acr.signed_certificate ?
                                            @acr.signed_certificate.expiration_date : nil
 
-          @result.sub_main = {}
-          @result.sub_main[:certificate_type] = certificate_type(@acr)
-          @result.sub_main[:certificate_duration] = @acr.certificate_duration
-          @result.sub_main[:validation_level] = @acr.certificate.description["validation_level"]
-
-          if @acr.is_unused_credit? || @acr.certificate_content.csr.blank? || @acr.certificate_content.csr.signed_certificate.blank?
-            @result.sub_main[:issued_date] = 'Pending'
-          else
-            @result.sub_main[:issued_date] = @acr.certificate_content.csr.signed_certificate.created_at.strftime("%b %d, %Y")
-          end
-
-          if @acr.is_unused_credit? || @acr.certificate_content.csr.blank?
-            @result.sub_main[:requested_date] = 'N/A'
-          else
-            @result.sub_main[:requested_date] = @acr.certificate_content.csr.created_at.strftime("%b %d, %Y")
-          end
-
-          @result.certificate_content = {}
-          @result.certificate_content[:csr_blank] = @acr.certificate_content.csr.blank?
-          @result.certificate_content[:fields] = {}
-          @result.certificate_content[:fields][:is_signed] = true
+          @result.cert_details[:certificate_content] = {}
+          @result.cert_details[:certificate_content][:csr_blank] = @acr.certificate_content.csr.blank?
+          @result.cert_details[:certificate_content][:fields] = {}
+          @result.cert_details[:certificate_content][:fields][:is_signed] = true
 
           if @acr.certificate_content.csr.signed_certificate.blank?
             csr = @acr.certificate_content.csr
-            @result.certificate_content[:fields][:is_signed] = false
-            @result.certificate_content[:fields][:organization] = csr.organization
-            @result.certificate_content[:fields][:organization_unit] = csr.organization_unit
-            @result.certificate_content[:fields][:locality] = csr.locality
-            @result.certificate_content[:fields][:state] = csr.state
-            @result.certificate_content[:fields][:country] = csr.country
+            @result.cert_details[:certificate_content][:fields][:is_signed] = false
+            @result.cert_details[:certificate_content][:fields][:organization] = csr.organization
+            @result.cert_details[:certificate_content][:fields][:organization_unit] = csr.organization_unit
+            @result.cert_details[:certificate_content][:fields][:locality] = csr.locality
+            @result.cert_details[:certificate_content][:fields][:state] = csr.state
+            @result.cert_details[:certificate_content][:fields][:country] = csr.country
           else
             sc = @acr.certificate_content.csr.signed_certificate
-            @result.certificate_content[:fields][:algorithm] = sc.signature_algorithm
-            @result.certificate_content[:fields][:decoded] = sc.decoded
+            @result.cert_details[:certificate_content][:fields][:algorithm] = sc.signature_algorithm
+            @result.cert_details[:certificate_content][:fields][:decoded] = sc.decoded
           end
 
-          @result.in_limit = (@acr.certificate_duration(:days).to_i > 1187) && (@acr.created_at > Date.parse('Apr 1 2015'))
-          @result.registrant = @acr.certificate_content.registrant.to_api_query
+          @result.cert_details[:in_limit] = (@acr.certificate_duration(:days).to_i > 1187) && (@acr.created_at > Date.parse('Apr 1 2015'))
+          @result.cert_details[:registrant] = @acr.certificate_content.registrant.to_api_query
 
           if @acr.certificate_content.issued? && !@acr.certificate_content.expired?
             csr, sc = @acr.csr, @acr.signed_certificate
-            # @result.download = {
+            # @result.cert_details.download = {
             #     iis7: ["Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
             #     cpanel: ["WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
             #     apache: ["Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
@@ -247,7 +250,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             #     other: ["Other platforms", certificate_file("other", @acr), SignedCertificate::OTHER_INSTALL_LINK],
             #     bundle: ["CA bundle (intermediate certs)", certificate_file("ca_bundle", @acr), SignedCertificate::OTHER_INSTALL_LINK]
             # }
-            @result.download = [
+            @result.cert_details[:download] = [
                 ["iis7", "Microsoft IIS (*.p7b)", certificate_file("pkcs", @acr), SignedCertificate::IIS_INSTALL_LINK],
                 ["cpanel", "WHM/cpanel", certificate_file("whm_bundle", @acr), SignedCertificate::CPANEL_INSTALL_LINK],
                 ["apache", "Apache", certificate_file("apache_bundle", @acr), SignedCertificate::APACHE_INSTALL_LINK],
@@ -263,28 +266,35 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           unless (@acr.certificate_content.csr.blank? ||
               (!@acr.certificate_content.show_validation_view? && @acr.is_test?))
             if @acr.certificate_content.pending_validation?
-              @result.domain_validation = true
+              @result.cert_details[:domain_validation] = true
             end
             unless @acr.certificate.is_dv?
-              @result.validation_document = {}
+              @result.cert_details[:validation_document] = {}
 
               unless @acr.certificate_content.blank? ||
                   @acr.certificate_content.new? ||
                   @acr.certificate_content.csr_submitted? ||
                   @acr.certificate_content.info_provided? ||
                   @acr.expired?
-                @result.validation_document[:links] = {}
-                @result.validation_document[:links][:status] = true
+                @result.cert_details[:validation_document][:links] = {}
+                @result.cert_details[:validation_document][:links][:status] = true
 
                 unless @acr.validation_rules_satisfied? || @acr.certificate_content.expired?
-                  @result.validation_document[:links][:upload] = true
+                  @result.cert_details[:validation_document][:links][:upload] = true
                 end
 
                 unless @acr.validation.validation_histories.blank?
-                  @result.validation_document[:links][:manage] = true
-                  @result.validation_document[:history] = {}
+                  @result.cert_details[:validation_document][:links][:manage] = true
+                  @result.cert_details[:validation_document][:history] = []
+
                   @acr.validation.validation_histories.each do |vh|
-                    @result.validation_document[:history][vh.id] = vh
+                    tmp = {}
+                    tmp[:id] = vh.id
+                    tmp[:preview] = getDocumentsPath(vh, vh.document_url(:preview))
+                    tmp[:doc_url] = getDocumentsPath(vh, vh.document_url)
+                    tmp[:file_name] = vh.document_file_name.shorten(25, false)
+
+                    @result.cert_details[:validation_document][:history] << tmp
                   end
                 end
               end
@@ -292,116 +302,232 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           end
 
           if @acr.subject
-            @result.visit = @acr.subject.gsub(/^\*\./, "").downcase
+            @result.cert_details[:visit] = @acr.subject.gsub(/^\*\./, "").downcase
           end
 
           unless @acr.certificate_content.blank?
-            @result.contacts = {}
+            @result.cert_details[:contacts] = {}
             CertificateContent::CONTACT_ROLES.each do |role|
-              @result.contacts[role] = @acr.certificate_content.certificate_contacts.detect(&"is_#{role}?".to_sym)
+              @result.cert_details[:contacts][role] = @acr.certificate_content.certificate_contacts.detect(&"is_#{role}?".to_sym)
             end
           end
 
-          @result.certificate_contents = {}
+          @result.cert_details[:certificate_contents] = {}
           @acr.certificate_contents.order('created_at DESC').each do |cc|
-            @result.certificate_contents[cc.label] = {}
-            @result.certificate_contents[cc.label][:server_software] = cc.server_software.try(:title)
-            @result.certificate_contents[cc.label][:current] = cc == @acr.certificate_content
+            @result.cert_details[:certificate_contents][cc.label] = {}
+            @result.cert_details[:certificate_contents][cc.label][:server_software] = cc.server_software.try(:title)
+            @result.cert_details[:certificate_contents][cc.label][:current] = cc == @acr.certificate_content
 
-            @result.certificate_contents[cc.label][:csr] = {}
+            @result.cert_details[:certificate_contents][cc.label][:csr] = {}
             csr = cc.csr
-            @result.certificate_contents[cc.label][:csr][:body] = csr.body
-            @result.certificate_contents[cc.label][:csr][:created_at] = csr.created_at.strftime("%b %d, %Y %R %Z")
+            @result.cert_details[:certificate_contents][cc.label][:csr][:body] = csr.body
+            @result.cert_details[:certificate_contents][cc.label][:csr][:created_at] = csr.created_at.strftime("%b %d, %Y %R %Z")
 
-            @result.certificate_contents[cc.label][:sc] = {}
+            @result.cert_details[:certificate_contents][cc.label][:sc] = {}
             sc = cc.csr.try(:signed_certificate)
             if sc
-              @result.certificate_contents[cc.label][:sc][:body] = sc.body
-              @result.certificate_contents[cc.label][:sc][:serial] = sc.serial
-              @result.certificate_contents[cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
-              @result.certificate_contents[cc.label][:sc][:decoded] = sc.decoded
-              @result.certificate_contents[cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
-              # @result.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
+              @result.cert_details[:certificate_contents][cc.label][:sc][:body] = sc.body
+              @result.cert_details[:certificate_contents][cc.label][:sc][:serial] = sc.serial
+              @result.cert_details[:certificate_contents][cc.label][:sc][:created_at] = sc.created_at.strftime("%b %d, %Y %R %Z")
+              @result.cert_details[:certificate_contents][cc.label][:sc][:decoded] = sc.decoded
+              @result.cert_details[:certificate_contents][cc.label][:sc][:subject_alternative_names] = sc.subject_alternative_names
+              # @result.cert_details.certificate_contents[cc.label]['permitted_to'] = permitted_to!(:create, SignedCertificate.new)
             end
           end
 
-          @result.api_commands = {}
-          @result.api_commands[:is_server] = @acr.certificate.is_server?
-          @result.api_commands[:comm_name] = Settings.community_name
-          @result.api_commands[:is_test] = @acr.is_test
+          @result.cert_details[:api_commands] = {}
+          @result.cert_details[:api_commands][:is_server] = @acr.certificate.is_server?
+          @result.cert_details[:api_commands][:comm_name] = Settings.community_name
+          @result.cert_details[:api_commands][:is_test] = @acr.is_test
 
-          @result.api_commands[:products] = []
+          @result.cert_details[:api_commands][:products] = []
           serial_list = ['evucc256sslcom', 'ucc256sslcom', 'ov256sslcom', 'ev256sslcom', 'dv256sslcom', 'wc256sslcom', 'basic256sslcom']
           serial_list.push('premium256sslcom') if DEPLOYMENT_CLIENT=~/www.ssl.com/
           serial_list.each do |serial|
             c = Certificate.find_by_serial(serial)
-            @result.api_commands[:products].push('"' + c.api_product_code + '"' + ' - ' + c.title)
+            @result.cert_details[:api_commands][:products].push('"' + c.api_product_code + '"' + ' - ' + c.title)
           end
 
-          @result.api_commands[:command] = {}
-          @result.api_commands[:command][:command_1] = {}
-          @result.api_commands[:command][:command_1][:key] = @acr.csr ? 'Status/Retrieve' : 'Status'
-          @result.api_commands[:command][:command_1][:doc_url] =
+          @result.cert_details[:api_commands][:command] = {}
+          @result.cert_details[:api_commands][:command][:command_1] = {}
+          @result.cert_details[:api_commands][:command][:command_1][:key] = @acr.csr ? 'Status/Retrieve' : 'Status'
+          @result.cert_details[:api_commands][:command][:command_1][:doc_url] =
               'http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D'
-          @result.api_commands[:command][:command_1][:command_str] = @acr.to_api_string(action: 'show', domain_override: api_domain(@acr))
+          @result.cert_details[:api_commands][:command][:command_1][:command_str] = @acr.to_api_string(action: 'show', domain_override: api_domain(@acr))
 
-          @result.api_commands[:command][:command_2] = {}
-          @result.api_commands[:command][:command_2][:key] = 'List Orders'
-          @result.api_commands[:command][:command_2][:doc_url] =
+          @result.cert_details[:api_commands][:command][:command_2] = {}
+          @result.cert_details[:api_commands][:command][:command_2][:key] = 'List Orders'
+          @result.cert_details[:api_commands][:command][:command_2][:doc_url] =
               'http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2F%7B%3Fquery_type%2Cresponse_type%2Cresponse_encoding%7D'
-          @result.api_commands[:command][:command_2][:command_str] = @acr.to_api_string(action: 'index', domain_override: api_domain(@acr))
+          @result.cert_details[:api_commands][:command][:command_2][:command_str] = @acr.to_api_string(action: 'index', domain_override: api_domain(@acr))
 
-          @result.api_commands[:command][:command_3] = {}
-          @result.api_commands[:command][:command_3][:key] = 'New Order W/O CSR'
-          @result.api_commands[:command][:command_3][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates'
-          @result.api_commands[:command][:command_3][:command_str] = @acr.to_api_string(action: 'create', domain_override: api_domain(@acr))
+          @result.cert_details[:api_commands][:command][:command_3] = {}
+          @result.cert_details[:api_commands][:command][:command_3][:key] = 'New Order W/O CSR'
+          @result.cert_details[:api_commands][:command][:command_3][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates'
+          @result.cert_details[:api_commands][:command][:command_3][:command_str] = @acr.to_api_string(action: 'create', domain_override: api_domain(@acr))
 
-          @result.api_commands[:command][:command_4] = {}
-          @result.api_commands[:command][:command_4][:key] = 'List DCV Methods W/O CSR'
-          @result.api_commands[:command][:command_4][:doc_url] =
+          @result.cert_details[:api_commands][:command][:command_4] = {}
+          @result.cert_details[:api_commands][:command][:command_4][:key] = 'List DCV Methods W/O CSR'
+          @result.cert_details[:api_commands][:command][:command_4][:doc_url] =
               'http://docs.sslcomapi.apiary.io/#get-%2Fcertificate%2F%7Bref%7D%2Fvalidations%2Fmethods%7B%3Faccount_key%2Csecret_key%7D'
-          @result.api_commands[:command][:command_4][:command_str] =
+          @result.cert_details[:api_commands][:command][:command_4][:command_str] =
               @acr.to_api_string(action: 'dcv_methods_wo_csr', domain_override: api_domain(@acr))
 
           if @acr.certificate_content.registrant
             if @acr.csr
-              @result.api_commands[:command][:command_5] = {}
-              @result.api_commands[:command][:command_5][:key] = 'New Order W/ CSR'
-              @result.api_commands[:command][:command_5][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates'
-              @result.api_commands[:command][:command_5][:command_str] = @acr.to_api_string(action: 'create_w_csr', domain_override: api_domain(@acr))
+              @result.cert_details[:api_commands][:command][:command_5] = {}
+              @result.cert_details[:api_commands][:command][:command_5][:key] = 'New Order W/ CSR'
+              @result.cert_details[:api_commands][:command][:command_5][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates'
+              @result.cert_details[:api_commands][:command][:command_5][:command_str] = @acr.to_api_string(action: 'create_w_csr', domain_override: api_domain(@acr))
 
-              @result.api_commands[:command][:command_6] = {}
-              @result.api_commands[:command][:command_6][:key] = 'List DCV Methods W/ CSR'
-              @result.api_commands[:command][:command_6][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash'
-              @result.api_commands[:command][:command_6][:command_str] = @acr.to_api_string(action: 'dcv_methods_w_csr', domain_override: api_domain(@acr))
+              @result.cert_details[:api_commands][:command][:command_6] = {}
+              @result.cert_details[:api_commands][:command][:command_6][:key] = 'List DCV Methods W/ CSR'
+              @result.cert_details[:api_commands][:command][:command_6][:doc_url] = 'http://docs.sslcomapi.apiary.io/#post-%2Fcertificates%2Fvalidations%2Fcsr_hash'
+              @result.cert_details[:api_commands][:command][:command_6][:command_str] = @acr.to_api_string(action: 'dcv_methods_w_csr', domain_override: api_domain(@acr))
 
-              @result.api_commands[:command][:command_7] = {}
-              @result.api_commands[:command][:command_7][:key] = 'Update DCV'
-              @result.api_commands[:command][:command_7][:doc_url] = 'http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D'
-              @result.api_commands[:command][:command_7][:command_str] = @acr.to_api_string(action: 'update_dcv', domain_override: api_domain(@acr))
+              @result.cert_details[:api_commands][:command][:command_7] = {}
+              @result.cert_details[:api_commands][:command][:command_7][:key] = 'Update DCV'
+              @result.cert_details[:api_commands][:command][:command_7][:doc_url] = 'http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D'
+              @result.cert_details[:api_commands][:command][:command_7][:command_str] = @acr.to_api_string(action: 'update_dcv', domain_override: api_domain(@acr))
             end
             if @acr.external_order_number
-              @result.api_commands[:command][:command_8] = {}
-              @result.api_commands[:command][:command_8][:key] = 'Process CSR or Reissue'
-              @result.api_commands[:command][:command_8][:doc_url] = 'http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D'
-              @result.api_commands[:command][:command_8][:command_str] = @acr.to_api_string(action: 'update', domain_override: api_domain(@acr))
+              @result.cert_details[:api_commands][:command][:command_8] = {}
+              @result.cert_details[:api_commands][:command][:command_8][:key] = 'Process CSR or Reissue'
+              @result.cert_details[:api_commands][:command][:command_8][:doc_url] = 'http://docs.sslcomapi.apiary.io/#put-%2Fcertificate%2F%7Bref%7D'
+              @result.cert_details[:api_commands][:command][:command_8][:command_str] = @acr.to_api_string(action: 'update', domain_override: api_domain(@acr))
 
-              @result.api_commands[:command][:command_9] = {}
-              @result.api_commands[:command][:command_9][:key] = 'Revoke'
-              @result.api_commands[:command][:command_9][:doc_url] =
+              @result.cert_details[:api_commands][:command][:command_9] = {}
+              @result.cert_details[:api_commands][:command][:command_9][:key] = 'Revoke'
+              @result.cert_details[:api_commands][:command][:command_9][:doc_url] =
                   'http://docs.sslcomapi.apiary.io/#reference/ssl-certificates/certificate-order/revoke-certificate'
-              @result.api_commands[:command][:command_9][:command_str] = @acr.to_api_string(action: 'revoke', domain_override: api_domain(@acr))
+              @result.cert_details[:api_commands][:command][:command_9][:command_str] = @acr.to_api_string(action: 'revoke', domain_override: api_domain(@acr))
             end
           end
 
           # TODO: In case of Admin.
         end
 
+        # if @result.cert_details.menu[:validation_status_tab]
+
+        if @result.menu[:smart_seal_tab]
+          ss = @acr.site_seal
+
+          @result.smart_seal = {}
+          @result.smart_seal[:main] = {}
+          @result.smart_seal[:main][:subject] = @acr.signed_certificate ? @acr.signed_certificate.common_name : nil
+          @result.smart_seal[:main][:cert_status] = certificate_status(@acr, true)
+          @result.smart_seal[:main][:site_seal_status] = site_seal_status(ss) unless ss && ss.blank?
+
+          @result.smart_seal[:site_seal_id] = ss.id unless ss && ss.blank?
+          @result.smart_seal[:is_ev] = @acr.certificate.is_ev?
+          @result.smart_seal[:is_dv] = @acr.certificate.is_dv?
+          @result.smart_seal[:expired] = @acr.certificate_content.expired?
+          @result.smart_seal[:valid_his_blank] = @acr.validation.validation_histories.blank?
+          @result.smart_seal[:preferred_artifacts_status] = ss.preferred_artifacts_status unless ss && ss.blank?
+          @result.smart_seal[:preferred_seal_image] = ss.preferred_seal_image? unless ss && ss.blank?
+          @result.smart_seal[:workflow_state] = ss.workflow_state unless ss && ss.blank?
+          @result.smart_seal[:is_disabled] = ss.is_disabled? unless ss && ss.blank?
+
+          co = ss.latest_certificate_order #TODO: different with @ACR?
+          r = co.certificate_content.registrant
+
+          @result.smart_seal[:co_subject] = @acr.subject
+          @result.smart_seal[:secured_site_report_subject] = co.display_subject
+          @result.smart_seal[:has_artifacts] = ss.has_artifacts? unless ss && ss.blank?
+          @result.smart_seal[:ss_ref] = ss.ref unless ss && ss.blank?
+          @result.smart_seal[:report_certificate_status] = certificate_status(@acr)
+
+          if r
+            @result.smart_seal[:registrant_company_name] = r.company_name
+            @result.smart_seal[:registrant_city_state_country] = [r.city, r.state, r.country].join(', ')
+          end
+
+          @result.smart_seal[:community_name] = Settings.community_name
+          @result.smart_seal[:cc_validated] = @acr.certificate_content.validated?
+          @result.smart_seal[:cc_issued] = @acr.certificate_content.issued?
+          @result.smart_seal[:sc_dv] = @acr.csr.signed_certificate.is_dv?
+
+          # @result.smart_seal[:hide_document] =
+          #     @acr.other_party_validation_request && @acr.other_party_validation_request.hide_documents?
+          @result.smart_seal[:validation_histories] = []
+          validation_histories = @acr.validation_histories
+          validation_histories.each do |validation|
+            tmp = {}
+            tmp[:id] = validation.id
+            tmp[:thumb] = getDocumentsPath(validation, validation.document_url(:thumb))
+            tmp[:preview] = getDocumentsPath(validation, validation.document_url(:preview))
+            tmp[:doc_url] = getDocumentsPath(validation, validation.document_url)
+            tmp[:file_name] = validation.document_file_name.shorten(25, false)
+            tmp[:file_size] = bytesToSize(Integer(validation.document_file_size))
+            tmp[:created_at] = validation.created_at.strftime("%b %d, %Y")
+            tmp[:updated_at] = validation.updated_at.strftime("%b %d, %Y")
+            tmp[:publish_to_site_seal] = validation.publish_to_site_seal
+            tmp[:viewing_method] = validation.preferred_viewing_method
+            tmp[:publish_to_site_seal_approval] = validation.publish_to_site_seal_approval
+            tmp[:satisfies_validation_methods] = validation.satisfies_validation_methods.join(', ') unless validation.satisfies_validation_methods.blank?
+
+            tmp[:validation_rules] = []
+            valid_rules = validation.validation_rules
+            valid_rules.each do |vr|
+              tmp[:validation_rules] << vr.description
+            end
+
+            @result.smart_seal[:validation_histories] << tmp
+          end
+          # @result.smart_seal[:validation_histories] = @acr.validation_histories
+          # TODO: Other_party_request(CO)
+          @result.smart_seal[:other_party_request] = false
+          @result.smart_seal[:valid_his_preview] = false
+        end
+
+        # if @result.menu[:transaction_receipt_tab]
+
         render(:template => @template) and return
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
+  rescue => e
+    render_500_error e
+  end
+
+  def update_site_seal_v1_4
+    @template = "api_certificate_requests/site_seal_tab_v1_4.rabl"
+
+    if @result.save
+      @acr = @result.find_certificate_order
+
+      if params[:artifacts_status]
+        @acr.site_seal.update_attributes(params[:artifacts_status])
+        @result.artifacts_status = @acr.site_seal.preferred_artifacts_status
+      end
+
+      if params[:publish_to_site_seal]
+        validation_his = ValidationHistory.find(params[:id])
+        validation_his.update_attributes(params[:publish_to_site_seal])
+        @result.id = params[:id]
+        @result.publish_to_site_seal = validation_his.publish_to_site_seal
+      end
+
+      if params[:viewing_method]
+        validation_his = ValidationHistory.find(params[:id])
+        validation_his.update_attributes(params[:viewing_method])
+        @result.id = params[:id]
+        @result.viewing_method = validation_his.preferred_viewing_method
+      end
+
+      if params[:publish_to_site_seal_approval]
+        validation_his = ValidationHistory.find(params[:id])
+        validation_his.update_attribute(:publish_to_site_seal_approval,
+                                        params[:publish_to_site_seal_approval])
+        @result.id = params[:id]
+        @result.publish_to_site_seal_approval = validation_his.publish_to_site_seal_approval
+      end
+
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render_200_status
   rescue => e
     render_500_error e
   end
@@ -465,8 +591,8 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
-  def show_upload_v1_4
-    @template = "api_certificate_requests/show_upload_v1_4"
+  def view_upload_v1_4
+    @template = "api_certificate_requests/view_upload_v1_4"
 
     if @result.save
       @acr = @result.find_certificate_order
@@ -652,59 +778,63 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     client_app  = params[:client_app]
 
     if @result.save
+      @orders = @result.find_certificate_orders(params[:search])
 
       page     = params[:page] || 1
       per_page = params[:per_page] || PER_PAGE_DEFAULT
-      @orders = @result.find_certificate_orders(params[:search],(page.to_i-1)*per_page.to_i,per_page.to_i)
+      @acrs    = paginate @orders, per_page: per_page.to_i, page: page.to_i
 
-      @results = []
-      @orders.each do |acr|
-        c = acr.certificate
-        sc = acr.signed_certificate
-        cc = acr.certificate_content
+      if @acrs.is_a?(ActiveRecord::Relation)
+        @results = []
+        @acrs.each do |acr|
+          c = acr.certificate
+          sc = acr.signed_certificate
+          cc = acr.certificate_content
 
-        result = ApiCertificateRetrieve.new(ref: acr.ref)
-        result.order_date =   acr.created_at
-        result.order_status = acr.status
-        result.domains =      acr.all_domains
-        result.description =  acr.description
-        result.common_name =  sc ? sc.common_name : nil
-        result.product_type = c.product
-        result.period =       acr.certificate_contents.first.duration
+          result = ApiCertificateRetrieve.new(ref: acr.ref)
+          result.order_date =   acr.created_at
+          result.order_status = acr.status
+          result.domains =      acr.all_domains
+          result.description =  acr.description
+          result.common_name =  sc ? sc.common_name : nil
+          result.product_type = c.product
+          result.period =       acr.certificate_contents.first.duration
 
-        if client_app
-          result.expiration_date = sc ? sc.expiration_date : nil
-        else
-          result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
-          result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
-
-          if c.is_ucc?
-            result.domains_qty_purchased = acr.purchased_domains('all').to_s
-            result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
+          if client_app
+            result.expiration_date = sc ? sc.expiration_date : nil
           else
-            result.domains_qty_purchased = '1'
-            result.wildcard_qty_purchased = c.is_wildcard? ? '1' : '0'
-          end
+            result.registrant = cc.registrant.to_api_query if (cc && cc.registrant)
+            result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
 
-          if (sc && result.query_type!='order_status_only')
-            signed_certificate_format = sc.to_format(
-                response_type:     @result.response_type, #assume comodo issued cert
-                response_encoding: @result.response_encoding
-            )
-            result.certificates = signed_certificate_format || sc.to_nginx
-            result.subject_alternative_names = sc.subject_alternative_names
-            result.effective_date = sc.effective_date
-            result.expiration_date = sc.expiration_date
-            result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
-            result.site_seal_code = ERB::Util.json_escape(render_to_string(
-              partial: 'site_seals/site_seal_code.html.haml',
-              locals: {co: acr},
-              layout: false)
-            )
+            if c.is_ucc?
+              result.domains_qty_purchased = acr.purchased_domains('all').to_s
+              result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
+            else
+              result.domains_qty_purchased = '1'
+              result.wildcard_qty_purchased = c.is_wildcard? ? '1' : '0'
+            end
+
+            if (sc && result.query_type!='order_status_only')
+              signed_certificate_format = sc.to_format(
+                  response_type:     @result.response_type, #assume comodo issued cert
+                  response_encoding: @result.response_encoding
+              )
+              result.certificates = signed_certificate_format || sc.to_nginx
+              result.subject_alternative_names = sc.subject_alternative_names
+              result.effective_date = sc.effective_date
+              result.expiration_date = sc.expiration_date
+              result.algorithm = sc.is_SHA2? ? 'SHA256' : 'SHA1'
+              result.site_seal_code = ERB::Util.json_escape(render_to_string(
+                                                                partial: 'site_seals/site_seal_code.html.haml',
+                                                                locals: {co: acr},
+                                                                layout: false)
+              )
+            end
           end
+          @results << result
         end
-        @results << result
       end
+
       if client_app
         render json: serialize_models(@results,
           meta: { orders_count: @orders.count, page: page, per_page: per_page }
@@ -758,7 +888,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       http_to_s = dcv_verify(params[:protocol])
       @result.is_passed = http_to_s
 
-      render_200_status_noschema
+      render_200_status
     end
   rescue => e
     render_500_error e
@@ -877,7 +1007,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke
-              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "show_upload_v1_4", "upload_v1_4"
+              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4", "update_site_seal_v1_4"
                 ApiCertificateRetrieve
               when "api_parameters_v1_4"
                 ApiParameters
@@ -1047,7 +1177,76 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     @val_history.save
     @val_history
   end
-  
+
+  def certificate_status(co, is_managing=nil)
+    pending = is_managing ? "info" : "warning"
+    cc=co.certificate_content
+    case cc.workflow_state
+      when "issued"
+        if cc.csr.signed_certificate.blank?
+          ["certificate missing", "danger"]
+        else
+          ef, ex = [cc.csr.signed_certificate.effective_date, cc.csr.
+              signed_certificate.expiration_date]
+          if ex.blank? || ef.blank?
+            #these were signed certs transferred over and somehow were missing these dates
+            ["invalid certificate", "danger"]
+          elsif ex < Time.now
+            ["invalid (expired on #{ex.strftime("%b %d, %Y")})", pending]
+          elsif ef > Time.now
+            ["invalid (starts on #{ef.strftime("%b %d, %Y")})", pending]
+          else
+            ["valid (#{ef.strftime("%b %d, %Y")} - #{ex.strftime("%b %d, %Y")})",
+             "success"]
+          end
+        end
+      when "canceled"
+        ["canceled", "danger"]
+      when "revoked"
+        ["revoked", "danger"]
+      else
+        ["pending issuance", pending]
+    end
+  end
+
+  def site_seal_status(site_seal)
+    case site_seal.workflow_state
+      when "new"
+        [SiteSeal::NEW_STATUS, 'danger']
+      when SiteSeal::FULLY_ACTIVATED.to_s
+        [SiteSeal::FULLY_ACTIVATED_STATUS, 'success']
+      when SiteSeal::CONDITIONALLY_ACTIVATED.to_s
+        [SiteSeal::CONDITIONALLY_ACTIVATED_STATUS, 'warning']
+      when SiteSeal::DEACTIVATED.to_s
+        [SiteSeal::DEACTIVATED_STATUS, 'danger']
+      when SiteSeal::CANCELED.to_s
+        [SiteSeal::CANCELED_STATUS, 'danger']
+      else
+        ['','']
+    end
+  end
+
+  def bytesToSize(bytes)
+    sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+    return '0 Byte' if (bytes == 0)
+
+    i = (Math.log(bytes) / Math.log(1024)).floor
+    return (bytes / (1024**i)).round(2).to_s + ' ' + sizes[i]
+  end
+
+  def getDocumentsPath(vh, path)
+    file_name = path[(path.rindex('/') + 1)..path.length]
+    param_style = file_name[0..(file_name.rindex('.') - 1)]
+
+    if vh.document_file_name.force_encoding('UTF-8').include?(file_name)
+      style = vh.document.default_style
+    else
+      style = param_style.to_sym
+    end
+
+    return vh.authenticated_s3_get_url :style=> style
+  end
+
   def set_template(filename)
     @template = File.join('api/v1/api_certificate_requests/', filename)
   end
