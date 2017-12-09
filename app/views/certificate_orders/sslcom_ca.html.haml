@@ -1,4 +1,5 @@
 -if current_user.is_system_admins?
+  -csr=@certificate_order.csr
   .reseller_registration_profile
     %h3 Issue SSL.com Signed Certificate for ref# #{@certificate_order.ref} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
     =form_tag send_to_ca_certificate_order_validation_url(certificate_order_id: @certificate_order.ref), remote: true, method: :post, id: "send_to_ca", "data-type"=>"json" do
@@ -10,10 +11,7 @@
           .clearfix
             %label{for: 'cn'}
               *CN (Common name):
-            -if for_evcs? or for_cs?
-              =text_field_tag :cn, @certificate_order.csr.common_name
-            -else
-              %h3=@certificate_order.csr.common_name
+            =text_field_tag :cn, csr.try(:common_name)
           -if for_ov? or for_ev? or for_cs? or for_evcs?
             .clearfix
               %label{for: 'o'}
@@ -82,7 +80,7 @@
           .clearfix
             %label{for: 'csr'}
               *CSR (Certificate Signing Request):
-            =text_area_tag :csr, @certificate_order.certificate_content.csr.body
+            =text_area_tag :csr, csr.try(:body)
           -unless for_evcs? or for_cs?
             .clearfix
               %label{for: 'san'}

@@ -366,16 +366,16 @@ ActiveRecord::Schema.define(version: 20171207223422) do
     t.string   "contactable_type",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "assumed_name",          limit: 255
+    t.string   "business_category",     limit: 255
+    t.string   "duns_number",           limit: 255
+    t.string   "company_number",        limit: 255
     t.integer  "registrant_type",       limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
     t.string   "incorporation_state",   limit: 255
     t.string   "incorporation_city",    limit: 255
-    t.string   "assumed_name",          limit: 255
-    t.string   "business_category",     limit: 255
-    t.string   "duns_number",           limit: 255
-    t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
   end
 

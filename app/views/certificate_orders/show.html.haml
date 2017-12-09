@@ -260,71 +260,72 @@
                           (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
-                        .certificate_details_box
-                          %strong certificate signing request
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
-                            -unless csr.blank?
-                              %div
-                                submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
-                              =text_area_tag :csr, csr.body, :size=>"30x10"
+                        -unless csr.blank?
+                          .certificate_details_box
+                            %strong certificate signing request
+                            -unless permitted_to?(:create, SignedCertificate.new) && current
+                              -unless csr.blank?
+                                %div
+                                  submitted on #{c.csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                =text_area_tag :csr, csr.body, :size=>"30x10"
+                              -else
+                                no certificate signing request found
                             -else
-                              no certificate signing request found
-                          -else
-                            #csr_submitted_on
-                              %span.submitted_on
-                                -unless csr.try(:created_at).blank?
-                                  submitted on
-                                  \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
-                                -else
-                                  &nbsp
-                            =form_for csr do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                              =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
-                              #temporary_csr.hidden[csr, :new]
-                                =text_area_tag :tmp_csr, csr.try(:body)
-                        .certificate_details_box
-                          %strong signed certificate
-                          -unless permitted_to?(:create, SignedCertificate.new) && current
+                              #csr_submitted_on
+                                %span.submitted_on
+                                  -unless csr.try(:created_at).blank?
+                                    submitted on
+                                    \#{csr.created_at.strftime("%b %d, %Y %R %Z")}
+                                  -else
+                                    &nbsp
+                              =form_for csr do |f|
+                                =f.text_area :body, :cols=>30, :rows=>10
+                                .clearfix
+                                =submit_tag 'Submit csr', :class=> 'submit_signed_certificate'
+                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_on_csr', :style=>'display:none;vertical-align: middle;')
+                                #temporary_csr.hidden[csr, :new]
+                                  =text_area_tag :tmp_csr, csr.try(:body)
+                          .certificate_details_box
+                            %strong signed certificate
+                            -unless permitted_to?(:create, SignedCertificate.new) && current
+                              -unless sc.try(:body).blank?
+                                %div
+                                  submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
+                              -else
+                                %div
+                                  no signed certificate found
+                            -else
+                              #signed_certificate_submitted_on
+                                %span.submitted_on
+                                  -unless sc.try(:created_at).blank?
+                                    submitted on
+                                    \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
+                                  -else
+                                    &nbsp
+                              =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
+                                =f.text_area :body, :cols=>30, :rows=>10
+                                .clearfix
+                                  #{check_box_tag "email_customer", true, true}notify customer?
+                                =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
+                                =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
+                                #temporary_signed_certificate.hidden[csr]
+                                  =text_area_tag :tmp_signed_certificate, sc.try(:body)
+                          .certificate_details_box
                             -unless sc.try(:body).blank?
-                              %div
-                                submitted on #{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                              =text_area_tag :signed_certificate, sc.body, :size=>"30x10"
-                            -else
-                              %div
-                                no signed certificate found
-                          -else
-                            #signed_certificate_submitted_on
-                              %span.submitted_on
-                                -unless sc.try(:created_at).blank?
-                                  submitted on
-                                  \#{sc.created_at.strftime("%b %d, %Y %R %Z")}
-                                -else
-                                  &nbsp
-                            =form_for SignedCertificate.new, :url=>csr_signed_certificates_path(csr) do |f|
-                              =f.text_area :body, :cols=>30, :rows=>10
-                              .clearfix
-                                #{check_box_tag "email_customer", true, true}notify customer?
-                              =submit_tag 'Submit certificate', :class=> 'submit_signed_certificate'
-                              =image_tag('waiting_bar_medium.gif', :id=>'waiting_bar', :style=>'display:none;vertical-align: middle;')
-                              #temporary_signed_certificate.hidden[csr]
-                                =text_area_tag :tmp_signed_certificate, sc.try(:body)
-                        .certificate_details_box
-                          -unless sc.try(:body).blank?
-                            -if co.certificate.is_code_signing?
-                              %strong parsed certificate
-                              %div
-                                issued to: #{sc.common_name}
-                              %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
-                            -else
-                              %strong parsed certificate
-                              %div
-                                domains
-                              %textarea.selectAll{cols: 10, rows: 5}=sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : ""
-                              %div
-                                raw
-                              %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
+                              -if co.certificate.is_code_signing?
+                                %strong parsed certificate
+                                %div
+                                  issued to: #{sc.common_name}
+                                %textarea.selectAll{cols: 30, rows: 10}=sc.decoded
+                              -else
+                                %strong parsed certificate
+                                %div
+                                  domains
+                                %textarea.selectAll{cols: 10, rows: 5}=sc.subject_alternative_names ? sc.subject_alternative_names.join("\n") : ""
+                                %div
+                                  raw
+                                %textarea.selectAll{cols: 10, rows: 4}=sc.decoded
                   -if current_user.is_admin?
                     %tr
                       %td(colspan="5")

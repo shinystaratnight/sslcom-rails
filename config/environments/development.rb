@@ -38,8 +38,6 @@ SslCom::Application.configure do
   config.assets.compile = true
   config.assets.digest = false
 
-  config.action_controller.asset_host='wwwsslcom.a.cdnify.io'
-
   ActiveMerchant::Billing::Base.mode = :test
   #config.log_level = :info
   # GATEWAY_TEST_CODE = 1.0

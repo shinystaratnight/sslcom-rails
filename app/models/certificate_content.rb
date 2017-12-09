@@ -4,6 +4,7 @@ class CertificateContent < ActiveRecord::Base
   
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
   has_one     :ssl_account, through: :certificate_order
+  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
@@ -128,7 +129,7 @@ class CertificateContent < ActiveRecord::Base
       event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        unless csr.sent_success #do not send if already sent successfully
+        if csr and !csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
           unless self.infringement.empty? # possible trademark problems
             OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
