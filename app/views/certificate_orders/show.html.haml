@@ -197,8 +197,9 @@
                                 %li
                                   #{display}
                                   %ul
-                                    %li PIN - #{token.activation_pin}
                                     %li Serial - #{token.serial_number}
+                                    %li Activation PIN - #{token.activation_pin}
+                                    %li Admin PIN - #{token.activation_pin}
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?

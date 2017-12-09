@@ -279,6 +279,8 @@ class CertificateOrder < ActiveRecord::Base
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
   PREPAID_FULL_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
+  NO_CSR_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
+    :pages=>PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
 
@@ -577,7 +579,9 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def prepaid_signup_process(cert=certificate)
-    if ssl_account && ssl_account.has_role?('reseller')
+    if cert.admin_submit_csr?
+      NO_CSR_SIGNUP_PROCESS
+    elsif ssl_account && ssl_account.has_role?('reseller')
       unless cert.is_ev?
         PREPAID_EXPRESS_SIGNUP_PROCESS
       else

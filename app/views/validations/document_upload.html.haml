@@ -12,7 +12,7 @@
   =error_messages_for :validation, :dcv, :other_party_validation_request
 #stylized.default_form
   =form_tag(upload_certificate_order_validation_path(co.ref),{ :multipart => true}) do
-    -if checkout_in_progress
+    -if checkout_in_progress and !co.certificate.is_code_signing?
       -unless co.certificate.is_dv?
         =render partial: 'refer_to_others', locals: {co: co, hide_options: !checkout_in_progress}
       =render partial: 'proof_of_dcv', locals: {co: co}
@@ -34,7 +34,11 @@
       #documents_upload_section
         #documents_upload_instructions
           %h2 Documents
-          -if co.certificate.is_ev?
+          -if co.certificate.is_ev? or co.certificate.is_evcs?
+            %p
+              Please refer to
+              =link_to "https://www.ssl.com/faqs/ssl-ev-validation-requirements/"
+              for details on the EV validation process.
             %p
               #{Settings.community_name} will verify the existence of your business, the ownership of the domain(s)
               #{co.all_domains.join(", ")}, and your employment status or authority to
@@ -43,9 +47,9 @@
               %dd
                 %ul
                   %li
-                    Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/22/0/ev-ssl-certificate-subscriber-agreement"}
+                    Please submit a signed copy of the #{link_to "EV Subscriber agreement #{image_tag('pdf_icon.gif')}".html_safe, co.certificate.is_evcs? ? Certificate::SSLCOM_EV_SUBSCRIBER_AGREEMENT : Certificate::USERTRUST_EV_SUBSCRIBER_AGREEMENT }
                   %li
-                    Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe, "http://support.ssl.com/default_import/Knowledgebase/Article/View/6/0/ev-authorization-form-simple"}
+                    Please submit a signed copy of the #{link_to "EV Authorization Form #{image_tag('pdf_icon.gif')}".html_safe,  co.certificate.is_evcs? ? Certificate::SSLCOM_EV_AUTHORIZATION : Certificate::USERTRUST_EV_AUTHORIZATION}
             %p
               Lastly, please choose one of the following items to submit:
             %dl.listing

@@ -105,24 +105,28 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1/edit
   def edit
     unless @certificate_order.blank?
-      if @certificate_order.is_unused_credit?
-        @certificate_order.has_csr=true
-        @certificate = @certificate_order.mapped_certificate
-        @certificate_content = @certificate_order.certificate_content
-        @certificate_content.agreement=true
-        return render '/certificates/buy', :layout=>'application'
-      end
-      unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
-        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+      @certificate = @certificate_order.mapped_certificate
+      unless @certificate.admin_submit_csr?
+        if @certificate_order.is_unused_credit?
+          @certificate_order.has_csr=true
+          @certificate_content = @certificate_order.certificate_content
+          @certificate_content.agreement=true
+          return render '/certificates/buy', :layout=>'application'
+        end
+        unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
+          redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+        else
+          @csr = @certificate_order.certificate_content.csr
+          setup_registrant()
+          @registrant.company_name = @csr.organization
+          @registrant.department = @csr.organization_unit
+          @registrant.city = @csr.locality
+          @registrant.state = @csr.state
+          @registrant.email = @csr.email
+          @registrant.country = @csr.country
+        end
       else
-        @csr = @certificate_order.certificate_content.csr
-        setup_registrant()
-        @registrant.company_name = @csr.organization
-        @registrant.department = @csr.organization_unit
-        @registrant.city = @csr.locality
-        @registrant.state = @csr.state
-        @registrant.email = @csr.email
-        @registrant.country = @csr.country
+        setup_registrant
       end
       @saved_registrants = current_user.ssl_account.saved_registrants
     else
@@ -183,7 +187,7 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
-        if cc.csr_submitted?
+        if cc.csr_submitted? or cc.new?
           cc.provide_info!
           if current_user.ssl_account.is_registered_reseller?
             @order = @certificate_order.order

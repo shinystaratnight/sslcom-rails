@@ -102,6 +102,7 @@ class CertificateContent < ActiveRecord::Base
   workflow do
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
+      event :provide_info, :transitions_to => :info_provided
       event :cancel, :transitions_to => :canceled
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
@@ -116,6 +117,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
@@ -123,6 +125,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
         unless csr.sent_success #do not send if already sent successfully
