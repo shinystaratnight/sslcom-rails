@@ -293,7 +293,10 @@ SslCom::Application.routes.draw do
     concerns :teamable
   end
 
-  resources :cdns
+  resources :cdns do
+    post :register_api_key, on: :collection
+    post :update_resources, on: :collection
+  end
 
   resources :users, except: :index do
     collection do
