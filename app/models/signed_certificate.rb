@@ -67,6 +67,10 @@ class SignedCertificate < ActiveRecord::Base
   after_save do |s|
     s.send_processed_certificate if s.email_customer
     cc=s.csr.certificate_content
+    if cc.preferred_reprocessing?
+      cc.preferred_reprocessing=false
+      cc.save
+    end
     co=cc.certificate_order
     co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true) unless
         co.site_seal.fully_activated?
@@ -74,10 +78,6 @@ class SignedCertificate < ActiveRecord::Base
     co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
     last_sent=s.csr.domain_control_validations.last_sent
     last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
-    if cc.preferred_reprocessing?
-      cc.preferred_reprocessing=false
-      cc.save
-    end
   end
 
   scope :most_recent_expiring, lambda{|start, finish|
