@@ -3,11 +3,11 @@
 class SslcomCaRequest < CaApiRequest
   @parsed
   def username
-    (@parsed || JSON.parse(response))["username"]
+    (@parsed ||= JSON.parse(response))["username"] unless response.blank?
   end
 
   def certificate_chain
-    (@parsed || JSON.parse(response))["certificate_chain"]
+    (@parsed ||= JSON.parse(response))["certificate_chain"] unless response.blank?
   end
 
   def x509_certificates

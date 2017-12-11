@@ -25,9 +25,9 @@ class PhysicalTokensController < ApplicationController
   # PATCH/PUT /physical_tokens/1.json
   def update
     if @physical_token.update(physical_token_params)
-      head :no_content
+      redirect_to certificate_order_path @certificate_order
     else
-      render json: @physical_token.errors, status: :unprocessable_entity
+      format.html { render :action => "new" }
     end
   end
 
@@ -47,6 +47,10 @@ class PhysicalTokensController < ApplicationController
       flash[:error] = "Serial number is not valid for token '#{@physical_token.name}'"
     end
     redirect_to certificate_order_path @certificate_order
+  end
+
+  def edit
+
   end
 
   private

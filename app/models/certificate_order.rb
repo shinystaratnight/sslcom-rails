@@ -1030,7 +1030,7 @@ class CertificateOrder < ActiveRecord::Base
           "waiting on validation from customer"
         when "pending_validation", "validated"
           last_sent=csr.last_dcv
-          if last_sent.blank?
+          if last_sent.blank? or (is_evcs? and validation_histories.count>0)
             'validating, please wait' #assume intranet
           elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))
             'validating, please wait'

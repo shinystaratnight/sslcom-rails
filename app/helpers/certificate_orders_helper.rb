@@ -46,6 +46,10 @@ module CertificateOrdersHelper
         expiration_date.strftime("%b %d, %Y")
   end
 
+  def sandbox_notice
+    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+  end
+
   def action(certificate_order)
     certificate_content = certificate_order.certificate_content
     if certificate_content.new?
@@ -202,7 +206,7 @@ module CertificateOrdersHelper
   end
 
   def for_ev?
-    @certificate_order.certificate.is_ev? unless ["ov","dv"].include?(params[:downstep])
+    @certificate_order.certificate.is_evcs? unless ["ov","dv"].include?(params[:downstep])
   end
 
   # EV SSL can downstep to OV

@@ -149,6 +149,7 @@ class SslcomCaApi
     res = Net::HTTP.start(uri.hostname, uri.port) do |http|
       http.request(req)
     end
+    cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
     unless api_log_entry.username
@@ -157,9 +158,9 @@ class SslcomCaApi
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s
       SystemAudit.create(
-          owner:  current_user,
+          owner:  options[:current_user],
           target: api_log_entry,
-          notes:  "issued signed certificate for certificate order #{co.ref}",
+          notes:  "issued signed certificate for certificate order #{certificate_order.ref}",
           action: "SslcomCaApi#apply_for_certificate"
       )
     end
