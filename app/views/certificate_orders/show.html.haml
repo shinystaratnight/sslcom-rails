@@ -9,6 +9,8 @@
 -if params[:checkout] && co.certificate_content.pending_validation?
   -i=adjusted_position(7, co)
 =order_progress_indicator(i, co.certificate) unless i.blank?
+-if token=co.physical_tokens.first(&"in_transit?".to_sym)
+  -flash.now[:warning] = "Token #{token.name} has shipped with tracking number #{token.tracking_number}!" if co.certificate.is_evcs? and !co.physical_tokens.blank?
 =render :partial=>'quick_links'
 #certificate_orders
   %table(cellspacing="0")
@@ -191,8 +193,13 @@
                                   %a{style:"cursor: pointer;", onclick: "activate_physical_token('#{@certificate_order.ref}','#{token.id}','#{token.name}')"}="activate #{display}"
                                   -if current_user.is_system_admins?
                                     |
-                                    =link_to "delete", certificate_order_physical_token_path(@certificate_order,token), method: :delete,
+                                    =link_to "edit", edit_certificate_order_physical_token_path(@certificate_order.ref,token)
+                                    |
+                                    =link_to "delete", certificate_order_physical_token_path(@certificate_order.ref,token), method: :delete,
                                       data: {confirm: 'Are you sure you want to delete this token?'}
+                                -if token.in_transit?
+                                  %ul
+                                    %li=link_to "#{token.shipping_method}: #{token.tracking_number}"
                               -else
                                 %li
                                   #{display}

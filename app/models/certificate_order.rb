@@ -1030,7 +1030,7 @@ class CertificateOrder < ActiveRecord::Base
           "waiting on validation from customer"
         when "pending_validation", "validated"
           last_sent=csr.last_dcv
-          if last_sent.blank?
+          if last_sent.blank? or (is_evcs? and validation_histories.count>0)
             'validating, please wait' #assume intranet
           elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))
             'validating, please wait'
@@ -1494,7 +1494,8 @@ class CertificateOrder < ActiveRecord::Base
   private
 
   def fill_csr_fields(options, obj)
-    f= {'organizationName' => obj.company_name,
+    unless obj.blank?
+      f= {'organizationName' => obj.company_name,
           'organizationalUnitName' => obj.department,
           'postOfficeBox' => obj.po_box,
           'streetAddress1' => obj.address1,
@@ -1504,7 +1505,8 @@ class CertificateOrder < ActiveRecord::Base
           'stateOrProvinceName' => obj.state,
           'postalCode' => obj.postal_code,
           'countryName' => obj.country}
-    options.merge!(f.each{|k,v|f[k]=CGI.escape(v) unless v.blank?})
+      options.merge!(f.each{|k,v|f[k]=CGI.escape(v) unless v.blank?})
+    end
   end
 
   def post_process_csr

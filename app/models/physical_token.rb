@@ -5,15 +5,22 @@ class PhysicalToken < ActiveRecord::Base
   belongs_to :certificate_order
   belongs_to :signed_certificate
 
+  after_save do
+    if tracking_number and new?
+      ship_token!
+    end
+  end
+
   include Workflow
   workflow do
     state :new do
-      event :send, :transitions_to => :in_transit
+      event :ship_token, :transitions_to => :in_transit
       event :confirm_serial, :transitions_to => :in_possession
       event :soft_delete, :transitions_to => :soft_deleted
     end
 
     state :in_transit do
+      event :shipping_recipient_confirmation, :transitions_to => :received
       event :confirm_serial, :transitions_to => :in_possession
       event :soft_delete, :transitions_to => :soft_deleted
     end

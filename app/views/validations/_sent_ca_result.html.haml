@@ -1,12 +1,16 @@
 -if ca_response.response
-  -result=CGI::parse(ca_response.response)
   %dt sent on #{ca_response.created_at}
-  -if result['errorCode'][0]=~/^[0]/
-    %dd order number: #{result['orderNumber'][0]}
-    %dd certificate id: #{result['certificateID'][0]}
-    %dd cost: $#{result['totalCost'][0]}
-    %dd eta: #{result['expectedDeliveryTime'][0]} hours
-  -elsif result['errorCode'][0]=~/^[1]/
-    %dd payment required
-  -else
-    %dd=result['errorMessage'][0]
+  -if ca_response.instance_of? SslcomCaRequest
+    %dd username: #{ca_response.username}
+    %dd certificate_chain: #{ca_response.certificate_chain}
+  -elsif !ca_response.response.blank?
+    -result=CGI::parse(ca_response.response)
+    -if result['errorCode'][0]=~/^[0]/
+      %dd order number: #{result['orderNumber'][0]}
+      %dd certificate id: #{result['certificateID'][0]}
+      %dd cost: $#{result['totalCost'][0]}
+      %dd eta: #{result['expectedDeliveryTime'][0]} hours
+    -elsif result['errorCode'][0]=~/^[1]/
+      %dd payment required
+    -else
+      %dd=result['errorMessage'][0]

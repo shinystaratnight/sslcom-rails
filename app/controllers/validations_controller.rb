@@ -32,7 +32,7 @@ class ValidationsController < ApplicationController
     elsif @certificate_order.certificate_content.issued?
       checkout={checkout: "true"}
       respond_to do |format|
-        format.html { redirect_to certificate_order_path({id: @certificate_order.id}.merge!(checkout))}
+        format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
       end
     end
   end
@@ -256,7 +256,7 @@ class ValidationsController < ApplicationController
 
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
-    result = co.apply_for_certificate(params)
+    result = co.apply_for_certificate(params.merge(current_user: current_user))
     unless [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? params[:ca]
       co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
     end
