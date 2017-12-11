@@ -1,0 +1,100 @@
+-if current_user.is_system_admins?
+  -csr=@certificate_order.csr
+  .reseller_registration_profile
+    %h3 Issue SSL.com Signed Certificate for ref #{link_to(@certificate_order.ref)} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
+    =form_tag send_to_ca_certificate_order_validation_url(certificate_order_id: @certificate_order.ref), remote: true, method: :post, id: "send_to_ca", "data-type"=>"json" do
+      =hidden_field_tag :ca, SslcomCaApi::MANAGEMENT_CA
+      -if downstepped?
+        =hidden_field_tag :downstepped, params[:downstep]
+      #stylized.default_form
+        %div(class='fields')
+          .clearfix
+            %label{for: 'cn'}
+              *CN (Common name):
+            =text_field_tag :cn, csr.try(:common_name)
+          -if for_ov? or for_ev? or for_cs? or for_evcs?
+            .clearfix
+              %label{for: 'o'}
+                *O (Organization):
+                %span.label_desc organization or company name
+              =text_field_tag :o, @certificate_order.registrant.company_name
+            .clearfix
+              %label{for: 'ou'}
+                OU (Organizational Unit):
+              =text_field_tag :ou, @certificate_order.registrant.department
+            .clearfix
+              %label{for: 'city'}
+                *Locality:
+                %span.label_desc * if city registered
+              =text_field_tag :city, @certificate_order.registrant.city
+            .clearfix
+              %label{for: 'state'}
+                *Province:
+                %span.label_desc * if state, province, or county registered
+              =text_field_tag :state, @certificate_order.registrant.department
+            .clearfix
+              %label{for: 'country'}
+                *Country:
+              =select_tag :country, options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]},@certificate_order.registrant.country)
+            .clearfix
+              %label{for: 'postal_code'}
+                Postal Code:
+                %span.label_desc postal code or zip
+              =text_field_tag :postal_code, @certificate_order.registrant.postal_code
+            -if for_ov? or for_ev?
+              .clearfix
+                %label{for: 'postal_address'}
+                  Postal Address:
+                  %span.label_desc postal address
+                =text_field_tag :postal_address
+            .clearfix
+              %label{for: 'street_address'}
+                Street Address:
+                %span.label_desc street address
+              =text_field_tag :street_address
+          -if for_evcs? or for_ev?
+            .clearfix
+              %label{for: 'business_category'}
+                *Business Category:
+              =select_tag :business_category, options_for_select(Joi::BUSINESS_CATEGORY.values)
+            .clearfix
+              %label{for: 'serial_number'}
+                *Serial Number:
+                %span.label_desc company registration number
+              =text_field_tag :serial_number
+            .clearfix
+              %label{for: 'joi_locality'}
+                Jurisdiction Locality:
+                %span.label_desc joi city
+              =text_field_tag :postal_locality
+            .clearfix
+              %label{for: 'joi_province'}
+                Jurisdiction Province:
+                %span.label_desc joi province, state or country
+              =text_field_tag :joi_state
+            .clearfix
+              %label{for: 'joi_country'}
+                *Jurisdiction Country:
+                %span.label_desc joi country
+              =select_tag :joi_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]})
+          .clearfix
+            %label{for: 'csr'}
+              *CSR (Certificate Signing Request):
+            =text_area_tag :csr, csr.try(:body)
+          -unless for_evcs? or for_cs?
+            .clearfix
+              %label{for: 'san'}
+                *SAN (Subject Alternative Names):
+              =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+      #button_container
+        #next_submit=image_submit_tag "bl_submit_button.gif"
+%ul
+  %li
+    #processing_ca
+      =image_tag 'waiting_bar_medium.gif'
+      %span processing...
+  %dl#sent_to_ca_results
+    =render partial: "validations/sent_ca_result", collection: @certificate_order.ca_api_requests, as: :ca_response
+    =render partial: "validations/cert_ca_result", locals: {ca_response: @certificate_order.ca_retrieve_certificates.first} unless @certificate_order.ca_retrieve_certificates.blank?
+=render partial: 'validations/index_scripts'
+

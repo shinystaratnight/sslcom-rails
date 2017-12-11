@@ -1,13 +1,11 @@
 require "declarative_authorization/maintenance"
 
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
+  include CertificateType
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
-    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id
+    :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant
 
-  NON_EV_PERIODS = %w(365 730 1095 1461 1826)
-  EV_PERIODS = %w(365 730)
-  FREE_PERIODS = %w(30 90)
   DCV_FAILURE_ACTIONS = %w(remove ignore)
 
   PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
@@ -20,24 +18,29 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
   validates :csr, presence: true, unless: "ref.blank? || is_processing?"
   validates :period, presence: true, format: /\d+/,
-    inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
+    inclusion: {in: ApiCertificateRequest::NON_EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{NON_EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
           !c.is_free? && c.ref.blank? && ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
+    inclusion: {in: ApiCertificateRequest::EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::FREE_PERIODS,
+    inclusion: {in: ApiCertificateRequest::EV_CS_PERIODS,
+    message: "needs to be one of the following: #{EV_CS_PERIODS.join(', ')}"}, if: lambda{|c|c.is_evcs? && c.ref.blank? &&
+    ['create_v1_4'].include?(c.action)}
+  validates :period, presence: true, format: {with: /\d+/},
+    inclusion: {in: ApiCertificateRequest::FREE_PERIODS,
     message: "needs to be one of the following: #{FREE_PERIODS.join(', ')}"}, if: lambda{|c|c.is_free? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :product, presence: true, format: {with: /\d{3}/},
-      inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
+      inclusion: {in: PRODUCTS.keys.map(&:to_s),
       message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}, if:
       lambda{|c|['create_v1_4'].include?(c.action)}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
+            if: "csr and Settings.require_server_software_w_csr_submit"
   validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -61,6 +64,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validate  :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
+    retrieve_registrant
     self.period = period.to_s unless period.blank?
     self.product = product.to_s unless product.blank?
     if new_record?
@@ -99,7 +103,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     )
     order = api_requestable.purchase(@certificate_order)
     order.cents = @certificate_order.attributes_before_type_cast["amount"].to_f
-
+    
     if errors.blank?
       if certificate_content.valid?
         apply_funds(
@@ -246,13 +250,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       cc.provide_info!
       CertificateContent::CONTACT_ROLES.each do |role|
         c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
-              CertificateContact.new(options[:contacts][role] ? options[:contacts][role] : options[:contacts][:all])
+              CertificateContact.new(retrieve_saved_contact(
+                  options[:contacts][(options[:contacts][role] ? role : :all)],
+                  %w(company_name department)
+              ))
             else
               attributes = api_requestable.reseller.attributes.select do |attr, value|
                 (CertificateContact.column_names-%w(id created_at)).include?(attr.to_s)
               end
               contact = CertificateContact.new
-              contact.assign_attributes(attributes, :without_protection => true)
+              contact.assign_attributes(attributes, without_protection: true)
               contact
             end
         c.clear_roles
@@ -349,60 +356,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         self.api_requestable.certificate_orders.find_by_ref(self.renewal_id).blank?
   end
 
-  def serial
-    PRODUCTS[self.product.to_s] if product
-  end
-  
-  def target_certificate
-    @target_certificate ||= (Certificate.find_by(serial: serial) if serial)
-  end
-  
-  def is_ev?
-    (target_certificate.serial.include?('ev') && !is_evucc?) if target_certificate
-  end
-
-  def is_dv?
-    if target_certificate
-      !target_certificate.product.include?('free') &&
-      (is_basic? || target_certificate.serial.include?('dv'))
-    end
-  end
-
-  def is_ov?
-    !is_ev? && !is_dv?
-  end
-
-  def is_free?
-    if target_certificate
-      target_certificate.serial.include?('dv') &&
-        target_certificate.product.include?('free')
-    end
-  end
-
-  def is_basic?
-    target_certificate.serial.include?('basic') if target_certificate
-  end
-
-  def is_wildcard?
-    target_certificate.serial.include?('wc') if target_certificate
-  end
-
-  def is_ucc?
-    (target_certificate.serial.include?('ucc') && !is_evucc?) if target_certificate
-  end
-
-  def is_premium?
-    target_certificate.serial.include?('premium') if target_certificate
-  end
-
-  def is_evucc?
-    target_certificate.serial.include?('evucc') if target_certificate
-  end
-
-  def is_not_ip
-    true
-  end
-
   # must belong to a list of acceptable email addresses
   def verify_dcv
     #if submitting domains, then a csr must have been submitted on this or a previous request
@@ -455,17 +408,20 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       errors[:contacts] = {}
       CertificateContent::CONTACT_ROLES.each do |role|
         if (contacts[role] || contacts["all"])
-          attrs,c_role = contacts[role] ? [contacts[role],role] : [contacts["all"],"all"]
-          extra = attrs.keys-(CertificateContent::RESELLER_FIELDS_TO_COPY+%w(organization country department)).flatten
-          if !extra.empty?
+          c_role = contacts[role] ? role : 'all'
+          attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
+          extra  = (attrs.keys - permit_contact_fields).flatten
+          if attrs[:saved_contact] # failed to find saved contact by id
+            errors[:contacts].last[:role] = c_role
+          elsif !extra.empty?
             msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
             errors[:contacts].last.merge!(msg)
           elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
             r = CertificateContact.new(attrs.merge(roles: [role]))
             r.valid?
             errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-          elsif attrs[:country].blank? or Country.find_by_iso1_code(attrs[:country].upcase).blank?
-            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs[:country]}'"}
+          elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
+            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
             errors[:contacts].last.merge!(msg)
           end
         else
@@ -480,6 +436,46 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     errors.delete(:contacts)
     errors.add(:contacts, cur_err) if cur_err.any?
     errors.get(:contacts) ? false : true
+  end
+  
+  def retrieve_registrant
+    id = self.saved_registrant
+    if id
+      found = Registrant.find_by(id: id.to_i)
+      if found
+        self.organization_name = found.company_name
+        self.organization_unit_name = found.department
+        self.post_office_box = found.po_box
+        self.street_address_1 = found.address1
+        self.street_address_2 = found.address2
+        self.street_address_3 = found.address3
+        self.locality_name = found.city
+        self.state_or_province_name = found.state
+        self.postal_code = found.postal_code
+        self.country_name = found.country
+      else
+        errors[:saved_registrant].push(id: "Registrant with id=#{id} does not exist.")
+      end
+    end
+  end
+  
+  def retrieve_saved_contact(attributes, extra_attributes=[])
+    new_attrs = attributes # { saved_contact: contact_id }
+    if attributes && attributes.is_a?(Hash)
+      id = attributes[:saved_contact]
+      if id
+        found = Contact.find_by(id: id.to_i)
+        if found
+          keepers = permit_contact_fields + extra_attributes - ['all']
+          new_attrs = found.attributes.keep_if {|k,_| keepers.include? k}
+        else
+          unless extra_attributes.include?('all') && errors[:contacts].count > 1
+            errors[:contacts].push(id: "Contact with id=#{id} does not exist.")
+          end
+        end
+      end
+    end
+    new_attrs
   end
 
   def is_processing?
@@ -534,5 +530,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         errors[:domains] << "You have exceeded the maximum of #{max} domain(s) or subdomains for this certificate."
       end
     end
+  end
+  
+  def permit_contact_fields
+    CertificateContent::RESELLER_FIELDS_TO_COPY + %w(organization organization_unit country saved_contact)
   end
 end

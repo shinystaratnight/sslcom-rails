@@ -20,6 +20,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs
   has_many    :ca_certificate_requests, :through=>:csrs
+  has_many    :ca_api_requests, :through=>:csrs
+  has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
@@ -28,6 +30,9 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :ca_mdc_statuses, as: :api_requestable
   #has_many    :client_order_certificate_requests, class_name: "ClientOrderCertificateRequest",
   #            as: :api_requestable, dependent: :destroy
+  has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
+  has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
+  has_many    :physical_tokens
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -267,13 +272,15 @@ class CertificateOrder < ActiveRecord::Base
   EXPRESS = 'express'
   PREPAID_FULL = 'prepaid_full'
   PREPAID_EXPRESS = 'prepaid_express'
-  VERIFICATION_STEP = 'Provide Verification'
+  VERIFICATION_STEP = 'Perform Validation'
   FULL_SIGNUP_PROCESS = {:label=>FULL, :pages=>%W(Submit\ CSR Payment
     Registrant Contacts #{VERIFICATION_STEP} Complete)}
   EXPRESS_SIGNUP_PROCESS = {:label=>EXPRESS,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Contacts)}
   PREPAID_FULL_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
     :pages=>FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
+  NO_CSR_SIGNUP_PROCESS = {:label=>PREPAID_FULL,
+    :pages=>PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
 
@@ -468,7 +475,7 @@ class CertificateOrder < ActiveRecord::Base
         when 5
           1826
       end
-    elsif unit==:comodo_api
+    elsif [:comodo_api,:sslcom_api].include? unit
       case years.gsub(/[^\d]+/,"").to_i
         when 1
           365
@@ -572,13 +579,15 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def prepaid_signup_process(cert=certificate)
-    if ssl_account && ssl_account.has_role?('reseller')
+    if cert.admin_submit_csr?
+      NO_CSR_SIGNUP_PROCESS
+    elsif ssl_account && ssl_account.has_role?('reseller')
       unless cert.is_ev?
         PREPAID_EXPRESS_SIGNUP_PROCESS
       else
         PREPAID_FULL_SIGNUP_PROCESS
       end
-    elsif cert.is_browser_generated_capable?
+    elsif cert.is_client?
       PREPAID_EXPRESS_SIGNUP_PROCESS
     else
       PREPAID_FULL_SIGNUP_PROCESS
@@ -596,6 +605,10 @@ class CertificateOrder < ActiveRecord::Base
 
   def certificate_content
     certificate_contents.last
+  end
+
+  def registrant
+    certificate_content.registrant
   end
 
   def csr
@@ -686,7 +699,11 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
+    if [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? options[:ca]
+      SslcomCaApi.apply_for_certificate(self, options)
+    else
+      ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
+    end
   end
 
   def retrieve_ca_cert(email_customer=false)
@@ -734,21 +751,21 @@ class CertificateOrder < ActiveRecord::Base
       when /create_ssl/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
-             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             secret_key: "<account_secret_key>",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
             "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
-             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             secret_key: "<account_secret_key>",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
             "\" #{domain}/certificates"
       when /create_code_signing/
         'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             {account_key: "#{options[:ssl_account].api_credential.account_key if options[:ssl_account].api_credential}",
-             secret_key: "#{options[:ssl_account].api_credential.secret_key if options[:ssl_account].api_credential}",
+             secret_key: "<account_secret_key>",
              product: options[:certificate].api_product_code,
              period: options[:period]}.to_json.gsub("\"","\\\"") +
             "\" #{domain}/certificates"
@@ -762,14 +779,14 @@ class CertificateOrder < ActiveRecord::Base
       when /update_dcv/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     domains: api_domains}
         options[:caller].blank? ?
             'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
                 api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /update/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     server_software: cc.server_software_id.to_s,
                     domains: api_domains,
                     contacts: api_contacts,
@@ -779,7 +796,7 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /revoke/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     reason: "development test",
                     serials:signed_certificates.map(&:serial),
                     ref: self.ref}
@@ -787,7 +804,7 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /create_w_csr/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     product: certificate.api_product_code,
                     period: certificate_duration(:comodo_api).to_s,
                     server_software: cc.server_software_id.to_s,
@@ -798,7 +815,7 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /create/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     product: certificate.api_product_code,
                     period: certificate_duration(:comodo_api).to_s,
                     domains: api_domains}
@@ -806,31 +823,31 @@ class CertificateOrder < ActiveRecord::Base
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /show/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
                     response_type: ("individually" unless signed_certificate.blank?)}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /index/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     per_page: "10", page: "1"}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /dcv_emails/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}.
+                    secret_key: "<account_secret_key>"}.
             merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email" : api_params
       when /dcv_methods_wo_csr/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}"}
+                    secret_key: "<account_secret_key>"}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods" : api_params
       when /dcv_methods_w_csr/
         api_params={account_key: "#{ssl_account.api_credential.account_key if ssl_account.api_credential}",
-                    secret_key: "#{ssl_account.api_credential.secret_key if ssl_account.api_credential}",
+                    secret_key: "<account_secret_key>",
                     csr: certificate_content.csr.body}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/csr_hash" : api_params
@@ -1013,7 +1030,7 @@ class CertificateOrder < ActiveRecord::Base
           "waiting on validation from customer"
         when "pending_validation", "validated"
           last_sent=csr.last_dcv
-          if last_sent.blank?
+          if last_sent.blank? or (is_evcs? and validation_histories.count>0)
             'validating, please wait' #assume intranet
           elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))
             'validating, please wait'
@@ -1477,7 +1494,8 @@ class CertificateOrder < ActiveRecord::Base
   private
 
   def fill_csr_fields(options, obj)
-    f= {'organizationName' => obj.company_name,
+    unless obj.blank?
+      f= {'organizationName' => obj.company_name,
           'organizationalUnitName' => obj.department,
           'postOfficeBox' => obj.po_box,
           'streetAddress1' => obj.address1,
@@ -1487,7 +1505,8 @@ class CertificateOrder < ActiveRecord::Base
           'stateOrProvinceName' => obj.state,
           'postalCode' => obj.postal_code,
           'countryName' => obj.country}
-    options.merge!(f.each{|k,v|f[k]=CGI.escape(v) unless v.blank?})
+      options.merge!(f.each{|k,v|f[k]=CGI.escape(v) unless v.blank?})
+    end
   end
 
   def post_process_csr

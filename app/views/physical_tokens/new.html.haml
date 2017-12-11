@@ -1,0 +1,9 @@
+-if permitted_to?(:new, @physical_token)
+  .reseller_registration_profile
+    %h3 Create Physical Token for #{@certificate_order.ref}
+    =error_messages_for :physical_token
+    =form_for @physical_token, url: certificate_order_physical_tokens_path(@certificate_order), html: {id: 'new_saved_contact'} do |f|
+      #stylized.default_form
+        =render partial: 'form', locals: {f: f}
+      #button_container
+        #next_submit=image_submit_tag "bl_submit_button.gif"

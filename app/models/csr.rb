@@ -9,6 +9,8 @@ class Csr < ActiveRecord::Base
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, :dependent => :destroy
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
+  has_many    :sslcom_ca_requests, as: :api_requestable
+  has_many    :ca_api_requests, as: :api_requestable
   has_many    :ca_dcv_requests, as: :api_requestable, dependent: :destroy
   has_many    :ca_dcv_resend_requests, as: :api_requestable, dependent: :destroy
   has_many    :domain_control_validations, :dependent => :destroy do
@@ -60,7 +62,7 @@ class Csr < ActiveRecord::Base
   end
 
   def body=(csr)
-    csr=enclose_with_tags(csr.strip)
+    csr=Csr.enclose_with_tags(csr.strip)
     unless Settings.csr_parser=="remote"
       self[:body] = csr
       begin
@@ -115,9 +117,14 @@ class Csr < ActiveRecord::Base
     end
   end
 
-  def enclose_with_tags(csr)
-    csr.gsub!(/-+BEGIN NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+BEGIN NEW CERTIFICATE REQUEST-+/
-    csr.gsub!(/-+END NEW CERTIFICATE REQUEST-+/,"") if csr =~ /-+END NEW CERTIFICATE REQUEST-+/
+  def self.remove_begin_end_tags(csr)
+    csr.gsub!(/-+BEGIN.+?REQUEST-+/,"") if csr =~ /-+BEGIN.+?REQUEST-+/
+    csr.gsub!(/-+END.+?REQUEST-+/,"") if csr =~ /-+END.+?REQUEST-+/
+    csr
+  end
+
+  def self.enclose_with_tags(csr)
+    csr=remove_begin_end_tags(csr)
     unless (csr =~ Regexp.new(BEGIN_TAG))
       csr.gsub!(/-+BEGIN CERTIFICATE REQUEST-+/,"")
       csr = BEGIN_TAG + "\n" + csr.strip

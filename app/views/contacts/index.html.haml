@@ -1,12 +1,14 @@
 -content_for :title, "Create Contacts For #{@certificate_order.subject.downcase} (order ref##{@certificate_order.ref})"
--pos=skip_payment? ? 3 : 4
+-pos=@certificate_order.certificate.admin_submit_csr? ? 2 : (skip_payment? ? 3 : 4)
 =order_progress_indicator(pos, @certificate_order.certificate) if @certificate_content.info_provided?
 .reseller_registration_profile
   %h3
     Create Contacts For #{@certificate_order.subject.downcase}
     (order ref##{@certificate_order.ref})
   %p
-    Please provide point of contacts for #{@certificate_order.subject.downcase}.
+    Please provide point of contacts
+    -if @certificate_order.subject
+      for #{@certificate_order.subject.downcase}
   =error_messages_for :certificate_content
   =form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
     #stylized.default_form

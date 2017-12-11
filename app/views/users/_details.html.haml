@@ -111,7 +111,7 @@
                     ][
                     =link_to "users(#{ssl.users.count})", users_path(slug_params)
                     ][
-                    %a{onclick: "adjust_funds_ssl_account('#{ssl.to_slug}','#{ssl.get_team_name}')"} $#{ssl.funded_account.try :amount}
+                    %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{ssl.to_slug}','#{ssl.get_team_name}')"} $#{ssl.funded_account.try :amount}
                     ][
                     =link_to "orders(#{ssl.certificate_orders.count})", certificate_orders_path(slug_params)
                     ][

@@ -1,4 +1,4 @@
-object falseend
+object false
 unless @result.errors.blank?
   glue @result do
     attributes :errors
