@@ -113,7 +113,7 @@ class SslcomCaApi
     if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      "dNSName="+options[:san].split(/\s+/).map(&:downcase).join(",")
+      "dNSName="+(options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map(&:downcase).join(",")
     end
   end
 
