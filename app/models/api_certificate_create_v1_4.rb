@@ -1,13 +1,11 @@
 require "declarative_authorization/maintenance"
 
 class ApiCertificateCreate_v1_4 < ApiCertificateRequest
+  include CertificateType
   attr_accessor :csr_obj, # temporary csr object
     :certificate_url, :receipt_url, :smart_seal_url, :validation_url, :order_number, :order_amount, :order_status,
     :api_request, :api_response, :error_code, :error_message, :eta, :send_to_ca, :ref, :renewal_id, :saved_registrant
 
-  NON_EV_PERIODS = %w(365 730 1095 1461 1826)
-  EV_PERIODS = %w(365 730)
-  FREE_PERIODS = %w(30 90)
   DCV_FAILURE_ACTIONS = %w(remove ignore)
 
   PRODUCTS = Settings.api_product_codes.to_hash.stringify_keys
@@ -20,24 +18,29 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :ref, presence: true, if: lambda{|c|['update_v1_4', 'show_v1_4'].include?(c.action)}
   validates :csr, presence: true, unless: "ref.blank? || is_processing?"
   validates :period, presence: true, format: /\d+/,
-    inclusion: {in: ApiCertificateCreate::NON_EV_PERIODS,
-    message: "needs to be one of the following: #{NON_EV_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
+    inclusion: {in: ApiCertificateRequest::NON_EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{NON_EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c| (c.is_dv? || c.is_ov?) &&
           !c.is_free? && c.ref.blank? && ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::EV_PERIODS,
-    message: "needs to be one of the following: #{EV_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
+    inclusion: {in: ApiCertificateRequest::EV_SSL_PERIODS,
+    message: "needs to be one of the following: #{EV_SSL_PERIODS.join(', ')}"}, if: lambda{|c|c.is_ev? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :period, presence: true, format: {with: /\d+/},
-    inclusion: {in: ApiCertificateCreate::FREE_PERIODS,
+    inclusion: {in: ApiCertificateRequest::EV_CS_PERIODS,
+    message: "needs to be one of the following: #{EV_CS_PERIODS.join(', ')}"}, if: lambda{|c|c.is_evcs? && c.ref.blank? &&
+    ['create_v1_4'].include?(c.action)}
+  validates :period, presence: true, format: {with: /\d+/},
+    inclusion: {in: ApiCertificateRequest::FREE_PERIODS,
     message: "needs to be one of the following: #{FREE_PERIODS.join(', ')}"}, if: lambda{|c|c.is_free? && c.ref.blank? &&
     ['create_v1_4'].include?(c.action)}
   validates :product, presence: true, format: {with: /\d{3}/},
-      inclusion: {in: ApiCertificateCreate::PRODUCTS.keys.map(&:to_s),
+      inclusion: {in: PRODUCTS.keys.map(&:to_s),
       message: "needs to one of the following: #{PRODUCTS.keys.map(&:to_s).join(', ')}"}, if:
       lambda{|c|['create_v1_4'].include?(c.action)}
   validates :server_software, presence: true, format: {with: /\d+/}, inclusion:
       {in: ServerSoftware.pluck(:id).map(&:to_s),
-      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"}, unless: "csr.blank?"
+      message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
+            if: "csr and Settings.require_server_software_w_csr_submit"
   validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
@@ -351,60 +354,6 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def renewal_exists
     self.errors[:renewal_id] << "renewal_id #{self.renewal_id} does not exist or is invalid" if
         self.api_requestable.certificate_orders.find_by_ref(self.renewal_id).blank?
-  end
-
-  def serial
-    PRODUCTS[self.product.to_s] if product
-  end
-  
-  def target_certificate
-    @target_certificate ||= (Certificate.find_by(serial: serial) if serial)
-  end
-  
-  def is_ev?
-    (target_certificate.serial.include?('ev') && !is_evucc?) if target_certificate
-  end
-
-  def is_dv?
-    if target_certificate
-      !target_certificate.product.include?('free') &&
-      (is_basic? || target_certificate.serial.include?('dv'))
-    end
-  end
-
-  def is_ov?
-    !is_ev? && !is_dv?
-  end
-
-  def is_free?
-    if target_certificate
-      target_certificate.serial.include?('dv') &&
-        target_certificate.product.include?('free')
-    end
-  end
-
-  def is_basic?
-    target_certificate.serial.include?('basic') if target_certificate
-  end
-
-  def is_wildcard?
-    target_certificate.serial.include?('wc') if target_certificate
-  end
-
-  def is_ucc?
-    (target_certificate.serial.include?('ucc') && !is_evucc?) if target_certificate
-  end
-
-  def is_premium?
-    target_certificate.serial.include?('premium') if target_certificate
-  end
-
-  def is_evucc?
-    target_certificate.serial.include?('evucc') if target_certificate
-  end
-
-  def is_not_ip
-    true
   end
 
   # must belong to a list of acceptable email addresses

@@ -4,6 +4,7 @@ require 'openssl'
 #require 'zip/zipfilesystem'
 
 class SignedCertificate < ActiveRecord::Base
+  include CertificateType
 #  using_access_control
   serialize :organization_unit
   serialize :subject_alternative_names
@@ -15,6 +16,7 @@ class SignedCertificate < ActiveRecord::Base
   validates :csr_id, :presence=>true, :on=>:save
   validate :proper_certificate?, :if=>
     Proc.new{|r| !r.parent_cert && !r.body.blank?}
+  has_many  :sslcom_ca_revocation_requests, as: :api_requestable
   #validate :same_as_previously_signed_certificate?, :if=> '!csr.blank?'
 
   attr :parsed
@@ -36,6 +38,14 @@ class SignedCertificate < ActiveRecord::Base
 
   APACHE_BUNDLE = "ca-bundle-client.crt"
   AMAZON_BUNDLE = "ca-chain-amazon.crt"
+
+  OID_DV = "2.23.140.1.2.1"
+  OID_OV = "2.23.140.1.2.2"
+  OID_IV = "2.23.140.1.2.3"
+  OID_EV = "2.23.140.1.1"
+  OID_EVCS = "2.23.140.1.3"
+  OID_CS = "2.23.140.1.4.1"
+  OID_TEST = "2.23.140.2.1"
 
 
   after_initialize do
@@ -109,7 +119,7 @@ class SignedCertificate < ActiveRecord::Base
 
   def body=(certificate)
     return if certificate.blank?
-    self[:body] = enclose_with_tags(certificate.strip)
+    self[:body] = SignedCertificate.enclose_with_tags(certificate.strip)
     unless Settings.csr_parser=="remote"
       begin
         parsed =  if certificate=~ /PKCS7/
@@ -213,6 +223,10 @@ class SignedCertificate < ActiveRecord::Base
 
   def issuer
     openssl_x509.issuer.to_s
+  end
+
+  def is_sslcom_ca?
+    issuer.include?("O=SSL Corporation")
   end
 
   def create_signed_cert_zip_bundle(options={})
@@ -472,32 +486,6 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  def is_dv?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com DV CA/ ||
-        decoded =~ /Domain Control Validated/ ||
-        decoded =~ /EssentialSSL/
-  end
-
-  def is_ov?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com OV CA/ ||
-        decoded =~ /High Assurance CA/
-  end
-
-  def is_ev?
-    decoded =~ /Issuer: C=US, O=SSL.com, OU=www.ssl.com, CN=SSL.com EV CA/  ||
-        decoded =~ /SSL.com Premium EV CA/
-  end
-
-  def comodo_ca_id
-    if is_ev?
-      Settings.ca_certificate_id_ev
-    elsif is_ov?
-      Settings.ca_certificate_id_ov
-    else
-      Settings.ca_certificate_id_dv
-    end
-  end
-
   def ca_id
     {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
   end
@@ -519,16 +507,6 @@ class SignedCertificate < ActiveRecord::Base
       "SHA2"
     else
       "SHA1"
-    end
-  end
-
-  def validation_type
-    if is_dv?
-      "dv"
-    elsif is_ev?
-      "ev"
-    elsif is_ov?
-      "ov"
     end
   end
 
@@ -574,7 +552,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   #openssl is very finicky and requires opening and ending tags with exactly 5(-----) dashes on each side
-  def enclose_with_tags(cert)
+  def self.enclose_with_tags(cert)
     if cert =~ /PKCS7/
       # it's PKCS7
       cert.gsub!(/-+BEGIN PKCS7-+/,"")
@@ -584,11 +562,11 @@ class SignedCertificate < ActiveRecord::Base
       cert = cert + END_TAG + "\n"
     else
       unless cert =~ Regexp.new(BEGIN_TAG)
-        cert.gsub!(/-+BEGIN CERTIFICATE-+/,"")
+        cert.gsub!(/-+BEGIN.+?CERTIFICATE-+/,"")
         cert = BEGIN_TAG + "\n" + cert.strip
       end
       unless cert =~ Regexp.new(END_TAG)
-        cert.gsub!(/-+END CERTIFICATE-+/,"")
+        cert.gsub!(/-+END.+?CERTIFICATE-+/,"")
         cert = cert + "\n" unless cert=~/\n\Z\z/
         cert = cert + END_TAG + "\n"
       end

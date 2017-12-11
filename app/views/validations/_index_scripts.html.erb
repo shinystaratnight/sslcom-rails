@@ -323,7 +323,7 @@ jQuery(function($) {
         }
       }
     });
-    <%if @certificate_order%>
+    <%if @certificate_order and !@certificate_order.certificate.is_code_signing?%>
       $('select[id^=domains]').change(function(){
         var dcv_select=$(this);
         var dt = new Date();

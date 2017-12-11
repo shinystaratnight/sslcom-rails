@@ -135,6 +135,11 @@ SslCom::Application.routes.draw do
   concern :teamable do
     resource :user_session
     resources :certificate_orders do
+      resources :physical_tokens do
+        member do
+          get :activate
+        end
+      end
       collection do
         get :credits
         get :pending
@@ -156,13 +161,14 @@ SslCom::Application.routes.draw do
         get :reprocess
         get :auto_renew
         post :start_over
+        get :sslcom_ca
         match :admin_update, via: [:put, :patch]
         get :change_ext_order_number
       end
 
       resource :validation do
         post :upload, :send_dcv_email
-        get :send_to_ca
+        match :send_to_ca, via: [:get, :post]
         member do
           get :document_upload
         end

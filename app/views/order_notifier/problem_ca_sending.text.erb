@@ -3,7 +3,7 @@ Hello,
 There was a problem sending <%=Settings.community_name%> order <%=@certificate_order.ref%> to <%=@ca%>
 
 Reason:
-<%ccr=@certificate_order.ca_certificate_requests.first%>
+<%ccr=@certificate_order.ca_api_requests.first%>
 <%=ccr.request_url%>
 <%=ccr.parameters%>
 <%=ccr.method%>

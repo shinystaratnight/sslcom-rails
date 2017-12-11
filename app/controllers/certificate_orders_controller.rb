@@ -20,7 +20,7 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
   before_filter :require_user, :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer, :developers]
+                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
@@ -30,6 +30,7 @@ class CertificateOrdersController < ApplicationController
                    :developers, :require=>[:update, :delete]
   filter_access_to :renew, :parse_csr, :require=>[:create]
   filter_access_to :auto_renew, require: [:admin_manage]
+  # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
   #cache_sweeper :certificate_order_sweeper
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
@@ -75,6 +76,9 @@ class CertificateOrdersController < ApplicationController
     end
   end
 
+  def sslcom_ca
+
+  end
 
   def renew
     action = CertificateOrder::RENEWING
@@ -101,24 +105,28 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/1/edit
   def edit
     unless @certificate_order.blank?
-      if @certificate_order.is_unused_credit?
-        @certificate_order.has_csr=true
-        @certificate = @certificate_order.mapped_certificate
-        @certificate_content = @certificate_order.certificate_content
-        @certificate_content.agreement=true
-        return render '/certificates/buy', :layout=>'application'
-      end
-      unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
-        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+      @certificate = @certificate_order.mapped_certificate
+      unless @certificate.admin_submit_csr?
+        if @certificate_order.is_unused_credit?
+          @certificate_order.has_csr=true
+          @certificate_content = @certificate_order.certificate_content
+          @certificate_content.agreement=true
+          return render '/certificates/buy', :layout=>'application'
+        end
+        unless @certificate_order.certificate_content.csr_submitted? or params[:registrant]
+          redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+        else
+          @csr = @certificate_order.certificate_content.csr
+          setup_registrant()
+          @registrant.company_name = @csr.organization
+          @registrant.department = @csr.organization_unit
+          @registrant.city = @csr.locality
+          @registrant.state = @csr.state
+          @registrant.email = @csr.email
+          @registrant.country = @csr.country
+        end
       else
-        csr = @certificate_order.certificate_content.csr
-        setup_registrant()
-        @registrant.company_name = csr.organization
-        @registrant.department = csr.organization_unit
-        @registrant.city = csr.locality
-        @registrant.state = csr.state
-        @registrant.email = csr.email
-        @registrant.country = csr.country
+        setup_registrant
       end
       @saved_registrants = current_user.ssl_account.saved_registrants
     else
@@ -179,7 +187,7 @@ class CertificateOrdersController < ApplicationController
     respond_to do |format|
       if @certificate_order.update_attributes(params[:certificate_order])
         cc = @certificate_order.certificate_content
-        if cc.csr_submitted?
+        if cc.csr_submitted? or cc.new?
           cc.provide_info!
           if current_user.ssl_account.is_registered_reseller?
             @order = @certificate_order.order
@@ -208,7 +216,7 @@ class CertificateOrdersController < ApplicationController
           end
         end
         if @certificate_order.is_express_signup?
-          format.html { redirect_to new_certificate_order_validation_path(@ssl_slug, @certificate_order.ref) }
+          format.html { redirect_to validation_destination(slug: @ssl_slug, certificate_order: @certificate_order) }
         else #assume ev full signup process
           format.html { redirect_to certificate_content_contacts_path(@ssl_slug, cc) }
         end
