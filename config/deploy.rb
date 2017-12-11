@@ -25,7 +25,7 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 
-server = "production"
+server = "sandbox2"
 case server
   when "sandbox2"
     require "rvm/capistrano"
@@ -213,6 +213,7 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/local_env.yml #{release_path}/config/local_env.yml"
     run "ln -nfs #{shared_path}/config/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{shared_path}/config/initializers/secret_token.rb #{release_path}/config/initializers/secret_token.rb"
+    run "ln -nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
   end
 end
 after 'deploy:update', 'deploy:symlink_shared'

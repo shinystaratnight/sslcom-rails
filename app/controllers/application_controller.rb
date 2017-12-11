@@ -565,7 +565,7 @@ class ApplicationController < ActionController::Base
     slug = options[:ssl_slug]
     co.certificate.is_code_signing? ?
         document_upload_certificate_order_validation_url(certificate_order_id: co.ref) :
-        new_certificate_order_validation_path(*[ssl_slug, co.ref].compact)
+        new_certificate_order_validation_path(*[slug, co.ref].compact)
   end
 
   def identify_visitor
