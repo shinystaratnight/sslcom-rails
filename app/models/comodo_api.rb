@@ -22,7 +22,8 @@ class ComodoApi
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
   def self.apply_for_certificate(certificate_order, options={})
-    cc = options[:certificate_content] || certificate_order.certificate_content
+    cc = options[:certificate_content] || (certificate_order.certificate_contents.count > 1 ?
+             certificate_order.certificate_content : co.certificate_contents.last(2).first)
     options.merge!(ca_certificate_id: cc.csr.signed_certificate.comodo_ca_id) if cc.csr.signed_certificate
     comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")

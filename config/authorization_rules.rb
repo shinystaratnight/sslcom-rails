@@ -385,7 +385,7 @@ authorization do
   role :guest do
     has_permission_on :csrs, :certificate_orders, :orders,  :to => :create
     has_permission_on :certificates,  :to => :buy_renewal
-    has_permission_on :site_seals, :surls,    :to => [:create, :read]
+    has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
     has_permission_on :certificates, :validation_histories, :to => :read
     has_permission_on :funded_accounts, :to => [
@@ -426,7 +426,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check
