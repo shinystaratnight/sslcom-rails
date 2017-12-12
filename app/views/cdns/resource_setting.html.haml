@@ -1,0 +1,124 @@
+-title = "CDN Management"
+-content_for :title, title
+-api_key = @results[:api_key]
+-if @results[:resource]
+  -domain_list = @results[:resource]['custom_domains']
+  -origin = @results[:resource]['origin']
+  -hostname = @results[:resource]['alias']
+  -allow_robots = @results[:resource]['advanced_settings']['allow_robots']
+  -cache_query_str = @results[:resource]['advanced_settings']['cache_query_string']
+  -enable_cors = @results[:resource]['advanced_settings']['enable_cors']
+  -disable_gzip = @results[:resource]['advanced_settings']['disable_gzip']
+  -force_ssl = @results[:resource]['advanced_settings']['force_ssl']
+  -cache_expire_time = @results[:resource]['advanced_settings']['cache_expire_time']
+  -pull_https = @results[:resource]['advanced_settings']['pull_https']
+  -link = @results[:resource]['advanced_settings']['link']
+#cdns.clearfix
+  #resource-info
+    #resource-general
+      .sub-title General Settings
+      .sub-cont
+        =form_tag :update_resource_cdn, :method=>:post do
+          =hidden_field_tag :api_key, api_key
+          %div.reg-resource.clearfix
+            .field-label Resource Origin:
+            .field-cont
+              =text_field_tag :resource_origin, origin
+              .note
+                Which website should we mirror on the CDN?
+          %div.reg-resource.clearfix
+            .field-label Resource Name:
+            .field-cont
+              =text_field_tag :resource_name, hostname
+              %span .a.cdnify.io
+              .note
+                Something to identify this resource by (e.g. mysite.a.cdnify.io)
+          =submit_tag 'Update', :id=>'btn_update_resource'
+    %hr
+    #resource-add-custom-domain
+      .sub-title Add A Custom Domain
+      .sub-cont
+        =form_tag :add_custom_domain_cdn, :method=>:post do
+          =hidden_field_tag :api_key, api_key
+          %div.reg-resource.clearfix
+            .field-label Host Name:
+            .field-cont
+              =text_field_tag :custom_domain
+              %span .a.cdnify.io
+              .note
+                SSL is only valid for your first custom domain.
+          =submit_tag 'Create', :id=>'btn_add_custom_domain'
+    %hr
+    %div
+      .sub-title Custom Domain List
+      #resource-custom-domain-list.sub-cont
+        %table(cellspacing="0")
+          %tr.heading_row
+            %th Domain Name
+            %th Created
+            %th
+            %th
+          -if domain_list.length > 0
+            -domain_list.each do |domain|
+              %tr
+                %td
+                  =domain['hostname']
+                %td
+                  =DateTime.parse(domain['created_at']).strftime("%d/%m/%Y")
+                %td
+                %td
+          -else
+            %tr
+              %td(colspan="4")
+                There are no custom domains.
+  #resource-setting
+    #advanced-setting
+      .sub-title Advanced Setting
+      .sub-cont
+        =form_tag :update_advanced_setting_cdn, :method=>:post do
+          =hidden_field_tag :api_key, api_key
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :allow_robots, true, allow_robots
+            .field-setting-label
+              Stop robots from indexing your resource on the CDN?
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :cache_query_str, true, cache_query_str
+            .field-setting-label
+              Do not cache URLs with arguments separately
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :enable_cors, true, enable_cors
+            .field-setting-label
+              Enable CORS headers?
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :disable_gzip, true, disable_gzip
+            .field-setting-label
+              Disable GZIP compression?
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :force_ssl, true, force_ssl
+            .field-setting-label
+              Force SSL pull from origin?
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :pull_https, true, pull_https
+            .field-setting-label
+              Force assets to be pulled via https?
+          %div.reg-resource.clearfix
+            .field-setting-event
+              =check_box_tag :link, true, link
+            .field-setting-label
+              Add an canonical link to your assets?
+          =submit_tag 'Save', :id=>'btn_save_advanced_setting'
+    %hr
+    #delete-resource
+      .sub-title Delete This Resource
+      .sub-cont
+        =form_tag :delete_resource_cdn, :method=>:delete do
+          =hidden_field_tag :api_key, api_key
+          %div.field-note
+            Deleting a resource cannot be undone. Before continuing make sure you are certain.
+          =submit_tag 'Delete', :id=>'btn_delete_resource'

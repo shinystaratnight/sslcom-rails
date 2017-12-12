@@ -3449,7 +3449,7 @@ label.error
     background: lightyellow
 
 #report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources
+#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -5711,13 +5711,15 @@ span.notifications-teams
     font-weight: bold
     text-decoration: underline
     margin-top: 10px
-  #resources
+  #resources,
+  #resource-custom-domain-list
     margin-top: 3px
     > table
       margin-bottom: 10px
   .reg-api-key,
   .reg-resource
-    .field-label
+    .field-label,
+    .field-setting-event
       float: left
       padding-right: 10px
       font-size: 14px
@@ -5730,6 +5732,13 @@ span.notifications-teams
         color: #888
       input[type="submit"]
         margin-top: 0px
+      span
+        font-size: 13px
+    .field-setting-event
+      width: 20px
+    .field-setting-label
+      float: left
+      font-size: 13px
   .sub-cont
     margin-left: 10px
     .reg-resource > div
@@ -5739,3 +5748,12 @@ span.notifications-teams
   form input[type="submit"]
     height: 20px
     font-size: 13px
+  #resource-info
+    width: 60%
+    float: left
+  #resource-setting
+    width: 38%
+    float: right
+    .field-note
+      font-size: 13px
+      margin-top: 3px

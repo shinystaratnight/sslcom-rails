@@ -296,6 +296,14 @@ SslCom::Application.routes.draw do
   resources :cdns do
     post :register_api_key, on: :collection
     post :update_resources, on: :collection
+
+    member do
+      get :resource_setting
+      post :update_resource
+      delete :delete_resource
+      post :add_custom_domain
+      post :update_advanced_setting
+    end
   end
 
   resources :users, except: :index do

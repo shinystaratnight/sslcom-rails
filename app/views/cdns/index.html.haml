@@ -1,13 +1,7 @@
 -title = "CDN Management"
 -content_for :title, title
 -api_key = @results[:api_key]
--used_resource = @results[:used_resource]
 -resources = @results[:resources]
--#%ul.nav.nav-tabs
--#  %li.nav-item
--#    %a.nav-link.active Resoruces
--#  %li.nav-item
--#    %a.nav-link Settings
 #cdns
   %hr
   %div
@@ -31,7 +25,7 @@
               %th Origin
               %th Hostname
               %th Created
-              %th Use?
+              %th Settings
               %th Delete?
             -if resources && resources.length > 0
               -resources.each do |resource|
@@ -45,7 +39,7 @@
                   %td
                     =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
                   %td
-                    =radio_button_tag :used_resources, resource['id'] + '|' + resource['hostname'], used_resource==resource['hostname']
+                    =link_to 'Setting', resource_setting_cdn_path(resource['id'])
                   %td
                     =check_box_tag "deleted_resources[]", resource['id']
             -else
@@ -69,6 +63,7 @@
               .field-label Resource Name:
               .field-cont
                 =text_field_tag :resource_name
+                %span .a.cdnify.io
                 .note
                   Something to identify this resource by (e.g. mysite.a.cdnify.io)
             =submit_tag 'Save', :id=>'btn_create_resource'
