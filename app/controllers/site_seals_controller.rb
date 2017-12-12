@@ -3,7 +3,7 @@ class SiteSealsController < ApplicationController
   before_filter :find_site_seal, only: [:artifacts, :site_report, :edit, :update, :admin_update]
   filter_access_to :all
   filter_access_to :edit, :update, :admin_update, attribute_check: true
-  filter_access_to :site_report, :artifacts, :details, :require=>:read
+  filter_access_to :artifacts, :details, :require=>:read
 
   def search
     index
