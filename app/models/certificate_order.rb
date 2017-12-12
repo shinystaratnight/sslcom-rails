@@ -67,8 +67,8 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :is_test, ->{where{is_test==true}}
 
-  scope :search, lambda {|term, options|
-    {:conditions => ["ref #{SQL_LIKE} ?", '%'+term+'%']}.merge(options)
+  scope :search, lambda {|term, options={}|
+    where{ref =~ '%'+term+'%'}.merge(options)
   }
 
   scope :search_signed_certificates, lambda {|term|
