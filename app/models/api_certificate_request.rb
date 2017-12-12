@@ -173,7 +173,12 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   def target_certificate
-    @target_certificate ||= (Certificate.find_by(serial: serial) if serial)
+    @target_certificate ||=
+      if serial
+        Certificate.find_by_serial(serial)
+      elsif ref
+        CertificateOrder.find_by_ref(ref).certificate
+      end
   end
 
   %W(is_premium_ssl? is_dv_or_basic? is_basic? is_multi? is_document_signing? is_personal? is_wildcard?

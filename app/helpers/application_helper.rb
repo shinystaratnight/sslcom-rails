@@ -33,7 +33,7 @@ module ApplicationHelper
       if is_sandbox?
         Rails.env=~/production/i ? "https://#{api_source.test_api_domain}" : "https://#{api_source.dev_test_api_domain}:3000"
       else
-        Rails.env=~/production/i ? "https://#{api_source.api_domain}" : "https://#{api_source.dev_api_domain}:3000"
+        Rails.env=~/production/i ? "https://#{api_source.api_domain}" : ""
       end
     end
   end
