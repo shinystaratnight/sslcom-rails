@@ -1,6 +1,6 @@
 class SslAccountsController < ApplicationController
   before_filter :find_ssl_account
-  before_filter :require_user, only: [:edit]
+  before_filter :require_user, only: [:show, :edit]
   filter_access_to :all, attribute_check: true
 
   # GET /ssl_account/
@@ -14,7 +14,7 @@ class SslAccountsController < ApplicationController
   # GET /ssl_account/edit
   def edit
     if params[:url_slug] || params[:update_company_name]
-      @ssl_account = SslAccount.find(params[:id]) if params[:id]
+      @ssl_account = (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find(params[:id]) if params[:id]
     end
   end
 
@@ -47,7 +47,7 @@ class SslAccountsController < ApplicationController
   end
 
   def update_company_name
-    ssl = SslAccount.find params[:ssl_account][:id]
+    ssl = (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find params[:ssl_account][:id]
     if ssl && ssl.update(company_name: params[:ssl_account][:company_name])
       flash[:notice] = "Company name has been successfully updated to #{ssl.company_name}"
       redirect_to account_path(ssl_slug: @ssl_slug)

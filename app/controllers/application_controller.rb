@@ -394,11 +394,14 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    @ssl_account = if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
-      SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
-    else
-      current_user.ssl_account if current_user
-    end
+    @ssl_account =
+        if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
+         (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
+             (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
+        else
+         current_user.ssl_account
+        end
+    not_found if @ssl_account.blank?
   end
 
   def load_notifications
