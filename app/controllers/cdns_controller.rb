@@ -15,7 +15,6 @@ class CdnsController < ApplicationController
 
       if cdn
         @results[:api_key] = cdn.api_key
-        @results[:used_resource] = cdn.host_name
 
         @response = HTTParty.get('https://cdnify.com/api/v1/resources',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
@@ -29,26 +28,53 @@ class CdnsController < ApplicationController
     end
   end
 
+  def register_account
+    if current_user.blank?
+      redirect_to login_url and return
+    end
+
+    reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
+    @response = HTTParty.post('https://reseller.cdnify.com/users',
+                              {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
+
+    # if @response.parsed_response
+    #   if @response.parsed_response['resources']
+    #     flash[:notice] = 'Successfully Added Custom Domain.'
+    #   else
+    #     @response.parsed_response['errors'].each do |error|
+    #       msg = error['code'].to_s + ': ' + error['message']
+    #       flash[:error] = msg
+    #     end
+    #   end
+    # else
+    #   flash[:error] = 'Failed to Add Custom Domain.'
+    # end
+
+    byebug
+    # TODO://API_KEY from reseller API.
+    api_key = '8f213487af4f47fc609590892cc292a91b48af0b'
+
+    cdn = Cdn.new
+    cdn.api_key = api_key
+    cdn.ssl_account_id = current_user.ssl_account.id
+    cdn.save
+
+    redirect_to cdns_path
+  end
+
   def register_api_key
     if current_user.blank?
       redirect_to login_url and return
     end
 
     if current_user.ssl_account.blank?
-      flash[:error] = 'Failed to register API Key.'
+      flash[:error] = 'Failed to Update API Key.'
     else
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
-      if cdn
-        cdn.api_key = params[:api_key]
-        cdn.host_name = ''
-      else
-        cdn = Cdn.new
-        cdn.api_key = params[:api_key]
-        cdn.ssl_account_id = current_user.ssl_account.id
-      end
+      cdn.api_key = params[:api_key]
       cdn.save
 
-      flash[:notice] = 'Successfully Registered API Key.'
+      flash[:notice] = 'Successfully Updated API Key.'
     end
 
     redirect_to cdns_path
@@ -61,10 +87,13 @@ class CdnsController < ApplicationController
 
     resource_id = params[:id]
     api_key = params[:api_key]
-    custom_domain = params[:custom_domain]
+    custom_domains_list = []
+    custom_domains_list << params[:custom_domain]
+
+    # curl -X PATCH -u "8f213487af4f47fc609590892cc292a91b48af0b:x" https://cdnify.com/api/v1/resources/a080e67 -d alias=ssltst
 
     @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
-                               {basic_auth: {username: api_key, password: 'x'}, body: {custom_domains: custom_domain}})
+                               {basic_auth: {username: api_key, password: 'x'}, body: {custom_domains: custom_domains_list}})
 
     if @response.parsed_response
       if @response.parsed_response['resources']
@@ -89,16 +118,29 @@ class CdnsController < ApplicationController
 
     resource_id = params[:id]
     api_key = params[:api_key]
-    advanced_settings = {}
-    advanced_settings['allow_robots'] = params[:allow_robots]
-    advanced_settings['cache_query_str'] = params[:cache_query_str]
-    advanced_settings['enable_cors'] = params[:enable_cors]
-    advanced_settings['disable_gzip'] = params[:disable_gzip]
-    advanced_settings['force_ssl'] = params[:force_ssl]
-    advanced_settings['pull_https'] = params[:pull_https]
-    advanced_settings['link'] = params[:link]
 
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
+    advanced_settings = {}
+    advanced_settings['allow_robots'] = !params[:allow_robots].blank?
+    advanced_settings['cache_query_str'] = !params[:cache_query_str].blank?
+    advanced_settings['enable_cors'] = !params[:enable_cors].blank?
+    advanced_settings['disable_gzip'] = !params[:disable_gzip].blank?
+    advanced_settings['force_ssl'] = !params[:force_ssl].blank?
+    advanced_settings['pull_https'] = !params[:pull_https].blank?
+    advanced_settings['link'] = !params[:link].blank?
+
+    # curl -X PATCH -u "8f213487af4f47fc609590892cc292a91b48af0b:x" https://cdnify.com/api/v1/resources/a080e67 -d '{"allow_robots": true, "cache_query_string": true, "enable_cors": true, "disable_gzip": true, "force_ssl" : true, "pull_https": true, "link": true}'
+    # {
+    #     allow_robots: params[:allow_robots],
+    #     cache_query_str: params[:cache_query_str],
+    #     enable_cors: params[:enable_cors],
+    #     disable_gzip: params[:disable_gzip],
+    #     force_ssl: params[:force_ssl],
+    #     pull_https: params[:pull_https],
+    #     link: params[:link],
+    #
+    # }
+
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
                                {basic_auth: {username: api_key, password: 'x'}, body: {advanced_settings: advanced_settings}})
 
     if @response.parsed_response

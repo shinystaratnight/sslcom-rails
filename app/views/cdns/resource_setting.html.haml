@@ -10,7 +10,6 @@
   -enable_cors = @results[:resource]['advanced_settings']['enable_cors']
   -disable_gzip = @results[:resource]['advanced_settings']['disable_gzip']
   -force_ssl = @results[:resource]['advanced_settings']['force_ssl']
-  -cache_expire_time = @results[:resource]['advanced_settings']['cache_expire_time']
   -pull_https = @results[:resource]['advanced_settings']['pull_https']
   -link = @results[:resource]['advanced_settings']['link']
 #cdns.clearfix
@@ -44,7 +43,6 @@
             .field-label Host Name:
             .field-cont
               =text_field_tag :custom_domain
-              %span .a.cdnify.io
               .note
                 SSL is only valid for your first custom domain.
           =submit_tag 'Create', :id=>'btn_add_custom_domain'

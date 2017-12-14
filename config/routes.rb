@@ -296,6 +296,7 @@ SslCom::Application.routes.draw do
   resources :cdns do
     post :register_api_key, on: :collection
     post :update_resources, on: :collection
+    post :register_account, on: :collection
 
     member do
       get :resource_setting
