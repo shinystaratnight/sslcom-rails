@@ -23,8 +23,8 @@ class ComodoApi
 
   def self.apply_for_certificate(certificate_order, options={})
     cc = options[:certificate_content] || certificate_order.certificate_content
-    options.merge!(ca_certificate_id: certificate_order.signed_certificates.last.comodo_ca_id) unless
-        certificate_order.signed_certificates.blank?
+    options.merge!(ca_certificate_id: certificate_order.signed_certificates.last.comodo_ca_id) if
+        !certificate_order.signed_certificates.blank? and options[:ca_certificate_id].blank?
     comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     #reprocess or new?

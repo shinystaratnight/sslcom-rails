@@ -1267,7 +1267,8 @@ class CertificateOrder < ActiveRecord::Base
             'responseFormat' => 1,
             'showCertificateID' => 'N',
             'foreignOrderNumber' => ref,
-            'countryName'=>csr.country
+            'countryName'=>csr.country,
+            'uniqueValue'=>csr.unique_value
           )
           set_comodo_subca(params,options)
           last_sent = csr.domain_control_validations.last_method
