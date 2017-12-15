@@ -367,10 +367,10 @@ class Csr < ActiveRecord::Base
   end
 
   def unique_value(ca="comodo")
-    if certificate_order.notes =~ /UniqueValue#(\S+)/
-      $1
-    elsif ca_certificate_requests.first
+    if ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
       ca_certificate_requests.first.response_value("uniqueValue")
+    else
+      Digest::MD5.hexdigest(id.to_s)[0..5].upcase
     end
   end
 end
