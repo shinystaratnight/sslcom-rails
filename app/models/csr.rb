@@ -29,7 +29,8 @@ class Csr < ActiveRecord::Base
   has_one     :csr_override  #used for overriding csr fields - does not include a full csr
   belongs_to  :certificate_content
   belongs_to  :certificate_lookup
-  has_many    :certificate_orders, :through=>:certificate_content
+  has_one    :certificate_order, :through=>:certificate_content
+  has_many    :certificate_orders, :through=>:certificate_content # api_requestable.certificate_orders compatibility
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
@@ -366,6 +367,10 @@ class Csr < ActiveRecord::Base
   end
 
   def unique_value(ca="comodo")
-    ca_certificate_requests.first.response_value("uniqueValue") if ca_certificate_requests.first
+    if certificate_order.notes =~ /UniqueValue#(\S+)/
+      $1
+    elsif ca_certificate_requests.first
+      ca_certificate_requests.first.response_value("uniqueValue")
+    end
   end
 end
