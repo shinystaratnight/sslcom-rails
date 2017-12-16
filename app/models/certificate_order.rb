@@ -1270,7 +1270,6 @@ class CertificateOrder < ActiveRecord::Base
             'countryName'=>csr.country,
             'uniqueValue'=>csr.unique_value
           )
-          set_comodo_subca(params,options)
           last_sent = csr.domain_control_validations.last_method
           build_comodo_dcv(last_sent, params, options)
         else

@@ -26,7 +26,7 @@ class ComodoApi
     comodo_options = certificate_order.options_for_ca(options).
         merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
     options.merge!(ca_certificate_id: certificate_order.signed_certificates.last.comodo_ca_id) if
-        !certificate_order.signed_certificates.blank? and options[:ca_certificate_id].blank?
+        !certificate_order.signed_certificates.blank? and options[:ca_certificate_id].blank? and comodo_options["orderNumber"].blank?
     #reprocess or new?
     host = comodo_options["orderNumber"] ? REPLACE_SSL_URL : APPLY_SSL_URL
     url = URI.parse(host)

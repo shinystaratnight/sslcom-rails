@@ -308,7 +308,7 @@ class ValidationsController < ApplicationController
   end
 
   def find_certificate_order
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
+    @certificate_order = (current_user.is_system_admins? ? CertificateOrder : current_user.certificates).find_by_ref(params[:certificate_order_id])
     @validation = @certificate_order.validation if @certificate_order
   end
 
