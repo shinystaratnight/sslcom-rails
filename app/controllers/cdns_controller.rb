@@ -1,16 +1,13 @@
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
+  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_setting]
 
   # # GET /cdns
   # # GET /cdns.json
   def index
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     @results = {}
-    unless current_user.ssl_account.blank?
+    if current_user.ssl_account
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
 
       if cdn
@@ -29,62 +26,55 @@ class CdnsController < ApplicationController
   end
 
   def register_account
-    if current_user.blank?
-      redirect_to login_url and return
+    if current_user.ssl_account
+      reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
+      @response = HTTParty.post('https://reseller.cdnify.com/users',
+                                {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
+
+      # if @response.parsed_response
+      #   if @response.parsed_response['resources']
+      #     flash[:notice] = 'Successfully Added Custom Domain.'
+      #   else
+      #     @response.parsed_response['errors'].each do |error|
+      #       msg = error['code'].to_s + ': ' + error['message']
+      #       flash[:error] = msg
+      #     end
+      #   end
+      # else
+      #   flash[:error] = 'Failed to Add Custom Domain.'
+      # end
+
+      # TODO://API_KEY from reseller API.
+      api_key = '8f213487af4f47fc609590892cc292a91b48af0b'
+
+      cdn = Cdn.new
+      cdn.api_key = api_key
+      cdn.ssl_account_id = current_user.ssl_account.id
+      cdn.save
+
+      flash[:notice] = 'Successfully Registered Account.'
+    else
+      flash[:error] = 'Failed to Register Account.'
     end
-
-    reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
-    @response = HTTParty.post('https://reseller.cdnify.com/users',
-                              {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
-
-    # if @response.parsed_response
-    #   if @response.parsed_response['resources']
-    #     flash[:notice] = 'Successfully Added Custom Domain.'
-    #   else
-    #     @response.parsed_response['errors'].each do |error|
-    #       msg = error['code'].to_s + ': ' + error['message']
-    #       flash[:error] = msg
-    #     end
-    #   end
-    # else
-    #   flash[:error] = 'Failed to Add Custom Domain.'
-    # end
-
-    byebug
-    # TODO://API_KEY from reseller API.
-    api_key = '8f213487af4f47fc609590892cc292a91b48af0b'
-
-    cdn = Cdn.new
-    cdn.api_key = api_key
-    cdn.ssl_account_id = current_user.ssl_account.id
-    cdn.save
 
     redirect_to cdns_path
   end
 
   def register_api_key
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
-    if current_user.ssl_account.blank?
-      flash[:error] = 'Failed to Update API Key.'
-    else
+    if current_user.ssl_account
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
       cdn.api_key = params[:api_key]
       cdn.save
 
       flash[:notice] = 'Successfully Updated API Key.'
+    else
+      flash[:error] = 'Failed to Update API Key.'
     end
 
     redirect_to cdns_path
   end
 
   def add_custom_domain
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     resource_id = params[:id]
     api_key = params[:api_key]
     custom_domains_list = []
@@ -92,12 +82,12 @@ class CdnsController < ApplicationController
 
     # curl -X PATCH -u "8f213487af4f47fc609590892cc292a91b48af0b:x" https://cdnify.com/api/v1/resources/a080e67 -d alias=ssltst
 
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
                                {basic_auth: {username: api_key, password: 'x'}, body: {custom_domains: custom_domains_list}})
 
     if @response.parsed_response
       if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Added Custom Domain.'
+        flash[:notice] = 'Successfully Added New Custom Domain.'
       else
         @response.parsed_response['errors'].each do |error|
           msg = error['code'].to_s + ': ' + error['message']
@@ -105,46 +95,29 @@ class CdnsController < ApplicationController
         end
       end
     else
-      flash[:error] = 'Failed to Add Custom Domain.'
+      flash[:error] = 'Failed to Add a New Custom Domain.'
     end
 
     redirect_to resource_setting_cdn_path(resource_id) and return
   end
 
   def update_advanced_setting
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     resource_id = params[:id]
     api_key = params[:api_key]
 
-    advanced_settings = {}
-    advanced_settings['allow_robots'] = !params[:allow_robots].blank?
-    advanced_settings['cache_query_str'] = !params[:cache_query_str].blank?
-    advanced_settings['enable_cors'] = !params[:enable_cors].blank?
-    advanced_settings['disable_gzip'] = !params[:disable_gzip].blank?
-    advanced_settings['force_ssl'] = !params[:force_ssl].blank?
-    advanced_settings['pull_https'] = !params[:pull_https].blank?
-    advanced_settings['link'] = !params[:link].blank?
-
-    # curl -X PATCH -u "8f213487af4f47fc609590892cc292a91b48af0b:x" https://cdnify.com/api/v1/resources/a080e67 -d '{"allow_robots": true, "cache_query_string": true, "enable_cors": true, "disable_gzip": true, "force_ssl" : true, "pull_https": true, "link": true}'
-    # {
-    #     allow_robots: params[:allow_robots],
-    #     cache_query_str: params[:cache_query_str],
-    #     enable_cors: params[:enable_cors],
-    #     disable_gzip: params[:disable_gzip],
-    #     force_ssl: params[:force_ssl],
-    #     pull_https: params[:pull_https],
-    #     link: params[:link],
-    #
-    # }
-
     @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
-                               {basic_auth: {username: api_key, password: 'x'}, body: {advanced_settings: advanced_settings}})
+                               {basic_auth: {username: api_key, password: 'x'}, body: {
+                                   allow_robots: !params[:allow_robots].blank?,
+                                   cache_query_string: !params[:cache_query_string].blank?,
+                                   enable_cors: !params[:enable_cors].blank?,
+                                   disable_gzip: !params[:disable_gzip].blank?,
+                                   force_ssl: !params[:pull_https].blank?,
+                                   pull_https: !params[:pull_https].blank?,
+                                   link: !params[:link].blank?
+                               }})
 
     if @response.parsed_response
-      if @response.parsed_response['resources']
+      if @response.parsed_response['resource']
         flash[:notice] = 'Successfully Updated Advanced Settings.'
       else
         @response.parsed_response['errors'].each do |error|
@@ -160,10 +133,6 @@ class CdnsController < ApplicationController
   end
 
   def update_resource
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     resource_id = params[:id]
     api_key = params[:api_key]
     resource_origin = params[:resource_origin]
@@ -174,7 +143,7 @@ class CdnsController < ApplicationController
 
     if @response.parsed_response
       if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Updated Resource Information.'
+        flash[:notice] = 'Successfully Updated General Settings.'
       else
         @response.parsed_response['errors'].each do |error|
           msg = error['code'].to_s + ': ' + error['message']
@@ -182,17 +151,13 @@ class CdnsController < ApplicationController
         end
       end
     else
-      flash[:error] = 'Failed to Update.'
+      flash[:error] = 'Failed to Update General Settings.'
     end
 
     redirect_to resource_setting_cdn_path(resource_id) and return
   end
 
   def delete_resource
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     resource_id = params[:id]
     api_key = params[:api_key]
 
@@ -207,17 +172,13 @@ class CdnsController < ApplicationController
 
       redirect_to resource_setting_cdn_path(resource_id) and return
     else
-      flash[:notice] = 'Successfully Deleted.'
+      flash[:notice] = 'Successfully Deleted Resource.'
     end
 
     redirect_to cdns_path
   end
 
   def update_resources
-    if current_user.blank?
-      redirect_to login_url and return
-    end
-
     resources = params['deleted_resources']
     is_deleted = true
 
@@ -281,7 +242,7 @@ class CdnsController < ApplicationController
 
     if @response.parsed_response
       if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Created.'
+        flash[:notice] = 'Successfully Created Resource.'
       else
         @response.parsed_response['errors'].each do |error|
           msg = error['code'].to_s + ': ' + error['message']
@@ -289,7 +250,7 @@ class CdnsController < ApplicationController
         end
       end
     else
-      flash[:error] = 'Failed to Create.'
+      flash[:error] = 'Failed to Create Resource.'
     end
 
     redirect_to cdns_path
@@ -321,10 +282,5 @@ class CdnsController < ApplicationController
 
     def cdn_params
       params.require(:cdn).permit()
-    end
-
-    def current_user
-      return @current_user if defined?(@current_user)
-      @current_user = current_user_session && current_user_session.user
     end
 end
