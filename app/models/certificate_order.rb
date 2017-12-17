@@ -1490,6 +1490,28 @@ class CertificateOrder < ActiveRecord::Base
     return receipt_recipients unless receipt_recipients.is_a? Array
     receipt_recipients.map(&:split).compact.flatten.uniq
   end
+
+  def validating_domains
+    cns = certificate_content.certificate_names
+    (certificate.is_ucc? ? cns : [cns.last])
+  end
+
+  def domains_validated
+    mdc_validation = ComodoApi.mdc_status(self)
+    ds = mdc_validation.domain_status
+    validated=[]
+    validating_domains.each_with_index do |cn,i|
+      if ds and ds[cn.name]
+        name=ds[cn.name]
+        validated << cn if (name && name["status"]=~/validated/i)
+      end
+    end
+    return validated
+  end
+
+  def all_domains_validated?
+    return true if domains_validated.count==validating_domains.count
+  end
   
   private
 

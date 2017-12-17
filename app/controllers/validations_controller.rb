@@ -29,8 +29,9 @@ class ValidationsController < ApplicationController
     end
     if @certificate_order.certificate_content.contacts_provided?
       @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-    elsif @certificate_order.certificate_content.issued?
+    elsif @certificate_order.certificate_content.issued? or @certificate_order.all_domains_validated?
       checkout={checkout: "true"}
+      flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
       respond_to do |format|
         format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
       end
