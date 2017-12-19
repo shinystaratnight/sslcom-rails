@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-  layout false, only: [:invoice]
+  layout false, only: :invoice
   include OrdersHelper
   #resource_controller
   helper_method :cart_items_from_model_and_id
@@ -100,27 +100,12 @@ class OrdersController < ApplicationController
   end
 
   def invoice
-    if @order
-      begin
-        timeout(10) do
-          @doc=Nokogiri::HTML(open("https://www.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}",
-                                   {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
-          @doc.encoding = 'UTF-8' if @doc.encoding.blank?
-          @doc.css("form").first.set_attribute("action", "https://www.ssl.com/invoice/ajax/process.php?ref_num=#{
-                                    @order.reference_number}")
-          @doc.at_css("script[src*='magic.js']").set_attribute("src", "/ajax/magic.js")
-          #render(inline: doc.to_html) and return
-        end
-      rescue Exception=>e
-        print e
-      end
-    end
-
     respond_to do |format|
-      if @doc
-        format.html # new.html.erb
+      if @order
+        format.html { render pdf: "invoice_ref_#{@order.reference_number}" }
       else
-        format.html{ render status: 404}
+        flash[:error] = 'This order cannot be found!'
+        format.html { redirect_to :back }
       end
     end
   end

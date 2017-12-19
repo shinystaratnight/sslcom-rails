@@ -9,4 +9,4 @@ Rails.application.config.assets.version = '1.0'
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
 Rails.application.config.assets.precompile += %w( ssl_com.css certassure.css common.css print.css
-  ie.css ie8.css site_report.css buy_now.css ssl_seal.css common.js shared.js)
+  ie.css ie8.css site_report.css buy_now.css ssl_seal.css common.js shared.js invoice.css)
