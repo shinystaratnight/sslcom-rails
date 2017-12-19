@@ -580,6 +580,13 @@ class CertificateContent < ActiveRecord::Base
     dn.join(",")
   end
 
+  def csr_certificate_name
+    if certificate_names.find_by_name(:csr.common_name).blank?
+      certificate_names.update_all(is_common_name: false)
+      certificate_names.create(name: csr.common_name, is_common_name: true)
+    end
+  end
+
   private
   
   def validate_domains?
