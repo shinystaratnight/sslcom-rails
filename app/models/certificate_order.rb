@@ -1282,7 +1282,8 @@ class CertificateOrder < ActiveRecord::Base
             'isCustomerValidated' => 'N',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
-            'foreignOrderNumber' => ref
+            'foreignOrderNumber' => ref,
+            'uniqueValue'=>csr.unique_value
           )
           last_sent = csr.last_dcv
           #43 is the old comodo 30 day trial

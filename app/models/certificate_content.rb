@@ -76,7 +76,7 @@ class CertificateContent < ActiveRecord::Base
       cc = CertificateContent.find cc_id
       domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
-          cc.certificate_names.create(name: domain, is_common_name: (i == 0))
+          cc.certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
     end
@@ -198,21 +198,18 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    if domains.blank?
-      if csr && certificate_names.find_by_name(csr.common_name).blank?
-        certificate_names.create(name: csr.common_name, is_common_name: true)
+    if csr && certificate_names.find_by_name(csr.common_name).blank?
+      certificate_names.create(name: csr.common_name, is_common_name: true)
+    end
+    if domains.length <= 20
+      domains.flatten.each_with_index do |domain, i|
+        if certificate_names.find_by_name(domain).blank?
+          certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
+        end
       end
     else
-      if domains.length <= 20
-        domains.flatten.each_with_index do |domain, i|
-          if certificate_names.find_by_name(domain).blank?
-            certificate_names.create(name: domain, is_common_name: (i == 0)) 
-          end
-        end
-      else
-        domains.flatten.each_slice(100) do |domain_slice|
-          Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
-        end
+      domains.flatten.each_slice(100) do |domain_slice|
+        Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
       end
     end
   end
