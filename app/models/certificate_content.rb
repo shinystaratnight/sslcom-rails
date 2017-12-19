@@ -581,9 +581,12 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def csr_certificate_name
-    if certificate_names.find_by_name(:csr.common_name).blank?
-      certificate_names.update_all(is_common_name: false)
-      certificate_names.create(name: csr.common_name, is_common_name: true)
+    if csr and certificate_names.find_by_name(csr.common_name).blank?
+      begin
+        certificate_names.update_all(is_common_name: false)
+        certificate_names.create(name: csr.common_name, is_common_name: true)
+      rescue
+      end
     end
   end
 
