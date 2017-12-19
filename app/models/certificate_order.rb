@@ -1270,7 +1270,6 @@ class CertificateOrder < ActiveRecord::Base
             'countryName'=>csr.country,
             'uniqueValue'=>csr.unique_value
           )
-          set_comodo_subca(params,options)
           last_sent = csr.domain_control_validations.last_method
           build_comodo_dcv(last_sent, params, options)
         else
@@ -1283,7 +1282,8 @@ class CertificateOrder < ActiveRecord::Base
             'isCustomerValidated' => 'N',
             'responseFormat' => 1,
             'showCertificateID' => 'N',
-            'foreignOrderNumber' => ref
+            'foreignOrderNumber' => ref,
+            'uniqueValue'=>csr.unique_value
           )
           last_sent = csr.last_dcv
           #43 is the old comodo 30 day trial
@@ -1490,6 +1490,28 @@ class CertificateOrder < ActiveRecord::Base
   def valid_recipients_list
     return receipt_recipients unless receipt_recipients.is_a? Array
     receipt_recipients.map(&:split).compact.flatten.uniq
+  end
+
+  def validating_domains
+    cns = certificate_content.certificate_names
+    (certificate.is_ucc? ? cns : [cns.last])
+  end
+
+  def domains_validated
+    mdc_validation = ComodoApi.mdc_status(self)
+    ds = mdc_validation.domain_status
+    validated=[]
+    validating_domains.each_with_index do |cn,i|
+      if ds and ds[cn.name]
+        name=ds[cn.name]
+        validated << cn if (name && name["status"]=~/validated/i)
+      end
+    end
+    return validated
+  end
+
+  def all_domains_validated?
+    return true if domains_validated.count==validating_domains.count
   end
   
   private

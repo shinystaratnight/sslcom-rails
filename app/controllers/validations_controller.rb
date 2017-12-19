@@ -29,8 +29,9 @@ class ValidationsController < ApplicationController
     end
     if @certificate_order.certificate_content.contacts_provided?
       @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-    elsif @certificate_order.certificate_content.issued?
+    elsif @certificate_order.certificate_content.issued? or @certificate_order.all_domains_validated?
       checkout={checkout: "true"}
+      flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
       respond_to do |format|
         format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
       end
@@ -308,7 +309,7 @@ class ValidationsController < ApplicationController
   end
 
   def find_certificate_order
-    @certificate_order = CertificateOrder.find_by_ref(params[:certificate_order_id])
+    @certificate_order = (current_user.is_system_admins? ? CertificateOrder : current_user.certificates).find_by_ref(params[:certificate_order_id])
     @validation = @certificate_order.validation if @certificate_order
   end
 
