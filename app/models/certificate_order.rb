@@ -227,7 +227,7 @@ class CertificateOrder < ActiveRecord::Base
     if options && options.has_key?(:includes)
       includes=method(:includes).call(options[:includes])
     end
-    (includes || self).where(:workflow_state.matches % 'paid').uniq
+    (includes || self).where{workflow_state << ['new']}.uniq
   }
 
   scope :unrenewed, ->{not_new.where(:renewal_id=>nil)}

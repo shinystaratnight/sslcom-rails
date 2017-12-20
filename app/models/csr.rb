@@ -367,9 +367,7 @@ class Csr < ActiveRecord::Base
   end
 
   def unique_value(ca="comodo")
-    if certificate_order and certificate_order.signed_certificates.blank? # no certs have been issued from the private key
-      nil
-    elsif ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
+    if ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
       ca_certificate_requests.first.response_value("uniqueValue") # comodo has returned a unique already
     else
       SecureRandom.hex(5) # generate our own

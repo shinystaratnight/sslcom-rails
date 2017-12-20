@@ -76,7 +76,7 @@ class CertificateContent < ActiveRecord::Base
       cc = CertificateContent.find cc_id
       domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
-          cc.certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
+          cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end
       end
     end
@@ -581,12 +581,12 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def csr_certificate_name
-    if csr and certificate_names.find_by_name(csr.common_name).blank?
-      begin
+    begin
+      if csr and certificate_names.find_by_name(csr.common_name).blank?
         certificate_names.update_all(is_common_name: false)
         certificate_names.create(name: csr.common_name, is_common_name: true)
-      rescue
       end
+    rescue
     end
   end
 
