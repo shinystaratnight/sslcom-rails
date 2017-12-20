@@ -2,7 +2,7 @@
 -cc = co.certificate_content
 -cn = cc.csr.common_name
 -v = co.validation
-%tr.expanded(class="#{'hidden' if current_page?(:validations)}")
+%tr.expanded(class="#{'hidden' if current_page?(:validations) or current_page?(:search_validations)}")
   %td(colspan="6")
     .certificate_details
       =render :partial=>'/certificate_orders/menu', :locals=>{:co=>co}
@@ -156,7 +156,7 @@
                         =link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
               .certificate_details_box
                 %ul
-                  -if cn
+                  -if cn and !co.certificate.is_code_signing?
                     =render partial: 'certificate_orders/visit', locals: {cn: cn}
                   =render partial: 'shared/small_admin_functions', locals: {co: co}
                 -if current_user.try("is_admin?")
@@ -164,7 +164,7 @@
                     %li
                       %strong
                         process certificate signing request
-                    %li=link_to 'send to ca', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"
+                    %li=link_to 'send to comodo ca', send_to_ca_certificate_order_validation_url(certificate_order_id: co.ref), remote: true, id: "send_to_ca", "data-type"=>"json"
                     %li
                       #processing_ca
                         =image_tag 'waiting_bar_medium.gif'

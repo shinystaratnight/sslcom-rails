@@ -15,10 +15,14 @@
   -unless u.blank?
     %li=remote_login_link(u)
     %li=link_to 'user dashboard', admin_show_user_path(u)
-  -if csr.try(:body)
-    -unless co.skip_verification?
-      %li=link_to "view dcv url", csr.dcv_url, target: "_blank"
-    %li=link_to "#{co.csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, csr), target: "_blank"
+  -unless co.certificate.is_code_signing?
+    -if csr.try(:body)
+      -unless co.skip_verification?
+        %li=link_to "view dcv url", csr.dcv_url, target: "_blank"
+      %li=link_to "#{co.csr.md5_hash}.txt", http_dcv_file_csr_path(@ssl_slug, csr), target: "_blank"
   -if co.external_order_number
     %li ext order number: #{co.external_order_number}
   %li=link_to "change ext order number", '#', onclick:  "change_ext_order_#{co.id}()"
+  -if co.certificate.is_evcs?
+    %li
+      =link_to "add physical token", new_certificate_order_physical_token_path(co)

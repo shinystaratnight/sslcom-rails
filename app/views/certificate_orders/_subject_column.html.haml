@@ -1,6 +1,6 @@
 -single ||= false
 -co = certificate_order
--cn = co.is_unused_credit? ? 'credit - '+co.certificate.description["certificate_type"]+' certificate' : co.common_name
+-cn = co.is_unused_credit? ? 'credit - '+co.certificate.description["certificate_type"]+' certificate' :  (co.certificate.is_code_signing? ? co.registrant.company_name : co.common_name)
 -cn = "expired certificate" if co.is_expired_credit?
 .subject_column
   %a.common_name(title=cn)

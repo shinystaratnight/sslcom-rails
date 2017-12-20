@@ -26,7 +26,6 @@
       -order=Order.unscoped{co.order}
       -next if order.blank?
       -cc = co.certificate_content
-      -next if !co.is_unused_credit? && cc.csr.blank?
       -cn = (co.is_unused_credit? || cc.csr.blank?) ? nil : cc.csr.common_name
       %tr
         %td.dropdown
@@ -90,7 +89,7 @@
                                 .notes_box
                                   =form_for co, :url=>admin_update_certificate_order_url(co) do |f|
                                     %li
-                                      %strong notes (viewable only by #{Settings.community_name} team)
+                                      %strong notes for admins only
                                     %li
                                       =f.text_area :notes, cols: 40, rows: 10
                                 .certificate_details_box
@@ -154,7 +153,7 @@
                                         -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
                                       -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
                                       =link_cluster([ul,m,s])
-                            -if cn
+                            -if cn  and !co.certificate.is_code_signing?
                               =render partial: 'visit', locals: {cn: cn}
                             -if cc.server_software
                               %li

@@ -66,7 +66,7 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain=='sandbox' ? 'sandbox' : Settings.root_subdomain
+      redirect_to new_user_session_path
       return false
     else
       flash[:error] = "You currently do not have permission to access that page."
@@ -394,11 +394,14 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    @ssl_account = if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
-      SslAccount.find_by_acct_number(params[:ssl_slug]) || SslAccount.find_by_ssl_slug(params[:ssl_slug])
-    else
-      current_user.ssl_account if current_user
-    end
+    @ssl_account =
+        if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
+         (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
+             (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
+        else
+         current_user.ssl_account
+        end
+    not_found if @ssl_account.blank?
   end
 
   def load_notifications
@@ -465,7 +468,7 @@ class ApplicationController < ActionController::Base
     if current_user.blank?
       store_location
       flash[:notice] = "You must be logged in to access this page"
-      redirect_to new_user_session_url subdomain: request.subdomain
+      redirect_to new_user_session_path
       return false
     end
   end
@@ -558,6 +561,14 @@ class ApplicationController < ActionController::Base
     cookies.delete(:cart)
     cookies.delete(:aid_li)
     current_user.shopping_cart.update_attribute(:content, nil) if current_user && current_user.shopping_cart
+  end
+
+  def validation_destination(options)
+    co = options[:certificate_order]
+    slug = options[:ssl_slug]
+    co.certificate.is_code_signing? ?
+        document_upload_certificate_order_validation_url(certificate_order_id: co.ref) :
+        new_certificate_order_validation_path(*[slug, co.ref].compact)
   end
 
   def identify_visitor

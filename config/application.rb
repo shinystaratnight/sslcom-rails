@@ -11,6 +11,8 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 CLIENT_OPTIONS=["ssl.com","certassure"]
 DEPLOYMENT_CLIENT=CLIENT_OPTIONS[0]
 
+Struct.new("Expiring", :before, :after, :cert)
+
 module SslCom
   class Application < Rails::Application
     # set environment variables
@@ -72,6 +74,7 @@ module SslCom
     config.generators do |g|
       g.fixture_replacement :factory_girl
       g.test_framework :minitest, spec: true, fixture: false
+      g.jbuilder            false
     end
 
     config.middleware.use OAuth::Rack::OAuthFilter

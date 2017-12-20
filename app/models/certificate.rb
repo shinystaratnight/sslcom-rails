@@ -1,4 +1,5 @@
 class Certificate < ActiveRecord::Base
+  include CertificateType
   has_many    :product_variant_groups, :as => :variantable
   has_many    :product_variant_items, through: :product_variant_groups
   has_many    :validation_rulings, :as=>:validation_rulable
@@ -17,6 +18,11 @@ class Certificate < ActiveRecord::Base
   UCC_MAX_DOMAINS = 200
 
   FREE_CERTS_CART_LIMIT=5
+
+  USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
+  USERTRUST_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ev-request-form-simplified.pdf"
+  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
+  SSLCOM_EV_AUTHORIZATION="https://www.ssl.com/app/uploads/2017/12/SSL_com_EV_request_form.pdf"
 
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
   MAP_TO_TRIAL=[["Comodo Trial SSL Certificate", "SSL128SCGN SSL Certificate",
@@ -223,7 +229,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def api_product_code
-    ApiCertificateCreate_v1_4::PRODUCTS.find{|k,v|
+    ApiCertificateRequest::PRODUCTS.find{|k,v|
       serial =~ Regexp.new(v)
     }[0].to_s
   end
@@ -316,8 +322,18 @@ class Certificate < ActiveRecord::Base
     product_variant_groups.first.product_variant_items.last
   end
 
+  # is is true for SAN and EV SAN certs
   def is_ucc?
     product.include?('ucc') || product.include?('premiumssl')
+  end
+
+  # true for EV SAN only
+  def is_evucc?
+    product =~ /\Aevucc/
+  end
+
+  def admin_submit_csr?
+    is_evcs?
   end
 
   def is_client?
@@ -349,33 +365,15 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_wildcard?
-    product.include?('wildcard')
+    product =~ /wildcard/
   end
 
-  def is_ev?
-    product.include?('ev')
-  end
-
-  def is_ov?
-    product.include?('high_assurance')
-  end
-
-  def comodo_ca_id
-    if is_ev?
-      Settings.ca_certificate_id_ev
-    elsif is_ov?
-      Settings.ca_certificate_id_ov
-    else
-      Settings.ca_certificate_id_dv
-    end
+  def is_basic?
+    product =~ /basic/
   end
 
   def is_browser_generated_capable?
     is_code_signing? || is_client?
-  end
-
-  def is_code_signing?
-    product.include?('code_signing') || product.include?('code-signing')
   end
 
   def is_personal?
@@ -387,19 +385,13 @@ class Certificate < ActiveRecord::Base
   end
 
   def is_premium_ssl?
-    product_root=="premiumssl"
+    product =~ /\Apremiumssl/
   end
 
-  def is_dv?
-    product.include?('free')
-  end
-
-  def is_dv_or_basic?
-    product.include?('basic') || product.include?('dv')
-  end
+  alias_method "is_dv_or_basic?".to_sym, "is_dv?".to_sym
 
   def is_free?
-    product.include?('free')
+    product =~ /\Afree/
   end
 
   def is_multi?

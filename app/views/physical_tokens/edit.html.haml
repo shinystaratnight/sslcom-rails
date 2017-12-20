@@ -1,0 +1,9 @@
+-if permitted_to?(:update, @physical_token)
+  .reseller_registration_profile
+    %h3 Edit Physical Token for #{@certificate_order.ref}
+    =error_messages_for :physical_token
+    =form_for @physical_token, url: certificate_order_physical_token_path(@ssl_slug, @certificate_order.ref,@physical_token) do |f|
+      #stylized.default_form
+        =render partial: 'form', locals: {f: f}
+      #button_container
+        #next_submit=image_submit_tag "bl_submit_button.gif"

@@ -4,6 +4,7 @@ class CertificateContent < ActiveRecord::Base
   
   belongs_to  :certificate_order, -> { unscope(where: [:workflow_state, :is_expired]) }
   has_one     :ssl_account, through: :certificate_order
+  has_one     :certificate, through: :certificate_order
   has_many    :users, through: :certificate_order
   belongs_to  :server_software
   has_one     :csr, :dependent => :destroy
@@ -14,6 +15,7 @@ class CertificateContent < ActiveRecord::Base
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
+  accepts_nested_attributes_for :csr, :allow_destroy => false
 
   after_update :certificate_names_from_domains, unless: :certificate_names_created?
 
@@ -56,7 +58,7 @@ class CertificateContent < ActiveRecord::Base
   serialize :domains
 
   validates_presence_of :server_software_id, :signing_request,
-    :if => "certificate_order_has_csr && !ajax_check_csr"
+    :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
     :if => :certificate_order_has_csr_and_signing_request
@@ -74,7 +76,7 @@ class CertificateContent < ActiveRecord::Base
       cc = CertificateContent.find cc_id
       domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
-          cc.certificate_names.create(name: domain, is_common_name: (i == 0))
+          cc.certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
     end
@@ -101,12 +103,14 @@ class CertificateContent < ActiveRecord::Base
   workflow do
     state :new do
       event :submit_csr, :transitions_to => :csr_submitted
+      event :provide_info, :transitions_to => :info_provided
       event :cancel, :transitions_to => :canceled
       event :issue, :transitions_to => :issued
       event :reset, :transitions_to => :new
     end
 
     state :csr_submitted do
+      event :issue, :transitions_to => :issued
       event :provide_info, :transitions_to => :info_provided
       event :reprocess, :transitions_to => :reprocess_requested
       event :cancel, :transitions_to => :canceled
@@ -114,6 +118,7 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :info_provided do
+      event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :provide_contacts, :transitions_to => :contacts_provided
       event :cancel, :transitions_to => :canceled
@@ -121,9 +126,10 @@ class CertificateContent < ActiveRecord::Base
     end
 
     state :contacts_provided do
+      event :submit_csr, :transitions_to => :csr_submitted
       event :issue, :transitions_to => :issued
       event :pend_validation, :transitions_to => :pending_validation do |options={}|
-        unless csr.sent_success #do not send if already sent successfully
+        if csr and !csr.sent_success #do not send if already sent successfully
           options[:certificate_content]=self
           unless self.infringement.empty? # possible trademark problems
             OrderNotifier.potential_trademark(Settings.notify_address, certificate_order, self.infringement).deliver_now
@@ -192,27 +198,28 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def certificate_names_from_domains
-    if domains.blank?
-      if csr && certificate_names.find_by_name(csr.common_name).blank?
-        certificate_names.create(name: csr.common_name, is_common_name: true)
+    if csr && certificate_names.find_by_name(csr.common_name).blank?
+      certificate_names.create(name: csr.common_name, is_common_name: true)
+    end
+    if domains.length <= 20
+      domains.flatten.each_with_index do |domain, i|
+        if certificate_names.find_by_name(domain).blank?
+          certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
+        end
       end
     else
-      if domains.length <= 20
-        domains.flatten.each_with_index do |domain, i|
-          if certificate_names.find_by_name(domain).blank?
-            certificate_names.create(name: domain, is_common_name: (i == 0)) 
-          end
-        end
-      else
-        domains.flatten.each_slice(100) do |domain_slice|
-          Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
-        end
+      domains.flatten.each_slice(100) do |domain_slice|
+        Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
       end
     end
   end
 
   def signed_certificate
     signed_certificates.last
+  end
+
+  def certificate
+    certificate_order.certificate
   end
 
   def domains=(names)
@@ -308,6 +315,10 @@ class CertificateContent < ActiveRecord::Base
       return false
     end
     true
+  end
+
+  def validation_type
+    (signed_certificate || certificate).validation_type
   end
 
   CONTACT_ROLES.each do |role|
@@ -452,6 +463,129 @@ class CertificateContent < ActiveRecord::Base
         end
         errors.add(:domain, "#{domain} contains more than one * character") if (domain.scan /\*/).count > 1
         errors
+      end
+    end
+  end
+
+  # 1- End Entity Profile : DV_SERVER_CERT_EE and Certificate Profile: DV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 2- End Entity Profile : OV_SERVER_CERT_EE and Certificate Profile: OV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 3- End Entity Profile : EV_SERVER_CERT_EE and Certificate Profile: EV_RSA_SERVER_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  # 2.5.4.15 (businessCategory)- Required
+  # serialNumber - Required
+  # 1.3.6.1.4.1.311.60.2.1.1 (Jurisdiction Locality) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.2 (Jurisdiction State or Province) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.3 (Jurisdiction Country) - Required
+  #
+  # Subject Alternative Name
+  #
+  # dNSName - It could be multiple but atleast one is required
+  #
+  # 4- End Entity Profile : EV_CS_CERT_EE and Certificate Profile: EV_RSA_CS_CERT
+  #
+  # Subject DN
+  #
+  # CN (Common name) - Required
+  # OU (Organizational Unit) - Optional
+  # O (Organization) - Required
+  # L (Locality) - Optional
+  # ST (State or Province) - Optional
+  # C (Country) - Required
+  # postalCode - Optional
+  # postalAddress - Optional
+  # streetAddress - Optional
+  # 2.5.4.15 (businessCategory)- Required
+  # serialNumber - Required
+  # 1.3.6.1.4.1.311.60.2.1.1 (Jurisdiction Locality) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.2 (Jurisdiction State or Province) - Optional
+  # 1.3.6.1.4.1.311.60.2.1.3 (Jurisdiction Country) - Required
+  #
+  # Subject Alternative Name
+  #
+  # This extension is not required for this profile
+  #
+  #  5- End Entity Profile : CS_CERT_EE and Certificate Profile: RSA_CS_CERT
+  #
+  #  Subject DN
+  #
+  #  CN (Common name) - Required
+  #  OU (Organizational Unit) - Optional
+  #  O (Organization) - Required
+  #  streetAddress - Optional
+  #  L (Locality) - Optional
+  #  ST (State or Province) - Optional
+  #  postalCode - Optional
+  #  C (Country) - Required
+  #
+  #  Subject Alternative Name
+  #
+  #
+  #  Note:-
+  #
+  #  Subject DN format : "subject_dn": "CN=saad.com,O=SSL.COM,C=US". The names in open and closing parenthisis are just for description e.g. CN (common name). Here (common name) is for description. You only need to pass CN in subject DN. Those names that do not have any parenthisis will be passed as it is in subject DN.
+  #      Subject alternative name format : "subject_alt_name": "dNSName=foo2.bar.com, dNSName=foo2.bar.com"
+
+  def subject_dn(options={})
+    cert = options[:certificate] || self.certificate
+    dn=["CN=#{options[:common_name] || csr.common_name}"]
+    unless cert.is_dv?
+      dn << "O=#{options[:o] || registrant.company_name}"
+      dn << "C=#{options[:c] || registrant.country}"
+      if cert.is_ev?
+        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number)}"
+        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category)}"
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city)}"
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state)}"
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country)}"
+      end
+    end
+    dn << options[:custom_fields] if options[:custom_fields]
+    dn.join(",")
+  end
+
+  def csr_certificate_name
+    if csr and certificate_names.find_by_name(csr.common_name).blank?
+      begin
+        certificate_names.update_all(is_common_name: false)
+        certificate_names.create(name: csr.common_name, is_common_name: true)
+      rescue
       end
     end
   end

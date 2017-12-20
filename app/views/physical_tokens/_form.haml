@@ -1,0 +1,33 @@
+%div(class='fields')
+  .clearfix
+    %label{:for=>"name"}
+      Friendly Name:
+    =f.text_field :name
+  .clearfix
+    %label{:for=>"manufacturer"}
+      Manufacturer:
+    =f.select :manufacturer, PhysicalToken::MAKE_AND_MODELS.keys
+  .clearfix
+    %label{:for=>"model_number"}
+      Model Number:
+    =f.select :model_number, PhysicalToken::MAKE_AND_MODELS.values
+  .clearfix
+    %label{:for=>"serial_number"}
+      Serial Number:
+    =f.text_field :serial_number
+  .clearfix
+    %label{:for=>"activation_pin"}
+      Activation PIN:
+    =f.text_field :activation_pin
+  .clearfix
+    %label{:for=>"shipping_method"}
+      Shipping Method:
+    =f.select :shipping_method, PhysicalToken::CARRIERS
+  .clearfix
+    %label{:for=>"tracking_number"}
+      Tracking Number:
+    =f.text_field :tracking_number
+  .clearfix
+    %label{:for=>"notes"}
+      Notes:
+    =f.text_area :notes, :cols=>30, :rows=>10

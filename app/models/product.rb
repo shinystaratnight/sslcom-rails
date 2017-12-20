@@ -24,7 +24,7 @@ class Product < ActiveRecord::Base
   end
 
   def api_product_code
-    ApiCertificateCreate_v1_4::PRODUCTS.find{|k,v|
+    ApiCertificateRequest::PRODUCTS.find{|k,v|
       serial =~ Regexp.new(v)
     }[0].to_s
   end

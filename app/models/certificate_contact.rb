@@ -13,4 +13,8 @@ class CertificateContact < Contact
     [first_name, last_name, email] <=> [contact.first_name, contact.last_name,
       contact.email]
   end
+
+  def to_digest_key
+    [first_name.capitalize, last_name.capitalize, email.downcase].join(",")
+  end
 end

@@ -10,5 +10,7 @@
           %strong=adj_index
           -if certificate.try("is_free?") && page=~/Payment/i
             Agreement
+          -elsif certificate.try("is_code_signing?") && page==CertificateOrder::VERIFICATION_STEP
+            Upload Documents
           -else
             #{page}

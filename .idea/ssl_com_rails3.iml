@@ -2,7 +2,7 @@
 <module type="RUBY_MODULE" version="4">
   <component name="CompassSettings">
     <option name="compassConfigPath" value="C:\Users\leo\git\sslcom-rails\compass.rb" />
-    <option name="compassExecutableFilePath" value="$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/508573160/-705174119/gems/compass-1.0.3/bin/compass" />
+    <option name="compassExecutableFilePath" value="$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/95326244/-705174119/gems/compass-1.0.3/bin/compass" />
     <option name="importPaths">
       <list>
         <option value="/home/vagrant/.rvm/gems/ruby-2.3.0/gems/compass-core-1.0.3/stylesheets" />
@@ -266,6 +266,13 @@
         <envs />
         <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
         <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <PathMappingSettings>
+          <option name="pathMappings">
+            <list>
+              <mapping local-root="$MODULE_DIR$" remote-root="/vagrant" />
+            </list>
+          </option>
+        </PathMappingSettings>
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="deploy" />
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
@@ -296,6 +303,13 @@
         <envs />
         <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
         <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <PathMappingSettings>
+          <option name="pathMappings">
+            <list>
+              <mapping local-root="$MODULE_DIR$" remote-root="/vagrant" />
+            </list>
+          </option>
+        </PathMappingSettings>
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="deploy:restart" />
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
         <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
@@ -691,9 +705,17 @@
         <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
         <envs>
           <env name="RAILS_ENV" value="development" />
+          <env name="VERSION" value="20170824154146" />
         </envs>
         <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
         <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+        <PathMappingSettings>
+          <option name="pathMappings">
+            <list>
+              <mapping local-root="$MODULE_DIR$" remote-root="/vagrant" />
+            </list>
+          </option>
+        </PathMappingSettings>
         <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="db:migrate" />
         <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
         <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
@@ -892,6 +914,7 @@
     <orderEntry type="library" scope="PROVIDED" name="akami (v1.3.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="annotate (v2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ansi (v1.5.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="api-pagination (v4.6.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="archive-zip (v0.7.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="arel (v6.0.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="attr_encrypted (v3.0.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -902,7 +925,7 @@
     <orderEntry type="library" scope="PROVIDED" name="better_errors (v2.1.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="binding_of_caller (v0.7.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="builder (v3.2.2, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.15.4, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.16.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="cancan (v1.6.10, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capistrano (v2.15.9, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="capybara (v2.7.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -967,6 +990,7 @@
     <orderEntry type="library" scope="PROVIDED" name="jbuilder (v2.6.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jquery-rails (v4.2.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json-schema (v2.8.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="jsonapi-serializers (v1.0.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jwt (v1.5.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="launchy (v2.4.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="libv8 (v3.16.14.17, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
@@ -1035,7 +1059,7 @@
     <orderEntry type="library" scope="PROVIDED" name="ruby-progressbar (v1.8.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby_dep (v1.5.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="ruby_parser (v3.8.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
-    <orderEntry type="library" scope="PROVIDED" name="rubyzip (v1.2.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="rubyzip (v1.2.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rvm-capistrano (v1.5.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass (v3.4.22, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="sass-rails (v5.0.6, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />

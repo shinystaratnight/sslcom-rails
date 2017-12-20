@@ -12,12 +12,12 @@ authorization do
   role :sysadmin do
     includes :user
     has_permission_on :authorization_rules, :to => :read
-    has_permission_on :site_seals, :validation_rules,
-      :to => :admin_manage, except: :delete
-    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls,
+    has_permission_on :site_seals, :validation_rules, :certificate_orders,
+      :to => :sysadmin_manage, except: :delete
+    has_permission_on :affiliates, :certificate_orders, :csrs, :orders, :signed_certificates, :surls, :physical_tokens,
       :to => :manage
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
-      :to => :admin_manage
+      :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
     has_permission_on :orders,       to: :refund_merchant
     has_permission_on :ssl_accounts, to: [
@@ -31,7 +31,7 @@ authorization do
     #
     # Users
     #
-    has_permission_on :users, :to => :admin_manage
+    has_permission_on :users, :to => :sysadmin_manage
   end
 
   # ============================================================================
@@ -256,6 +256,11 @@ authorization do
       }
     end
 
+    has_permission_on :physical_tokens, :to => [:read] do
+      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
+      }
+    end
+
     has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
       if_permitted_to :update, :certificate_order
     end
@@ -380,7 +385,7 @@ authorization do
   role :guest do
     has_permission_on :csrs, :certificate_orders, :orders,  :to => :create
     has_permission_on :certificates,  :to => :buy_renewal
-    has_permission_on :validations, :site_seals, :surls,    :to => [:create, :read]
+    has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
     has_permission_on :certificates, :validation_histories, :to => :read
     has_permission_on :funded_accounts, :to => [
@@ -421,7 +426,7 @@ privileges do
     :change_state, :create, :delete, :read, :refund, :update
   ]
   privilege :read, includes: [
-    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer
+    :index, :invoice, :lookup_discount, :search, :show, :show_cart, :developer, :site_report
   ]
   privilege :update, includes: [
     :edit, :edit_email, :edit_update, :verification_check
@@ -429,28 +434,34 @@ privileges do
   privilege :create, includes: :new
   privilege :delete, includes: :destroy
   privilege :admin_manage, includes: [
-    :adjust_funds,
     :admin_activate,
     :admin_index,
     :admin_show,
     :admin_update,
     :change_ext_order_number,
-    :change_login,
     :edit,
     :edit_settings,
     :edit_password,
     :enable_disable,
-    :login_as,
     :manage,
     :manage_all,
-    :refund_merchant,
     :remove_from_account,
     :resend_account_invite,
     :search,
-    :set_default_team_max,
     :update_company_name,
-    :update_roles,
     :update_settings,
     :update_ssl_slug
+  ]
+  privilege :sysadmin_manage, includes: [
+    :admin_manage,
+    :adjust_funds,
+    :change_ext_order_number,
+    :change_login,
+    :login_as,
+    :refund_merchant,
+    :search,
+    :set_default_team_max,
+    :sslcom_ca,
+    :update_roles
   ]
 end

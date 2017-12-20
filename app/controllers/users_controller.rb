@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   ]
   before_filter :finish_reseller_signup, :only => [:show]
   before_filter :new_user, :only=>[:create, :new]
-  before_filter :find_ssl_account, only: [:admin_show]
+  before_filter :find_ssl_account, only: [:show, :admin_show]
   before_filter :find_user, :set_admin_flag, :only=>[:edit_email,
     :edit_password, :update, :login_as, :admin_update, :admin_show,
     :consolidate, :dup_info, :adjust_funds, :change_login, 
