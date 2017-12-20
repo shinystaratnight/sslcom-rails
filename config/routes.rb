@@ -300,6 +300,9 @@ SslCom::Application.routes.draw do
 
     member do
       get :resource_setting
+      get :resource_cache
+      delete :purge_cache
+      post :update_cache_expiry
       post :update_resource
       delete :delete_resource
       post :add_custom_domain

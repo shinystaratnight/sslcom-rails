@@ -3449,7 +3449,7 @@ label.error
     background: lightyellow
 
 #report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list
+#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list, #popular-files
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -5757,3 +5757,41 @@ span.notifications-teams
     .field-note
       font-size: 13px
       margin-top: 3px
+
+#caches
+  hr
+    margin: 15px 0px
+  .sub-title
+    font-size: 15px
+    font-weight: bold
+    text-decoration: underline
+    margin-top: 10px
+  .sub-cont
+    margin-left: 10px
+    div
+      padding-top: 10px
+    input[type="submit"]
+      margin-top: 10px
+    form input[type="submit"]
+      height: 20px
+      font-size: 13px
+  & table th,
+  & table td
+    text-align: left
+    &:last-child
+      text-align: center
+    &:first-child
+      padding-left: 10px
+  #purge-files,
+  #cache-expiry
+    float: left
+    width: 50%
+    .field-label
+      float: left
+      width: 130px
+      font-size: 14px
+      padding-right: 10px
+    .field-cont
+      float: left
+  #cache-expiry .field-label
+    width: 160px

@@ -1,5 +1,6 @@
 -title = "CDN Management"
 -content_for :title, title
+-is_system_admin = @results[:is_admin]
 -api_key = @results[:api_key]
 -resources = @results[:resources]
 #cdns
@@ -11,15 +12,16 @@
           =submit_tag 'Activate CDN'
     %hr
   -if api_key
-    %div
-      .sub-cont
-        =form_tag :register_api_key_cdns, :method=>:post do
-          %div.reg-api-key.clearfix
-            .field-label API Key:
-            .field-cont
-              =text_field_tag :api_key, api_key
-              =submit_tag 'Update'
-    %hr
+    -if is_system_admin
+      %div
+        .sub-cont
+          =form_tag :register_api_key_cdns, :method=>:post do
+            %div.reg-api-key.clearfix
+              .field-label API Key:
+              .field-cont
+                =text_field_tag :api_key, api_key
+                =submit_tag 'Update'
+      %hr
     %div
       .sub-title Resources
       =form_tag :update_resources_cdns, :method=>:post do
@@ -32,6 +34,7 @@
               %th Hostname
               %th Created
               %th Settings
+              %th Caches
               %th Delete?
             -if resources && resources.length > 0
               -resources.each do |resource|
@@ -46,6 +49,8 @@
                     =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
                   %td
                     =link_to 'Setting', resource_setting_cdn_path(resource['id'])
+                  %td
+                    =link_to 'Cache', resource_cache_cdn_path(resource['id'])
                   %td
                     =check_box_tag "deleted_resources[]", resource['id']
             -else

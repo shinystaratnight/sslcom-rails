@@ -1,0 +1,11 @@
+<script type="text/javascript">
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function() {
+      $('#purge_all_btn').click(function() {
+        $('form #purge_all').val(true)
+        $('#purge_form').submit();
+      });
+    });
+  });
+</script>

@@ -1,14 +1,17 @@
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
-  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_setting]
+  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_setting, :resource_cache]
 
   # # GET /cdns
   # # GET /cdns.json
   def index
     @results = {}
+    @results[:is_admin] = current_user.is_system_admins?
+
     if current_user.ssl_account
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+      # cdn = Cdn.where(ssl_account_id: '111').last
 
       if cdn
         @results[:api_key] = cdn.api_key
@@ -28,6 +31,7 @@ class CdnsController < ApplicationController
   def register_account
     if current_user.ssl_account
       reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
+      byebug
       @response = HTTParty.post('https://reseller.cdnify.com/users',
                                 {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
 
@@ -101,6 +105,30 @@ class CdnsController < ApplicationController
     redirect_to resource_setting_cdn_path(resource_id) and return
   end
 
+  def update_cache_expiry
+    byebug
+    resource_id = params[:id]
+    api_key = params[:api_key]
+
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
+                               {basic_auth: {username: api_key, password: 'x'}, body: {cache_expire_time: params[:expiry_hours]}})
+
+    if @response.parsed_response
+      if @response.parsed_response['resource']
+        flash[:notice] = 'Successfully Updated Cache Expire Time.'
+      else
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      end
+    else
+      flash[:error] = 'Failed to Update Cache Expire Time.'
+    end
+
+    redirect_to resource_cache_cdn_path(resource_id) and return
+  end
+
   def update_advanced_setting
     resource_id = params[:id]
     api_key = params[:api_key]
@@ -155,6 +183,32 @@ class CdnsController < ApplicationController
     end
 
     redirect_to resource_setting_cdn_path(resource_id) and return
+  end
+
+  def purge_cache
+    resource_id = params[:id]
+    api_key = params[:api_key]
+    files = params[:purge_files].split(',')
+    is_purge_all = params[:purge_all]
+
+    if is_purge_all == 'true'
+      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                  basic_auth: {username: api_key, password: 'x'})
+    else
+      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                  {basic_auth: {username: api_key, password: 'x'}, body: {files: files}})
+    end
+
+    if @response.parsed_response
+      @response.parsed_response['errors'].each do |error|
+        msg = error['code'].to_s + ': ' + error['message']
+        flash[:error] = msg
+      end
+    else
+      flash[:notice] = 'Successfully Purged File(s).'
+    end
+
+    redirect_to resource_cache_cdn_path(resource_id) and return
   end
 
   def delete_resource
@@ -220,6 +274,27 @@ class CdnsController < ApplicationController
 
     respond_to do |format|
       format.html { render :action => "resource_setting" }
+      format.xml { render :xml => @results }
+    end
+  end
+
+  def resource_cache
+    resource_id = params['id']
+    @results = {}
+
+    unless current_user.ssl_account.blank?
+      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+
+      if cdn
+        @results[:api_key] = cdn.api_key
+        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
+                                 basic_auth: {username: cdn.api_key, password: 'x'})
+        @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
+      end
+    end
+
+    respond_to do |format|
+      format.html { render :action => "resource_cache" }
       format.xml { render :xml => @results }
     end
   end
