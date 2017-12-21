@@ -394,6 +394,7 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
+    return unless require_user
     @ssl_account =
         if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
          (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
