@@ -11,3 +11,4 @@
 //= require jCal
 //= require datejs
 //= require merchant_validate_cc
+//= require invoice_section

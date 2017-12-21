@@ -1,0 +1,58 @@
+-found = Invoice.find_by order_id: @order.id
+-invoice = found ? found : Invoice.new
+-method = found ? :put : :post
+=form_for invoice, url: update_invoice_order_path(@ssl_slug, @order), method: method, remote: true,  data: {type: :json}, html: {id: 'frm-inv-update'} do |f|
+  =f.hidden_field :order_id, value: @order.id
+  %p This will update the address (Billed To) that will be displayed in current invoice.
+  %small *Note: Default 'Billed To' address is pulled from the current order.
+  .registration_form
+    %div(class='fields')
+      .clearfix
+        %label{:for=>'first_name'}
+          *First Name:
+        =f.text_field :first_name
+      .clearfix
+        %label{:for=>'last_name'}
+          *Last Name:
+        =f.text_field :last_name
+      .clearfix
+        %label{:for=>'phone'}
+          Phone:
+        =f.text_field :phone
+      .clearfix
+        %label{:for=>'fax'}
+          Fax:
+        =f.text_field :fax
+      .clearfix
+        %label{:for=>'company'}
+          Company:
+        =f.text_field :company
+      .clearfix
+        %label{:for=>'address_1'}
+          *Address 1:
+        =f.text_field :address_1
+      .clearfix
+        %label{:for=>'address_2'}
+          Address 2:
+        =f.text_field :address_2
+      .clearfix
+        %label{:for=>'city'}
+          *City:
+        =f.text_field :city
+      .clearfix
+        %label{:for=>'state'}
+          *State:
+        =f.text_field :state
+      .clearfix
+        %label{:for=>'postal_code'}
+          *Postal Code:
+        =f.text_field :postal_code
+      .clearfix
+        %label{:for=>'country'}
+          *Country:
+        =f.select :country, Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
+  
+  #button_container
+    #auto_adjust
+      =image_tag 'cancel_bl.gif', id: 'btn-inv-update-cancel'
+      =image_submit_tag 'bl_submit_button.gif'
