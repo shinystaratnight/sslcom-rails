@@ -300,19 +300,20 @@ SslCom::Application.routes.draw do
   end
 
   resources :cdns do
+    post :register_account, on: :collection
     post :register_api_key, on: :collection
     post :update_resources, on: :collection
-    post :register_account, on: :collection
 
     member do
       get :resource_setting
+      post :update_resource
+      post :add_custom_domain
+      post :update_custom_domain
+      post :update_advanced_setting
+      delete :delete_resource
       get :resource_cache
       delete :purge_cache
       post :update_cache_expiry
-      post :update_resource
-      delete :delete_resource
-      post :add_custom_domain
-      post :update_advanced_setting
     end
   end
 

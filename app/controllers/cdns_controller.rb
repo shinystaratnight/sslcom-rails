@@ -19,6 +19,7 @@ class CdnsController < ApplicationController
         @response = HTTParty.get('https://cdnify.com/api/v1/resources',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resources] = @response.parsed_response['resources'] if @response.parsed_response
+
       end
     end
 
@@ -31,7 +32,6 @@ class CdnsController < ApplicationController
   def register_account
     if current_user.ssl_account
       reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
-      byebug
       @response = HTTParty.post('https://reseller.cdnify.com/users',
                                 {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
 
@@ -78,160 +78,6 @@ class CdnsController < ApplicationController
     redirect_to cdns_path
   end
 
-  def add_custom_domain
-    resource_id = params[:id]
-    api_key = params[:api_key]
-    custom_domains_list = []
-    custom_domains_list << params[:custom_domain]
-
-    # curl -X PATCH -u "8f213487af4f47fc609590892cc292a91b48af0b:x" https://cdnify.com/api/v1/resources/a080e67 -d alias=ssltst
-
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
-                               {basic_auth: {username: api_key, password: 'x'}, body: {custom_domains: custom_domains_list}})
-
-    if @response.parsed_response
-      if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Added New Custom Domain.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          msg = error['code'].to_s + ': ' + error['message']
-          flash[:error] = msg
-        end
-      end
-    else
-      flash[:error] = 'Failed to Add a New Custom Domain.'
-    end
-
-    redirect_to resource_setting_cdn_path(resource_id) and return
-  end
-
-  def update_cache_expiry
-    byebug
-    resource_id = params[:id]
-    api_key = params[:api_key]
-
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
-                               {basic_auth: {username: api_key, password: 'x'}, body: {cache_expire_time: params[:expiry_hours]}})
-
-    if @response.parsed_response
-      if @response.parsed_response['resource']
-        flash[:notice] = 'Successfully Updated Cache Expire Time.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          msg = error['code'].to_s + ': ' + error['message']
-          flash[:error] = msg
-        end
-      end
-    else
-      flash[:error] = 'Failed to Update Cache Expire Time.'
-    end
-
-    redirect_to resource_cache_cdn_path(resource_id) and return
-  end
-
-  def update_advanced_setting
-    resource_id = params[:id]
-    api_key = params[:api_key]
-
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
-                               {basic_auth: {username: api_key, password: 'x'}, body: {
-                                   allow_robots: !params[:allow_robots].blank?,
-                                   cache_query_string: !params[:cache_query_string].blank?,
-                                   enable_cors: !params[:enable_cors].blank?,
-                                   disable_gzip: !params[:disable_gzip].blank?,
-                                   force_ssl: !params[:pull_https].blank?,
-                                   pull_https: !params[:pull_https].blank?,
-                                   link: !params[:link].blank?
-                               }})
-
-    if @response.parsed_response
-      if @response.parsed_response['resource']
-        flash[:notice] = 'Successfully Updated Advanced Settings.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          msg = error['code'].to_s + ': ' + error['message']
-          flash[:error] = msg
-        end
-      end
-    else
-      flash[:error] = 'Failed to Update Advanced Settings.'
-    end
-
-    redirect_to resource_setting_cdn_path(resource_id) and return
-  end
-
-  def update_resource
-    resource_id = params[:id]
-    api_key = params[:api_key]
-    resource_origin = params[:resource_origin]
-    resource_name = params[:resource_name]
-
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
-                               {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
-
-    if @response.parsed_response
-      if @response.parsed_response['resources']
-        flash[:notice] = 'Successfully Updated General Settings.'
-      else
-        @response.parsed_response['errors'].each do |error|
-          msg = error['code'].to_s + ': ' + error['message']
-          flash[:error] = msg
-        end
-      end
-    else
-      flash[:error] = 'Failed to Update General Settings.'
-    end
-
-    redirect_to resource_setting_cdn_path(resource_id) and return
-  end
-
-  def purge_cache
-    resource_id = params[:id]
-    api_key = params[:api_key]
-    files = params[:purge_files].split(',')
-    is_purge_all = params[:purge_all]
-
-    if is_purge_all == 'true'
-      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
-                                  basic_auth: {username: api_key, password: 'x'})
-    else
-      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
-                                  {basic_auth: {username: api_key, password: 'x'}, body: {files: files}})
-    end
-
-    if @response.parsed_response
-      @response.parsed_response['errors'].each do |error|
-        msg = error['code'].to_s + ': ' + error['message']
-        flash[:error] = msg
-      end
-    else
-      flash[:notice] = 'Successfully Purged File(s).'
-    end
-
-    redirect_to resource_cache_cdn_path(resource_id) and return
-  end
-
-  def delete_resource
-    resource_id = params[:id]
-    api_key = params[:api_key]
-
-    @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id,
-                                basic_auth: {username: api_key, password: 'x'})
-
-    if @response.parsed_response
-      @response.parsed_response['errors'].each do |error|
-        msg = error['code'].to_s + ': ' + error['message']
-        flash[:error] = msg
-      end
-
-      redirect_to resource_setting_cdn_path(resource_id) and return
-    else
-      flash[:notice] = 'Successfully Deleted Resource.'
-    end
-
-    redirect_to cdns_path
-  end
-
   def update_resources
     resources = params['deleted_resources']
     is_deleted = true
@@ -239,7 +85,7 @@ class CdnsController < ApplicationController
     if resources
       resources.each do |resource_id|
         @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id,
-                                 basic_auth: {username: params['api_key'], password: 'x'})
+                                    basic_auth: {username: params['api_key'], password: 'x'})
         if @response.parsed_response
           is_deleted = false
           @response.parsed_response['errors'].each do |error|
@@ -278,6 +124,156 @@ class CdnsController < ApplicationController
     end
   end
 
+  def update_resource
+    resource_id = params[:id]
+    api_key = params[:api_key]
+    resource_origin = params[:resource_origin]
+    resource_name = params[:resource_name]
+
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
+                               {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
+
+    if @response.parsed_response
+      if @response.parsed_response['resources']
+        flash[:notice] = 'Successfully Updated General Settings.'
+      else
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      end
+    else
+      flash[:error] = 'Failed to Update General Settings.'
+    end
+
+    redirect_to resource_setting_cdn_path(resource_id) and return
+  end
+
+  def add_custom_domain
+    resource_id = params[:id]
+    api_key = params[:api_key]
+    custom_domain = params[:custom_domain]
+
+    @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+                              {basic_auth: {username: api_key, password: 'x'}, body: {hostname: custom_domain}})
+
+    # certificate_value = params['certificate_value']
+    # private_key = params['private_key']
+    # byebug
+    # @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+    #                           {basic_auth: {username: api_key, password: 'x'},
+    #                            body: {hostname: custom_domain, certificates: {certificate: certificate_value, privateKey: private_key}}})
+
+    if @response.parsed_response
+      if @response.parsed_response['errors']
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      else
+        flash[:notice] = @response.parsed_response['message']
+      end
+    else
+      flash[:error] = 'Failed to Add a New Custom Domain.'
+    end
+
+    redirect_to resource_setting_cdn_path(resource_id) and return
+  end
+
+  def update_custom_domain
+    resource_id = params[:id]
+    action_type = params['action_type']
+    api_key = params['api_key']
+    host_name = params['host_name']
+
+    if action_type == 'modify'
+      certificate_value = params['certificate_value']
+      private_key = params['private_key']
+
+      @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+                                {basic_auth: {username: api_key, password: 'x'},
+                                 body: {hostname: host_name, certificates: {certificate: certificate_value, privateKey: private_key}}})
+
+      if @response.parsed_response && @response.parsed_response['errors']
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      else
+        flash[:notice] = @response.parsed_response && @response.parsed_response['message'] ?
+                             @response.parsed_response['message'] : 'Successfully Modified.'
+      end
+    else
+      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,
+                                  basic_auth: {username: api_key, password: 'x'})
+
+      if @response.parsed_response
+        if @response.parsed_response['errors']
+          @response.parsed_response['errors'].each do |error|
+            msg = error['code'].to_s + ': ' + error['message']
+            flash[:error] = msg
+          end
+        end
+      else
+        flash[:notice] = 'Successfully Deleted.'
+      end
+    end
+
+    redirect_to resource_setting_cdn_path(resource_id) and return
+  end
+
+  def update_advanced_setting
+    resource_id = params[:id]
+    api_key = params[:api_key]
+
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
+                               {basic_auth: {username: api_key, password: 'x'}, body: {
+                                   allow_robots: !params[:allow_robots].blank?,
+                                   cache_query_string: !params[:cache_query_string].blank?,
+                                   enable_cors: !params[:enable_cors].blank?,
+                                   disable_gzip: !params[:disable_gzip].blank?,
+                                   force_ssl: !params[:pull_https].blank?,
+                                   pull_https: !params[:pull_https].blank?,
+                                   link: !params[:link].blank?
+                               }})
+
+    if @response.parsed_response
+      if @response.parsed_response['resource']
+        flash[:notice] = 'Successfully Updated Advanced Settings.'
+      else
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      end
+    else
+      flash[:error] = 'Failed to Update Advanced Settings.'
+    end
+
+    redirect_to resource_setting_cdn_path(resource_id) and return
+  end
+
+  def delete_resource
+    resource_id = params[:id]
+    api_key = params[:api_key]
+
+    @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id,
+                                basic_auth: {username: api_key, password: 'x'})
+
+    if @response.parsed_response
+      @response.parsed_response['errors'].each do |error|
+        msg = error['code'].to_s + ': ' + error['message']
+        flash[:error] = msg
+      end
+
+      redirect_to resource_setting_cdn_path(resource_id) and return
+    else
+      flash[:notice] = 'Successfully Deleted Resource.'
+    end
+
+    redirect_to cdns_path
+  end
+
   def resource_cache
     resource_id = params['id']
     @results = {}
@@ -297,6 +293,55 @@ class CdnsController < ApplicationController
       format.html { render :action => "resource_cache" }
       format.xml { render :xml => @results }
     end
+  end
+
+  def purge_cache
+    resource_id = params[:id]
+    api_key = params[:api_key]
+    files = params[:purge_files].split(',')
+    is_purge_all = params[:purge_all]
+
+    if is_purge_all == 'true'
+      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                  basic_auth: {username: api_key, password: 'x'})
+    else
+      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                  {basic_auth: {username: api_key, password: 'x'}, body: {files: files}})
+    end
+
+    if @response.parsed_response
+      @response.parsed_response['errors'].each do |error|
+        msg = error['code'].to_s + ': ' + error['message']
+        flash[:error] = msg
+      end
+    else
+      flash[:notice] = 'Successfully Purged File(s).'
+    end
+
+    redirect_to resource_cache_cdn_path(resource_id) and return
+  end
+
+  def update_cache_expiry
+    resource_id = params[:id]
+    api_key = params[:api_key]
+
+    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
+                               {basic_auth: {username: api_key, password: 'x'}, body: {cache_expire_time: params[:expiry_hours]}})
+
+    if @response.parsed_response
+      if @response.parsed_response['resource']
+        flash[:notice] = 'Successfully Updated Cache Expire Time.'
+      else
+        @response.parsed_response['errors'].each do |error|
+          msg = error['code'].to_s + ': ' + error['message']
+          flash[:error] = msg
+        end
+      end
+    else
+      flash[:error] = 'Failed to Update Cache Expire Time.'
+    end
+
+    redirect_to resource_cache_cdn_path(resource_id) and return
   end
 
   # GET /cdns/1

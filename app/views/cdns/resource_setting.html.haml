@@ -1,4 +1,5 @@
 -title = "CDN Settings"
+=render :partial => 'index_scripts'
 -content_for :title, title
 -api_key = @results[:api_key]
 -if @results[:resource]
@@ -45,6 +46,14 @@
               =text_field_tag :custom_domain
               .note
                 SSL is only valid for your first custom domain.
+          -#%div.reg-resource.clearfix
+          -#  .field-label Certificate:
+          -#  .field-cont
+          -#    =text_area_tag :certificate_value, nil, rows: 5, cols: 37
+          -#%div.reg-resource.clearfix
+          -#  .field-label Private Key:
+          -#  .field-cont
+          -#    =text_area_tag :private_key, nil, rows: 5, cols: 37
           =submit_tag 'Create', :id=>'btn_add_custom_domain'
     %hr
     %div
@@ -54,7 +63,7 @@
           %tr.heading_row
             %th Domain Name
             %th Created
-            %th
+            %th Valid Status
             %th
           -if domain_list.length > 0
             -domain_list.each do |domain|
@@ -65,6 +74,7 @@
                   =DateTime.parse(domain['created_at']).strftime("%d/%m/%Y")
                 %td
                 %td
+                  =link_to 'Edit', nil, :class => "custom-domain-modal-link", "data-toggle" => "modal", "data-target" => "#custom-domain-modal", "data-hostname" => domain['hostname']
           -else
             %tr
               %td(colspan="4")
@@ -120,3 +130,38 @@
           %div.field-note
             Deleting a resource cannot be undone. Before continuing make sure you are certain.
           =submit_tag 'Delete', :id=>'btn_delete_resource'
+  %div.modal.fade#custom-domain-modal{:tabindex => "-1", :role => "dialog", "aria-labelledby" => "modal-label", "aria-hidden" => "true"}
+    %div.modal-dialog{:role => "document"}
+      %div.modal-content
+        %div.modal-header
+          %h4.modal-title#modal-label Configure SSL
+          %button.close{:type => "button", "data-dismiss" => "modal", "aria-label" => "Close"}
+            #span{"aria-hidden" => "true"} &times
+        %div.modal-body
+          %div.modal-note
+            Please paste in the certificate and private key provided to you by your SSL certificate issuer.
+          %hr
+          %div.container-fluid
+            =form_tag :update_custom_domain_cdn, :id=>'custom_domain_modal_form' do
+              =hidden_field_tag :api_key, api_key
+              =hidden_field_tag :host_name
+              =hidden_field_tag :action_type, 'modify'
+              %div.row
+                %div.col-md-4.col-sm-4.col-lg-3
+                  Certificate
+                %div.col-md-8.col-sm-8.col-lg-9
+                  =text_area_tag :certificate_value, nil, rows: 5, cols: 37
+              %div.row
+                %div.col-md-4.col-sm-4.col-lg-3
+                  Private Key
+                %div.col-md-8.col-sm-8.col-lg-9
+                  =text_area_tag :private_key, nil, rows: 5, cols: 37
+        %div.modal-footer
+          %div.container-fluid
+            %div.row
+              %div.col-4
+                =button_tag 'Delete', 'class' => 'delete-custom-domain'
+              %div.col-8
+                =button_tag 'Modify', 'class' => 'modify-custom-domain float-right'
+                =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal'
+

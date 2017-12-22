@@ -49,7 +49,7 @@ img
   border: 0
 
 a
-  color: #6b9029
+  color: #6b9029 !important
   outline: none
   text-decoration: none
   border-bottom-style: none
@@ -3371,13 +3371,13 @@ label.error
   display: block
   margin: 0
   padding: .3em 1em
-  color: #eee
+  color: #eee !important
   text-decoration: none
   border-bottom: none
   background: #060511
 
 #prog_nav a:hover, #t-intro a
-  color: #333
+  color: #333 !important
   background: #fff image-url('on_bg.gif') repeat-x top left
 
 .order_amount_strong
@@ -4138,19 +4138,19 @@ table#at_a_glance_header
   .validations, .validations a
     vertical-align: top
     display: block
-    color: #f00
+    color: #f00 !important
     line-height: 90%
   #logout_header_link
     text-transform: none
     padding-left: 60px
   th.certificate_status, th.certificate_status a
-    color: #808080
+    color: #808080 !important
     vertical-align: top
     line-height: 90%
   td.certificate_status a
     vertical-align: top
     display: block
-    color: #fff
+    color: #fff !important
   td:hover
     text-decoration: underline
 
@@ -5746,6 +5746,7 @@ span.notifications-teams
       margin-top: 10px
   form input[type="submit"]
     height: 20px
+    line-height: 15px
     font-size: 13px
   #resource-info
     width: 60%
@@ -5773,6 +5774,7 @@ span.notifications-teams
       margin-top: 10px
     form input[type="submit"]
       height: 20px
+      line-height: 15px
       font-size: 13px
   & table th,
   & table td
@@ -5793,4 +5795,11 @@ span.notifications-teams
     .field-cont
       float: left
   #cache-expiry .field-label
-    width: 160px
+    width: 170px
+#custom-domain-modal
+  .modal-title
+    font-weight: bold
+  .modal-body
+    font-size: 13px
+    &.modal-note
+      padding-bottom: 10px

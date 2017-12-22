@@ -6,6 +6,20 @@
         $('form #purge_all').val(true)
         $('#purge_form').submit();
       });
+
+      $('.custom-domain-modal-link').click(function() {
+        var hostname = $(this).data('hostname');
+        $('#host_name').val(hostname);
+      });
+
+      $('.delete-custom-domain').click(function() {
+        $('#action_type').val('delete');
+        $('form#custom_domain_modal_form').submit();
+      })
+
+      $('.modify-custom-domain').click(function() {
+        $('form#custom_domain_modal_form').submit();
+      })
     });
   });
 </script>
