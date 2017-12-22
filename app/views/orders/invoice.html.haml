@@ -1,4 +1,16 @@
--if @doc
-  =@doc.inner_html.html_safe
--else
-  Invoice not found
+!!!
+%html
+  %head
+    %meta{:content => 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type'}/
+    %meta{:charset => 'utf-8'}/
+    =stylesheet_link_tag wicked_pdf_asset_base64('invoice.css')
+  %body
+    #background
+      %p{id: 'bg-text'} PAID
+      %p{id: 'bg-note'}
+        *Invoice and charges are accurate
+        %br
+        ="as of #{DateTime.now.strftime('%F %I:%M %p')}."
+    
+    -@orders.each do |order|
+      =render partial: 'orders/invoice_page', locals: {order: order}

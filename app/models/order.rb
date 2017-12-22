@@ -831,6 +831,24 @@ class Order < ActiveRecord::Base
     end
   end
 
+  def invoice_bill_to_str
+    invoice = Invoice.find_by(order_id: id)
+    o       = get_order_charged
+    bt      = invoice.nil? ? o.billing_profile : invoice
+    if bt
+      addr = []
+      addr << bt.company unless bt.company.blank?
+      addr << "#{bt.first_name} #{bt.last_name}"
+      addr << bt.address_1
+      addr << bt.address_2 unless bt.address_2.blank?
+      addr << "#{bt.city}, #{bt.state}, #{bt.postal_code}"
+      addr << bt.country
+      addr
+    else
+      []
+    end
+  end
+  
   private
 
   def gateway

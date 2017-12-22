@@ -5,6 +5,8 @@
   =render partial: "orders/cancel_order"
   #completed_order_results
     =render partial: 'orders/order_report'
+.order_container
+  =render partial: 'orders/invoice_section'
 =render partial: "orders/adwords_conversion" #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
 =confirm_affiliate_sale
 

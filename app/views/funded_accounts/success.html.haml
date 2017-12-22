@@ -92,5 +92,7 @@
       #available_funds
         %h3.order_results_header Available Funds in SSL Account
         #available_funds_amount=h ssl_account.funded_account.amount.format :with_currency
+.order_container
+  =render partial: 'orders/invoice_section'
 =render partial: "orders/adwords_conversion" #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
 =confirm_affiliate_sale

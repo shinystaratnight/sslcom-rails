@@ -1,10 +1,10 @@
 class OrdersController < ApplicationController
-  layout false, only: [:invoice]
+  layout false, only: :invoice
   include OrdersHelper
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
-  before_filter :find_order, :only => [:show, :invoice, :refund, :refund_merchant, :change_state]
+  before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state]
   before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
@@ -13,7 +13,7 @@ class OrdersController < ApplicationController
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
-  filter_access_to :show,:attribute_check=>true
+  filter_access_to :show, :update_invoice, attribute_check: true
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
@@ -100,27 +100,51 @@ class OrdersController < ApplicationController
   end
 
   def invoice
-    if @order
-      begin
-        timeout(10) do
-          @doc=Nokogiri::HTML(open("https://www.ssl.com/invoice/index.php?ref_num=#{@order.reference_number}",
-                                   {ssl_verify_mode: OpenSSL::SSL::VERIFY_NONE}))
-          @doc.encoding = 'UTF-8' if @doc.encoding.blank?
-          @doc.css("form").first.set_attribute("action", "https://www.ssl.com/invoice/ajax/process.php?ref_num=#{
-                                    @order.reference_number}")
-          @doc.at_css("script[src*='magic.js']").set_attribute("src", "/ajax/magic.js")
-          #render(inline: doc.to_html) and return
+    @orders  = [@order]
+    invoices = !params[:start_date].blank? && !params[:end_date].blank?
+
+    if invoices
+      start = DateTime.parse(params[:start_date])
+      finish = DateTime.parse(params[:end_date])
+      @orders = current_user.ssl_account.orders.where(
+        state: 'paid',
+        created_at: start..finish,
+        description: 'SSL Certificate Order'
+      )
+    end
+    
+    filename = if @orders.any? && @orders.count == 1
+      "ssl.com_invoice_ref_#{@orders.first.reference_number}"
+    elsif invoices
+      "ssl.com_invoices_#{start.strftime('%F')}_#{finish.strftime('%F')}"
+    else
+      "ssl.com_invoices_#{Date.today.strftime('%F')}"
+    end
+    
+    respond_to do |format|
+      if @orders.any?
+        format.html { render pdf: filename }
+      else
+        flash[:error] = if invoices 
+          'Zero orders found for this date range!'
+        else
+          'This order does not exist!'
         end
-      rescue Exception=>e
-        print e
+        format.html { redirect_to :back }
       end
     end
+  end
+  
+  def update_invoice
+    found   = Invoice.find_by(order_id: @order.id)
+    update  = found ? found : Invoice.new(params[:invoice])
+    no_errors = found ? update.update_attributes(params[:invoice]) : update.save
 
     respond_to do |format|
-      if @doc
-        format.html # new.html.erb
+      if no_errors
+        format.json { render json: update, status: :ok }
       else
-        format.html{ render status: 404}
+        format.json { render json: update.errors, status: :unprocessable_entity }
       end
     end
   end
