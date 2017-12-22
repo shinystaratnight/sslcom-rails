@@ -1,7 +1,7 @@
 class CaaCheck < ActiveRecord::Base
   belongs_to :checkable, :polymorphic => true
 
-  CAA_COMMAND=->(name){%x"echo QUIT | caatest #{name}"}
+  CAA_COMMAND=->(name){%x"echo QUIT | caatest -issuer ssl.com #{name}"}
 
   def self.caa_lookup(name)
     CAA_COMMAND.call name
