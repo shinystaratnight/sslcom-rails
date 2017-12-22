@@ -1,6 +1,6 @@
 class SslAccountsController < ApplicationController
-  before_filter :find_ssl_account
   before_filter :require_user, only: [:show, :edit]
+  before_filter :find_ssl_account
   filter_access_to :all, attribute_check: true
 
   # GET /ssl_account/

@@ -6,9 +6,9 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
+  before_filter :require_user, only: [:index, :new, :show, :upload, :document_upload]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
-  before_filter :require_user, only: [:index, :new, :show]
   filter_access_to :all
   filter_access_to [:upload, :document_upload], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
@@ -29,7 +29,7 @@ class ValidationsController < ApplicationController
     end
     if @certificate_order.certificate_content.contacts_provided?
       @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-    elsif @certificate_order.certificate_content.issued? or @certificate_order.all_domains_validated?
+    elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
       checkout={checkout: "true"}
       flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
       respond_to do |format|
@@ -309,7 +309,7 @@ class ValidationsController < ApplicationController
   end
 
   def find_certificate_order
-    @certificate_order = (current_user.is_system_admins? ? CertificateOrder : current_user.certificate_orders).find_by_ref(params[:certificate_order_id])
+    @certificate_order = (current_user.is_system_admins? ? CertificateOrder : current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
     @validation = @certificate_order.validation if @certificate_order
   end
 
