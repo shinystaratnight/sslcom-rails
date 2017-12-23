@@ -6,8 +6,6 @@ class BillingProfilesController < ApplicationController
   filter_access_to :all
   filter_access_to :destroy, attribute_check: true
   respond_to :json
-  
-  before_filter :require_user
 
   def index
     @billing_profile  = BillingProfile.new
