@@ -405,6 +405,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def validate_contacts
     if contacts
+      if contacts.is_a?(Array)
+          errors[:contacts] << "expecting hash, not array"
+        return false
+      end
       errors[:contacts] = {}
       CertificateContent::CONTACT_ROLES.each do |role|
         if (contacts[role] || contacts["all"])
