@@ -56,7 +56,7 @@
                           %ul
                             %li
                               %strong certificate contents
-                            -unless cc.blank?
+                            -unless cc.blank? or co.certificate.is_evcs?
                               -if cc.signed_certificate.blank?
                                 -if cc.csr.blank?
                                   %li
