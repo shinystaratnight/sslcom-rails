@@ -381,7 +381,7 @@ class SslAccount < ActiveRecord::Base
 
   #Reminder.preparing_recipients to locate point of injection for do-not-send list
   def self.send_reminders
-    ActiveRecord::Base.logger.level = Logger::INFO
+    # ActiveRecord::Base.logger.level = Logger::INFO
     logger.info "Sending SSL.com cert reminders. Type 'Q' and press Enter to exit this program"
     SslAccount.unscoped.order('created_at').includes(
         [:stored_preferences, {:certificate_orders =>

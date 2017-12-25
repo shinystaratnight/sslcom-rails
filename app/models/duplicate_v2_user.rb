@@ -73,17 +73,13 @@ class DuplicateV2User < ActiveRecord::Base
     swap
   end
 
-  INVALID_DUPS ||= V2MigrationProgress.find_non_mapped(DuplicateV2User)+
-      V2MigrationProgress.find_multiple_mapped(DuplicateV2User)
-
-  INVALID_USERS ||= V2MigrationProgress.find_non_mapped(User)+
-      V2MigrationProgress.find_multiple_mapped(User)
-
   #swap attributes and v2_migration_progress
   def swap_with(user)
-    if INVALID_DUPS.include? self
+    if (V2MigrationProgress.find_non_mapped(DuplicateV2User)+
+        V2MigrationProgress.find_multiple_mapped(DuplicateV2User)).include? self
       p "DuplicateV2User #{model_and_id} (#{login}) has no or multiple v2_migration_progresses"
-    elsif INVALID_USERS.include? user
+    elsif (V2MigrationProgress.find_non_mapped(User)+
+        V2MigrationProgress.find_multiple_mapped(User)).include? user
       p "User #{user.model_and_id} (#{user.login}) has no or multiple v2_migration_progresses"
     else
       #swap user<->dup attrs
