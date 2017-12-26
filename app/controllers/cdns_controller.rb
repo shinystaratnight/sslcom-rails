@@ -19,7 +19,6 @@ class CdnsController < ApplicationController
         @response = HTTParty.get('https://cdnify.com/api/v1/resources',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resources] = @response.parsed_response['resources'] if @response.parsed_response
-
       end
     end
 
@@ -286,6 +285,10 @@ class CdnsController < ApplicationController
         @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
+
+        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                 basic_auth: {username: cdn.api_key, password: 'x'})
+        @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
       end
     end
 

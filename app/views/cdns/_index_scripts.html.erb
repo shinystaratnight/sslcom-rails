@@ -15,11 +15,17 @@
       $('.delete-custom-domain').click(function() {
         $('#action_type').val('delete');
         $('form#custom_domain_modal_form').submit();
-      })
+      });
 
       $('.modify-custom-domain').click(function() {
         $('form#custom_domain_modal_form').submit();
-      })
+      });
+
+      $('.btn_purge_file').click(function() {
+        var file_uri = $(this).data('file');
+        $('#purge_files').val(file_uri);
+        $('#purge_form').submit();
+      });
     });
   });
 </script>
