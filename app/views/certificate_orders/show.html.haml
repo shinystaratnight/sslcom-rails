@@ -49,82 +49,82 @@
                     %td(colspan="5")
                       .certificate_details_box
                         %ul
-                          %li
-                            %strong certificate contents
-                          -if @cc.csr.blank?
+                          -unless co.certificate.is_evcs?
                             %li
-                              %em waiting for csr
-                          -else
-                            -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
-                            -unless @cc.csr.signed_certificate
-                              -unless fields.organization.blank?
-                                %li
-                                  organization:
-                                  %span.organization
-                                    \#{fields.organization}
-                              -unless (ou=fields.organization_unit).blank?
-                                %li
-                                  department:
-                                  %div.department
-                                    -unless ou.is_a? Array
-                                      \#{fields.organization_unit}
-                                    -else
-                                      %ul
-                                        -ou.each do |u|
-                                          %li
-                                            =u
-                              -unless fields.locality.blank?
-                                %li
-                                  city:
-                                  %span.city
-                                    \#{fields.locality}
-                              -unless fields.state.blank?
-                                %li
-                                  state:
-                                  %span.state
-                                    \#{fields.state}
-                              -unless fields.country.blank?
-                                %li
-                                  country:
-                                  %span.country
-                                    \#{fields.country}
+                              %strong certificate contents
+                            -if @cc.csr.blank?
+                              %li
+                                %em waiting for csr
                             -else
-                              -#%li
-                              -#  expires:
-                              -#  %span.country
-                              -#    \#{fields.expiration_date.strftime("%b %d, %Y")}
-                              -#%li
-                              -#  remaining days:
-                              -#  %span.country
-                              -#    \#{fields.remaining_days(true)}
-                              %li
-                                algorithm:
-                                %span.country
-                                  \#{fields.signature_algorithm}
-                                  -if fields.is_SHA1?
-                                    =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
-                            %li.category_border
-                            -unless @certificate_order.certificate.is_dv?
-                              %li
-                                %strong validation documentation
-                              -unless @certificate_order.validation.validation_histories.blank?
-                                -@certificate_order.validation.validation_histories.each do |vh|
+                              -fields = (@cc.csr.signed_certificate.blank?)? @cc.csr : @cc.csr.signed_certificate
+                              -unless @cc.csr.signed_certificate
+                                -unless fields.organization.blank?
                                   %li
-                                    =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
-                                    =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
-                                    =vh.document_file_name.shorten(20, false)
+                                    organization:
+                                    %span.organization
+                                      \#{fields.organization}
+                                -unless (ou=fields.organization_unit).blank?
+                                  %li
+                                    department:
+                                    %div.department
+                                      -unless ou.is_a? Array
+                                        \#{fields.organization_unit}
+                                      -else
+                                        %ul
+                                          -ou.each do |u|
+                                            %li
+                                              =u
+                                -unless fields.locality.blank?
+                                  %li
+                                    city:
+                                    %span.city
+                                      \#{fields.locality}
+                                -unless fields.state.blank?
+                                  %li
+                                    state:
+                                    %span.state
+                                      \#{fields.state}
+                                -unless fields.country.blank?
+                                  %li
+                                    country:
+                                    %span.country
+                                      \#{fields.country}
                               -else
+                                -#%li
+                                -#  expires:
+                                -#  %span.country
+                                -#    \#{fields.expiration_date.strftime("%b %d, %Y")}
+                                -#%li
+                                -#  remaining days:
+                                -#  %span.country
+                                -#    \#{fields.remaining_days(true)}
                                 %li
-                                  %em none submitted
+                                  algorithm:
+                                  %span.country
+                                    \#{fields.signature_algorithm}
+                                    -if fields.is_SHA1?
+                                      =link_to "(SHA2 upgrade)", reprocess_certificate_order_url(co)
                               %li.category_border
-                                -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
-                                  -unless co.validation_rules_satisfied? || co.certificate_content.expired?
-                                    -u=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
-                                  -unless co.validation.validation_histories.blank?
-                                    -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
-                                  -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
-                                  =link_cluster([u,m,s])
-                                -else
+                          -unless @certificate_order.certificate.is_dv?
+                            %li
+                              %strong validation documentation
+                            -unless @certificate_order.validation.validation_histories.blank?
+                              -@certificate_order.validation.validation_histories.each do |vh|
+                                %li
+                                  =link_to image_tag('preview.png', :class=>'blue_icon'), vh.document_url(:preview), :rel=>'prettyPhoto'
+                                  =link_to image_tag('download.png', :class=>'blue_icon'), vh.document_url
+                                  =vh.document_file_name.shorten(20, false)
+                            -else
+                              %li
+                                %em none submitted
+                            %li.category_border
+                              -unless @cc.blank? || @cc.new? || @cc.csr_submitted? || @cc.info_provided? || co.expired?
+                                -unless co.validation_rules_satisfied? || co.certificate_content.expired?
+                                  -u=link_to 'upload', document_upload_certificate_order_validation_url(certificate_order_id: co.ref)
+                                -unless co.validation.validation_histories.blank?
+                                  -m=link_to 'manage', edit_certificate_order_validation_url(certificate_order_id: co.ref)
+                                -s=link_to 'status', certificate_order_validation_url(certificate_order_id: co.ref)
+                                =link_cluster([u,m,s])
                           -if cn and !co.certificate.is_code_signing?
                             =render partial: 'certificate_orders/visit', locals: {cn: cn}
                           %li.category_border
@@ -261,10 +261,11 @@
                     %tr
                       %td(colspan="5" style="text-align: left;")
                         %span.previous_requests #{c!=@certificate_order.certificate_content ? "previous" : "current" }: #{c.label}
-                        -if sc.try(:body).blank?
-                          (server software: #{c.server_software.try :title})
-                        -else
-                          (serial number: #{sc.serial})
+                        -unless !co.certificate.is_code_signing?
+                          -if sc.try(:body).blank?
+                            (server software: #{c.server_software.try :title})
+                          -else
+                            (serial number: #{sc.serial})
                     %tr
                       %td(colspan="5")
                         -unless csr.blank?

@@ -67,6 +67,7 @@ class ApiCertificateRequest < CaApiRequest
       self.api_requestable = ac.ssl_account
     else
       errors[:login] << "account_key not found or wrong secret_key"
+      false
     end
   end
 

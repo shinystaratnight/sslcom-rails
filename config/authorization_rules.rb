@@ -377,6 +377,12 @@ authorization do
       :create,
       :saved_contacts
     ]
+    # 
+    # Orders
+    #
+    has_permission_on :orders, to: :update_invoice do
+      if_attribute billable_id: is_in {user.ssl_accounts.pluck(:id)}
+    end
   end
 
   # ============================================================================

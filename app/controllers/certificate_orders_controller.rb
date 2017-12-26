@@ -320,7 +320,7 @@ class CertificateOrdersController < ApplicationController
     p = {:page => params[:page]}
     @certificate_orders = current_user.is_admin? ?
         (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
-    @certificate_orders = @certificate_orders.not_test.filter_by(params[:id]).paginate(p)
+    @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(p)
 
     respond_to do |format|
       format.html { render :action=>:index}

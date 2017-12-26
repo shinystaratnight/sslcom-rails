@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171206142451) do
+ActiveRecord::Schema.define(version: 20171207223422) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -135,6 +135,18 @@ ActiveRecord::Schema.define(version: 20171206142451) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -165,6 +177,16 @@ ActiveRecord::Schema.define(version: 20171206142451) do
   add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], name: "index_ca_api_requests_on_api_requestable", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
+
+  create_table "caa_check", force: :cascade do |t|
+    t.integer  "checkable_id",   limit: 4
+    t.string   "checkable_type", limit: 255
+    t.string   "domain",         limit: 255
+    t.string   "request",        limit: 255
+    t.text     "result",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -349,46 +371,47 @@ ActiveRecord::Schema.define(version: 20171206142451) do
 
   add_index "client_applications", ["key"], name: "index_client_applications_on_key", unique: true, using: :btree
 
-  create_table "cnds", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "contacts", force: :cascade do |t|
-    t.string   "title",              limit: 255
-    t.string   "first_name",         limit: 255
-    t.string   "last_name",          limit: 255
-    t.string   "company_name",       limit: 255
-    t.string   "department",         limit: 255
-    t.string   "po_box",             limit: 255
-    t.string   "address1",           limit: 255
-    t.string   "address2",           limit: 255
-    t.string   "address3",           limit: 255
-    t.string   "city",               limit: 255
-    t.string   "state",              limit: 255
-    t.string   "country",            limit: 255
-    t.string   "postal_code",        limit: 255
-    t.string   "email",              limit: 255
-    t.string   "phone",              limit: 255
-    t.string   "ext",                limit: 255
-    t.string   "fax",                limit: 255
-    t.string   "notes",              limit: 255
-    t.string   "type",               limit: 255
-    t.string   "roles",              limit: 255, default: "--- []"
-    t.integer  "contactable_id",     limit: 4
-    t.string   "contactable_type",   limit: 255
+    t.string   "title",                 limit: 255
+    t.string   "first_name",            limit: 255
+    t.string   "last_name",             limit: 255
+    t.string   "company_name",          limit: 255
+    t.string   "department",            limit: 255
+    t.string   "po_box",                limit: 255
+    t.string   "address1",              limit: 255
+    t.string   "address2",              limit: 255
+    t.string   "address3",              limit: 255
+    t.string   "city",                  limit: 255
+    t.string   "state",                 limit: 255
+    t.string   "country",               limit: 255
+    t.string   "postal_code",           limit: 255
+    t.string   "email",                 limit: 255
+    t.string   "phone",                 limit: 255
+    t.string   "ext",                   limit: 255
+    t.string   "fax",                   limit: 255
+    t.string   "notes",                 limit: 255
+    t.string   "type",                  limit: 255
+    t.string   "roles",                 limit: 255, default: "--- []"
+    t.integer  "contactable_id",        limit: 4
+    t.string   "contactable_type",      limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "registrant_type",    limit: 4
-    t.string   "callback_method",    limit: 255
+    t.integer  "registrant_type",       limit: 4
+    t.integer  "parent_id",             limit: 4
+    t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
-    t.string   "assumed_name",       limit: 255
-    t.string   "business_category",  limit: 255
-    t.string   "duns_number",        limit: 255
-    t.string   "company_number",     limit: 255
+    t.string   "incorporation_country", limit: 255
+    t.string   "incorporation_state",   limit: 255
+    t.string   "incorporation_city",    limit: 255
+    t.string   "assumed_name",          limit: 255
+    t.string   "business_category",     limit: 255
+    t.string   "duns_number",           limit: 255
+    t.string   "company_number",        limit: 255
+    t.string   "registration_service",  limit: 255
   end
 
   add_index "contacts", ["contactable_id", "contactable_type"], name: "index_contacts_on_contactable_id_and_contactable_type", using: :btree
+  add_index "contacts", ["id", "parent_id"], name: "index_contacts_on_id_and_parent_id", using: :btree
 
   create_table "countries", force: :cascade do |t|
     t.string  "iso1_code", limit: 255
@@ -787,6 +810,19 @@ ActiveRecord::Schema.define(version: 20171206142451) do
     t.datetime "updated_at",              null: false
   end
 
+  create_table "physical_token", force: :cascade do |t|
+    t.integer  "certificate_order_id",  limit: 4
+    t.integer  "signed_certificate_id", limit: 4
+    t.string   "tracking_number",       limit: 255
+    t.string   "shipping_method",       limit: 255
+    t.string   "activation_pin",        limit: 255
+    t.string   "manufacturer",          limit: 255
+    t.string   "model_number",          limit: 255
+    t.string   "serial_number",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
@@ -798,6 +834,9 @@ ActiveRecord::Schema.define(version: 20171206142451) do
     t.string   "serial_number",         limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "notes",                 limit: 65535
+    t.string   "name",                  limit: 255
+    t.string   "workflow_state",        limit: 255
   end
 
   create_table "preferences", force: :cascade do |t|

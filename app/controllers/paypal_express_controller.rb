@@ -55,7 +55,8 @@ class PaypalExpressController < ApplicationController
       current_user = Authorization.current_user = User.first
       @ssl_account = current_user.ssl_account
     end
-    total_as_cents, purchase_params = get_purchase_params @gateway.details_for(params[:token]), request, params
+    paypal_details = @gateway.details_for(params[:token])
+    total_as_cents, purchase_params = get_purchase_params paypal_details, request, params
     purchase = @gateway.purchase total_as_cents, purchase_params
 
     if purchase.success?
@@ -106,6 +107,7 @@ class PaypalExpressController < ApplicationController
         @order.finalize_sale(params: params, deducted_from: @deposit,
                              visitor_token: @visitor_token, cookies: cookies)
         notice = "Your purchase is now complete!"
+        billed_to_address(paypal_details)
         clear_cart
       end
     else
@@ -115,6 +117,24 @@ class PaypalExpressController < ApplicationController
   end
 
   private
+  
+  def billed_to_address(paypal_details)
+    attrs = paypal_details.params['PayerInfo']['Address']
+    if @order && @order.persisted?
+      Invoice.create(
+        order_id:    @order.id, 
+        first_name:  attrs['Name'].split.first,
+        last_name:   attrs['Name'].split.last,
+        address_1:   attrs['Street1'],
+        address_2:   attrs['Street2'],
+        city:        attrs['CityName'],
+        state:       attrs['StateOrProvince'],
+        postal_code: attrs['PostalCode'],
+        country:     attrs['Country'],
+      )
+    end
+  end
+  
   def assigns_gateway
     s = ::Rails.application.secrets
     @gateway ||= PaypalExpressGateway.new(

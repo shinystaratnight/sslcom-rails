@@ -14,14 +14,14 @@ class V2MigrationProgress < ActiveRecord::Base
   end
 
   def self.find_non_mapped(klass)
-    ids=klass.all.map(&:id)
-    vps=where{(migratable_type==klass.to_s) & (migratable_id >> ids)}
-    klass.find((ids-vps.map(&:migratable_id)))
+    joins("RIGHT JOIN `#{klass.table_name}` ON `#{klass.table_name}`.`id` =
+      `v2_migration_progresses`.`migratable_id` AND `v2_migration_progresses`.`migratable_type` = '#{klass}'").where{migratable_id==nil}
+    # klass.where{id.not_in(mapped.select{migratable_id})}
   end
 
   def self.find_multiple_mapped(klass)
-    ids=klass.all.map(&:id)
-    vps=where{(migratable_type==klass.to_s) & (migratable_id >> ids)}.
+    joins("INNER JOIN `#{klass.table_name}` ON `#{klass.table_name}`.`id` =
+      `v2_migration_progresses`.`migratable_id` AND `v2_migration_progresses`.`migratable_type` = '#{klass}'").
         group(:migratable_id).having("count(migratable_id)>1")
   end
 

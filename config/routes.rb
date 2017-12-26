@@ -30,7 +30,7 @@ SslCom::Application.routes.draw do
 
   # api: If version is not specified then use the default version in APIConstraint
   constraints DomainConstraint.new(
-    (%w(sws.sslpki.com sws.sslpki.local www.ssl.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
+    (%w(sws.sslpki.com sws.sslpki.local)+Website.pluck(:api_host)+Sandbox.pluck(:host)).uniq
   ) do
     scope module: :api do
       scope module: :v1, constraints: APIConstraint.new(version: 1) do
@@ -242,6 +242,7 @@ SslCom::Application.routes.draw do
         get :refund
         get :change_state
         get :refund_merchant
+        match :update_invoice, via: [:put, :post]
       end
     end
     resources :billing_profiles

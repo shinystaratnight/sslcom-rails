@@ -1,5 +1,5 @@
 module CertificateOrdersHelper
-  def order_line_items(certificate_order, email_template=false)
+  def order_line_items(certificate_order, email_template=false, invoice=false)
     items = []
     if certificate_order.certificate.is_ucc? ||
         certificate_order.certificate.is_wildcard?
@@ -17,6 +17,10 @@ module CertificateOrdersHelper
             wildcard_qty=certificate_order.purchased_domains('wildcard')
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
+            elsif invoice
+              items << pluralize(quantity, "#{certificate_order.certificate.is_premium_ssl? ? 'sub' : ''}domain") +
+                (wildcard_qty==0 ? '' : " (#{pluralize(certificate_order.purchased_domains('wildcard'), 'wildcard ssl domain')})")
+              items << domains.split('+') unless domains.empty? || domains.blank?
             else
               items << content_tag(:dt,pluralize(quantity, "#{certificate_order.certificate.is_premium_ssl? ? 'sub' : ''}domain")+
                 (wildcard_qty==0 ? '' : " (#{pluralize(certificate_order.purchased_domains('wildcard'), 'wildcard ssl domain')})")) +

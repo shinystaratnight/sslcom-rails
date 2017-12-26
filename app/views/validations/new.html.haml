@@ -62,7 +62,7 @@
         -sdc_validation = ComodoApi.collect_ssl(co)
         -ds = mdc_validation.domain_status
         -count_validated,count_domain=0,0
-        -(@certificate_order.certificate.is_ucc? ? cns : [cns.last]).each_with_index do |cn|
+        -cns.each_with_index do |cn|
           -if @certificate_order.certificate.is_ucc?
             -if ds && ds[cn.name] #comodo api acts strange for non ucc cert
               -name=ds[cn.name]

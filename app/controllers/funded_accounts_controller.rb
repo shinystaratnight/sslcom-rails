@@ -5,10 +5,9 @@ class FundedAccountsController < ApplicationController
 #  ssl_required :allocate_funds, :allocate_funds_for_order, :apply_funds,
 #    :deposit_funds
 #  belongs_to :user
-  before_filter :find_ssl_account
   before_filter :require_user, :only => [:allocate_funds_for_order,
-    :deposit_funds, :allocate_funds, :apply_funds],
-    :if=>'request.subdomain==Reseller::SUBDOMAIN'
+    :deposit_funds, :allocate_funds, :apply_funds]
+  before_filter :find_ssl_account
   skip_filter :finish_reseller_signup
   filter_access_to :all
 

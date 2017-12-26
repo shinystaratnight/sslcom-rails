@@ -2,12 +2,10 @@ class BillingProfilesController < ApplicationController
   include ApplicationHelper, OrdersHelper
   #ssl_required :new
   #helper :profile
-  before_filter :find_ssl_account
+  before_filter :require_user, :find_ssl_account
   filter_access_to :all
   filter_access_to :destroy, attribute_check: true
   respond_to :json
-  
-  before_filter :require_user
 
   def index
     @billing_profile  = BillingProfile.new

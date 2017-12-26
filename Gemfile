@@ -70,6 +70,8 @@ gem 'rails-api'
 gem 'jsonapi-serializers'
 gem 'api-pagination'
 gem 'rubyzip', '~> 1.2.1'
+gem 'wkhtmltopdf-binary'
+gem 'wicked_pdf'
 
 group :development do
   gem 'foreman'
