@@ -64,7 +64,7 @@ case server
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
-    set :user, "leo"
+    set :user, "app-sws"
     set :branch, "master"
     set :domain, 'sws-a1.sslpki.local'
     set :deploy_to, "/srv/www/#{application}"
