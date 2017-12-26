@@ -192,10 +192,16 @@ class CertificateOrder < ActiveRecord::Base
   scope :reprocessing, lambda {
     cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
         where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.
-        order("csrs.updated_at asc")
+    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
   }
 
+  # more elegant but needs to be refined. Too slow
+  # scope :reprocessing1, lambda {
+  #   cids=Preference.joins{owner(CertificateContent)}.
+  #       where{(name=="reprocessing") & (value==1)}.select{owner_id}
+  #   joins{certificate_contents.csr}.where{certificate_contents.id.in(cids)}.order("csrs.updated_at asc")
+  # }
+  #
   scope :order_by_csr, lambda {
     joins{certificate_contents.csr.outer}.order("csrs.updated_at desc") #.uniq #- breaks order by csr
   }
@@ -1296,8 +1302,6 @@ class CertificateOrder < ActiveRecord::Base
           else
             params.merge!('days' => (days+csr.days_left).to_s)
           end
-          #ssl.com Sub CA certs
-          set_comodo_subca(params,options)
           build_comodo_dcv(last_sent, params, options)
           fill_csr_fields(params, cc.registrant)
           unless csr.csr_override.blank?
@@ -1310,6 +1314,8 @@ class CertificateOrder < ActiveRecord::Base
             params.merge!('servers' => server_licenses.to_s || '1')
           end
         end
+        #ssl.com Sub CA certs
+        set_comodo_subca(params,options)
         if certificate.is_ev?
           params.merge!('joiCountryName'=>(cc.csr.csr_override || cc.registrant).country)
           params.merge!('joiLocalityName'=>(cc.csr.csr_override || cc.registrant).city)
@@ -1632,7 +1638,7 @@ class CertificateOrder < ActiveRecord::Base
 
   # used for determining which Sub Ca certs to use
   def set_comodo_subca(params, options={})
-    cci=Settings.ca_certificate_id_dv
+    cci=Settings.ca_certificate_id_dv # default is DV
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
