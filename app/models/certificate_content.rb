@@ -17,7 +17,7 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :registrant, :allow_destroy => false
   accepts_nested_attributes_for :csr, :allow_destroy => false
 
-  after_update :certificate_names_from_domains, unless: :certificate_names_created?
+  after_commit :certificate_names_from_domains, unless: :certificate_names_created?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -57,7 +57,7 @@ class CertificateContent < ActiveRecord::Base
 
   serialize :domains
 
-  validates_presence_of :server_software_id, :signing_request, :agreement,
+  validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
     :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
     :message=> 'contains invalid characters.',
@@ -426,7 +426,7 @@ class CertificateContent < ActiveRecord::Base
       CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}
     else
       [].tap{|c_tmp|CertificateContent::CONTACT_ROLES.each {|r|
-        c_tmp << CertificateContact.new(contactable: self, country: self.registrant.country, roles: [r])}}
+        c_tmp << CertificateContact.new(contactable: self, country: self.registrant.try(:country), roles: [r])}}
     end
   end
 

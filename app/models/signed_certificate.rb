@@ -72,9 +72,10 @@ class SignedCertificate < ActiveRecord::Base
       cc.save
     end
     co=cc.certificate_order
-    co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true) unless
-        co.site_seal.fully_activated?
-    co.site_seal.save
+    unless co.site_seal.fully_activated?
+      co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
+      co.site_seal.save
+    end
     co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
     last_sent=s.csr.domain_control_validations.last_sent
     last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
