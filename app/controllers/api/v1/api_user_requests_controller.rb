@@ -14,8 +14,8 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   end
 
   def create_v1_4
+    set_template "create_v1_4"
     if @result.save
-      set_template "create_v1_4"
       if @obj = @result.create_user
         if @obj.is_a?(User) && @obj.errors.empty?
           set_result_parameters(@result, @obj, @template)

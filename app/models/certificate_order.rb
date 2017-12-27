@@ -207,8 +207,8 @@ class CertificateOrder < ActiveRecord::Base
   }
 
   scope :filter_by, lambda { |term|
-    order_by_csr.joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where {sub_order_item.product_variant_items.certificates.product.like "%#{term}%"}
+    joins{sub_order_items.product_variant_item.product_variant_group.
+        variantable(Certificate)}.where{certificates.product.like "%#{term}%"}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
