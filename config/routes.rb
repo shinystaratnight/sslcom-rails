@@ -306,6 +306,7 @@ SslCom::Application.routes.draw do
     post :update_resources, on: :collection
 
     member do
+      get :resource_cdn
       get :resource_setting
       post :update_resource
       post :add_custom_domain

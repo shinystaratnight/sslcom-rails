@@ -1,7 +1,7 @@
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
-  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_setting, :resource_cache]
+  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :resource_setting, :resource_cache]
 
   # # GET /cdns
   # # GET /cdns.json
@@ -102,6 +102,52 @@ class CdnsController < ApplicationController
     redirect_to cdns_path
   end
 
+  def resource_cdn
+    resource_id = params['id']
+    @results = {}
+
+    unless current_user.ssl_account.blank?
+      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+
+      if cdn
+        @results[:active_tab] = 'overview'
+
+        # Overview Data
+        @results[:api_key] = cdn.api_key
+        dateTo = Date.today.to_s
+        dateFrom = Date.yesterday.to_s
+
+        @response = HTTParty.get('https://cdnify.com/api/v1/stats/' + resource_id + '/bandwidth?datefrom=' + dateFrom + '&dateto=' + dateTo,
+                                 basic_auth: {username: cdn.api_key, password: 'x'})
+        if @response.parsed_response && @response.parsed_response['overall_usage'] && @response.parsed_response['overall_usage'][0][0]
+          @results[:bandwidth] = @response.parsed_response['overall_usage'][0][0]['cached'] + @response.parsed_response['overall_usage'][0][0]['non_cached']
+          @results[:hits] = @response.parsed_response['overall_usage'][0][0]['hits']
+        else
+          @results[:bandwidth] = 0
+          @results[:hits] = 0
+        end
+        # TODO://Get Location with Location Name, Bandwidth and Hits
+
+        # Settings Data
+        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
+                                 basic_auth: {username: cdn.api_key, password: 'x'})
+        @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
+
+        # Cache Data
+        @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
+
+        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+                                 basic_auth: {username: cdn.api_key, password: 'x'})
+        @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
+      end
+    end
+
+    respond_to do |format|
+      format.html { render :action => "resource_cdn" }
+      format.xml { render :xml => @results }
+    end
+  end
+
   def resource_setting
     resource_id = params['id']
 
@@ -145,7 +191,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update General Settings.'
     end
 
-    redirect_to resource_setting_cdn_path(resource_id) and return
+    # redirect_to resource_setting_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   def add_custom_domain
@@ -176,7 +223,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Add a New Custom Domain.'
     end
 
-    redirect_to resource_setting_cdn_path(resource_id) and return
+    # redirect_to resource_setting_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   def update_custom_domain
@@ -218,7 +266,8 @@ class CdnsController < ApplicationController
       end
     end
 
-    redirect_to resource_setting_cdn_path(resource_id) and return
+    # redirect_to resource_setting_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   def update_advanced_setting
@@ -249,7 +298,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update Advanced Settings.'
     end
 
-    redirect_to resource_setting_cdn_path(resource_id) and return
+    # redirect_to resource_setting_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   def delete_resource
@@ -321,7 +371,8 @@ class CdnsController < ApplicationController
       flash[:notice] = 'Successfully Purged File(s).'
     end
 
-    redirect_to resource_cache_cdn_path(resource_id) and return
+    # redirect_to resource_cache_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   def update_cache_expiry
@@ -344,7 +395,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update Cache Expire Time.'
     end
 
-    redirect_to resource_cache_cdn_path(resource_id) and return
+    # redirect_to resource_cache_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
   # GET /cdns/1

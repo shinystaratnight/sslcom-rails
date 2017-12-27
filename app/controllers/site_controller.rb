@@ -10,7 +10,7 @@ class SiteController < ApplicationController
                 :cache_path => Proc.new { |c| c.params } unless Rails.env =~ /development/ || "is_sandbox?".to_sym
 
   def index
-    (redirect_to login_url and return) if is_sandbox?
+    # (redirect_to login_url and return) if is_sandbox?
     render action: "buy_now"
   end
 
