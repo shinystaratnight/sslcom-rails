@@ -22,6 +22,8 @@
         -if DEPLOYMENT_CLIENT=~/ssl.com/
           %li=link_to "Premium SSL", filter_by_certificate_orders_path(@ssl_slug, "premium")
         %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "wildcard")
+        %li=link_to Certificate.find_by_serial("codesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "code-signing")
+        %li=link_to Certificate.find_by_serial("evcodesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ev-code-signing")
       -else
         %li Developers:
         %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
