@@ -16,10 +16,9 @@
     %tr
       %td{id: 'bill-to'}
         %p{class: 'font-small-grey'} Billed To
-        %p
-          -order.invoice_bill_to_str.each do |line|
-            =line
-            %br
+        -order.invoice_bill_to_str.each do |line|
+          %div
+            =line.strip
       
       %td{id: 'invoice-sum'}
         %p{class: 'font-small-grey'} Reference Number
