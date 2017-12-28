@@ -8,11 +8,16 @@ class ApiUserCreate_v1_4 < ApiUserRequest
   validates :password, length: { in: 6..20 }
 
   def create_user
-    params={login: self.login, email: self.email, password: self.password,password_confirmation: self.password}
+    params = {
+      login: self.login,
+      email: self.email,
+      password: self.password,
+      password_confirmation: self.password,
+      persist_notice: true
+    }
     @user = User.create(params)
     if @user.errors.empty?
-      @user.create_ssl_account
-      @user.roles << Role.find_by_name(Role::OWNER)
+      @user.create_ssl_account([Role.get_owner_id])
       @user.signup!({user: params})
       @user.activate!({user: params})
       @user.deliver_activation_confirmation!

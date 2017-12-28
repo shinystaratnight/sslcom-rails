@@ -64,6 +64,8 @@ class ApiUserRequestsControllerTest < ActionDispatch::IntegrationTest
       assert_equal 200, status
       assert_equal 5, items.count
       assert_equal 1, User.count
+      assert_equal 1, user.assignments.count
+      assert_equal user.ssl_account.id, user.assignments.first.ssl_account_id
       assert_match user.status, items['status']
       assert_match user.ssl_account.acct_number, items['account_number']
       assert_match cred.account_key, items['account_key']

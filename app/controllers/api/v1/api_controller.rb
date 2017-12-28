@@ -9,6 +9,7 @@ class Api::V1::APIController < ActionController::API
   include ActionView::Rendering
   
   before_filter :activate_authlogic
+  before_filter :set_default_request_format
   after_filter  :set_access_control_headers
 
   TEST_SUBDOMAIN = 'sws-test'
@@ -72,5 +73,9 @@ class Api::V1::APIController < ActionController::API
     @team ||= SslAccount.joins(:api_credential)
       .where(api_credential: {account_key: ak, secret_key: sk}).last
     !@team.nil?
+  end
+  
+  def set_default_request_format
+    request.format = :json
   end
 end
