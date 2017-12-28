@@ -2,6 +2,7 @@ require 'will_paginate/array'
 
 class Api::V1::APIController < ActionController::API
   include SerializerHelper
+  include ApplicationHelper
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::Rendering

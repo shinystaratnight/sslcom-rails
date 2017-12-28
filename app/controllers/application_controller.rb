@@ -422,10 +422,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def is_sandbox?
-    Sandbox.exists?(request.try(:host))
-  end
-
   private
 
   #Saves a cookie using a hash
