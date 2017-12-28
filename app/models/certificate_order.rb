@@ -1642,20 +1642,24 @@ class CertificateOrder < ActiveRecord::Base
     if options[:ca_certificate_id]
       cci = options[:ca_certificate_id]
     elsif [CA_CERTIFICATES[:SSLcomSHA2]].include? self.ca
-      cci = if Settings.send_dv_first and external_order_number.blank?
-              Settings.ca_certificate_id_dv #first time needs to be DV
-            elsif external_order_number_meta=="EV"
+      cci = if external_order_number_meta=="EV"
               Settings.ca_certificate_id_ev
             elsif external_order_number_meta=="OV"
               Settings.ca_certificate_id_ov
             elsif external_order_number_meta=="DV"
               Settings.ca_certificate_id_dv
-            elsif certificate.is_ev?
-              Settings.ca_certificate_id_ev
-            elsif certificate.is_ov?
-              Settings.ca_certificate_id_ov
             else
-              Settings.ca_certificate_id_dv
+              if Settings.send_dv_first
+                Settings.ca_certificate_id_dv #first time needs to be DV
+              else
+                if certificate.is_ev?
+                  Settings.ca_certificate_id_ev
+                elsif certificate.is_ov?
+                  Settings.ca_certificate_id_ov
+                else
+                  Settings.ca_certificate_id_dv
+                end
+              end
             end
     elsif certificate.serial=~/256sslcom/
       cci = if certificate.is_ev?

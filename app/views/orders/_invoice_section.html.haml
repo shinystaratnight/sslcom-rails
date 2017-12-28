@@ -4,13 +4,13 @@
       Invoice Detail
     #invoice-container
       #btn-invoice-dwnl
-        #{link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, @order), class: 'button-invoice'}
+        #{link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, @order.reference_number), class: 'button-invoice'}
       #btn-invoice-update
         #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-invoice'}
       #btn-invoice-generate
         #{link_to "\u21E9\u21E9 Download Invoices".html_safe, '#', class: 'button-invoice'}
     #invoice-container-errors
-    
+
     #invoice-container-ext
       =form_tag(invoice_order_url(@ssl_slug, @order), method: :get, authenticity_token: true, id: 'frm-inv-download') do
         %p Download multiple invoices for date range (e.g.: 01/01/2017 or 01-01-2017)
