@@ -9,13 +9,13 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
     result.email = aur.email
     result.account_number=aur.ssl_account.acct_number
     result.status = aur.status
-    result.user_url = "https://#{Settings.community_domain}#{user_path(aur)}"
+    result.user_url = "#{api_domain}#{user_path(aur)}"
     result.update_attribute :response, render_to_string(:template => template)
   end
 
   def create_v1_4
+    set_template "create_v1_4"
     if @result.save
-      set_template "create_v1_4"
       if @obj = @result.create_user
         if @obj.is_a?(User) && @obj.errors.empty?
           set_result_parameters(@result, @obj, @template)

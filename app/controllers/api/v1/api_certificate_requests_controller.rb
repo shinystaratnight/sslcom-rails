@@ -1111,22 +1111,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     end
   end
 
-  def api_domain(certificate_order=nil)
-    unless certificate_order.blank?
-      if Rails.env=~/production/i
-        "https://" + (certificate_order.is_test ? Settings.test_api_domain : Settings.api_domain)
-      else
-        "https://" + (certificate_order.is_test ? Settings.dev_test_api_domain : Settings.dev_api_domain) +":3000"
-      end
-    else
-      if is_sandbox?
-        Rails.env=~/production/i ? "https://#{Settings.test_api_domain}" : "https://#{Settings.dev_test_api_domain}:3000"
-      else
-        Rails.env=~/production/i ? "https://#{Settings.api_domain}" : "https://#{Settings.dev_api_domain}:3000"
-      end
-    end
-  end
-
   def certificate_file(type, certificate_order)
     path = "#{Rails.root}/tmp/certificate/"
     unless File.directory?(path)

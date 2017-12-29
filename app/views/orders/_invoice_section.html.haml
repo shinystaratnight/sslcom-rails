@@ -1,28 +1,29 @@
-#completed_order_results
-  %h3.order_results_header
-    Invoice Detail
-  #invoice-container
-    #btn-invoice-dwnl
-      #{link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, @order), class: 'button-invoice'}
-    #btn-invoice-update
-      #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-invoice'}
-    #btn-invoice-generate
-      #{link_to "\u21E9\u21E9 Download Invoices".html_safe, '#', class: 'button-invoice'}
-  #invoice-container-errors
-  
-  #invoice-container-ext
-    =form_tag(invoice_order_url(@ssl_slug, @order), method: :get, authenticity_token: true, id: 'frm-inv-download') do
-      %p Download multiple invoices for date range (e.g.: 01/01/2017 or 01-01-2017)
-      %small *Note: Look for pdf file in your Downloads folder.
-      .registration_form
-        .clearfix
-          =label_tag 'Start Date (mm/dd/yyyy):'
-          =date_field_tag 'start_date'
-        .clearfix
-          =label_tag 'End Date (mm/dd/yyyy):'
-          =date_field_tag 'end_date', Date.today.strftime('%F')
-        #button_container
-          #auto_adjust
-            =submit_tag 'Cancel', id: 'btn-inv-cancel'
-            =submit_tag 'Download', id: 'btn-inv-download'
-    =render partial: 'orders/invoice_update'
+-unless action_name == "deposit_funds"
+  #completed_order_results
+    %h3.order_results_header
+      Invoice Detail
+    #invoice-container
+      #btn-invoice-dwnl
+        #{link_to "\u21E9 Download".html_safe, invoice_order_path(@ssl_slug, @order.reference_number), class: 'button-invoice'}
+      #btn-invoice-update
+        #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-invoice'}
+      #btn-invoice-generate
+        #{link_to "\u21E9\u21E9 Download Invoices".html_safe, '#', class: 'button-invoice'}
+    #invoice-container-errors
+
+    #invoice-container-ext
+      =form_tag(invoice_order_url(@ssl_slug, @order), method: :get, authenticity_token: true, id: 'frm-inv-download') do
+        %p Download multiple invoices for date range (e.g.: 01/01/2017 or 01-01-2017)
+        %small *Note: Look for pdf file in your Downloads folder.
+        .registration_form
+          .clearfix
+            =label_tag 'Start Date (mm/dd/yyyy):'
+            =date_field_tag 'start_date'
+          .clearfix
+            =label_tag 'End Date (mm/dd/yyyy):'
+            =date_field_tag 'end_date', Date.today.strftime('%F')
+          #button_container
+            #auto_adjust
+              =submit_tag 'Cancel', id: 'btn-inv-cancel'
+              =submit_tag 'Download', id: 'btn-inv-download'
+      =render partial: 'orders/invoice_update'
