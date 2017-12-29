@@ -56,16 +56,16 @@ class Order < ActiveRecord::Base
         (line_items.sellable(CertificateOrder).is_test==false)}
   }
 
-  scope :test, ->(is_test) {
+  scope :is_test, -> {
     joins{line_items.sellable(CertificateOrder).outer}.
-        where{(line_items.sellable(CertificateOrder).is_test==is_test) |
-        (line_items.sellable(CertificateOrder).is_test==is_test)}
+        where{(line_items.sellable(CertificateOrder).is_test==true) |
+        (line_items.sellable(CertificateOrder).is_test==true)}
   }
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-               discount_amount: nil, company_name: nil, ssl_slug: nil, test: nil}
+               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -99,9 +99,9 @@ class Order < ActiveRecord::Base
         (billable(SslAccount).unscoped_users.login=~ "%#{term}%") |
         (billable(SslAccount).unscoped_users.email=~ "%#{term}%")}
     end
-    %w(test).each do |field|
+    %w(is_test).each do |field|
       query=filters[field.to_sym]
-      result = result.test(query.true?) if query
+      result = result.send(field) if query.try("true?")
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
