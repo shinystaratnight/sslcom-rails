@@ -58,6 +58,11 @@ class Csr < ActiveRecord::Base
   BEGIN_NEW_TAG="-----BEGIN NEW CERTIFICATE REQUEST-----"
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
+  after_save do |c|
+    c.certificate_content.touch
+    c.certificate_order.touch
+  end
+
   def common_name
     SimpleIDN.to_unicode(read_attribute(:common_name)).gsub(/\x00/, '') unless read_attribute(:common_name).blank?
   end

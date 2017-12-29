@@ -60,7 +60,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   default_scope{ where{(workflow_state << ['canceled','refunded','charged_back']) & (is_expired != true)}.
-      joins(:certificate_contents).includes(:certificate_contents).order("certificate_orders.created_at desc").
+      joins(:certificate_contents).includes(:certificate_contents).order(updated_at: :desc).
       references(:all).readonly(false)}
 
   scope :not_test, ->{where{(is_test == nil) | (is_test==false)}}
@@ -93,15 +93,21 @@ class CertificateOrder < ActiveRecord::Base
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
-               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil, decoded: nil}
+               expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
+               decoded: nil, is_test: nil, order_by_csr: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
-    result = joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-        joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
-        joins{ssl_account.users.outer}
+    result =
+        if (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(test order_by_csr)).empty?
+          joins{}
+        else
+          joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+              joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
+              joins{ssl_account.users.outer}
+        end
     unless term.blank?
       result = case term
                  when /co-\w/i, /\d{7,8}/
@@ -135,6 +141,10 @@ class CertificateOrder < ActiveRecord::Base
                          (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
                end
+    end
+    %w(is_test order_by_csr).each do |field|
+      query=filters[field.to_sym]
+      result = result.send(field) if query.try("true?")
     end
     %w(postal_code signature fingerprint).each do |field|
       query=filters[field.to_sym]

@@ -257,11 +257,11 @@ class OrdersController < ApplicationController
         end
       else
         if current_user.is_system_admins?
-          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc")
+          (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.order("created_at desc").not_test
         else
-          current_user.ssl_account.orders
+          current_user.ssl_account.orders.not_test
         end
-      end.not_test.uniq
+      end.uniq
     stats(p, unpaginated)
 
     respond_to do |format|
