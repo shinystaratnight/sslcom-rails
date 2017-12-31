@@ -705,7 +705,6 @@
         <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
         <envs>
           <env name="RAILS_ENV" value="development" />
-          <env name="VERSION" value="20170824154146" />
         </envs>
         <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
         <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
@@ -1095,7 +1094,9 @@
     <orderEntry type="library" scope="PROVIDED" name="web-console (v2.3.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="websocket (v1.2.3, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="whenever (v0.9.7, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="wicked_pdf (v1.1.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="will_paginate (v3.1.5, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="wkhtmltopdf-binary (v0.12.3.1, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="workflow (v1.2.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="xml-simple (v1.1.5, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="xpath (v2.0.0, Remote-rvm:ruby-2.3.3-p222 [rails427]) [gem]" level="application" />

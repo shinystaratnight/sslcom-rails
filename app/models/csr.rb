@@ -59,8 +59,8 @@ class Csr < ActiveRecord::Base
   END_NEW_TAG="-----END NEW CERTIFICATE REQUEST-----"
 
   after_save do |c|
-    c.certificate_content.touch
-    c.certificate_order.touch
+    c.certificate_content.touch unless c.certificate_content.blank?
+    c.certificate_order.touch unless c.certificate_content.blank?
   end
 
   def common_name

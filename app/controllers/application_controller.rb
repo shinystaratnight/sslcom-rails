@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   layout 'application'
   #include Authentication
+  include ApplicationHelper
   rescue_from ActiveRecord::RecordNotFound, :with => :not_found
   rescue_from ActionController::RoutingError, :with => :not_found
   rescue_from AbstractController::ActionNotFound, :with => :not_found

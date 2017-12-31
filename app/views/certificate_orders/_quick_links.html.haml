@@ -15,19 +15,16 @@
         -if permitted_to?(:index, :site_seals)
           %li=link_to "Smart SeaLs", details_site_seals_url
         %li &nbsp;
-        %li Filter Orders:
-        %li=link_to Certificate.find_by_serial("basic256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "basic")
-        %li=link_to Certificate.find_by_serial("ev256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ev")
-        %li=link_to Certificate.find_by_serial("ucc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ucc")
-        -if DEPLOYMENT_CLIENT=~/ssl.com/
-          %li=link_to "Premium SSL", filter_by_certificate_orders_path(@ssl_slug, "premium")
-        %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "wildcard")
-        %li=link_to Certificate.find_by_serial("codesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "code-signing")
-        %li=link_to Certificate.find_by_serial("evcodesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ev-code-signing")
-      -else
-        %li Developers:
-        %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
-        %li=link_to 'Test Orders', filter_by_scope_certificate_orders_path(@ssl_slug, "is_test")
+      %li Filter Orders:
+      %li=link_to Certificate.find_by_serial("basic256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "basic")
+      %li=link_to Certificate.find_by_serial("ev256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ev")
+      %li=link_to Certificate.find_by_serial("ucc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ucc")
+      %li=link_to "Premium SSL", filter_by_certificate_orders_path(@ssl_slug, "premium")
+      %li=link_to Certificate.find_by_serial("wc256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "wildcard")
+      %li=link_to Certificate.find_by_serial("codesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "code-signing")
+      %li=link_to Certificate.find_by_serial("evcodesigning256sslcom").title, filter_by_certificate_orders_path(@ssl_slug, "ev-code-signing")
+      %li Developers:
+      %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"
       -if current_user.is_system_admins?
         %li=link_to 'Chargebacks', filter_by_state_orders_path(@ssl_slug, "charged_back")
         %li=link_to 'Refunds', filter_by_state_orders_path(@ssl_slug, "fully_refunded")
