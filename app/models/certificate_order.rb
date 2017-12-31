@@ -100,14 +100,12 @@ class CertificateOrder < ActiveRecord::Base
     }
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
-    result =
-        if (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(test order_by_csr)).empty?
-          joins{}
-        else
-          joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-              joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
-              joins{ssl_account.users.outer}
-        end
+    result = not_new
+    result =  unless (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(test order_by_csr)).empty?
+                result.joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+                    joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
+                    joins{ssl_account.users.outer}
+              end
     unless term.blank?
       result = case term
                  when /co-\w/i, /\d{7,8}/
@@ -218,7 +216,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product.like "%#{term}%"}
+        variantable(Certificate)}.where{certificates.product=="#{term}"}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
