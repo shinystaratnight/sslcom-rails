@@ -101,21 +101,24 @@ class CertificateOrder < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     result = not_new
-    result =  unless (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(test order_by_csr)).empty?
-                result.joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
-                    joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
-                    joins{ssl_account.users.outer}
-              end
+    # if 'is_test' and 'order_by_csr' are the only search terms, keep it simple
+    result = result.joins{certificate_contents.outer}.joins{certificate_contents.csr.outer}.
+              joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
+              joins{ssl_account.users.outer} unless (
+                  !filters.map{|k,v|k.to_s unless v.blank?}.compact.empty? and
+                  (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr)).empty?)
     unless term.blank?
       result = case term
                  when /co-\w/i, /\d{7,8}/
-                   where{
+                   result.where{
                      (ref =~ "%#{term}%") |
                          (external_order_number =~ "%#{term}%") |
                          (notes =~ "%#{term}%")}
                  else
                    result.where{
                      (ssl_account.acct_number =~ "%#{term}%") |
+                         (ssl_account.company_name =~ "%#{term}%") |
+                         (ssl_account.ssl_slug =~ "%#{term}%") |
                          (users.login =~ "%#{term}%") |
                          (users.email =~ "%#{term}%") |
                          (certificate_contents.domains =~ "%#{term}%") |
