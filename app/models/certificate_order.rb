@@ -71,6 +71,10 @@ class CertificateOrder < ActiveRecord::Base
     where{ref =~ '%'+term+'%'}.merge(options)
   }
 
+  scope :search_physical_tokens, lambda {|state="new"|
+    joins{physical_tokens}.where{physical_tokens.workflow_state >> [state.split(',')]} unless state.blank?
+  }
+
   scope :search_signed_certificates, lambda {|term|
     joins{certificate_contents.csr.signed_certificates}.
       where{certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%"}
@@ -143,7 +147,15 @@ class CertificateOrder < ActiveRecord::Base
                          (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
                end
     end
-    %w(is_test order_by_csr).each do |field|
+    %w(is_test).each do |field|
+      query=filters[field.to_sym]
+      if query.try("true?")
+        result = result.send(field)
+      else
+        result = result.not_test
+      end
+    end
+    %w(order_by_csr).each do |field|
       query=filters[field.to_sym]
       result = result.send(field) if query.try("true?")
     end

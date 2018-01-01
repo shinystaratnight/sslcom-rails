@@ -1,7 +1,7 @@
 -if current_user.is_system_admins?
   -csr=@certificate_order.csr
   .reseller_registration_profile
-    %h3 Issue SSL.com Signed Certificate for ref #{link_to(@certificate_order.ref)} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
+    %h3 Issue SSL.com Signed Certificate for ref #{link_to(@certificate_order.ref, @certificate_order)} (#{@certificate_order.certificate.validation_type.upcase}#{' downstepped to '+params[:downstep].upcase if downstepped?})
     =form_tag send_to_ca_certificate_order_validation_url(certificate_order_id: @certificate_order.ref), remote: true, method: :post, id: "send_to_ca", "data-type"=>"json" do
       =hidden_field_tag :ca, SslcomCaApi::MANAGEMENT_CA
       -if downstepped?

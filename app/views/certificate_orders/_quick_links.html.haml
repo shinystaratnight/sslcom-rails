@@ -25,6 +25,7 @@
       %li=link_to "EV SSL", search_certificate_orders_path(@ssl_slug, search: "product:ev#{is_test}")
       %li=link_to "EV UCC/SAN SSL", search_certificate_orders_path(@ssl_slug, search: "product:evucc#{is_test}")
       %li=link_to Certificate.find_by_serial("evcodesigning256sslcom").title, search_certificate_orders_path(@ssl_slug, search: "product:ev-code-signing#{is_test}")
+      %li=link_to "Physical Tokens", search_certificate_orders_path(@ssl_slug, search: "physical_tokens:in_transit,received,in_possession#{is_test}")
       %li &nbsp;
       %li Developers:
       %li=link_to "Developer Tools", is_sandbox? ? developers_certificate_orders_url : "https://sandbox.ssl.com"

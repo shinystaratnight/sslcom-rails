@@ -58,8 +58,7 @@ class Order < ActiveRecord::Base
 
   scope :is_test, -> {
     joins{line_items.sellable(CertificateOrder).outer}.
-        where{(line_items.sellable(CertificateOrder).is_test==true) |
-        (line_items.sellable(CertificateOrder).is_test==true)}
+        where{(line_items.sellable(CertificateOrder).is_test==true)}
   }
 
   scope :search, lambda {|term|
@@ -101,7 +100,11 @@ class Order < ActiveRecord::Base
     end
     %w(is_test).each do |field|
       query=filters[field.to_sym]
-      result = result.send(field) if query.try("true?")
+      if query.try("true?")
+        result = result.send(field)
+      else
+        result = result.not_test
+      end
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
