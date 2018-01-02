@@ -9,15 +9,13 @@ class SslcomCaApi
   # SSLcom-SubCA-SSL-ECC-384-R1
   # ManagementCA
 
-  DEV_HOST = "https://192.168.100.5:8442/restapi"
-
   CERTLOCK_CA = "certlock"
   SSLCOM_CA = "sslcom"
   MANAGEMENT_CA = "management_ca"
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
-  APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
-  REVOKE_SSL_URL=DEV_HOST+"/v1/certificate/revoke"
+  APPLY_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
+  REVOKE_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
@@ -113,7 +111,7 @@ class SslcomCaApi
     if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      "dNSName="+(options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map(&:downcase).join(",")
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
     end
   end
 

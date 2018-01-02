@@ -231,8 +231,8 @@ class ApplicationController < ActionController::Base
             current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
     else
       (current_user.is_admin? ?
-          (@ssl_account.try(:certificate_orders) || CertificateOrder).find_not_new(options) :
-            current_user.ssl_account.certificate_orders.not_new(options)).order(updated_at: :desc)
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
+            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
     end
   end
 

@@ -85,7 +85,7 @@
             .clearfix
               %label{for: 'san'}
                 *SAN (Subject Alternative Names):
-              =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+              =text_area_tag :san, @certificate_order.all_domains.join("\n") #,readonly: true
       #button_container
         #next_submit=image_submit_tag "bl_submit_button.gif"
 %ul
