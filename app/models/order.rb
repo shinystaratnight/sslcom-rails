@@ -51,13 +51,13 @@ class Order < ActiveRecord::Base
   }
 
   scope :not_test, lambda {
-    joins{line_items.sellable(CertificateOrder).outer}.
+    joins{line_items.sellable(CertificateOrder)}.
         where{(line_items.sellable(CertificateOrder).is_test==nil) |
         (line_items.sellable(CertificateOrder).is_test==false)}
   }
 
   scope :is_test, -> {
-    joins{line_items.sellable(CertificateOrder).outer}.
+    joins{line_items.sellable(CertificateOrder)}.
         where{(line_items.sellable(CertificateOrder).is_test==true)}
   }
 
@@ -73,7 +73,7 @@ class Order < ActiveRecord::Base
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
     result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
         joins{billable(SslAccount).unscoped_users.outer}
-    result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
+    result = result.joins{line_items.sellable(CertificateOrder)} if ref
     unless term.blank?
       result = result.where{
         (billing_profile_unscoped.last_digits == "#{term}") |
