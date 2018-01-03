@@ -21,12 +21,12 @@ body {
 #bg-note {
   font-size: 0.8rem;
   font-weight: 500;
-  top: 13rem;
-  left: 1;
   color: grey;
   opacity: 0.4;
-  position: absolute;
-  z-index: 0;
+}
+
+caption {
+  text-align: left;
 }
 
 #header {
@@ -115,7 +115,7 @@ body {
 #line-items table {
   border-collapse: collapse;
   border-top: 3px solid #808080;
-  margin-top: 2.5rem;
+  margin-top: 0.2rem;
   width: 100%
 }
 

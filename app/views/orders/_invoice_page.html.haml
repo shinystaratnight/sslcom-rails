@@ -33,6 +33,11 @@
 
 #line-items
   %table
+    %caption
+      %p{id: 'bg-note'}
+        *Invoice and charges are accurate
+        %br
+        ="as of #{DateTime.now.strftime('%F %I:%M %p')}."
     %thead
       %tr
         %th Description
