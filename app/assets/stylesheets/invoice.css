@@ -57,9 +57,6 @@ body {
 
 #bill-to {
   color: black;
-  p {
-    line-height: 5rem;
-  }
 }
 
 .font-small-grey {
