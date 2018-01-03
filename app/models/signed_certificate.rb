@@ -227,7 +227,7 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def is_sslcom_ca?
-    issuer.include?("O=SSL Corporation")
+    issuer.include?("O=SSL Corporation") || issuer.include?("O=EJBCA Sample")
   end
 
   def create_signed_cert_zip_bundle(options={})

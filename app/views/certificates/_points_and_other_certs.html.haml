@@ -12,7 +12,7 @@
       =link_to "Click here for details.", details_site_seals_path
 .see_other_certificates
   %ul
-    %li.heading other SSL certificates
+    %li.heading Other Certificates
     -@certificates.each do |cert|
       -unless cert==@certificate
         %li=link_to cert.title, certificate_path(:id=>cert.product_root)

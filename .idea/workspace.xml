@@ -2,16 +2,24 @@
 <project version="4">
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/app/models/comodo_api.rb" line="188" mnemonic="8" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="560" mnemonic="6" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="695" mnemonic="2" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="564" mnemonic="6" />
     <bookmark url="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml" line="166" mnemonic="3" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="706" mnemonic="9" />
-    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_content.rb" line="78" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="1430" mnemonic="1" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="201" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/app/models/certificate_order.rb" line="1310" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="copied views. Need to DRY it up">
+    <list default="true" id="b0bcf628-0f13-498f-b549-87a3b24d4ca9" name="Default" comment="API fixes; self signed cert in dev env">
+      <change beforePath="$PROJECT_DIR$/.idea/.rakeTasks" afterPath="$PROJECT_DIR$/.idea/.rakeTasks" />
+      <change beforePath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" afterPath="$PROJECT_DIR$/.idea/ssl_com_rails3.iml" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/Gemfile.lock" afterPath="$PROJECT_DIR$/Gemfile.lock" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/application_controller.rb" afterPath="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+      <change beforePath="$PROJECT_DIR$/app/models/certificate_order.rb" afterPath="$PROJECT_DIR$/app/models/certificate_order.rb" />
+      <change beforePath="$PROJECT_DIR$/app/models/csr.rb" afterPath="$PROJECT_DIR$/app/models/csr.rb" />
+      <change beforePath="$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml" afterPath="$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml" />
+      <change beforePath="$PROJECT_DIR$/app/views/certificates/_points_and_other_certs.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/_points_and_other_certs.html.haml" />
+      <change beforePath="$PROJECT_DIR$/app/views/certificates/buy.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/buy.html.haml" />
+      <change beforePath="$PROJECT_DIR$/app/views/certificates/buy_ucc.html.haml" afterPath="$PROJECT_DIR$/app/views/certificates/buy_ucc.html.haml" />
     </list>
     <ignored path="ssl_com_rails3.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -91,91 +99,31 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-      <file leaf-file-name="site_seals_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
+      <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/deploy.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3795">
-              <caret line="115" column="6" lean-forward="false" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
+            <state relative-caret-position="825">
+              <caret line="28" column="18" lean-forward="false" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="administrative_contact.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/administrative_contact.rb">
+      <file leaf-file-name="certificate_order.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="-223">
+              <caret line="867" column="48" lean-forward="false" selection-start-line="867" selection-start-column="48" selection-end-line="867" selection-end-column="48" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="signed_certificate.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
+      <file leaf-file-name="_quick_links.html.haml" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10362">
-              <caret line="314" column="27" lean-forward="false" selection-start-line="314" selection-start-column="7" selection-end-line="314" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="contacts_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/contacts_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="297">
-              <caret line="9" column="9" lean-forward="false" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="certificate_contents_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/certificate_contents_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="validations_controller.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9933">
-              <caret line="301" column="22" lean-forward="false" selection-start-line="301" selection-start-column="22" selection-end-line="301" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="certificate_content.rb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="580" column="5" lean-forward="false" selection-start-line="580" selection-start-column="5" selection-end-line="580" selection-end-column="5" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Gemfile.lock" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Gemfile.lock">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7773">
-              <caret line="31" column="23" lean-forward="true" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Gemfile" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Gemfile">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2877">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="221">
+              <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -184,8 +132,68 @@
       <file leaf-file-name="certificate_orders_controller.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="528">
+              <caret line="16" column="53" lean-forward="false" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application_helper.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="318">
+              <caret line="14" column="6" lean-forward="false" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="198">
+              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="csr.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="264">
+              <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_create.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="66">
+              <caret line="2" column="40" lean-forward="false" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="api_certificate_request.rb" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="369">
+              <caret line="81" column="71" lean-forward="false" selection-start-line="81" selection-start-column="71" selection-end-line="81" selection-end-column="71" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="database.yml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/database.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="789">
+              <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -202,36 +210,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>site_seal</find>
-      <find>update_</find>
-      <find>team</find>
-      <find>teamable</find>
-      <find>SslAccount.find</find>
-      <find>ssl_account</find>
-      <find>on :ssl</find>
-      <find>def show</find>
-      <find>render.*?404</find>
-      <find>status.*?404</find>
-      <find>default</find>
-      <find>def new</find>
-      <find>def uniq</find>
-      <find>uuid</find>
-      <find>base64</find>
-      <find>securerand</find>
-      <find>def all_domains</find>
-      <find>parse_unique_domains</find>
-      <find>certificate_names</find>
-      <find>api credentials</find>
-      <find>unique_value</find>
-      <find>AdministrativeContact</find>
-      <find>deliver</find>
-      <find>_recipients</find>
-      <find>technical_contact</find>
-      <find>def.*?_contact</find>
-      <find>notify_customer</find>
-      <find>certificate_names.create</find>
-      <find>private</find>
-      <find>noko</find>
+      <find>def api_domain</find>
+      <find>def is_sandbox?</find>
+      <find>is_s</find>
+      <find>is_sandbox?</find>
+      <find>Test Orders</find>
+      <find>-&gt;</find>
+      <find>search_orders</find>
+      <find>true?</find>
+      <find>(TEST)</find>
+      <find>is_test?</find>
+      <find>reload</find>
+      <find>pricing</find>
+      <find>def pricing</find>
+      <find>csr</find>
+      <find>desc</find>
+      <find>after_save</find>
+      <find>alias</find>
+      <find>test:tr</find>
+      <find>order_by_csr</find>
+      <find>not_new</find>
+      <find>Smart SeaLs</find>
+      <find>@ssl_slug</find>
+      <find>invoice_order</find>
+      <find>applicationhel</find>
+      <find>&lt;secret</find>
+      <find>secret_key</find>
+      <find>Quick Links</find>
+      <find>#{ssl_account.api_credential.account_key if ssl_account.api_credential}</find>
+      <find>Settings</find>
+      <find>other SSL certificates</find>
     </findStrings>
     <replaceStrings>
       <replace>/</replace>
@@ -242,9 +250,11 @@
       <replace>for</replace>
       <replace>@csr</replace>
       <replace>create</replace>
+      <replace>Other Certificates</replace>
     </replaceStrings>
     <dirStrings>
       <dir>C:\Users\leo\RubymineProjects\sslcom-rails\db\migrate</dir>
+      <dir>C:\Users\leo\RubymineProjects\sslcom-rails</dir>
     </dirStrings>
   </component>
   <component name="FindManager">
@@ -260,64 +270,64 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="HengS" />
       </map>
     </option>
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
-        <option value="$PROJECT_DIR$/Gemfile" />
-        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
-        <option value="$PROJECT_DIR$/app/views/layouts/_standard_menu.html.haml" />
-        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20171126210209_create_cas.rb" />
-        <option value="$PROJECT_DIR$/app/models/ca.rb" />
-        <option value="$PROJECT_DIR$/lib/tasks/cas.rake" />
-        <option value="$PROJECT_DIR$/app/controllers/contacts_controller.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
-        <option value="$PROJECT_DIR$/app/models/ca_api_request.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
-        <option value="$PROJECT_DIR$/lib/v2_migration_progress_addon.rb" />
-        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/contats_v1_4.rabl" />
-        <option value="$PROJECT_DIR$/app/models/db.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml" />
-        <option value="$PROJECT_DIR$/app/models/product_order.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/certificate_contents_controller.rb" />
-        <option value="$PROJECT_DIR$/db/migrate/20171201154843_add_joi_and_app_rep_to_contacts.rb" />
-        <option value="$PROJECT_DIR$/config/environments/development.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
-        <option value="$PROJECT_DIR$/config/settings.yml" />
-        <option value="$PROJECT_DIR$/db/migrate/20171029160707_create_physical_token_blocklist_and_caa_check.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
-        <option value="$PROJECT_DIR$/app/models/sslcom_ca_api.rb" />
-        <option value="$PROJECT_DIR$/config/routes.rb" />
-        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
-        <option value="$PROJECT_DIR$/app/models/sslcom_ca_request.rb" />
-        <option value="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/sslcom_ca.html.haml" />
         <option value="$PROJECT_DIR$/app/views/physical_tokens/new.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/physical_tokens_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml" />
         <option value="$PROJECT_DIR$/app/views/physical_tokens/edit.html.haml" />
         <option value="$PROJECT_DIR$/app/models/physical_token.rb" />
-        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
-        <option value="$PROJECT_DIR$/config/authorization_rules.rb" />
         <option value="$PROJECT_DIR$/app/controllers/site_seals_controller.rb" />
-        <option value="$PROJECT_DIR$/config/deploy.rb" />
         <option value="$PROJECT_DIR$/app/controllers/ssl_accounts_controller.rb" />
-        <option value="$PROJECT_DIR$/config/database.yml" />
-        <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
-        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/validations/new.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/validations_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/funded_accounts_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/caa_check.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/billing_profiles_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/show.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/bin/rails" />
+        <option value="$PROJECT_DIR$/lib/certificate_type.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb" />
+        <option value="$PROJECT_DIR$/app/models/api_certificate_request.rb" />
+        <option value="$PROJECT_DIR$/app/models/duplicate_v2_user.rb" />
+        <option value="$PROJECT_DIR$/app/models/v2_migration_progress.rb" />
+        <option value="$PROJECT_DIR$/app/models/ssl_account.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/config/environments/production.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/contacts/_certificate_contact.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificates/_form.html.haml" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/lib/preferences/app/models/preference.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
+        <option value="$PROJECT_DIR$/app/models/signed_certificate.rb" />
+        <option value="$PROJECT_DIR$/config/deploy.rb" />
+        <option value="$PROJECT_DIR$/config/authorization_rules.rb" />
+        <option value="$PROJECT_DIR$/app/views/orders/_invoice_section.html.haml" />
+        <option value="$PROJECT_DIR$/config/initializers/assets.rb" />
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/api/v1/api_user_requests_controller.rb" />
+        <option value="$PROJECT_DIR$/lib/string.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/views/orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/funded_accounts/success.html.haml" />
+        <option value="$PROJECT_DIR$/app/helpers/orders_helper.rb" />
+        <option value="$PROJECT_DIR$/app/views/layouts/_admin.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/order.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/csr.rb" />
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
-        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml" />
       </list>
     </option>
   </component>
@@ -330,13 +340,13 @@
   <component name="LogFilters">
     <option name="FILTER_ERRORS" value="false" />
     <option name="FILTER_WARNINGS" value="false" />
-    <option name="FILTER_INFO" value="true" />
-    <option name="FILTER_DEBUG" value="true" />
-    <option name="CUSTOM_FILTER" value="V2Mi" />
+    <option name="FILTER_INFO" value="false" />
+    <option name="FILTER_DEBUG" value="false" />
+    <option name="CUSTOM_FILTER" value="csr" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-10" />
-    <option name="y" value="-10" />
+    <option name="x" value="-11" />
+    <option name="y" value="80" />
     <option name="width" value="738" />
     <option name="height" value="978" />
   </component>
@@ -426,29 +436,18 @@
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="models" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
               <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="db" type="462c0819:PsiDirectoryNode" />
-              <item name="migrate" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sslcom-rails" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="tasks" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="sslcom-rails" type="b2602c69:ProjectViewProjectNode" />
@@ -1394,122 +1393,6 @@
       </list>
     </option>
   </component>
-  <component name="RestoreUpdateTree" date="Moments ago" ActionInfo="_Update">
-    <UpdatedFiles>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Updated from server" />
-        <option name="myStatusName" value="Changed on server" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="CHANGED_ON_SERVER" />
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Updated" />
-          <option name="myStatusName" value="Changed" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="UPDATED" />
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/Gemfile.lock</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/controllers/validations_controller.rb</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/certificate_content.rb</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/certificate_order.rb</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/comodo_api.rb</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/models/csr.rb</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml</PATH>
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Created" />
-          <option name="myStatusName" value="Created" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="CREATED" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Deleted" />
-          <option name="myStatusName" value="Deleted" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="true" />
-          <option name="myId" value="REMOVED_FROM_REPOSITORY" />
-        </FILE-GROUP>
-        <FILE-GROUP>
-          <option name="myUpdateName" value="Restored" />
-          <option name="myStatusName" value="Will be restored" />
-          <option name="mySupportsDeletion" value="false" />
-          <option name="myCanBeAbsent" value="false" />
-          <option name="myId" value="RESTORED" />
-        </FILE-GROUP>
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Modified" />
-        <option name="myStatusName" value="Modified" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MODIFIED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Skipped" />
-        <option name="myStatusName" value="Skipped" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SKIPPED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with conflicts" />
-        <option name="myStatusName" value="Will be merged with conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_CONFLICTS" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with tree conflicts" />
-        <option name="myStatusName" value="Merged with tree conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_TREE_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged with property conflicts" />
-        <option name="myStatusName" value="Will be merged with property conflicts" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED_WITH_PROPERTY_CONFLICT" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Merged" />
-        <option name="myStatusName" value="Will be merged" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="MERGED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Not in repository" />
-        <option name="myStatusName" value="Not in repository" />
-        <option name="mySupportsDeletion" value="true" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="UNKNOWN" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally added" />
-        <option name="myStatusName" value="Locally added" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_ADDED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Locally removed" />
-        <option name="myStatusName" value="Locally removed" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="LOCALLY_REMOVED" />
-      </FILE-GROUP>
-      <FILE-GROUP>
-        <option name="myUpdateName" value="Switched" />
-        <option name="myStatusName" value="Switched" />
-        <option name="mySupportsDeletion" value="false" />
-        <option name="myCanBeAbsent" value="false" />
-        <option name="myId" value="SWITCHED" />
-      </FILE-GROUP>
-    </UpdatedFiles>
-  </component>
   <component name="RunDashboard">
     <option name="ruleStates">
       <list>
@@ -1551,6 +1434,20 @@
       <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
       <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
     </configuration>
+    <configuration name="delayed_job:stop: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="delayed_job:stop" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+    </configuration>
     <configuration name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
       <module name="ssl_com_rails3" />
       <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1584,53 +1481,24 @@
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
     </configuration>
-    <configuration name="All tests in authorization: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+    <configuration name="assets:precompile: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
       <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
       <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
+        <env name="RAILS_ENV" value="production" />
       </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="$MODULE_DIR$/test/integration/authorization" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/{*_test,test_*,*_spec}.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="ALL_IN_FOLDER" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
-    </configuration>
-    <configuration name="All tests in teams: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
-      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
-      <module name="ssl_com_rails3" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="test" />
-        <env name="JRUBY_OPTS" value="-X+O" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="$MODULE_DIR$/test/integration/api/teams" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/{*_test,test_*,*_spec}.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="ALL_IN_FOLDER" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="assets:precompile" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
     </configuration>
     <configuration name="Run test 'api_certificate_revoke_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
@@ -1882,19 +1750,19 @@
       <item index="22" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
       <item index="23" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
       <item index="24" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
-      <item index="25" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in teams: ssl_com_rails3" />
-      <item index="26" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in authorization: ssl_com_rails3" />
-      <item index="27" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+      <item index="25" class="java.lang.String" itemvalue="Capistrano.delayed_job:stop: ssl_com_rails3" />
+      <item index="26" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+      <item index="27" class="java.lang.String" itemvalue="Rake.assets:precompile: ssl_com_rails3" />
       <item index="28" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
       <item index="29" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
-        <item index="1" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
-        <item index="2" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
-        <item index="3" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in authorization: ssl_com_rails3" />
-        <item index="4" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in teams: ssl_com_rails3" />
+        <item index="0" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item index="3" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item index="4" class="java.lang.String" itemvalue="Rake.assets:precompile: ssl_com_rails3" />
       </list>
     </recent_temporary>
   </component>
@@ -1984,154 +1852,15 @@
       <workItem from="1512266585253" duration="1388000" />
       <workItem from="1512268069446" duration="70812000" />
       <workItem from="1513140997243" duration="6391000" />
-      <workItem from="1513590015432" duration="10668000" />
-    </task>
-    <task id="LOCAL-00347" summary="put OPTIONS in apir routes to fix CORS issues">
-      <created>1508537144532</created>
-      <option name="number" value="00347" />
-      <option name="presentableId" value="LOCAL-00347" />
-      <option name="project" value="LOCAL" />
-      <updated>1508537144532</updated>
-    </task>
-    <task id="LOCAL-00348" summary="rename parser rabl file due to errors thrown">
-      <created>1508538741314</created>
-      <option name="number" value="00348" />
-      <option name="presentableId" value="LOCAL-00348" />
-      <option name="project" value="LOCAL" />
-      <updated>1508538741314</updated>
-    </task>
-    <task id="LOCAL-00349" summary="return status 200">
-      <created>1508539108129</created>
-      <option name="number" value="00349" />
-      <option name="presentableId" value="LOCAL-00349" />
-      <option name="project" value="LOCAL" />
-      <updated>1508539108129</updated>
-    </task>
-    <task id="LOCAL-00350" summary="refactor api views location">
-      <created>1508775470048</created>
-      <option name="number" value="00350" />
-      <option name="presentableId" value="LOCAL-00350" />
-      <option name="project" value="LOCAL" />
-      <updated>1508775470048</updated>
-    </task>
-    <task id="LOCAL-00351" summary="CORS header">
-      <created>1508776168838</created>
-      <option name="number" value="00351" />
-      <option name="presentableId" value="LOCAL-00351" />
-      <option name="project" value="LOCAL" />
-      <updated>1508776168838</updated>
-    </task>
-    <task id="LOCAL-00352" summary="copied views. Need to DRY it up">
-      <created>1508776555534</created>
-      <option name="number" value="00352" />
-      <option name="presentableId" value="LOCAL-00352" />
-      <option name="project" value="LOCAL" />
-      <updated>1508776555534</updated>
-    </task>
-    <task id="LOCAL-00353" summary="set_access_control_headers in application_controller as a temp fix">
-      <created>1508779110400</created>
-      <option name="number" value="00353" />
-      <option name="presentableId" value="LOCAL-00353" />
-      <option name="project" value="LOCAL" />
-      <updated>1508779110400</updated>
-    </task>
-    <task id="LOCAL-00354" summary="allow reseller to store their own ext_customer_ref to each order and also update it">
-      <created>1508967760672</created>
-      <option name="number" value="00354" />
-      <option name="presentableId" value="LOCAL-00354" />
-      <option name="project" value="LOCAL" />
-      <updated>1508967760676</updated>
-    </task>
-    <task id="LOCAL-00355" summary="added tables for EV CS, black and white lists and CAA checking">
-      <created>1509297245102</created>
-      <option name="number" value="00355" />
-      <option name="presentableId" value="LOCAL-00355" />
-      <option name="project" value="LOCAL" />
-      <updated>1509297245107</updated>
-    </task>
-    <task id="LOCAL-00356" summary="models for CAA, Physical Tokens, and black and white lists">
-      <created>1509298017535</created>
-      <option name="number" value="00356" />
-      <option name="presentableId" value="LOCAL-00356" />
-      <option name="project" value="LOCAL" />
-      <updated>1509298017536</updated>
-    </task>
-    <task id="LOCAL-00357" summary="adding EV CS product">
-      <created>1509379391394</created>
-      <option name="number" value="00357" />
-      <option name="presentableId" value="LOCAL-00357" />
-      <option name="project" value="LOCAL" />
-      <updated>1509379391395</updated>
-    </task>
-    <task id="LOCAL-00358" summary="creating multi websites for resellers">
-      <created>1510292650484</created>
-      <option name="number" value="00358" />
-      <option name="presentableId" value="LOCAL-00358" />
-      <option name="project" value="LOCAL" />
-      <updated>1510292650484</updated>
-    </task>
-    <task id="LOCAL-00359" summary="added db tables for multi website">
-      <created>1510294603418</created>
-      <option name="number" value="00359" />
-      <option name="presentableId" value="LOCAL-00359" />
-      <option name="project" value="LOCAL" />
-      <updated>1510294603418</updated>
-    </task>
-    <task id="LOCAL-00360" summary="integrated dynamic db for white-labeling">
-      <created>1510378566845</created>
-      <option name="number" value="00360" />
-      <option name="presentableId" value="LOCAL-00360" />
-      <option name="project" value="LOCAL" />
-      <updated>1510378566845</updated>
-    </task>
-    <task id="LOCAL-00361" summary="pulling sandbox site from db">
-      <created>1510590500350</created>
-      <option name="number" value="00361" />
-      <option name="presentableId" value="LOCAL-00361" />
-      <option name="project" value="LOCAL" />
-      <updated>1510590500353</updated>
-    </task>
-    <task id="LOCAL-00362" summary="api routes constraint pulls from db">
-      <created>1510674902016</created>
-      <option name="number" value="00362" />
-      <option name="presentableId" value="LOCAL-00362" />
-      <option name="project" value="LOCAL" />
-      <updated>1510674902018</updated>
-    </task>
-    <task id="LOCAL-00363" summary="test api changes">
-      <created>1510782690995</created>
-      <option name="number" value="00363" />
-      <option name="presentableId" value="LOCAL-00363" />
-      <option name="project" value="LOCAL" />
-      <updated>1510782691000</updated>
-    </task>
-    <task id="LOCAL-00364" summary="logic for certificate chain; see https://anotherengineeringblog.com/extract-parse-digital-certificates-with-ruby">
-      <created>1511047592045</created>
-      <option name="number" value="00364" />
-      <option name="presentableId" value="LOCAL-00364" />
-      <option name="project" value="LOCAL" />
-      <updated>1511047592045</updated>
-    </task>
-    <task id="LOCAL-00365" summary="create SignedCertificate with return value from SslcomCaRequest">
-      <created>1511071243516</created>
-      <option name="number" value="00365" />
-      <option name="presentableId" value="LOCAL-00365" />
-      <option name="project" value="LOCAL" />
-      <updated>1511071243516</updated>
-    </task>
-    <task id="LOCAL-00366" summary="security fix to which looks consistent with a critical vulnerability found by the pentest team. It was an issue of scoping the invites to only teams owned by the invitor. A section was removed which potentially could allow any user to send invites on behalf of any team.">
-      <created>1511465481383</created>
-      <option name="number" value="00366" />
-      <option name="presentableId" value="LOCAL-00366" />
-      <option name="project" value="LOCAL" />
-      <updated>1511465481384</updated>
-    </task>
-    <task id="LOCAL-00367" summary="updated rubyzip to 1.2.1 due to vulnerability detected by github https://github.com/SSLcom/sslcom-rails/network/dependencies">
-      <created>1511486519901</created>
-      <option name="number" value="00367" />
-      <option name="presentableId" value="LOCAL-00367" />
-      <option name="project" value="LOCAL" />
-      <updated>1511486519901</updated>
+      <workItem from="1513590015432" duration="27855000" />
+      <workItem from="1513841736529" duration="10031000" />
+      <workItem from="1513958349741" duration="23849000" />
+      <workItem from="1514152653543" duration="244000" />
+      <workItem from="1514154036329" duration="2121000" />
+      <workItem from="1514193518671" duration="60375000" />
+      <workItem from="1514457091069" duration="15475000" />
+      <workItem from="1514549270528" duration="23092000" />
+      <workItem from="1514628364107" duration="9565000" />
     </task>
     <task id="LOCAL-00368" summary="remove 'Contacts' from the main menu">
       <created>1511631987569</created>
@@ -2329,7 +2058,154 @@
       <option name="project" value="LOCAL" />
       <updated>1513708609467</updated>
     </task>
-    <option name="localTasksCounter" value="396" />
+    <task id="LOCAL-00396" summary="bundle install">
+      <created>1513709183315</created>
+      <option name="number" value="00396" />
+      <option name="presentableId" value="LOCAL-00396" />
+      <option name="project" value="LOCAL" />
+      <updated>1513709183315</updated>
+    </task>
+    <task id="LOCAL-00397" summary="external order number appears for code signing certs">
+      <created>1513710027769</created>
+      <option name="number" value="00397" />
+      <option name="presentableId" value="LOCAL-00397" />
+      <option name="project" value="LOCAL" />
+      <updated>1513710027769</updated>
+    </task>
+    <task id="LOCAL-00398" summary="fix">
+      <created>1513715825780</created>
+      <option name="number" value="00398" />
+      <option name="presentableId" value="LOCAL-00398" />
+      <option name="project" value="LOCAL" />
+      <updated>1513715825780</updated>
+    </task>
+    <task id="LOCAL-00399" summary="require user for some resources. Refactored not_new">
+      <created>1513800698669</created>
+      <option name="number" value="00399" />
+      <option name="presentableId" value="LOCAL-00399" />
+      <option name="project" value="LOCAL" />
+      <updated>1513800698669</updated>
+    </task>
+    <task id="LOCAL-00400" summary="require user for getting ssl_account">
+      <created>1513885133749</created>
+      <option name="number" value="00400" />
+      <option name="presentableId" value="LOCAL-00400" />
+      <option name="project" value="LOCAL" />
+      <updated>1513885133753</updated>
+    </task>
+    <task id="LOCAL-00401" summary="Made the multi invoice download a little more obvious">
+      <created>1513892314091</created>
+      <option name="number" value="00401" />
+      <option name="presentableId" value="LOCAL-00401" />
+      <option name="project" value="LOCAL" />
+      <updated>1513892314091</updated>
+    </task>
+    <task id="LOCAL-00402" summary="Made the multi invoice download a little more obvious">
+      <created>1513971914148</created>
+      <option name="number" value="00402" />
+      <option name="presentableId" value="LOCAL-00402" />
+      <option name="project" value="LOCAL" />
+      <updated>1513971914152</updated>
+    </task>
+    <task id="LOCAL-00403" summary="require_user before find_ssl_account on BillingProfilesController">
+      <created>1513991778973</created>
+      <option name="number" value="00403" />
+      <option name="presentableId" value="LOCAL-00403" />
+      <option name="project" value="LOCAL" />
+      <updated>1513991778973</updated>
+    </task>
+    <task id="LOCAL-00404" summary="clean up EV CS pages">
+      <created>1514119573026</created>
+      <option name="number" value="00404" />
+      <option name="presentableId" value="LOCAL-00404" />
+      <option name="project" value="LOCAL" />
+      <updated>1514119573026</updated>
+    </task>
+    <task id="LOCAL-00405" summary="API fixes; self signed cert in dev env">
+      <created>1514149834298</created>
+      <option name="number" value="00405" />
+      <option name="presentableId" value="LOCAL-00405" />
+      <option name="project" value="LOCAL" />
+      <updated>1514149834299</updated>
+    </task>
+    <task id="LOCAL-00406" summary="optimize reminders">
+      <created>1514235247221</created>
+      <option name="number" value="00406" />
+      <option name="presentableId" value="LOCAL-00406" />
+      <option name="project" value="LOCAL" />
+      <updated>1514235247222</updated>
+    </task>
+    <task id="LOCAL-00407" summary="API fixes; self signed cert in dev env">
+      <created>1514289932786</created>
+      <option name="number" value="00407" />
+      <option name="presentableId" value="LOCAL-00407" />
+      <option name="project" value="LOCAL" />
+      <updated>1514289932786</updated>
+    </task>
+    <task id="LOCAL-00408" summary="Subscriber Agreement fix; ca_certificate_id fix">
+      <created>1514314332039</created>
+      <option name="number" value="00408" />
+      <option name="presentableId" value="LOCAL-00408" />
+      <option name="project" value="LOCAL" />
+      <updated>1514314332040</updated>
+    </task>
+    <task id="LOCAL-00409" summary="fix the subscriber agreement">
+      <created>1514374897959</created>
+      <option name="number" value="00409" />
+      <option name="presentableId" value="LOCAL-00409" />
+      <option name="project" value="LOCAL" />
+      <updated>1514374897959</updated>
+    </task>
+    <task id="LOCAL-00410" summary="fix the reprocess requested">
+      <created>1514407803075</created>
+      <option name="number" value="00410" />
+      <option name="presentableId" value="LOCAL-00410" />
+      <option name="project" value="LOCAL" />
+      <updated>1514407803075</updated>
+    </task>
+    <task id="LOCAL-00411" summary="create user API fixes">
+      <created>1514417664761</created>
+      <option name="number" value="00411" />
+      <option name="presentableId" value="LOCAL-00411" />
+      <option name="project" value="LOCAL" />
+      <updated>1514417664761</updated>
+    </task>
+    <task id="LOCAL-00412" summary="include owner permissions under super_user">
+      <created>1514418855290</created>
+      <option name="number" value="00412" />
+      <option name="presentableId" value="LOCAL-00412" />
+      <option name="project" value="LOCAL" />
+      <updated>1514418855290</updated>
+    </task>
+    <task id="LOCAL-00413" summary="Creating User through API fixes empty role issue">
+      <created>1514499519243</created>
+      <option name="number" value="00413" />
+      <option name="presentableId" value="LOCAL-00413" />
+      <option name="project" value="LOCAL" />
+      <updated>1514499519245</updated>
+    </task>
+    <task id="LOCAL-00414" summary="refactor sandbox methods">
+      <created>1514501472167</created>
+      <option name="number" value="00414" />
+      <option name="presentableId" value="LOCAL-00414" />
+      <option name="project" value="LOCAL" />
+      <updated>1514501472167</updated>
+    </task>
+    <task id="LOCAL-00415" summary="add search filters for test orders">
+      <created>1514587368607</created>
+      <option name="number" value="00415" />
+      <option name="presentableId" value="LOCAL-00415" />
+      <option name="project" value="LOCAL" />
+      <updated>1514587368607</updated>
+    </task>
+    <task id="LOCAL-00416" summary="searches for test">
+      <created>1514587803938</created>
+      <option name="number" value="00416" />
+      <option name="presentableId" value="LOCAL-00416" />
+      <option name="project" value="LOCAL" />
+      <updated>1514587803938</updated>
+    </task>
+    <option name="localTasksCounter" value="417" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -2365,33 +2241,33 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="529760000" />
+    <option name="totallyTimeSpent" value="691699000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-13" y="67" width="3026" height="1946" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48876745" sideWeight="0.41208792" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51669705" sideWeight="0.6105769" order="9" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4996964" sideWeight="0.43131867" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48876745" sideWeight="0.5879121" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4335155" sideWeight="0.5432692" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4996964" sideWeight="0.42342034" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3940498" sideWeight="0.51270604" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4335155" sideWeight="0.5048077" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.08791209" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22012363" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17925824" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32970807" sideWeight="0.49862638" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4092715" sideWeight="0.7915143" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20618556" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21222527" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42380086" sideWeight="0.5343407" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3940498" sideWeight="0.48729396" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48876745" sideWeight="0.48832417" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="REST Client" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4112022" sideWeight="0.60544217" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4110504" sideWeight="0.6037088" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -2399,6 +2275,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -2414,32 +2300,37 @@
   <component name="VcsManagerConfiguration">
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="SHOW_ONLY_CHANGED_IN_SELECTION_DIFF" value="false" />
-    <MESSAGE value="do not save API responses, it's growing out of control and the encoding issues are causing problems for special characters" />
-    <MESSAGE value="seed file for ejbca CAs" />
-    <MESSAGE value="fix for vulnerability that allows all contacts to be seen" />
-    <MESSAGE value="scope certificate_orders on developers page" />
-    <MESSAGE value="restrict access to certificate_orders" />
-    <MESSAGE value="prevent unauth access to certificate_orders" />
-    <MESSAGE value="removed obsolete method" />
-    <MESSAGE value="fix ucc identification" />
-    <MESSAGE value="downcase certificate name" />
-    <MESSAGE value="merging with team-settings-3" />
-    <MESSAGE value="send to SSL.com CA form; restrict which countries can bee added as contacts" />
-    <MESSAGE value="ajax RA form to CA" />
-    <MESSAGE value="RA/CA integration" />
-    <MESSAGE value="Allow common name to be changed for code signing" />
-    <MESSAGE value="EV requires contacts" />
-    <MESSAGE value="fix EV CS process" />
-    <MESSAGE value="correct Gemfile.lock" />
-    <MESSAGE value="routes update" />
-    <MESSAGE value="copied views. Need to DRY it up" />
     <MESSAGE value="fix API issue with missing obj" />
     <MESSAGE value="restrict site seals edit page" />
     <MESSAGE value="fixed API issue with joi" />
     <MESSAGE value="when all domains are validated, tell customer to wait" />
     <MESSAGE value="make unique value required for all cert orders, not just rekeys" />
     <MESSAGE value="create certificate_name for Csr#common_name" />
-    <option name="LAST_COMMIT_MESSAGE" value="create certificate_name for Csr#common_name" />
+    <MESSAGE value="bundle install" />
+    <MESSAGE value="external order number appears for code signing certs" />
+    <MESSAGE value="fix" />
+    <MESSAGE value="require user for some resources. Refactored not_new" />
+    <MESSAGE value="require user for getting ssl_account" />
+    <MESSAGE value="Made the multi invoice download a little more obvious" />
+    <MESSAGE value="require_user before find_ssl_account on BillingProfilesController" />
+    <MESSAGE value="clean up EV CS pages" />
+    <MESSAGE value="optimize reminders" />
+    <MESSAGE value="API fixes; self signed cert in dev env" />
+    <MESSAGE value="Subscriber Agreement fix; ca_certificate_id fix" />
+    <MESSAGE value="fix the subscriber agreement" />
+    <MESSAGE value="fix the reprocess requested" />
+    <MESSAGE value="create user API fixes" />
+    <MESSAGE value="include owner permissions under super_user" />
+    <MESSAGE value="Creating User through API fixes empty role issue" />
+    <MESSAGE value="refactor sandbox methods" />
+    <MESSAGE value="add search filters for test orders" />
+    <MESSAGE value="searches for test" />
+    <option name="LAST_COMMIT_MESSAGE" value="searches for test" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="892" height="822" key="Git.Branch.Popup" />
+    <state width="892" height="822" key="Git.Branch.Popup/3000.2000" />
+    <state width="892" height="822" key="Git.Branch.Popup@3000.2000@192dpi" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -2460,23 +2351,13 @@
           <option name="timeStamp" value="831" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
-          <line>103</line>
-          <option name="timeStamp" value="1912" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
-          <url>file://$PROJECT_DIR$/app/models/csr.rb</url>
-          <line>99</line>
-          <option name="timeStamp" value="1913" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb</url>
           <line>140</line>
           <option name="timeStamp" value="1976" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/models/certificate_order.rb</url>
-          <line>572</line>
+          <line>588</line>
           <option name="timeStamp" value="2045" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
@@ -2511,7 +2392,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/paypal_express_controller.rb</url>
-          <line>64</line>
+          <line>65</line>
           <option name="timeStamp" value="2187" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
@@ -2548,193 +2429,124 @@
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="2271" />
+      <option name="time" value="2341" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="IrbRunConfigurationType">
-        <watch expression="c.serial" />
-        <watch expression="c.serial.last(3)" />
-        <watch expression="s.last(3)" />
-        <watch expression="certs.map &amp;:serial" language="ruby" />
+        <watch expression="cc.errors" language="ruby" />
+        <watch expression="cc.write_preference(:reprocessing, false)" language="ruby" />
+        <watch expression="cc.save" language="ruby" />
+        <watch expression="cc.preferred_reprocessing(true)" language="ruby" />
+      </configuration>
+      <configuration name="RailsRunConfigurationType">
+        <watch expression="result.order(updated_at: :desc).to_sql" language="ruby" />
+        <watch expression="(current_user.is_admin? ?&#10;        (CertificateOrder.unscoped{&#10;          (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :&#10;            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc).to_sql" language="ruby" />
+        <watch expression="(current_user.is_admin? ?&#10;          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :&#10;            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc).to_sql" language="ruby" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
+    <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>order.display_state.blank?</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>order.blank?</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
     <expressions id="watch">
       <expression>
-        <expression-string>co.physical_tokens.last</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>co.physical_tokens.all</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>@parsed[&quot;username&quot;]</expression-string>
+        <expression-string>(current_user.is_admin? ?
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
+            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc).to_sql</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>@certificate_order.ca_certificate_requests.count</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>ca_response.instance_of? SslcomCaRequest</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>ca_response.class.is_a? SslcomCaRequest</expression-string>
-        <language-id>Haml</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>result.class</expression-string>
+        <expression-string>(current_user.is_admin? ?
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
+            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc)to_sql</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>params.merge(current_user: current_user)</expression-string>
+        <expression-string>(current_user.is_admin? ?
+        (CertificateOrder.unscoped{
+          (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
+            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc).to_sql</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>params.merge{current_user: current_user}</expression-string>
+        <expression-string>result.order(updated_at: :desc).to_sql</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>JSON.parse(response)[&quot;username&quot;]</expression-string>
+        <expression-string>result.to_sql</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>filters.map{|k,v|k unless v.blank?}.compact</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>filters.map{|f|!f.value.blank?}.compact</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>filters.values.compact</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>result.count</expression-string>
+        <language-id>ruby</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>result.test(query.true?).count</expression-string>
         <language-id>ruby</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="9" column="104" lean-forward="false" selection-start-line="9" selection-start-column="104" selection-end-line="9" selection-end-column="104" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/physical_tokens/edit.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1023">
-          <caret line="31" column="60" lean-forward="false" selection-start-line="31" selection-start-column="60" selection-end-line="31" selection-end-column="60" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/physical_token.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="8" column="13" lean-forward="false" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/show.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="563">
-          <caret line="195" column="35" lean-forward="false" selection-start-line="195" selection-start-column="35" selection-end-line="195" selection-end-column="35" />
+        <state relative-caret-position="485">
+          <caret line="537" column="30" lean-forward="false" selection-start-line="537" selection-start-column="20" selection-end-line="537" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create_v1_4.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_form.html.haml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1781">
-          <caret line="359" column="6" lean-forward="false" selection-start-line="359" selection-start-column="6" selection-end-line="359" selection-end-column="6" />
+        <state relative-caret-position="11055">
+          <caret line="335" column="28" lean-forward="false" selection-start-line="335" selection-start-column="28" selection-end-line="335" selection-end-column="28" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="26367">
-          <caret line="799" column="2" lean-forward="false" selection-start-line="799" selection-start-column="2" selection-end-line="799" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/db/migrate/20171029160707_create_physical_token_blocklist_and_caa_check.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
-          <caret line="5" column="30" lean-forward="false" selection-start-line="5" selection-start-column="30" selection-end-line="5" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3894">
-          <caret line="118" column="53" lean-forward="false" selection-start-line="118" selection-start-column="53" selection-end-line="118" selection-end-column="53" />
+          <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/user_notifier/follow_up_comment_notice.rhtml">
+    <entry file="file://$PROJECT_DIR$/bin/rails">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="12" column="12" lean-forward="false" selection-start-line="12" selection-start-column="12" selection-end-line="12" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_user_requests_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="22" column="71" lean-forward="false" selection-start-line="22" selection-start-column="71" selection-end-line="22" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/settings.yml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3234">
-          <caret line="98" column="73" lean-forward="false" selection-start-line="98" selection-start-column="73" selection-end-line="98" selection-end-column="73" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/certificate_type.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="528">
-          <caret line="16" column="0" lean-forward="false" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/users/show.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="8" column="26" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/users/_ssl_slug_company.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/routes.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3298">
-          <caret line="134" column="19" lean-forward="false" selection-start-line="134" selection-start-column="11" selection-end-line="134" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/sass/main.sass">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3927">
-          <caret line="119" column="7" lean-forward="false" selection-start-line="119" selection-start-column="7" selection-end-line="119" selection-end-column="7" />
+        <state relative-caret-position="1155">
+          <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -2746,241 +2558,75 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
+    <entry file="file://$PROJECT_DIR$/Gemfile.lock">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2805">
-          <caret line="85" column="26" lean-forward="false" selection-start-line="85" selection-start-column="19" selection-end-line="85" selection-end-column="26" />
+        <state relative-caret-position="396">
+          <caret line="12" column="19" lean-forward="false" selection-start-line="12" selection-start-column="19" selection-end-line="12" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/database.yml">
+    <entry file="file://$PROJECT_DIR$/app/models/cdn.rb" />
+    <entry file="file://$PROJECT_DIR$/app/views/cdns/_cdn.json.jbuilder" />
+    <entry file="file://$PROJECT_DIR$/app/views/cdns/index.html.haml" />
+    <entry file="file://$PROJECT_DIR$/config/environments/production.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="20" column="30" lean-forward="false" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
-          <folding />
+        <state relative-caret-position="238">
+          <caret line="48" column="22" lean-forward="false" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="22" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/users_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/views/certificates/_index_scripts.html.erb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="9" column="26" lean-forward="false" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
-          <folding />
+        <state relative-caret-position="7227">
+          <caret line="219" column="27" lean-forward="false" selection-start-line="219" selection-start-column="18" selection-end-line="219" selection-end-column="27" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_api.html.haml">
+    <entry file="file://$PROJECT_DIR$/app/models/v2_migration_progress.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1683">
-          <caret line="51" column="59" lean-forward="false" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
-          <folding />
+        <state relative-caret-position="495">
+          <caret line="15" column="20" lean-forward="false" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5115">
-          <caret line="155" column="68" lean-forward="false" selection-start-line="155" selection-start-column="68" selection-end-line="155" selection-end-column="68" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="7" column="47" lean-forward="false" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/95326244/-705174119/gems/sprockets-3.7.0/lib/sprockets/asset.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4554">
-          <caret line="138" column="7" lean-forward="false" selection-start-line="138" selection-start-column="7" selection-end-line="138" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="250">
-          <caret line="366" column="5" lean-forward="false" selection-start-line="366" selection-start-column="5" selection-end-line="366" selection-end-column="5" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_mdc_status.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="7" column="6" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="69" column="30" lean-forward="false" selection-start-line="69" selection-start-column="30" selection-end-line="69" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2871">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/users/_standard.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
-          <folding>
-            <marker date="1512015331807" expanded="true" signature="3847:4221" ph="{...}" />
-            <marker date="1512015331807" expanded="true" signature="4313:4695" ph="{...}" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
+    <entry file="file://$PROJECT_DIR$/config/initializers/preferences.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5478">
-          <caret line="166" column="78" lean-forward="false" selection-start-line="166" selection-start-column="78" selection-end-line="166" selection-end-column="78" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34155">
-          <caret line="1035" column="0" lean-forward="false" selection-start-line="1035" selection-start-column="0" selection-end-line="1035" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/ssl_accounts_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="2" column="23" lean-forward="false" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="858">
-          <caret line="26" column="52" lean-forward="false" selection-start-line="26" selection-start-column="52" selection-end-line="26" selection-end-column="52" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+    <entry file="file://$PROJECT_DIR$/app/models/permission.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15378">
-          <caret line="466" column="6" lean-forward="false" selection-start-line="466" selection-start-column="6" selection-end-line="466" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="132">
-          <caret line="4" column="23" lean-forward="false" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33">
-          <caret line="27" column="20" lean-forward="false" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39468">
-          <caret line="1196" column="14" lean-forward="false" selection-start-line="1196" selection-start-column="14" selection-end-line="1196" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/certificate_contact.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3795">
-          <caret line="115" column="6" lean-forward="false" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/models/administrative_contact.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="66">
-          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        <state relative-caret-position="4026">
+          <caret line="122" column="52" lean-forward="false" selection-start-line="122" selection-start-column="30" selection-end-line="122" selection-end-column="52" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10362">
-          <caret line="314" column="27" lean-forward="false" selection-start-line="314" selection-start-column="7" selection-end-line="314" selection-end-column="27" />
+        <state relative-caret-position="2607">
+          <caret line="79" column="56" lean-forward="false" selection-start-line="79" selection-start-column="14" selection-end-line="79" selection-end-column="56" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/contacts_controller.rb">
+    <entry file="file://$PROJECT_DIR$/lib/preferences/app/models/preference.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="9" column="9" lean-forward="false" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
-          <folding />
+        <state relative-caret-position="165">
+          <caret line="5" column="76" lean-forward="false" selection-start-line="5" selection-start-column="76" selection-end-line="5" selection-end-column="76" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_contents_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9933">
-          <caret line="301" column="22" lean-forward="false" selection-start-line="301" selection-start-column="22" selection-end-line="301" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -2988,26 +2634,261 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="12" column="18" lean-forward="false" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="6" column="65" lean-forward="false" selection-start-line="6" selection-start-column="65" selection-end-line="6" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/wicked_pdf.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/mime_types.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="59" lean-forward="false" selection-start-line="0" selection-start-column="59" selection-end-line="0" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/orders/invoice.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/invoice.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-4950">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/initializers/assets.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="67" lean-forward="false" selection-start-line="0" selection-start-column="67" selection-end-line="0" selection-end-column="67" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2673">
+          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_user_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="6" column="50" lean-forward="false" selection-start-line="6" selection-start-column="50" selection-end-line="6" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="580" column="5" lean-forward="false" selection-start-line="580" selection-start-column="5" selection-end-line="580" selection-end-column="5" />
+        <state relative-caret-position="495">
+          <caret line="15" column="26" lean-forward="false" selection-start-line="15" selection-start-column="26" selection-end-line="15" selection-end-column="26" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile.lock">
+    <entry file="file://$PROJECT_DIR$/config/settings.yml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7773">
-          <caret line="31" column="23" lean-forward="true" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+        <state relative-caret-position="448">
+          <caret line="30" column="19" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="42" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Gemfile">
+    <entry file="file://$PROJECT_DIR$/lib/string.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2877">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="612">
+          <caret line="41" column="22" lean-forward="false" selection-start-line="41" selection-start-column="22" selection-end-line="41" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/funded_accounts/success.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+          <folding>
+            <marker date="1514560611297" expanded="true" signature="57:139" ph="{...}" />
+            <marker date="1514560611297" expanded="true" signature="94:131" ph="{...}" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="594">
+          <caret line="39" column="29" lean-forward="false" selection-start-line="39" selection-start-column="29" selection-end-line="39" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="161" column="0" lean-forward="false" selection-start-line="161" selection-start-column="0" selection-end-line="161" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="8547">
+          <caret line="259" column="161" lean-forward="false" selection-start-line="259" selection-start-column="161" selection-end-line="259" selection-end-column="161" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3630">
+          <caret line="110" column="6" lean-forward="false" selection-start-line="110" selection-start-column="6" selection-end-line="110" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/95326244/-705174119/gems/activerecord-4.2.7.1/lib/active_record/scoping/named.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5082">
+          <caret line="154" column="0" lean-forward="false" selection-start-line="154" selection-start-column="0" selection-end-line="154" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/layouts/_admin.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2046">
+          <caret line="62" column="33" lean-forward="false" selection-start-line="62" selection-start-column="33" selection-end-line="62" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="495">
+          <caret line="119" column="39" lean-forward="false" selection-start-line="119" selection-start-column="39" selection-end-line="119" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/orders/_invoice_section.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="924">
+          <caret line="28" column="28" lean-forward="false" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="28" column="18" lean-forward="false" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="14" column="6" lean-forward="false" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="16" column="53" lean-forward="false" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="789">
+          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="2" column="40" lean-forward="false" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="369">
+          <caret line="81" column="71" lean-forward="false" selection-start-line="81" selection-start-column="71" selection-end-line="81" selection-end-column="71" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-223">
+          <caret line="867" column="48" lean-forward="false" selection-start-line="867" selection-start-column="48" selection-end-line="867" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
           <folding />
         </state>
       </provider>

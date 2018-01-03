@@ -230,7 +230,7 @@ class Certificate < ActiveRecord::Base
 
   def api_product_code
     ApiCertificateRequest::PRODUCTS.find{|k,v|
-      serial =~ Regexp.new(v)
+      serial =~ Regexp.new('^'+v)
     }[0].to_s
   end
 

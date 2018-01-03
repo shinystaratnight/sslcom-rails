@@ -9,15 +9,13 @@ class SslcomCaApi
   # SSLcom-SubCA-SSL-ECC-384-R1
   # ManagementCA
 
-  DEV_HOST = "http://192.168.100.5:8080/restapi"
-
   CERTLOCK_CA = "certlock"
   SSLCOM_CA = "sslcom"
   MANAGEMENT_CA = "management_ca"
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
-  APPLY_SSL_URL=DEV_HOST+"/v1/certificate/pkcs10"
-  REVOKE_SSL_URL=DEV_HOST+"/v1/certificate/revoke"
+  APPLY_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
+  REVOKE_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
@@ -113,7 +111,7 @@ class SslcomCaApi
     if cert.is_smime?
       "rfc822Name="
     elsif !cert.is_code_signing?
-      "dNSName="+(options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map(&:downcase).join(",")
+      (options[:san] ? options[:san].split(/\s+/) : options[:cc].all_domains).map{|d|"dNSName="+d.downcase}.join(",")
     end
   end
 
@@ -143,12 +141,7 @@ class SslcomCaApi
   def self.apply_for_certificate(certificate_order, options={})
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
     host = APPLY_SSL_URL
-    uri = URI.parse(host)
-    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-    req.body = issue_cert_json(options)
-    res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-      http.request(req)
-    end
+    req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
       parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
@@ -170,14 +163,10 @@ class SslcomCaApi
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
       host = REVOKE_SSL_URL
+      req, res = call_ca(host, options, revoke_cert_json(signed_certificate, reason))
       uri = URI.parse(host)
-      req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
-      req.body = revoke_cert_json(signed_certificate, reason)
-      res = Net::HTTP.start(uri.hostname, uri.port) do |http|
-        http.request(req)
-      end
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
-                                                                            parameters: req.body, method: "post", response: res.message, ca: "sslcom")
+                                              parameters: req.body, method: "post", response: res.message, ca: "sslcom")
       unless api_log_entry.response=="OK"
         OrderNotifier.problem_ca_sending("support@ssl.com", signed_certificate.certificate_order,"sslcom").deliver
       else
@@ -187,8 +176,20 @@ class SslcomCaApi
     end
   end
 
+  private
+  def self.call_ca(host, options, body)
+    uri = URI.parse(host)
+    req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+    req.body = body
+    res = http.request(req)
+    return req, res
+  end
 
-#  def self.test
+
+  #  def self.test
 #    ssl_util = Savon::Client.new "http://ccm-host/ws/EPKIManagerSSL?wsdl"
 #    begin
 #      response = ssl_util.enroll do |soap|

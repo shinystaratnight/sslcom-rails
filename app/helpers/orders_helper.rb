@@ -159,7 +159,13 @@ module OrdersHelper
       end
     end
   end
-  
+
+  def test_label(order)
+    label=(order.is_test? ? "(TEST) " : "")
+    label << order.display_state+" " unless order.display_state.blank?
+    label
+  end
+
   def delay_transaction?
     fa       = current_user.ssl_account.funded_account if current_user
     declined = fa && fa.card_recently_declined? if fa
