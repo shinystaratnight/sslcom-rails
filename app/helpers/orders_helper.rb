@@ -161,9 +161,11 @@ module OrdersHelper
   end
 
   def test_label(order)
-    label=(order.is_test? ? "(TEST) " : "")
-    label << order.display_state+" " unless order.display_state.blank?
-    label
+    unless order.display_state.blank?
+      order.display_state+" "
+    else
+      order.is_test? ? "(TEST) " : ""
+    end
   end
 
   def delay_transaction?
