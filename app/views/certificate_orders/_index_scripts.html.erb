@@ -59,25 +59,6 @@ jQuery(function($) {
             }
           }
 
-          /*if (filterCont.children().first().attr('class') == 'filter-cont-text'
-            || filterCont.children().first().attr('class') == 'filter-cont-slt') {
-
-            val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
-            itemQuery = filterCont.children().data('field') + ':' + val;
-          } else {
-            var from = filterCont.children().first().children().first().val();
-            var year = from.substring(0, from.indexOf('-'));
-            from = from.substring(from.indexOf('-') + 1) + '-' + year;
-
-            var to = filterCont.children().last().children().first().val();
-            year = to.substring(0, to.indexOf('-'));
-            to = to.substring(to.indexOf('-') + 1) + '-' + year;
-
-            alert('from : ' + from + ' | to : ' + to);
-            val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
-            itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
-          }*/
-
           query += itemQuery + ' ';
         }
       });
@@ -88,51 +69,7 @@ jQuery(function($) {
 
       $('#search').val(searchStr);
     });
-    $('#btn_cert_order_search1').click(function() {
-      $(this).prop('disabled', true);
-      $('#btn_cert_order_filter').prop('disabled', true);
-      /*$('#btn_close_cert_order_filter').click();
 
-      var query = '';
-
-      $('.filter-item').each(function() {
-        var isChecked = $(this).find('input[type="checkbox"]').prop('checked');
-
-        if (isChecked) {
-          var filterCont = $(this).find('.filter-cont');
-          var val, itemQuery = '';
-
-          if (filterCont.children().first().attr('class') == 'filter-cont-text'
-            || filterCont.children().first().attr('class') == 'filter-cont-slt') {
-
-            val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
-            itemQuery = filterCont.children().data('field') + ':' + val;
-          } else {
-            var from = filterCont.children().first().children().first().val();
-            var year = from.substring(0, from.indexOf('-'));
-            from = from.substring(from.indexOf('-') + 1) + '-' + year;
-
-            var to = filterCont.children().last().children().first().val();
-            year = to.substring(0, to.indexOf('-'));
-            to = to.substring(to.indexOf('-') + 1) + '-' + year;
-
-            alert('from : ' + from + ' | to : ' + to);
-            val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
-            itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
-          }
-
-          query += itemQuery + ' ';
-        }
-      });
-      var searchStr = $('#search').val().trim() != '' ? $('#search').val().trim() : '';
-      if (query.trim() != '') {
-        searchStr = searchStr == '' ? query : searchStr + ' ' + query.trim();
-      }
-
-      $('#search').val(searchStr);*/
-
-      $('#search_form').submit();
-    });
     $('.filter-item input[type="checkbox"]').click(function() {
       var isChecked = $(this).prop('checked');
       var parentSiblingNode = $(this).parent().next();
