@@ -7,10 +7,6 @@
   %body
     #background
       %p{id: 'bg-text'} PAID
-      %p{id: 'bg-note'}
-        *Invoice and charges are accurate
-        %br
-        ="as of #{DateTime.now.strftime('%F %I:%M %p')}."
     
     -@orders.each do |order|
       =render partial: 'orders/invoice_page', locals: {order: order}
