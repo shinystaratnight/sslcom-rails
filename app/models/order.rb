@@ -51,15 +51,20 @@ class Order < ActiveRecord::Base
   }
 
   scope :not_test, lambda {
-    joins{line_items.sellable(CertificateOrder).outer}.
+    joins{line_items.sellable(CertificateOrder)}.
         where{(line_items.sellable(CertificateOrder).is_test==nil) |
         (line_items.sellable(CertificateOrder).is_test==false)}
+  }
+
+  scope :is_test, -> {
+    joins{line_items.sellable(CertificateOrder)}.
+        where{(line_items.sellable(CertificateOrder).is_test==true)}
   }
 
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-               discount_amount: nil}
+               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -68,7 +73,7 @@ class Order < ActiveRecord::Base
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
     result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
         joins{billable(SslAccount).unscoped_users.outer}
-    result = result.joins{line_items.sellable(CertificateOrder).outer} if ref
+    result = result.joins{line_items.sellable(CertificateOrder)} if ref
     unless term.blank?
       result = result.where{
         (billing_profile_unscoped.last_digits == "#{term}") |
@@ -93,12 +98,20 @@ class Order < ActiveRecord::Base
         (billable(SslAccount).unscoped_users.login=~ "%#{term}%") |
         (billable(SslAccount).unscoped_users.email=~ "%#{term}%")}
     end
+    %w(is_test).each do |field|
+      query=filters[field.to_sym]
+      if query.try("true?")
+        result = result.send(field)
+      else
+        result = result.not_test
+      end
+    end
     %w(login email).each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (billable(SslAccount).users.try(field.to_sym) =~ "%#{query}%")} if query
     end
-    %w(account_number).each do |field|
+    %w(account_number company_name ssl_slug).each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (billable(SslAccount).try(field.to_sym) =~ "%#{query}%")} if query
@@ -534,16 +547,17 @@ class Order < ActiveRecord::Base
   end
 
   def display_state
-    case self.state
-      when "fully_refunded"
-        "(REFUNDED)"
-      when "charged_back"
-        "(CHARGEBACK)"
-      when "rejected"
-        "(REJECTED)"
-      else
-        ""
-    end
+    display=case self.state
+              when "fully_refunded"
+                "(REFUNDED)"
+              when "charged_back"
+                "(CHARGEBACK)"
+              when "rejected"
+                "(REJECTED)"
+              else
+                ""
+            end
+    (is_test? ? "(TEST) " : "") + display
   end
 
   def is_deposit?

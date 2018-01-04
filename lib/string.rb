@@ -34,6 +34,14 @@ class String
     end
   end
 
+  def self.true?(obj)
+    obj.to_s == "true"
+  end
+
+  def true?
+    String.true?(self)
+  end
+
   def urlencode
     gsub( /[^a-zA-Z0-9\-_\.!~*'()]/n ) {|x| sprintf('%%%02x', x[0]) }
   end

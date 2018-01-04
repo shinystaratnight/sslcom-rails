@@ -26,7 +26,7 @@ default_run_options[:pty] = true
 set :application, "ssl_com"
 set :domain, '172.16.1.12' #Rails 4 staging
 
-server = "production"
+server = "sandbox2"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -64,6 +64,7 @@ case server
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
+    set :application, "sws"
     set :user, "app-sws"
     set :branch, "master"
     set :domain, 'sws-a1.sslpki.local'
@@ -224,12 +225,8 @@ namespace :deploy do
     run "ln -nfs #{shared_path}/config/environments/production.rb #{release_path}/config/environments/production.rb"
   end
 
-  task :restart do
-    invoke 'delayed_job:restart'
-  end
 end
 after 'deploy:update', 'deploy:symlink_shared'
-after 'deploy:publishing', 'deploy:restart'
 
 #auto install rvm
 #before 'deploy', 'rvm:install_rvm'

@@ -59,11 +59,13 @@ class User < ActiveRecord::Base
   default_scope        {where{status << ['disabled']}.order("created_at desc")}
   scope :with_role, -> (role){joins(:roles).where('lower(roles.name) LIKE (?)',
                         "%#{role.downcase.strip}%")}
-  scope :search,    -> (term){joins{ssl_accounts}.where{
+  scope :search,    -> (term){joins{ssl_accounts.api_credential}.where{
                         (login =~ "%#{term}%") |
                         (email =~ "%#{term}%") |
                         (last_login_ip =~ "%#{term}%") |
                         (current_login_ip =~ "%#{term}%") |
+                        (ssl_accounts.api_credential.account_key =~ "%#{term}%") |
+                        (ssl_accounts.api_credential.secret_key =~ "%#{term}%") |
                         (ssl_accounts.acct_number =~ "%#{term}%")}.uniq}
 
   def ssl_account(default_team=nil)

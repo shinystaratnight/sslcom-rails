@@ -1,6 +1,7 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
+  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./ || request.host=~/^reseller\.ssl\./ || Rails.env.test?"
   before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
@@ -1107,22 +1108,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         certificate_order.certificate.description["certificate_type"]
       else
         certificate_order.preferred_v2_product.description.gsub /[Cc]ertificate\z/, ''
-      end
-    end
-  end
-
-  def api_domain(certificate_order=nil)
-    unless certificate_order.blank?
-      if Rails.env=~/production/i
-        "https://" + (certificate_order.is_test ? Settings.test_api_domain : Settings.api_domain)
-      else
-        "https://" + (certificate_order.is_test ? Settings.dev_test_api_domain : Settings.dev_api_domain) +":3000"
-      end
-    else
-      if is_sandbox?
-        Rails.env=~/production/i ? "https://#{Settings.test_api_domain}" : "https://#{Settings.dev_test_api_domain}:3000"
-      else
-        Rails.env=~/production/i ? "https://#{Settings.api_domain}" : "https://#{Settings.dev_api_domain}:3000"
       end
     end
   end

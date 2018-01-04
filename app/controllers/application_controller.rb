@@ -4,6 +4,7 @@
 class ApplicationController < ActionController::Base
   layout 'application'
   #include Authentication
+  include ApplicationHelper
   rescue_from ActiveRecord::RecordNotFound, :with => :not_found
   rescue_from ActionController::RoutingError, :with => :not_found
   rescue_from AbstractController::ActionNotFound, :with => :not_found
@@ -22,33 +23,6 @@ class ApplicationController < ActionController::Base
   before_filter :team_base, if: "params[:ssl_slug] && current_user"
   before_filter :set_ssl_slug, :load_notifications
   after_filter :set_access_control_headers#need to move parse_csr to api, if: "request.subdomain=='sws' || request.subdomain=='sws-test'"
-
-  def sandbox_notice
-    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
-  end
-  # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
-  def set_mailer_host
-    host = if Rails.const_defined?('Console')
-      Settings.actionmailer_host
-    elsif is_sandbox_or_test?
-      'sandbox.ssl.com'
-    else
-      request.host_with_port
-    end
-    ActionMailer::Base.default_url_options[:host] = host
-    ActionMailer::Base.default_url_options[:protocol] = 'https'
-  end
-
-  # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
-  # I use the entire domain, just change to sandbox_db and pass only the subdomain
-  def current_website
-    @website ||= Website.current_site(request.host)
-  end
-
-  def set_database
-    current_website.use_database
-    sandbox_notice if @website.instance_of?(Sandbox)
-  end
 
   # Bonus - add view_path
   def set_paths
@@ -227,11 +201,11 @@ class ApplicationController < ActionController::Base
       (current_user.is_admin? ?
         (CertificateOrder.unscoped{
           (@ssl_account.try(:certificate_orders) || CertificateOrder).search_with_csr(params[:search], options)}) :
-            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order_by_csr
+            current_user.ssl_account.certificate_orders.search_with_csr(params[:search], options)).order(updated_at: :desc)
     else
       (current_user.is_admin? ?
           (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
-            current_user.ssl_account.certificate_orders.not_test.not_new(options))
+            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
     end
   end
 
@@ -420,10 +394,6 @@ class ApplicationController < ActionController::Base
         flash[:info_activation] = true
       end
     end
-  end
-
-  def is_sandbox?
-    Sandbox.exists?(request.try(:host))
   end
 
   private

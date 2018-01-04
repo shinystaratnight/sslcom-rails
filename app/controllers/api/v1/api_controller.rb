@@ -2,6 +2,7 @@ require 'will_paginate/array'
 
 class Api::V1::APIController < ActionController::API
   include SerializerHelper
+  include ApplicationHelper
   include ActionController::Cookies
   include ActionController::HttpAuthentication::Basic::ControllerMethods
   include ActionController::Rendering
@@ -9,6 +10,7 @@ class Api::V1::APIController < ActionController::API
   include ActionView::Rendering
   
   before_filter :activate_authlogic
+  before_filter :set_default_request_format
   after_filter  :set_access_control_headers
 
   TEST_SUBDOMAIN = 'sws-test'
@@ -28,7 +30,7 @@ class Api::V1::APIController < ActionController::API
   end
   
   def set_test
-    @test = Sandbox.exists?(request.host) || %w{development test}.include?(Rails.env)
+    @test = is_sandbox? || %w{test}.include?(Rails.env)
   end
   
   def activate_authlogic
@@ -72,5 +74,9 @@ class Api::V1::APIController < ActionController::API
     @team ||= SslAccount.joins(:api_credential)
       .where(api_credential: {account_key: ak, secret_key: sk}).last
     !@team.nil?
+  end
+  
+  def set_default_request_format
+    request.format = :json
   end
 end

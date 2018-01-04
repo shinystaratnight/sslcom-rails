@@ -354,15 +354,15 @@ class SslAccount < ActiveRecord::Base
     results
   end
 
-  def expired_certificates(intervals)
+  # years back - how many years back do we want to go on expired certificates
+  def expired_certificates(intervals, years_back=1)
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
       unrenewed_signed_certificates.compact.each do |sc|
         sed = sc.expiration_date
         unless sed.blank?
-          #go 10 years back
-          10.times do |i|
-            years = year_in_days * (i+1)
+          years_back.times do |i|
+          years = year_in_days * (i+1)
             adj_int = intervals.map{|i|i+years}
             adj_int.each_with_index do |ed, i|
               if i < adj_int.count-1 &&
@@ -387,7 +387,7 @@ class SslAccount < ActiveRecord::Base
         [:stored_preferences, {:certificate_orders =>
                                    [:orders, :certificate_contents=>
                                        {:csr=>:signed_certificates}]}]).find_in_batches(batch_size: 250) do |s|
-      #find expired certs based on triggers.
+      # find expired certs based on triggers.
       logger.info "filtering out expired certs"
       e_certs=s.map{|s|s.expiring_certificates}.reject{|e|e.empty?}.flatten
       digest={}
@@ -395,9 +395,9 @@ class SslAccount < ActiveRecord::Base
       #find expired certs from n*1 years ago from ssl_accounts that do not have
       #recent purchase history
       remove = e_certs.map(&:cert).flatten.map(&:ssl_account).uniq
-      #should also filter out ssl_accounts who have recently logged in. We don't
-      #want to constantly email them even if they have expired certs from a several
-      #years ago
+      # should also filter out ssl_accounts who have recently logged in. We don't
+      # want to constantly email them even if they have expired certs from a several
+      # years ago
       s = s - remove
       digest.clear
       intervals = [-30, -7, 16, 31] #0 represents this day, n * 1 years ago
@@ -425,10 +425,11 @@ class SslAccount < ActiveRecord::Base
                   c.csr.certificate_content.administrative_contact]
         contacts.uniq.compact.each do |contact|
           logger.info "adding contact to digest"
-          unless contact.email.blank? || SentReminder.exists?(trigger_value:
-                                                                  [ec.before, ec.after].join(", "),
-                                                              expires_at: c.expiration_date, subject: c.common_name,
-                                                              recipients: contact.email) ||
+          unless contact.email.blank? ||
+              SentReminder.exists?(trigger_value:
+                  [ec.before, ec.after].join(", "),
+              expires_at: c.expiration_date, subject: c.common_name,
+              recipients: contact.email) ||
               exempt_certs.(c.common_name, exempt_list)
             dk=contact.to_digest_key
             if digest[dk].blank?
