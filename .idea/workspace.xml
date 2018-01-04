@@ -35,49 +35,49 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1433558499414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1421859367439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL: ssl_com_rails3 Coverage Results" MODIFIED="1400454091340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the order page: ssl_com_rails3 Coverage Results" MODIFIED="1400878957224" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_valid__ssl_com_rails3.coverage" NAME="ApiCredential is valid: ssl_com_rails3 Coverage Results" MODIFIED="1400509623757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1431016051714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1432701157695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@Production__ssl_com_rails3.coverage" NAME="Production: ssl_com_rails3 Coverage Results" MODIFIED="1428084191886" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_returns_error_if_not_enough_funds_exists__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 returns error if not enough funds exists: ssl_com_rails3 Coverage Results" MODIFIED="1400534227443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@routes__ssl_com_rails3.coverage" NAME="routes: ssl_com_rails3 Coverage Results" MODIFIED="1428081782998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_groups__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_groups: ssl_com_rails3 Coverage Results" MODIFIED="1400454279853" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Start_Zeus_Server__ssl_com_rails3.coverage" NAME="Start Zeus Server: ssl_com_rails3 Coverage Results" MODIFIED="1402945578230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_invalid_without_ssl_account__ssl_com_rails3.coverage" NAME="ApiCredential is invalid without ssl_account: ssl_com_rails3 Coverage Results" MODIFIED="1400438743589" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate__ssl_com_rails3.coverage" NAME="ApiCertificateCreate: ssl_com_rails3 Coverage Results" MODIFIED="1402957937677" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__api_certificate_create_spec___ssl_com_rails3.coverage" NAME="Run spec 'api_certificate_create_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400279173362" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_assigns_the_order__ssl_com_rails3.coverage" NAME="OrdersController Get #show assigns the order: ssl_com_rails3 Coverage Results" MODIFIED="1401746084483" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_wildcard_ssl_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the wildcard ssl csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400532095576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml_displays_order_details_correctly__ssl_com_rails3.coverage" NAME="orders/new.html.haml displays order details correctly: ssl_com_rails3 Coverage Results" MODIFIED="1402356185855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_returns_a_OK_200_return_code__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction returns a OK 200 return code: ssl_com_rails3 Coverage Results" MODIFIED="1401746938517" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_creates_a_certificate_order_is_enough_funds_exist__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 creates a certificate order is enough funds exist: ssl_com_rails3 Coverage Results" MODIFIED="1400529194106" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_default_dcv_method__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a default dcv method: ssl_com_rails3 Coverage Results" MODIFIED="1400510099493" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SignedCertificate_as_an_ssl_com_signed_certificate__ssl_com_rails3.coverage" NAME="SignedCertificate as an ssl.com signed certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400266609097" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_alles__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is alles: ssl_com_rails3 Coverage Results" MODIFIED="1400529040576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction: ssl_com_rails3 Coverage Results" MODIFIED="1400868111908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@db_migrate__ssl_com_rails3.coverage" NAME="db:migrate: ssl_com_rails3 Coverage Results" MODIFIED="1431016051714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_has_a_valid_csr_object__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 has a valid csr object: ssl_com_rails3 Coverage Results" MODIFIED="1400458548279" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL: ssl_com_rails3 Coverage Results" MODIFIED="1400454091340" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_valid_credentials__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires valid credentials: ssl_com_rails3 Coverage Results" MODIFIED="1400436288567" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SslAccount_reseller_has_1000_00_in_the_account__ssl_com_rails3.coverage" NAME="SslAccount reseller has 1000.00 in the account: ssl_com_rails3 Coverage Results" MODIFIED="1400530018957" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show__ssl_com_rails3.coverage" NAME="OrdersController Get #show: ssl_com_rails3 Coverage Results" MODIFIED="1400881666839" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@rails_upgrade_routes__ssl_com_rails3.coverage" NAME="rails:upgrade:routes: ssl_com_rails3 Coverage Results" MODIFIED="1421859367439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@orders_new_html_haml__ssl_com_rails3.coverage" NAME="orders/new.html.haml: ssl_com_rails3 Coverage Results" MODIFIED="1402357031062" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_adds_a_new_certificate_order_to_the_database__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction adds a new certificate order to the database: ssl_com_rails3 Coverage Results" MODIFIED="1400868346988" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_requires_proper_validation__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 requires proper validation: ssl_com_rails3 Coverage Results" MODIFIED="1400529259088" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Development__ssl_com_rails3.coverage" NAME="Development: ssl_com_rails3 Coverage Results" MODIFIED="1433558499414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_successful_transaction_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1402357981442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Run_spec__sub_order_item_spec___ssl_com_rails3.coverage" NAME="Run spec 'sub_order_item_spec': ssl_com_rails3 Coverage Results" MODIFIED="1400270554871" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_Get__show_shows_the_certificate_reference_number__ssl_com_rails3.coverage" NAME="OrdersController Get #show shows the certificate reference number: ssl_com_rails3 Coverage Results" MODIFIED="1400882183149" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
     <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_deducts_the_proper_amount_when_create_certificate_order_is_called__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 deducts the proper amount when create_certificate_order is called: ssl_com_rails3 Coverage Results" MODIFIED="1400528611344" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
-    <SUITE FILE_PATH="coverage/ssl_com_rails3@Certificate_as_a_ssl_com_dv_certificate_product_365_day_Basic_SSL_has_a_product_variant_item__ssl_com_rails3.coverage" NAME="Certificate as a ssl.com dv certificate product 365 day Basic SSL has a product_variant_item: ssl_com_rails3 Coverage Results" MODIFIED="1400455160642" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCredential_is_valid__ssl_com_rails3.coverage" NAME="ApiCredential is valid: ssl_com_rails3 Coverage Results" MODIFIED="1400509623757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@OrdersController_POST__create_unsuccessful_transaction_redirects_to_the_new_order_page__ssl_com_rails3.coverage" NAME="OrdersController POST #create unsuccessful transaction redirects to the new order page: ssl_com_rails3 Coverage Results" MODIFIED="1400879090503" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_places_a_valid_order__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3 Coverage Results" MODIFIED="1402979935966" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_parses_the_csr_correctly__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 parses the csr correctly: ssl_com_rails3 Coverage Results" MODIFIED="1400511228412" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_is_invalid_with_non_digit_product__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 is invalid with non digit product: ssl_com_rails3 Coverage Results" MODIFIED="1400279059333" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@Rails_console__ssl_com_rails3.coverage" NAME="Rails console: ssl_com_rails3 Coverage Results" MODIFIED="1432701157695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApiCertificateCreate_version_1_3_ev_certificate_order_is_invalid_without_organization_name__ssl_com_rails3.coverage" NAME="ApiCertificateCreate version 1.3 ev certificate order is invalid without organization name: ssl_com_rails3 Coverage Results" MODIFIED="1400279043996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@SubOrderItem_has_a_certificate__ssl_com_rails3.coverage" NAME="SubOrderItem has a certificate: ssl_com_rails3 Coverage Results" MODIFIED="1400270538502" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
+    <SUITE FILE_PATH="coverage/ssl_com_rails3@ApplicationController_should_get_certificate_order_from_cart__ssl_com_rails3.coverage" NAME="ApplicationController should get certificate order from cart: ssl_com_rails3 Coverage Results" MODIFIED="1401903507339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="rcov" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" MODULE_NAME="ssl_com_rails3" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="$PROJECT_DIR$" />
@@ -93,11 +93,13 @@
     <expand />
     <select />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="ExportTestResults" outputFolder="$USER_HOME$/Downloads" userTempatePath="" />
   <component name="FavoritesManager">
     <favorites_list name="ssl_com_rails3" />
   </component>
   <component name="FileEditorManager">
+<<<<<<< Updated upstream
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
       <file leaf-file-name="deploy.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/config/deploy.rb">
@@ -200,6 +202,138 @@
         </entry>
       </file>
     </leaf>
+=======
+    <splitter split-orientation="vertical" split-proportion="0.9">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
+          <file leaf-file-name="routes.rb" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/config/routes.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="2960">
+                  <caret line="148" column="19" lean-forward="false" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="19" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="index.html.haml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-2040">
+                  <caret line="6" column="29" lean-forward="false" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="certificate_orders_controller.rb" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="440">
+                  <caret line="49" column="45" lean-forward="false" selection-start-line="49" selection-start-column="45" selection-end-line="49" selection-end-column="45" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Gemfile" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Gemfile">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="515">
+                  <caret line="84" column="13" lean-forward="false" selection-start-line="84" selection-start-column="13" selection-end-line="84" selection-end-column="13" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="application_controller.rb" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="398">
+                  <caret line="229" column="66" lean-forward="true" selection-start-line="229" selection-start-column="66" selection-end-line="229" selection-end-column="66" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="certificate_order.rb" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="45">
+                  <caret line="92" column="10" lean-forward="false" selection-start-line="92" selection-start-column="10" selection-end-line="92" selection-end-column="10" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.sass" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/sass/main.sass">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="816">
+                  <caret line="5782" column="8" lean-forward="true" selection-start-line="5782" selection-start-column="8" selection-end-line="5782" selection-end-column="8" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="_index_scripts.html.erb" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="440">
+                  <caret line="40" column="42" lean-forward="true" selection-start-line="40" selection-start-column="42" selection-end-line="40" selection-end-column="42" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf>
+          <file leaf-file-name="rails" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/bin/rails">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="49">
+                  <caret line="26" column="76" lean-forward="false" selection-start-line="26" selection-start-column="76" selection-end-line="26" selection-end-column="76" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="application.rb" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/config/application.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="349">
+                  <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="database.yml" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/config/client/certassure/database.yml">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="276">
+                  <caret line="39" column="16" lean-forward="false" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="rails_config.rb" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/config/initializers/rails_config.rb">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="140">
+                  <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+>>>>>>> Stashed changes
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -210,6 +344,7 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
+<<<<<<< Updated upstream
       <find>def api_domain</find>
       <find>def is_sandbox?</find>
       <find>is_s</find>
@@ -240,6 +375,38 @@
       <find>#{ssl_account.api_credential.account_key if ssl_account.api_credential}</find>
       <find>Settings</find>
       <find>other SSL certificates</find>
+=======
+      <find>search_</find>
+      <find>search_with_c</find>
+      <find>search_with_cs</find>
+      <find>search_with</find>
+      <find>options</find>
+      <find>=button_tag 'Filters', :id=&gt;'btn_cert_order_filter'</find>
+      <find>search_with_csr</find>
+      <find>bu</find>
+      <find>but</find>
+      <find>#certificate_orders</find>
+      <find>c</find>
+      <find>checkbo</find>
+      <find>checkbox</find>
+      <find>checkbox_bu</find>
+      <find>checkbox_b</find>
+      <find>checkbox_</find>
+      <find>ra</find>
+      <find>radio-</find>
+      <find>radio</find>
+      <find>radio_</find>
+      <find>radio_b</find>
+      <find>radio_bu</find>
+      <find>certificate_orders</find>
+      <find>calendar</find>
+      <find>calendar_date_select_includes</find>
+      <find>button_tag</find>
+      <find>text_field_tag</find>
+      <find>country</find>
+      <find>byebug</find>
+      <find>search</find>
+>>>>>>> Stashed changes
     </findStrings>
     <replaceStrings>
       <replace>/</replace>
@@ -277,6 +444,32 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+<<<<<<< Updated upstream
+=======
+        <option value="$PROJECT_DIR$/app/controllers/contacts_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate.rb" />
+        <option value="$PROJECT_DIR$/app/models/ca_api_request.rb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_name.rb" />
+        <option value="$PROJECT_DIR$/lib/v2_migration_progress_addon.rb" />
+        <option value="$PROJECT_DIR$/app/views/api/v1/api_certificate_requests/contats_v1_4.rabl" />
+        <option value="$PROJECT_DIR$/app/models/db.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_menu.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml" />
+        <option value="$PROJECT_DIR$/app/models/product_order.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_contents_controller.rb" />
+        <option value="$PROJECT_DIR$/db/migrate/20171201154843_add_joi_and_app_rep_to_contacts.rb" />
+        <option value="$PROJECT_DIR$/config/environments/development.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_subject_column.html.haml" />
+        <option value="$PROJECT_DIR$/config/settings.yml" />
+        <option value="$PROJECT_DIR$/db/migrate/20171029160707_create_physical_token_blocklist_and_caa_check.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/application_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/sslcom_ca_api.rb" />
+        <option value="$PROJECT_DIR$/config/routes.rb" />
+        <option value="$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb" />
+        <option value="$PROJECT_DIR$/app/models/sslcom_ca_request.rb" />
+        <option value="$PROJECT_DIR$/app/views/validations/_sent_ca_result.html.haml" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/sslcom_ca.html.haml" />
+>>>>>>> Stashed changes
         <option value="$PROJECT_DIR$/app/views/physical_tokens/new.html.haml" />
         <option value="$PROJECT_DIR$/app/controllers/physical_tokens_controller.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml" />
@@ -284,6 +477,11 @@
         <option value="$PROJECT_DIR$/app/models/physical_token.rb" />
         <option value="$PROJECT_DIR$/app/controllers/site_seals_controller.rb" />
         <option value="$PROJECT_DIR$/app/controllers/ssl_accounts_controller.rb" />
+<<<<<<< Updated upstream
+=======
+        <option value="$PROJECT_DIR$/config/database.yml" />
+        <option value="$PROJECT_DIR$/app/controllers/users_controller.rb" />
+>>>>>>> Stashed changes
         <option value="$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml" />
         <option value="$PROJECT_DIR$/app/views/validations/new.html.haml" />
         <option value="$PROJECT_DIR$/app/views/shared/_small_admin_functions.html.haml" />
@@ -326,8 +524,24 @@
         <option value="$PROJECT_DIR$/app/models/order.rb" />
         <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
         <option value="$PROJECT_DIR$/app/models/csr.rb" />
+<<<<<<< Updated upstream
         <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
         <option value="$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml" />
+=======
+        <option value="$PROJECT_DIR$/app/models/certificate_content.rb" />
+        <option value="$PROJECT_DIR$/bin/rails" />
+        <option value="$PROJECT_DIR$/config/application.rb" />
+        <option value="$PROJECT_DIR$/config/initializers/rails_config.rb" />
+        <option value="$PROJECT_DIR$/config/client/certassure/database.yml" />
+        <option value="$PROJECT_DIR$/Gemfile" />
+        <option value="$PROJECT_DIR$/app/controllers/application_controller.rb" />
+        <option value="$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb" />
+        <option value="$PROJECT_DIR$/app/models/country.rb" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/index.html.haml" />
+        <option value="$PROJECT_DIR$/app/assets/stylesheets/sass/main.sass" />
+        <option value="$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb" />
+        <option value="$PROJECT_DIR$/app/models/certificate_order.rb" />
+>>>>>>> Stashed changes
       </list>
     </option>
   </component>
@@ -344,11 +558,19 @@
     <option name="FILTER_DEBUG" value="false" />
     <option name="CUSTOM_FILTER" value="csr" />
   </component>
+<<<<<<< Updated upstream
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-11" />
     <option name="y" value="80" />
     <option name="width" value="738" />
     <option name="height" value="978" />
+=======
+  <component name="ProjectFrameBounds">
+    <option name="x" value="64" />
+    <option name="y" value="-11" />
+    <option name="width" value="1617" />
+    <option name="height" value="966" />
+>>>>>>> Stashed changes
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -403,7 +625,7 @@
     </entry>
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -416,6 +638,7 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
+<<<<<<< Updated upstream
     <panes>
       <pane id="Scope" />
       <pane id="RailsProjectView" />
@@ -465,12 +688,15 @@
         </subPane>
       </pane>
     </panes>
+=======
+    <panes />
+>>>>>>> Stashed changes
   </component>
   <component name="PropertiesComponent">
     <property name="recentsLimit" value="5" />
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="zeus.debugging.info.shown" value="true" />
-    <property name="last_opened_file_path" value="C:/Program Files/Git/bin/git.exe" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="Ruby.ViewRefParam.DefaultExtension" value="html.erb" />
     <property name="options.lastSelected" value="org.jetbrains.plugins.ruby.settings.RubyActiveModuleSdkConfigurable" />
     <property name="options.splitter.main.proportions" value="0.3" />
@@ -1406,6 +1632,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Rails.Development: ssl_com_rails3">
+<<<<<<< Updated upstream
     <configuration name="delayed_job:restart: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
       <module name="ssl_com_rails3" />
       <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1482,25 +1709,8 @@
       <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
     </configuration>
     <configuration name="assets:precompile: ssl_com_rails3" type="RakeRunConfigurationType" factoryName="Rake" temporary="true">
-      <module name="ssl_com_rails3" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
-      <envs>
-        <env name="RAILS_ENV" value="production" />
-      </envs>
-      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
-      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="assets:precompile" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
-      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
-    </configuration>
-    <configuration name="Run test 'api_certificate_revoke_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
+=======
+    <configuration default="false" name="All tests in teams: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
       <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
       <module name="ssl_com_rails3" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
@@ -1514,15 +1724,140 @@
       </envs>
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="$MODULE_DIR$/test/integration/api/teams" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/{*_test,test_*,*_spec}.rb" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
-      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="ALL_IN_FOLDER" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+      <method />
+    </configuration>
+    <configuration default="false" name="All tests in authorization: ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest" temporary="true">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+>>>>>>> Stashed changes
+      <module name="ssl_com_rails3" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="production" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+<<<<<<< Updated upstream
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="assets:precompile" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_TRACE" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_DRYRUN" VALUE="false" />
+      <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_OPTION_PREREQS" VALUE="false" />
+=======
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="$MODULE_DIR$/test/integration/authorization" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/{*_test,test_*,*_spec}.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="ALL_IN_FOLDER" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+      <method />
+>>>>>>> Stashed changes
+    </configuration>
+    <configuration default="false" name="delayed_job:start: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="delayed_job:start" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Rails console: ssl_com_rails3" type="IrbRunConfigurationType" factoryName="IRB console" temporary="true">
+      <module name="ssl_com_rails3" />
+      <IRB_RUN_CONFIG NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <IRB_RUN_CONFIG NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <IRB_RUN_CONFIG NAME="SHOULD_USE_SDK" VALUE="false" />
+      <IRB_RUN_CONFIG NAME="ALTERN_SDK_NAME" VALUE="" />
+      <IRB_RUN_CONFIG NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="$MODULE_DIR$/script/rails" />
+      <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="console" />
+      <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="true" />
+      <method />
+    </configuration>
+    <configuration default="false" name="delayed_job:restart: ssl_com_rails3" type="CapistranoRunConfigurationType" factoryName="Capistrano" temporary="true">
+      <module name="ssl_com_rails3" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="delayed_job:restart" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="CapistranoRunConfigurationType" factoryName="Capistrano">
+      <module name="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="WORK DIR" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="SHOULD_USE_SDK" VALUE="false" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="ALTERN_SDK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIGURATION NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_NAME" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_TASK_ARGS" VALUE="" />
+      <CAPISTRANO_RUN_CONFIG_SETTINGS_ID NAME="CAPISTRANO_STAGE" VALUE="" />
+      <method />
     </configuration>
     <configuration default="true" type="CucumberRunConfigurationType" factoryName="Cucumber">
       <predefined_log_file id="RUBY_CUCUMBER" enabled="true" />
@@ -1535,6 +1870,11 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="**/*.feature" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
       <CUCUMBER_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
@@ -1563,15 +1903,30 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <IRB_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
       <IRB_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
       <IRB_RUN_CONFIG NAME="IS_RAILS_CONSOLE" VALUE="false" />
       <method />
     </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
       <method />
     </configuration>
-    <configuration default="true" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" working-dir="">
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
     <configuration default="true" type="RSpecRunConfigurationType" factoryName="RSpec">
@@ -1585,6 +1940,11 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="SPEC_RUNNER_PATH" VALUE="" />
@@ -1600,6 +1960,31 @@
       <RSPEC_RUN_CONFIG_SETTINGS_ID NAME="FULL_BACKTRACE" VALUE="false" />
       <method />
     </configuration>
+    <configuration default="true" type="RailsRunConfigurationType" factoryName="Rails">
+      <predefined_log_file id="RUBY_RAILS_SERVER" enabled="true" />
+      <module name="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs />
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="SCRIPT_ARGS" VALUE="" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="PORT" VALUE="3000" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="IP" VALUE="0.0.0.0" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="DUMMY_APP" VALUE="test/dummy" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="RAILS_SERVER_TYPE" VALUE="Default" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="ENVIRONMENT_TYPE" VALUE="development" />
+      <RAILS_SERVER_CONFIG_SETTINGS_ID NAME="LAUNCH_JS" VALUE="false" />
+      <method />
+    </configuration>
     <configuration default="true" type="RakeRunConfigurationType" factoryName="Rake">
       <module name="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift)" />
@@ -1610,6 +1995,11 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_NAME" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ARGS" VALUE="" />
       <RAKE_RUN_CONFIG_SETTINGS_ID NAME="RAKE_TASK_ATTACHED_TEST_FRAMEWORKS" VALUE="" />
@@ -1628,6 +2018,11 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <RUBY_RUN_CONFIG NAME="SCRIPT_PATH" VALUE="" />
       <RUBY_RUN_CONFIG NAME="SCRIPT_ARGS" VALUE="" />
       <method />
@@ -1643,6 +2038,11 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="" />
       <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
@@ -1664,6 +2064,7 @@
       <envs />
       <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="false" />
       <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="rcov" />
       <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_NAME" VALUE="" />
       <ZEUS_RUN_CONFIG_SETTING NAME="ZEUS_COMMAND_ARGS" VALUE="" />
       <method />
@@ -1671,13 +2072,93 @@
     <configuration default="true" type="docker-deploy" factoryName="Docker Deployment">
       <method />
     </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <pass-parent-envs>true</pass-parent-envs>
+      <envs />
+      <method />
+    </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run-script" />
+      <command value="run" />
       <scripts />
       <node-interpreter value="project" />
       <envs />
       <method />
     </configuration>
+    <configuration default="false" name="Run test 'api_certificate_revoke_test': ssl_com_rails3" type="TestUnitRunConfigurationType" factoryName="Test::Unit/Shoulda/Minitest">
+      <predefined_log_file id="RUBY_TESTUNIT" enabled="true" />
+      <module name="ssl_com_rails3" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUBY_ARGS" VALUE="-e $stdout.sync=true;$stderr.sync=true;load($0=ARGV.shift) -Itest" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="WORK DIR" VALUE="$MODULE_DIR$" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SHOULD_USE_SDK" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ALTERN_SDK_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="myPassParentEnvs" VALUE="true" />
+      <envs>
+        <env name="RAILS_ENV" value="test" />
+        <env name="JRUBY_OPTS" value="-X+O" />
+      </envs>
+      <EXTENSION ID="BundlerRunConfigurationExtension" bundleExecEnabled="true" />
+      <EXTENSION ID="JRubyRunConfigurationExtension" NailgunExecEnabled="false" />
+      <EXTENSION ID="RubyCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" track_test_folders="true" runner="rcov">
+        <COVERAGE_PATTERN ENABLED="true">
+          <PATTERN REGEXPS="/.rvm/" INCLUDED="false" />
+        </COVERAGE_PATTERN>
+      </EXTENSION>
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TESTS_FOLDER_PATH" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_SCRIPT_PATH" VALUE="$MODULE_DIR$/test/integration/api/cert_revoke_test.rb" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_FILE_MASK" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_METHOD_NAME" VALUE="" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="TEST_TEST_TYPE" VALUE="TEST_SCRIPT" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="DRB" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="ZEUS" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="SPRING" VALUE="false" />
+      <RTEST_RUN_CONFIG_SETTINGS_ID NAME="RUNNER_OPTIONS" VALUE="" />
+      <method />
+    </configuration>
+    <list size="29">
+      <item index="0" class="java.lang.String" itemvalue="Capistrano.deploy: ssl_com_rails3" />
+      <item index="1" class="java.lang.String" itemvalue="Capistrano.deploy:cleanup: ssl_com_rails3" />
+      <item index="2" class="java.lang.String" itemvalue="Capistrano.deploy:restart: ssl_com_rails3" />
+      <item index="3" class="java.lang.String" itemvalue="Cucumber.Anonymous user adds items" />
+      <item index="4" class="java.lang.String" itemvalue="Cucumber.Buying a high assurance ssl certificate" />
+      <item index="5" class="java.lang.String" itemvalue="Cucumber.I want to be able to change when expiration reminders are sent" />
+      <item index="6" class="java.lang.String" itemvalue="Cucumber.I want to be able to determine who receives ssl certs, receipts, reminders, and confirmations" />
+      <item index="7" class="java.lang.String" itemvalue="Cucumber.Status messages need to reflect the stage the certificate order is in" />
+      <item index="8" class="java.lang.String" itemvalue="RSpec.POST on /certificates/v1/apply" />
+      <item index="9" class="java.lang.String" itemvalue="RSpec.SignedCertificate as an ssl.com signed certificate: ssl_com_rails3" />
+      <item index="10" class="java.lang.String" itemvalue="RSpec.OrdersController POST #create successful transaction shows the certificate reference number: ssl_com_rails3" />
+      <item index="11" class="java.lang.String" itemvalue="RSpec.ApiCertificateCreate version 1.3 places a valid order: ssl_com_rails3" />
+      <item index="12" class="java.lang.String" itemvalue="Rails.Development: ssl_com_rails3" />
+      <item index="13" class="java.lang.String" itemvalue="Rails.Production: ssl_com_rails3" />
+      <item index="14" class="java.lang.String" itemvalue="Rails.Test: ssl_com_rails3" />
+      <item index="15" class="java.lang.String" itemvalue="Rake.db:migrate: ssl_com_rails3" />
+      <item index="16" class="java.lang.String" itemvalue="Rake.rails:upgrade:routes: ssl_com_rails3" />
+      <item index="17" class="java.lang.String" itemvalue="Rake.routes: ssl_com_rails3" />
+      <item index="18" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in billing: ssl_com_rails3" />
+      <item index="19" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in integration: ssl_com_rails3" />
+      <item index="20" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'api_certificate_revoke_test': ssl_com_rails3" />
+      <item index="21" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'non_wildcard_test': ssl_com_rails3" />
+      <item index="22" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.Run test 'wildcard_test': ssl_com_rails3" />
+      <item index="23" class="java.lang.String" itemvalue="Zeus Server.Start Zeus Server: ssl_com_rails3" />
+      <item index="24" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in teams: ssl_com_rails3" />
+      <item index="25" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in authorization: ssl_com_rails3" />
+      <item index="26" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+      <item index="27" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+      <item index="28" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Capistrano.delayed_job:restart: ssl_com_rails3" />
+        <item index="1" class="java.lang.String" itemvalue="IRB console.Rails console: ssl_com_rails3" />
+        <item index="2" class="java.lang.String" itemvalue="Capistrano.delayed_job:start: ssl_com_rails3" />
+        <item index="3" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in authorization: ssl_com_rails3" />
+        <item index="4" class="java.lang.String" itemvalue="Test::Unit/Shoulda/Minitest.All tests in teams: ssl_com_rails3" />
+      </list>
+    </recent_temporary>
     <configuration name="docker-whale" type="docker-deploy" factoryName="docker-image" server-name="Docker">
       <deployment type="docker-image">
         <settings>
@@ -1703,6 +2184,7 @@
         </settings>
       </deployment>
     </configuration>
+<<<<<<< Updated upstream
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
       <node-interpreter>project</node-interpreter>
       <node-options />
@@ -1765,6 +2247,8 @@
         <item index="4" class="java.lang.String" itemvalue="Rake.assets:precompile: ssl_com_rails3" />
       </list>
     </recent_temporary>
+=======
+>>>>>>> Stashed changes
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
@@ -1852,6 +2336,7 @@
       <workItem from="1512266585253" duration="1388000" />
       <workItem from="1512268069446" duration="70812000" />
       <workItem from="1513140997243" duration="6391000" />
+<<<<<<< Updated upstream
       <workItem from="1513590015432" duration="27855000" />
       <workItem from="1513841736529" duration="10031000" />
       <workItem from="1513958349741" duration="23849000" />
@@ -1861,6 +2346,159 @@
       <workItem from="1514457091069" duration="15475000" />
       <workItem from="1514549270528" duration="23092000" />
       <workItem from="1514628364107" duration="9565000" />
+=======
+      <workItem from="1513590015432" duration="10668000" />
+      <workItem from="1514545729043" duration="15252000" />
+      <workItem from="1514694860528" duration="18217000" />
+      <workItem from="1514761264926" duration="9980000" />
+    </task>
+    <task id="LOCAL-00347" summary="put OPTIONS in apir routes to fix CORS issues">
+      <created>1508537144532</created>
+      <option name="number" value="00347" />
+      <option name="presentableId" value="LOCAL-00347" />
+      <option name="project" value="LOCAL" />
+      <updated>1508537144532</updated>
+    </task>
+    <task id="LOCAL-00348" summary="rename parser rabl file due to errors thrown">
+      <created>1508538741314</created>
+      <option name="number" value="00348" />
+      <option name="presentableId" value="LOCAL-00348" />
+      <option name="project" value="LOCAL" />
+      <updated>1508538741314</updated>
+    </task>
+    <task id="LOCAL-00349" summary="return status 200">
+      <created>1508539108129</created>
+      <option name="number" value="00349" />
+      <option name="presentableId" value="LOCAL-00349" />
+      <option name="project" value="LOCAL" />
+      <updated>1508539108129</updated>
+    </task>
+    <task id="LOCAL-00350" summary="refactor api views location">
+      <created>1508775470048</created>
+      <option name="number" value="00350" />
+      <option name="presentableId" value="LOCAL-00350" />
+      <option name="project" value="LOCAL" />
+      <updated>1508775470048</updated>
+    </task>
+    <task id="LOCAL-00351" summary="CORS header">
+      <created>1508776168838</created>
+      <option name="number" value="00351" />
+      <option name="presentableId" value="LOCAL-00351" />
+      <option name="project" value="LOCAL" />
+      <updated>1508776168838</updated>
+    </task>
+    <task id="LOCAL-00352" summary="copied views. Need to DRY it up">
+      <created>1508776555534</created>
+      <option name="number" value="00352" />
+      <option name="presentableId" value="LOCAL-00352" />
+      <option name="project" value="LOCAL" />
+      <updated>1508776555534</updated>
+    </task>
+    <task id="LOCAL-00353" summary="set_access_control_headers in application_controller as a temp fix">
+      <created>1508779110400</created>
+      <option name="number" value="00353" />
+      <option name="presentableId" value="LOCAL-00353" />
+      <option name="project" value="LOCAL" />
+      <updated>1508779110400</updated>
+    </task>
+    <task id="LOCAL-00354" summary="allow reseller to store their own ext_customer_ref to each order and also update it">
+      <created>1508967760672</created>
+      <option name="number" value="00354" />
+      <option name="presentableId" value="LOCAL-00354" />
+      <option name="project" value="LOCAL" />
+      <updated>1508967760676</updated>
+    </task>
+    <task id="LOCAL-00355" summary="added tables for EV CS, black and white lists and CAA checking">
+      <created>1509297245102</created>
+      <option name="number" value="00355" />
+      <option name="presentableId" value="LOCAL-00355" />
+      <option name="project" value="LOCAL" />
+      <updated>1509297245107</updated>
+    </task>
+    <task id="LOCAL-00356" summary="models for CAA, Physical Tokens, and black and white lists">
+      <created>1509298017535</created>
+      <option name="number" value="00356" />
+      <option name="presentableId" value="LOCAL-00356" />
+      <option name="project" value="LOCAL" />
+      <updated>1509298017536</updated>
+    </task>
+    <task id="LOCAL-00357" summary="adding EV CS product">
+      <created>1509379391394</created>
+      <option name="number" value="00357" />
+      <option name="presentableId" value="LOCAL-00357" />
+      <option name="project" value="LOCAL" />
+      <updated>1509379391395</updated>
+    </task>
+    <task id="LOCAL-00358" summary="creating multi websites for resellers">
+      <created>1510292650484</created>
+      <option name="number" value="00358" />
+      <option name="presentableId" value="LOCAL-00358" />
+      <option name="project" value="LOCAL" />
+      <updated>1510292650484</updated>
+    </task>
+    <task id="LOCAL-00359" summary="added db tables for multi website">
+      <created>1510294603418</created>
+      <option name="number" value="00359" />
+      <option name="presentableId" value="LOCAL-00359" />
+      <option name="project" value="LOCAL" />
+      <updated>1510294603418</updated>
+    </task>
+    <task id="LOCAL-00360" summary="integrated dynamic db for white-labeling">
+      <created>1510378566845</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1510378566845</updated>
+    </task>
+    <task id="LOCAL-00361" summary="pulling sandbox site from db">
+      <created>1510590500350</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1510590500353</updated>
+    </task>
+    <task id="LOCAL-00362" summary="api routes constraint pulls from db">
+      <created>1510674902016</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1510674902018</updated>
+    </task>
+    <task id="LOCAL-00363" summary="test api changes">
+      <created>1510782690995</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1510782691000</updated>
+    </task>
+    <task id="LOCAL-00364" summary="logic for certificate chain; see https://anotherengineeringblog.com/extract-parse-digital-certificates-with-ruby">
+      <created>1511047592045</created>
+      <option name="number" value="00364" />
+      <option name="presentableId" value="LOCAL-00364" />
+      <option name="project" value="LOCAL" />
+      <updated>1511047592045</updated>
+    </task>
+    <task id="LOCAL-00365" summary="create SignedCertificate with return value from SslcomCaRequest">
+      <created>1511071243516</created>
+      <option name="number" value="00365" />
+      <option name="presentableId" value="LOCAL-00365" />
+      <option name="project" value="LOCAL" />
+      <updated>1511071243516</updated>
+    </task>
+    <task id="LOCAL-00366" summary="security fix to which looks consistent with a critical vulnerability found by the pentest team. It was an issue of scoping the invites to only teams owned by the invitor. A section was removed which potentially could allow any user to send invites on behalf of any team.">
+      <created>1511465481383</created>
+      <option name="number" value="00366" />
+      <option name="presentableId" value="LOCAL-00366" />
+      <option name="project" value="LOCAL" />
+      <updated>1511465481384</updated>
+    </task>
+    <task id="LOCAL-00367" summary="updated rubyzip to 1.2.1 due to vulnerability detected by github https://github.com/SSLcom/sslcom-rails/network/dependencies">
+      <created>1511486519901</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1511486519901</updated>
+>>>>>>> Stashed changes
     </task>
     <task id="LOCAL-00368" summary="remove 'Contacts' from the main menu">
       <created>1511631987569</created>
@@ -2241,14 +2879,21 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< Updated upstream
     <option name="totallyTimeSpent" value="691699000" />
+=======
+    <option name="totallyTimeSpent" value="573209000" />
+>>>>>>> Stashed changes
   </component>
   <component name="ToolWindowManager">
-    <frame x="-13" y="67" width="3026" height="1946" extended-state="6" />
+    <frame x="64" y="-11" width="1617" height="966" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19855073" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22307202" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51669705" sideWeight="0.6105769" order="9" side_tool="true" content_ui="tabs" />
+<<<<<<< Updated upstream
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4996964" sideWeight="0.42342034" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3940498" sideWeight="0.51270604" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4335155" sideWeight="0.5048077" order="8" side_tool="false" content_ui="tabs" />
@@ -2258,11 +2903,22 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4092715" sideWeight="0.7915143" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21222527" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+=======
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4996964" sideWeight="0.43131867" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48876745" sideWeight="0.5879121" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20618556" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4335155" sideWeight="0.5432692" order="8" side_tool="false" content_ui="tabs" />
+>>>>>>> Stashed changes
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3940498" sideWeight="0.48729396" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+<<<<<<< Updated upstream
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48876745" sideWeight="0.48832417" order="11" side_tool="false" content_ui="tabs" />
+=======
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48876745" sideWeight="0.41208792" order="11" side_tool="false" content_ui="tabs" />
+>>>>>>> Stashed changes
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="13" side_tool="false" content_ui="tabs" />
@@ -2270,11 +2926,39 @@
       <window_info id="REST Client" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4110504" sideWeight="0.6037088" order="14" side_tool="false" content_ui="tabs" />
       <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32970807" sideWeight="0.49862638" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4092715" sideWeight="0.7915143" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.45833334" sideWeight="0.4997227" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32913566" sideWeight="0.49862638" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.48876745" sideWeight="0.41208792" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.51669705" sideWeight="0.6105769" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="14" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="REST Client" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.4112022" sideWeight="0.60544217" order="15" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4996964" sideWeight="0.43131867" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.48876745" sideWeight="0.5879121" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Thumbnails" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32965687" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4335155" sideWeight="0.5432692" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19855073" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22307202" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.32970807" sideWeight="0.49862638" order="13" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.072916664" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4092715" sideWeight="0.7915143" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20618556" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.42380086" sideWeight="0.5343407" order="4" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="processedProjectFiles" value="true" />
   </component>
   <component name="Vcs.Log.History.Properties">
     <option name="COLUMN_ORDER">
@@ -2519,6 +3203,7 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="485">
@@ -2539,10 +3224,54 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="5" column="25" lean-forward="false" selection-start-line="5" selection-start-column="25" selection-end-line="5" selection-end-column="25" />
+=======
+    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2805">
+          <caret line="85" column="26" lean-forward="false" selection-start-line="85" selection-start-column="19" selection-end-line="85" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/database.yml" />
+    <entry file="file://$PROJECT_DIR$/app/controllers/users_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="9" column="26" lean-forward="false" selection-start-line="9" selection-start-column="26" selection-end-line="9" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_api.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1683">
+          <caret line="51" column="59" lean-forward="false" selection-start-line="51" selection-start-column="59" selection-end-line="51" selection-end-column="59" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/sslcom_ca_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5115">
+          <caret line="155" column="68" lean-forward="false" selection-start-line="155" selection-start-column="68" selection-end-line="155" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_form_progress_indicator.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="7" column="47" lean-forward="false" selection-start-line="7" selection-start-column="47" selection-end-line="7" selection-end-column="47" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.RubyMine2017.2/system/ruby_stubs/95326244/-705174119/gems/sprockets-3.7.0/lib/sprockets/asset.rb" />
+    <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="366" column="5" lean-forward="false" selection-start-line="366" selection-start-column="5" selection-end-line="366" selection-end-column="5" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/bin/rails">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1155">
@@ -2583,12 +3312,44 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models/v2_migration_progress.rb">
+=======
+    <entry file="file://$PROJECT_DIR$/app/models/ca_mdc_status.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="7" column="6" lean-forward="false" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/validations/new.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="69" column="30" lean-forward="false" selection-start-line="69" selection-start-column="30" selection-end-line="69" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_name.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2871">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/users/_standard.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="7" column="18" lean-forward="false" selection-start-line="7" selection-start-column="18" selection-end-line="7" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/ca_certificate_request.rb">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
           <caret line="15" column="20" lean-forward="false" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/config/initializers/preferences.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -2615,10 +3376,38 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2607">
           <caret line="79" column="56" lean-forward="false" selection-start-line="79" selection-start-column="14" selection-end-line="79" selection-end-column="56" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/views/validations/_entry.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5478">
+          <caret line="166" column="78" lean-forward="false" selection-start-line="166" selection-start-column="78" selection-end-line="166" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/api/v1/api_certificate_requests_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34155">
+          <caret line="1035" column="0" lean-forward="false" selection-start-line="1035" selection-start-column="0" selection-end-line="1035" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/ssl_accounts_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="66">
+          <caret line="2" column="23" lean-forward="false" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/comodo_api.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="858">
+          <caret line="26" column="52" lean-forward="false" selection-start-line="26" selection-start-column="52" selection-end-line="26" selection-end-column="52" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/lib/preferences/app/models/preference.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
@@ -2627,6 +3416,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/config/routes.rb">
+=======
+    <entry file="file://$PROJECT_DIR$/app/models/ssl_account.rb">
+>>>>>>> Stashed changes
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
@@ -2634,8 +3426,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/config/authorization_rules.rb">
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="0">
           <caret line="12" column="18" lean-forward="false" selection-start-line="12" selection-start-column="18" selection-end-line="12" selection-end-column="18" />
         </state>
@@ -2761,10 +3554,130 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="8547">
           <caret line="259" column="161" lean-forward="false" selection-start-line="259" selection-start-column="161" selection-end-line="259" selection-end-column="161" />
+=======
+        <state relative-caret-position="132">
+          <caret line="4" column="23" lean-forward="false" selection-start-line="4" selection-start-column="23" selection-end-line="4" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/config/deploy.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="33">
+          <caret line="27" column="20" lean-forward="false" selection-start-line="27" selection-start-column="20" selection-end-line="27" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_contact.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="31" lean-forward="false" selection-start-line="0" selection-start-column="31" selection-end-line="0" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/site_seals_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2300">
+          <caret line="115" column="6" lean-forward="false" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/administrative_contact.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/signed_certificate.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6280">
+          <caret line="314" column="27" lean-forward="false" selection-start-line="314" selection-start-column="7" selection-end-line="314" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/contacts_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="9" column="9" lean-forward="false" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/certificate_contents_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/controllers/validations_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6020">
+          <caret line="301" column="22" lean-forward="false" selection-start-line="301" selection-start-column="22" selection-end-line="301" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_content.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11600">
+          <caret line="580" column="5" lean-forward="false" selection-start-line="580" selection-start-column="5" selection-end-line="580" selection-end-column="5" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gemfile.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="620">
+          <caret line="31" column="23" lean-forward="false" selection-start-line="31" selection-start-column="23" selection-end-line="31" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/features/support/local_env.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-685">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/client/certassure/settings.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/certificate_orders_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1920">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/asset_tag_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="192" column="14" lean-forward="false" selection-start-line="192" selection-start-column="14" selection-end-line="192" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/routes.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2960">
+          <caret line="148" column="19" lean-forward="false" selection-start-line="148" selection-start-column="13" selection-end-line="148" selection-end-column="19" />
+>>>>>>> Stashed changes
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/controllers/certificates_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3630">
@@ -2801,94 +3714,203 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
           <caret line="119" column="39" lean-forward="false" selection-start-line="119" selection-start-column="39" selection-end-line="119" selection-end-column="39" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_show_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/edit.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="220">
+          <caret line="11" column="51" lean-forward="false" selection-start-line="11" selection-start-column="47" selection-end-line="11" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/shared/_prototype_scripts.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="41" lean-forward="false" selection-start-line="7" selection-start-column="41" selection-end-line="7" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_form.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="301">
+          <caret line="73" column="186" lean-forward="true" selection-start-line="73" selection-start-column="29" selection-end-line="73" selection-end-column="186" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Gemfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="515">
+          <caret line="84" column="13" lean-forward="false" selection-start-line="84" selection-start-column="13" selection-end-line="84" selection-end-column="13" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/views/orders/_invoice_section.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="924">
           <caret line="28" column="28" lean-forward="false" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/models/country.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="40">
+          <caret line="2" column="82" lean-forward="false" selection-start-line="2" selection-start-column="82" selection-end-line="2" selection-end-column="82" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/config/deploy.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="825">
           <caret line="28" column="18" lean-forward="false" selection-start-line="28" selection-start-column="18" selection-end-line="28" selection-end-column="18" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="398">
+          <caret line="229" column="66" lean-forward="true" selection-start-line="229" selection-start-column="66" selection-end-line="229" selection-end-column="66" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/helpers/application_helper.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="318">
           <caret line="14" column="6" lean-forward="false" selection-start-line="14" selection-start-column="6" selection-end-line="14" selection-end-column="6" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="92" column="10" lean-forward="false" selection-start-line="92" selection-start-column="10" selection-end-line="92" selection-end-column="10" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/controllers/certificate_orders_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< Updated upstream
         <state relative-caret-position="528">
           <caret line="16" column="53" lean-forward="false" selection-start-line="16" selection-start-column="53" selection-end-line="16" selection-end-column="53" />
+=======
+        <state relative-caret-position="440">
+          <caret line="49" column="45" lean-forward="false" selection-start-line="49" selection-start-column="45" selection-end-line="49" selection-end-column="45" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/config/database.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="789">
           <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
+=======
+    <entry file="file://$PROJECT_DIR$/bin/rails">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="49">
+          <caret line="26" column="76" lean-forward="false" selection-start-line="26" selection-start-column="76" selection-end-line="26" selection-end-column="76" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/controllers/application_controller.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+=======
+    <entry file="file://$PROJECT_DIR$/config/application.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="349">
+          <caret line="20" column="26" lean-forward="true" selection-start-line="20" selection-start-column="26" selection-end-line="20" selection-end-column="26" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/models/csr.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="264">
           <caret line="53" column="5" lean-forward="false" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="5" />
+=======
+    <entry file="file://$PROJECT_DIR$/config/client/certassure/database.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="39" column="16" lean-forward="false" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_create.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
           <caret line="2" column="40" lean-forward="false" selection-start-line="2" selection-start-column="40" selection-end-line="2" selection-end-column="40" />
+=======
+    <entry file="file://$PROJECT_DIR$/config/initializers/rails_config.rb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/models/api_certificate_request.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="369">
           <caret line="81" column="71" lean-forward="false" selection-start-line="81" selection-start-column="71" selection-end-line="81" selection-end-column="71" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/index.html.haml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2040">
+          <caret line="6" column="29" lean-forward="false" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/models/certificate_order.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-223">
           <caret line="867" column="48" lean-forward="false" selection-start-line="867" selection-start-column="48" selection-end-line="867" selection-end-column="48" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/assets/stylesheets/sass/main.sass">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="5782" column="8" lean-forward="true" selection-start-line="5782" selection-start-column="8" selection-end-line="5782" selection-end-column="8" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< Updated upstream
     <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_quick_links.html.haml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="221">
           <caret line="16" column="18" lean-forward="true" selection-start-line="16" selection-start-column="18" selection-end-line="16" selection-end-column="18" />
+=======
+    <entry file="file://$PROJECT_DIR$/app/views/certificate_orders/_index_scripts.html.erb">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="40" column="42" lean-forward="true" selection-start-line="40" selection-start-column="42" selection-end-line="40" selection-end-column="42" />
+>>>>>>> Stashed changes
           <folding />
         </state>
       </provider>

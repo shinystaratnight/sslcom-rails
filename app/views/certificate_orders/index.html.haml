@@ -4,7 +4,7 @@
   =form_tag :search_certificate_orders, :id=>'search_form', :method=>:get do
     subject or ref#
     =text_field_tag :search, @search
-    =button_tag 'Search', :type=>'button', :id=>'btn_cert_order_search'
+    =button_tag 'Search', :id=>'btn_cert_order_search'
     =button_tag 'Filters', :type=>'button', :id=>'btn_cert_order_filter'
 
 %div.hidden#wrap-cert-order-filter
@@ -16,100 +16,100 @@
           =check_box_tag :filter_common_name_chk, true, false, :class=>'filter-chk'
         .filter-label
           Common Name
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_common_name, nil, :class=>'filter-cont-text', 'data-field'=>'common_name'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_organization_chk, true, false, :class=>'filter-chk'
         .filter-label
           Organization
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_organization, nil, :class=>'filter-cont-text', 'data-field'=>'organization'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_organization_unit_chk, true, false, :class=>'filter-chk'
         .filter-label
           Organization Unit
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_organization_unit, nil, :class=>'filter-cont-text', 'data-field'=>'organization_unit'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_address_chk, true, false, :class=>'filter-chk'
         .filter-label
           Address
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_address, nil, :class=>'filter-cont-text', 'data-field'=>'address'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_state_chk, true, false, :class=>'filter-chk'
         .filter-label
           State
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_state, nil, :class=>'filter-cont-text', 'data-field'=>'state'
-    .filter-items-col
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_postal_code_chk, true, false, :class=>'filter-chk'
         .filter-label
           Postal Code
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_postal_code, nil, :class=>'filter-cont-text', 'data-field'=>'postal_code'
+    .filter-items-col
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_subject_alternative_names_chk, true, false, :class=>'filter-chk'
         .filter-label
           Subject Alternative Names
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_subject_alternative_names, nil, :class=>'filter-cont-text', 'data-field'=>'subject_alternative_names'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_locality_chk, true, false, :class=>'filter-chk'
         .filter-label
           Locality
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_locality, nil, :class=>'filter-cont-text', 'data-field'=>'locality'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_country_chk, true, false, :class=>'filter-chk'
         .filter-label
           Country
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'select'}
             =select_tag :filter_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.name ] }.sort{|x,y|x[0]<=>y[0]}), :class=>'filter-cont-slt', 'data-field'=>'country'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_signature_chk, true, false, :class=>'filter-chk'
         .filter-label
           Signature
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_signature, nil, :class=>'filter-cont-text', 'data-field'=>'signature'
-    .filter-items-col
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_fingerprint_chk, true, false, :class=>'filter-chk'
         .filter-label
           Fingerprint
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_fingerprint, nil, :class=>'filter-cont-text', 'data-field'=>'fingerprint'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_test_chk, true, false, :class=>'filter-chk'
         .filter-label
           Test
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_test, nil, :class=>'filter-cont-text', 'data-field'=>'test'
+    .filter-items-col
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_strength_chk, true, false, :class=>'filter-chk'
         .filter-label
           Strength
-          .filter-cont.hidden
+          .filter-cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_strength, nil, :class=>'filter-cont-text', 'data-field'=>'strength'
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_expires_at_chk, true, false, :class=>'filter-chk'
         .filter-label
           Expires At
-          .filter-cont.hidden.clearfix
+          .filter-cont.hidden.clearfix{'data-type'=>'date'}
             .filter-cont-item
               =date_field_tag :filter_expires_from, nil, :class=>'filter-cont-date', 'data-field'=>'expires'
             .filter-cont-item -
@@ -120,12 +120,34 @@
           =check_box_tag :filter_created_at_chk, true, false, :class=>'filter-chk'
         .filter-label
           Created At
-          .filter-cont.hidden.clearfix
+          .filter-cont.hidden.clearfix{'data-type'=>'date'}
             .filter-cont-item
               =date_field_tag :filter_created_from, nil, :class=>'filter-cont-date', 'data-field'=>'created'
             .filter-cont-item -
             .filter-cont-item
               =date_field_tag :filter_created_to, nil, :class=>'filter-cont-date', 'data-field'=>'created'
+      %div.filter-item.clearfix
+        .filter-evt
+          =check_box_tag :filter_token_chk, true, false, :class=>'filter-chk'
+        .filter-label
+          Physical Token
+          .filter-cont.hidden{'data-type'=>'checkbox', 'data-field'=>'physical_token'}
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_in_transit_chk, true, false, 'data-field'=>'in_transit'
+              .filter-cont-item-label
+                In Transit
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_received_chk, true, false, 'data-field'=>'received'
+              .filter-cont-item-label
+                Received
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession'
+              .filter-cont-item-label
+                Activated
+
   =button_tag 'Close Filters', :type=>'button', :id=>'btn_close_cert_order_filter'
 
 =render :partial=>'quick_links'

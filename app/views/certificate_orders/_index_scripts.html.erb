@@ -13,11 +13,86 @@ jQuery(function($) {
   $(document).ready(function() {
     $('#btn_cert_order_filter').click(function() {
       $('#wrap-cert-order-filter').show();
+      $('#btn_cert_order_search').prop('disabled', true);
     });
     $('#btn_close_cert_order_filter').click(function() {
       $('#wrap-cert-order-filter').hide();
+      $('#btn_cert_order_search').prop('disabled', false);
+
+      var query = '';
+
+      $('.filter-item').each(function() {
+        var isChecked = $(this).find('.filter-chk').prop('checked');
+
+        if (isChecked) {
+          var filterCont = $(this).find('.filter-cont');
+          var val, itemQuery = '';
+
+          if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
+            val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
+            itemQuery = filterCont.children().data('field') + ':' + val;
+          } else if (filterCont.data('type') == 'date') {
+            var from = filterCont.children().first().children().first().val();
+            var year = from.substring(0, from.indexOf('-'));
+            from = from.substring(from.indexOf('-') + 1) + '-' + year;
+
+            var to = filterCont.children().last().children().first().val();
+            year = to.substring(0, to.indexOf('-'));
+            to = to.substring(to.indexOf('-') + 1) + '-' + year;
+
+            val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
+            itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
+          } else {
+            if (filterCont.find('#filter_in_transit_chk').prop('checked')) {
+              itemQuery = filterCont.find('#filter_in_transit_chk').data('field');
+            }
+            if (filterCont.find('#filter_received_chk').prop('checked')) {
+              itemQuery += itemQuery == '' ? '' : ',';
+              itemQuery += filterCont.find('#filter_received_chk').data('field');
+            }
+            if (filterCont.find('#filter_activated_chk').prop('checked')) {
+              itemQuery += itemQuery == '' ? '' : ',';
+              itemQuery += filterCont.find('#filter_activated_chk').data('field');
+            }
+            if (itemQuery != '') {
+              itemQuery = filterCont.data('field') + ':' + itemQuery;
+            }
+          }
+
+          /*if (filterCont.children().first().attr('class') == 'filter-cont-text'
+            || filterCont.children().first().attr('class') == 'filter-cont-slt') {
+
+            val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
+            itemQuery = filterCont.children().data('field') + ':' + val;
+          } else {
+            var from = filterCont.children().first().children().first().val();
+            var year = from.substring(0, from.indexOf('-'));
+            from = from.substring(from.indexOf('-') + 1) + '-' + year;
+
+            var to = filterCont.children().last().children().first().val();
+            year = to.substring(0, to.indexOf('-'));
+            to = to.substring(to.indexOf('-') + 1) + '-' + year;
+
+            alert('from : ' + from + ' | to : ' + to);
+            val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
+            itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
+          }*/
+
+          query += itemQuery + ' ';
+        }
+      });
+      var searchStr = $('#search').val().trim() != '' ? $('#search').val().trim() : '';
+      if (query.trim() != '') {
+        searchStr = searchStr == '' ? query : searchStr + ' ' + query.trim();
+      }
+
+      $('#search').val(searchStr);
     });
-    $('#btn_cert_order_search').click(function() {
+    $('#btn_cert_order_search1').click(function() {
+      $(this).prop('disabled', true);
+      $('#btn_cert_order_filter').prop('disabled', true);
+      /*$('#btn_close_cert_order_filter').click();
+
       var query = '';
 
       $('.filter-item').each(function() {
@@ -54,8 +129,7 @@ jQuery(function($) {
         searchStr = searchStr == '' ? query : searchStr + ' ' + query.trim();
       }
 
-      $('#btn_close_cert_order_filter').click();
-      $('#search').val(searchStr);
+      $('#search').val(searchStr);*/
 
       $('#search_form').submit();
     });
