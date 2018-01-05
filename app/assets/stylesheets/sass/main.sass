@@ -5756,39 +5756,48 @@ span.notifications-teams
     padding: 5px 15px
     box-shadow: none
 
-#wrap-cert-order-filter
+#wrap_cert_order_filter,
+#wrap_order_filter
   margin: 0.8em 0 0.5em
   width: 84%
   background: #EEE
   border: 1px solid #CCF
   float: right
-  .wrap-filter-items
+  .wrap_filter_items
     margin: 15px 10px 3px
-    .filter-items-col
+    .filter_items_col
       float: left
       width: 33.33%
-      .filter-item
+      .filter_item
         margin: 0 0 .5em
-        .filter-evt
+        .filter_evt
           float: left
-        .filter-label
+        .filter_label
           padding-top: 1px
           padding-left: 10px
           float: left
-        .filter-cont
+        .filter_cont
           margin-top: 3px
           select
             width: 130px
-          .filter-cont-item
+            &.slt-small
+              width: 90px
+              margin-right: 5px
+          .filter_cont_item
             float: left
             input[type="number"]
               width: 45px
-            .filter-cont-item-evt,
-            .filter-cont-item-label
+              &.small_input
+                width: 40px
+                height: 9px
+                margin-left: 2px
+                margin-right: 2px
+            .filter_cont_item_evt,
+            .filter_cont_item_label
               float: left
-            .filter-cont-item-evt
+            .filter_cont_item_evt
               padding-right: 5px
-            .filter-cont-item-label
+            .filter_cont_item_label
               padding-top: 2px
               padding-right: 8px
   button

@@ -12,7 +12,7 @@ jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
     $('#btn_cert_order_filter').click(function() {
-      $('#wrap-cert-order-filter').show();
+      $('#wrap_cert_order_filter').show();
       $('#btn_cert_order_search').prop('disabled', true);
 
       var filterItems = $('#search').val().split(/\s(?=(?:[^']|'[^']*')*$)/);
@@ -64,37 +64,37 @@ jQuery(function($) {
             }
           }
 
-          var filterWrap = $('#filter_' + filterKey + '_chk').parent().next().find('.filter-cont');
+          var filterWrap = $('#filter_' + filterKey + '_chk').parent().next().find('.filter_cont');
           filterWrap.show();
         }
       });
     });
 
     $('#btn_close_cert_order_filter').click(function() {
-      $('#wrap-cert-order-filter').hide();
+      $('#wrap_cert_order_filter').hide();
       $('#btn_cert_order_search').prop('disabled', false);
 
-      $('.filter-chk').prop('checked', false);
-      $('.filter-cont-text').val('');
-      $('.filter-cont-date').val('');
-      $('.filter-cont-slt').val('US');
-      $('.filter-cont-chk').prop('checked', false);
-      $('.filter-cont').hide();
+      $('.filter_chk').prop('checked', false);
+      $('.filter_cont_text').val('');
+      $('.filter_cont_date').val('');
+      $('.filter_cont_slt').val('US');
+      $('.filter_cont_chk').prop('checked', false);
+      $('.filter_cont').hide();
     });
 
     $('#btn_cert_order_filter_search').click(function() {
       var query = '';
 
-      $('.filter-item').each(function() {
-        var isChecked = $(this).find('.filter-chk').prop('checked');
+      $('.filter_item').each(function() {
+        var isChecked = $(this).find('.filter_chk').prop('checked');
 
         if (isChecked) {
-          if ($(this).find('.filter-chk').prop('id') == 'filter_is_test_chk') {
-            query += $(this).find('.filter-chk').data('field') + ':true ';
+          if ($(this).find('.filter_chk').prop('id') == 'filter_is_test_chk') {
+            query += $(this).find('.filter_chk').data('field') + ':true ';
             return;
           }
 
-          var filterCont = $(this).find('.filter-cont');
+          var filterCont = $(this).find('.filter_cont');
           var val, itemQuery = '';
 
           if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
@@ -166,14 +166,14 @@ jQuery(function($) {
       $('#search_form').submit();
     });
 
-    $('.filter-item input[type="checkbox"]').click(function() {
+    $('.filter_item input[type="checkbox"]').click(function() {
       if ($(this).prop('id') == 'filter_is_test_chk') {
         return;
       }
 
       var isChecked = $(this).prop('checked');
       var parentSiblingNode = $(this).parent().next();
-      var filterItem = parentSiblingNode.find('.filter-cont');
+      var filterItem = parentSiblingNode.find('.filter_cont');
       if (isChecked) {
         filterItem.show();
       } else {
@@ -183,9 +183,9 @@ jQuery(function($) {
         } else if ($(this).prop('id') == 'filter_country_chk') {
           filterItem.children().val('us');
         } else if ($(this).prop('id') == 'filter_physical_token_chk') {
-          filterItem.find('.filter-cont-chk').prop('checked', false);
+          filterItem.find('.filter_cont_chk').prop('checked', false);
         } else if ($(this).prop('id') == 'filter_strength_chk') {
-          filterItem.find('.filter-cont-chk').prop('checked', false);
+          filterItem.find('.filter_cont_chk').prop('checked', false);
           filterItem.find('#filter_strength').val('');
         } else {
           filterItem.children().val('');
@@ -195,7 +195,7 @@ jQuery(function($) {
       }
     });
 
-    $('.filter-cont-date').change(function() {
+    $('.filter_cont_date').change(function() {
       var idVal = $(this).attr('id');
       var from, to = '';
 
