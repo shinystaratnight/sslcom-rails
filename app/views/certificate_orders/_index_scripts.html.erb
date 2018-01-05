@@ -14,35 +14,115 @@ jQuery(function($) {
     $('#btn_cert_order_filter').click(function() {
       $('#wrap-cert-order-filter').show();
       $('#btn_cert_order_search').prop('disabled', true);
+
+      var filterItems = $('#search').val().split(/\s(?=(?:[^']|'[^']*')*$)/);
+      $.each(filterItems, function(idx) {
+        var filterItem = filterItems[idx];
+        if (filterItem.indexOf(':') > 0) {
+          var filterKey = filterItem.split(':')[0];
+          var filterValue = filterItem.split(':')[1];
+
+          $('#filter_' + filterKey + '_chk').prop('checked', true);
+
+          if (filterKey == 'is_test') {
+            return;
+          }
+
+          if (filterKey == 'expires_at' || filterKey == 'created_at') {
+            var dateStr = filterValue.split('-')[0];
+            dateStr = dateStr.split('/')[2] + '-' + dateStr.split('/')[0] + '-' + dateStr.split('/')[1];
+            $('#filter_' + filterKey.split('_')[0] + '_from').val(dateStr);
+
+            if (filterValue.split('-').length > 1) {
+              dateStr = filterValue.split('-')[1];
+              dateStr = dateStr.split('/')[2] + '-' + dateStr.split('/')[0] + '-' + dateStr.split('/')[1];
+              $('#filter_' + filterKey.split('_')[0] + '_to').val(dateStr);
+            }
+          } else if (filterKey == 'physical_token') {
+            var tokens = filterValue.split(',');
+            $.each(tokens, function(cIdx) {
+              if (tokens[cIdx] == 'in_possession') {
+                $('#filter_activated_chk').prop('checked', true);
+              } else {
+                $('#filter_' + tokens[cIdx] + '_chk').prop('checked', true);
+              }
+            });
+          } else if (filterKey == 'strength') {
+            var strengths = filterValue.split(',');
+            $.each(strengths, function(cIdx) {
+              if (strengths[cIdx] != '1024' && strengths[cIdx] != '2048' && strengths[cIdx] != '4096') {
+                $('#filter_strength').val(strengths[cIdx]);
+              } else {
+                $('#filter_' + strengths[cIdx] + '_chk').prop('checked', true);
+              }
+            });
+          } else {
+            if (filterValue.charAt(0) == "'" && filterValue.charAt(filterValue.length - 1) == "'") {
+              $('#filter_' + filterKey).val(filterValue.slice(1, -1));
+            } else {
+              $('#filter_' + filterKey).val(filterValue);
+            }
+          }
+
+          var filterWrap = $('#filter_' + filterKey + '_chk').parent().next().find('.filter-cont');
+          filterWrap.show();
+        }
+      });
     });
+
     $('#btn_close_cert_order_filter').click(function() {
       $('#wrap-cert-order-filter').hide();
       $('#btn_cert_order_search').prop('disabled', false);
 
+      $('.filter-chk').prop('checked', false);
+      $('.filter-cont-text').val('');
+      $('.filter-cont-date').val('');
+      $('.filter-cont-slt').val('US');
+      $('.filter-cont-chk').prop('checked', false);
+      $('.filter-cont').hide();
+    });
+
+    $('#btn_cert_order_filter_search').click(function() {
       var query = '';
 
       $('.filter-item').each(function() {
         var isChecked = $(this).find('.filter-chk').prop('checked');
 
         if (isChecked) {
+          if ($(this).find('.filter-chk').prop('id') == 'filter_is_test_chk') {
+            query += $(this).find('.filter-chk').data('field') + ':true ';
+            return;
+          }
+
           var filterCont = $(this).find('.filter-cont');
           var val, itemQuery = '';
 
           if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
             val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
-            itemQuery = filterCont.children().data('field') + ':' + val;
+            if (val.trim() != '') {
+              itemQuery = filterCont.children().data('field') + ':' + val;
+            }
           } else if (filterCont.data('type') == 'date') {
             var from = filterCont.children().first().children().first().val();
-            var year = from.substring(0, from.indexOf('-'));
-            from = from.substring(from.indexOf('-') + 1) + '-' + year;
+            var year = '';
 
-            var to = filterCont.children().last().children().first().val();
-            year = to.substring(0, to.indexOf('-'));
-            to = to.substring(to.indexOf('-') + 1) + '-' + year;
+            if (from != '') {
+              year = from.substring(0, from.indexOf('-'));
+              from = from.substring(from.indexOf('-') + 1) + '-' + year;
 
-            val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
-            itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
-          } else {
+              var to = filterCont.children().last().children().first().val();
+
+              if (to != '') {
+                year = to.substring(0, to.indexOf('-'));
+                to = to.substring(to.indexOf('-') + 1) + '-' + year;
+                val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
+              } else {
+                val = from.replace(/-/g, '/');
+              }
+
+              itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
+            }
+          } else if (filterCont.data('type') == 'checkbox') {
             if (filterCont.find('#filter_in_transit_chk').prop('checked')) {
               itemQuery = filterCont.find('#filter_in_transit_chk').data('field');
             }
@@ -57,38 +137,64 @@ jQuery(function($) {
             if (itemQuery != '') {
               itemQuery = filterCont.data('field') + ':' + itemQuery;
             }
+          } else if (filterCont.data('type') == 'mix') {
+            if (filterCont.find('#filter_1024_chk').prop('checked')) {
+              itemQuery = filterCont.find('#filter_1024_chk').data('field');
+            }
+            if (filterCont.find('#filter_2048_chk').prop('checked')) {
+              itemQuery += itemQuery == '' ? '' : ',';
+              itemQuery += filterCont.find('#filter_2048_chk').data('field');
+            }
+            if (filterCont.find('#filter_4096_chk').prop('checked')) {
+              itemQuery += itemQuery == '' ? '' : ',';
+              itemQuery += filterCont.find('#filter_4096_chk').data('field');
+            }
+            if (filterCont.find('#filter_strength').val() != '') {
+              itemQuery += itemQuery == '' ? '' : ',';
+              itemQuery += filterCont.find('#filter_strength').val();
+            }
+            if (itemQuery != '') {
+              itemQuery = filterCont.data('field') + ':' + itemQuery;
+            }
           }
 
           query += itemQuery + ' ';
         }
       });
-      var searchStr = $('#search').val().trim() != '' ? $('#search').val().trim() : '';
-      if (query.trim() != '') {
-        searchStr = searchStr == '' ? query : searchStr + ' ' + query.trim();
-      }
 
-      $('#search').val(searchStr);
+      $('#search').val(query.trim());
+      $('#search_form').submit();
     });
 
     $('.filter-item input[type="checkbox"]').click(function() {
+      if ($(this).prop('id') == 'filter_is_test_chk') {
+        return;
+      }
+
       var isChecked = $(this).prop('checked');
       var parentSiblingNode = $(this).parent().next();
       var filterItem = parentSiblingNode.find('.filter-cont');
       if (isChecked) {
         filterItem.show();
       } else {
-        if (filterItem.children().first().attr('class') == 'filter-cont-text') {
-          filterItem.children().val('');
-        } else if (filterItem.children().first().attr('class') == 'filter-cont-slt') {
-          filterItem.children().val('us');
-        } else {
+        if ($(this).prop('id') == 'filter_created_at_chk' || $(this).prop('id') == 'filter_expires_at_chk') {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
+        } else if ($(this).prop('id') == 'filter_country_chk') {
+          filterItem.children().val('us');
+        } else if ($(this).prop('id') == 'filter_physical_token_chk') {
+          filterItem.find('.filter-cont-chk').prop('checked', false);
+        } else if ($(this).prop('id') == 'filter_strength_chk') {
+          filterItem.find('.filter-cont-chk').prop('checked', false);
+          filterItem.find('#filter_strength').val('');
+        } else {
+          filterItem.children().val('');
         }
 
         filterItem.hide();
       }
     });
+
     $('.filter-cont-date').change(function() {
       var idVal = $(this).attr('id');
       var from, to = '';
