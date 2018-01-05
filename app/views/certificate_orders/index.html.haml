@@ -91,19 +91,28 @@
             =text_field_tag :filter_fingerprint, nil, :class=>'filter-cont-text', 'data-field'=>'fingerprint'
       %div.filter-item.clearfix
         .filter-evt
-          =check_box_tag :filter_test_chk, true, false, :class=>'filter-chk'
-        .filter-label
-          Test
-          .filter-cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_test, nil, :class=>'filter-cont-text', 'data-field'=>'test'
-    .filter-items-col
-      %div.filter-item.clearfix
-        .filter-evt
           =check_box_tag :filter_strength_chk, true, false, :class=>'filter-chk'
         .filter-label
           Strength
-          .filter-cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_strength, nil, :class=>'filter-cont-text', 'data-field'=>'strength'
+          .filter-cont.hidden.clearfix{'data-type'=>'mix', 'data-field'=>'strength'}
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_1024_chk, true, false, 'data-field'=>'1024', :class=>'filter-cont-chk'
+              .filter-cont-item-label
+                1024
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_2048_chk, true, false, 'data-field'=>'2048', :class=>'filter-cont-chk'
+              .filter-cont-item-label
+                2048
+            .filter-cont-item.clearfix
+              .filter-cont-item-evt
+                =check_box_tag :filter_4096_chk, true, false, 'data-field'=>'4096', :class=>'filter-cont-chk'
+              .filter-cont-item-label
+                4096
+            .filter-cont-item
+              =number_field_tag :filter_strength, nil, :class=>'filter-cont-text'
+    .filter-items-col
       %div.filter-item.clearfix
         .filter-evt
           =check_box_tag :filter_expires_at_chk, true, false, :class=>'filter-chk'
@@ -128,27 +137,32 @@
               =date_field_tag :filter_created_to, nil, :class=>'filter-cont-date', 'data-field'=>'created'
       %div.filter-item.clearfix
         .filter-evt
-          =check_box_tag :filter_token_chk, true, false, :class=>'filter-chk'
+          =check_box_tag :filter_physical_token_chk, true, false, :class=>'filter-chk'
         .filter-label
           Physical Token
-          .filter-cont.hidden{'data-type'=>'checkbox', 'data-field'=>'physical_token'}
+          .filter-cont.hidden.clearfix{'data-type'=>'checkbox', 'data-field'=>'physical_token'}
             .filter-cont-item.clearfix
               .filter-cont-item-evt
-                =check_box_tag :filter_in_transit_chk, true, false, 'data-field'=>'in_transit'
+                =check_box_tag :filter_in_transit_chk, true, false, 'data-field'=>'in_transit', :class=>'filter-cont-chk'
               .filter-cont-item-label
                 In Transit
             .filter-cont-item.clearfix
               .filter-cont-item-evt
-                =check_box_tag :filter_received_chk, true, false, 'data-field'=>'received'
+                =check_box_tag :filter_received_chk, true, false, 'data-field'=>'received', :class=>'filter-cont-chk'
               .filter-cont-item-label
                 Received
             .filter-cont-item.clearfix
               .filter-cont-item-evt
-                =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession'
+                =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter-cont-chk'
               .filter-cont-item-label
                 Activated
-
-  =button_tag 'Close Filters', :type=>'button', :id=>'btn_close_cert_order_filter'
+      -unless current_user.is_admin?
+        %div.filter-item.clearfix
+          .filter-evt
+            =check_box_tag :filter_is_test_chk, true, false, :class=>'filter-chk', 'data-field'=>'is_test'
+          .filter-label Test
+  =button_tag 'Search', :type=>'button', :id=>'btn_cert_order_filter_search'
+  =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'
 
 =render :partial=>'quick_links'
 #certificate_orders
