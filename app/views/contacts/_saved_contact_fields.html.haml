@@ -1,6 +1,17 @@
 %div(class='fields')
+  .clearfix
+    %label{for: 'administrative_role'} Administrative
+    =f.check_box :administrative_role, id: 'chk-administrative-role'
+  .clearfix
+    %label{for: 'billing_role'} Billing
+    =f.check_box :billing_role, id: 'chk-billing-role'
+  .clearfix
+    %label{for: 'technical_role'} Technical
+    =f.check_box :technical_role, id: 'chk-technical-role'
+  .clearfix
+    %label{for: 'validation_role'} Validation
+    =f.check_box :validation_role, id: 'chk-validation-role'
   -if new_contact == :new_contact
-    =f.hidden_field :roles, value: contact_role
     .clearfix
       %label{for: 'save_for_later'}
         Save to Available Contacts:

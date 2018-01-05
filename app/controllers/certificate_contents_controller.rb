@@ -19,11 +19,12 @@ class CertificateContentsController < ApplicationController
     end
     
     if Contact.optional_contacts? && optional_contacts_params?(params)
-      add_saved_contact(params)    if params[:add_saved_contact]
-      remove_saved_contact(params) if params[:remove_saved_contact]
-      add_role_contact(params)     if params[:add_role_contact]
-      update_role_contact(params)  if params[:update_role_contact]
-      delete_role_contact(params)  if params[:delete_role_contact]
+      add_saved_contact(params)        if params[:add_saved_contact]
+      remove_select_contact(params)    if params[:remove_selected_contact]
+      create_contact(params)           if params[:create_contact]
+      update_selected_contact(params)  if params[:update_selected_contact]
+      update_available_contact(params) if params[:update_available_contact]
+      update_role(params)              if params[:update_role]
     else
       respond_to do |format|
         proceed = if (has_all_contacts? && !params[:certificate_content])
@@ -62,51 +63,68 @@ class CertificateContentsController < ApplicationController
   end
 
   private
-  
+  # 
+  # Optional contacts ENABLED
+  # 
   def optional_contacts_params?(params)
     result = false
     list = %w(
       add_saved_contact
-      remove_saved_contact
-      add_role_contact
-      update_role_contact
-      delete_role_contact
+      remove_selected_contact
+      create_contact
+      update_selected_contact
+      update_available_contact
+      update_role
     )
     list.each { |param| result = true if params.include?(param) }
     result
   end
   
+  def update_role(params)
+    contact = Contact.find params[:update_role_id].to_i
+    if contact
+      cur_roles = contact.roles
+      contact.roles = if params[:update_role_checked]=='false'
+        cur_roles - [params[:update_role]]
+      else
+        cur_roles + [params[:update_role]]
+      end
+      contact.save
+    end
+    render_contacts
+  end
+  
   def add_saved_contact(params)
-    saved_contact = Contact.find params[:add_saved_contact]
-    if saved_contact
-      new_contact = @certificate_content.certificate_contacts.create(
+    parent_id      = params[:add_saved_contact].to_i
+    saved_contact  = Contact.find parent_id
+    already_exists = @certificate_content.certificate_contacts.where(parent_id: parent_id).any?
+    
+    if saved_contact && !already_exists
+      roles = (saved_contact.roles.is_a?(String) || saved_contact.roles.blank?) ? [] : saved_contact.roles
+      @certificate_content.certificate_contacts.create(
         saved_contact.attributes
-          .keep_if {|k,_| Contact::SYNC_FIELDS.include? k.to_sym}
-          .merge(parent_id: params[:add_saved_contact].to_i, roles: [params[:add_saved_contact_role]])
+          .keep_if {|k,_| (Contact::SYNC_FIELDS - [:roles]).include? k.to_sym}
+          .merge(parent_id: parent_id, roles: roles)
       )
-      render json: new_contact
     end
+    render_contacts
   end
   
-  def remove_saved_contact(params)
-    certificate_contact = @certificate_content.certificate_contacts(true).select {
-      |c| c.has_role?(params[:remove_saved_contact_role]) && c.parent_id== params[:remove_saved_contact].to_i
-    }.first
-    if certificate_contact
-      certificate_contact.destroy
-      render json: certificate_contact
-    end
+  def remove_select_contact(params)
+    remove = @certificate_content.certificate_contacts
+      .find_by(id: params[:remove_selected_contact].to_i)
+    remove.destroy if remove
+    render_contacts
   end
   
-  def add_role_contact(params)
+  def create_contact(params)
+    contact   = params[:contact]
     parent_id = nil
     errors    = nil
-    attrs     = params[:contact].except(*CertificateOrder::ID_AND_TIMESTAMP)
-      .except(:save_for_later).merge(roles: [params[:contact][:roles]])
+    attrs     = contact.except(*CertificateOrder::ID_AND_TIMESTAMP).except(:save_for_later)
     
-    if params[:contact][:save_for_later]=='1' # create saved contact?
-      saved = @certificate_content.ssl_account.saved_contacts
-        .create(attrs.except(:roles))
+    if contact[:save_for_later]=='1' # create saved contact?
+      saved = @certificate_content.ssl_account.saved_contacts.create(attrs)
       errors = saved.errors unless saved.valid?
       parent_id = saved.id if saved.valid?
     end
@@ -118,13 +136,13 @@ class CertificateContentsController < ApplicationController
     end
     
     if errors.blank?
-      render json: saved
+      render_contacts
     else
       render json: errors.messages, status: :unprocessable_entity
     end
   end
   
-  def update_role_contact(params)
+  def update_selected_contact(params)
     parent_id = nil
     errors    = nil
     attrs     = params[:contact].except(*CertificateOrder::ID_AND_TIMESTAMP)
@@ -138,20 +156,30 @@ class CertificateContentsController < ApplicationController
     end
     
     if errors.nil?
-      found = CertificateContact.find params[:contact][:id].to_i
+      found = CertificateContact.find_by(id: params[:contact][:id].to_i)
       found.assign_attributes(attrs.merge(parent_id: parent_id))
       errors = found.errors unless found.valid?
       found.save if found.changed? && errors.nil?
     end
-    errors.blank? ? render(json: found) : render(json: errors.messages, status: :unprocessable_entity)
+    if errors.blank?
+      render_contacts
+    else
+      render json: errors.messages, status: :unprocessable_entity
+    end
   end
   
-  def delete_role_contact(params)
-    found = CertificateContact.find params[:contact][:id].to_i
-    found.destroy
-    render json: found
+  def update_available_contact(params)
+    contact = Contact.find_by(id: params[:contact][:id].to_i)
+    if contact.update_attributes(params[:contact])
+      render_contacts
+    else
+      render json: contact.errors.messages, status: :unprocessable_entity
+    end
   end
   
+  # 
+  # Optional contacts DISABLED
+  # 
   def create_contacts_required(params)
     CertificateContent::CONTACT_ROLES.each_with_index do |role, index|
       @current_attributes = @contacts_attributes[index.to_s]
@@ -205,5 +233,10 @@ class CertificateContentsController < ApplicationController
     else
       @certificate_content.has_all_contacts?
     end
+  end
+  
+  def render_contacts
+    partial = render_to_string(partial: '/contacts/index_optional', layout: false)
+    render json: {content: partial}, status: :ok
   end
 end

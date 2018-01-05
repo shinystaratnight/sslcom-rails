@@ -5805,12 +5805,7 @@ span.notifications-teams
   .select2-selection__choice
     font-size: 1.2rem
 
-/* Optional/dynamic contacts is turned on: custom styles */    
-#lnk-update-saved
-  font-size: 1.3rem
-  font-weight: 700
-  margin: 1.5rem 0 1rem 21rem
-  padding-bottom: 1rem
+/* Optional/dynamic contacts is turned on: custom styles */
 
 #btn_cancel_saved_contact,
 #btn_cancel_role_contact,
@@ -5821,15 +5816,44 @@ span.notifications-teams
 #btn_update_role_contact
   margin-left: 1rem !important
 
-#btn_create_new_contact,
 .button_medium_blue
   font-size: 1.4rem
   margin-left: 21rem !important
   text-align: center
   padding: 5px
   width: 25%
-  
+
+#btn_create_new_contact
+  background: linear-gradient(#69b3ff, #334dff)
+  border-radius: 3px
+  border: 2px solid #334DFF
+  color: #FFFFFF
+  cursor: pointer
+  display: block
+  font-size: 1.5rem
+  margin: 1rem 0 -2rem 51rem
+  text-align: center
+  padding: 5px
+  width: 20%
+
 #opt_contacts_container
+  h3
+    margin: 2.5rem 0
+    text-align: center
+  .sub_container
+    width: 100%
+  #selected-contacts,
+  #available-contacts
+    margin-left: 2rem
+    table-layout: fixed
+    width: 90%
+    white-space: nowrap
+    font-size: 1.1rem
+    .role-checkbox
+      width: 16%
+      text-align: center
+      input
+        margin: 1rem 2rem 1rem 3rem
   #edit_saved_contact
     .edit_saved_contact_errors
       font-size: 1.5rem

@@ -4,7 +4,7 @@
     =error_messages_for :contact
     =form_for @contact, html: {id: 'new_saved_contact'} do |f|
       #stylized.default_form
-        =render 'saved_contact_fields', f: f
+        =render 'saved_contact_fields', new_contact: false, filter: false, f: f
       #button_container
         #next_submit=image_submit_tag "bl_submit_button.gif"
 =render :partial => '/contacts/index_scripts'

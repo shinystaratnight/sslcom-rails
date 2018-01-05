@@ -10,6 +10,8 @@
     -if @certificate_order.subject
       for #{@certificate_order.subject.downcase}.
     -partial = Contact.optional_contacts? ? 'optional' : 'required'
+    -if Contact.optional_contacts?
+      =link_to "+ Create Contact", '#', id: 'btn_create_new_contact'
     #opt_contacts_container
       =render partial: "/contacts/index_#{partial}"
 =render partial: "/contacts/index_scripts#{partial=='optional' ? '_optional' : ''}"

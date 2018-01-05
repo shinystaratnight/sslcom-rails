@@ -1,12 +1,32 @@
--contacts_exist = @saved_contacts && @saved_contacts.any?
+-contacts_exist = (@saved_contacts && @saved_contacts.any?) || (saved_contacts && saved_contacts.any?)
+
 -if Contact.optional_contacts?
   .clearfix
     -if contacts_exist && saved_contacts
-      -pre_select = child_contacts.map(&:parent_id)
-      =label_tag 'available_contacts'
-      -saved_contacts = render_saved_contacts(@saved_contacts)
-      =select_tag :saved_contacts, options_for_select(saved_contacts, pre_select), |
-      { multiple: true, size: @saved_contacts.count }
+      %h3 Available Contacts
+      -saved_contacts = render_saved_contacts(@saved_contacts || saved_contacts)
+      -already_added = child_contacts.map(&:parent_id)
+      %table
+        %thead
+          %tr
+            %td
+            %td{class: 'role-checkbox'} Administrative
+            %td{class: 'role-checkbox'} Billing
+            %td{class: 'role-checkbox'} Technical
+            %td{class: 'role-checkbox'} Validation
+            %td
+        %tbody
+          -saved_contacts.each do |c|
+            -roles = c.last['roles']
+            %tr{id: c[1], data: c.last}
+              %td=link_to c.first[0..35], '#', id: 'lnk-update-saved'
+              %td{class: 'role-checkbox'}=check_box_tag :administrative, 'yes', (roles && roles.include?('administrative'))
+              %td{class: 'role-checkbox'}=check_box_tag :billing, 'yes', (roles && roles.include?('billing'))
+              %td{class: 'role-checkbox'}=check_box_tag :technical, 'yes', (roles && roles.include?('technical'))
+              %td{class: 'role-checkbox'}=check_box_tag :validation, 'yes', (roles && roles.include?('validation'))
+              -unless already_added.include? c[1]
+                %td=link_to 'Add', '#', class: 'btn-add-contact'
+        
 -else 
   -if contacts_exist
     .clearfix

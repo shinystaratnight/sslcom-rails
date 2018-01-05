@@ -56,7 +56,7 @@ class CertificateContent < ActiveRecord::Base
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
-
+  
   validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
     :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
@@ -421,21 +421,19 @@ class CertificateContent < ActiveRecord::Base
     certificate_order.ref+"-"+certificate_order.certificate_contents.index(self).to_s
   end
   
-  def contacts_for_form_opt(roles, type=nil)
-    unless self.certificate_contacts.blank?
+  def contacts_for_form_opt(type=nil)
       case type
-        when :custom  # contacts that are NOT duplicated from saved contacts
-          certificate_contacts(true).select{|c| c.has_role?(roles) && c.parent_id.nil? }
-        when :child   # contacts that were duplicated from saved contacts
-          certificate_contacts(true).select{|c| c.has_role?(roles) && !c.parent_id.nil? }
-        when :saved   # saved contacts for the team
-          ssl_account.saved_contacts
-        else          # contacts, BOTH child and custom
-          certificate_contacts(true).select{|c| c.has_role?(roles)}
+        when :custom   # contacts that are NOT duplicated from saved contacts
+          certificate_contacts(true).select{|c| c.parent_id.nil? && c.type=='CertificateContact'}
+        when :child    # contacts that were duplicated from saved contacts
+          certificate_contacts(true).select{|c| !c.parent_id.nil? && c.type=='CertificateContact'}
+        when :saved    # saved contacts for the team
+          ssl_account.saved_contacts.select{|c| c.type=='CertificateContact'}
+        when :selected # contacts, BOTH child and custom
+          certificate_contacts(true).select{|c| c.type=='CertificateContact'}
+        else
+          []
       end
-    else
-      []
-    end
   end
   
   def contacts_for_form
