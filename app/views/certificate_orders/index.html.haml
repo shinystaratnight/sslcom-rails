@@ -156,7 +156,7 @@
                 =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter-cont-chk'
               .filter-cont-item-label
                 Activated
-      -unless current_user.is_admin?
+      -if current_user.is_system_admins?
         %div.filter-item.clearfix
           .filter-evt
             =check_box_tag :filter_is_test_chk, true, false, :class=>'filter-chk', 'data-field'=>'is_test'

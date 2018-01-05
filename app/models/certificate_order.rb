@@ -98,7 +98,7 @@ class CertificateOrder < ActiveRecord::Base
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
-               decoded: nil, is_test: nil, order_by_csr: nil}
+               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -159,6 +159,10 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.send(field) if query.try("true?")
     end
+    %w(physical_tokens).each do |field|
+      query=filters[field.to_sym]
+      result = result.search_physical_tokens(query) if query
+    end
     %w(postal_code signature fingerprint).each do |field|
       query=filters[field.to_sym]
       result = result.where{
@@ -168,7 +172,13 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
     end
-    %w(common_name organization organization_unit state subject_alternative_names locality country strength decoded).each do |field|
+    %w(country strength).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) >> [query.split(',')]) |
+            (certificate_contents.csrs.send(field.to_sym) >> [query.split(',')])} if query
+    end
+    %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) =~ "%#{query}%") |
