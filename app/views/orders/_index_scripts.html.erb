@@ -60,6 +60,203 @@ jQuery(function($) {
     $.save_cart(cart);
   };
   $(document).ready(function() {
+    $('#btn_order_filter').click(function() {
+      $('#wrap_order_filter').show();
+      $('#btn_order_search').prop('disabled', true);
+
+      var filterItems = $('#search').val().split(/\s(?=(?:[^']|'[^']*')*$)/);
+      $.each(filterItems, function(idx) {
+        var filterItem = filterItems[idx];
+        if (filterItem.indexOf(':') > 0) {
+          var filterKey = filterItem.split(':')[0];
+          var filterValue = filterItem.split(':')[1];
+
+          $('#filter_' + filterKey + '_chk').prop('checked', true);
+
+          if (filterKey == 'is_test') {
+            return;
+          }
+
+          if (filterKey == 'created_at') {
+            var dateStr = filterValue.split('-')[0];
+            dateStr = dateStr.split('/')[2] + '-' + dateStr.split('/')[0] + '-' + dateStr.split('/')[1];
+            $('#filter_' + filterKey.split('_')[0] + '_from').val(dateStr);
+
+            if (filterValue.split('-').length > 1) {
+              dateStr = filterValue.split('-')[1];
+              dateStr = dateStr.split('/')[2] + '-' + dateStr.split('/')[0] + '-' + dateStr.split('/')[1];
+              $('#filter_' + filterKey.split('_')[0] + '_to').val(dateStr);
+            }
+          } else if (filterKey == 'amount') {
+            if (filterValue.indexOf('-') > 0) {
+              $('.range').show();
+              $('#filter_amount').val('range');
+              $('#filter_amount_from').val(filterValue.split('-')[0]);
+              $('#filter_amount_to').val(filterValue.split('-')[1]);
+            } else if (filterValue.indexOf('>') == 0 || filterValue.indexOf('<') == 0) {
+              filterValue.indexOf('>') == 0 ? $('#filter_amount').val('bigger') : $('#filter_amount').val('smaller');
+              $('#filter_amount_from').val(filterValue.substring(1));
+            } else {
+              $('#filter_amount').val('equal');
+              $('#filter_amount_from').val(filterValue);
+            }
+          } else {
+            if (filterValue.charAt(0) == "'" && filterValue.charAt(filterValue.length - 1) == "'") {
+              $('#filter_' + filterKey).val(filterValue.slice(1, -1));
+            } else {
+              $('#filter_' + filterKey).val(filterValue);
+            }
+          }
+
+          var filterWrap = $('#filter_' + filterKey + '_chk').parent().next().find('.filter_cont');
+          filterWrap.show();
+        }
+      });
+    });
+
+    $('#btn_close_order_filter').click(function() {
+      $('#wrap_order_filter').hide();
+      $('#btn_order_search').prop('disabled', false);
+
+      $('.filter_chk').prop('checked', false);
+      $('.filter_cont_text').val('');
+      $('.filter_cont_date').val('');
+      $('#filter_product.filter_cont_slt').val('deposit');
+      $('#filter_amount.filter_cont_slt').val('equal');
+      $('.filter_cont').hide();
+      $('.range').hide();
+    });
+
+    $('#btn_order_filter_search').click(function() {
+      var query = '';
+
+      $('.filter_item').each(function() {
+        var isChecked = $(this).find('.filter_chk').prop('checked');
+
+        if (isChecked) {
+          if ($(this).find('.filter_chk').prop('id') == 'filter_is_test_chk') {
+            query += $(this).find('.filter_chk').data('field') + ':true ';
+            return;
+          }
+
+          var filterCont = $(this).find('.filter_cont');
+          var val, itemQuery = '';
+
+          if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
+            val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
+            if (val.trim() != '') {
+              itemQuery = filterCont.children().data('field') + ':' + val;
+            }
+          } else if (filterCont.data('type') == 'mix') {
+            if (filterCont.find('#filter_amount').val() == 'range') {
+              val = filterCont.find('#filter_amount_from').val() + '-' + filterCont.find('#filter_amount_to').val();
+            } else if (filterCont.find('#filter_amount').val() == 'bigger') {
+              val = '>' + filterCont.find('#filter_amount_from').val();
+            } else if (filterCont.find('#filter_amount').val() == 'smaller') {
+              val = '<' + filterCont.find('#filter_amount_from').val();
+            } else {
+              val = filterCont.find('#filter_amount_from').val()
+            }
+
+            itemQuery = filterCont.data('field') + ':' + val;
+          } else if (filterCont.data('type') == 'date') {
+            var from = filterCont.children().first().children().first().val();
+            var year = '';
+
+            if (from != '') {
+              year = from.substring(0, from.indexOf('-'));
+              from = from.substring(from.indexOf('-') + 1) + '-' + year;
+
+              var to = filterCont.children().last().children().first().val();
+
+              if (to != '') {
+                year = to.substring(0, to.indexOf('-'));
+                to = to.substring(to.indexOf('-') + 1) + '-' + year;
+                val = from.replace(/-/g, '/') + '-' + to.replace(/-/g, '/');
+              } else {
+                val = from.replace(/-/g, '/');
+              }
+
+              itemQuery = filterCont.children().last().children().first().data('field') + '_at:' + val;
+            }
+          }
+
+          query += itemQuery + ' ';
+        }
+      });
+
+      $('#search').val(query.trim());
+      $('#search_form').submit();
+    });
+
+    $('.filter_item input[type="checkbox"]').click(function() {
+      if ($(this).prop('id') == 'filter_is_test_chk') {
+        return;
+      }
+
+      var isChecked = $(this).prop('checked');
+      var parentSiblingNode = $(this).parent().next();
+      var filterItem = parentSiblingNode.find('.filter_cont');
+
+      if (isChecked) {
+        filterItem.show();
+      } else {
+        if ($(this).prop('id') == 'filter_created_at_chk') {
+          filterItem.children().first().children().first().val('');
+          filterItem.children().last().children().first().val('');
+        } else if ($(this).prop('id') == 'filter_product_chk') {
+          filterItem.children().val('deposit');
+        } else if ($(this).prop('id') == 'filter_amount_chk') {
+          filterItem.find('#filter_amount').val('equal');
+          filterItem.find('#filter_amount_from').val('');
+          filterItem.find('#filter_amount_to').val('');
+          filterItem.find('.range').hide();
+        } else {
+          filterItem.children().val('');
+        }
+
+        filterItem.hide();
+      }
+    });
+
+    $('#filter_amount').change(function() {
+      var condition = $(this).val();
+      var parentNode = $(this).parent().parent();
+
+      if (condition == 'range') {
+        parentNode.find('.range').show();
+      } else {
+        parentNode.find('#filter_amount_to').val('');
+        parentNode.find('.range').hide();
+      }
+    });
+
+    $('.filter_cont_date').change(function() {
+      var idVal = $(this).attr('id');
+      var from, to = '';
+
+      if (idVal.indexOf('from') > 0) {
+        from = idVal;
+        to = from.replace('from', 'to');
+      } else {
+        to = idVal;
+        from = to.replace('to', 'from');
+      }
+
+      if ((idVal == from && $('#' + to).val() != '')
+        || (idVal == to && $('#' + from).val() != '')) {
+        var dateFrom = $('#' + from).val();
+        var dateTo = $('#' + to).val();
+
+        if (dateFrom > dateTo && idVal == from) {
+          $('#' + from).val('');
+        } else if (dateFrom > dateTo && idVal == to) {
+          $('#' + to).val('');
+        }
+      }
+    });
+
+
     <%=render partial: 'billing_profiles/profile_scripts'%>
     $('.dropdown, .validation_status_message, .expand, .subject_column > a').click(function(){
       if($(this).parents().filter('tr').next().css('display')!='none'){
