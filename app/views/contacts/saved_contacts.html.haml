@@ -14,12 +14,12 @@
       %tr.heading_row
         %th Name
         %th Company
+        %th Default
         %th{colspan: 4} 
           Default Notifications
           %br
           Administrative | Billing | Technical | Validation
         %th Type
-        %th Created
         %th{colspan: 3} Actions
       -@all_contacts.each do |c|
         -reg_type = c.registrant_type
@@ -28,6 +28,7 @@
         %tr
           %td= f_name.blank? && l_name.blank? ? '' : "#{l_name}, #{f_name}"
           %td #{c.company_name}
+          %td #{c.saved_default ? "&#x2713;".html_safe : ''}
           -if c.type=='CertificateContact'
             %td=check_box_tag :administrative, 'yes', (c.roles.include?('administrative')), disabled: true
             %td=check_box_tag :billing, 'yes', (c.roles.include?('billing')), disabled: true
@@ -38,9 +39,11 @@
           %td
             %strong
               #{c.type=='Registrant' ? c.type : 'Contact'}
-          %td #{c.created_at.strftime('%b %d, %Y')}
           %td=link_to "view", contact_path(@ssl_slug, c.id, saved_contact: true)
           - if permitted_to?(:edit, c.becomes(Contact))
             %td=link_to "edit", edit_contact_path(@ssl_slug, c.id, saved_contact: true)
-            %td=link_to "delete", contact_path(@ssl_slug, c.id, saved_contact: true), method: :delete, |
+            -if c.saved_default
+              %td
+            -else
+              %td=link_to "delete", contact_path(@ssl_slug, c.id, saved_contact: true), method: :delete, |
           data: {confirm: 'Are you sure you want to delete this contact?'}
