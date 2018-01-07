@@ -12,6 +12,34 @@ module ApplicationHelper
     end
   end
 
+  def sandbox_notice
+    flash[:sandbox] = "SSL.com Sandbox. This is a test environment for api orders. Transactions and orders are not live."
+  end
+
+  # http://excid3.com/blog/change-actionmailer-email-url-host-dynamically
+  def set_mailer_host
+    host = if Rails.const_defined?('Console')
+             Settings.actionmailer_host
+           elsif is_sandbox_or_test?
+             'sandbox.ssl.com'
+           else
+             request.host_with_port
+           end
+    ActionMailer::Base.default_url_options[:host] = host
+    ActionMailer::Base.default_url_options[:protocol] = 'https'
+  end
+
+  # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
+  # I use the entire domain, just change to sandbox_db and pass only the subdomain
+  def current_website
+    @website ||= Website.current_site(request.host)
+  end
+
+  def set_database
+    current_website.use_database
+    sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
+  end
+
   def is_sandbox?
     Sandbox.exists?(request.try(:host))
   end

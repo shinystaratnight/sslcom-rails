@@ -104,9 +104,9 @@ class OrdersController < ApplicationController
     invoices = !params[:start_date].blank? && !params[:end_date].blank?
 
     if invoices
-      start = DateTime.parse(params[:start_date])
-      finish = DateTime.parse(params[:end_date])
-      @orders = current_user.ssl_account.orders.where(
+      start   = DateTime.parse(params[:start_date])
+      finish  = DateTime.parse(params[:end_date])
+      @orders = (current_user.is_system_admins? ? @order.billable : current_user.ssl_account).orders.where(
         state: 'paid',
         created_at: start..finish,
         description: 'SSL Certificate Order'

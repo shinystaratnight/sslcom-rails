@@ -98,7 +98,7 @@ class CertificateOrder < ActiveRecord::Base
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
-               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil}
+               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -206,7 +206,7 @@ class CertificateOrder < ActiveRecord::Base
         (certificate_contents.csr.signed_certificates.address1 =~ "%#{query}%") |
         (certificate_contents.csr.signed_certificates.address2 =~ "%#{query}%")} if query
     end
-    %w(expires_at created_at).each do |field|
+    %w(expires_at created_at issued_at).each do |field|
       query=filters[field.to_sym]
       if query
         query=query.split("-")
@@ -214,8 +214,10 @@ class CertificateOrder < ActiveRecord::Base
         finish = query[1] ? Date.strptime(query[1], "%m/%d/%Y") : start+1.day
         if(field=="expires_at")
           result = result.where{(certificate_contents.csr.signed_certificates.expiration_date >> (start..finish))}
+        elsif(field=="issued_at")
+          result = result.where{(certificate_contents.csr.signed_certificates.created_at >> (start..finish))}
         else
-          result = result.where{(certificate_contents.csr.signed_certificates.send(field.to_sym) >> (start..finish))}
+          result = result.where{created_at >> (start..finish)}
         end
       end
     end
@@ -1068,7 +1070,7 @@ class CertificateOrder < ActiveRecord::Base
         when "contacts_provided"
           "waiting on validation from customer"
         when "pending_validation", "validated"
-          last_sent=csr.last_dcv
+          last_sent=csr.try(:last_dcv)
           if last_sent.blank? or (certificate.is_evcs? and validation_histories.count>0)
             'validating, please wait' #assume intranet
           elsif %w(http https cname http_csr_hash https_csr_hash cname_csr_hash).include?(last_sent.try(:dcv_method))

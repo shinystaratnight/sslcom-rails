@@ -1,6 +1,7 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
+  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./ || request.host=~/^reseller\.ssl\./ || Rails.env.test?"
   before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 

@@ -2,10 +2,98 @@
 -content_for :title, title
 =render :partial => 'index_scripts'
 #search_bar
-  =form_tag :search_orders, :method=>:get do
+  =form_tag :search_orders, :id=>'search_form', :method=>:get do
     order #
     =text_field_tag :search, @search
-    =submit_tag 'search'
+    =button_tag 'Search', :id=>'btn_order_search'
+    =button_tag 'Filters', :type=>'button', :id=>'btn_order_filter'
+
+%div.hidden#wrap_order_filter
+  .wrap_filter_items.clearfix
+    .filter_items_col
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_amount_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Amount
+          .filter_cont.hidden.clearfix{'data-type'=>'mix', 'data-field'=>'amount'}
+            .filter_cont_item
+              =select_tag :filter_amount, options_for_select([['Is equal to', 'equal'], ['Is bigger than', 'bigger'], ['Is smaller than', 'smaller'], ['Is range of', 'range']]), :class=>'filter_cont_slt slt-small'
+            .filter_cont_item
+              =number_field_tag :filter_amount_from, nil, :class=>'filter_cont_text small_input'
+            .filter_cont_item.range.hidden -
+            .filter_cont_item.range.hidden
+              =number_field_tag :filter_amount_to, nil, :class=>'filter_cont_text small_input'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_email_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Email
+          .filter_cont.hidden{'data-type'=>'text'}
+            =email_field_tag :filter_email, nil, :class=>'filter_cont_text', 'data-field'=>'email'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_login_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Login
+          .filter_cont.hidden{'data-type'=>'text'}
+            =number_field_tag :filter_login, nil, :class=>'filter_cont_text', 'data-field'=>'login'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_account_number_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Account Number
+          .filter_cont.hidden{'data-type'=>'text'}
+            =number_field_tag :filter_account_number, nil, :class=>'filter_cont_text', 'data-field'=>'account_number'
+    .filter_items_col
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Product
+          .filter_cont.hidden{'data-type'=>'select'}
+            =select_tag :filter_product, options_for_select([['Deposit', 'deposit'], ['Certificate Order', 'certificate'], ['Reseller Tier', 'reseller']]), :class=>'filter_cont_slt', 'data-field'=>'product'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_created_at_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Created At
+          .filter_cont.hidden.clearfix{'data-type'=>'date'}
+            .filter_cont_item
+              =date_field_tag :filter_created_from, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+            .filter_cont_item -
+            .filter_cont_item
+              =date_field_tag :filter_created_to, nil, :class=>'filter_cont_date', 'data-field'=>'created'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_discount_amount_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Discount Amount
+          .filter_cont.hidden{'data-type'=>'text'}
+            =number_field_tag :filter_discount_amount, nil, :class=>'filter_cont_text', 'data-field'=>'discount_amount'
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_company_name_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          Company Name
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_company_name, nil, :class=>'filter_cont_text', 'data-field'=>'company_name'
+    .filter_items_col
+      %div.filter_item.clearfix
+        .filter_evt
+          =check_box_tag :filter_ssl_slug_chk, true, false, :class=>'filter_chk'
+        .filter_label
+          SSL Slug
+          .filter_cont.hidden{'data-type'=>'text'}
+            =text_field_tag :filter_ssl_slug, nil, :class=>'filter_cont_text', 'data-field'=>'ssl_slug'
+      -if current_user.is_admin?
+        %div.filter_item.clearfix
+          .filter_evt
+            =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
+          .filter_label Test
+  =button_tag 'Search', :type=>'button', :id=>'btn_order_filter_search'
+  =button_tag 'Cancel', :type=>'button', :id=>'btn_close_order_filter'
+
 =render :partial=>'/certificate_orders/quick_links'
 #certificate_orders
   %table(cellspacing="0")

@@ -14,8 +14,6 @@ class SslcomCaApi
   MANAGEMENT_CA = "management_ca"
 
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
-  APPLY_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
-  REVOKE_SSL_URL=Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
@@ -140,7 +138,7 @@ class SslcomCaApi
 
   def self.apply_for_certificate(certificate_order, options={})
     options.merge! cc: cc = options[:certificate_content] || certificate_order.certificate_content
-    host = APPLY_SSL_URL
+    host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
@@ -162,7 +160,7 @@ class SslcomCaApi
 
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
-      host = REVOKE_SSL_URL
+      host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
       req, res = call_ca(host, options, revoke_cert_json(signed_certificate, reason))
       uri = URI.parse(host)
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
