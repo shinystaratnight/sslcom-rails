@@ -214,12 +214,12 @@ class ApplicationController < ActionController::Base
     if @search = params[:search]
       (current_user.is_admin? ?
         (CertificateOrder.search_with_csr(params[:search])) :
-        current_user.ssl_account.certificate_orders.
+        current_user.certificate_orders.
           search_with_csr(params[:search])).has_csr
     else
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(:include=>:site_seal) :
-        current_user.ssl_account.certificate_orders.not_new(:include=>:site_seal))
+        current_user.certificate_orders.not_new(:include=>:site_seal))
     end
   end
 
