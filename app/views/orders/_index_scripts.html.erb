@@ -100,6 +100,8 @@ jQuery(function($) {
               $('#filter_amount').val('equal');
               $('#filter_amount_from').val(filterValue);
             }
+          } else if (filterKey == 'product') {
+            $('#filter_' + filterKey).val(filterValue.split(','));
           } else {
             if (filterValue.charAt(0) == "'" && filterValue.charAt(filterValue.length - 1) == "'") {
               $('#filter_' + filterKey).val(filterValue.slice(1, -1));
@@ -121,7 +123,7 @@ jQuery(function($) {
       $('.filter_chk').prop('checked', false);
       $('.filter_cont_text').val('');
       $('.filter_cont_date').val('');
-      $('#filter_product.filter_cont_slt').val('deposit');
+      $('#filter_product.filter_cont_slt').val([]);
       $('#filter_amount.filter_cont_slt').val('equal');
       $('.filter_cont').hide();
       $('.range').hide();
@@ -142,8 +144,13 @@ jQuery(function($) {
           var filterCont = $(this).find('.filter_cont');
           var val, itemQuery = '';
 
-          if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
+          if (filterCont.data('type') == 'text') {
             val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
+            if (val.trim() != '') {
+              itemQuery = filterCont.children().data('field') + ':' + val;
+            }
+          } else if ( filterCont.data('type') == 'select') {
+            val = filterCont.children().val().toString();
             if (val.trim() != '') {
               itemQuery = filterCont.children().data('field') + ':' + val;
             }
@@ -205,7 +212,7 @@ jQuery(function($) {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
         } else if ($(this).prop('id') == 'filter_product_chk') {
-          filterItem.children().val('deposit');
+          filterItem.children().val([]);
         } else if ($(this).prop('id') == 'filter_amount_chk') {
           filterItem.find('#filter_amount').val('equal');
           filterItem.find('#filter_amount_from').val('');
