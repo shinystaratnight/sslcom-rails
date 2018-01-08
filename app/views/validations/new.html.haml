@@ -103,23 +103,29 @@
             -addresses = validated ? [] : (co.certificate_content.certificate_names.count > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ? DomainControlValidation.email_address_choices(cn.name) : ComodoApi.domain_control_email_choices(cn.name).email_address_choices)
             -addresses.delete("none")
             -opts = {"validation via email" => addresses, "validation via csr hash" =>  [["csr hash text file using http://","http_csr_hash"], ["csr hash text file using https://","https_csr_hash"], ["add cname entry","cname_csr_hash"]]}
-            %tr[cn]
-              %td=check_box_tag cn.id, false, nil, class: "check_box"
-              %td
-                =cn.name
-              %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds ? name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_") : dcv.try(:dcv_method)),prompt: 'Please select a validation method', disabled: validated, alt: render_domain_for_instructions(co, cn.name))
-              -#%td description
-              %td.pretest{class: cn.name} n/a
-              %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
-              -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
-              %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
-              %td.status{class: cn.name}=name["status"].downcase if ds && name
-            %tr
-              %td
-              %td
-              %td{colspan: "5"}
-                instructions:
-                %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
+            -if Settings.enable_caa_test and CaaCheck.caa_lookup(cn)==false
+              %tr[cn]
+                %td=check_box_tag cn.id, false, nil, class: "check_box"
+                %td=cn.name
+                %td{colspan: "5"}
+                  CAA Test Failed!
+            -else
+              %tr[cn]
+                %td=check_box_tag cn.id, false, nil, class: "check_box"
+                %td=cn.name
+                %td=validated ? "validation satisfied for #{cn.name}" : select_tag("domains[#{cn.name}][dcv]", grouped_options_for_select(opts, ds ? name["method"].downcase.gsub("pre-validated %28","").gsub("%29","").gsub(" ","_") : dcv.try(:dcv_method)),prompt: 'Please select a validation method', disabled: validated, alt: render_domain_for_instructions(co, cn.name))
+                -#%td description
+                %td.pretest{class: cn.name} n/a
+                %td.attempt{class: cn.name}=name["method"].downcase.gsub("%28"," ").gsub("%29"," ") if ds && name
+                -#%td{class: cn}=dcv.blank? ? "validation not performed yet" : "#{dcv.action_performed}" #file upload attempted on 12-15-2015
+                %td.attempted_on{class: cn.name}=dcv.blank? ? "n/a" : dcv.created_at
+                %td.status{class: cn.name}=name["status"].downcase if ds && name
+              %tr
+                %td
+                %td
+                %td{colspan: "5"}
+                  instructions:
+                  %span{alt: "domains[#{cn.name}][dcv]"} #{validated ? "n/a" : "please select a validation method"}
       -else
         -co.certificate_content.certificate_names.each do |cn|
           -dcv = cn.domain_control_validations.last

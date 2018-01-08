@@ -120,6 +120,7 @@ class CertificateOrder < ActiveRecord::Base
                          (notes =~ "%#{term}%")}
                  else
                    result.where{
+                     (notes =~ "%#{term}%") |
                      (ssl_account.acct_number =~ "%#{term}%") |
                          (ssl_account.company_name =~ "%#{term}%") |
                          (ssl_account.ssl_slug =~ "%#{term}%") |

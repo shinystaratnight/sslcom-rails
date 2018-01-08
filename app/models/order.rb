@@ -71,11 +71,10 @@ class Order < ActiveRecord::Base
     term = term.empty? ? nil : term.join(" ")
     return nil if [term,*(filters.values)].compact.empty?
     ref = (term=~/\b(co-[^\s]+)/ ? $1 : nil)
-    result = joins{discounts.outer}.joins{billing_profile_unscoped.outer}.
-        joins{billable(SslAccount).unscoped_users.outer}
+    result = joins{}
     result = result.joins{line_items.sellable(CertificateOrder)} if ref
     unless term.blank?
-      result = result.where{
+      result = result.joins{discounts.outer}.joins{billing_profile_unscoped.outer}.where{
         (billing_profile_unscoped.last_digits == "#{term}") |
         (billing_profile_unscoped.first_name =~ "%#{term}%") |
         (billing_profile_unscoped.last_name =~ "%#{term}%") |
@@ -93,10 +92,8 @@ class Order < ActiveRecord::Base
         (reference_number =~ "%#{term}%") |
         (notes =~ "%#{term}%") |
         (ref ? (line_items.sellable(CertificateOrder).ref=~ "%#{ref}%") :
-            (notes =~ "%#{term}%")) | # searching notes twice is a hack, nil did not work
-        (billable(SslAccount).acct_number=~ "%#{term}%") |
-        (billable(SslAccount).unscoped_users.login=~ "%#{term}%") |
-        (billable(SslAccount).unscoped_users.email=~ "%#{term}%")}
+            (notes =~ "%#{term}%")) # searching notes twice is a hack, nil did not work
+        }
     end
     %w(is_test).each do |field|
       query=filters[field.to_sym]
@@ -108,13 +105,13 @@ class Order < ActiveRecord::Base
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
-      result = result.where{
-        (billable(SslAccount).users.try(field.to_sym) =~ "%#{query}%")} if query
+      result = result.joins{billable(SslAccount).users}.where{
+        (billable(SslAccount).users.send(field.to_sym) =~ "%#{query}%")} if query
     end
     %w(account_number company_name ssl_slug).each do |field|
       query=filters[field.to_sym]
-      result = result.where{
-        (billable(SslAccount).try(field.to_sym) =~ "%#{query}%")} if query
+      result = result.joins{billable(SslAccount).outer}.where{
+        (billable(SslAccount).send((field=="account_number" ? "acct_number" : field).to_sym) =~ "%#{query}%")} if query
     end
     %w(product).each do |field|
       query=filters[field.to_sym]
@@ -154,7 +151,7 @@ class Order < ActiveRecord::Base
         result = result.where{created_at >> (start..finish)}
       end
     end
-    result.uniq.order("created_at desc")
+    result.uniq.order("orders.created_at desc")
   } do
 
     def amount
