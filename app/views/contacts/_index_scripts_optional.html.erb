@@ -1,0 +1,209 @@
+<script type='text/javascript'>
+  jQuery.noConflict();
+  jQuery(function($) {
+    $(document).ready(function() {
+      
+      var current_contact_id = '';
+      function populateContact(form_id, label, data) {
+        $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
+      }
+      
+      function checkmarkRoles(dataset) {
+        $('#chk-administrative-role').prop('checked', ($.inArray('administrative', dataset.roles) !=-1) );
+        $('#chk-billing-role').prop('checked', ($.inArray('billing', dataset.roles) !=-1) );
+        $('#chk-technical-role').prop('checked', ($.inArray('technical', dataset.roles) !=-1) );
+        $('#chk-validation-role').prop('checked', ($.inArray('validation', dataset.roles) !=-1) );
+      }
+      
+      function copyContactFields(dataset) {
+        var list = [
+          ['title', dataset.title],
+          ['company_name', dataset.companyName],
+          ['department', dataset.department],
+          ['po_box', dataset.po_box],
+          ['address1', dataset.address1],
+          ['address2', dataset.address2],
+          ['address3', dataset.address3],
+          ['city', dataset.city],
+          ['state', dataset.state],
+          ['country', dataset.country],
+          ['postal_code', dataset.postalCode],
+          ['email', dataset.email],
+          ['phone', dataset.phone],
+          ['first_name', dataset.firstName],
+          ['last_name', dataset.lastName],
+          ['fax', dataset.fax],
+          ['ext', dataset.ext],
+        ];
+        list.forEach(function(el) {
+          populateContact('edit_saved_contact', el[0], el[1]);
+        });
+        checkmarkRoles(dataset);
+      }
+      
+      function removeSavedContactForms() {
+        $('#edit_saved_contact').parents('.clearfix').remove();
+        $('#edit_saved_contact').remove();
+      }
+      
+      function reloadContactsContiner() {
+        location.reload();
+      }
+      
+      function removeErrors() {
+        $('.edit_saved_contact_errors').remove();
+      }
+      
+      // Add Available Contact to Selected Contacts
+      function addSavedContact(id) {
+        $.ajax({
+          type: 'PUT',
+          url: $('.edit_certificate_content').attr('action'),
+          data: $('.edit_certificate_content').serialize().concat('&add_saved_contact=' + id),
+          dataType: 'JSON'
+        }).success(function(json) {
+          $('#opt_contacts_container').html(json.content);
+        });
+      }
+      
+      // Remove/delete contact from Selected Contacts
+      function addSelectedContact(id) {
+        $.ajax({
+          type: 'PUT',
+          url: $('.edit_certificate_content').attr('action'),
+          data: $('.edit_certificate_content').serialize().concat('&remove_selected_contact=' + id),
+          dataType: 'JSON'
+        }).success(function(json) {
+          $('#opt_contacts_container').html(json.content);
+        });
+      }
+      
+      // Role check box is clicked, add or remove role
+      function updateRole(role, checked) {
+        var data = $('.edit_certificate_content').serialize().concat(
+            '&update_role=' + role 
+            + '&update_role_checked=' + checked 
+            + '&update_role_id=' + current_contact_id
+          );
+        $.ajax({
+          type: 'PUT',
+          url: $('.edit_certificate_content').attr('action'),
+          data: data,
+          dataType: 'JSON'
+        }).success(function(json) {
+          $('#opt_contacts_container').html(json.content);
+        });
+      }
+      
+      function updateSelectedContact(type) {
+        var data = $('#edit_saved_contact').serialize();
+        
+        if (type=='create') {
+          data = data.concat('&create_contact=true');
+        } else if (type=='update_selected_contact') {
+          data = data.concat('&update_selected_contact=true')
+            .concat('&contact%5Bid%5D=' + current_contact_id);
+        } else {
+          data = data.concat('&update_available_contact=true')
+            .concat('&contact%5Bid%5D=' + current_contact_id);
+        }
+        removeErrors();
+        
+        $.ajax({
+          type: 'PUT',
+          url: $('.edit_certificate_content').attr('action'),
+          data: data,
+          dataType: 'JSON'
+        }).success(function(json) {
+          $('#opt_contacts_container').html(json.content);
+        }).error(function(json) {
+          var errors = JSON.parse(json.responseText);
+          for (var key in errors) {
+            if (errors.hasOwnProperty(key)) {
+              $('#edit_saved_contact .default_form').prepend(
+                "<div class='edit_saved_contact_errors'>"
+                + key.replace('_', ' ') + ": " + errors[key] + "</div>"
+              );
+              $('#contact_first_name').focus();
+            }
+          }
+        });
+      }
+      
+      function removeSavedContactForms() {
+        $('#edit_saved_contact').parents('.clearfix').remove();
+        $('#edit_saved_contact').remove();
+      }
+      
+      // Saved contact is added to Selected Contacts
+      $('#opt_contacts_container').on('click', '.btn-add-contact', function(e) {
+        e.preventDefault();
+        addSavedContact($(this).parents('tr').attr('id'));
+      });
+      
+      $('#opt_contacts_container').on('click', '.btn-remove-contact', function(e) {
+        e.preventDefault();
+        addSelectedContact($(this).parents('tr').attr('id'));
+      });
+      
+      // "Create New Contact" button, show new contact form
+      $('#btn_create_new_contact').on('click', function(e) {
+        e.preventDefault();
+        removeSavedContactForms();
+        $('#contact-form-container').after(
+          "<%= j render(partial: 'contacts/saved_contact_custom', locals: {new_contact: :new_contact}) %>"
+        );
+      });
+      
+      // Submit: create new contact
+      $('#opt_contacts_container').on('click', '#btn_create_role_contact', function(e) {
+        e.preventDefault();
+        updateSelectedContact('create');
+        return false;
+      });
+      
+      // Submit: update role contact
+      $('#opt_contacts_container').on('click', '#btn_update_role_contact, #btn_edit_saved_contact', function(e) {
+        e.preventDefault();
+        if ($(this).attr('id') == 'btn_update_role_contact') {
+          updateSelectedContact('update_selected_contact');
+        } else {
+          updateSelectedContact('update_available_contact');
+        }
+        return false;
+      });
+      
+      // Cancel New Contact From
+      $('#opt_contacts_container').on('click', '#btn_cancel_saved_contact', function(e) {
+        e.preventDefault();
+        removeSavedContactForms();
+        return false;
+      });
+      
+      // Update single Available Contact or Selected Contact
+      $('#opt_contacts_container').on('click', '#lnk-update-saved, #lnk-update-role-contact', function(e) {
+        e.preventDefault();
+        var form = '',
+            parent_id = $(this).parents('tr').attr('id');
+        current_contact_id = parent_id;
+        if ($(this).attr('id') == 'lnk-update-role-contact') {
+          form = "<%= j render(partial: 'contacts/saved_contact_custom', locals: {new_contact: false}) %>";
+        } else {
+          form = "<%= j render(partial: 'contacts/saved_contact_edit') %>";
+        }
+        removeSavedContactForms();
+        $('#contact-form-container').after(form);
+        $('#contact-form-container').focus();
+        var new_action = $('#edit_saved_contact').attr('action').replace('placeholder_id', parent_id);
+        $('#edit_saved_contact').attr('action', new_action);
+        copyContactFields($(this).parents('tr').data());
+      });
+      
+      // Role check box is clicked
+      $('#opt_contacts_container').on('click', '.role-checkbox input[type="checkbox"]', function(e) {
+        current_contact_id = $(this).parents('tr').attr('id');
+        updateRole($(this).attr('id'), $(this).is(':checked'));
+      });
+    });
+  });
+</script>

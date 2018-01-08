@@ -228,8 +228,8 @@
                               %li
                                 %strong
                                   \#{role} contact
-                              -ct = @cc.certificate_contacts.detect(&"is_#{role}?".to_sym)
-                              -unless ct.blank?
+                              -@cc.certificate_contacts.where("roles LIKE ?", "%#{role}%").each_with_index do |ct, i|
+                                %li{class: 'cc-contacts-index'}=i+1
                                 %li=ct.first_name+" "+ct.last_name
                                 -unless ct.po_box.blank?
                                   %li=ct.po_box
@@ -248,10 +248,9 @@
                                   %li=link_to "#{ct.email}","mailto:#{ct.email}"
                                 -unless ct.phone.blank?
                                   %li=ct.phone
-                              -else
-                                none
-                              %li
-                                =link_to 'create/edit contacts', certificate_content_contacts_path(@ssl_slug, @cc)
+                                %li
+                                  =link_to 'create/edit contacts', certificate_content_contacts_path(@ssl_slug, @cc)
+                                %br
               %table(cellspacing="0")
                 %tbody
                   -@certificate_order.certificate_contents.order('created_at DESC').each do |c|

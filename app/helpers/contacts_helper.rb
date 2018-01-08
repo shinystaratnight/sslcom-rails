@@ -4,10 +4,6 @@ module ContactsHelper
       if cc.certificate_contacts.empty?
         cc.billing_checkbox, cc.technical_checkbox, cc.validation_checkbox =
           true, true, true
-#        4.times do
-#          contact = cc.certificate_contacts.build
-#          contact.country = 'US'
-#        end
       end
     end
   end
@@ -22,8 +18,8 @@ module ContactsHelper
       main_info = {}
       full_name = "#{c.last_name}, #{c.first_name}"
       company   = c.company_name
-      remove    = %w{id notes type roles contactable_id contactable_type created_at updated_at registrant_type}
-      c.attributes.each {|key, val| main_info["data-#{key}"] = val}
+      remove    = %w{id notes type contactable_id contactable_type created_at updated_at registrant_type}
+      c.attributes.each {|key, val| main_info["#{key}"] = val}
       main_info = main_info.delete_if {|k,v| remove.include?(k.remove 'data-')}
       option = if c.type == 'Registrant'
         c.individual? ? "#{full_name} (individual)" : "#{company} (organization)"
