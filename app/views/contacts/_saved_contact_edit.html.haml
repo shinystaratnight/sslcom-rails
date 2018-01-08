@@ -1,0 +1,12 @@
+.reseller_registration_profile
+  =error_messages_for :contact
+  -url = {action: :update, ssl_slug: @ssl_slug, id: 'placeholder_id', saved_contact: true}
+  -html = {id: 'edit_saved_contact'}
+  =form_for :contact, url: url, method: :put, remote: true, authenticity_token: true, html: html do |f|
+    .default_form
+      %br
+      =render partial: 'contacts/saved_contact_fields', |
+      locals: {f: f, filter: true, new_contact: false}
+      .clearfix
+        =f.submit 'Cancel', class: 'button_blue button_medium_blue', id: 'btn_cancel_saved_contact'
+        =f.submit 'Update', class: 'button_blue button_medium_blue', id: 'btn_edit_saved_contact'

@@ -37,7 +37,7 @@ class ContactsController < ApplicationController
 
   def new
     if params[:saved_contact]
-      @contact = Contact.new
+      @contact = Contact.new  
       respond_to :html
     else  
       @certificate_content = CertificateContent.find params[:certificate_content_id]
@@ -78,12 +78,14 @@ class ContactsController < ApplicationController
       if @contact.update_attributes new_params
         flash[:notice] = 'Contact was successfully updated.'
         format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
+        format.json { render json: @contact, status: :ok }
       else
         format.html { render :edit }
+        format.json { render json: @contact.errors, status: :unprocessable_entity }
       end
     end
   end
-
+  
   def destroy
    @contact = Contact.find(params[:id])
    @contact.destroy
