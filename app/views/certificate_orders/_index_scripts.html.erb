@@ -28,7 +28,7 @@ jQuery(function($) {
             return;
           }
 
-          if (filterKey == 'expires_at' || filterKey == 'created_at') {
+          if (filterKey == 'expires_at' || filterKey == 'created_at' || filterKey == 'issued_at') {
             var dateStr = filterValue.split('-')[0];
             dateStr = dateStr.split('/')[2] + '-' + dateStr.split('/')[0] + '-' + dateStr.split('/')[1];
             $('#filter_' + filterKey.split('_')[0] + '_from').val(dateStr);
@@ -177,7 +177,9 @@ jQuery(function($) {
       if (isChecked) {
         filterItem.show();
       } else {
-        if ($(this).prop('id') == 'filter_created_at_chk' || $(this).prop('id') == 'filter_expires_at_chk') {
+        if ($(this).prop('id') == 'filter_created_at_chk'
+          || $(this).prop('id') == 'filter_expires_at_chk'
+          || $(this).prop('id') == 'filter_issued_at_chk') {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
         } else if ($(this).prop('id') == 'filter_country_chk') {
