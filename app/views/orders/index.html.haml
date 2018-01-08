@@ -37,7 +37,7 @@
         .filter_label
           Login
           .filter_cont.hidden{'data-type'=>'text'}
-            =number_field_tag :filter_login, nil, :class=>'filter_cont_text', 'data-field'=>'login'
+            =text_field_tag :filter_login, nil, :class=>'filter_cont_text', 'data-field'=>'login'
       %div.filter_item.clearfix
         .filter_evt
           =check_box_tag :filter_account_number_chk, true, false, :class=>'filter_chk'
