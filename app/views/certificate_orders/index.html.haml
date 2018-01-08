@@ -155,11 +155,11 @@
                 =check_box_tag :filter_activated_chk, true, false, 'data-field'=>'in_possession', :class=>'filter_cont_chk'
               .filter_cont_item_label
                 Activated
-      -if current_user.is_admin?
-        %div.filter_item.clearfix
-          .filter_evt
-            =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
-          .filter_label Test
+      -if current_user.is_system_admins?
+        %div.filter-item.clearfix
+          .filter-evt
+            =check_box_tag :filter_is_test_chk, true, false, :class=>'filter-chk', 'data-field'=>'is_test'
+          .filter-label Test
   =button_tag 'Search', :type=>'button', :id=>'btn_cert_order_filter_search'
   =button_tag 'Cancel', :type=>'button', :id=>'btn_close_cert_order_filter'
 
