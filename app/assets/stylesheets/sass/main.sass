@@ -5847,6 +5847,21 @@ span.notifications-teams
   padding: 5px
   width: 20%
 
+#zero-contacts-box
+  color: #A9A9A9
+  margin: auto
+  width: 45%
+  div
+    border: dashed 1px #91b145
+    border-radius: 5px
+    margin-bottom: 1.5rem
+    h3
+      margin: 1rem
+  #lnk_create_new_contact
+    font-size: 1.3rem
+  small
+    margin-left: 3.5rem
+
 #opt_contacts_container
   h3
     margin: 2.5rem 0
@@ -5877,8 +5892,7 @@ span.notifications-teams
     width: 120% !important
     border: solid 1px #69AFFD
     @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
-    @include border-radius(5px)
-    
+    @include border-radius(5px)    
     .button_red
       font-weight: 600
       color: #FFFFFF
@@ -5889,7 +5903,25 @@ span.notifications-teams
       border: none
       padding: 6px 11px
       cursor: pointer
-  
+  #lnk-update-role-contact.btn-decorate,
+  #lnk-update-saved.btn-decorate,
+  .btn-remove-contact,
+  .btn-add-contact
+    padding: 1px 3px
+    border-radius: 2px
+    color: white
+    letter-spacing: 1px
+  #lnk-update-role-contact.btn-decorate,
+  #lnk-update-saved.btn-decorate
+    border: 1px solid grey
+    background-color: grey
+  .btn-remove-contact
+    border: 1px solid #F51C29
+    background-color: #F51C29
+  .btn-add-contact  
+    border: 1px solid #6b9029
+    background-color: #6b9029  
+
 .cc-contacts-index
   background-color: #000000
   width: 5%
