@@ -8,7 +8,6 @@ class CertificateContact < Contact
   validates :city, :state, :postal_code, :country, presence: true, if: 'contactable.is_a?SslAccount'
   validates :address1, presence: true, if: 'contactable.is_a?(SslAccount) && po_box.blank?'
   validates :email, email: true
-  validates :roles, presence: true
   
   attr_accessor :update_parent
   
