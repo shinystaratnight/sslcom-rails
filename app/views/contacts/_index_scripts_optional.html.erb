@@ -154,6 +154,7 @@
       $('#btn_create_new_contact').on('click', function(e) {
         e.preventDefault();
         removeSavedContactForms();
+        $('#zero-contacts-box').hide();
         $('#contact-form-container').after(
           "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: false, new_contact: :new_contact}) %>"
         );
@@ -162,6 +163,7 @@
       $('#opt_contacts_container').on('click', '#lnk_create_new_contact', function(e) {
         e.preventDefault();
         removeSavedContactForms();
+        $('#zero-contacts-box').hide();
         $('#contact-form-container').after(
           "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: false, new_contact: :new_contact}) %>"
         );
@@ -188,6 +190,7 @@
       // Cancel New Contact From
       $('#opt_contacts_container').on('click', '#btn_cancel_saved_contact', function(e) {
         e.preventDefault();
+        $('#zero-contacts-box').show();
         removeSavedContactForms();
         return false;
       });
@@ -195,6 +198,7 @@
       // Update single Available Contact or Selected Contact
       $('#opt_contacts_container').on('click', '#lnk-update-saved, #lnk-update-role-contact', function(e) {
         e.preventDefault();
+        $('#zero-contacts-box').hide();
         var form = '',
             parent_id = $(this).parents('tr').attr('id');
         current_contact_id = parent_id;
