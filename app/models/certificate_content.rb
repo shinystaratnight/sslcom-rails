@@ -17,7 +17,8 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :registrant, :allow_destroy => false
   accepts_nested_attributes_for :csr, :allow_destroy => false
 
-  after_commit :certificate_names_from_domains, unless: :certificate_names_created?
+  after_create :certificate_names_from_domains, unless: :certificate_names_created?
+  after_save   :certificate_names_from_domains, unless: :certificate_names_created?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see

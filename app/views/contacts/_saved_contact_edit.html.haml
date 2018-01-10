@@ -5,8 +5,15 @@
   =form_for :contact, url: url, method: :put, remote: true, authenticity_token: true, html: html do |f|
     .default_form
       %br
-      =render partial: 'contacts/saved_contact_fields', |
-      locals: {f: f, filter: true, new_contact: false}
+      -locals = from_available ? {f: f, filter: true, new_contact: false} : {f: f, filter: true, new_contact: :new_contact, contact_role: nil}
+      =render partial: 'contacts/saved_contact_fields', locals: locals
       .clearfix
-        =f.submit 'Cancel', class: 'button_blue button_medium_blue', id: 'btn_cancel_saved_contact'
-        =f.submit 'Update', class: 'button_blue button_medium_blue', id: 'btn_edit_saved_contact'
+        -if from_available 
+          =f.submit 'Cancel', class: 'button_blue button_medium_blue', id: 'btn_cancel_saved_contact'
+          =f.submit 'Update', class: 'button_blue button_medium_blue', id: 'btn_edit_saved_contact'
+        -else 
+          =f.submit 'Cancel', class: 'button_blue button_medium_blue', id: 'btn_cancel_saved_contact'
+          -if new_contact
+            =f.submit 'Create', class: 'button_blue button_medium_blue', id: 'btn_create_role_contact'
+          -else
+            =f.submit 'Update', class: 'button_blue button_medium_blue', id: 'btn_update_role_contact'

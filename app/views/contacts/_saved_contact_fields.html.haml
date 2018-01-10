@@ -1,16 +1,17 @@
 %div(class='fields')
+  - roles = f.object && f.object.roles.is_a?(Array)
   .clearfix
     %label{for: 'administrative_role'} Administrative
-    =f.check_box :administrative_role, id: 'chk-administrative-role'
+    =f.check_box :administrative_role, checked: (roles && f.object.roles.include?('administrative')), id: 'chk-administrative-role'
   .clearfix
     %label{for: 'billing_role'} Billing
-    =f.check_box :billing_role, id: 'chk-billing-role'
+    =f.check_box :billing_role, checked: (roles && f.object.roles.include?('billing')), id: 'chk-billing-role'
   .clearfix
     %label{for: 'technical_role'} Technical
-    =f.check_box :technical_role, id: 'chk-technical-role'
+    =f.check_box :technical_role, checked: (roles && f.object.roles.include?('technical')), id: 'chk-technical-role'
   .clearfix
     %label{for: 'validation_role'} Validation
-    =f.check_box :validation_role, id: 'chk-validation-role'
+    =f.check_box :validation_role, checked: (roles && f.object.roles.include?('validation')), id: 'chk-validation-role'
   -if new_contact == :new_contact
     .clearfix
       %label{for: 'save_for_later'}
@@ -91,7 +92,8 @@
   .clearfix
     %label{for: 'country'}
       *Country:
-    =f.select :country, Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
+    -country = f.object.country if f.object
+    =f.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""], )+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, required: true, selected: (country || 'US'))
   -unless new_contact == :new_contact
     .clearfix
       %label{for: 'default'}
