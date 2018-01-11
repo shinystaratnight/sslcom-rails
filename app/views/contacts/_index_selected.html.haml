@@ -27,4 +27,17 @@
             (roles && roles.include?('technical')), disabled: c.last['parent_id']
             %td{class: 'role-checkbox'}=check_box_tag :validation, 'yes', |
             (roles && roles.include?('validation')), disabled: c.last['parent_id']
+            -if c.last['parent_id']
+              %td
+            -else
+              %td=link_to 'Edit', '#', id: 'lnk-update-role-contact', class: 'btn-decorate'
             %td=link_to 'Remove', '#', class: 'btn-remove-contact'
+  -else
+    %h3 Selected Contacts (0)
+    #zero-contacts-box
+      %h3 None
+      %div
+        %h3
+          =link_to "+ Create New Contact", '#', id: 'lnk_create_new_contact'
+      -if saved_contacts.any?
+        %small or, add from Available Contacts section

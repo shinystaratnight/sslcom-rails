@@ -5,7 +5,11 @@
       
       var current_contact_id = '';
       function populateContact(form_id, label, data) {
-        $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
+        if (label=='country') {
+          $('#contact_country option[value=' + data + ']').prop('selected', 'selected').change(); 
+        } else {
+          $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
+        }
       }
       
       function checkmarkRoles(dataset) {
@@ -150,8 +154,18 @@
       $('#btn_create_new_contact').on('click', function(e) {
         e.preventDefault();
         removeSavedContactForms();
+        $('#zero-contacts-box').hide();
         $('#contact-form-container').after(
-          "<%= j render(partial: 'contacts/saved_contact_custom', locals: {new_contact: :new_contact}) %>"
+          "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: false, new_contact: :new_contact}) %>"
+        );
+      });
+      
+      $('#opt_contacts_container').on('click', '#lnk_create_new_contact', function(e) {
+        e.preventDefault();
+        removeSavedContactForms();
+        $('#zero-contacts-box').hide();
+        $('#contact-form-container').after(
+          "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: false, new_contact: :new_contact}) %>"
         );
       });
       
@@ -176,6 +190,7 @@
       // Cancel New Contact From
       $('#opt_contacts_container').on('click', '#btn_cancel_saved_contact', function(e) {
         e.preventDefault();
+        $('#zero-contacts-box').show();
         removeSavedContactForms();
         return false;
       });
@@ -183,17 +198,18 @@
       // Update single Available Contact or Selected Contact
       $('#opt_contacts_container').on('click', '#lnk-update-saved, #lnk-update-role-contact', function(e) {
         e.preventDefault();
+        $('#zero-contacts-box').hide();
         var form = '',
             parent_id = $(this).parents('tr').attr('id');
         current_contact_id = parent_id;
         if ($(this).attr('id') == 'lnk-update-role-contact') {
-          form = "<%= j render(partial: 'contacts/saved_contact_custom', locals: {new_contact: false}) %>";
+          form = "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: false, new_contact: false}) %>";
         } else {
-          form = "<%= j render(partial: 'contacts/saved_contact_edit') %>";
+          form = "<%= j render(partial: 'contacts/saved_contact_edit', locals: {from_available: true}) %>";
         }
         removeSavedContactForms();
         $('#contact-form-container').after(form);
-        $('#contact-form-container').focus();
+        $('#contact_first_name').focus();
         var new_action = $('#edit_saved_contact').attr('action').replace('placeholder_id', parent_id);
         $('#edit_saved_contact').attr('action', new_action);
         copyContactFields($(this).parents('tr').data());

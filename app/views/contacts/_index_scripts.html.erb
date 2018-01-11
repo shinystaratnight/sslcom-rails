@@ -171,6 +171,10 @@ jQuery(function($) {
     $('#contact_registrant_type').change(function() {
       showRegistrantFields();
     });
+    
+    $("#btn-cancel-contact").click(function() {
+      window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug) %>";
+    });
   });
 });
 </script>

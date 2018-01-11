@@ -201,7 +201,8 @@ module ApiSetupHelper
       state:        'TX',                   # required
       postal_code:  '77098',                # required
       organization: 'SSL Org',
-      country:      'US'                    # required: Country code (ISO3166 2-character country code)
+      country:      'US',                    # required: Country code (ISO3166 2-character country code)
+      roles:        ['administrative']
     }
   end
   
