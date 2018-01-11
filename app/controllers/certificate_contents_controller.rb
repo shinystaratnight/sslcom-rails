@@ -81,7 +81,7 @@ class CertificateContentsController < ApplicationController
   end
   
   def update_role(params)
-    contact = Contact.find params[:update_role_id].to_i
+    contact = find_contact_from_team params[:update_role_id]
     if contact
       cur_roles = contact.roles
       contact.roles = if params[:update_role_checked]=='false'
@@ -238,5 +238,13 @@ class CertificateContentsController < ApplicationController
   def render_contacts
     partial = render_to_string(partial: '/contacts/index_optional', layout: false)
     render json: {content: partial}, status: :ok
+  end
+  
+  def find_contact_from_team(target_id)
+    found = @certificate_content.certificate_contacts.find_by(id: target_id.to_i)
+    if found && found.parent_id
+      found = @certificate_content.ssl_account.saved_contacts.find_by(id: found.parent_id)
+    end
+    found
   end
 end

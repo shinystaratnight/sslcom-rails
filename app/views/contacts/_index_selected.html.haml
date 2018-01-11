@@ -20,13 +20,13 @@
             -else
               %td=link_to c.first[0..35], '#', id: 'lnk-update-role-contact'
             %td{class: 'role-checkbox'}=check_box_tag :administrative, 'yes', |
-            (roles && roles.include?('administrative')), disabled: c.last['parent_id']
+            (roles && roles.include?('administrative'))
             %td{class: 'role-checkbox'}=check_box_tag :billing, 'yes', |
-            (roles && roles.include?('billing')), disabled: c.last['parent_id']
+            (roles && roles.include?('billing'))
             %td{class: 'role-checkbox'}=check_box_tag :technical, 'yes', |
-            (roles && roles.include?('technical')), disabled: c.last['parent_id']
+            (roles && roles.include?('technical'))
             %td{class: 'role-checkbox'}=check_box_tag :validation, 'yes', |
-            (roles && roles.include?('validation')), disabled: c.last['parent_id']
+            (roles && roles.include?('validation'))
             -if c.last['parent_id']
               %td
             -else
