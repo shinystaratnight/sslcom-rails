@@ -104,8 +104,8 @@
                           %ul
                             %li
                               %strong
-                                saved contacts
-                            %li=link_to 'manage contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
+                                contacts/registrants
+                            %li=link_to 'manage', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
                       -unless is_sandbox?
                         -if permitted_to?(:edit, :billing_profiles)
                           %ul
