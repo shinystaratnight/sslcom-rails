@@ -8,6 +8,7 @@
 -hits = @results[:hits]
 -expire_time = @results[:expire_time]
 -files = @results[:files]
+-locations = @results[:locations]
 -if @results[:resource]
   -domain_list = @results[:resource]['custom_domains']
   -origin = @results[:resource]['origin']
@@ -46,18 +47,19 @@
               %th Location
               %th Bandwidth
               %th Hits
-            %tr
-              %td New York
-              %td 124.76 MB
-              %td 55
-            %tr
-              %td San Francisco
-              %td 33.13 MB
-              %td 25
-            %tr
-              %td Amsterdam
-              %td 442.56 kB
-              %td 3
+            -if locations && locations.length > 0
+              -locations.each_value do |location|
+                %tr
+                  %td
+                    =location['name']
+                  %td
+                    =number_to_human_size(location['bytes'])
+                  %td
+                    =location['hits']
+            -else
+              %tr
+                %td(colspan="3")
+                  No Stats to display yet
     #caches.tab-pane{:class => ('active' if active_tab == 'caches')}
       %div
         .sub-title Popular Files
@@ -170,7 +172,7 @@
                 %th Created
                 %th Valid Status
                 %th
-              -if domain_list.length > 0
+              -if domain_list && domain_list.length > 0
                 -domain_list.each do |domain|
                   %tr
                     %td
@@ -178,6 +180,9 @@
                     %td
                       =DateTime.parse(domain['created_at']).strftime("%d/%m/%Y")
                     %td
+                      -if domain['valid_to']
+                        SSL valid to
+                        =DateTime.parse(domain['valid_to']['date']).strftime("%d/%m/%Y")
                     %td
                       =link_to 'Edit', nil, :class => "custom-domain-modal-link", "data-toggle" => "modal", "data-target" => "#custom-domain-modal", "data-hostname" => domain['hostname']
               -else

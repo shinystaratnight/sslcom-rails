@@ -2,21 +2,22 @@ class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
   before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :resource_setting, :resource_cache]
+  before_action :set_tab_name, only: [:resource_cdn, :update_resource, :add_custom_domain, :update_advanced_setting,
+                                      :update_custom_domain, :purge_cache, :update_cache_expiry]
 
   # # GET /cdns
   # # GET /cdns.json
   def index
     @results = {}
-    @results[:is_admin] = current_user.is_system_admins?
+    # @results[:is_admin] = current_user.is_system_admins?
 
     if current_user.ssl_account
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
-      # cdn = Cdn.where(ssl_account_id: '111').last
 
       if cdn
         @results[:api_key] = cdn.api_key
 
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources',
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resources] = @response.parsed_response['resources'] if @response.parsed_response
       end
@@ -32,30 +33,24 @@ class CdnsController < ApplicationController
     if current_user.ssl_account
       reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
       @response = HTTParty.post('https://reseller.cdnify.com/users',
-                                {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: 'dev.soft3@gmail.com', password: 'Abcd12*34'}})
+                                {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: current_user.email, password: 'a'}})
 
-      # if @response.parsed_response
-      #   if @response.parsed_response['resources']
-      #     flash[:notice] = 'Successfully Added Custom Domain.'
-      #   else
-      #     @response.parsed_response['errors'].each do |error|
-      #       msg = error['code'].to_s + ': ' + error['message']
-      #       flash[:error] = msg
-      #     end
-      #   end
-      # else
-      #   flash[:error] = 'Failed to Add Custom Domain.'
-      # end
+      if @response.parsed_response &&
+          @response.parsed_response['users'] &&
+          @response.parsed_response['users'].length > 0
+        api_key = @response.parsed_response['users'][0]['api_key']
 
-      # TODO://API_KEY from reseller API.
-      api_key = '8f213487af4f47fc609590892cc292a91b48af0b'
+        cdn = Cdn.new
+        cdn.api_key = api_key
+        cdn.ssl_account_id = current_user.ssl_account.id
+        cdn.save
 
-      cdn = Cdn.new
-      cdn.api_key = api_key
-      cdn.ssl_account_id = current_user.ssl_account.id
-      cdn.save
-
-      flash[:notice] = 'Successfully Registered Account.'
+        flash[:notice] = 'Successfully Registered Account.'
+      elsif @response.parsed_response && @response.parsed_response['error']
+        flash[:error] = @response.parsed_response['error']
+      else
+        flash[:error] = 'Failed to Register Account.'
+      end
     else
       flash[:error] = 'Failed to Register Account.'
     end
@@ -63,19 +58,19 @@ class CdnsController < ApplicationController
     redirect_to cdns_path
   end
 
-  def register_api_key
-    if current_user.ssl_account
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
-      cdn.api_key = params[:api_key]
-      cdn.save
-
-      flash[:notice] = 'Successfully Updated API Key.'
-    else
-      flash[:error] = 'Failed to Update API Key.'
-    end
-
-    redirect_to cdns_path
-  end
+  # def register_api_key
+  #   if current_user.ssl_account
+  #     cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+  #     cdn.api_key = params[:api_key]
+  #     cdn.save
+  #
+  #     flash[:notice] = 'Successfully Updated API Key.'
+  #   else
+  #     flash[:error] = 'Failed to Update API Key.'
+  #   end
+  #
+  #   redirect_to cdns_path
+  # end
 
   def update_resources
     resources = params['deleted_resources']
@@ -83,7 +78,7 @@ class CdnsController < ApplicationController
 
     if resources
       resources.each do |resource_id|
-        @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id,
+        @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                     basic_auth: {username: params['api_key'], password: 'x'})
         if @response.parsed_response
           is_deleted = false
@@ -110,33 +105,34 @@ class CdnsController < ApplicationController
       cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
 
       if cdn
-        @results[:active_tab] = 'overview'
+        @results[:active_tab] = @tab_overview
+        @results[:active_tab] = session[:selected_tab] if session[:selected_tab]
+        session.delete(:selected_tab)
 
         # Overview Data
         @results[:api_key] = cdn.api_key
-        dateTo = Date.today.to_s
-        dateFrom = Date.yesterday.to_s
-
-        @response = HTTParty.get('https://cdnify.com/api/v1/stats/' + resource_id + '/bandwidth?datefrom=' + dateFrom + '&dateto=' + dateTo,
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/stats/' + resource_id + '/bandwidth',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
-        if @response.parsed_response && @response.parsed_response['overall_usage'] && @response.parsed_response['overall_usage'][0][0]
-          @results[:bandwidth] = @response.parsed_response['overall_usage'][0][0]['cached'] + @response.parsed_response['overall_usage'][0][0]['non_cached']
-          @results[:hits] = @response.parsed_response['overall_usage'][0][0]['hits']
+
+        if @response.parsed_response
+          @results[:bandwidth] = @response.parsed_response['bandwidth_usage'][0]
+          @results[:hits] = @response.parsed_response['hit_usage'][0]
+          @results[:locations] = @response.parsed_response['pop_usage'][0]
         else
           @results[:bandwidth] = 0
           @results[:hits] = 0
+          @results[:locations] = nil
         end
-        # TODO://Get Location with Location Name, Bandwidth and Hits
 
         # Settings Data
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
 
         # Cache Data
         @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
 
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
       end
@@ -157,7 +153,7 @@ class CdnsController < ApplicationController
 
       if cdn
         @results[:api_key] = cdn.api_key
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
       end
@@ -175,7 +171,7 @@ class CdnsController < ApplicationController
     resource_origin = params[:resource_origin]
     resource_name = params[:resource_name]
 
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id,
+    @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
 
     if @response.parsed_response
@@ -191,7 +187,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update General Settings.'
     end
 
-    # redirect_to resource_setting_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_setting
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -200,13 +197,12 @@ class CdnsController < ApplicationController
     api_key = params[:api_key]
     custom_domain = params[:custom_domain]
 
-    @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+    @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
                               {basic_auth: {username: api_key, password: 'x'}, body: {hostname: custom_domain}})
 
     # certificate_value = params['certificate_value']
     # private_key = params['private_key']
-    # byebug
-    # @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+    # @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
     #                           {basic_auth: {username: api_key, password: 'x'},
     #                            body: {hostname: custom_domain, certificates: {certificate: certificate_value, privateKey: private_key}}})
 
@@ -223,7 +219,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Add a New Custom Domain.'
     end
 
-    # redirect_to resource_setting_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_setting
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -237,7 +234,7 @@ class CdnsController < ApplicationController
       certificate_value = params['certificate_value']
       private_key = params['private_key']
 
-      @response = HTTParty.post('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
+      @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains',
                                 {basic_auth: {username: api_key, password: 'x'},
                                  body: {hostname: host_name, certificates: {certificate: certificate_value, privateKey: private_key}}})
 
@@ -251,7 +248,7 @@ class CdnsController < ApplicationController
                              @response.parsed_response['message'] : 'Successfully Modified.'
       end
     else
-      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,
+      @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,
                                   basic_auth: {username: api_key, password: 'x'})
 
       if @response.parsed_response
@@ -266,7 +263,8 @@ class CdnsController < ApplicationController
       end
     end
 
-    # redirect_to resource_setting_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_setting
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -274,7 +272,7 @@ class CdnsController < ApplicationController
     resource_id = params[:id]
     api_key = params[:api_key]
 
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
+    @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/settings',
                                {basic_auth: {username: api_key, password: 'x'}, body: {
                                    allow_robots: !params[:allow_robots].blank?,
                                    cache_query_string: !params[:cache_query_string].blank?,
@@ -298,7 +296,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update Advanced Settings.'
     end
 
-    # redirect_to resource_setting_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_setting
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -306,7 +305,7 @@ class CdnsController < ApplicationController
     resource_id = params[:id]
     api_key = params[:api_key]
 
-    @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id,
+    @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                 basic_auth: {username: api_key, password: 'x'})
 
     if @response.parsed_response
@@ -332,11 +331,11 @@ class CdnsController < ApplicationController
 
       if cdn
         @results[:api_key] = cdn.api_key
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id,
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
 
-        @response = HTTParty.get('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
                                  basic_auth: {username: cdn.api_key, password: 'x'})
         @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
       end
@@ -355,10 +354,10 @@ class CdnsController < ApplicationController
     is_purge_all = params[:purge_all]
 
     if is_purge_all == 'true'
-      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+      @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
                                   basic_auth: {username: api_key, password: 'x'})
     else
-      @response = HTTParty.delete('https://cdnify.com/api/v1/resources/' + resource_id + '/cache',
+      @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
                                   {basic_auth: {username: api_key, password: 'x'}, body: {files: files}})
     end
 
@@ -371,7 +370,8 @@ class CdnsController < ApplicationController
       flash[:notice] = 'Successfully Purged File(s).'
     end
 
-    # redirect_to resource_cache_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_cache
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -379,7 +379,7 @@ class CdnsController < ApplicationController
     resource_id = params[:id]
     api_key = params[:api_key]
 
-    @response = HTTParty.patch('https://cdnify.com/api/v1/resources/' + resource_id + '/settings',
+    @response = HTTParty.patch('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/settings',
                                {basic_auth: {username: api_key, password: 'x'}, body: {cache_expire_time: params[:expiry_hours]}})
 
     if @response.parsed_response
@@ -395,7 +395,8 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Update Cache Expire Time.'
     end
 
-    # redirect_to resource_cache_cdn_path(resource_id) and return
+    session[:selected_tab] = @tab_cache
+
     redirect_to resource_cdn_cdn_path(resource_id) and return
   end
 
@@ -412,7 +413,7 @@ class CdnsController < ApplicationController
     resource_name = params[:resource_name]
     resource_origin = params[:resource_origin]
 
-    @response = HTTParty.post('https://cdnify.com/api/v1/resources',
+    @response = HTTParty.post('https://reseller.cdnify.com/api/v1/resources',
                              {basic_auth: {username: api_key, password: 'x'}, body: {alias: resource_name, origin: resource_origin}})
 
     if @response.parsed_response
@@ -453,6 +454,12 @@ class CdnsController < ApplicationController
 
     def set_cdn
       @cdn = Cdn.find(params[:id])
+    end
+
+    def set_tab_name
+      @tab_overview = 'overview'
+      @tab_cache = 'caches'
+      @tab_setting = 'settings'
     end
 
     def cdn_params

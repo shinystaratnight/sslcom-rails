@@ -1,7 +1,7 @@
 -title = "CDN Management"
 -content_for :title, title
 =stylesheet_link_tag "bootstrap_style", :media => 'all'
--is_system_admin = @results[:is_admin]
+-#-is_system_admin = @results[:is_admin]
 -api_key = @results[:api_key]
 -resources = @results[:resources]
 #cdns
@@ -13,15 +13,15 @@
           =submit_tag 'Activate CDN'
     %hr
   -if api_key
-    -if is_system_admin
-      %div.manage-api-key
-        .sub-cont
-          =form_tag :register_api_key_cdns, :method=>:post do
-            %div.reg-api-key.clearfix
-              .field-label API Key:
-              .field-cont
-                =text_field_tag :api_key, api_key
-                =submit_tag 'Update'
+    -#-if is_system_admin
+    -#  %div.manage-api-key
+    -#    .sub-cont
+    -#      =form_tag :register_api_key_cdns, :method=>:post do
+    -#        %div.reg-api-key.clearfix
+    -#          .field-label API Key:
+    -#          .field-cont
+    -#            =text_field_tag :api_key, api_key
+    -#            =submit_tag 'Update'
       %hr
     %div
       .sub-title Resources
