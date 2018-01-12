@@ -1,10 +1,6 @@
 class CertificateContentsController < ApplicationController
   layout 'application'
 
-  def new_contacts
-
-  end
-
   def show
     redirect_to certificate_order_path(@ssl_slug, CertificateContent.find(params[:id]).certificate_order)
   end
@@ -65,7 +61,7 @@ class CertificateContentsController < ApplicationController
   private
   # 
   # Optional contacts ENABLED
-  # 
+  # ============================================================================
   def optional_contacts_params?(params)
     result = false
     list = %w(
@@ -177,9 +173,14 @@ class CertificateContentsController < ApplicationController
     end
   end
   
+  def render_contacts
+    partial = render_to_string(partial: '/contacts/index_optional', layout: false)
+    render json: {content: partial}, status: :ok
+  end
+
   # 
   # Optional contacts DISABLED
-  # 
+  # ============================================================================
   def create_contacts_required(params)
     CertificateContent::CONTACT_ROLES.each_with_index do |role, index|
       @current_attributes = @contacts_attributes[index.to_s]
@@ -233,11 +234,6 @@ class CertificateContentsController < ApplicationController
     else
       @certificate_content.has_all_contacts?
     end
-  end
-  
-  def render_contacts
-    partial = render_to_string(partial: '/contacts/index_optional', layout: false)
-    render json: {content: partial}, status: :ok
   end
   
   def find_contact_from_team(target_id)

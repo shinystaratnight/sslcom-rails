@@ -9,7 +9,7 @@
       Please provide information about the applicant of this certificate. Address and contact information will not be publicly visible
     - if @saved_registrants.try "any?".to_sym
       .clearfix
-        -saved_contacts = render_saved_contacts(@saved_registrants)
+        -saved_contacts = render_saved_contacts(@saved_registrants, :with_data)
         =label_tag 'saved_registrants'
         =select_tag :saved_contacts, options_for_select(saved_contacts), include_blank: true
     .clearfix
@@ -28,7 +28,19 @@
   =cc.fields_for :registrant, @registrant do |rf|
     -if @certificate_order.certificate.requires_company_info?
       .clearfix
-        %label{:for=>"company"}
+        %label{for: 'registrant_type'}
+          Registrant Type:
+        =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}
+      .clearfix
+        %label{:for=>"first_name"}
+          *First Name:
+        =rf.text_field :first_name
+      .clearfix
+        %label{:for=>"last_name"}
+          *Last Name:
+        =rf.text_field :last_name
+      .clearfix
+        %label{:for=>"company_name"}
           *Company:
           %span.label_desc organization
         =rf.text_field :company_name

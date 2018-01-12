@@ -288,14 +288,21 @@ jQuery(function($) {
     });
     <%end%>
     
-    function populate_contact(label, data) {
-      $("label[for='" + label + "']").siblings('input').val(data);
+    function populateContact(label, data) {
+      if (label=='registrant_type') {
+        r_data = (data == '1') ? 'organization' : 'individual';
+        $("label[for='" + label + "']").siblings('select').val(r_data);
+      } else if (label=='country') {
+        $("label[for='" + label + "']").siblings('select').val(data);  
+      } else {
+        $("label[for='" + label + "']").siblings('input').val(data);
+      }
     }
     
     $('#saved_contacts').change(function() {
       var list = [
         ['title', 'title'],
-        ['organization', 'company_name'],
+        ['company_name', 'company_name'],
         ['department', 'department'],
         ['po_box', 'po_box'],
         ['address1', 'address1'],
@@ -311,10 +318,11 @@ jQuery(function($) {
         ['first_name', 'first_name'],
         ['last_name', 'last_name'],
         ['fax', 'fax'],
-        ['ext', 'ext']
+        ['ext', 'ext'],
+        ['registrant_type', 'registrant_type']
       ];
       list.forEach(function(el) {
-        populate_contact(el[0], $('#saved_contacts option:selected').data(el[1]));
+        populateContact(el[0], $('#saved_contacts option:selected').data(el[1]));
       });
     });
     
