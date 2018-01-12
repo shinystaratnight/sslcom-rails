@@ -30,15 +30,7 @@
       .clearfix
         %label{for: 'registrant_type'}
           Registrant Type:
-        =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}
-      .clearfix
-        %label{:for=>"first_name"}
-          *First Name:
-        =rf.text_field :first_name
-      .clearfix
-        %label{:for=>"last_name"}
-          *Last Name:
-        =rf.text_field :last_name
+        =rf.select :registrant_type, Registrant::registrant_types.keys.map{|key| [key.capitalize, key]}, {selected: 'organization'}, {disabled: true}
       .clearfix
         %label{:for=>"company_name"}
           *Company:

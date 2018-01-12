@@ -289,10 +289,7 @@ jQuery(function($) {
     <%end%>
     
     function populateContact(label, data) {
-      if (label=='registrant_type') {
-        r_data = (data == '1') ? 'organization' : 'individual';
-        $("label[for='" + label + "']").siblings('select').val(r_data);
-      } else if (label=='country') {
+      if (label=='country') {
         $("label[for='" + label + "']").siblings('select').val(data);  
       } else {
         $("label[for='" + label + "']").siblings('input').val(data);
@@ -318,8 +315,7 @@ jQuery(function($) {
         ['first_name', 'first_name'],
         ['last_name', 'last_name'],
         ['fax', 'fax'],
-        ['ext', 'ext'],
-        ['registrant_type', 'registrant_type']
+        ['ext', 'ext']
       ];
       list.forEach(function(el) {
         populateContact(el[0], $('#saved_contacts option:selected').data(el[1]));
