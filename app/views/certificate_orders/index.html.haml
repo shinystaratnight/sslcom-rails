@@ -104,11 +104,20 @@
             =select_tag :filter_country, options_for_select(Country::PRIORITY+[""], disabled: [""])+options_for_select(Country.approved.collect {|c| [ c.name, c.name ] }.sort{|x,y|x[0]<=>y[0]}), :class=>'filter_cont_slt', 'data-field'=>'country'
       %div.filter_item.clearfix
         .filter_evt
-          =check_box_tag :filter_external_order_number_chk, true, false, :class=>'filter_chk'
+          =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
         .filter_label
-          External Order Number
-          .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_external_order_number, nil, :class=>'filter_cont_text', 'data-field'=>'external_order_number'
+          Product
+          .filter_cont.hidden{'data-type'=>'select-multi'}
+            =select_tag :filter_product,
+            options_for_select([['Basic SSL (basicssl)', 'basic'],
+              ['Wildcard SSL (wildcard)', 'wildcard'],
+              ['Premium SSL (premiumssl)', 'premium'],
+              ['High Assurance', 'high-assurance'],
+              ['SAN SSL (ucc)', 'ucc'],
+              ['EV SAN SSL (evucc)', 'evucc'],
+              ['Code Signing (code-signing)', 'code-signing'],
+              ['EV Code Signing (ev-code-signing)', 'ev-code-signing']]),
+            :class=>'filter_cont_slt slt-large', 'data-field'=>'product', :multiple=> true
       %div.filter_item.clearfix
         .filter_evt
           =check_box_tag :filter_signature_chk, true, false, :class=>'filter_chk'
@@ -183,13 +192,6 @@
               =date_field_tag :filter_issued_to, nil, :class=>'filter_cont_date', 'data-field'=>'issued'
       %div.filter_item.clearfix
         .filter_evt
-          =check_box_tag :filter_notes_chk, true, false, :class=>'filter_chk'
-        .filter_label
-          Notes
-          .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_notes, nil, :class=>'filter_cont_text', 'data-field'=>'notes'
-      %div.filter_item.clearfix
-        .filter_evt
           =check_box_tag :filter_physical_token_chk, true, false, :class=>'filter_chk'
         .filter_label
           Physical Token
@@ -210,6 +212,20 @@
               .filter_cont_item_label
                 Activated
       -if current_user.is_system_admins?
+        %div.filter_item.clearfix
+          .filter_evt
+            =check_box_tag :filter_external_order_number_chk, true, false, :class=>'filter_chk'
+          .filter_label
+            External Order Number
+            .filter_cont.hidden{'data-type'=>'text'}
+              =text_field_tag :filter_external_order_number, nil, :class=>'filter_cont_text', 'data-field'=>'external_order_number'
+        %div.filter_item.clearfix
+          .filter_evt
+            =check_box_tag :filter_notes_chk, true, false, :class=>'filter_chk'
+          .filter_label
+            Notes
+            .filter_cont.hidden{'data-type'=>'text'}
+              =text_field_tag :filter_notes, nil, :class=>'filter_cont_text', 'data-field'=>'notes'
         %div.filter_item.clearfix
           .filter_evt
             =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
