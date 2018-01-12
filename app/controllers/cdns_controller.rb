@@ -1,3 +1,5 @@
+require 'securerandom'
+
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
@@ -31,9 +33,13 @@ class CdnsController < ApplicationController
 
   def register_account
     if current_user.ssl_account
-      reseller_api_key = 'b0434bb831ad83db23c5e5230800ca6ef4c7fa50c60a80ac17a6182cbe38cc2f'
+      reseller_api_key = ENV['RESELLER_API_KEY']
+
+      email_addr = 'SslAccount' + current_user.ssl_account.acct_number + '@ssl.com'
+      password = SecureRandom.hex(32)
+
       @response = HTTParty.post('https://reseller.cdnify.com/users',
-                                {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: current_user.email, password: 'a'}})
+                                {basic_auth: {username: reseller_api_key, password: 'x'}, body: {email: email_addr, password: password}})
 
       if @response.parsed_response &&
           @response.parsed_response['users'] &&

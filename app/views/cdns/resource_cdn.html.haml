@@ -24,6 +24,8 @@
   %div.clearfix
     %ul.nav.nav-tabs
       %li.nav-item
+        =link_to 'Resources', cdns_path, :class => "nav-link"
+      %li.nav-item
         =link_to 'Overview', '#overview', :class => "nav-link #{active_tab == 'overview' ? 'active' : ''}", 'data-toggle' => 'tab'
       %li.nav-item
         =link_to 'Cache', '#caches', :class => "nav-link #{active_tab == 'caches' ? 'active' : ''}", 'data-toggle' => 'tab'
