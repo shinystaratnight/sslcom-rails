@@ -238,9 +238,8 @@ class CertificateContentsController < ApplicationController
   
   def find_contact_from_team(target_id)
     found = @certificate_content.certificate_contacts.find_by(id: target_id.to_i)
-    if found && found.parent_id
-      found = @certificate_content.ssl_account.saved_contacts.find_by(id: found.parent_id)
-    end
+    found = @certificate_content.ssl_account.saved_contacts.find_by(id: found.parent_id) if found && found.parent_id
+    found = @certificate_content.ssl_account.saved_contacts.find_by(id: target_id.to_i) if !found && target_id
     found
   end
 end

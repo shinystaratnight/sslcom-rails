@@ -13,12 +13,13 @@
           %td
       %tbody    
         -custom_contacts.each do |c|
-          -roles = c.last['roles']
           %tr{id: c[1], data: c.last}
             -if c.last['parent_id']
               %td=c.first[0..35]
+              -parent_roles = saved_contacts.select {|pc| pc if pc.id == (c.last['parent_id'])}.first.roles
             -else
               %td=link_to c.first[0..35], '#', id: 'lnk-update-role-contact'
+            -roles = c.last['parent_id'] ? parent_roles : c.last['roles']
             %td{class: 'role-checkbox'}=check_box_tag :administrative, 'yes', |
             (roles && roles.include?('administrative'))
             %td{class: 'role-checkbox'}=check_box_tag :billing, 'yes', |
