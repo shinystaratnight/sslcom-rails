@@ -1,5 +1,6 @@
 %div(class='fields')
   - roles = f.object && f.object.roles.is_a?(Array)
+  .saved-contact-fields Roles
   .clearfix
     %label{for: 'administrative_role'} Administrative
     =f.check_box :administrative_role, checked: (roles && f.object.roles.include?('administrative')), id: 'chk-administrative-role'
@@ -12,11 +13,7 @@
   .clearfix
     %label{for: 'validation_role'} Validation
     =f.check_box :validation_role, checked: (roles && f.object.roles.include?('validation')), id: 'chk-validation-role'
-  -if new_contact == :new_contact
-    .clearfix
-      %label{for: 'save_for_later'}
-        Save to Available Contacts:
-      =f.check_box :save_for_later 
+  .saved-contact-fields Details
   -unless filter
     .clearfix
       %label{for: 'type'}
@@ -58,6 +55,7 @@
     %label{for: 'fax'}
       Fax:
     =f.text_field :fax
+  .saved-contact-fields Address
   .clearfix
     %label{for: 'po_box'}
       PO Box:
@@ -99,3 +97,8 @@
       %label{for: 'default'}
         Default
       =f.check_box :saved_default
+  -if new_contact == :new_contact
+    .clearfix
+      %label{for: 'save_for_later'}
+        Save to Available Contacts:
+      =f.check_box :save_for_later 
