@@ -59,7 +59,8 @@
                 %tr
                   %td(colspan="6")
                     There is no resources
-            =submit_tag 'Save', :id=>'btn_update_resource'
+            -if resources && resources.length > 0
+              =submit_tag 'Save', :id=>'btn_update_resource'
       %hr
       %div.create-resource
         .sub-title Create Resource

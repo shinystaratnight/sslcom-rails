@@ -121,9 +121,15 @@ class CdnsController < ApplicationController
                                  basic_auth: {username: cdn.api_key, password: 'x'})
 
         if @response.parsed_response
-          @results[:bandwidth] = @response.parsed_response['bandwidth_usage'][0]
-          @results[:hits] = @response.parsed_response['hit_usage'][0]
-          @results[:locations] = @response.parsed_response['pop_usage'][0]
+          @results[:bandwidth] = @response.parsed_response['bandwidth_usage'] &&
+              @response.parsed_response['bandwidth_usage'].length > 0 ?
+                                     @response.parsed_response['bandwidth_usage'][0] : 0
+          @results[:hits] = @response.parsed_response['hit_usage'] &&
+              @response.parsed_response['hit_usage'].length > 0 ?
+                                @response.parsed_response['hit_usage'][0] : 0
+          @results[:locations] = @response.parsed_response['pop_usage'] &&
+              @response.parsed_response['pop_usage'].length > 0 ?
+                                     @response.parsed_response['pop_usage'][0] : nil
         else
           @results[:bandwidth] = 0
           @results[:hits] = 0
