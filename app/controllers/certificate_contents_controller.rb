@@ -50,6 +50,14 @@ class CertificateContentsController < ApplicationController
         else
           if !has_all_contacts? && Contact.optional_contacts?
             flash[:error] = 'Requires at least one contact for this certificate.'
+          else
+            error = if @certificate_content.certificate_order.errors.any?
+              @certificate_content.certificate_order.errors
+            else
+              missing_roles = %w(administrative billing technical validation) - @certificate_content.certificate_contacts.map(&:roles).flatten.uniq 
+              "Missing information for roles: #{missing_roles.join(', ')}." if missing_roles.count > 0
+            end  
+            flash[:error] = error
           end
           @saved_contacts = current_user.ssl_account.saved_contacts
           format.html { render :file => "/contacts/index", :layout=> 'application'}

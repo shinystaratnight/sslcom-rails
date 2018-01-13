@@ -439,7 +439,17 @@ class CertificateContent < ActiveRecord::Base
   
   def contacts_for_form
     unless self.certificate_contacts.blank?
-      CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}
+      list  = CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}.compact
+      roles = list.map(&:roles).flatten.uniq
+      CertificateContent::CONTACT_ROLES.each do |r|
+        unless roles.include? r
+          new_contact = CertificateContact.new(
+            contactable: self, country: self.registrant.try(:country), roles: [r]
+          )
+          r == 'administrative' ? list.unshift(new_contact) : list.push(new_contact)
+        end
+      end
+      list
     else
       [].tap{|c_tmp|CertificateContent::CONTACT_ROLES.each {|r|
         c_tmp << CertificateContact.new(contactable: self, country: self.registrant.try(:country), roles: [r])}}
