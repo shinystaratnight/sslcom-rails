@@ -90,11 +90,13 @@ class CertificateContentsController < ApplicationController
   def update_role(params)
     contact = find_contact_from_team params[:update_role_id]
     if contact
-      cur_roles = contact.roles
-      contact.roles = if params[:update_role_checked]=='false'
-        cur_roles - [params[:update_role]]
-      else
-        cur_roles + [params[:update_role]]
+      cur_roles  = contact.roles
+      admin_role = ['administrative']
+      new_role   = params[:update_role]
+      contact.roles = if params[:update_role_checked]=='false' # role unchecked
+        cur_roles - [new_role]
+      else                                                     # role checked
+        new_role == 'administrative' ? admin_role : (cur_roles + [new_role] - admin_role)
       end
       contact.save
     end
