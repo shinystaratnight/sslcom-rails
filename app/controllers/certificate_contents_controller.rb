@@ -120,7 +120,12 @@ class CertificateContentsController < ApplicationController
   def remove_select_contact(params)
     remove = @certificate_content.certificate_contacts
       .find_by(id: params[:remove_selected_contact].to_i)
-    remove.destroy if remove
+    if remove && remove.parent_id
+      @certificate_content.certificate_contacts
+        .where(parent_id: remove.parent_id).destroy_all
+    else
+      remove.destroy if remove
+    end
     render_contacts
   end
   
