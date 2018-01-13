@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180105231017) do
+ActiveRecord::Schema.define(version: 20180113195551) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20180105231017) do
   end
 
   add_index "assignments", ["user_id", "ssl_account_id", "role_id"], name: "index_assignments_on_user_id_and_ssl_account_id_and_role_id", using: :btree
+  add_index "assignments", ["user_id", "ssl_account_id"], name: "index_assignments_on_user_id_and_ssl_account_id", using: :btree
 
   create_table "authentications", force: :cascade do |t|
     t.integer  "user_id",    limit: 4
@@ -135,6 +136,18 @@ ActiveRecord::Schema.define(version: 20180105231017) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
+  create_table "blocklist", force: :cascade do |t|
+    t.string   "type",        limit: 255
+    t.string   "domain",      limit: 255
+    t.integer  "validation",  limit: 4
+    t.string   "status",      limit: 255
+    t.string   "reason",      limit: 255
+    t.string   "description", limit: 255
+    t.text     "notes",       limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -165,6 +178,16 @@ ActiveRecord::Schema.define(version: 20180105231017) do
   add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], name: "index_ca_api_requests_on_api_requestable", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
+
+  create_table "caa_check", force: :cascade do |t|
+    t.integer  "checkable_id",   limit: 4
+    t.string   "checkable_type", limit: 255
+    t.string   "domain",         limit: 255
+    t.string   "request",        limit: 255
+    t.text     "result",         limit: 65535
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -308,6 +331,7 @@ ActiveRecord::Schema.define(version: 20180105231017) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
+  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -386,7 +410,6 @@ ActiveRecord::Schema.define(version: 20180105231017) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
-    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
@@ -741,6 +764,7 @@ ActiveRecord::Schema.define(version: 20180105231017) do
   add_index "orders", ["po_number"], name: "index_orders_on_po_number", using: :btree
   add_index "orders", ["quote_number"], name: "index_orders_on_quote_number", using: :btree
   add_index "orders", ["reference_number"], name: "index_orders_on_reference_number", using: :btree
+  add_index "orders", ["state", "billable_id", "billable_type"], name: "index_orders_on_state_and_billable_id_and_billable_type", using: :btree
   add_index "orders", ["status"], name: "index_orders_on_status", using: :btree
   add_index "orders", ["updated_at"], name: "index_orders_on_updated_at", using: :btree
 
@@ -788,6 +812,19 @@ ActiveRecord::Schema.define(version: 20180105231017) do
     t.integer  "role_id",       limit: 4
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
+  end
+
+  create_table "physical_token", force: :cascade do |t|
+    t.integer  "certificate_order_id",  limit: 4
+    t.integer  "signed_certificate_id", limit: 4
+    t.string   "tracking_number",       limit: 255
+    t.string   "shipping_method",       limit: 255
+    t.string   "activation_pin",        limit: 255
+    t.string   "manufacturer",          limit: 255
+    t.string   "model_number",          limit: 255
+    t.string   "serial_number",         limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "physical_tokens", force: :cascade do |t|
@@ -1128,6 +1165,7 @@ ActiveRecord::Schema.define(version: 20180105231017) do
 
   add_index "ssl_account_users", ["ssl_account_id", "user_id"], name: "index_ssl_account_users_on_ssl_account_id_and_user_id", using: :btree
   add_index "ssl_account_users", ["ssl_account_id"], name: "index_ssl_account_users_on_ssl_account_id", using: :btree
+  add_index "ssl_account_users", ["user_id", "ssl_account_id", "approved", "user_enabled"], name: "index_ssl_account_users_on_four_fields", using: :btree
   add_index "ssl_account_users", ["user_id"], name: "index_ssl_account_users_on_user_id", using: :btree
 
   create_table "ssl_accounts", force: :cascade do |t|
@@ -1342,6 +1380,7 @@ ActiveRecord::Schema.define(version: 20180105231017) do
     t.datetime "updated_at"
   end
 
+  add_index "validation_histories", ["validation_id"], name: "index_validation_histories_on_validation_id", using: :btree
   add_index "validation_histories", ["validation_id"], name: "index_validation_histories_validation_id", using: :btree
 
   create_table "validation_history_validations", force: :cascade do |t|
