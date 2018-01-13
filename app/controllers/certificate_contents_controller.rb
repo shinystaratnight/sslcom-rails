@@ -28,14 +28,15 @@ class CertificateContentsController < ApplicationController
         elsif !has_all_contacts? && !params[:certificate_content]
           false
         else
-          # TODO: bug when optional not enabled, need additional update funct.
-          @certificate_content.update_attributes(
+          updated = @certificate_content.update_attributes(
             params[:certificate_content].except(:certificate_contacts_attributes)
-          ) && has_all_contacts?
+          ) 
+          create_contacts_required(params) if updated
+          
+          updated && has_all_contacts?
         end
           
         if proceed
-          create_contacts_required(params) unless Contact.optional_contacts?
           if @certificate_content.info_provided?
             @certificate_content.provide_contacts!
             format.html { redirect_to new_certificate_order_validation_path(
@@ -47,7 +48,9 @@ class CertificateContentsController < ApplicationController
             format.xml  { head :ok }
           end
         else
-          flash[:error] = 'Requires at least one contact for this certificate.' unless has_all_contacts?
+          if !has_all_contacts? && Contact.optional_contacts?
+            flash[:error] = 'Requires at least one contact for this certificate.'
+          end
           @saved_contacts = current_user.ssl_account.saved_contacts
           format.html { render :file => "/contacts/index", :layout=> 'application'}
           format.xml  { render :xml =>
@@ -196,17 +199,30 @@ class CertificateContentsController < ApplicationController
   end
 
   def create_certificate_contact
-    attrs = @saved_contact ? @saved_contact.attributes : @current_attributes
+    attrs = if @saved_contact
+      @saved_contact.attributes
+        .keep_if {|k,_| Contact::SYNC_FIELDS_REQUIRED.include? k.to_sym}
+        .merge(parent_id: @current_attributes[:parent_id])
+        .merge(roles: @current_attributes[:roles])
+    else
+      @current_attributes
+    end
     @certificate_content.certificate_contacts.create(
         attrs.except(*CertificateOrder::ID_AND_TIMESTAMP)
     )
   end
   
   def update_certificate_contact
-    @existing_contact.assign_attributes(@saved_contact.attributes
-      .keep_if {|k,_| Contact::SYNC_FIELDS.include? k.to_sym}
-      .merge(parent_id: @current_attributes[:parent_id])
-    )
+    attrs = if @saved_contact
+      @saved_contact.attributes
+        .keep_if {|k,_| Contact::SYNC_FIELDS_REQUIRED.include? k.to_sym}
+        .merge(parent_id: @current_attributes[:parent_id])
+        .merge(roles: @current_attributes[:roles])
+    else
+      @current_attributes
+    end
+    
+    @existing_contact.assign_attributes(attrs)
     if @existing_contact.changed?
       @existing_contact.save
     end
@@ -217,7 +233,7 @@ class CertificateContentsController < ApplicationController
     unless !params || params[:parent_id].blank?
       cc = CertificateContact.find_by(id: params[:parent_id])
       if cc && !params[:update_parent].blank?
-        cc.assign_attributes(params.permit(Contact::SYNC_FIELDS))
+        cc.assign_attributes(params.permit(Contact::SYNC_FIELDS_REQUIRED))
         cc.save if cc.changed?
       end
     end

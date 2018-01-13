@@ -12,11 +12,12 @@ class Contact < ActiveRecord::Base
                   street_address_3: :address3, locality: :city, state_or_province: :state, post_office_box: :po_box}
   EXCLUDED_FIELDS = %w(id roles type contactable_id contactable_type created_at updated_at notes)
   EXCLUDED_SAVED  = %w(id roles contactable_id contactable_type notes)
-  SYNC_FIELDS     = [
+  SYNC_FIELDS_REQUIRED = [
     :title, :first_name, :last_name, :company_name, :department, :po_box,
     :address1, :address2, :address3, :city, :state, :country, :postal_code,
-    :email, :phone, :ext, :fax, :roles
+    :email, :phone, :ext, :fax
   ]
+  SYNC_FIELDS = SYNC_FIELDS_REQUIRED.dup.push(:roles)
   
   before_validation :set_roles
   
