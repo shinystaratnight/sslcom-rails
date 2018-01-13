@@ -33,9 +33,10 @@ class CdnsController < ApplicationController
 
   def register_account
     if current_user.ssl_account
-      reseller_api_key = ENV['RESELLER_API_KEY']
+      reseller_api_key = Rails.application.secrets.cdnify_reseller_api_key
 
-      email_addr = 'SslAccount' + current_user.ssl_account.acct_number + '@ssl.com'
+      email_addr = current_user.ssl_account.acct_number + '@ssl.com'
+      email_addr = 'sandbox-' + email_addr if is_sandbox?
       password = SecureRandom.hex(32)
 
       @response = HTTParty.post('https://reseller.cdnify.com/users',
