@@ -13,6 +13,10 @@ module RefParam
   def initials
     self.class.to_s.tableize.split("_").map{|w|w[0]}.join
   end
+
+  def to_param
+    ref
+  end
 end
 
 
