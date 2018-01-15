@@ -423,6 +423,7 @@ class CertificateContent < ActiveRecord::Base
   end
   
   def contacts_for_form_opt(type=nil)
+      certificate_contact_compatibility
       case type
         when :custom   # contacts that are NOT duplicated from saved contacts
           certificate_contacts(true).select{|c| c.parent_id.nil? && c.type=='CertificateContact'}
@@ -438,6 +439,7 @@ class CertificateContent < ActiveRecord::Base
   end
   
   def contacts_for_form
+    certificate_contact_compatibility
     unless self.certificate_contacts.blank?
       list  = CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}.compact
       roles = list.map(&:roles).flatten.uniq
@@ -617,6 +619,35 @@ class CertificateContent < ActiveRecord::Base
   end
 
   private
+  
+  def certificate_contact_compatibility
+    if Contact.optional_contacts? # optional contacts ENABLED
+      certificate_contacts(true).where(type: 'CertificateContact')
+        .where.not(parent_id: nil).group_by(&:parent_id).each do |c_group|
+          group = c_group.second
+          if group.count > 1
+            ids = group.map(&:id)
+            certificate_contacts(true).find(ids.shift).update(roles: Contact.find(c_group.first).roles)
+            certificate_contacts(true).where(id: ids).destroy_all
+          end
+        end
+    else # Optional contacts DISABLED
+      keep = []
+      all = certificate_contacts(true).where(type: 'CertificateContact')
+      self.update(billing_checkbox: 0, validation_checkbox: 0, technical_checkbox: 0)
+      CertificateContent::CONTACT_ROLES.each do |role|
+        found = certificate_contacts(true).where(type: 'CertificateContact')
+          .where("roles LIKE ?", "%#{role}%")
+        if found.any?
+          update = found.first
+          found = all - [update]
+          update.update(roles: [role]) if update.roles.count > 1
+          keep << update
+        end
+      end
+      all.where.not(id: keep.map(&:id)).destroy_all
+    end
+  end
   
   def validate_domains?
     (new? && (domains.blank? || errors[:domain].any?)) || !rekey_certificate.blank?
