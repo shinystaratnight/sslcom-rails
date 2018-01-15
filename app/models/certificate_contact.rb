@@ -5,8 +5,6 @@ class CertificateContact < Contact
   before_destroy :replace_with_default
     
   validates :first_name, :last_name, :email, :phone, presence: true
-  validates :city, :state, :postal_code, :country, presence: true, if: 'contactable.is_a?SslAccount'
-  validates :address1, presence: true, if: 'contactable.is_a?(SslAccount) && po_box.blank?'
   validates :email, email: true
   
   attr_accessor :update_parent
