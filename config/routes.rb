@@ -2,7 +2,6 @@ require 'apis/certificates_api_app'
 require 'domain_constraint'
 
 SslCom::Application.routes.draw do
-  resources :cdns, except: [:new, :edit]
   resources :oauth_clients
 
   match '/oauth/test_request',  :to => 'oauth#test_request',  :as => :test_request, via: [:get, :post]
@@ -280,13 +279,11 @@ SslCom::Application.routes.draw do
 
       member do
         get :resource_cdn
-        get :resource_setting
         post :update_resource
         post :add_custom_domain
         post :update_custom_domain
         post :update_advanced_setting
         delete :delete_resource
-        get :resource_cache
         delete :purge_cache
         post :update_cache_expiry
       end

@@ -3,9 +3,9 @@ require 'securerandom'
 class CdnsController < ApplicationController
   include HTTParty
   before_action :set_cdn, only: [:show, :update, :destroy]
-  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn, :resource_setting, :resource_cache]
+  before_action :require_user, only: [:index, :register_account, :register_api_key, :resource_cdn]
   before_action :set_tab_name, only: [:resource_cdn, :update_resource, :add_custom_domain, :update_advanced_setting,
-                                      :update_custom_domain, :purge_cache, :update_cache_expiry]
+                                      :update_custom_domain, :purge_cache, :update_cache_expiry, :delete_resource]
 
   # # GET /cdns
   # # GET /cdns.json
@@ -59,10 +59,10 @@ class CdnsController < ApplicationController
         flash[:error] = 'Failed to Register Account.'
       end
     else
-      flash[:error] = 'Failed to Register Account.'
+      flash[:error] = 'Failed to Register Account Because Current User have not SSL Account.'
     end
 
-    redirect_to cdns_path
+    redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
 
   # def register_api_key
@@ -76,7 +76,7 @@ class CdnsController < ApplicationController
   #     flash[:error] = 'Failed to Update API Key.'
   #   end
   #
-  #   redirect_to cdns_path
+  #   redirect_to cdns_path(ssl_slug: @ssl_slug)
   # end
 
   def update_resources
@@ -101,7 +101,7 @@ class CdnsController < ApplicationController
       flash[:notice] = 'Successfully Updated.'
     end
 
-    redirect_to cdns_path
+    redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
 
   def resource_cdn
@@ -157,26 +157,26 @@ class CdnsController < ApplicationController
     end
   end
 
-  def resource_setting
-    resource_id = params['id']
-
-    @results = {}
-    unless current_user.ssl_account.blank?
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
-
-      if cdn
-        @results[:api_key] = cdn.api_key
-        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
-                                 basic_auth: {username: cdn.api_key, password: 'x'})
-        @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
-      end
-    end
-
-    respond_to do |format|
-      format.html { render :action => "resource_setting" }
-      format.xml { render :xml => @results }
-    end
-  end
+  # def resource_setting
+  #   resource_id = params['id']
+  #
+  #   @results = {}
+  #   unless current_user.ssl_account.blank?
+  #     cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+  #
+  #     if cdn
+  #       @results[:api_key] = cdn.api_key
+  #       @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
+  #                                basic_auth: {username: cdn.api_key, password: 'x'})
+  #       @results[:resource] = @response.parsed_response['resources'][0] if @response.parsed_response
+  #     end
+  #   end
+  #
+  #   respond_to do |format|
+  #     format.html { render :action => "resource_setting" }
+  #     format.xml { render :xml => @results }
+  #   end
+  # end
 
   def update_resource
     resource_id = params[:id]
@@ -202,7 +202,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_setting
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   def add_custom_domain
@@ -234,7 +234,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_setting
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   def update_custom_domain
@@ -278,7 +278,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_setting
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   def update_advanced_setting
@@ -311,7 +311,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_setting
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   def delete_resource
@@ -327,38 +327,40 @@ class CdnsController < ApplicationController
         flash[:error] = msg
       end
 
-      redirect_to resource_setting_cdn_path(resource_id) and return
+      session[:selected_tab] = @tab_setting
+
+      redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
     else
       flash[:notice] = 'Successfully Deleted Resource.'
     end
 
-    redirect_to cdns_path
+    redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
 
-  def resource_cache
-    resource_id = params['id']
-    @results = {}
-
-    unless current_user.ssl_account.blank?
-      cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
-
-      if cdn
-        @results[:api_key] = cdn.api_key
-        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
-                                 basic_auth: {username: cdn.api_key, password: 'x'})
-        @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
-
-        @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
-                                 basic_auth: {username: cdn.api_key, password: 'x'})
-        @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
-      end
-    end
-
-    respond_to do |format|
-      format.html { render :action => "resource_cache" }
-      format.xml { render :xml => @results }
-    end
-  end
+  # def resource_cache
+  #   resource_id = params['id']
+  #   @results = {}
+  #
+  #   unless current_user.ssl_account.blank?
+  #     cdn = Cdn.where(ssl_account_id: current_user.ssl_account.id).last
+  #
+  #     if cdn
+  #       @results[:api_key] = cdn.api_key
+  #       @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id,
+  #                                basic_auth: {username: cdn.api_key, password: 'x'})
+  #       @results[:expire_time] = @response.parsed_response['resources'][0]['advanced_settings']['cache_expire_time'] if @response.parsed_response
+  #
+  #       @response = HTTParty.get('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/cache',
+  #                                basic_auth: {username: cdn.api_key, password: 'x'})
+  #       @results[:files] = @response.parsed_response['files'] if @response.parsed_response && @response.parsed_response['files']
+  #     end
+  #   end
+  #
+  #   respond_to do |format|
+  #     format.html { render :action => "resource_cache" }
+  #     format.xml { render :xml => @results }
+  #   end
+  # end
 
   def purge_cache
     resource_id = params[:id]
@@ -385,7 +387,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_cache
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   def update_cache_expiry
@@ -410,7 +412,7 @@ class CdnsController < ApplicationController
 
     session[:selected_tab] = @tab_cache
 
-    redirect_to resource_cdn_cdn_path(resource_id) and return
+    redirect_to resource_cdn_cdn_path(@ssl_slug, resource_id) and return
   end
 
   # GET /cdns/1
@@ -442,7 +444,7 @@ class CdnsController < ApplicationController
       flash[:error] = 'Failed to Create Resource.'
     end
 
-    redirect_to cdns_path
+    redirect_to cdns_path(ssl_slug: @ssl_slug)
   end
 
   # PATCH/PUT /cdns/1

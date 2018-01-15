@@ -1,7 +1,8 @@
--title = "CDN Resource"
+-title = 'CDN Resource'
 -content_for :title, title
 =render :partial => 'index_scripts'
-=stylesheet_link_tag "bootstrap_style", :media => 'all'
+=stylesheet_link_tag 'bootstrap_style', :media => 'all'
+-slug_params = {ssl_slug: @ssl_slug}
 -api_key = @results[:api_key]
 -active_tab = @results[:active_tab]
 -bandwidth = @results[:bandwidth]
@@ -24,7 +25,7 @@
   %div.clearfix
     %ul.nav.nav-tabs
       %li.nav-item
-        =link_to 'Resources', cdns_path, :class => "nav-link"
+        =link_to 'Resources', cdns_path(slug_params), :class => 'nav-link'
       %li.nav-item
         =link_to 'Overview', '#overview', :class => "nav-link #{active_tab == 'overview' ? 'active' : ''}", 'data-toggle' => 'tab'
       %li.nav-item
@@ -91,13 +92,13 @@
               %td 110.45 kB
               %td 10
               %td
-                =button_tag 'Purge', :class=>'btn_purge_file', "data-file" => 'jquery.js'
+                =button_tag 'Purge', :class=>'btn_purge_file', 'data-file' => 'jquery.js'
             %tr
               %td /wp-content/themes/twentyseventeen/assets/js/global.js?ver=1.0
               %td 99.41 kB
               %td 8
               %td
-                =button_tag 'Purge', :class=>'btn_purge_file', "data-file" => 'main.css'
+                =button_tag 'Purge', :class=>'btn_purge_file', 'data-file' => 'main.css'
       %hr
       %div.clearfix
         #purge-files
@@ -180,13 +181,13 @@
                     %td
                       =domain['hostname']
                     %td
-                      =DateTime.parse(domain['created_at']).strftime("%d/%m/%Y")
+                      =DateTime.parse(domain['created_at']).strftime('%d/%m/%Y')
                     %td
                       -if domain['valid_to']
                         SSL valid to
-                        =DateTime.parse(domain['valid_to']['date']).strftime("%d/%m/%Y")
+                        =DateTime.parse(domain['valid_to']['date']).strftime('%d/%m/%Y')
                     %td
-                      =link_to 'Edit', nil, :class => "custom-domain-modal-link", "data-toggle" => "modal", "data-target" => "#custom-domain-modal", "data-hostname" => domain['hostname']
+                      =link_to 'Edit', nil, :class => 'custom-domain-modal-link', 'data-toggle' => 'modal', 'data-target' => '#custom-domain-modal', 'data-hostname' => domain['hostname']
               -else
                 %tr
                   %td(colspan="4")
@@ -242,13 +243,13 @@
               %div.field-note
                 Deleting a resource cannot be undone. Before continuing make sure you are certain.
               =submit_tag 'Delete', :id=>'btn_delete_resource'
-      %div.modal.fade#custom-domain-modal{:tabindex => "-1", :role => "dialog", "aria-labelledby" => "modal-label", "aria-hidden" => "true"}
-        %div.modal-dialog{:role => "document"}
+      %div.modal#custom-domain-modal
+        %div.modal-dialog
           %div.modal-content
             %div.modal-header
               %h4.modal-title#modal-label Configure SSL
-              %button.close{:type => "button", "data-dismiss" => "modal", "aria-label" => "Close"}
-                #span{"aria-hidden" => "true"} &times
+              %button.close{:type => 'button', 'data-dismiss' => 'modal'}
+                #span &times
             %div.modal-body
               %div.modal-note
                 Please paste in the certificate and private key provided to you by your SSL certificate issuer.
@@ -272,7 +273,7 @@
               %div.container-fluid
                 %div.row
                   %div.col-4
-                    =button_tag 'Delete', 'class' => 'delete-custom-domain'
+                    =button_tag 'Delete', 'class' => 'delete-custom-domain', 'type' => 'button'
                   %div.col-8
-                    =button_tag 'Modify', 'class' => 'modify-custom-domain float-right'
-                    =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal'
+                    =button_tag 'Modify', 'class' => 'modify-custom-domain float-right', 'type' => 'button'
+                    =button_tag 'Close', 'class' => 'float-right mr-1', 'data-dismiss' => 'modal', 'type' => 'button'

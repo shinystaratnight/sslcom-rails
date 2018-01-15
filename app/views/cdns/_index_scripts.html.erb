@@ -2,6 +2,13 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function() {
+      $('#private_key').bind('cut copy', function (e) {
+        e.preventDefault();
+      });
+      $('#private_key').on('contextmenu',function(e) {
+        return false;
+      });
+
       $('#purge_all_btn').click(function() {
         $('form #purge_all').val(true)
         $('#purge_form').submit();

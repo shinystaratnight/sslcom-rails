@@ -35,24 +35,18 @@
                 %th Origin
                 %th Hostname
                 %th Created
-                -#%th Settings
-                -#%th Caches
                 %th Delete?
               -if resources && resources.length > 0
                 -resources.each do |resource|
                   %tr
                     %td
-                      =link_to resource['alias'], resource_cdn_cdn_path(resource['id'])
+                      =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
                     %td
                       =resource['origin']
                     %td
                       =resource['hostname']
                     %td
                       =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
-                    -#%td
-                    -#  =link_to 'Setting', resource_setting_cdn_path(resource['id'])
-                    -#%td
-                    -#  =link_to 'Cache', resource_cache_cdn_path(resource['id'])
                     %td
                       =check_box_tag "deleted_resources[]", resource['id']
               -else
