@@ -1,6 +1,6 @@
 %div(class='fields')
-  - roles = f.object && f.object.roles.is_a?(Array)
-  .saved-contact-fields Roles
+  -roles = f.object && f.object.roles.is_a?(Array)
+  .saved-contact-fields.saved-contact-roles Roles
   .clearfix
     %label{for: 'administrative_role'} Administrative
     =f.check_box :administrative_role, checked: (roles && f.object.roles.include?('administrative')), id: 'chk-administrative-role'
