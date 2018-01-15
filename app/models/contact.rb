@@ -56,6 +56,9 @@ class Contact < ActiveRecord::Base
     unless set_roles.empty?
       self.roles = set_roles
     end
+    if roles.blank? && (type !='Registrant')
+      self.roles = ['administrative']
+    end
   end
   
   def self.optional_contacts?
