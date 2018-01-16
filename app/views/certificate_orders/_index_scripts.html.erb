@@ -11,6 +11,11 @@ function activate_physical_token(certificate_order_ref, physical_token_id, name)
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
+    $('#number_rows').change(function() {
+      $('#per_page').val($(this).val());
+      $('#search_form').submit();
+    });
+
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
       $('#btn_cert_order_search').prop('disabled', true);
@@ -56,6 +61,8 @@ jQuery(function($) {
                 $('#filter_' + strengths[cIdx] + '_chk').prop('checked', true);
               }
             });
+          } else if (filterKey == 'product') {
+            $('#filter_' + filterKey).val(filterValue.split(','));
           } else {
             if (filterValue.charAt(0) == "'" && filterValue.charAt(filterValue.length - 1) == "'") {
               $('#filter_' + filterKey).val(filterValue.slice(1, -1));
@@ -77,7 +84,8 @@ jQuery(function($) {
       $('.filter_chk').prop('checked', false);
       $('.filter_cont_text').val('');
       $('.filter_cont_date').val('');
-      $('.filter_cont_slt').val('US');
+      $('#filter_product.filter_cont_slt').val([]);
+      $('#filter_country.filter_cont_slt').val('US');
       $('.filter_cont_chk').prop('checked', false);
       $('.filter_cont').hide();
     });
@@ -99,8 +107,17 @@ jQuery(function($) {
 
           if (filterCont.data('type') == 'text' || filterCont.data('type') == 'select') {
             val = filterCont.children().val().indexOf(' ') > 0 ? "'" + filterCont.children().val() + "'" : filterCont.children().val();
+
             if (val.trim() != '') {
               itemQuery = filterCont.children().data('field') + ':' + val;
+            }
+          } else if (filterCont.data('type') == 'select-multi') {
+            if (filterCont.children().val()) {
+              val = filterCont.children().val().toString();
+
+              if (val.trim() != '') {
+                itemQuery = filterCont.children().data('field') + ':' + val;
+              }
             }
           } else if (filterCont.data('type') == 'date') {
             var from = filterCont.children().first().children().first().val();
@@ -174,6 +191,7 @@ jQuery(function($) {
       var isChecked = $(this).prop('checked');
       var parentSiblingNode = $(this).parent().next();
       var filterItem = parentSiblingNode.find('.filter_cont');
+
       if (isChecked) {
         filterItem.show();
       } else {
@@ -182,6 +200,8 @@ jQuery(function($) {
           || $(this).prop('id') == 'filter_issued_at_chk') {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
+        } else if ($(this).prop('id') == 'filter_product_chk') {
+          filterItem.children().val([]);
         } else if ($(this).prop('id') == 'filter_country_chk') {
           filterItem.children().val('us');
         } else if ($(this).prop('id') == 'filter_physical_token_chk') {

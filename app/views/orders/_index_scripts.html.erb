@@ -150,9 +150,12 @@ jQuery(function($) {
               itemQuery = filterCont.children().data('field') + ':' + val;
             }
           } else if ( filterCont.data('type') == 'select') {
-            val = filterCont.children().val().toString();
-            if (val.trim() != '') {
-              itemQuery = filterCont.children().data('field') + ':' + val;
+            if (filterCont.children().val()) {
+              val = filterCont.children().val().toString();
+
+              if (val.trim() != '') {
+                itemQuery = filterCont.children().data('field') + ':' + val;
+              }
             }
           } else if (filterCont.data('type') == 'mix') {
             if (filterCont.find('#filter_amount').val() == 'range') {
