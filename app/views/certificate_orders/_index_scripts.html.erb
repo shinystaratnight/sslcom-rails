@@ -11,6 +11,11 @@ function activate_physical_token(certificate_order_ref, physical_token_id, name)
 jQuery.noConflict();
 jQuery(function($) {
   $(document).ready(function() {
+    $('#number_rows').change(function() {
+      $('#per_page').val($(this).val());
+      $('#search_form').submit();
+    });
+
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
       $('#btn_cert_order_search').prop('disabled', true);

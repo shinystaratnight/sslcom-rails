@@ -424,6 +424,10 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def self.set_per_page_will_paginate(number_rows=10)
+    @@per_page = number_rows
+  end
+
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
