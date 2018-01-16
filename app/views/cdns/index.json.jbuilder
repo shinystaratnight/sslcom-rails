@@ -1,0 +1,1 @@
+json.array! @cdns, partial: 'cdns/cdn', as: :cdn

@@ -7,9 +7,11 @@
       -html = {id: 'edit_saved_contact'}
       =form_for @contact.becomes(Contact), url: url, method: :put, html: html do |f|
         #stylized.default_form
-          =render 'saved_contact_fields', f: f
+          =render 'saved_contact_fields', new_contact: false, filter: false, f: f
         #button_container
-          #next_submit=image_submit_tag 'bl_submit_button.gif'
+          #auto_adjust
+            =image_tag "cancel_bl.gif", id: "btn-cancel-contact"
+            =image_submit_tag 'bl_submit_button.gif'
     =render partial: '/contacts/index_scripts'
 -else
   -content_for :title, "Create Contacts For #{@certificate_order.subject.downcase} (order ref##{@certificate_order.order.reference_number})"

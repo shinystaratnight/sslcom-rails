@@ -1,0 +1,43 @@
+.clearfix
+  -if custom_contacts.any?
+    -custom_contacts = render_saved_contacts(custom_contacts)
+    %h3 Selected Contacts (#{custom_contacts.count})
+    %table
+      %thead
+        %tr
+          %td
+          %td{class: 'role-checkbox'} Administrative
+          %td{class: 'role-checkbox'} Billing
+          %td{class: 'role-checkbox'} Technical
+          %td{class: 'role-checkbox'} Validation
+          %td
+      %tbody    
+        -custom_contacts.each do |c|
+          -roles = c.last['roles']
+          %tr{id: c[1], data: c.last}
+            -if c.last['parent_id']
+              %td=c.first[0..35]
+            -else
+              %td=link_to c.first[0..35], '#', id: 'lnk-update-role-contact'
+            %td{class: 'role-checkbox'}=check_box_tag :administrative, 'yes', |
+            (roles && roles.include?('administrative')), disabled: c.last['parent_id']
+            %td{class: 'role-checkbox'}=check_box_tag :billing, 'yes', |
+            (roles && roles.include?('billing')), disabled: c.last['parent_id']
+            %td{class: 'role-checkbox'}=check_box_tag :technical, 'yes', |
+            (roles && roles.include?('technical')), disabled: c.last['parent_id']
+            %td{class: 'role-checkbox'}=check_box_tag :validation, 'yes', |
+            (roles && roles.include?('validation')), disabled: c.last['parent_id']
+            -if c.last['parent_id']
+              %td
+            -else
+              %td=link_to 'Edit', '#', id: 'lnk-update-role-contact', class: 'btn-decorate'
+            %td=link_to 'Remove', '#', class: 'btn-remove-contact'
+  -else
+    %h3 Selected Contacts (0)
+    #zero-contacts-box
+      %h3 None
+      %div
+        %h3
+          =link_to "+ Create New Contact", '#', id: 'lnk_create_new_contact'
+      -if saved_contacts.any?
+        %small or, add from Available Contacts section

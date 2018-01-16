@@ -273,10 +273,10 @@ class OrdersController < ApplicationController
   def stats(p, unpaginated)
     @negative = unpaginated.where{state >> ['fully_refunded','charged_back', 'canceled']}.sum(:cents)
     @paid_via_deposit = unpaginated.where{billing_profile_id == nil }.sum(:cents)
-    @total_amount=unpaginated.sum(:cents)-@paid_via_deposit-@negative
-    @total_count=unpaginated.count
     @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
+    @total_amount=unpaginated.sum(:cents)-@deposits_amount-@negative
+    @total_count=unpaginated.count
     @orders=unpaginated.paginate(p)
   end
 

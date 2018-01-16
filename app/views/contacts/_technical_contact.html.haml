@@ -1,7 +1,8 @@
 .subheading Technical Contact
-.show_hide_contact_form
-  =f.check_box :technical_checkbox
-  %span use administrative contact as technical contact
+-unless Contact.optional_contacts?
+  .show_hide_contact_form
+    =f.check_box :technical_checkbox
+    %span use administrative contact as technical contact
 %p.description
   This should be the point of contact related to installation
   and support issues. This contact will also receive the issued

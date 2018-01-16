@@ -85,6 +85,8 @@
                             =link_to 'deposit funds', allocate_funds_url(ssl_slug: @ssl_slug)
                           -if ssl_account && permitted_to?(:index, :billing_profiles)
                             %li=link_to 'manage billing profiles', billing_profiles_path(ssl_slug: @ssl_slug)
+                          -if ssl_account && permitted_to?(:read, :contacts)
+                            %li=link_to 'manage saved contacts', saved_contacts_contacts_path(ssl_slug: @ssl_slug)
                           %li
                             =link_to 'buy certificate', certificates_url
                           %li

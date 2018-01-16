@@ -11,4 +11,6 @@
 //= require jCal
 //= require datejs
 //= require merchant_validate_cc
+//= require popper
+//= require bootstrap-sprockets
 //= require invoice_section

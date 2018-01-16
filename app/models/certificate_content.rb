@@ -17,7 +17,8 @@ class CertificateContent < ActiveRecord::Base
   accepts_nested_attributes_for :registrant, :allow_destroy => false
   accepts_nested_attributes_for :csr, :allow_destroy => false
 
-  after_commit :certificate_names_from_domains, unless: :certificate_names_created?
+  after_create :certificate_names_from_domains, unless: :certificate_names_created?
+  after_save   :certificate_names_from_domains, unless: :certificate_names_created?
 
   SIGNING_REQUEST_REGEX = /\A[\w\-\/\s\n\+=]+\Z/
   MIN_KEY_SIZE = 2047 #thought would be 2048, be see
@@ -56,7 +57,7 @@ class CertificateContent < ActiveRecord::Base
   INTRANET_IP_REGEX = /\A(127\.0\.0\.1)|(10.\d{,3}.\d{,3}.\d{,3})|(172\.1[6-9].\d{,3}.\d{,3})|(172\.2[0-9].\d{,3}.\d{,3})|(172\.3[0-1].\d{,3}.\d{,3})|(192\.168.\d{,3}.\d{,3})\z/
 
   serialize :domains
-
+  
   validates_presence_of :server_software_id, :signing_request, # :agreement, # need to test :agreement out on reprocess and api submits
     :if => "certificate_order_has_csr && !ajax_check_csr && Settings.require_server_software_w_csr_submit"
   validates_format_of :signing_request, :with=>SIGNING_REQUEST_REGEX,
@@ -420,7 +421,22 @@ class CertificateContent < ActiveRecord::Base
     # "cc-"+created_at.to_i.to_s(16)
     certificate_order.ref+"-"+certificate_order.certificate_contents.index(self).to_s
   end
-
+  
+  def contacts_for_form_opt(type=nil)
+      case type
+        when :custom   # contacts that are NOT duplicated from saved contacts
+          certificate_contacts(true).select{|c| c.parent_id.nil? && c.type=='CertificateContact'}
+        when :child    # contacts that were duplicated from saved contacts
+          certificate_contacts(true).select{|c| !c.parent_id.nil? && c.type=='CertificateContact'}
+        when :saved    # saved contacts for the team
+          ssl_account.saved_contacts.select{|c| c.type=='CertificateContact'}
+        when :selected # contacts, BOTH child and custom
+          certificate_contacts(true).select{|c| c.type=='CertificateContact'}
+        else
+          []
+      end
+  end
+  
   def contacts_for_form
     unless self.certificate_contacts.blank?
       CertificateContent::CONTACT_ROLES.map{|role|self.send "#{role}_contact"}

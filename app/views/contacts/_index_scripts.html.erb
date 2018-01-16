@@ -29,19 +29,69 @@ jQuery(function($) {
         $(form_types[i+1]).hide();
     }
     
-    function populate_contact(form_id, label, data) {
+    // Saved Contacts and Registrant Forms:
+    // toggle form fields based on contact_type and registrant_type (organization vs. individual)
+    // populate attribute if saved contact is selected for order contacts.
+    function populateContact(form_id, label, data) {
       $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
     }
-    
-    // Saved Contacts and Registrant Forms: 
-    // toggle form fields based on contact_type and registrant_type (organization vs. individual)
-    $('.saved_contacts').change(function() {
-      var form_id = $(this).parents()['1']['id'];
+    function getContactFormId(selected) {
+      return ('#' + selected.parents()['1'].id);
+    }
+    function hideElement(element) {
+      element.addClass('hidden');
+    }
+    function showElement(element) {
+      element.removeClass('hidden');
+    }
+    function setSavedContact(selected) {
+      var contact_id = selected.val(),
+          form_id    = getContactFormId(selected),
+          set_id     = form_id + ' .parent_id',
+          fields_id  = form_id + ' .fields',
+          update_id  = form_id + ' .link-contact-update',
+          cancel_id  = form_id + ' .link-update-cancel';
       
+      $(set_id).val((contact_id.length > 0) ? contact_id : '');
+      if (contact_id.length > 0) {
+        hideElement($(fields_id));
+        showElement($(update_id));
+        hideElement($(cancel_id));
+      } else {
+        showElement($(fields_id));
+        hideElement($(update_id));
+        showElement($(cancel_id));
+      }
+    }
+    
+    $('.link-contact-update, .link-update-cancel').click(function(e) {
+      e.preventDefault();
+      var form_id = getContactFormId($(this)),
+          fields_id = form_id + ' .fields',
+          update_id = form_id + ' .link-contact-update',
+          cancel_id = form_id + ' .link-update-cancel',
+          edit_id   = form_id + ' .update_parent';
+      
+      if ($(this).hasClass('link-contact-update')) {
+        showElement($(fields_id));
+        hideElement($(update_id));
+        showElement($(cancel_id));
+        $(edit_id).val(true);
+      } else {
+        hideElement($(fields_id));
+        hideElement($(cancel_id));
+        showElement($(update_id));
+        $(edit_id).val(null);
+      }
+    });
+    
+    function copyContactFields(selected) {
+      var form_id = selected.parents()['1']['id'];
+      setSavedContact(selected);
       var list = [
         ['title', 'title'],
-        ['company', 'company_name'],
-        ['department', 'address1'],
+        ['organization', 'company_name'],
+        ['department', 'department'],
         ['po_box', 'po_box'],
         ['address1', 'address1'],
         ['address2', 'address2'],
@@ -59,60 +109,71 @@ jQuery(function($) {
         ['ext', 'ext']
       ];
       list.forEach(function(el) {
-        populate_contact(
+        populateContact(
           form_id, el[0], $('#' + form_id + ' #saved_contacts option:selected').data(el[1])
         );
       });
-    });
-    
-    function hide_org_fields() {
+    }  
+    function hideOrgFields() {
       $("label[for='company_name']").parent().addClass('hidden');
       $("label[for='department']").parent().addClass('hidden');
     }
-    function show_org_fields() {
+    function showOrgFields() {
       $("label[for='department']").parent().removeClass('hidden');
       $("label[for='company_name']").parent().removeClass('hidden');
     }
-    function hide_indiv_fields() {
+    function hideIndivFields() {
       $("label[for='first_name']").parent().addClass('hidden');
       $("label[for='last_name']").parent().addClass('hidden');
     }
-    function show_indiv_fields() {
+    function showIndivFields() {
       $("label[for='first_name']").parent().removeClass('hidden');
       $("label[for='last_name']").parent().removeClass('hidden');
     }
-    function show_registrant_type() {
+    function showRegistrantType() {
       $('#contact_registrant_type').parent().removeClass('hidden');
     }
-    function show_registrant_fields() {
+    function showRegistrantFields() {
       if ($('#contact_registrant_type').val()==<%= Registrant::registrant_types[:individual] %>) {
-        hide_org_fields();
-        show_indiv_fields();
+        hideOrgFields();
+        showIndivFields();
       } else {
-        show_org_fields();
-        hide_indiv_fields();
+        showOrgFields();
+        hideIndivFields();
       }
     }
     
+    $('.saved_contacts').change(function() {
+      copyContactFields($(this));
+    });
+    
+    $('.saved_contacts').each(function(el) {
+      copyContactFields($(this));
+    });
+    
     if ( ($('#edit_saved_contact').length || $('#new_saved_contact').length)
       && $('#contact_type').val()=='Registrant') {
-      show_registrant_type();
-      show_registrant_fields();
+      showRegistrantType();
+      showRegistrantFields();
     }
     
     $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
       if ($(this).val()=='Registrant') {
         $('#contact_registrant_type').parent().removeClass('hidden');
-        show_registrant_fields();
+        showRegistrantFields();
       } else {
         $('#contact_registrant_type').parent().addClass('hidden');
-        show_org_fields();
-        show_indiv_fields();
+        showOrgFields();
+        showIndivFields();
       }
     });
     
     $('#contact_registrant_type').change(function() {
-      show_registrant_fields();
+      showRegistrantFields();
+    });
+    
+    $("#btn-cancel-contact").click(function() {
+      window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug) %>";
     });
   });
 });

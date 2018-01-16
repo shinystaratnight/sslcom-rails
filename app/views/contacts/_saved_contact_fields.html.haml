@@ -1,12 +1,31 @@
 %div(class='fields')
+  - roles = f.object && f.object.roles.is_a?(Array)
   .clearfix
-    %label{for: 'type'}
-      Type:
-    =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
-  .clearfix.hidden
-    %label{for: 'registrant_type'}
-      Registrant Type:
-    =f.select :registrant_type, Registrant::registrant_types
+    %label{for: 'administrative_role'} Administrative
+    =f.check_box :administrative_role, checked: (roles && f.object.roles.include?('administrative')), id: 'chk-administrative-role'
+  .clearfix
+    %label{for: 'billing_role'} Billing
+    =f.check_box :billing_role, checked: (roles && f.object.roles.include?('billing')), id: 'chk-billing-role'
+  .clearfix
+    %label{for: 'technical_role'} Technical
+    =f.check_box :technical_role, checked: (roles && f.object.roles.include?('technical')), id: 'chk-technical-role'
+  .clearfix
+    %label{for: 'validation_role'} Validation
+    =f.check_box :validation_role, checked: (roles && f.object.roles.include?('validation')), id: 'chk-validation-role'
+  -if new_contact == :new_contact
+    .clearfix
+      %label{for: 'save_for_later'}
+        Save to Available Contacts:
+      =f.check_box :save_for_later 
+  -unless filter
+    .clearfix
+      %label{for: 'type'}
+        Type:
+      =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
+    .clearfix.hidden
+      %label{for: 'registrant_type'}
+        Registrant Type:
+      =f.select :registrant_type, Registrant::registrant_types
   .clearfix
     %label{for: 'first_name'}
       *First Name:
@@ -73,4 +92,10 @@
   .clearfix
     %label{for: 'country'}
       *Country:
-    =f.select :country, Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
+    -country = f.object.country if f.object
+    =f.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""], )+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, required: true, selected: (country || 'US'))
+  -unless new_contact == :new_contact
+    .clearfix
+      %label{for: 'default'}
+        Default
+      =f.check_box :saved_default

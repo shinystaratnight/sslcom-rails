@@ -49,7 +49,7 @@ img
   border: 0
 
 a
-  color: #6b9029
+  color: #6b9029 !important
   outline: none
   text-decoration: none
   border-bottom-style: none
@@ -3371,13 +3371,13 @@ label.error
   display: block
   margin: 0
   padding: .3em 1em
-  color: #eee
+  color: #eee !important
   text-decoration: none
   border-bottom: none
   background: #060511
 
 #prog_nav a:hover, #t-intro a
-  color: #333
+  color: #333 !important
   background: #fff image-url('on_bg.gif') repeat-x top left
 
 .order_amount_strong
@@ -3449,7 +3449,8 @@ label.error
     background: lightyellow
 
 #report, #reseller_tiers, #domain_pricing_popup, #certificate_listing,
-#dashboard, #certificate_orders, #validations
+#dashboard, #certificate_orders, #validations, #resources, #resource-custom-domain-list,
+#popular-files, #resource-popular-location-list
   line-height: 1.5em
   font-size: 1.4em
   background: #fff
@@ -4138,19 +4139,19 @@ table#at_a_glance_header
   .validations, .validations a
     vertical-align: top
     display: block
-    color: #f00
+    color: #f00 !important
     line-height: 90%
   #logout_header_link
     text-transform: none
     padding-left: 60px
   th.certificate_status, th.certificate_status a
-    color: #808080
+    color: #808080 !important
     vertical-align: top
     line-height: 90%
   td.certificate_status a
     vertical-align: top
     display: block
-    color: #fff
+    color: #fff !important
   td:hover
     text-decoration: underline
 
@@ -4677,6 +4678,8 @@ img.blue_icon
   width: 400px
   font-size: 1.4em
   border: 1px solid #ccf
+  #search
+    width: 160px
 
 #validation_requirements_box
   ul
@@ -4851,7 +4854,7 @@ span.footer_link
   padding: 10px 0 10px 10px
 
 #sample_site_report, #sample_artifacts
-  margin-right: 10px 10px 0 0
+  margin: 10px 10px 0px 0px
   float: left
   width: 300px
 
@@ -5702,12 +5705,76 @@ span.notifications-teams
   .colored_row
     background-color: #EEEEEE !important
 
+//#cdns
+//  hr
+//    margin: 15px 0px
+//  .sub-title
+//    font-size: 14px
+//    font-weight: bold
+//    text-decoration: underline
+//    margin-top: 10px
+//  #resources,
+//  #resource-custom-domain-list
+//    margin-top: 3px
+//    > table
+//      margin-bottom: 10px
+//  .reg-api-key,
+//  .reg-resource
+//    .field-label,
+//    .field-setting-event
+//      float: left
+//      padding-right: 10px
+//      font-size: 14px
+//      width: 130px
+//    .field-cont
+//      float: left
+//      .note
+//        font-size: 12px
+//        font-style: italic
+//        color: #888
+//      input[type="submit"]
+//        margin-top: 0px
+//      span
+//        font-size: 13px
+//    .field-setting-event
+//      width: 20px
+//    .field-setting-label
+//      float: left
+//      font-size: 13px
+//  .sub-cont
+//    margin-left: 10px
+//    .reg-resource > div
+//      padding-top: 10px
+//    input[type="submit"]
+//      margin-top: 10px
+//  form input[type="submit"]
+//    height: 20px
+//    line-height: 15px
+//    font-size: 13px
+//  #resource-info
+//    width: 60%
+//    float: left
+//  #resource-setting
+//    width: 38%
+//    float: right
+//    .field-note
+//      font-size: 13px
+//      margin-top: 3px
+
+#custom-domain-modal
+  .modal-title
+    font-weight: bold
+  .modal-body
+    font-size: 13px
+    &.modal-note
+      padding-bottom: 10px
+
 #invoice-container
   display: flex
   justify-content: center
   font-size: 1rem
 
-  .button-invoice,
+  .button-invoice
     background: -webkit-linear-gradient(#69B3FF, #334DFF)
     background: -o-linear-gradient(#69B3FF, #334DFF)
     background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -5756,38 +5823,325 @@ span.notifications-teams
     padding: 5px 15px
     box-shadow: none
 
-#wrap-cert-order-filter
+
+#cdns
+  .sub-title
+    font-size: 14px
+    font-weight: bold
+    text-decoration: underline
+  .sub-cont
+    padding-top: 5px
+    margin-left: 10px !important
+    form input[type="submit"]
+      height: 20px
+      line-height: 15px
+      font-size: 13px
+  .field-label
+    float: left
+    padding-right: 10px
+    font-size: 14px
+    width: 130px
+  .field-cont
+    float: left
+    input[type="text"],
+    input[type="number"]
+      min-width: 250px
+  #resources
+    margin-top: 5px
+    input[type="submit"]
+      margin-top: 13px
+  .create-resource
+    .sub-cont .reg-resource
+      padding-bottom: 10px
+      .note
+        font-size: 11px
+        font-style: italic
+        color: #888
+
+.resource-detail
+  .nav
+    float: left
+    width: 100%
+    li
+      background-image: none
+      a
+        font-size: 14px
+        &.active
+          font-weight: bold
+          cursor: none
+  .tab-content
+    margin: 20px 10px 10px
+    padding-bottom: 10px
+    border-bottom: 1px solid rgba(0, 0, 0, .1)
+    .sub-title
+      font-size: 14px
+      font-weight: bold
+      text-decoration: underline
+    .sub-cont
+      padding-top: 5px
+      margin-left: 10px !important
+      input[type="submit"]
+        margin-top: 10px
+      form input[type="submit"]
+        height: 20px
+        line-height: 15px
+        font-size: 13px
+    .field-label
+      float: left
+      padding-right: 10px
+      font-size: 14px
+      width: 130px
+    .field-cont
+      float: left
+      input[type="text"],
+      input[type="number"]
+        min-width: 250px
+    #resource-popular-location-list,
+    #resource-custom-domain-list,
+    #popular-files
+      margin-top: 5px
+      padding-bottom: 5px
+    #overview
+      .bandwidth .field-label
+        width: 100px
+      .hits .field-label
+        width: 50px
+      .bandwidth .field-cont,
+      .hits .field-cont
+        font-size: 14px
+    #caches
+      padding-bottom: 8px
+      #popular-files
+        button
+          height: 20px
+          line-height: 15px
+          font-size: 13px
+        table th,
+        table td
+          text-align: left
+          &:first-child
+            padding-left: 10px
+          &:last-child
+            text-align: center
+      #purge-files,
+      #cache-expiry
+        float: left
+        width: 50%
+        form .field-label
+          width: 90px
+      #cache-expiry form .field-label
+        width: 170px
+      .sub-cont div
+        padding-top: 3px
+    #settings
+      #resource-info
+        width: 60%
+        float: left
+        #resource-general .sub-cont .reg-resource
+          padding-bottom: 10px
+          &.resource-name
+            padding-bottom: 0px
+        .note
+          font-size: 11px
+          font-style: italic
+          color: #888
+      #resource-setting
+        width: 38%
+        float: right
+        .field-note
+          font-size: 13px
+          margin-top: 3px
+        #advanced-setting .sub-cont
+          padding-top: 0px
+        #advanced-setting .sub-cont .reg-resource
+          > div
+            float: left
+            padding-top: 10px
+            &:first-child
+              width: 20px
+              padding-right: 10px
+              font-size: 15px
+            &:last-child
+              font-size: 13px
+              max-width: 310px
+
+
+#wrap_cert_order_filter,
+#wrap_order_filter
   margin: 0.8em 0 0.5em
   width: 84%
   background: #EEE
   border: 1px solid #CCF
   float: right
-  .wrap-filter-items
+  .wrap_filter_items
     margin: 15px 10px 3px
-    .filter-items-col
+    .filter_items_col
       float: left
       width: 33.33%
-      .filter-item
+      .filter_item
         margin: 0 0 .5em
-        .filter-evt
+        .filter_evt
           float: left
-        .filter-label
+        .filter_label
           padding-top: 1px
           padding-left: 10px
           float: left
-        .filter-cont
+        .filter_cont
           margin-top: 3px
           select
             width: 130px
-          .filter-cont-item
+            &.slt-small
+              width: 90px
+              margin-right: 5px
+            &.slt-large
+              width: 180px
+          .filter_cont_item
             float: left
-            .filter-cont-item-evt,
-            .filter-cont-item-label
+            input[type="number"]
+              width: 45px
+              &.small_input
+                width: 40px
+                height: 9px
+                margin-left: 2px
+                margin-right: 2px
+            .filter_cont_item_evt,
+            .filter_cont_item_label
               float: left
-            .filter-cont-item-evt
-              padding-right: 5px
-            .filter-cont-item-label
+            .filter_cont_item_evt
+              padding-right: 3px
+            .filter_cont_item_label
               padding-top: 2px
-              padding-right: 8px
+              padding-right: 5px
   button
     margin: 3px 0 10px 10px
+.link-contact-update,
+.link-update-cancel
+  float: left
+  font-size: 1.4rem
+  font-weight: 700
+  margin: 1.5rem 0 1rem -31rem
+
+.edit_certificate_content
+  .select2-container
+    margin-bottom: 1rem !important
+  .select2-selection__choice
+    font-size: 1.2rem
+
+/* Optional/dynamic contacts is turned on: custom styles */
+
+#btn_cancel_saved_contact,
+#btn_cancel_role_contact,
+  margin-left: 18rem !important
+
+#btn_edit_saved_contact,
+#btn_create_role_contact,
+#btn_update_role_contact
+  margin-left: 1rem !important
+
+.button_medium_blue
+  font-size: 1.4rem
+  margin-left: 21rem !important
+  text-align: center
+  padding: 5px
+  width: 25%
+
+#btn_create_new_contact
+  background: linear-gradient(#69b3ff, #334dff)
+  border-radius: 3px
+  border: 2px solid #334DFF
+  color: #FFFFFF
+  cursor: pointer
+  display: block
+  font-size: 1.5rem
+  margin: 1rem 0 -2rem 51rem
+  text-align: center
+  padding: 5px
+  width: 20%
+
+#zero-contacts-box
+  color: #A9A9A9
+  margin: auto
+  width: 45%
+  div
+    border: dashed 1px #91b145
+    border-radius: 5px
+    margin-bottom: 1.5rem
+    h3
+      margin: 1rem
+  #lnk_create_new_contact
+    font-size: 1.3rem
+  small
+    margin-left: 3.5rem
+
+#opt_contacts_container
+  h3
+    margin: 2.5rem 0
+    text-align: center
+  .sub_container
+    width: 100%
+  #selected-contacts,
+  #available-contacts
+    margin-left: 2rem
+    table-layout: fixed
+    width: 90%
+    white-space: nowrap
+    font-size: 1.1rem
+    .role-checkbox
+      width: 16%
+      text-align: center
+      input
+        margin: 1rem 2rem 1rem 3rem
+  #edit_saved_contact
+    .edit_saved_contact_errors
+      font-size: 1.5rem
+      padding: 0.5rem
+      background-color: red
+      color: white
+    label
+      font-weight: 600
+    margin-left: -4.5rem !important
+    width: 120% !important
+    border: solid 1px #69AFFD
+    @include box-shadow(0 0 1px 1px rgba(255, 255, 255, 0.4) inset)
+    @include border-radius(5px)
+    .button_red
+      font-weight: 600
+      color: #FFFFFF
+      margin-right: -18rem
+      background-color: #FC0D1B
+      margin-left: 10rem
+      border-radius: 3px
+      border: none
+      padding: 6px 11px
+      cursor: pointer
+  #lnk-update-role-contact.btn-decorate,
+  #lnk-update-saved.btn-decorate,
+  .btn-remove-contact,
+  .btn-add-contact
+    padding: 1px 3px
+    border-radius: 2px
+    color: white
+    letter-spacing: 1px
+  #lnk-update-role-contact.btn-decorate,
+  #lnk-update-saved.btn-decorate
+    border: 1px solid grey
+    background-color: grey
+  .btn-remove-contact
+    border: 1px solid #F51C29
+    background-color: #F51C29
+  .btn-add-contact
+    border: 1px solid #6b9029
+    background-color: #6b9029
+
+.cc-contacts-index
+  background-color: #000000
+  width: 5%
+  font-weight: 500
+  font-size: 0.7rem
+  color: 	#FFFFFF
+  border: solid 2px #000000
+  -webkit-border-radius: 16px
+  -moz-border-radius: 16px
+  border-radius: 16px
+  padding: 0 1px
+  text-align: center !important

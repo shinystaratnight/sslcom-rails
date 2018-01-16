@@ -61,6 +61,7 @@ gem 'airbrake'
 gem 'rails-observers'
 gem 'actionpack-action_caching', '~> 1.1', '>= 1.1.1'
 gem 'sass-rails'
+gem 'bootstrap'
 gem 'compass-rails'
 gem 'select2-rails'
 gem 'stripe'
@@ -82,6 +83,7 @@ group :development do
   gem 'better_errors'
   gem 'binding_of_caller'
   gem 'annotate'
+  gem 'byebug'
 end
 
 group :development, :test do
@@ -116,3 +118,5 @@ end
 group :assets do
   gem 'uglifier'
 end
+
+gem 'httparty'
