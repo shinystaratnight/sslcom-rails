@@ -67,7 +67,6 @@ case server
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
-    set :application, "sws"
     set :user, "app-sws"
     set :branch, "master"
     set :domain, 'sws-a1.sslpki.local'
@@ -229,6 +228,7 @@ namespace :deploy do
 
 end
 after 'deploy:update', 'deploy:symlink_shared'
+after 'deploy:publishing', 'deploy:restart'
 
 #auto install rvm
 #before 'deploy', 'rvm:install_rvm'
