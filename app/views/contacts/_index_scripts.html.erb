@@ -151,8 +151,26 @@ jQuery(function($) {
       showElement($(".saved-contact-roles"));
       showOrgFields();
       showIndivFields();
-    }  
+      addressNotRequired();
+    }
+    function addressRequired() {
+      $("label[for='address1']").text('*Address 1:');
+      $("label[for='city']").text('*City:');
+      $("label[for='state']").text('*State:');
+      $("label[for='postal_code']").text('*Postal Code:');
+      $("label[for='country']").text('*Country:');
+      
+    }
+    function addressNotRequired() {
+      $("label[for='address1']").text('Address 1:');
+      $("label[for='city']").text('City:');
+      $("label[for='state']").text('State:');
+      $("label[for='postal_code']").text('Postal Code:');
+      $("label[for='country']").text('Country:');
+      
+    }
     function showRegistrantFields() {
+      addressRequired();
       hideSavedContactFields();
       if ($('#contact_registrant_type').val()==<%= Registrant::registrant_types[:individual] %>) {
         hideOrgFields();
