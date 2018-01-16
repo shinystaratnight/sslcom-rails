@@ -9,7 +9,7 @@
     
     %div{id: "selected-contacts", class: "sub_container"}
       =render partial: 'contacts/index_selected', |
-      locals: {custom_contacts: select_contacts}
+      locals: {custom_contacts: select_contacts, saved_contacts: saved_contacts}
     
     %div{id: "available-contacts", class: "sub_container"}
       =render partial: 'contacts/saved_contacts', |

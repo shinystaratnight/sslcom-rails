@@ -98,7 +98,8 @@ class CertificateOrder < ActiveRecord::Base
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
-               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil}
+               decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
+               ref: nil, external_order_number: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -110,7 +111,7 @@ class CertificateOrder < ActiveRecord::Base
               joins{certificate_contents.signed_certificates.outer}.joins{ssl_account.outer}.
               joins{ssl_account.users.outer} unless (
                   !filters.map{|k,v|k.to_s unless v.blank?}.compact.empty? and
-                  (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr)).empty?)
+                  (filters.map{|k,v|k.to_s unless v.blank?}.compact - %w(is_test order_by_csr ref)).empty?)
     unless term.blank?
       result = case term
                  when /co-\w/i, /\d{7,8}/
@@ -128,24 +129,12 @@ class CertificateOrder < ActiveRecord::Base
                          (users.email =~ "%#{term}%") |
                          (certificate_contents.domains =~ "%#{term}%") |
                          (certificate_contents.csrs.common_name =~ "%#{term}%") |
-                         (certificate_contents.csrs.organization =~ "%#{term}%") |
-                         (certificate_contents.csrs.organization_unit =~ "%#{term}%") |
                          (certificate_contents.csrs.email =~ "%#{term}%") |
                          (certificate_contents.csrs.sig_alg =~ "%#{term}%") |
-                         (certificate_contents.csrs.state =~ "%#{term}%") |
                          (certificate_contents.csrs.subject_alternative_names =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
                          (certificate_contents.csr.signed_certificates.common_name =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.organization =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.organization_unit =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.address1 =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.address2 =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.state =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.postal_code =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.signature =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.strength =~ "%#{term}%") |
-                         (certificate_contents.csr.signed_certificates.fingerprint =~ "%#{term}%")}
+                         (certificate_contents.csr.signed_certificates.subject_alternative_names =~ "%#{term}%")}
                end
     end
     %w(is_test).each do |field|
@@ -173,11 +162,15 @@ class CertificateOrder < ActiveRecord::Base
       query=filters[field.to_sym]
       result = result.filter_by(query) if query
     end
+    %w(ref).each do |field|
+      query=filters[field.to_sym]
+      result = result.where(field.to_sym => query.split(',')) if query
+    end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
       result = result.where{
-        (certificate_contents.csr.signed_certificates.send(field.to_sym) >> [query.split(',')]) |
-            (certificate_contents.csrs.send(field.to_sym) >> [query.split(',')])} if query
+        (certificate_contents.csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
+            (certificate_contents.csrs.send(field.to_sym) >> query.split(','))} if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
       query=filters[field.to_sym]

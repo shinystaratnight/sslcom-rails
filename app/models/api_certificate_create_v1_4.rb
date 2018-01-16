@@ -445,7 +445,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def retrieve_registrant
     id = self.saved_registrant
     if id
-      found = Registrant.find_by(id: id.to_i)
+      found = self.api_requestable.saved_registrants.find_by(id: id.to_i)
       if found
         self.organization_name = found.company_name
         self.organization_unit_name = found.department
@@ -468,7 +468,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if attributes && attributes.is_a?(Hash)
       id = attributes[:saved_contact]
       if id
-        found = Contact.find_by(id: id.to_i)
+        found = self.api_requestable.all_saved_contacts.find_by(id: id.to_i)
         if found
           keepers = permit_contact_fields + extra_attributes - ['all']
           new_attrs = found.attributes.keep_if {|k,_| keepers.include? k}

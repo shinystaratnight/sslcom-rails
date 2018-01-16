@@ -1,6 +1,7 @@
 class Contact < ActiveRecord::Base
   include V2MigrationProgressAddon
-  
+  # include RefParam
+
   belongs_to :contactable, polymorphic: true
   has_many   :order_contacts, foreign_key: :parent_id, class_name: 'Contact'
   
