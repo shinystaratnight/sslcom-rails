@@ -632,18 +632,24 @@ class CertificateContent < ActiveRecord::Base
           end
         end
     else # Optional contacts DISABLED
-      keep = []
-      all = certificate_contacts(true).where(type: 'CertificateContact')
-      self.update(billing_checkbox: 0, validation_checkbox: 0, technical_checkbox: 0)
+      keep    = []
+      updated = 0
+      all     = certificate_contacts(true).where(type: 'CertificateContact')
       CertificateContent::CONTACT_ROLES.each do |role|
         found = certificate_contacts(true).where(type: 'CertificateContact')
           .where("roles LIKE ?", "%#{role}%")
         if found.any?
           update = found.first
           found = all - [update]
-          update.update(roles: [role]) if update.roles.count > 1
+          if update.roles.count > 1
+            update.update(roles: [role])
+            updated += 1
+          end
           keep << update
         end
+      end
+      if updated > 0
+        self.update(billing_checkbox: 0, validation_checkbox: 0, technical_checkbox: 0)
       end
       all.where.not(id: keep.map(&:id)).destroy_all
     end

@@ -1,10 +1,9 @@
 -contacts_exist = (@saved_contacts && @saved_contacts.any?) || (saved_contacts && saved_contacts.any?)
-
+-col = @saved_contacts.blank? ? saved_contacts : @saved_contacts
 -if Contact.optional_contacts?
   .clearfix
-    -if contacts_exist && saved_contacts
+    -if contacts_exist && col.any?
       %h3 Available Contacts
-      -saved_contacts = render_saved_contacts(@saved_contacts || saved_contacts)
       -already_added = child_contacts.map(&:parent_id)
       %table
         %thead
@@ -16,7 +15,7 @@
             %td{class: 'role-checkbox'} Validation
             %td
         %tbody
-          -saved_contacts.each do |c|
+          -render_saved_contacts(col).each do |c|
             -unless already_added.include? c[1]
               -roles = c.last['roles']
               %tr{id: c[1], data: c.last}
@@ -27,7 +26,7 @@
                 %td{class: 'role-checkbox'}=check_box_tag :validation, 'yes', (roles && roles.include?('validation'))
                 %td=link_to 'Edit', '#', id: 'lnk-update-saved', class: 'btn-decorate'
                 %td=link_to 'Add', '#', class: 'btn-add-contact'
-        
+
 -else 
   -if contacts_exist
     .clearfix

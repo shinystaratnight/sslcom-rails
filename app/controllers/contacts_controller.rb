@@ -7,7 +7,7 @@ class ContactsController < ApplicationController
       (current_user.is_system_admins? ? CertificateContent :
           current_user.ssl_account.certificate_contents).find params[:certificate_content_id]
     @certificate_order = @certificate_content.certificate_order
-    @saved_contacts = current_user.ssl_account.saved_contacts
+    @saved_contacts = @certificate_order.ssl_account.saved_contacts
     respond_to do |format|
       format.html 
       format.xml  { render :xml => @contacts }
