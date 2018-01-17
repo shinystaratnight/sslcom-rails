@@ -5,6 +5,7 @@
   =form_tag :search_orders, :id=>'search_form', :method=>:get do
     order #
     =text_field_tag :search, @search
+    =hidden_field_tag :per_page, @per_page
     =button_tag 'Search', :id=>'btn_order_search'
     =button_tag 'Filters', :type=>'button', :id=>'btn_order_filter'
 
@@ -106,10 +107,14 @@
 =render :partial=>'/certificate_orders/quick_links'
 #certificate_orders
   %table(cellspacing="0")
-    -if will_paginate @certificate_orders
+    -if will_paginate @orders
       %tfoot
         %tr
-          %td(colspan='6')=will_paginate @orders
+          %td.wrap_number_rows
+            =select_tag :number_rows,
+            options_for_select([[10, 10], [20, 20], [50, 50], [100, 100], [200, 200]], @per_page),
+            :class=>'per_page'
+          %td(colspan='5')=will_paginate @orders
     %caption
       =title
       =will_paginate @orders

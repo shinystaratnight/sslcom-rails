@@ -26,6 +26,9 @@ class User < ActiveRecord::Base
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
+
+  preference  :cer_order_row_count, :string, :default=>"10"
+  preference  :order_row_count, :string, :default=>"10"
   
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,

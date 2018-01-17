@@ -42,7 +42,7 @@ class CertificateOrder < ActiveRecord::Base
       :dcv_email_address, :dcv_candidate_addresses
 
   #will_paginate
-  cattr_reader :per_page
+  cattr_accessor :per_page
   @@per_page = 10
 
   #used to temporarily determine lineitem qty
@@ -415,10 +415,6 @@ class CertificateOrder < ActiveRecord::Base
     state :rejected do #only refund a canceled order
       event :unreject, :transitions_to => :paid
     end
-  end
-
-  def self.set_per_page_will_paginate(number_rows=10)
-    @@per_page = number_rows
   end
 
   def certificate
