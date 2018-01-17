@@ -60,6 +60,11 @@ jQuery(function($) {
     $.save_cart(cart);
   };
   $(document).ready(function() {
+    $('#number_rows').change(function() {
+      $('#per_page').val($(this).val());
+      $('#search_form').submit();
+    });
+
     $('#btn_order_filter').click(function() {
       $('#wrap_order_filter').show();
       $('#btn_order_search').prop('disabled', true);
