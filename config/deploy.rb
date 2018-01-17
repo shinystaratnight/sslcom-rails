@@ -44,7 +44,7 @@ case server
     require "rvm/capistrano"
     set :application, 'ssl_com_test'
     set :user, "ubuntu"
-    set :branch, "api-mult-saved-contacts"
+    set :branch, "staging"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the
