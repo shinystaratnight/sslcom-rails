@@ -76,8 +76,8 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert_equal 2, dcv.where(dcv_method: 'HTTP_CSR_HASH').count  # 2 domain names, one provided and one from csr
       assert_equal 0, dcv.where(dcv_method: 'email', email_address: 'admin@ssltestdomain2.com').count # 1 domain is an email
       
-      assert_equal 1, CertificateName.count # 2 domains provided, 1 from csr
-      assert_equal %w{mail.ssltestdomain1.com}.sort, CertificateName.pluck(:name).sort
+      assert_equal 2, CertificateName.count # 2 domains provided, 1 from csr
+      assert_equal %w{mail.ssltestdomain1.com qlikdev.ezops.com}.sort, CertificateName.pluck(:name).sort
       assert_match 'ssl.com', ca_request_1.ca
       assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
       assert_match 'comodo', ca_request_2.ca
@@ -151,8 +151,8 @@ class CertCreateWithCsrTest < ActionDispatch::IntegrationTest
       assert_equal 1, dcv.where.not(certificate_name_id: nil).count # 1 domain provided via domains params, not from csr
       assert_equal 2, dcv.where(dcv_method: 'HTTP_CSR_HASH').count  # 2 domain names, one provided and one from csr
 
-      assert_equal 1, CertificateName.count # 1 domains provided, ignore one from csr
-      assert_equal ['mail.ssltestdomain1.com'], CertificateName.pluck(:name)
+      assert_equal 2, CertificateName.count # 1 domains provided, ignore one from csr
+      assert_equal ['qlikdev.ezops.com', 'mail.ssltestdomain1.com'], CertificateName.pluck(:name)
       assert_match 'ssl.com', ca_request_1.ca
       assert_match 'ApiCertificateCreate_v1_4', ca_request_1.type
       assert_match 'comodo', ca_request_2.ca

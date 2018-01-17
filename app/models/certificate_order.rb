@@ -1050,7 +1050,11 @@ class CertificateOrder < ActiveRecord::Base
 
   def status
     if certificate_content.new?
-      "unused. waiting on certificate signing request (csr) from customer"
+      if certificate.is_code_signing?
+        "waiting on registrant or organization information"
+      else
+        "unused. waiting on certificate signing request (csr)"
+      end
     elsif certificate_content.expired?
       'n/a'
     else

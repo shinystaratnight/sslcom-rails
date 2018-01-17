@@ -3,17 +3,16 @@ class CertificateContact < Contact
   
   before_validation :set_roles
   before_destroy :replace_with_default
+  after_save :set_one_default, if: 'contactable.is_a?SslAccount'
+  after_update :update_child_contacts, if: 'contactable.is_a?SslAccount'
     
   validates :first_name, :last_name, :email, :phone, presence: true
-  validates :city, :state, :postal_code, :country, presence: true, if: 'contactable.is_a?SslAccount'
-  validates :address1, presence: true, if: 'contactable.is_a?(SslAccount) && po_box.blank?'
   validates :email, email: true
   
   attr_accessor :update_parent
   
   easy_roles :roles
   
-  after_update :update_child_contacts, if: 'contactable.is_a?SslAccount'
   
   def <=>(contact)
     [first_name, last_name, email] <=> [contact.first_name, contact.last_name,
@@ -28,6 +27,17 @@ class CertificateContact < Contact
   
   def update_child_contacts
     Delayed::Job.enqueue SyncChildContactsJob.new(self.id)
+  end
+  
+  def set_one_default
+    if saved_default
+      contactable.saved_contacts.where(saved_default: true).where.not(id: id)
+        .update_all(saved_default: false)
+    else
+      unless contactable.saved_contacts.where(saved_default: true).any?
+        self.update(saved_default: true)
+      end
+    end
   end
   
   # If saved/available contact is deleted, then update all child contacts to default contact

@@ -220,6 +220,33 @@
         current_contact_id = $(this).parents('tr').attr('id');
         updateRole($(this).attr('id'), $(this).is(':checked'));
       });
+      
+      // Toggle Contact form roles: if administrative THEN uncheck other roles and vice versa.
+      $('#opt_contacts_container').on('click', '#chk-administrative-role, #chk-billing-role, #chk-technical-role, #chk-validation-role', function() {
+        if ($(this).is(':checked')) {
+          if ( $(this).prop('id') == 'chk-administrative-role' ) {
+            $('#chk-billing-role, #chk-technical-role, #chk-validation-role').prop('checked', false);
+          } else {
+            $('#chk-administrative-role').prop('checked', false);
+          }
+        }
+      });
+      
+      // Cancel button
+      $('#opt_contacts_container').on('click', '#start_over_optional', function(e) {
+        e.preventDefault();
+        $.ajax({
+          url: "<%= start_over_certificate_order_url(@ssl_slug, @certificate_order.ref) %>",
+          type: "POST",
+          beforeSend: function() {
+            return confirm("Are you sure you want to start over with this certificate order?");
+          },
+          success: function(data, status) {
+            window.location.href = "<%= edit_certificate_order_path(@ssl_slug, @certificate_order.ref) %>";
+          }
+        });
+      });
+      
     });
   });
 </script>

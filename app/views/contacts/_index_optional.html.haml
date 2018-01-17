@@ -14,9 +14,12 @@
     %div{id: "available-contacts", class: "sub_container"}
       =render partial: 'contacts/saved_contacts', |
       locals: {saved_contacts: saved_contacts, child_contacts: child_contacts}
+    %div{id: 'role-disclaimer'}
+      %strong *Note: 
+      updating role of "Available Contacts" contact will update roles for other certificates where this contact was also used.
     
   #button_container
     #auto_adjust
       -if @certificate_content.info_provided?
-        =image_tag "cancel_bl.gif", id: "start_over"
-      =image_submit_tag "bl_submit_button.gif"
+        =image_tag "cancel_bl.gif", id: "start_over_optional"
+      =image_submit_tag "next_bl.gif"

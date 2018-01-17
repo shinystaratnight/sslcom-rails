@@ -210,10 +210,10 @@ ActiveRecord::Schema.define(version: 20180113195551) do
   end
 
   create_table "cdns", force: :cascade do |t|
-    t.integer  "ssl_account_id", limit: 4
-    t.string   "api_key",        limit: 255
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "ssl_account_id",  limit: 4
+    t.string  "api_key",        limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "certificate_api_requests", force: :cascade do |t|
