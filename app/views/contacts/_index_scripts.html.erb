@@ -215,6 +215,18 @@ jQuery(function($) {
     $("#btn-cancel-contact").click(function() {
       window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug) %>";
     });
+    
+    // Toggle Contact form roles: if administrative THEN uncheck other roles and vice versa.
+    $('#chk-administrative-role, #chk-billing-role, #chk-technical-role, #chk-validation-role').on('click', function() {
+      if ($(this).is(':checked')) {
+        if ( $(this).prop('id') == 'chk-administrative-role' ) {
+          $('#chk-billing-role, #chk-technical-role, #chk-validation-role').prop('checked', false);
+        } else {
+          $('#chk-administrative-role').prop('checked', false);
+        }
+      }
+    });
+
   });
 });
 </script>

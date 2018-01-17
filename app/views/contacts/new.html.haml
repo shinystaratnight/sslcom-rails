@@ -6,5 +6,7 @@
       #stylized.default_form
         =render 'saved_contact_fields', new_contact: false, filter: false, f: f
       #button_container
-        #next_submit=image_submit_tag "bl_submit_button.gif"
+        #auto_adjust
+          =image_tag "cancel_bl.gif", id: "btn-cancel-contact"
+          =image_submit_tag 'bl_submit_button.gif'
 =render :partial => '/contacts/index_scripts'
