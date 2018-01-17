@@ -36,13 +36,15 @@ caption {
 
 #header #header-logo {
   align-content: left;
-  margin-left: -3.5px;
+  margin-left: -1px;
   width: 82%;
 }
 
 #header #header-logo img {
+  border-left: 1px solid black;
   height: 40px;
   margin-bottom: -2.1rem;
+  margin-left: -3.5px;
 }
 
 #header #header-address {
@@ -146,9 +148,12 @@ caption {
 
 #line-items thead th:first-child {
   width: 70%;
+  text-align: left !important;
 }
+
 #line-items thead th {
   padding-bottom: 1rem;
+  text-align: right;
 }
 
 #line-items .description {
@@ -168,6 +173,12 @@ caption {
 #line-items .quantity,
 #line-items .price {
   font-weight: 600;
+}
+
+#line-items .unit-price,
+#line-items .quantity,
+#line-items .price {
+  text-align: right;
 }
 
 #line-items-total {
