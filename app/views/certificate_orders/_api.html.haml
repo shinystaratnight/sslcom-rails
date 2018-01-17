@@ -174,13 +174,13 @@
           %strong SSL.com CA API Issue Command
         %li
           %textarea.selectAll{style: "width:95%;"}
-            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(cc: co.certificate_content)}' "+SslcomCaApi::APPLY_SSL_URL
+            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d '+"'#{SslcomCaApi.issue_cert_json(cc: co.certificate_content)}' "+Rails.application.secrets.sslcom_ca_host+"/v1/certificate/pkcs10"
       -if co.signed_certificate and co.signed_certificate.is_sslcom_ca?
         %li
           %strong SSL.com CA API Revoke Command
         %li
           %textarea.selectAll{style: "width:95%;"}
-            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.revoke_cert_json(co.signed_certificate, "reason").gsub('"', '\"')+'" \''+SslcomCaApi::REVOKE_SSL_URL+'\''
+            ='curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+SslcomCaApi.revoke_cert_json(co.signed_certificate, "reason").gsub('"', '\"')+'" \''+Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"+'\''
         %li
           %strong SSL.com CA API Retrieve Command
         %li
