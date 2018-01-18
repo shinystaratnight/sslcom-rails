@@ -118,3 +118,9 @@
                           %li=remote_login_link(user)
                         %li=link_to 'edit email address', edit_email_user_url(user)
                         %li=link_to 'change password', edit_password_user_url(user)
+                    .certificate_details_box
+                      %ul
+                        -if ssl_account && permitted_to?(:read, :contacts)
+                          %li
+                            %strong contacts/registrants
+                          %li=link_to 'manage', saved_contacts_contacts_path(ssl_slug: @ssl_slug)

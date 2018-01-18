@@ -228,12 +228,12 @@ class ApplicationController < ActionController::Base
     if user
       ssl = user.ssl_account
       @ssl_slug = if user.is_system_admins?
-        nil
-      else
-        if ssl 
-          ssl.ssl_slug || ssl.acct_number
-        end
-      end
+                    nil
+                  else
+                    if ssl
+                      ssl.ssl_slug || ssl.acct_number
+                    end
+                  end
     end
   end
 
@@ -701,7 +701,7 @@ class ApplicationController < ActionController::Base
     @ssl_account = SslAccount.where('ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]).first
     if current_user.get_all_approved_accounts.include?(@ssl_account)
       current_user.set_default_ssl_account(@ssl_account)
-    end
+    end unless current_user.is_system_admins?
   end
   
   def is_sandbox_or_test?
