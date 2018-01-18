@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   has_many  :tokens, ->{order("authorized_at desc").includes(:client_application)}, :class_name => "OauthToken"
   has_many  :ssl_account_users, dependent: :destroy
   has_many  :ssl_accounts, through: :ssl_account_users
+  has_many  :certificate_orders, through: :ssl_accounts
+  has_many  :validation_histories, through: :certificate_orders
   has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},
             dependent: :destroy, class_name: "SslAccountUser"
   has_many  :approved_ssl_accounts,
@@ -24,6 +26,9 @@ class User < ActiveRecord::Base
   has_many  :discounts, as: :benefactor, dependent: :destroy
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
+
+  preference  :cer_order_row_count, :string, :default=>"10"
+  preference  :order_row_count, :string, :default=>"10"
   
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
   attr_accessible :login, :email, :password, :password_confirmation,

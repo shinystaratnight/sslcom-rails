@@ -5,6 +5,7 @@ jQuery(function($) {
     <%js_roles = CertificateContent::CONTACT_ROLES.dclone%>
     var form_types = ["<%=js_roles.map{|role|role.insert(0,"#certificate_content_")}.join("_form\", \"").html_safe%>_form"];
     var check_boxes = ["<%=(js_roles-%w(administrative)).join("_checkbox\", \"").html_safe%>_checkbox"];
+
     $(':checkbox[id*=checkbox]').click(function(){
       to = $(this).attr('id').length - '_checkbox'.length;
       form = $(this).attr('id').substring(0,to);
@@ -29,19 +30,69 @@ jQuery(function($) {
         $(form_types[i+1]).hide();
     }
     
-    function populate_contact(form_id, label, data) {
+    // Saved Contacts and Registrant Forms:
+    // toggle form fields based on contact_type and registrant_type (organization vs. individual)
+    // populate attribute if saved contact is selected for order contacts.
+    function populateContact(form_id, label, data) {
       $("#" + form_id + " label[for='" + label + "']").siblings('input').val(data);
     }
-    
-    // Saved Contacts and Registrant Forms: 
-    // toggle form fields based on contact_type and registrant_type (organization vs. individual)
-    $('.saved_contacts').change(function() {
-      var form_id = $(this).parents()['1']['id'];
+    function getContactFormId(selected) {
+      return ('#' + selected.parents()['1'].id);
+    }
+    function hideElement(element) {
+      element.addClass('hidden');
+    }
+    function showElement(element) {
+      element.removeClass('hidden');
+    }
+    function setSavedContact(selected) {
+      var contact_id = selected.val(),
+          form_id    = getContactFormId(selected),
+          set_id     = form_id + ' .parent_id',
+          fields_id  = form_id + ' .fields',
+          update_id  = form_id + ' .link-contact-update',
+          cancel_id  = form_id + ' .link-update-cancel';
       
+      $(set_id).val((contact_id.length > 0) ? contact_id : '');
+      if (contact_id.length > 0) {
+        hideElement($(fields_id));
+        showElement($(update_id));
+        hideElement($(cancel_id));
+      } else {
+        showElement($(fields_id));
+        hideElement($(update_id));
+        showElement($(cancel_id));
+      }
+    }
+    
+    $('.link-contact-update, .link-update-cancel').click(function(e) {
+      e.preventDefault();
+      var form_id = getContactFormId($(this)),
+          fields_id = form_id + ' .fields',
+          update_id = form_id + ' .link-contact-update',
+          cancel_id = form_id + ' .link-update-cancel',
+          edit_id   = form_id + ' .update_parent';
+      
+      if ($(this).hasClass('link-contact-update')) {
+        showElement($(fields_id));
+        hideElement($(update_id));
+        showElement($(cancel_id));
+        $(edit_id).val(true);
+      } else {
+        hideElement($(fields_id));
+        hideElement($(cancel_id));
+        showElement($(update_id));
+        $(edit_id).val(null);
+      }
+    });
+    
+    function copyContactFields(selected) {
+      var form_id = selected.parents()['1']['id'];
+      setSavedContact(selected);
       var list = [
         ['title', 'title'],
-        ['company', 'company_name'],
-        ['department', 'address1'],
+        ['company_name', 'company_name'],
+        ['department', 'department'],
         ['po_box', 'po_box'],
         ['address1', 'address1'],
         ['address2', 'address2'],
@@ -59,61 +110,127 @@ jQuery(function($) {
         ['ext', 'ext']
       ];
       list.forEach(function(el) {
-        populate_contact(
+        populateContact(
           form_id, el[0], $('#' + form_id + ' #saved_contacts option:selected').data(el[1])
         );
       });
-    });
-    
-    function hide_org_fields() {
-      $("label[for='company_name']").parent().addClass('hidden');
-      $("label[for='department']").parent().addClass('hidden');
+    }  
+    function hideOrgFields() {
+      hideElement($("label[for='company_name']").parent());
+      hideElement($("label[for='department']").parent());
     }
-    function show_org_fields() {
-      $("label[for='department']").parent().removeClass('hidden');
-      $("label[for='company_name']").parent().removeClass('hidden');
+    function showOrgFields() {
+      showElement($("label[for='department']").parent());
+      showElement($("label[for='company_name']").parent());
+      
     }
-    function hide_indiv_fields() {
-      $("label[for='first_name']").parent().addClass('hidden');
-      $("label[for='last_name']").parent().addClass('hidden');
+    function hideIndivFields() {
+      hideElement($("label[for='first_name']").parent());
+      hideElement($("label[for='last_name']").parent());
+      $("label[for='phone']").text('*Phone:');
     }
-    function show_indiv_fields() {
+    function showIndivFields() {
       $("label[for='first_name']").parent().removeClass('hidden');
       $("label[for='last_name']").parent().removeClass('hidden');
+      $("label[for='phone']").text('Phone:');
     }
-    function show_registrant_type() {
+    function showRegistrantType() {
       $('#contact_registrant_type').parent().removeClass('hidden');
     }
-    function show_registrant_fields() {
+    function hideSavedContactFields() {
+      hideElement($("label[for='administrative_role']").parent());
+      hideElement($("label[for='billing_role']").parent());
+      hideElement($("label[for='technical_role']").parent());
+      hideElement($("label[for='validation_role']").parent());
+      hideElement($("label[for='default']").parent());
+      hideElement($(".saved-contact-roles"));
+    }
+    function showSavedContactFields() {
+      showElement($("label[for='administrative_role']").parent());
+      showElement($("label[for='billing_role']").parent());
+      showElement($("label[for='technical_role']").parent());
+      showElement($("label[for='validation_role']").parent());
+      showElement($("label[for='default']").parent());
+      showElement($(".saved-contact-roles"));
+      showOrgFields();
+      showIndivFields();
+      addressNotRequired();
+      $("label[for='phone']").text('*Phone:');
+    }
+    function addressRequired() {
+      $("label[for='address1']").text('*Address 1:');
+      $("label[for='city']").text('*City:');
+      $("label[for='state']").text('*State:');
+      $("label[for='postal_code']").text('*Postal Code:');
+      $("label[for='country']").text('*Country:');
+      $("label[for='company_name']").text('*Company Name:');
+    }
+    function addressNotRequired() {
+      $("label[for='address1']").text('Address 1:');
+      $("label[for='city']").text('City:');
+      $("label[for='state']").text('State:');
+      $("label[for='postal_code']").text('Postal Code:');
+      $("label[for='country']").text('Country:');
+      $("label[for='company_name']").text('Company Name:');
+    }
+    function showRegistrantFields() {
+      addressRequired();
+      hideSavedContactFields();
       if ($('#contact_registrant_type').val()==<%= Registrant::registrant_types[:individual] %>) {
-        hide_org_fields();
-        show_indiv_fields();
+        hideOrgFields();
+        showIndivFields();
       } else {
-        show_org_fields();
-        hide_indiv_fields();
+        showOrgFields();
+        hideIndivFields();
       }
     }
     
+    $('.saved_contacts').change(function() {
+      copyContactFields($(this));
+    });
+    
+    $('.saved_contacts').each(function(el) {
+      var selected_id = '#'+ $(this).parents()['1']['id'] + ' .saved_contacts' + ' option:selected';
+      if ($(selected_id).text().length > 0) {
+        copyContactFields($(this));  
+      }
+    });
+    
     if ( ($('#edit_saved_contact').length || $('#new_saved_contact').length)
       && $('#contact_type').val()=='Registrant') {
-      show_registrant_type();
-      show_registrant_fields();
+      showRegistrantType();
+      showRegistrantFields();
     }
     
     $('#new_saved_contact #contact_type, #edit_saved_contact #contact_type').change(function() {
       if ($(this).val()=='Registrant') {
         $('#contact_registrant_type').parent().removeClass('hidden');
-        show_registrant_fields();
+        showRegistrantFields();
       } else {
-        $('#contact_registrant_type').parent().addClass('hidden');
-        show_org_fields();
-        show_indiv_fields();
+        hideElement($('#contact_registrant_type').parent());
+        showSavedContactFields();
       }
     });
     
     $('#contact_registrant_type').change(function() {
-      show_registrant_fields();
+      showRegistrantFields();
     });
+    
+    $("#btn-cancel-contact").click(function() {
+      window.location.href = "<%= saved_contacts_contacts_url(ssl_slug: @ssl_slug) %>";
+    });
+    
+    // Toggle Contact form roles: if administrative THEN uncheck other roles and vice versa.
+    $('#chk-administrative-role, #chk-billing-role, #chk-technical-role, #chk-validation-role').on('click', function() {
+      if ($(this).is(':checked')) {
+        if ( $(this).prop('id') == 'chk-administrative-role' ) {
+          $('#chk-billing-role, #chk-technical-role, #chk-validation-role').prop('checked', false);
+        } else {
+          $('#chk-administrative-role').prop('checked', false);
+        }
+      }
+    });
+
   });
 });
 </script>

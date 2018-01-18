@@ -31,7 +31,127 @@ class ReprocessWithSavedContactsTest < ActionDispatch::IntegrationTest
         .merge(api_get_domain_for_csr)
         .merge(api_get_server_software)
     end
+    
+    # provide a list of saved contacts.
+    # SHOULD  Create 4 certificate contacts for each role "administrative", "billing", "technical"
+    #         and "validation" that duplicates attributes from 4 saved contacts 
+    #         with parent_id populated.
+    if Contact.optional_contacts?
+      it 'status 200: saved_contacts param' do
+        ac = @team.saved_contacts.create(api_create_contact
+          .merge(first_name: 'Administrative', roles: ['administrative']))
+        vc = @team.saved_contacts.create(api_create_contact
+          .merge(first_name: 'Validation', roles: ['validation']))
+        tc = @team.saved_contacts.create(api_create_contact
+          .merge(first_name: 'Technical', roles: ['technical']))
+        bc = @team.saved_contacts.create(api_create_contact
+          .merge(first_name: 'Billing', roles: ['billing']))
+        invalid = @team.saved_contacts.new(api_create_contact
+          .merge(first_name: nil, last_name: 'admin', roles: ['administrative']))
+        invalid.save(validate: false)
+        
+        assert_equal 5, @team.saved_contacts.count
+        assert_equal 10, Contact.count
+        assert_equal 9, CertificateContact.count
+        assert_equal 1, Registrant.count
 
+        put api_certificate_update_v1_4_path(@ref, @rekey_req # reprocess
+          .merge(
+            contacts: { saved_contacts: @team.saved_contacts.map(&:id)[0..3] }
+          )
+        )
+        items = JSON.parse(body)
+        
+        # response
+        assert       match_response_schema('cert_create') # json schema
+        assert       response.success?
+        assert_equal 200, status
+        assert_equal 10, items.count
+        assert_equal @amount_str, items['order_amount']
+        assert_match 'validating, please wait', items['order_status']
+        assert_nil   items['validations']
+        refute_nil   items['ref']
+        refute_nil   items['registrant']
+        refute_nil   items['order_amount']
+        refute_nil   items['certificate_url']
+        refute_nil   items['receipt_url']
+        refute_nil   items['smart_seal_url']
+        refute_nil   items['validation_url']
+        
+        # contacts
+        assert_equal 15, Contact.count
+        # 1 saved contact, 2 registrants, 4 for certificate create, 4 additional for reprocess
+        assert_equal 2, Registrant.count
+        assert_equal 5, CertificateContact.where(contactable_type: 'SslAccount').count
+        assert_equal 8, CertificateContact.where(contactable_type: 'CertificateContent').count
+        assert_equal 4, CertificateContact.where(contactable_type: 'CertificateContent').where.not(parent_id: nil).count
+        assert_equal 5, @team.saved_contacts.count
+        # each of 4 saved contacts has been duplicated for certificate content contacts
+        [ac, vc, tc, bc].each do |sc|
+          assert_equal 1, CertificateContact.where(
+            contactable_type: 'CertificateContent',
+            parent_id:        sc.id,
+            first_name:       sc.first_name
+          ).count
+        end
+
+        # Invalid saved contact ids (do not exist): 
+        #   e.g.: contacts {saved_contacts: [invalid_id_1, invalid_id_2]}
+        # SHOULD  return error, create zero certificate contacts
+        # ========================================================================
+        error = {
+          "contacts"=> [[
+            {"saved_contacts"=>"Contacts with ids 1000, 2000, 3000 do not exist."}
+          ]]
+        }
+        issue_certificate(Csr.last.id)
+        put api_certificate_update_v1_4_path(@ref, @rekey_req # reprocess
+          .merge(contacts: { saved_contacts: [1000, 2000, 3000] })
+        )
+        # response
+        items = JSON.parse(body)
+        assert       response.success?
+        assert_equal 200, status
+        assert_equal 1, items.count
+        assert_equal 1, items['errors']['contacts'].first.count
+        assert_equal error, items['errors']
+        assert_equal 1, InvalidApiCertificateRequest.count
+        
+        # contacts
+        assert_equal 15, Contact.count
+        # New contacts have not been created
+        assert_equal 2, Registrant.count
+        assert_equal 5, CertificateContact.where(contactable_type: 'SslAccount').count
+        assert_equal 8, CertificateContact.where(contactable_type: 'CertificateContent').count
+        assert_equal 4, CertificateContact.where(contactable_type: 'CertificateContent').where.not(parent_id: nil).count
+        assert_equal 5, @team.saved_contacts.count
+        
+        # Invalid saved contact: (saved contact passed is invalid)
+        #   e.g.: contacts {saved_contacts: [contact_id]}
+        # SHOULD  return error, create zero certificate contacts
+        # ========================================================================
+        error = {
+          "contacts"=> [
+            {"saved_contact_#{invalid.id}" => "Failed to create contact: First name can't be blank."}
+          ]
+        }
+        refute invalid.valid?
+        
+        issue_certificate(Csr.last.id)
+        put api_certificate_update_v1_4_path(@ref, @rekey_req # reprocess
+          .merge(contacts: {saved_contacts: [invalid.id]})
+        )
+        # response
+        items = JSON.parse(body)
+        assert       response.success?
+        assert_equal 200, status
+        assert_equal 1, items.count
+        assert_equal 1, items['errors']['contacts'].first.count
+        assert_equal error, items['errors']
+        assert_equal 1, InvalidApiCertificateRequest.count
+        
+      end
+    end
     # provide 1 saved contact for 'all' contacts on reprocess/rekey.
     # SHOULD  create a contact for each role "administrative", "billing", "technical"
     #         and "validation" that duplicates attributes from saved contact 

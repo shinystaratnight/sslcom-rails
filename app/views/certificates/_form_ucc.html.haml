@@ -94,11 +94,11 @@
         -if Settings.require_server_software_w_csr_submit
           .clearfix
             %label{:for=>"certificate_order_certificate_contents_attributes_0_server_software_id"}
-              *Server Software:
+              Server Software:
               %span.label_desc for informational purposes only
             -ss=ServerSoftware.all
             -other=[ss.delete(ServerSoftware.find(1))].map{|s|[s.title,s.id]}
-            =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:prompt=>'Select Software',:no_label=>true}, {})
+            =select_field_for(cert_form, :server_software_id.to_s, other+ss.sort{|a,b|a.title<=>b.title}.collect{|s|[s.title,s.id]},{:no_label=>true}, {})
   -if @certificate.is_ucc?
     .clearfix
       %label{:for=>"certificate_order_certificate_contents_attributes_0_additional_domains"}

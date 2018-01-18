@@ -86,6 +86,7 @@ class SslcomCaApi
     dn=["CN=#{options[:cn]}"]
     dn << "O=#{options[:o]}" unless options[:o].blank?
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
+    dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
     dn << "C=#{options[:country]}" unless options[:country].blank?
     dn << "L=#{options[:city]}" unless options[:city].blank?
     dn << "ST=#{options[:state]}" unless options[:state].blank?
@@ -161,7 +162,7 @@ class SslcomCaApi
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
       host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"
-      req, res = call_ca(host, options, revoke_cert_json(signed_certificate, reason))
+      req, res = call_ca(host, options, revoke_cert_json(signed_certificate, SslcomCaRevocationRequest::REASONS[0]))
       uri = URI.parse(host)
       api_log_entry=signed_certificate.sslcom_ca_revocation_requests.create(request_url: host,
                                               parameters: req.body, method: "post", response: res.message, ca: "sslcom")

@@ -1,0 +1,78 @@
+-title = "CDN Management"
+-content_for :title, title
+=stylesheet_link_tag "bootstrap_style", :media => 'all'
+-#-is_system_admin = @results[:is_admin]
+-api_key = @results[:api_key]
+-resources = @results[:resources]
+#cdns
+  %hr
+  -unless api_key
+    %div.activate-cdn
+      =form_tag :register_account_cdns, :method=>:post do
+        %div.active-cdn
+          =submit_tag 'Activate CDN'
+    %hr
+  -if api_key
+    -#-if is_system_admin
+    -#  %div.manage-api-key
+    -#    .sub-cont
+    -#      =form_tag :register_api_key_cdns, :method=>:post do
+    -#        %div.reg-api-key.clearfix
+    -#          .field-label API Key:
+    -#          .field-cont
+    -#            =text_field_tag :api_key, api_key
+    -#            =submit_tag 'Update'
+      %hr
+    %div
+      .sub-title Resources
+      .sub-cont
+        =form_tag :update_resources_cdns, :method=>:post do
+          =hidden_field_tag :api_key, api_key
+          #resources
+            %table(cellspacing="0")
+              %tr.heading_row
+                %th Alias
+                %th Origin
+                %th Hostname
+                %th Created
+                %th Delete?
+              -if resources && resources.length > 0
+                -resources.each do |resource|
+                  %tr
+                    %td
+                      =link_to resource['alias'], resource_cdn_cdn_path(@ssl_slug, resource['id'])
+                    %td
+                      =resource['origin']
+                    %td
+                      =resource['hostname']
+                    %td
+                      =DateTime.parse(resource['created_at']).strftime("%d/%m/%Y")
+                    %td
+                      =check_box_tag "deleted_resources[]", resource['id']
+              -else
+                %tr
+                  %td(colspan="6")
+                    There is no resources
+            -if resources && resources.length > 0
+              =submit_tag 'Save', :id=>'btn_update_resource'
+      %hr
+      %div.create-resource
+        .sub-title Create Resource
+        .sub-cont
+          =form_tag :id=>'create_resource', :method=>:post do
+            =hidden_field_tag :api_key, api_key
+            %div.reg-resource.clearfix
+              .field-label Resource Origin:
+              .field-cont
+                =text_field_tag :resource_origin, root_url
+                .note
+                  Which website should we mirror on the CDN?
+            %div.reg-resource.clearfix
+              .field-label Resource Name:
+              .field-cont
+                =text_field_tag :resource_name
+                %span .a.cdnify.io
+                .note
+                  Something to identify this resource by (e.g. mysite.a.cdnify.io)
+            =submit_tag 'Create', :id=>'btn_create_resource'
+      %hr

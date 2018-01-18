@@ -1,0 +1,25 @@
+=error_messages_for :certificate_content
+=form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
+  #stylized.default_form  
+    -saved_contacts  = @certificate_content.contacts_for_form_opt(:saved)
+    -child_contacts  = @certificate_content.contacts_for_form_opt(:child)
+    -select_contacts = @certificate_content.contacts_for_form_opt(:selected)
+    
+    %div{id: "contact-form-container"}
+    
+    %div{id: "selected-contacts", class: "sub_container"}
+      =render partial: 'contacts/index_selected', |
+      locals: {custom_contacts: select_contacts, saved_contacts: saved_contacts}
+    
+    %div{id: "available-contacts", class: "sub_container"}
+      =render partial: 'contacts/saved_contacts', |
+      locals: {saved_contacts: saved_contacts, child_contacts: child_contacts}
+    %div{id: 'role-disclaimer'}
+      %strong *Note: 
+      updating role of "Available Contacts" contact will update roles for other certificates where this contact was also used.
+    
+  #button_container
+    #auto_adjust
+      -if @certificate_content.info_provided?
+        =image_tag "cancel_bl.gif", id: "start_over_optional"
+      =image_submit_tag "next_bl.gif"

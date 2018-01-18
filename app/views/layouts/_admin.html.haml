@@ -64,13 +64,16 @@
         %li(id="#{current_page?(site_seals_url) ? 't-intro' : 'manage_site_seals'}")
           =link_to "Smart SeaLs", site_seals_path(slug_params)
         %li(id="#{current_page?(certificate_orders_url) ? 't-intro' : 'manage_certificate_orders'}")
-          =link_to "Orders", is_sandbox? ? filter_by_scope_certificate_orders_path(@ssl_slug, "is_test") : certificate_orders_path(slug_params)
+          =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
         %li(id="#{current_page?(orders_url) ? 't-intro' : 'manage_orders'}")
           =link_to "Transactions", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(slug_params)
         %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
           =link_to "Teams", teams_user_path(current_user)
         %li(id="#{current_page?(users_url) ? 't-intro' : 'manage_certificates'}")
           =link_to "Users", users_path(slug_params)
+        -if is_sandbox?
+          %li(id="#{current_page?(cdns_url) ? 't-intro' : 'manage_cdns'}")
+            =link_to "CDN", cdns_path(slug_params)
     .inner
       =render :partial => "shared/messages"
       =yield

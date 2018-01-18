@@ -46,7 +46,17 @@ class CertificateOrdersController < ApplicationController
   def index
 #    expire_fragment('admin_header_certs_status') if
 #      fragment_exist?('admin_header_certs_status')
-    p = {:page => params[:page]}
+
+    preferred_row_count = current_user.preferred_cer_order_row_count
+    @per_page = params[:per_page] || preferred_row_count
+    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_cer_order_row_count = @per_page
+      current_user.save
+    end
+
+    p = {:page => params[:page], :per_page => @per_page}
     @certificate_orders = find_certificate_orders.paginate(p)
 
     respond_to do |format|

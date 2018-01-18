@@ -248,28 +248,46 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         country: self.country_name || csr_obj.country)
     if cc.csr_submitted?
       cc.provide_info!
-      CertificateContent::CONTACT_ROLES.each do |role|
-        c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
-              CertificateContact.new(retrieve_saved_contact(
-                  options[:contacts][(options[:contacts][role] ? role : :all)],
-                  %w(company_name department)
-              ))
+      if Contact.optional_contacts? && contacts[:saved_contacts]
+        sc = contacts[:saved_contacts]
+        if sc && sc.is_a?(Array) && sc.any?
+          sc.each do |c_id|
+            c = CertificateContact.new(
+              retrieve_saved_contact({saved_contact: c_id}, ['roles']).merge(parent_id: c_id)
+            )
+            if c.valid?
+              cc.certificate_contacts << c
             else
-              attributes = api_requestable.reseller.attributes.select do |attr, value|
-                (CertificateContact.column_names-%w(id created_at)).include?(attr.to_s)
-              end
-              contact = CertificateContact.new
-              contact.assign_attributes(attributes, without_protection: true)
-              contact
+              errors[:contacts] << {
+                "saved_contact_#{c_id}" => "Failed to create contact: #{c.errors.full_messages.join(', ')}."
+              }
             end
-        c.clear_roles
-        c.add_role! role
-        unless c.valid?
-          errors[:contacts] << {role.to_sym => c.errors}
-        else
-          cc.certificate_contacts << c
-          cc.update_attribute(role+"_checkbox", true) unless
-              role==CertificateContent::ADMINISTRATIVE_ROLE
+          end
+        end
+      else
+        CertificateContent::CONTACT_ROLES.each do |role|
+          c = if options[:contacts] && (options[:contacts][role] || options[:contacts][:all])
+                CertificateContact.new(retrieve_saved_contact(
+                    options[:contacts][(options[:contacts][role] ? role : :all)],
+                    %w(company_name department)
+                ))
+              else
+                attributes = api_requestable.reseller.attributes.select do |attr, value|
+                  (CertificateContact.column_names-%w(id created_at)).include?(attr.to_s)
+                end
+                contact = CertificateContact.new
+                contact.assign_attributes(attributes, without_protection: true)
+                contact
+              end
+          c.clear_roles
+          c.add_role! role
+          unless c.valid?
+            errors[:contacts] << {role.to_sym => c.errors}
+          else
+            cc.certificate_contacts << c
+            cc.update_attribute(role+"_checkbox", true) unless
+                role==CertificateContent::ADMINISTRATIVE_ROLE
+          end
         end
       end
       cc.provide_contacts!
@@ -410,27 +428,38 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         return false
       end
       errors[:contacts] = {}
-      CertificateContent::CONTACT_ROLES.each do |role|
-        if (contacts[role] || contacts["all"])
-          c_role = contacts[role] ? role : 'all'
-          attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
-          extra  = (attrs.keys - permit_contact_fields).flatten
-          if attrs[:saved_contact] # failed to find saved contact by id
-            errors[:contacts].last[:role] = c_role
-          elsif !extra.empty?
-            msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(", ")}"}
-            errors[:contacts].last.merge!(msg)
-          elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
-            r = CertificateContact.new(attrs.merge(roles: [role]))
-            r.valid?
-            errors[:contacts].last.merge!(c_role.to_sym => r.errors)
-          elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
-            msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
+      if Contact.optional_contacts? && contacts[:saved_contacts]
+        sc = contacts[:saved_contacts]
+        if sc && sc.is_a?(Array) && sc.any? 
+          found = 0
+          sc.each {|c| found += 1 if api_requestable.all_saved_contacts.find_by(id: c.to_i)}
+          errors[:contacts].push(saved_contacts: "Contacts with ids #{sc.join(', ')} do not exist.") unless found > 0
+        else
+          errors[:contacts].push(saved_contacts: "Zero contacts provided, please pass a list of saved contact ids. E.g.: [1, 5, 6].")
+        end
+      else
+        CertificateContent::CONTACT_ROLES.each do |role|
+          if (contacts[role] || contacts['all'])
+            c_role = contacts[role] ? role : 'all'
+            attrs  = retrieve_saved_contact(contacts[c_role], [c_role])
+            extra  = (attrs.keys - permit_contact_fields).flatten
+            if attrs[:saved_contact] # failed to find saved contact by id
+              errors[:contacts].last[:role] = c_role
+            elsif !extra.empty?
+              msg = {c_role.to_sym => "The following parameters are invalid: #{extra.join(', ')}"}
+              errors[:contacts].last.merge!(msg)
+            elsif !CertificateContact.new(attrs.merge(roles: [role])).valid?
+              r = CertificateContact.new(attrs.merge(roles: [role]))
+              r.valid?
+              errors[:contacts].last.merge!(c_role.to_sym => r.errors)
+            elsif attrs['country'].blank? || Country.find_by_iso1_code(attrs['country'].upcase).blank?
+              msg = {c_role.to_sym => "The 'country' parameter has an invalid value of '#{attrs['country']}'"}
+              errors[:contacts].last.merge!(msg)
+            end
+          else
+            msg = {role.to_sym => "contact information missing"}
             errors[:contacts].last.merge!(msg)
           end
-        else
-          msg = {role.to_sym => "contact information missing"}
-          errors[:contacts].last.merge!(msg)
         end
       end
     else
@@ -445,7 +474,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def retrieve_registrant
     id = self.saved_registrant
     if id
-      found = Registrant.find_by(id: id.to_i)
+      found = self.api_requestable.saved_registrants.find_by(id: id.to_i)
       if found
         self.organization_name = found.company_name
         self.organization_unit_name = found.department
@@ -468,7 +497,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     if attributes && attributes.is_a?(Hash)
       id = attributes[:saved_contact]
       if id
-        found = Contact.find_by(id: id.to_i)
+        found = self.api_requestable.all_saved_contacts.find_by(id: id.to_i)
         if found
           keepers = permit_contact_fields + extra_attributes - ['all']
           new_attrs = found.attributes.keep_if {|k,_| keepers.include? k}

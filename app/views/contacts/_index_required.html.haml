@@ -1,0 +1,17 @@
+=error_messages_for :certificate_content
+=form_for setup_certificate_contacts(@certificate_content), url: certificate_content_path(@ssl_slug, @certificate_content) do |f|
+  #stylized.default_form
+    -i = 0
+    -same_contact = @certificate_content.contacts_for_form.compact.first.roles.count > 1
+    -roles_list = %w(administrative billing technical validation).reverse
+    =f.fields_for :certificate_contacts, @certificate_content.contacts_for_form.compact do |c|
+      -role = same_contact ? roles_list.pop() : c.object.roles.last
+      -i +=1
+      =render :partial=>"/contacts/#{role}_contact", locals: {f: f}
+      %div(id="certificate_content_#{role}_form")
+        =render_contact_fields(c, role)
+  #button_container
+    #auto_adjust
+      -if @certificate_content.info_provided?
+        =image_tag "cancel_bl.gif", id: "start_over"
+      =image_submit_tag "bl_submit_button.gif"

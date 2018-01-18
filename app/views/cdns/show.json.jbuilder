@@ -1,0 +1,1 @@
+json.partial! "cdns/cdn", cdn: @cdn

@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, unless: "request.host=~/^www\.ssl\./ || request.host=~/^sws\.sslpki\./ || request.host=~/^reseller\.ssl\./ || Rails.env.test?"
+  before_filter :set_database, unless: "request.host=~/^www\.ssl\.com/ || request.host=~/^sws\.sslpki\.com/ || request.host=~/^reseller\.ssl\.com/ || Rails.env.test?"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -214,12 +214,12 @@ class ApplicationController < ActionController::Base
     if @search = params[:search]
       (current_user.is_admin? ?
         (CertificateOrder.search_with_csr(params[:search])) :
-        current_user.ssl_account.certificate_orders.
+        current_user.certificate_orders.
           search_with_csr(params[:search])).has_csr
     else
       (current_user.is_admin? ?
         CertificateOrder.find_not_new(:include=>:site_seal) :
-        current_user.ssl_account.certificate_orders.not_new(:include=>:site_seal))
+        current_user.certificate_orders.not_new(:include=>:site_seal))
     end
   end
 

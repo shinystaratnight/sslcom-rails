@@ -272,6 +272,23 @@ SslCom::Application.routes.draw do
       end
     end
 
+    resources :cdns do
+      post :register_account, on: :collection
+      # post :register_api_key, on: :collection
+      post :update_resources, on: :collection
+
+      member do
+        get :resource_cdn
+        post :update_resource
+        post :add_custom_domain
+        post :update_custom_domain
+        post :update_advanced_setting
+        delete :delete_resource
+        delete :purge_cache
+        post :update_cache_expiry
+      end
+    end
+
     get '/orders/filter_by_state/:id' => 'orders#filter_by_state', as: :filter_by_state_orders
     match '/validation_histories/:id/documents/:style.:extension' =>
               'validation_histories#documents', :as => :validation_document, style: /.+/i, via: [:get, :post]

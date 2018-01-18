@@ -1,12 +1,28 @@
 %div(class='fields')
+  -roles = f.object && f.object.roles.is_a?(Array)
+  .saved-contact-fields.saved-contact-roles Roles
   .clearfix
-    %label{for: 'type'}
-      Type:
-    =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
-  .clearfix.hidden
-    %label{for: 'registrant_type'}
-      Registrant Type:
-    =f.select :registrant_type, Registrant::registrant_types
+    %label{for: 'administrative_role'} Administrative
+    =f.check_box :administrative_role, checked: (roles && f.object.roles.include?('administrative')), id: 'chk-administrative-role'
+  .clearfix
+    %label{for: 'billing_role'} Billing
+    =f.check_box :billing_role, checked: (roles && f.object.roles.include?('billing')), id: 'chk-billing-role'
+  .clearfix
+    %label{for: 'technical_role'} Technical
+    =f.check_box :technical_role, checked: (roles && f.object.roles.include?('technical')), id: 'chk-technical-role'
+  .clearfix
+    %label{for: 'validation_role'} Validation
+    =f.check_box :validation_role, checked: (roles && f.object.roles.include?('validation')), id: 'chk-validation-role'
+  .saved-contact-fields Details
+  -unless filter
+    .clearfix
+      %label{for: 'type'}
+        Type:
+      =f.select :type, [['Contact', 'CertificateContact'], ['Registrant', 'Registrant']]
+    .clearfix.hidden
+      %label{for: 'registrant_type'}
+        Registrant Type:
+      =f.select :registrant_type, Registrant::registrant_types
   .clearfix
     %label{for: 'first_name'}
       *First Name:
@@ -17,7 +33,7 @@
     =f.text_field :last_name
   .clearfix
     %label{for: 'company_name'}
-      *Company Name:
+      Company Name:
     =f.text_field :company_name
   .clearfix
     %label{for: 'department'}
@@ -39,13 +55,14 @@
     %label{for: 'fax'}
       Fax:
     =f.text_field :fax
+  .saved-contact-fields Address
   .clearfix
     %label{for: 'po_box'}
       PO Box:
     =f.text_field :po_box
   .clearfix
     %label{for: 'address1'}
-      *Address 1:
+      Address 1:
     =f.text_field :address1
   .clearfix
     %label{for: 'address2'}
@@ -57,20 +74,31 @@
     =f.text_field :address3
   .clearfix
     %label{for: 'city'}
-      *City:
+      City:
       %span.label_desc city, town, or locality
     =f.text_field :city
   .clearfix
     %label{for: 'state'}
-      *State:
+      State:
       %span.label_desc state, province, or county
     =f.text_field :state
   .clearfix
     %label{for: 'postal_code'}
-      *Postal Code:
+      Postal Code:
       %span.label_desc postal code or zip
     =f.text_field :postal_code
   .clearfix
     %label{for: 'country'}
-      *Country:
-    =f.select :country, Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}
+      Country:
+    -country = f.object.country if f.object
+    =f.select :country, options_for_select(Country::PRIORITY+[""], disabled: [""], )+options_for_select(Country.approved.collect {|c| [ c.name, c.iso1_code ] }.sort{|x,y|x[0]<=>y[0]}, required: true, selected: (country || 'US'))
+  -unless new_contact == :new_contact
+    .clearfix
+      %label{for: 'default'}
+        Default
+      =f.check_box :saved_default
+  -if new_contact == :new_contact
+    .clearfix
+      %label{for: 'save_for_later'}
+        Save to Available Contacts:
+      =f.check_box :save_for_later, checked: true

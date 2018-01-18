@@ -7,7 +7,7 @@ class ContactsController < ApplicationController
       (current_user.is_system_admins? ? CertificateContent :
           current_user.ssl_account.certificate_contents).find params[:certificate_content_id]
     @certificate_order = @certificate_content.certificate_order
-    @saved_contacts = current_user.ssl_account.saved_contacts
+    @saved_contacts = @certificate_order.ssl_account.saved_contacts
     respond_to do |format|
       format.html 
       format.xml  { render :xml => @contacts }
@@ -24,7 +24,7 @@ class ContactsController < ApplicationController
 
   def show
     if params[:saved_contact]
-      @contact = Contact.find params[:id]
+      @contact = current_user.ssl_account.all_saved_contacts.find_by(id: params[:id])
     else
       @certificate_content = CertificateContent.find params[:certificate_content_id]
       @certificate_order = @certificate_content.certificate_order
@@ -37,7 +37,7 @@ class ContactsController < ApplicationController
 
   def new
     if params[:saved_contact]
-      @contact = Contact.new
+      @contact = Contact.new  
       respond_to :html
     else  
       @certificate_content = CertificateContent.find params[:certificate_content_id]
@@ -50,7 +50,7 @@ class ContactsController < ApplicationController
   end
 
   def edit
-    @contact = Contact.find(params[:id])
+    @contact = current_user.ssl_account.all_saved_contacts.find_by(id: params[:id])
   end
   
   def create
@@ -72,20 +72,23 @@ class ContactsController < ApplicationController
   end
   
   def update
-    @contact = Contact.find params[:id]
+    @contact = current_user.ssl_account.all_saved_contacts.find_by(id: params[:id])
     new_params = set_registrant_type params
     respond_to do |format|
-      if @contact.update_attributes new_params
+      type = new_params[:type] == 'CertificateContact' ? CertificateContact : Registrant
+      if @contact.becomes(type).update_attributes(new_params)
         flash[:notice] = 'Contact was successfully updated.'
         format.html { redirect_to saved_contacts_contacts_path(@ssl_slug) }
+        format.json { render json: @contact, status: :ok }
       else
         format.html { render :edit }
+        format.json { render json: @contact.errors, status: :unprocessable_entity }
       end
     end
   end
-
+  
   def destroy
-   @contact = Contact.find(params[:id])
+   @contact = current_user.ssl_account.all_saved_contacts.find_by(id: params[:id])
    @contact.destroy
    respond_to do |format|
      flash[:notice] = "Contact was successfully deleted."
