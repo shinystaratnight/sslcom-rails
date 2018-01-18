@@ -28,13 +28,13 @@ default_run_options[:pty] = true
 
 set :application, "ssl_com"
 set :domain, '172.16.1.12' #Rails 4 staging
+set :user, "ubuntu"
+set :branch, "staging"
 
-server = "sandbox2"
+server = "sandbox"
 case server
   when "sandbox"
     require "rvm/capistrano"
-    set :user, "ubuntu"
-    set :branch, "staging"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the
@@ -43,8 +43,6 @@ case server
   when "sandbox2"
     require "rvm/capistrano"
     set :application, 'ssl_com_test'
-    set :user, "ubuntu"
-    set :branch, "staging"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the
@@ -52,8 +50,6 @@ case server
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
   when "staging"
     require "rvm/capistrano"
-    set :user, "ubuntu"
-    set :branch, "staging"
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     # NOTE: for some reason Capistrano requires you to have both the public and
     # the private key in the same folder, the public key should have the
@@ -61,7 +57,6 @@ case server
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "id_rsa")]
   when "production"
     require "rvm/capistrano"
-    set :user, "ubuntu"
     set :branch, "master"
     set :domain, 'ra.sslpki.local'
     set :deploy_to, "/home/ubuntu/sites/#{application}"
