@@ -356,21 +356,27 @@ class SslAccount < ActiveRecord::Base
 
   # years back - how many years back do we want to go on expired certificates
   def expired_certificates(intervals, years_back=1)
+    exp_dates=ReminderTrigger.all.map do |rt|
+      preferred_reminder_notice_triggers(rt)
+    end
+
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
-      unrenewed_signed_certificates.compact.each do |sc|
-        sed = sc.expiration_date
-        unless sed.blank?
-          years_back.times do |i|
-          years = year_in_days * (i+1)
-            adj_int = intervals.map{|i|i+years}
-            adj_int.each_with_index do |ed, i|
-              if i < adj_int.count-1 &&
-                  sed < ed.to_i.days.ago &&
-                  sed >= adj_int[i+1].days.ago
-                results[i] << Struct::Expiring.new(ed,adj_int[i+1],sc) unless
-                    renewed?(sc, intervals.last)
-                break
+      if !exp_dates.join('').blank?
+        unrenewed_signed_certificates.compact.each do |sc|
+          sed = sc.expiration_date
+          unless sed.blank?
+            years_back.times do |i|
+              years = year_in_days * (i+1)
+              adj_int = intervals.map{|i|i+years}
+              adj_int.each_with_index do |ed, i|
+                if i < adj_int.count-1 &&
+                    sed < ed.to_i.days.ago &&
+                    sed >= adj_int[i+1].days.ago
+                  results[i] << Struct::Expiring.new(ed,adj_int[i+1],sc) unless
+                      renewed?(sc, intervals.last)
+                  break
+                end
               end
             end
           end
