@@ -250,14 +250,6 @@ class OrdersController < ApplicationController
   # GET /orders
   # GET /orders.xml
   def index
-    # preferred_row_count = current_user.preferred_order_row_count
-    # @per_page = params[:per_page] || preferred_row_count.or_else("10")
-    #
-    # if @per_page != preferred_row_count
-    #   current_user.preferred_order_row_count = @per_page
-    #   current_user.save
-    # end
-
     @search = params[:search]
     unpaginated =
       if !@search.blank?
@@ -471,7 +463,6 @@ class OrdersController < ApplicationController
   private
 
   def set_row_page
-    byebug
     preferred_row_count = current_user.preferred_order_row_count
     @per_page = params[:per_page] || preferred_row_count.or_else("10")
 
