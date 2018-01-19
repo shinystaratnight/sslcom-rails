@@ -409,13 +409,6 @@ class ProductOrder < ActiveRecord::Base
     end
   end
 
-  def self.find_not_new(options=nil)
-    if options && options.has_key?(:includes)
-      includes=method(:includes).call(options[:includes])
-    end
-    (includes || self).select("distinct certificate_orders.*").where(:workflow_state.matches % 'paid')
-  end
-
   def to_param
     ref
   end
