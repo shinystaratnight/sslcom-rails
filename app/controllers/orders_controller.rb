@@ -9,6 +9,9 @@ class OrdersController < ApplicationController
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
+  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+
+
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
@@ -247,15 +250,14 @@ class OrdersController < ApplicationController
   # GET /orders
   # GET /orders.xml
   def index
-    preferred_row_count = current_user.preferred_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    # preferred_row_count = current_user.preferred_order_row_count
+    # @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    #
+    # if @per_page != preferred_row_count
+    #   current_user.preferred_order_row_count = @per_page
+    #   current_user.save
+    # end
 
-    if @per_page != preferred_row_count
-      current_user.preferred_order_row_count = @per_page
-      current_user.save
-    end
-
-    p = {:page => params[:page], :per_page => @per_page}
     @search = params[:search]
     unpaginated =
       if !@search.blank?
@@ -271,7 +273,8 @@ class OrdersController < ApplicationController
           current_user.ssl_account.orders.not_test
         end
       end.uniq
-    stats(p, unpaginated)
+
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action => :index}
@@ -279,18 +282,17 @@ class OrdersController < ApplicationController
     end
   end
 
-  def stats(p, unpaginated)
+  def stats(unpaginated)
     @negative = unpaginated.where{state >> ['fully_refunded','charged_back', 'canceled']}.sum(:cents)
     @paid_via_deposit = unpaginated.where{billing_profile_id == nil }.sum(:cents)
     @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
     @total_amount=unpaginated.sum(:cents)-@deposits_amount-@negative
     @total_count=unpaginated.count
-    @orders=unpaginated.paginate(p)
+    @orders=unpaginated.paginate(@p)
   end
 
   def filter_by_state
-    p = {:page => params[:page]}
     states = [params[:id]]
     unpaginated =
       if current_user.is_admin?
@@ -299,7 +301,7 @@ class OrdersController < ApplicationController
         current_user.ssl_account.orders.unscoped{
           current_user.ssl_account.orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
       end
-    stats(p, unpaginated)
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -308,9 +310,11 @@ class OrdersController < ApplicationController
   end
 
   def visitor_trackings
+    @search = params[:search]
     p = {:page => params[:page]}
+
     @orders =
-        if @search = params[:search]
+        if !@search.blank?
           Order.search(params[:search]).paginate(p)
         else
           Order.paginate(p)
@@ -465,6 +469,19 @@ class OrdersController < ApplicationController
   end
 
   private
+
+  def set_row_page
+    byebug
+    preferred_row_count = current_user.preferred_order_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+
+    if @per_page != preferred_row_count
+      current_user.preferred_order_row_count = @per_page
+      current_user.save
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
 
   def certificate_order_steps
     certificate_order=CertificateOrder.new(params[:certificate_order])
