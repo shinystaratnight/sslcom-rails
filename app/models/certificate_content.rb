@@ -622,6 +622,7 @@ class CertificateContent < ActiveRecord::Base
   
   def certificate_contact_compatibility
     if Contact.optional_contacts? # optional contacts ENABLED
+      # contacts created from saved contacts
       certificate_contacts(true).where(type: 'CertificateContact')
         .where.not(parent_id: nil).group_by(&:parent_id).each do |c_group|
           group = c_group.second
@@ -631,6 +632,17 @@ class CertificateContent < ActiveRecord::Base
             certificate_contacts(true).where(id: ids).destroy_all
           end
         end
+      # custom contacts, only created for this certificate content
+      # convert 4 identical contacts into one w/role 'administrative'
+      custom_contacts = certificate_contacts(true).where(type: 'CertificateContact', parent_id: nil)
+      custom_contacts.each do |c|
+        list = custom_contacts.where(c.attributes.keep_if {|k,_| Contact::SYNC_FIELDS_REQUIRED.include? k.to_sym})
+        if list.count > 1
+          found = list.first
+          found.update(roles: ['administrative'])
+          list.where.not(id: found.id).destroy_all
+        end
+      end
     else # Optional contacts DISABLED
       keep    = []
       updated = 0

@@ -76,11 +76,11 @@
               =date_field_tag :filter_created_to, nil, :class=>'filter_cont_date', 'data-field'=>'created'
       %div.filter_item.clearfix
         .filter_evt
-          =check_box_tag :filter_discount_amount_chk, true, false, :class=>'filter_chk'
+          =check_box_tag :filter_reference_number_chk, true, false, :class=>'filter_chk'
         .filter_label
-          Discount Amount
+          Reference Number
           .filter_cont.hidden{'data-type'=>'text'}
-            =number_field_tag :filter_discount_amount, nil, :class=>'filter_cont_text', 'data-field'=>'discount_amount'
+            =text_field_tag :filter_reference_number, nil, :class=>'filter_cont_text', 'data-field'=>'reference_number'
       %div.filter_item.clearfix
         .filter_evt
           =check_box_tag :filter_company_name_chk, true, false, :class=>'filter_chk'
@@ -96,7 +96,14 @@
           SSL Slug
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_ssl_slug, nil, :class=>'filter_cont_text', 'data-field'=>'ssl_slug'
-      -if current_user.is_admin?
+      -if current_user.is_system_admins?
+        %div.filter_item.clearfix
+          .filter_evt
+            =check_box_tag :filter_discount_amount_chk, true, false, :class=>'filter_chk'
+          .filter_label
+            Discount Amount
+            .filter_cont.hidden{'data-type'=>'text'}
+              =number_field_tag :filter_discount_amount, nil, :class=>'filter_cont_text', 'data-field'=>'discount_amount'
         %div.filter_item.clearfix
           .filter_evt
             =check_box_tag :filter_is_test_chk, true, false, :class=>'filter_chk', 'data-field'=>'is_test'
