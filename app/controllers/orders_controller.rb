@@ -248,7 +248,7 @@ class OrdersController < ApplicationController
   # GET /orders.xml
   def index
     preferred_row_count = current_user.preferred_order_row_count
-    @per_page = params[:per_page] || preferred_row_count || 10
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
 
     if @per_page != preferred_row_count
       current_user.preferred_order_row_count = @per_page

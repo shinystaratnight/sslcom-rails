@@ -17,18 +17,23 @@
 class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
-  skip_before_filter :verify_authenticity_token, :only => [:parse_csr]
-  before_filter :require_user, :load_certificate_order,
+  skip_before_filter :verify_authenticity_token, only: [:parse_csr]
+  before_filter :require_user,
+                only: [:index, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
+                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
+  before_filter :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
+  before_filter :set_row_page, only: [:index, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+                              :incomplete, :reprocessing]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
-  filter_access_to :update_csr, :require=>[:update]
+  filter_access_to :update_csr, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
                    :developers, :require=>[:update, :delete]
-  filter_access_to :renew, :parse_csr, :require=>[:create]
+  filter_access_to :renew, :parse_csr, require: [:create]
   filter_access_to :auto_renew, require: [:admin_manage]
   # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
   #cache_sweeper :certificate_order_sweeper
@@ -47,17 +52,7 @@ class CertificateOrdersController < ApplicationController
 #    expire_fragment('admin_header_certs_status') if
 #      fragment_exist?('admin_header_certs_status')
 
-    preferred_row_count = current_user.preferred_cer_order_row_count
-    @per_page = params[:per_page] || preferred_row_count || 10
-    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
-
-    if @per_page != preferred_row_count
-      current_user.preferred_cer_order_row_count = @per_page
-      current_user.save
-    end
-
-    p = {:page => params[:page], :per_page => @per_page}
-    @certificate_orders = find_certificate_orders.paginate(p)
+    @certificate_orders = find_certificate_orders.paginate(@p)
 
     respond_to do |format|
       format.html { render :action => :index }
@@ -277,10 +272,9 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/credits
   # GET /certificate_orders/credits.xml
   def credits
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.where{(workflow_state=='paid') & (certificate_contents.workflow_state == "new")} :
-        current_user.ssl_account.certificate_orders.credits).paginate(p)
+        current_user.ssl_account.certificate_orders.credits).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -289,10 +283,9 @@ class CertificateOrdersController < ApplicationController
   end
 
   def pending
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.pending :
-        current_user.ssl_account.certificate_orders.pending).paginate(p)
+        current_user.ssl_account.certificate_orders.pending).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -301,10 +294,9 @@ class CertificateOrdersController < ApplicationController
   end
 
   def filter_by_scope
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.send(params[:id].to_sym) :
-        current_user.ssl_account.certificate_orders.send(params[:id].to_sym)).paginate(p)
+        current_user.ssl_account.certificate_orders.send(params[:id].to_sym)).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -313,11 +305,10 @@ class CertificateOrdersController < ApplicationController
   end
 
   def order_by_csr
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.unscoped{CertificateOrder.not_test} :
         current_user.ssl_account.certificate_orders.unscoped{
-          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(p)
+          current_user.ssl_account.certificate_orders.not_test}).order_by_csr.paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -327,10 +318,9 @@ class CertificateOrdersController < ApplicationController
 
   def filter_by
     
-    p = {:page => params[:page]}
     @certificate_orders = current_user.is_admin? ?
         (@ssl_account.try(:certificate_orders) || CertificateOrder) : current_user.ssl_account.certificate_orders
-    @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(p)
+    @certificate_orders = @certificate_orders.not_test.not_new.filter_by(params[:id]).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -341,10 +331,9 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/credits
   # GET /certificate_orders/credits.xml
   def incomplete
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.incomplete :
-      current_user.ssl_account.certificate_orders.incomplete).paginate(p)
+      current_user.ssl_account.certificate_orders.incomplete).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -355,10 +344,9 @@ class CertificateOrdersController < ApplicationController
   # GET /certificate_orders/credits
   # GET /certificate_orders/credits.xml
   def reprocessing
-    p = {:page => params[:page]}
     @certificate_orders = (current_user.is_admin? ?
       CertificateOrder.reprocessing :
-      current_user.ssl_account.certificate_orders.reprocessing).paginate(p)
+      current_user.ssl_account.certificate_orders.reprocessing).paginate(@p)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -434,6 +422,18 @@ class CertificateOrdersController < ApplicationController
   end
 
   private
+  def set_row_page
+    preferred_row_count = current_user.preferred_cer_order_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+    CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
+
+    if @per_page != preferred_row_count
+      current_user.preferred_cer_order_row_count = @per_page
+      current_user.save
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
 
   def recert(action)
     instance_variable_set("@"+action,CertificateOrder.find_by_ref(params[:id]))

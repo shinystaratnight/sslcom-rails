@@ -1,7 +1,7 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_database, unless: "request.host=~/^www\.ssl\.com/ || request.host=~/^sws\.sslpki\.com/ || request.host=~/^reseller\.ssl\.com/ || Rails.env.test?"
+  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/"
   before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
@@ -26,7 +26,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     unless @rendered.is_a?(String) && @rendered.include?('errors')
       # commenting this out, it's causing encoding issues and can grow out of control
       # @result.update_attribute :response, @rendered
-      OrderNotifier.api_executed(@rendered, request.host_with_port).deliver if @rendered
+      OrderNotifier.api_executed(@rendered, request.host_with_port).deliver if @rendered and !Settings.send_api_calls.blank?
     end
   end
 
@@ -540,7 +540,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   def show_v1_4
     set_template "show_v1_4"
 
-    if @result.save
+    if @result.valid?
       @acr = @result.find_certificate_order
 
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
