@@ -238,7 +238,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render :text => "404 Not Found", :status => 404
+    render 'site/404_not_found', status: 404
   end
 
   protected
@@ -368,14 +368,18 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    @ssl_account =
-        if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
-         (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
-             (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
-        else
-         current_user.ssl_account
-        end
-    not_found if @ssl_account.blank?
+    if current_user.blank?
+      not_found
+    else  
+      @ssl_account =
+          if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
+           (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
+               (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
+          else
+           current_user.ssl_account
+          end
+      not_found if @ssl_account.blank?
+    end  
   end
 
   def load_notifications
