@@ -48,7 +48,7 @@ class CertificateOrdersController < ApplicationController
 #      fragment_exist?('admin_header_certs_status')
 
     preferred_row_count = current_user.preferred_cer_order_row_count
-    @per_page = params[:per_page] || preferred_row_count
+    @per_page = params[:per_page] || preferred_row_count || 10
     CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
 
     if @per_page != preferred_row_count
