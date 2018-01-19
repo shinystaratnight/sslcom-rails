@@ -19,7 +19,7 @@ class CertificateOrdersController < ApplicationController
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   before_filter :require_user,
-                only: [:index, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
+                only: [:index, :search, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
   before_filter :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,

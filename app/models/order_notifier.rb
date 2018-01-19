@@ -174,7 +174,7 @@ class OrderNotifier < ActionMailer::Base
     @rendered = rendered
     mail  subject: "SSL.com api command executed (#{api_domain})",
           from: "noreply@ssl.com",
-          to:    "api@ssl.com"
+          to:    Settings.send_api_calls
   end
 
   protected
