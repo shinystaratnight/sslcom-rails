@@ -20,7 +20,6 @@ module SerializerHelper
   end
 
   def serialize_resource(resource, options)
-    extra_options = params.permit(:include).to_h
-    JSONAPI::Serializer.serialize(resource, options.merge(extra_options))
+    JSONAPI::Serializer.serialize(resource, options)
   end
 end

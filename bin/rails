@@ -19,9 +19,9 @@ module Rails
                       Port:  3000,
                       SSLEnable:  true,
                       SSLVerifyClient:  OpenSSL::SSL::VERIFY_NONE,
-                      SSLCertName:  [["CN", "www.ssl.local"],["subjectAltName", "DNS.1=www.ssl.local, DNS.2=sandbox.ssl.local"]],
+                      SSLCertName:  [["CN", "www.ssl.local"],["subjectAltName", "DNS.1=ssl.local, DNS.2=*.ssl.local, DNS.3=sslpki.local, DNS.4=*.sslpki.local"]],
                       # comment out below 2 lines for JIT ssl gen or use the following line to generate a self signed cert
-                      # openssl req -nodes -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=www.ssl.local'  -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName='DNS.1:sandbox.ssl.local,DNS.2:www.ssl.local,DNS.3:sandbox2.ssl.local,DNS.4:sws-test.sslpki.local,DNS.5:sws-test2.sslpki.local,DNS.6:sws.sslpki.local'"))
+                      # openssl req -nodes -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=www.ssl.local'  -extensions SAN -config <(cat /etc/ssl/openssl.cnf <(printf "[SAN]\nsubjectAltName='DNS.1:ssl.local,DNS.2:*.ssl.local,DNS.3:sslpki.local,DNS.4:*.sslpki.local'"))
                       # test with
                       #  openssl x509 -noout -certopt no_sigdump,no_pubkey -text -in cert.pem
                       #  see https://dzone.com/articles/openssl-certificate-with-subjectaltname-one-liner

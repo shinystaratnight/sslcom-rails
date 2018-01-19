@@ -96,7 +96,7 @@
           SSL Slug
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_ssl_slug, nil, :class=>'filter_cont_text', 'data-field'=>'ssl_slug'
-      -if !current_user.is_system_admins?
+      -if current_user.is_system_admins?
         %div.filter_item.clearfix
           .filter_evt
             =check_box_tag :filter_discount_amount_chk, true, false, :class=>'filter_chk'

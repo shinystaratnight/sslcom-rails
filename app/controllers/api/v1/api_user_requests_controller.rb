@@ -26,7 +26,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
         end
       end
     else
-      InvalidApiUserRequest.create parameters: params
+      InvalidApiUserRequest.create parameters: params, response: @result.to_json
     end
     render_200_status
   rescue => e
@@ -34,8 +34,8 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   end
 
   def show_v1_4
+    set_template "show_v1_4"
     if @result.save
-      set_template "show_v1_4"
       if @obj = UserSession.create(params).user
         # successfully charged
         if @obj.is_a?(User) && @obj.errors.empty?
@@ -50,7 +50,7 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
         @result.errors[:login] << "#{@result.login} not found or incorrect password"
       end
     else
-      InvalidApiUserRequest.create parameters: params
+      InvalidApiUserRequest.create parameters: params, response: @result.errors.to_json
     end
     render_200_status
   rescue => e
@@ -78,6 +78,6 @@ class Api::V1::ApiUserRequestsController < Api::V1::APIController
   end
   
   def set_template(filename)
-    @template = File.join('api/v1/api_user_requests/', filename)
+    @template = File.join("api","v1","api_user_requests", filename)
   end
 end

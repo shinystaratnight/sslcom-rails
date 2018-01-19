@@ -1233,6 +1233,6 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def set_template(filename)
-    @template = File.join('api/v1/api_certificate_requests/', filename)
+    @template = File.join("api","v1","api_certificate_requests", filename)
   end
 end

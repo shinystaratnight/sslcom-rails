@@ -10,7 +10,7 @@
       -if permitted_to?(:create, Contact.new)
         %br
         %tr
-          =link_to "+ Create Contact", new_contact_path(saved_contact: true), class: 'button_blue button_index'
+          =link_to "New", new_contact_path(saved_contact: true), class: 'button_blue button_index'
       %tr.heading_row
         %th Name
         %th Company

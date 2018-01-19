@@ -187,7 +187,7 @@
                             %li
                               %strong physical tokens
                             -@certificate_order.physical_tokens.active.each do |token|
-                              -display="#{token.model_number}"+(token.name.blank? ? '' : " (#{token.name})")
+                              -display="#{token.model_number}"+(token.name.blank? ? '' : " (#{token.name.shorten(5,false)})")
                               -unless token.in_possession?
                                 %li
                                   %a{style:"cursor: pointer;", onclick: "activate_physical_token('#{@certificate_order.ref}','#{token.id}','#{token.name}')"}="activate #{display.shorten(7,false)}"
