@@ -468,7 +468,7 @@ class OrdersController < ApplicationController
 
     if @per_page != preferred_row_count
       current_user.preferred_order_row_count = @per_page
-      current_user.save
+      current_user.save(validate: false)
     end
 
     @p = {page: (params[:page] || 1), per_page: @per_page}
