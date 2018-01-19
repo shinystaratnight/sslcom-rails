@@ -257,7 +257,7 @@ class OrdersController < ApplicationController
 
     p = {:page => params[:page], :per_page => @per_page}
     unpaginated =
-      if @search = params[:search]
+      if @search = params[:search] && !@search.blank?
         if current_user.is_system_admins?
           (@ssl_account.try(:orders) ? Order.unscoped{@ssl_account.try(:orders)} : Order.unscoped).where{state << ['payment_declined']}.search(params[:search])
         else

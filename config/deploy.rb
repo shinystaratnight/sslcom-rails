@@ -27,11 +27,13 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
+set :user, "ubuntu"
+set :branch, "staging"
 set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
 set :branch, "staging"
 
-server = "production_api"
+server = "production"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -62,6 +64,7 @@ case server
     set :deploy_to, "/home/ubuntu/sites/#{application}"
     ssh_options[:keys] = [File.join(ENV["HOME"], ".ssh", "sws-a1.sslpki.local.key")]
   when "production_api"
+    set :application, "sws"
     set :user, "app-sws"
     set :branch, "master"
     set :domain, 'sws-a1.sslpki.local'
