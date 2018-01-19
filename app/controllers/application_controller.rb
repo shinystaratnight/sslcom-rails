@@ -205,7 +205,7 @@ class ApplicationController < ActionController::Base
     else
       (current_user.is_admin? ?
           (@ssl_account.try(:certificate_orders) || CertificateOrder).not_test.find_not_new(options) :
-            current_user.ssl_account.certificate_orders.not_test.not_new(options)).order(updated_at: :desc)
+            current_user.ssl_account.certificate_orders.not_test.find_not_new(options)).order(updated_at: :desc)
     end
   end
 

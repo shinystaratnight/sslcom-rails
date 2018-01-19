@@ -18,7 +18,10 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
-  before_filter :require_user, :load_certificate_order,
+  before_filter :require_user,
+                only: [:index, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
+                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
+  before_filter :load_certificate_order,
                 only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
   before_filter :set_row_page, only: [:index, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
@@ -421,7 +424,7 @@ class CertificateOrdersController < ApplicationController
   private
   def set_row_page
     preferred_row_count = current_user.preferred_cer_order_row_count
-    @per_page = params[:per_page] || preferred_row_count || 10
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
     CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
 
     if @per_page != preferred_row_count
@@ -429,7 +432,7 @@ class CertificateOrdersController < ApplicationController
       current_user.save
     end
 
-    @p = {:page => (params[:page] || 1), :per_page => @per_page}
+    @p = {page: (params[:page] || 1), per_page: @per_page}
   end
 
   def recert(action)
