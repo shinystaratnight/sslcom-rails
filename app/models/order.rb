@@ -64,7 +64,7 @@ class Order < ActiveRecord::Base
   scope :search, lambda {|term|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {amount: nil, email: nil, login: nil, account_number: nil, product: nil, created_at: nil,
-               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil}
+               discount_amount: nil, company_name: nil, ssl_slug: nil, is_test: nil, reference_number: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -102,6 +102,10 @@ class Order < ActiveRecord::Base
       else
         result = result.not_test
       end
+    end
+    %w(reference_number).each do |field|
+      query=filters[field.to_sym]
+      result = result.where(field.to_sym => query.split(',')) if query
     end
     %w(login email).each do |field|
       query=filters[field.to_sym]
