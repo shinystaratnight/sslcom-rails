@@ -6,9 +6,6 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :show, :upload, :document_upload]
-  before_filter :find_validation, only: [:update, :new]
-  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
   filter_access_to :all
   filter_access_to [:upload, :document_upload], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
@@ -17,6 +14,9 @@ class ValidationsController < ApplicationController
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
   in_place_edit_for :validation_history, :notes
+  # before_filter :require_user, only: [:index, :new, :show, :upload, :document_upload]
+  before_filter :find_validation, only: [:update, :new]
+  before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
 
   def search
     index

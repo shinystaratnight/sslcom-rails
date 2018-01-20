@@ -18,14 +18,6 @@ class CertificateOrdersController < ApplicationController
   layout 'application'
   include OrdersHelper
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
-  before_filter :require_user,
-                only: [:index, :search, :credits, :show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
-  before_filter :load_certificate_order,
-                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
-                      :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
-  before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
-                              :incomplete, :reprocessing]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer, attribute_check: true
   filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
@@ -37,6 +29,11 @@ class CertificateOrdersController < ApplicationController
   filter_access_to :auto_renew, require: [:admin_manage]
   # filter_access_to :sslcom_ca, require: [:sysadmin_manage]
   #cache_sweeper :certificate_order_sweeper
+  before_filter :load_certificate_order,
+                only: [:show, :update, :edit, :download, :destroy, :update_csr, :auto_renew, :start_over,
+                       :change_ext_order_number, :admin_update, :developer, :sslcom_ca]
+  before_filter :set_row_page, only: [:index, :search, :credits, :pending, :filter_by_scope, :order_by_csr, :filter_by,
+                                      :incomplete, :reprocessing]
   in_place_edit_for :certificate_order, :notes
   in_place_edit_for :csr, :signed_certificate_by_text
 
