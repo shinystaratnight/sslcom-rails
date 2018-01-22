@@ -218,11 +218,11 @@ class CertificateOrder < ActiveRecord::Base
     result.uniq
   }
 
-  scope :reprocessing, lambda {
-    cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
-        where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
-  }
+  # scope :reprocessing, lambda {
+  #   cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
+  #       where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
+  #   joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
+  # }
 
   # more elegant but needs to be refined. Too slow
   # scope :reprocessing1, lambda {
