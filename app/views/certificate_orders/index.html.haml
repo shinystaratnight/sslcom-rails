@@ -241,7 +241,7 @@
         %tr
           %td.wrap_number_rows(colspan='2')
             =select_tag :number_rows,
-            options_for_select([[10, 10], [20, 20], [50, 50], [100, 100], [200, 200]], @per_page),
+            options_for_select([[5, 5], [10, 10], [20, 20], [50, 50], [100, 100]], @per_page),
             :class=>'per_page'
           %td(colspan='4')=will_paginate @certificate_orders
     %caption 
