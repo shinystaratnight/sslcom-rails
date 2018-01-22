@@ -32,7 +32,8 @@ module ApplicationHelper
   # https://stackoverflow.com/questions/1602901/rails-separate-database-per-subdomain
   # I use the entire domain, just change to sandbox_db and pass only the subdomain
   def current_website
-    @website ||= Website.current_site(request.host)
+    # @website ||= Website.current_site(request.host) #this is causing issues when using sandbox and www on the same machine
+    @website = Website.current_site(request.host)
   end
 
   def set_database
