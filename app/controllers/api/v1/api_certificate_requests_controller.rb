@@ -80,7 +80,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @acr = @result.find_signed_certificates(co)
       if @acr.is_a?(Array) && @result.errors.empty?
         if @result.serials.blank? #revoke the entire order
-          co.revoke(@result.reason)
+          co.revoke!(@result.reason)
         else #revoke specific certs
           @acr.each do |signed_certificate|
             SystemAudit.create(
