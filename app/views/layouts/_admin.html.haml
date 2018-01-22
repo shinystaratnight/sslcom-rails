@@ -21,7 +21,7 @@
               %tr
                 %td.certificate_status=link_to "REPROCESSING", reprocessing_certificate_orders_path
               %tr
-                %td.certificate_status=link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
+                %td.certificate_status=#link_to CertificateOrder.reprocessing.count, reprocessing_certificate_orders_path
           %th.certificate_status
             %table
               %tr
