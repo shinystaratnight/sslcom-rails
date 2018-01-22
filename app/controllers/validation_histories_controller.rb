@@ -1,5 +1,6 @@
 class ValidationHistoriesController < ApplicationController
   before_filter :find_validation_history, :only=>[:update]
+  filter_access_to :documents, :require=>:read
 
   def update
     respond_to do |format|
