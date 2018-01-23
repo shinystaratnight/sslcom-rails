@@ -67,7 +67,7 @@ class UserNotifier < ActionMailer::Base
     @approval_url << @invited_user.generate_approval_query(ssl_account_id: @ssl_account.id)
     @token_expire = @invited_user.ssl_account_users.find_by(ssl_account_id: @ssl_account.id).token_expires
     mail subject: "Invition to SSL.com team #{@ssl_account.get_team_name}",
-            from: @current_user.email,
+            from: Settings.from_email.activations,
               to: @invited_user.email
   end
 
@@ -108,7 +108,7 @@ class UserNotifier < ActionMailer::Base
     @current_user = current_user
     @ssl_account  = account
     mail subject: "You have been removed from SSL.com account",
-            from: @current_user.email,
+            from: Settings.from_email.activations,
               to: @remove_user.email
   end
 
