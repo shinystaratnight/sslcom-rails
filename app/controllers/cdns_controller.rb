@@ -259,6 +259,9 @@ class CdnsController < ApplicationController
       else
         flash[:notice] = @response.parsed_response && @response.parsed_response['message'] ?
                              @response.parsed_response['message'] : 'Successfully Modified.'
+
+        # TODO: Email Sent
+        # UserNotifier.ssl_cert_private_key(self).deliver
       end
     else
       @response = HTTParty.delete('https://reseller.cdnify.com/api/v1/resources/' + resource_id + '/custom_domains/' + host_name,

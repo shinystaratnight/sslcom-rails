@@ -139,6 +139,12 @@ class UserNotifier < ActionMailer::Base
               to: @notify_user.email
   end
 
+  def ssl_cert_private_key(user)
+    mail subject: "SSL.com user saved SSL Certificate and Private Key",
+         from: Settings.from_email.activations,
+         to: user.email
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"
