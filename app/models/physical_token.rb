@@ -5,6 +5,10 @@ class PhysicalToken < ActiveRecord::Base
   belongs_to :certificate_order
   belongs_to :signed_certificate
 
+  after_initialize do
+    self.activation_pin=SecureRandom.base64(8)
+  end
+
   after_save do
     if tracking_number and new?
       ship_token!
@@ -32,6 +36,14 @@ class PhysicalToken < ActiveRecord::Base
 
   def make_and_model
     [manufacturer,model_number].join(" ")
+  end
+
+  def user_pin
+    Digest::MD5.base64digest(activation_pin[1..-1])
+  end
+
+  def admin_pin
+    Digest::MD5.base64digest(activation_pin[0..-2])
   end
 
   scope :active, ->{where{(workflow_state << ['soft_deleted'])}}
