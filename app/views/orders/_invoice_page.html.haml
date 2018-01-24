@@ -66,18 +66,18 @@
   %table
     %tr
       %td{id: 'subtotal'} Subtotal
-      %td{class: 'amount'} #{Money.new(order.certificate_orders.where(workflow_state: 'paid').map(&:amount).sum).format}
+      %td{class: 'amount'} #{Money.new(order.certificate_orders.map(&:amount).sum).format}
     -if order.discounts.any?
       %tr
         %td{id: 'discount-lbl'} Discount (#{order.discounts.map(&:label).join(', ')})
-        %td{id: 'discount-amt'} -#{order.discount_amount.format}
+        %td{id: 'discount-amt'} -#{order.discount_amount(:items).format}
     -if order.get_funded_account_amount > 0
       %tr
         %td{id: 'fund-lbl'} Funded Account Credit
         %td{id: 'fund-amt'} -#{Money.new(order.get_funded_account_amount).format}
     %tr
       %td{id: 'total-lbl'} Total
-      %td{id: 'total-amt'} #{order.get_order_charged.amount.format}
+      %td{id: 'total-amt'} #{Money.new(order.get_total_merchant_amount).format}
     %tr
       %td{id: 'paid-lbl'} Paid
       %td{id: 'paid-amt'} -#{order.get_order_charged.amount.format}
