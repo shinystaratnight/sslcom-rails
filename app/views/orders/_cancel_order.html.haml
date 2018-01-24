@@ -1,9 +1,10 @@
 -if current_user.is_admin?
+  -make_available = @order.make_available_total
   :javascript
     function refund_reason(return_funds){
       label="Cancel order #{@order.reference_number}";
       if(return_funds==true)
-        label+=" and make $#{@order.amount} available to customer again";
+        label+=" and make #{Money.new(make_available).format} available to customer again";
       var reason = prompt(label+"? Reason for refund.", '');
       if (reason == null || reason=="")
         return;
@@ -38,7 +39,7 @@
             -else
               %li=link_to "completely cancel order", '#', onclick:  "refund_reason(false)"
               -if @order.amount.cents > 0
-                %li=link_to "completely cancel order and make $#{@order.amount} available to customer", '#', onclick:  "refund_reason(true)"
+                %li=link_to "completely cancel order and make #{Money.new(make_available).format} available to customer", '#', onclick:  "refund_reason(true)"
                 -if ref_merchant && %{stripe paypal authnet}.include?(ref_merchant)
                   %br
                     %li

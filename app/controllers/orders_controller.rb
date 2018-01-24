@@ -180,32 +180,33 @@ class OrdersController < ApplicationController
   end
 
   def refund
-    performed="canceled #{'partial ' if params["partial"]}order"
+    @performed="canceled #{'partial ' if params["partial"]}order"
     unless @order.blank?
-      unless params["partial"]
+      unless params["partial"] # full refund
+        @target = @order
         if params["return_funds"]
-          @order.billable.funded_account.add_cents(@order.amount.cents)
-          performed << " and made $#{@order.amount} available to customer"
+          @order.billable.funded_account.add_cents(@order.make_available_total)
+          @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
-        SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
         @order.certificate_orders.each do |co|
           co.revoke!(params["refund_reason"], current_user)
         end
         notify_ca(params["refund_reason"])
-      else
-        line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
-        @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
-        performed << " and made $#{line_item.amount} available to customer"
-        #at least 1 lineitem needs to remain unrefunded
-        if @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
-          @order.full_refund!
-        else
-          @order.partial_refund!(params["partial"])
+      else # partial refunds or cancel line item
+        @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
+        @target ||= @order.certificate_orders.find { |co| co.ref==params["partial"] }
+        refund_partial_amount(params) if params["return_funds"]
+        refund_partial_cancel(params) if params["cancel_only"]
+        
+        if @target.is_a?(LineItem) && @target.sellable.is_a?(CertificateOrder)
+          @target.sellable.revoke!(params["refund_reason"], current_user)
         end
-        SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
-        line_item.sellable.revoke!(params["refund_reason"],current_user) if line_item.sellable.is_a?(CertificateOrder)
+        if @target.is_a?(CertificateOrder)
+          @target.revoke!(params["refund_reason"], current_user)
+        end
       end
+      SystemAudit.create(owner: current_user, target: @target, notes: params["refund_reason"], action: @performed)
     end
     redirect_to order_url(@order)
   end
@@ -223,11 +224,28 @@ class OrdersController < ApplicationController
     unless @order.blank?
       @refunds = @order.refunds
       if params[:type] == 'create'
-        amount      = Money.new(params[:refund_amount].to_d * 100)
+        co = CertificateOrder.find(params[:cancel_cert_order].to_i) if params[:cancel_cert_order]
+        amount      = Money.new(co ? @order.make_available_line(co, :merchant) : (params[:refund_amount].to_d * 100))
         refund      = @order.refund_merchant(amount.cents, params[:refund_reason], current_user.id)
         last_refund = @order.refunds.last
         if refund && last_refund && last_refund.successful?
           flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
+          if co
+            funded = @order.make_available_funded(co)
+            co.refund!
+            co.revoke!(params["refund_reason"], current_user)
+            SystemAudit.create(
+              owner:  current_user,
+              target: co,
+              notes:  params["refund_reason"], 
+              action: "Cancelled partial order #{co.ref}, merchant refund issued for #{amount.format}."
+            )
+            if funded > 0
+              @order.billable.funded_account.add_cents(funded)
+              flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+            end
+          end
+          
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -466,7 +484,32 @@ class OrdersController < ApplicationController
   end
 
   private
-
+  
+  # admin user refunds line item
+  def refund_partial_amount(params)
+    refund_amount = @order.make_available_line(@target)
+    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
+    
+    @order.billable.funded_account.add_cents(refund_amount)
+    @performed << " and made $#{refund_amount} available to customer"
+    
+    #at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
+    if item_remains
+      @order.full_refund!
+    else
+      @order.partial_refund!(params["partial"], refund_amount)
+    end
+    if (@target.is_a?(LineItem) && @target.sellable.refunded?) || (@target.is_a?(CertificateOrder) && @target.refunded?)
+      flash[:notice] = "Line item was successfully credited for #{Money.new(refund_amount).format}."
+    end
+  end
+  
+  # admin user cancels line item
+  def refund_partial_cancel(params)
+    @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
+    @target.sellable.cancel! @target
+  end
+  
   def certificate_order_steps
     certificate_order=CertificateOrder.new(params[:certificate_order])
     @certificate_order=Order.setup_certificate_order(certificate: @certificate, certificate_order: certificate_order)

@@ -1,20 +1,30 @@
 -cert ||= @certificate_order ? [@certificate_order] : @certificate_orders
 -order ||= @order || current_order
-%table#order_details_table(cellspacing='0' class="#{order.receipt ? 'receipt' : ''}")
+%table#order_details_section(class="#{order.receipt ? 'receipt' : ''}")
   %tbody
     -unless cert.blank?
       %tr#heading_row
-        %th.description(scope='col') description
-        %th.quantity(scope='col') quantity
-        %th.price(scope='col') price
-      =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
-    -unless order.discounts.empty?
-      %tr
-        %td.description.total_row(style="font-weight: normal") subtotal
-        %td.price.total_row(colspan='2' style="font-weight: normal") #{order.amount.format}
-      %tr(style="color:red")
-        %td.description.total_row(style="font-weight: normal")=order.discounts.map(&:label).join(", ")
-        %td.price.total_row(colspan='2' style="font-weight: normal") -#{order.discount_amount.format}
-    %tr
-      %td.description.total_row total
-      %td.price.total_row(colspan='2')= order.final_amount.format
+        %th.index(scope='col')
+        %th.description(scope='col') DESCRIPTION
+        %th.quantity(scope='col') QUANTITY
+        %th.price(scope='col') PRICE
+      =render partial: '/funded_accounts/certificate_order_row'
+      %tr.order-divider
+        %td{colspan: '4'}
+      %tr.order-subtotal
+        %td.description.total_row{colspan: '3'} Subtotal:
+        %td.price.total_row
+          #{Money.new(order.certificate_orders.map(&:amount).sum).format}
+      -if order.discounts.any?
+        %tr.order-discount
+          %td.description.total_row{colspan: '3'}
+            ="#{order.discounts.map(&:label).join(', ').capitalize}:"
+          %td.price.total_row -#{order.discount_amount(:items).format}
+      -if order.get_funded_account_amount > 0
+        %tr.order-funded
+          %td.description.total_row{colspan: '3'} Funded Account Credit:
+          %td.price.total_row -#{Money.new(order.get_funded_account_amount).format}
+    %tr.order-total
+      %td.description.total_row{colspan: '3'} Total:
+      %td.price.total_row
+        #{Money.new(order.get_total_merchant_amount).format}

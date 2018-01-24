@@ -3,6 +3,8 @@
 -row_class=indx.blank? ? "" : "row_#{indx}"
 -if cert.respond_to?(:parent) && cert.parent
   %tr.line_item(class=row_class)
+    -unless action_name == 'show_cart'
+      %td
     %td.description.subitem
       Renewal for certificate
       =link_to cert.parent.ref, certificate_order_url(cert.parent.ref)
@@ -10,5 +12,7 @@
 -if cert.is_a? CertificateOrder
   -order_line_items(cert).each do |item|
     %tr.line_item(class=row_class)
+      -unless action_name == 'show_cart'
+        %td
       %td.description.subitem= item
       %td(colspan="#{colspan}")
