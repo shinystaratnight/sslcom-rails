@@ -353,7 +353,7 @@ jQuery(function($) {
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
         }
         else if(/https/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
+          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
@@ -362,7 +362,7 @@ jQuery(function($) {
               });
         }
         else if(/http/.test(methods[0])){
-          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
+          instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
             $(dcv_select).parents('tr').attr('id')}).done(
