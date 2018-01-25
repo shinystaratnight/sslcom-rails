@@ -401,6 +401,10 @@ class User < ActiveRecord::Base
     UserNotifier.invite_to_account_disabled(self, account, current_user).deliver
   end
 
+  def deliver_ssl_cert_private_key!(resource_id, host_name, custom_domain_id)
+    UserNotifier.ssl_cert_private_key(self, resource_id, host_name, custom_domain_id).deliver
+  end
+
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
     l_bound = "01/01/2000" if l_bound.blank?
     s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"
