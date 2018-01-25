@@ -41,7 +41,7 @@
         .order-detail-actions
           %div
             -if current_user.is_admin? || (!current_user.is_admin? && !(co.canceled? || co.refunded?))
-              =link_to("#{co.subject} #{co.ref.upcase}", certificate_order_path(@ssl_slug, co), id: 'btn-order-edit')
+              =link_to("#{co.ref.upcase}", certificate_order_path(@ssl_slug, co), id: 'btn-order-edit')
           -if current_user.is_admin?
             -unless co.canceled? || co.refunded?
               %div
