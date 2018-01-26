@@ -126,23 +126,24 @@ class Order < ActiveRecord::Base
           result = result.joins{line_items.sellable(CertificateOrder)}
         when /reseller/
           result = result.joins{line_items.sellable(ResellerTier)}
+        when /ucc/,/evucc/,/basicssl/,/wildcard/,/ev/,/premiumssl/,/ev-code-signing/,/code-signing/
+          result = result.joins{line_items.sellable(CertificateOrder).sub_order_items.product_variant_item.product_variant_group.
+              variantable(Certificate)}.where{certificates.product=="#{query}"}
       end
     end
     %w(amount).each do |field|
       if filters[field.to_sym]
         query=filters[field.to_sym].split("-")
         if query.count==1
-          query=filters[field.to_sym].delete(".")
+          query=filters[field.to_sym]
           case query
-            when /\A>/
-              result = result.where{(cents > "#{query[1..-1]}")}
-            when /\A</
-              result = result.where{(cents < "#{query[1..-1]}")}
+            when /\A>/,/\A</
+              result = result.where{(cents > ("#{query[1..-1]}".to_f*100).to_i)}
             else
-              result = result.where{(cents == "#{query}")}
+              result = result.where{(cents == ("#{query}".to_f*100).to_i)}
           end
         else
-          result = result.where{cents >> ((query[0].delete("."))..(query[1].delete(".")))}
+          result = result.where{cents >> ((query[0].to_f*100).to_i..(query[1].to_f*100).to_i)}
         end
       end
     end
