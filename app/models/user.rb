@@ -405,6 +405,10 @@ class User < ActiveRecord::Base
     UserNotifier.ssl_cert_private_key(self, resource_id, host_name, custom_domain_id).deliver
   end
 
+  def deliver_generate_install_ssl!(resource_id, host_name, to_address)
+    UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
+  end
+
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")
     l_bound = "01/01/2000" if l_bound.blank?
     s= l_bound =~ /\// ? "%m/%d/%Y" : "%m-%d-%Y"

@@ -6,11 +6,11 @@
         if ($(this).prop('checked')) {
           $("#custom_domain_modal_form").hide();
           $(".gen-install-ssl-divider").hide();
-          $(".modify-custom-domain").hide();
+          $("#generate_type").val("auto");
         } else {
           $("#custom_domain_modal_form").show();
           $(".gen-install-ssl-divider").show();
-          $(".modify-custom-domain").show();
+          $("#generate_type").val("manual");
         }
       });
       $('#private_key').bind('cut copy', function (e) {

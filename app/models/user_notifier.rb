@@ -150,6 +150,16 @@ class UserNotifier < ActionMailer::Base
          to: "mamalos@ssl.com"
   end
 
+  def generate_install_ssl(user, resource_id, host_name, to_address)
+    @user = user
+    @user_name = [@user.first_name, @user.last_name].join(" ")
+    @resource_id = resource_id
+    @host_name = host_name
+    mail subject: "Processing SSL Certificate Request",
+         from: Settings.from_email.activations,
+         to: to_address
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"
