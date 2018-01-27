@@ -75,6 +75,9 @@ dv_explanation_link: "https://www.ssl.com/certificates/apidocs/dcv/"
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
 
+#Email address for sending in case of checked "Generate and Install SSL"
+cdn_ssl_notification_address: ''
+
 excluded_titles:
   ["--- Personal Basic\n...\n", "--- Personal Pro\n...\n", "--- Personal Enterprise\n...\n", "--- Personal Business\n...\n",
   "--- Premium Multi-subdomain SSL\n...\n", "Migrated SSL"] #,"--- Code Signing\n...\n"

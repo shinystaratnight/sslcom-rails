@@ -2,6 +2,17 @@
   jQuery.noConflict();
   jQuery(function($) {
     $(document).ready(function() {
+      $("#generate_install_ssl_chk").change(function() {
+        if ($(this).prop('checked')) {
+          $("#custom_domain_modal_form").hide();
+          $(".gen-install-ssl-divider").hide();
+          $("#generate_type").val("auto");
+        } else {
+          $("#custom_domain_modal_form").show();
+          $(".gen-install-ssl-divider").show();
+          $("#generate_type").val("manual");
+        }
+      });
       $('#private_key').bind('cut copy', function (e) {
         e.preventDefault();
       });
