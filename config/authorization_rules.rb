@@ -258,8 +258,7 @@ authorization do
     end
 
     has_permission_on :physical_tokens, :to => [:read] do
-      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq
-      }
+      if_attribute certificate_order_id: is_in {user.ssl_account.certificate_orders.map(&:id).uniq}
     end
 
     has_permission_on :site_seals, :certificate_contents, :to => [:read, :update] do
@@ -277,7 +276,7 @@ authorization do
     #
     # has_permission_on :validations, :to => [:create]
     has_permission_on :validations, :to => [:read, :update, :create] do
-      if_attribute :users => contains {user}
+      if_attribute id: is {user.validations.pluck(:id)}
     end
     #
     # ValidationHistories
