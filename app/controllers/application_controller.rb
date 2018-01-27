@@ -196,7 +196,8 @@ class ApplicationController < ActionController::Base
 
   def find_certificate_orders(options={})
     return CertificateOrder.none unless current_user # returns null set. Rails 4 is CertificateOrder.none
-    if @search = params[:search] && !@search.blank?
+    @search = params[:search]
+    if !@search.blank?
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
         (CertificateOrder.unscoped{
