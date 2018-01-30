@@ -6,18 +6,18 @@ class OrdersController < ApplicationController
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
   before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state]
-  before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
-  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
-
 
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show, :update_invoice, attribute_check: true
+  before_filter :find_user, :only => [:user_orders]
+  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
@@ -269,7 +269,10 @@ class OrdersController < ApplicationController
   # GET /orders
   # GET /orders.xml
   def index
-    @search = params[:search]
+    @search = params[:search] || ""
+    if is_sandbox? and @search.grep(/is_test\:true/).blank?
+      @search << " is_test:true"
+    end
     unpaginated =
       if !@search.blank?
         if current_user.is_system_admins?
