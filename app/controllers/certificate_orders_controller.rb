@@ -423,12 +423,12 @@ class CertificateOrdersController < ApplicationController
 
   private
   def set_row_page
-    preferred_row_count = current_user.preferred_cer_order_row_count
+    preferred_row_count = current_user.preferred_cert_order_row_count
     @per_page = params[:per_page] || preferred_row_count.or_else("10")
     CertificateOrder.per_page = @per_page if CertificateOrder.per_page != @per_page
 
     if @per_page != preferred_row_count
-      current_user.preferred_cer_order_row_count = @per_page
+      current_user.preferred_cert_order_row_count = @per_page
       current_user.save(validate: false)
     end
 

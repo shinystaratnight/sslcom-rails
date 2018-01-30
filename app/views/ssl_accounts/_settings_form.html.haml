@@ -87,6 +87,12 @@
 .subheading
   Expiration Reminders
   =link_to image_tag('question_mark.png'), '#what_are_expiration_notices', :rel => 'prettyPhoto', :id => 'what_are_expiration_notices_link'
+.settings_block.clearfix
+  .destination_block
+    %label
+      Disable/Enable Email reminders
+  .destination_block.right
+    =f.check_box :preferred_reminder_status, checked: f.object.prefers_reminder_status?
 -5.times do |i|
   -rnt=@ssl_account.preferred_reminder_notice_triggers(ReminderTrigger.find(i+1))
   .settings_block.clearfix(style="#{'margin-bottom: 1em;' if i==4}")

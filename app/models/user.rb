@@ -18,6 +18,7 @@ class User < ActiveRecord::Base
   has_many  :ssl_accounts, through: :ssl_account_users
   has_many  :certificate_orders, through: :ssl_accounts
   has_many  :validation_histories, through: :certificate_orders
+  has_many  :validations, through: :certificate_orders
   has_many  :approved_ssl_account_users, ->{where{(approved == true) & (user_enabled == true)}},
             dependent: :destroy, class_name: "SslAccountUser"
   has_many  :approved_ssl_accounts,
@@ -27,7 +28,7 @@ class User < ActiveRecord::Base
   has_one   :shopping_cart
   has_and_belongs_to_many :user_groups
 
-  preference  :cer_order_row_count, :string, :default=>"10"
+  preference  :cert_order_row_count, :string, :default=>"10"
   preference  :order_row_count, :string, :default=>"10"
   
   attr_accessor :changing_password, :admin_update, :role_ids, :role_change_type
@@ -399,6 +400,14 @@ class User < ActiveRecord::Base
 
   def deliver_invite_to_account_disabled!(account, current_user)
     UserNotifier.invite_to_account_disabled(self, account, current_user).deliver
+  end
+
+  def deliver_ssl_cert_private_key!(resource_id, host_name, custom_domain_id)
+    UserNotifier.ssl_cert_private_key(self, resource_id, host_name, custom_domain_id).deliver
+  end
+
+  def deliver_generate_install_ssl!(resource_id, host_name, to_address)
+    UserNotifier.generate_install_ssl(self, resource_id, host_name, to_address).deliver
   end
 
   def browsing_history(l_bound=nil, h_bound=nil, sort="asc")

@@ -36,7 +36,7 @@ class UsersController < ApplicationController
   end
 
   def index
-    p = {:page => params[:page]}
+    p = {:page => params[:page],per_page: 10}
     set_users
 
     if params[:search]

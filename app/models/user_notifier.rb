@@ -139,6 +139,27 @@ class UserNotifier < ActionMailer::Base
               to: @notify_user.email
   end
 
+  def ssl_cert_private_key(user, resource_id, host_name, custom_domain_id)
+    @user = user
+    @user_name = [@user.first_name, @user.last_name].join(" ")
+    @resource_id = resource_id
+    @host_name = host_name
+    @custom_domain_id = custom_domain_id
+    mail subject: "Request for updating certificates of custom domain #{@host_name} for User #{@user.email}",
+         from: Settings.from_email.activations,
+         to: "mamalos@ssl.com"
+  end
+
+  def generate_install_ssl(user, resource_id, host_name, to_address)
+    @user = user
+    @user_name = [@user.first_name, @user.last_name].join(" ")
+    @resource_id = resource_id
+    @host_name = host_name
+    mail subject: "Processing SSL Certificate Request",
+         from: Settings.from_email.activations,
+         to: to_address
+  end
+
   protected
   def setup_email(user)
     @recipients  = "#{user.email}"

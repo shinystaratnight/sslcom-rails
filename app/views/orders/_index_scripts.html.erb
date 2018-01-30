@@ -115,7 +115,7 @@ jQuery(function($) {
             }
           }
 
-          var filterWrap = $('#filter_' + filterKey + '_chk').parent().next().find('.filter_cont');
+          var filterWrap = $('#filter_' + filterKey + '_chk').parent().parent().next().find('.filter_cont');
           filterWrap.show();
         }
       });
@@ -210,7 +210,7 @@ jQuery(function($) {
       }
 
       var isChecked = $(this).prop('checked');
-      var parentSiblingNode = $(this).parent().next();
+      var parentSiblingNode = $(this).parent().parent().next();
       var filterItem = parentSiblingNode.find('.filter_cont');
 
       if (isChecked) {

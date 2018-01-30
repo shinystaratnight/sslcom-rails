@@ -914,7 +914,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
           @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
           unless @acr.csr.blank?
             @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                                                   {"http"=>"#{@acr.csr.dcv_url(domain)}",
+                                                   {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                                                     "allow_https"=>"true",
                                                     "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
             @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}
@@ -951,7 +951,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
             @result.dcv_methods[domain].merge! "email_addresses"=>ComodoApi.domain_control_email_choices(domain).email_address_choices
             unless @acr.csr.blank?
               @result.dcv_methods[domain].merge! "http_csr_hash"=>
-                 {"http"=>"#{@acr.csr.dcv_url(domain)}",
+                 {"http"=>"#{@acr.csr.dcv_url(false,domain)}",
                   "allow_https"=>"true",
                   "contents"=>"#{@result.sha2_hash}\ncomodoca.com#{"\n#{@acr.csr.unique_value}" unless @acr.csr.unique_value.blank?}"}
               @result.dcv_methods[domain].merge! "cname_csr_hash"=>{"cname"=>"#{@result.dns_md5_hash}.#{domain}. CNAME #{@result.dns_sha2_hash}.comodoca.com.","name"=>"#{@result.dns_md5_hash}.#{domain}","value"=>"#{@result.dns_sha2_hash}.comodoca.com."}

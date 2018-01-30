@@ -39,6 +39,7 @@ class SslAccount < ActiveRecord::Base
     attr_readonly :acct_number
   end
 
+  preference  :reminder_status, :default=>true
   preference  :reminder_notice_triggers, :string
   preference  :reminder_include_reseller, :default=>true
   preference  :reminder_notice_destinations, :string, :default=>"0"
@@ -332,37 +333,38 @@ class SslAccount < ActiveRecord::Base
   end
 
   def expiring_certificates
-    exp_dates=ReminderTrigger.all.map do|rt|
-      preferred_reminder_notice_triggers(rt).to_i
-    end.sort{|a,b|b<=>a} # order from highest to lowest value
     results=[]
-    unrenewed_signed_certificates.compact.each do |sc|
-      sed = sc.expiration_date
-      unless sed.blank?
-        exp_dates.each_with_index do |ed, i|
-          # determine if valid to send reminders and/or rebill at this point
-          if (i < exp_dates.count-1 && # be sure we don't over iterate
-              sed < ed.to_i.days.from_now && # is signed certificate expiration between exp intervals?
-              sed >= exp_dates[i+1].days.from_now)
-            results << Struct::Expiring.new(ed,exp_dates[i+1],sc) unless
-                renewed?(sc, exp_dates.first.to_i)
-            break
+
+    unless preferred_reminder_status
+      exp_dates=ReminderTrigger.all.map do|rt|
+        preferred_reminder_notice_triggers(rt).to_i
+      end.sort{|a,b|b<=>a} # order from highest to lowest value
+
+      unrenewed_signed_certificates.compact.each do |sc|
+        sed = sc.expiration_date
+        unless sed.blank?
+          exp_dates.each_with_index do |ed, i|
+            # determine if valid to send reminders and/or rebill at this point
+            if (i < exp_dates.count-1 && # be sure we don't over iterate
+                sed < ed.to_i.days.from_now && # is signed certificate expiration between exp intervals?
+                sed >= exp_dates[i+1].days.from_now)
+              results << Struct::Expiring.new(ed,exp_dates[i+1],sc) unless
+                  renewed?(sc, exp_dates.first.to_i)
+              break
+            end
           end
         end
       end
     end
+
     results
   end
 
   # years back - how many years back do we want to go on expired certificates
   def expired_certificates(intervals, years_back=1)
-    exp_dates=ReminderTrigger.all.map do |rt|
-      preferred_reminder_notice_triggers(rt)
-    end
-
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
-      if !exp_dates.join('').blank?
+      unless preferred_reminder_status
         unrenewed_signed_certificates.compact.each do |sc|
           sed = sc.expiration_date
           unless sed.blank?
