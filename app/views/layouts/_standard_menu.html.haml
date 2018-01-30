@@ -19,10 +19,9 @@
     -permitted_to? :index, :certificate_orders do
       %li(id="#{(is_on?("certificate_orders",current_slug) && !@prev) ? 't-intro' : 'manage_certificate_orders' }")
         =link_to "Orders", is_sandbox? ? search_certificate_orders_path(search:'is_test:true') : certificate_orders_path(slug_params)
-    -unless is_sandbox?
-      -permitted_to? :read, :orders do
-        %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
-          =link_to "Transactions", orders_path(slug_params)
+    -permitted_to? :read, :orders do
+      %li(id="#{(is_on?("orders",current_slug) && !@prev) ? 't-intro' : 'manage_orders'}")
+        =link_to "Transactions", is_sandbox? ? search_orders_path(search:'is_test:true') : orders_path(slug_params)
     -if current_user.get_all_approved_accounts.length > 0
       %li(id="#{current_page?(teams_user_path(current_user)) ? 't-intro' : 'manage_teams'}")
         =link_to "Teams(#{current_user.get_all_approved_accounts.count})", teams_user_path(current_user)
