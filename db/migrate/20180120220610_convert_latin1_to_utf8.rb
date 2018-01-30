@@ -8,7 +8,6 @@ class ConvertLatin1ToUtf8 < ActiveRecord::Migration
       "auto_renewals",
       "blocklists",
       "ca_api_requests",
-      "caa_check",
       "caa_checks",
       "cas",
       "certificate_api_requests",

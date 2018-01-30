@@ -23,6 +23,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
+  has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
