@@ -189,6 +189,10 @@ class Csr < ActiveRecord::Base
     "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
+  def all_names
+    (subject_alternative_names.split(",") + [common_name]).flatten.uniq
+  end
+
   def dcv_verified?
     retries=2
     begin

@@ -33,7 +33,7 @@ set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
 set :branch, "staging"
 
-server = "production"
+server = "sandbox"
 case server
   when "sandbox"
     require "rvm/capistrano"
@@ -181,6 +181,7 @@ end
 after "deploy:stop",    "delayed_job:stop"
 after "deploy:start",   "delayed_job:start"
 after "deploy:restart", "delayed_job:restart"
+after "deploy:restart", "deploy:cleanup"
 namespace :delayed_job do
   desc "Stop the delayed_job process"
   task :stop, :roles => :app do

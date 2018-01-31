@@ -257,7 +257,7 @@ class CertificateContentsController < ApplicationController
   
   def has_all_contacts?
     if Contact.optional_contacts?
-      if @certificate_content.certificate_order.certificate.is_dv?
+      if @certificate_content.certificate_order.certificate.is_dv? and Settings.exempt_dv_contacts
         true
       else
         @certificate_content.certificate_contacts.any?

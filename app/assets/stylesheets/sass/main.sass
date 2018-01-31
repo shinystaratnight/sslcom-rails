@@ -5983,13 +5983,18 @@ span.notifications-teams
       float: left
       width: 33.33%
       .filter_item
-        margin: 0 0 .5em
+        margin: 0 0 .7em
         .filter_evt
-          float: left
+          label
+            font-size: 11px
+            height: 15px
+            width: 100%
+            input[type="checkbox"]
+              vertical-align: text-bottom
+              height: 12px
+              margin-right: 7px
         .filter_label
-          padding-top: 1px
-          padding-left: 10px
-          float: left
+          padding-left: 25px
         .filter_cont
           margin-top: 3px
           select
@@ -6169,3 +6174,141 @@ span.notifications-teams
   border-radius: 16px
   padding: 0 1px
   text-align: center !important
+
+/*
+ * Order Details Page
+ */ 
+#order_details_section
+  margin: 1em auto 0
+  border: none
+  border-collapse: collapse
+  width: 100%
+  font-size: 1.4em
+
+  tr#heading_row
+    color: grey
+    font-size: 1.1rem
+    
+    th
+      border-bottom: 1px solid #ccc
+    .index
+      width: 0.5%
+
+    .description
+      width: 75%
+    
+    .quantity
+      width: 10%
+    
+    .price
+      width: 10%
+  
+  td, th
+    padding: 1em
+    &.description
+      text-align: left
+      font-size: .9em
+      font-weight: 600
+      width: 75%
+  
+      &.subitem
+        padding: 0 0 0 2em
+        font-size: .8em
+        font-weight: 400
+        color: #333
+  
+    &.line-index
+      color: grey
+      opacity: 0.6
+      
+    &.quantity
+      text-align: right
+      width: 10%
+  
+    &.price
+      text-align: right
+      width: 10%
+  
+    &.total_row
+      padding-top: 1em
+      font-weight: bold
+  
+  .line_item td
+    padding-bottom: 0
+ 
+  .line-index,
+  .index,
+  tr td:first-child,
+  tr, th:first-child
+    padding: 1em 0 0 1em
+    width: 15px
+    max-width: 15px
+    
+  .order-detail-container
+    margin: 0.5rem 1rem 0.5rem 0.5rem
+  
+  .order-detail-cn
+    color: #3c3c3c
+    font-size: 1.1rem
+    font-weight: 600
+    margin: -1rem 0 2rem 2.5rem
+    text-transform: uppercase
+    
+  .order-detail-actions
+    font-size: 0.8rem
+    display: flex
+    
+    #btn-order-edit,  
+    #btn-order-cancel,
+    #btn-order-credit,
+    #btn-order-co-refunt
+      border-radius: 3px
+      border: none  
+      font-weight: 500
+      color: #FFFFFF !important
+      cursor: pointer
+      letter-spacing: 1px
+      padding: 2px 3px
+    
+    form
+      margin-top: -0.3rem
+      
+    #btn-order-edit
+      border: 1px solid #6b9029
+      font-weight: 600
+      background-color: #6b9029
+      
+    #btn-order-cancel
+      border: 1px solid #6b9029
+      color: #6b9029 !important
+      background-color: none
+
+    #btn-order-credit
+      border: 1px solid grey
+      background-color: grey
+    
+    #btn-order-co-refunt
+      border: 1px solid #F51C29
+      background-color: #F51C29
+  
+  .description.total_row
+    text-align: right
+  
+  .order-discount td,
+  .order-funded td,
+  .order-total td,
+  .order-subtotal td
+    padding-top: 1rem !important
+    vertical-align: top !important
+    
+    &.price
+      padding-right: 1rem
+    
+  .order-discount,
+  .order-funded
+    color: grey
+  
+  .order-divider
+    td
+      border-bottom: 1px solid #ccc
+      padding: 2rem !important

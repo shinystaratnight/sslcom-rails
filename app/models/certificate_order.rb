@@ -23,6 +23,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
   has_many    :sub_order_items, :as => :sub_itemable, :dependent => :destroy
+  has_many    :product_variant_items, through: :sub_order_items, :dependent => :destroy
   has_many    :orders, ->{includes :stored_preferences}, :through => :line_items, unscoped: true
   has_many    :other_party_validation_requests, class_name: "OtherPartyValidationRequest",
               as: :other_party_requestable, dependent: :destroy
@@ -218,11 +219,11 @@ class CertificateOrder < ActiveRecord::Base
     result.uniq
   }
 
-  scope :reprocessing, lambda {
-    cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
-        where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
-    joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
-  }
+  # scope :reprocessing, lambda {
+  #   cids=Preference.select("owner_id").joins{owner(CertificateContent)}.
+  #       where{(name=="reprocessing") & (value==1)}.map(&:owner_id)
+  #   joins{certificate_contents.csr}.where{certificate_contents.id >> cids}.order("csrs.updated_at asc")
+  # }
 
   # more elegant but needs to be refined. Too slow
   # scope :reprocessing1, lambda {
@@ -399,6 +400,7 @@ class CertificateOrder < ActiveRecord::Base
     end
 
     state :canceled do
+      event :unrefund, :transitions_to => :canceled
       event :refund, :transitions_to => :refunded
       event :reject, :transitions_to => :rejected
       event :charge_back, :transitions_to => :charged_back
@@ -752,7 +754,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.retrieve_ca_certs(start, finish, options={})
-    Website.sandbox_db.use_database if options[:db]=="sandbox"
+    Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.unscoped.find_by_ref(co.ref).retrieve_ca_cert(true)}
@@ -1370,10 +1372,8 @@ class CertificateOrder < ActiveRecord::Base
       dcv_methods_for_comodo=[]
       domains_for_comodo=(options[:certificate_content] || self.certificate_content).all_domains
       domains_for_comodo.each do |d|
-        if certificate_contents.first.certificate_names.find_by_name(d)
-          last = certificate_contents.first.certificate_names.find_by_name(d).last_dcv_for_comodo
-          dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
-        end
+        last = certificate_contents.first.certificate_names.find_by_name(d).last_dcv_for_comodo
+        dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
       end
       params.merge!('domainNames' => domains_for_comodo.join(","))
       params.merge!('dcvEmailAddresses' => dcv_methods_for_comodo.join(",")) if (dcv_methods_for_comodo && dcv_methods_for_comodo.count==domains_for_comodo.count)

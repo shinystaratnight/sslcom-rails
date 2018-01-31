@@ -6,9 +6,9 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
-  before_filter :require_user, only: [:index, :new, :show, :upload, :document_upload]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
+  before_filter :require_user, only: [:index, :new]
   filter_access_to :all
   filter_access_to [:upload, :document_upload], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
@@ -292,6 +292,7 @@ class ValidationsController < ApplicationController
         elsif params[:certificate_order_id]
           CertificateOrder.find_by_ref(params[:certificate_order_id]).try(:validation)
         end
+    render :text => "404 Not Found", :status => 404 unless @validation
   end
 
   def notify_customer(validation_rulings)

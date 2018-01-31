@@ -1,24 +1,28 @@
 class OrdersController < ApplicationController
+  require 'cgi'
   layout false, only: :invoice
   include OrdersHelper
   #resource_controller
   helper_method :cart_items_from_model_and_id
   before_filter :finish_reseller_signup, :only => [:new], if: "current_user"
   before_filter :find_order, :only => [:show, :invoice, :update_invoice, :refund, :refund_merchant, :change_state]
-  before_filter :find_user, :only => [:user_orders]
   before_filter :set_prev_flag, only: [:create, :create_free_ssl, :create_multi_free_ssl]
   before_filter :prep_certificate_orders_instances, only: [:create, :create_free_ssl]
   before_filter :go_prev, :parse_certificate_orders, only: [:create_multi_free_ssl]
+
 #  before_filter :sync_aid_li_and_cart, :only=>[:create],
 #    :if=>Settings.sync_aid_li_and_cart
   filter_access_to :all
   filter_access_to :visitor_trackings, :filter_by_state, require: [:index]
   filter_access_to :show, :update_invoice, attribute_check: true
+  before_filter :find_user, :only => [:user_orders]
+  before_filter :set_row_page, only: [:index, :search, :filter_by_state, :visitor_trackings]
+
 
   def show_cart
     @cart = ShoppingCart.find_by_guid(params[:id]) if params[:id]
     if @cart # manually overwrite owned shopping_cart in favor or url specified
-      cookies[:cart] = {:value=>@cart.content, :path => "/",
+      cookies[:cart] = {:value=>(@cart.content.blank? ? @cart.content : CGI.unescape(@cart.content)), :path => "/",
                         :expires => Settings.cart_cookie_days.to_i.days.from_now}
     else
       cart = cookies[:cart]
@@ -179,32 +183,33 @@ class OrdersController < ApplicationController
   end
 
   def refund
-    performed="canceled #{'partial ' if params["partial"]}order"
+    @performed="canceled #{'partial ' if params["partial"]}order"
     unless @order.blank?
-      unless params["partial"]
+      unless params["partial"] # full refund
+        @target = @order
         if params["return_funds"]
-          @order.billable.funded_account.add_cents(@order.amount.cents)
-          performed << " and made $#{@order.amount} available to customer"
+          @order.billable.funded_account.add_cents(@order.make_available_total)
+          @performed << " and made #{Money.new(@order.make_available_total).format} available to customer."
         end
         @order.full_refund!
-        SystemAudit.create(owner: current_user, target: @order, notes: params["refund_reason"], action: performed)
         @order.certificate_orders.each do |co|
           co.revoke!(params["refund_reason"], current_user)
         end
         notify_ca(params["refund_reason"])
-      else
-        line_item=@order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
-        @order.billable.funded_account.add_cents(line_item.cents) if params["return_funds"]
-        performed << " and made $#{line_item.amount} available to customer"
-        #at least 1 lineitem needs to remain unrefunded
-        if @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
-          @order.full_refund!
-        else
-          @order.partial_refund!(params["partial"])
+      else # partial refunds or cancel line item
+        @target = @order.line_items.find {|li|li.sellable.try(:ref)==params["partial"]}
+        @target ||= @order.certificate_orders.find { |co| co.ref==params["partial"] }
+        refund_partial_amount(params) if params["return_funds"]
+        refund_partial_cancel(params) if params["cancel_only"]
+
+        if @target.is_a?(LineItem) && @target.sellable.is_a?(CertificateOrder)
+          @target.sellable.revoke!(params["refund_reason"], current_user)
         end
-        SystemAudit.create(owner: current_user, target: line_item, notes: params["refund_reason"], action: performed)
-        line_item.sellable.revoke!(params["refund_reason"],current_user) if line_item.sellable.is_a?(CertificateOrder)
+        if @target.is_a?(CertificateOrder)
+          @target.revoke!(params["refund_reason"], current_user)
+        end
       end
+      SystemAudit.create(owner: current_user, target: @target, notes: params["refund_reason"], action: @performed)
     end
     redirect_to order_url(@order)
   end
@@ -222,11 +227,28 @@ class OrdersController < ApplicationController
     unless @order.blank?
       @refunds = @order.refunds
       if params[:type] == 'create'
-        amount      = Money.new(params[:refund_amount].to_d * 100)
+        co = CertificateOrder.find(params[:cancel_cert_order].to_i) if params[:cancel_cert_order]
+        amount      = Money.new(co ? @order.make_available_line(co, :merchant) : (params[:refund_amount].to_d * 100))
         refund      = @order.refund_merchant(amount.cents, params[:refund_reason], current_user.id)
         last_refund = @order.refunds.last
         if refund && last_refund && last_refund.successful?
           flash[:notice] = "Successfully refunded merchant for amount #{amount.format}."
+          if co
+            funded = @order.make_available_funded(co)
+            co.refund!
+            co.revoke!(params["refund_reason"], current_user)
+            SystemAudit.create(
+              owner:  current_user,
+              target: co,
+              notes:  params["refund_reason"],
+              action: "Cancelled partial order #{co.ref}, merchant refund issued for #{amount.format}."
+            )
+            if funded > 0
+              @order.billable.funded_account.add_cents(funded)
+              flash[:notice] << " And made $#{Money.new(funded).format} available to customer."
+            end
+          end
+
         else
           flash[:error] = "Refund for #{amount.format} has failed! #{last_refund.message}"
         end
@@ -247,16 +269,10 @@ class OrdersController < ApplicationController
   # GET /orders
   # GET /orders.xml
   def index
-    preferred_row_count = current_user.preferred_order_row_count
-    @per_page = params[:per_page] || preferred_row_count.or_else("10")
-
-    if @per_page != preferred_row_count
-      current_user.preferred_order_row_count = @per_page
-      current_user.save
+    @search = params[:search] || ""
+    if is_sandbox? and @search.grep(/is_test\:true/).blank?
+      @search << " is_test:true"
     end
-
-    p = {:page => params[:page], :per_page => @per_page}
-    @search = params[:search]
     unpaginated =
       if !@search.blank?
         if current_user.is_system_admins?
@@ -271,7 +287,8 @@ class OrdersController < ApplicationController
           current_user.ssl_account.orders.not_test
         end
       end.uniq
-    stats(p, unpaginated)
+
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action => :index}
@@ -279,18 +296,17 @@ class OrdersController < ApplicationController
     end
   end
 
-  def stats(p, unpaginated)
+  def stats(unpaginated)
     @negative = unpaginated.where{state >> ['fully_refunded','charged_back', 'canceled']}.sum(:cents)
     @paid_via_deposit = unpaginated.where{billing_profile_id == nil }.sum(:cents)
     @deposits_amount=unpaginated.joins { line_items.sellable(Deposit) }.sum(:cents)
     @deposits_count=unpaginated.joins { line_items.sellable(Deposit) }.count
     @total_amount=unpaginated.sum(:cents)-@deposits_amount-@negative
     @total_count=unpaginated.count
-    @orders=unpaginated.paginate(p)
+    @orders=unpaginated.paginate(@p)
   end
 
   def filter_by_state
-    p = {:page => params[:page]}
     states = [params[:id]]
     unpaginated =
       if current_user.is_admin?
@@ -299,7 +315,7 @@ class OrdersController < ApplicationController
         current_user.ssl_account.orders.unscoped{
           current_user.ssl_account.orders.includes(:line_items).where{state >> states}.order(:created_at.desc)}
       end
-    stats(p, unpaginated)
+    stats(unpaginated)
 
     respond_to do |format|
       format.html { render :action=>:index}
@@ -308,9 +324,11 @@ class OrdersController < ApplicationController
   end
 
   def visitor_trackings
+    @search = params[:search]
     p = {:page => params[:page]}
+
     @orders =
-        if @search = params[:search]
+        if !@search.blank?
           Order.search(params[:search]).paginate(p)
         else
           Order.paginate(p)
@@ -465,6 +483,44 @@ class OrdersController < ApplicationController
   end
 
   private
+
+  def set_row_page
+    preferred_row_count = current_user.preferred_order_row_count
+    @per_page = params[:per_page] || preferred_row_count.or_else("10")
+
+    if @per_page != preferred_row_count
+      current_user.preferred_order_row_count = @per_page
+      current_user.save(validate: false)
+    end
+
+    @p = {page: (params[:page] || 1), per_page: @per_page}
+  end
+
+
+  # admin user refunds line item
+  def refund_partial_amount(params)
+    refund_amount = @order.make_available_line(@target)
+    item_remains  = @order.line_items.select{|li|li.sellable.try("refunded?")}.count==(@order.line_items.count)
+
+    @order.billable.funded_account.add_cents(refund_amount)
+    @performed << " and made $#{refund_amount} available to customer"
+
+    #at least 1 lineitem needs to remain unrefunded or refunded amount is less than order total
+    if item_remains
+      @order.full_refund!
+    else
+      @order.partial_refund!(params["partial"], refund_amount)
+    end
+    if (@target.is_a?(LineItem) && @target.sellable.refunded?) || (@target.is_a?(CertificateOrder) && @target.refunded?)
+      flash[:notice] = "Line item was successfully credited for #{Money.new(refund_amount).format}."
+    end
+  end
+
+  # admin user cancels line item
+  def refund_partial_cancel(params)
+    @performed = "Cancelled partial order #{@target.sellable.ref}, credit or refund were NOT issued."
+    @target.sellable.cancel! @target
+  end
 
   def certificate_order_steps
     certificate_order=CertificateOrder.new(params[:certificate_order])

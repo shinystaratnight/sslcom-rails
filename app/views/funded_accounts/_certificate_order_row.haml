@@ -1,39 +1,61 @@
--line_item_certs=@order.certificate_orders.select{|co|co.certificate==cert.certificate}
-%tr.line_item
-  %td.description
-    =row_description(cert)
-    %ul
-      -line_item_certs.each do |co|
+-fully_refunded = @order.get_total_merchant_refunds == @order.get_total_merchant_amount
+-@order.certificate_orders.each_with_index do |co, index|
+  %tr.line_item
+    %td.line-index
+      =index+1
+    %td.description
+      =row_description(co)
+    %td.quantity 1
+    %td.price
+      =Money.new(co.amount).format
+  -if co.migrated_from_v2? && !cert.v2_line_items.empty?
+    -co.v2_line_items.each do |item|
+      %tr.line_item
+        %td.description.subitem= item
+        %td(colspan='2')
+  =render partial: "funded_accounts/row", locals: {cert: co, colspan: '2'}
+
+  %tr.line_item  
+    %td{colspan: '3'}
+      .order-detail-container
         -if current_user.is_admin?
           :javascript
-            function refund_reason_#{co.id}(return_funds)
-            {
-              label="Cancel item #{co.subject} (#{co.ref})";
-              if(return_funds==true)
-                label+=" and make #{cert.price.format} available to customer again";
-              var reason = prompt(label+"? Reason for refund.", '');
+            function refund_reason_#{co.id}(return_funds) {
+              var label ="Cancel item #{co.subject} (#{co.ref})",
+              reason = "";
+              if(return_funds==true) {
+                label += " and make #{Money.new(@order.make_available_line(co)).format} available to customer again";
+                reason = prompt(label + "? Reason for refund.", "");
+              } else {
+                reason = prompt(label + "? Reason for cancel.", "");
+              }
+              
               if (reason == null || reason=="")
                 return;
               else
                 if(return_funds==true)
                   window.location = '#{refund_order_url(id: @order.reference_number, return_funds: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
                 else
-                  window.location = '#{refund_order_url(id: @order.reference_number, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
+                  window.location = '#{refund_order_url(id: @order.reference_number, cancel_only: true, partial: co.ref)}&refund_reason='+encodeURIComponent(reason);
             }
-        %li
-          =link_to("#{co.subject} (#{co.ref})", certificate_order_path(@ssl_slug, co))
-          -if current_user.is_admin? && line_item_certs.count > 1
-            =link_to("[cancel]", '#', onclick:  "refund_reason_#{co.id}(false)")
-            -if cert.price.cents > 0
-              =link_to("[credit #{cert.price.format}]", '#', onclick:  "refund_reason_#{co.id}(true)")
-  %td.quantity
-    =line_item_certs.count
-  %td.price= cert.price.format
--if cert.migrated_from_v2? && !cert.v2_line_items.empty?
-  -cert.v2_line_items.each do |item|
-    %tr.line_item
-      %td.description.subitem= item
-      %td(colspan='2')
-=render partial: "funded_accounts/row", locals: {cert: cert, colspan: '2'}
-
-
+        -unless co.subject.blank?
+          .order-detail-cn #{co.subject}
+        .order-detail-actions
+          -if current_user.is_admin? || (!current_user.is_admin? && !(co.canceled? || co.refunded?))
+            %div
+              =link_to("#{co.ref.upcase}", certificate_order_path(@ssl_slug, co), id: 'btn-order-edit')
+          -if current_user.is_admin?
+            -unless co.canceled? || co.refunded?
+              %div
+                =link_to("CANCEL", '#', onclick:  "refund_reason_#{co.id}(false)", id: 'btn-order-cancel')
+            -if co.price.cents > 0 && !co.refunded?
+              %div
+                =link_to("CREDIT #{Money.new(@order.make_available_line(co)).format}", '#', onclick:  "refund_reason_#{co.id}(true)", id: 'btn-order-credit')
+              -unless fully_refunded
+                %div
+                  -refund_merchant_amt = @order.make_available_line(co, :merchant)
+                  =form_tag refund_merchant_order_url(@ssl_slug, @order.reference_number), method: :get  do
+                    =hidden_field_tag :type, 'create'
+                    =hidden_field_tag :cancel_cert_order, co.id
+                    =hidden_field_tag :refund_reason, "Refund order line item #{co.id} for amount #{Money.new(refund_merchant_amt).format}."
+                    =submit_tag "refund merchant #{Money.new(refund_merchant_amt).format}", id: 'btn-order-co-refunt'

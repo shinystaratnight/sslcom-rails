@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180113195551) do
+ActiveRecord::Schema.define(version: 20180127195410) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -136,18 +136,6 @@ ActiveRecord::Schema.define(version: 20180113195551) do
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
 
-  create_table "blocklist", force: :cascade do |t|
-    t.string   "type",        limit: 255
-    t.string   "domain",      limit: 255
-    t.integer  "validation",  limit: 4
-    t.string   "status",      limit: 255
-    t.string   "reason",      limit: 255
-    t.string   "description", limit: 255
-    t.text     "notes",       limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "blocklists", force: :cascade do |t|
     t.string   "type",        limit: 255
     t.string   "domain",      limit: 255
@@ -162,12 +150,12 @@ ActiveRecord::Schema.define(version: 20180113195551) do
 
   create_table "ca_api_requests", force: :cascade do |t|
     t.integer  "api_requestable_id",   limit: 4
-    t.string   "api_requestable_type", limit: 255
+    t.string   "api_requestable_type", limit: 191
     t.text     "request_url",          limit: 65535
     t.text     "parameters",           limit: 65535
     t.string   "method",               limit: 255
     t.text     "response",             limit: 65535
-    t.string   "type",                 limit: 255
+    t.string   "type",                 limit: 191
     t.string   "ca",                   limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -178,16 +166,6 @@ ActiveRecord::Schema.define(version: 20180113195551) do
   add_index "ca_api_requests", ["api_requestable_id", "api_requestable_type"], name: "index_ca_api_requests_on_api_requestable", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type", "created_at"], name: "index_ca_api_requests_on_type_and_api_requestable_and_created_at", using: :btree
   add_index "ca_api_requests", ["id", "api_requestable_id", "api_requestable_type", "type"], name: "index_ca_api_requests_on_type_and_api_requestable", unique: true, using: :btree
-
-  create_table "caa_check", force: :cascade do |t|
-    t.integer  "checkable_id",   limit: 4
-    t.string   "checkable_type", limit: 255
-    t.string   "domain",         limit: 255
-    t.string   "request",        limit: 255
-    t.text     "result",         limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "caa_checks", force: :cascade do |t|
     t.integer  "checkable_id",   limit: 4
@@ -210,10 +188,10 @@ ActiveRecord::Schema.define(version: 20180113195551) do
   end
 
   create_table "cdns", force: :cascade do |t|
-    t.integer  "ssl_account_id",  limit: 4
-    t.string  "api_key",        limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "ssl_account_id", limit: 4
+    t.string   "api_key",        limit: 255
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   create_table "certificate_api_requests", force: :cascade do |t|
@@ -331,7 +309,6 @@ ActiveRecord::Schema.define(version: 20180113195551) do
   add_index "certificate_orders", ["is_test"], name: "index_certificate_orders_on_is_test", using: :btree
   add_index "certificate_orders", ["ref"], name: "index_certificate_orders_on_ref", using: :btree
   add_index "certificate_orders", ["site_seal_id"], name: "index_certificate_orders_site_seal_id", using: :btree
-  add_index "certificate_orders", ["validation_id"], name: "index_certificate_orders_on_validation_id", using: :btree
 
   create_table "certificates", force: :cascade do |t|
     t.integer  "reseller_tier_id",      limit: 4
@@ -399,7 +376,6 @@ ActiveRecord::Schema.define(version: 20180113195551) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "registrant_type",       limit: 4
-    t.integer  "parent_id",             limit: 4
     t.string   "callback_method",       limit: 255
     t.date     "incorporation_date"
     t.string   "incorporation_country", limit: 255
@@ -410,6 +386,7 @@ ActiveRecord::Schema.define(version: 20180113195551) do
     t.string   "duns_number",           limit: 255
     t.string   "company_number",        limit: 255
     t.string   "registration_service",  limit: 255
+    t.integer  "parent_id",             limit: 4
     t.boolean  "saved_default",                     default: false
   end
 
@@ -814,19 +791,6 @@ ActiveRecord::Schema.define(version: 20180113195551) do
     t.datetime "updated_at",              null: false
   end
 
-  create_table "physical_token", force: :cascade do |t|
-    t.integer  "certificate_order_id",  limit: 4
-    t.integer  "signed_certificate_id", limit: 4
-    t.string   "tracking_number",       limit: 255
-    t.string   "shipping_method",       limit: 255
-    t.string   "activation_pin",        limit: 255
-    t.string   "manufacturer",          limit: 255
-    t.string   "model_number",          limit: 255
-    t.string   "serial_number",         limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "physical_tokens", force: :cascade do |t|
     t.integer  "certificate_order_id",  limit: 4
     t.integer  "signed_certificate_id", limit: 4
@@ -841,6 +805,7 @@ ActiveRecord::Schema.define(version: 20180113195551) do
     t.text     "notes",                 limit: 65535
     t.string   "name",                  limit: 255
     t.string   "workflow_state",        limit: 255
+    t.string   "admin_pin",             limit: 255
   end
 
   create_table "preferences", force: :cascade do |t|
@@ -863,7 +828,7 @@ ActiveRecord::Schema.define(version: 20180113195551) do
     t.integer  "ssl_account_id",    limit: 4
     t.integer  "product_id",        limit: 4
     t.string   "workflow_state",    limit: 255
-    t.string   "ref",               limit: 255
+    t.string   "ref",               limit: 191
     t.string   "auto_renew",        limit: 255
     t.string   "auto_renew_status", limit: 255
     t.boolean  "is_expired"
@@ -1078,7 +1043,7 @@ ActiveRecord::Schema.define(version: 20180113195551) do
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", limit: 255,   null: false
+    t.string   "session_id", limit: 191,   null: false
     t.text     "data",       limit: 65535
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false

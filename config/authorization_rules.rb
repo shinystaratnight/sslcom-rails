@@ -394,7 +394,7 @@ authorization do
     has_permission_on :certificates,  :to => :buy_renewal
     has_permission_on :site_seals, :to => [:site_report]
     has_permission_on :users, :ssl_accounts, :resellers,    :to => [:create, :update]
-    has_permission_on :certificates, :validation_histories, :to => :read
+    has_permission_on :certificates, :to => :read
     has_permission_on :funded_accounts, :to => [
       :allocate_funds_for_order,
       :create,

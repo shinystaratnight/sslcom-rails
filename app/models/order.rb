@@ -126,23 +126,24 @@ class Order < ActiveRecord::Base
           result = result.joins{line_items.sellable(CertificateOrder)}
         when /reseller/
           result = result.joins{line_items.sellable(ResellerTier)}
+        when /ucc/,/evucc/,/basicssl/,/wildcard/,/ev/,/premiumssl/,/ev-code-signing/,/code-signing/
+          result = result.joins{line_items.sellable(CertificateOrder).sub_order_items.product_variant_item.product_variant_group.
+              variantable(Certificate)}.where{certificates.product=="#{query}"}
       end
     end
     %w(amount).each do |field|
       if filters[field.to_sym]
         query=filters[field.to_sym].split("-")
         if query.count==1
-          query=filters[field.to_sym].delete(".")
+          query=filters[field.to_sym]
           case query
-            when /\A>/
-              result = result.where{(cents > "#{query[1..-1]}")}
-            when /\A</
-              result = result.where{(cents < "#{query[1..-1]}")}
+            when /\A>/,/\A</
+              result = result.where{(cents > ("#{query[1..-1]}".to_f*100).to_i)}
             else
-              result = result.where{(cents == "#{query}")}
+              result = result.where{(cents == ("#{query}".to_f*100).to_i)}
           end
         else
-          result = result.where{cents >> ((query[0].delete("."))..(query[1].delete(".")))}
+          result = result.where{cents >> ((query[0].to_f*100).to_i..(query[1].to_f*100).to_i)}
         end
       end
     end
@@ -193,16 +194,17 @@ class Order < ActiveRecord::Base
     '%.02f' % rounded
   end
 
-  def discount_amount
+  def discount_amount(items=nil)
+    cur_amount = items ? line_items.map(&:cents).sum : amount.cents
     t=0
     unless id
       temp_discounts.each do |d|
         d=Discount.find(d)
-        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
+        d.apply_as=="percentage" ? t+=(d.value.to_f*cur_amount) : t+=(d.value.to_i)
       end unless temp_discounts.blank?
     else
       self.discounts.each do |d|
-        d.apply_as=="percentage" ? t+=(d.value.to_f*amount.cents) : t+=(d.value.to_i)
+        d.apply_as=="percentage" ? t+=(d.value.to_f*cur_amount) : t+=(d.value.to_i)
       end unless self.discounts.empty?
     end
     Money.new(t)
@@ -330,6 +332,14 @@ class Order < ActiveRecord::Base
     end
 
     state :partially_refunded do
+      event :partial_refund, transitions_to: :partially_refunded do |ref, amount=nil|
+        item =line_items.find {|li|li.sellable.try(:ref)==ref} || certificate_orders.find {|co| co.try(:ref)==ref}
+        if item
+          decrement! :cents, (amount ? amount : item.cents)
+          to_refund = item.is_a?(LineItem) ? item.sellable : item
+          to_refund.refund! if (to_refund.respond_to?("refund!".to_sym) && !to_refund.refunded?)
+        end
+      end
       event :full_refund, transitions_to: :fully_refunded do |complete=true|
         line_items.each {|li|li.sellable.refund! if(
           li.sellable.respond_to?("refund!".to_sym) && !li.sellable.refunded?)} if complete
@@ -599,7 +609,35 @@ class Order < ActiveRecord::Base
       response.params['response_reason_code'] == UNSETTLED_CREDIT_RESPONSE_REASON_CODE
     end
   end
+  
+  # ============================================================================
+  # Make available to customer
+  # ============================================================================
+  def make_available_total
+    get_total_merchant_amount + get_funded_account_amount
+  end
+  
+  def make_available_line(item, type=nil)
+    order_total  = line_items.pluck(:cents).sum
+    discount_amt = discount_amount(:items)
+    total        = item.is_a?(LineItem) ? item.cents : item.amount
+    percent      = total.to_d/order_total.to_d
+    discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
+    funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
+    
+    if type == :merchant
+      total - (discount + funded)
+    else
+      total - discount
+    end
+  end
 
+  def make_available_funded(item)
+    order_total  = line_items.pluck(:cents).sum
+    total        = item.is_a?(LineItem) ? item.cents : item.amount
+    percent      = total.to_d/order_total.to_d
+    get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
+  end
   # ============================================================================
   # REFUND (utilizes 3 merchants, Stripe, PaypalExpress and Authorize.net)
   # ============================================================================
@@ -650,8 +688,8 @@ class Order < ActiveRecord::Base
   def get_total_merchant_amount
     merchant = get_merchant
     o = get_order_charged
-    return (cents - get_funded_account_amount) if %w{stripe authnet}.include?(merchant)
-    return o.cents if merchant == 'paypal'
+    return o.cents if o && %w{paypal stripe authnet}.include?(merchant)
+    return 0 if o && %w{no_payment zero_amt funded}.include?(merchant)
   end
   
   def get_funded_account_amount

@@ -196,7 +196,11 @@ class ApplicationController < ActionController::Base
 
   def find_certificate_orders(options={})
     return CertificateOrder.none unless current_user # returns null set. Rails 4 is CertificateOrder.none
-    if @search = params[:search] && !@search.blank?
+    @search = params[:search] || ""
+    if is_sandbox? and @search.grep(/is_test\:true/).blank?
+      @search << " is_test:true"
+    end
+    if !@search.blank?
       #options.delete(:page) if options[:page].nil?
       (current_user.is_admin? ?
         (CertificateOrder.unscoped{
@@ -238,7 +242,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    render :text => "404 Not Found", :status => 404
+    render 'site/404_not_found', status: 404
   end
 
   protected
@@ -368,14 +372,18 @@ class ApplicationController < ActionController::Base
   end
 
   def find_ssl_account
-    @ssl_account =
-        if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
-         (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
-             (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
-        else
-         current_user.ssl_account
-        end
-    not_found if @ssl_account.blank?
+    if current_user.blank?
+      not_found
+    else  
+      @ssl_account =
+          if params[:ssl_slug] and request[:action]!="validate_ssl_slug"
+           (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_acct_number(params[:ssl_slug]) ||
+               (current_user.is_system_admins? ? SslAccount : current_user.ssl_accounts).find_by_ssl_slug(params[:ssl_slug])
+          else
+           current_user.ssl_account
+          end
+      not_found if @ssl_account.blank?
+    end  
   end
 
   def load_notifications

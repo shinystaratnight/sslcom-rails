@@ -130,6 +130,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def update_certificate_order
     @certificate_order=self.find_certificate_order
+    self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
     if @certificate_order.is_a?(CertificateOrder)
       @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
       @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
@@ -536,7 +537,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def get_domains
     if csr_obj && csr_obj.valid? && domains.nil?
-      self.domains = {csr_obj.common_name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access
+      self.domains={}
+      csr_obj.all_names.each do |name|
+        self.domains.merge!({name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access)
+      end
     end
 
     if domains.is_a? Hash
