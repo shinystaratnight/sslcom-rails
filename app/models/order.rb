@@ -679,6 +679,7 @@ class Order < ActiveRecord::Base
     return 'no_payment' if o.payment_not_required?
     return 'zero_amt'   if o.payment_zero?
     return 'funded'     if o.payment_funded_account_partial? || o.payment_funded_account?
+    return 'other'
   end
   
   def get_order_charged
@@ -689,7 +690,15 @@ class Order < ActiveRecord::Base
     merchant = get_merchant
     o = get_order_charged
     return o.cents if o && %w{paypal stripe authnet}.include?(merchant)
-    return 0 if o && %w{no_payment zero_amt funded}.include?(merchant)
+    if o #&& %w{paypal stripe authnet}.include?(merchant)
+      if %w{no_payment zero_amt funded}.include?(merchant)
+        0
+      else
+        o.cents
+      end
+    else
+      0
+    end
   end
   
   def get_funded_account_amount
