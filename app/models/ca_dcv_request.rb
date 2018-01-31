@@ -1,5 +1,9 @@
 class CaDcvRequest < CaApiRequest
 
+  def success?
+    !!(response=~/^0\n/)
+  end
+
   ["domain_name", "whois_email", "level2_email", "level3_email", "level4_email", "level5_email"].each do |i|
     define_method "#{i}" do
       choices = parse_email_choices
@@ -10,7 +14,7 @@ class CaDcvRequest < CaApiRequest
   end
 
   def email_address_choices
-    whois_email+level2_email+level3_email+level4_email+level5_email
+    success? ? whois_email+level2_email+level3_email+level4_email+level5_email : []
   end
 
   private

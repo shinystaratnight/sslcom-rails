@@ -1372,7 +1372,7 @@ class CertificateOrder < ActiveRecord::Base
       dcv_methods_for_comodo=[]
       domains_for_comodo=(options[:certificate_content] || self.certificate_content).all_domains
       domains_for_comodo.each do |d|
-        last = certificate_contents.first.certificate_names.find_by_name(d).last_dcv_for_comodo
+        last = certificate_contents.first.certificate_names.find_by_name(d).try(:last_dcv_for_comodo)
         dcv_methods_for_comodo << (last.blank? ? ApiCertificateCreate_v1_4::DEFAULT_DCV_METHOD_COMODO : last)
       end
       params.merge!('domainNames' => domains_for_comodo.join(","))
