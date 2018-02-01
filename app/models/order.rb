@@ -51,7 +51,7 @@ class Order < ActiveRecord::Base
   }
 
   scope :not_test, lambda {
-    joins{line_items.sellable(CertificateOrder)}.
+    joins{outer.line_items.sellable(CertificateOrder)}.
         where{(line_items.sellable(CertificateOrder).is_test==nil) |
         (line_items.sellable(CertificateOrder).is_test==false)}
   }
