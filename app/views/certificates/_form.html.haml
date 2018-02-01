@@ -1,3 +1,4 @@
+-reprocess_ucc = @certificate.is_ucc? && action_name == 'reprocess' && controller_name == 'certificate_orders'
 -if @certificate.is_ucc?
   -if @certificate.is_ev?
     -first, second = @certificate.items_by_domains(true).transpose[0]
@@ -203,29 +204,31 @@
             Domains#{" (prorated)" if @certificate_order.signed_certificates.try(:last)}:
             =link_to image_tag('question_mark.png'), '#what_are_domains', :rel => 'prettyPhoto', :id => 'what_are_domains_link'
         %span.label_desc separated by space or new line
-        %span.label_break
-        %span.label_desc can skip and edit later
+        -unless reprocess_ucc
+          %span.label_break
+          %span.label_desc can skip and edit later
         -unless @certificate.is_premium_ssl?
           %span.label_break
           %span.label_desc 2000 domains maximum
-          %span.label_break
-          %span.label_desc
-            $
-            %span#first_domain_tier_price>
-              #{first.price.format}
-            \ for first 3 non-wildcard domains
-          %span.label_break
-          %span.label_desc
-            $
-            %span#second_domain_tier_price>
-              #{second.price.format}
-            \ ea non-wildcard domain after 3rd
-          -unless @certificate.is_ev?
+          -unless reprocess_ucc
+            %span.label_break
             %span.label_desc
               $
-              %span#third_domain_tier_price>
-                #{third.price.format}
-              \ ea wildcard domain
+              %span#first_domain_tier_price>
+                #{first.price.format}
+              \ for first 3 non-wildcard domains
+            %span.label_break
+            %span.label_desc
+              $
+              %span#second_domain_tier_price>
+                #{second.price.format}
+              \ ea non-wildcard domain after 3rd
+            -unless @certificate.is_ev?
+              %span.label_desc
+                $
+                %span#third_domain_tier_price>
+                  #{third.price.format}
+                \ ea wildcard domain
       =cert_form.text_area :additional_domains, cols: 40, rows: 10
   -unless @certificate_order.is_unused_credit?
     .clearfix
@@ -328,6 +331,42 @@
             %span 3
             #{"sub" if @certificate.is_premium_ssl?}domains)
   -else
+    -if reprocess_ucc
+      -wildcard_count    = @certificate_order.wildcard_domains.count
+      -nonwildcard_count = @certificate_order.domains.count - wildcard_count
+      -nonwildcard_cost  = @certificate_order.ucc_prorated_domain
+      -wildcard_cost     = @certificate_order.ucc_prorated_domain(:wildcard)
+      .clearfix
+        %label{for: "ucc_nonwildcard_amount"}
+          Domain Amount:
+          %span.label_desc prorated cost per additional domain
+          %span.label_desc Original order: #{nonwildcard_count} domains
+        #ucc-nonwildcard-amount{data: {cost: Money.new(nonwildcard_cost).to_s, initial_count: nonwildcard_count}}
+          %span
+            =Money.new(nonwildcard_cost).format
+          %span{id: 'nonwildcard-current-count'}
+      -if wildcard_count > 0
+        %br
+        .clearfix
+          %label{for: "ucc_wildcard_amount"}
+            Wildcard Domain Amount:
+            %span.label_desc prorated cost per additional wildcard
+            %span.label_desc Original order: #{wildcard_count} domains
+          #ucc-wildcard-amount{data: {cost: Money.new(wildcard_cost).to_s, initial_count: wildcard_count}}
+            %span
+              =Money.new(wildcard_cost).format
+            %span{id: 'wildcard-current-count'}
+      %br
+      .clearfix
+        %label{for: "expense_amount"}
+          Order Amount:
+          %span.label_desc total cost of order
+        #order_amount
+          %span#calculated_reprocess_price $0.0
+          .order_amount_desc
+            (includes
+            %span 3
+            #{"sub" if @certificate.is_premium_ssl?}domains)
     .clearfix
       %label *Subscriber Agreement
       =cert_form.check_box :agreement
