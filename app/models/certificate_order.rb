@@ -425,7 +425,31 @@ class CertificateOrder < ActiveRecord::Base
       event :unreject, :transitions_to => :paid
     end
   end
-
+  
+  # Prorated pricing for single domain for ucc certificate,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_prorated_domain(wildcard=nil)
+    if certificate.is_ucc?
+      tiers = ucc_duration_amounts(certificate_duration(:years).to_i)
+      domain_amount  = wildcard ? tiers['tier_3'] : tiers['tier_2']
+      total_duration = certificate_duration(:days)
+      domain_amount - ( (used_days/total_duration) * domain_amount )
+    end
+  end
+  
+  # Get pricing for each tier for a given duration,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_duration_amounts(years=1)
+    if certificate.is_ucc?
+      durations = {}
+      i = years-1
+      certificate.num_domain_tiers.times do |j|
+        durations["tier_#{j+1}"] = (certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
+      end
+      durations
+    end
+  end
+  
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
