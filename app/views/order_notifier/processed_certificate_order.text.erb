@@ -9,7 +9,7 @@ Your <%=Settings.community_name%> <%=@certificate_order.certificate.description[
 
 If you need the certificate in other formats, please visit your order download page:
 
-  <%=certificate_order_url(id: @certificate_order.id)%>
+  <%=certificate_order_url(@certificate_order.ref)%>
 
 <%if @certificate_order.certificate.is_ev? && !@signed_certificate.is_ev?-%>
 The above DV certificate serves as a placeholder so that you can begin securing your site right away. However, in order to enable your EV certificate (and display the green address bar on your site) we'll need a bit more information.

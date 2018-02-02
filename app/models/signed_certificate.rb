@@ -313,9 +313,13 @@ class SignedCertificate < ActiveRecord::Base
         end
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-    co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-      OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-      OrderNotifier.site_seal_approve(c, co).deliver
+    if Settings.shadow_certificate_recipient and issuer="SSL.com Test"
+      OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, zip_path).deliver
+    else
+      co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+        OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+        OrderNotifier.site_seal_approve(c, co).deliver
+      end
     end
   end
 

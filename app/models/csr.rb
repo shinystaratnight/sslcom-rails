@@ -190,7 +190,8 @@ class Csr < ActiveRecord::Base
   end
 
   def all_names
-    (subject_alternative_names.split(",") + [common_name]).flatten.uniq
+    subject_alternative_names ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
+        [common_name]
   end
 
   def dcv_verified?
