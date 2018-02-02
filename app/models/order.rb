@@ -34,9 +34,12 @@ class Order < ActiveRecord::Base
       self.deposit_mode ||= false
     end
   end
-
+  
+  SSL_REPROCESS_UCC = "Reprocess UCC Order"
   SSL_CERTIFICATE = "SSL Certificate Order"
-
+  # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
+  # when running charges at the end of the month for orders from ucc reprocessing.
+  BILLING_STATUS = %w{approved pending declined}
   #go live with this
 #  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
@@ -265,7 +268,9 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+    unless reprocess_ucc_order?
+      self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+    end
   end
 
   def final_amount
@@ -442,6 +447,11 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+  
+  def reprocess_ucc_order?
+    description == Order::SSL_REPROCESS_UCC
+  end
+  
   def number
     SecureRandom.base64(32)
   end
@@ -451,8 +461,8 @@ class Order < ActiveRecord::Base
   def purchase(credit_card, options = {})
     options[:order_id] = number
     transaction do
-      authorization = OrderTransaction.purchase(final_amount, credit_card, options)
-      
+      current_amount = options[:amount] ? Money.new(options[:amount]) : final_amount
+      authorization = OrderTransaction.purchase(current_amount, credit_card, options)
       if authorization && authorization.is_a?(OrderTransaction)
         transactions.push(authorization)
 
@@ -743,7 +753,7 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      notes.blank? &&
+      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'

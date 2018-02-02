@@ -7,10 +7,23 @@ $.last_delete_clicked=function(){
 };
 
 function paypalCheckoutUrl() {
-  var url      = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>",
-      discount = $('span#discount_applied');
+  var url = "<%= paypal_express_checkout_url(ssl_slug: params[:ssl_slug]) %>",
+      discount = $('span#discount_applied'),
+      reprocess_ucc = $('#reprocess_ucc_amount');
+  
   if (discount.length && discount.data('discount') && discount.data('discount_code')) {
     url +='?discount='+discount.data('discount')+'&discount_code='+discount.data('discount_code');
+  }
+  
+  if (reprocess_ucc.length) {
+    url +='?amount=' + $('#order_order_amount').val()
+        + '&funded_target=' + $('#order_charge_amount').val()
+        + '&funded_account=' + $('#order_funded_amount').val()
+        + '&deduct_order=true'
+        + '&reprocess_ucc=true'
+        + '&order_type=order'
+        + '&co_ref=' + reprocess_ucc.data('co-ref')
+        + '&cc_ref=' + reprocess_ucc.data('cc-ref');
   }
   $('[name*=paypal]').attr('href', url);
   return url;
@@ -52,7 +65,9 @@ $('#expand_register_card').live('click', function(){
   }
   else{
     $('#credit_card_form').show();
-    $('form#new_order').attr("action","/orders");
+    if (!$('#reprocess_ucc_amount')) {
+      $('form#new_order').attr("action","/orders");
+    }
   }
 });
 $('.delete_profile').livequery(
