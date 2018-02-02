@@ -270,7 +270,7 @@ class OrdersController < ApplicationController
   # GET /orders.xml
   def index
     @search = params[:search] || ""
-    if is_sandbox? and @search.grep(/is_test\:true/).blank?
+    if is_sandbox? and @search.include?("is_test:true").blank?
       @search << " is_test:true"
     end
     unpaginated =
