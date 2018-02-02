@@ -1,5 +1,6 @@
 -certificate ||= @certificate_order.certificate if @certificate_order
--title=new_order_title(certificate)
+-cur_order = @reprocess_ucc.nil? ? current_order : current_order_reprocess_ucc
+-title = new_order_title(certificate)
 -content_for :title, title
 =order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
@@ -9,7 +10,7 @@
       =link_to("advanced options", checkout_orders_url) if current_page?(new_order_path)
   %p
     Please fill out the (*) required fields #{current_user.blank? ? "below to complete your account registration." : "below."}
-    -if current_order.amount.to_s.to_i > 0
+    -if cur_order.amount.to_s.to_i > 0
       This charge will appear as #{Settings.merchant_name} on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
   =form_for *url_to_new_order do |f|
@@ -23,7 +24,7 @@
           =cert_form.text_area :signing_request, :class=>'hidden'
           =cert_form.hidden_field :additional_domains
           =cert_form.hidden_field :server_software_id
-    -unless current_user && current_order.amount.to_s.to_i <= 0
+    -unless current_user && cur_order.amount.to_s.to_i <= 0
       #stylized.deposit_funds_form
         -if current_user && ssl_account
           =render partial: "billing_profiles", locals: {ssl_account: ssl_account}
@@ -76,7 +77,7 @@
                     1 numeric character [0-9] and
                   %li
                     1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
-        -if current_order.amount.to_s.to_i > 0
+        -if cur_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}
               .subheading Payment Method

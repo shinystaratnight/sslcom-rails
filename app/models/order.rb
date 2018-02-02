@@ -690,7 +690,7 @@ class Order < ActiveRecord::Base
     merchant = get_merchant
     o = get_order_charged
     return o.cents if o && %w{paypal stripe authnet}.include?(merchant)
-    if o #&& %w{paypal stripe authnet}.include?(merchant)
+    if o
       if %w{no_payment zero_amt funded}.include?(merchant)
         0
       else

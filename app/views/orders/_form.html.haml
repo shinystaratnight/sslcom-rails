@@ -1,8 +1,9 @@
+-cur_order = @reprocess_ucc.nil? ? current_order : current_order_reprocess_ucc
 .clearfix
   %label{:for => "amount"}
     Order Amount:
     %span.label_desc charged in $USD
-  -amount = current_order.amount
+  -amount = cur_order.amount
   #tier_load_amount{data: {original_amount: amount}}
     ="#{amount.format.gsub(',', '')} USD"
-  =f.hidden_field :amount, value: (amount.to_s.to_i or 0)
+  =f.hidden_field :amount, value: (amount.to_s.to_i || 0)

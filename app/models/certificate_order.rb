@@ -450,6 +450,25 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
   
+  def ucc_prorated_amount(certificate_content)
+    wildcard_count        = wildcard_domains.count
+    nonwildcard_count     = domains.count - wildcard_count
+    # not charged for tier 1 domains
+    nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
+    nonwildcard_cost      = ucc_prorated_domain
+    wildcard_cost         = ucc_prorated_domain(:wildcard)
+    new_nonwildcard_count = 0
+    new_wildcard_count    = 0
+    certificate_content.domains.each do |name|
+      name.include?('*') ? (new_wildcard_count +=1) : (new_nonwildcard_count +=1)
+    end
+    addt_nonwildcard = new_nonwildcard_count - nonwildcard_count
+    addt_wildcard    = new_wildcard_count - wildcard_count
+    addt_nonwildcard = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard
+    addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
+    (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
+  end
+    
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
