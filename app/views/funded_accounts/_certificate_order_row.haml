@@ -7,7 +7,7 @@
       =row_description(co)
     %td.quantity 1
     %td.price
-      =Money.new(co.amount).format
+      =Money.new(@order.reprocess_ucc_order? ? @order.cents : co.amount).format
   -if co.migrated_from_v2? && !cert.v2_line_items.empty?
     -co.v2_line_items.each do |item|
       %tr.line_item

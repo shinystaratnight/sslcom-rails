@@ -1,6 +1,5 @@
 -certificate ||= @certificate_order.certificate if @certificate_order
--cur_order = @reprocess_ucc.nil? ? current_order : current_order_reprocess_ucc
--title = new_order_title(certificate)
+-title=new_order_title(certificate)
 -content_for :title, title
 =order_progress_indicator(2, certificate) if certificate
 .reseller_registration_select_tier
@@ -10,7 +9,7 @@
       =link_to("advanced options", checkout_orders_url) if current_page?(new_order_path)
   %p
     Please fill out the (*) required fields #{current_user.blank? ? "below to complete your account registration." : "below."}
-    -if cur_order.amount.to_s.to_i > 0
+    -if current_order.amount.to_s.to_i > 0
       This charge will appear as #{Settings.merchant_name} on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, :object_name => 'transaction'
   =form_for *url_to_new_order do |f|
@@ -24,60 +23,13 @@
           =cert_form.text_area :signing_request, :class=>'hidden'
           =cert_form.hidden_field :additional_domains
           =cert_form.hidden_field :server_software_id
-    -unless current_user && cur_order.amount.to_s.to_i <= 0
+    -unless current_user && current_order.amount.to_s.to_i <= 0
       #stylized.deposit_funds_form
         -if current_user && ssl_account
           =render partial: "billing_profiles", locals: {ssl_account: ssl_account}
         -else
-          .clearfix
-            %label{:for=>"has_csr"}
-              *Have a #{Settings.community_name} account?:
-              %span.label_desc create or login into an account
-            .radio_choices
-              .radio_w_desc.clearfix
-                =radio_button_tag :has_account, true
-                %span.has_account_container I do and I want to log in now
-              .radio_w_desc.clearfix
-                =radio_button_tag :has_account, false
-                %span.has_account_container I do NOT but I want to create one
-          #login_section
-            =fields_for :user_session, @user_session do |form|
-              .subheading Login Information
-              .clearfix
-                = form.label :login, "*Login<span class='label_desc'>this will be your username</span>".html_safe
-                = form.text_field :login
-              .clearfix
-                = form.label :password, "*Password".html_safe
-                = form.password_field :password
-          #new_user_section
-            =fields_for :user, @user do |form|
-              .subheading Login Information
-              .clearfix
-                = form.label :login, "*Login<span class='label_desc'>this will be your username</span>".html_safe
-                = form.text_field :login
-              .clearfix#email_field
-                = form.label :email, "*Email<span class='label_desc'>must be a valid address</span>".html_safe
-                = form.text_field :email
-              .clearfix
-                = form.label :password, "*Password<span class='label_desc'>min. size 8 chars</span>".html_safe
-                = form.password_field :password
-              .clearfix#password_confirm_field
-                = form.label :password_confirmation, "*Password again<span class='label_desc'>type the password again</span>".html_safe
-                = form.password_field :password_confirmation
-              .clearfix
-                %strong
-                  *Password requires:
-                minimum of 8 characters which must include a minimum of:
-                %ul
-                  %li
-                    1 lower case letter [a-z] and
-                  %li
-                    1 upper case letter [A-Z] and
-                  %li
-                    1 numeric character [0-9] and
-                  %li
-                    1 special character: ~`!@#$%^&*()-_+={}[]|\;:"<>,./?
-        -if cur_order.amount.to_s.to_i > 0
+          =render partial: "order_login"
+        -if current_order.amount.to_s.to_i > 0
           #billing_section
             #register_card_form{initial_display?}
               .subheading Payment Method

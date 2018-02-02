@@ -62,7 +62,8 @@ class SslAccount < ActiveRecord::Base
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
-
+  
+  BILLING_METHODS = ['monthly', 'due_at_checkout']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
   PULL_ADMIN = "pull_from_admin"
@@ -480,7 +481,11 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-
+  
+  def billing_monthly?
+    billing_method == 'monthly'
+  end
+    
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db

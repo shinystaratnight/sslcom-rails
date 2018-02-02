@@ -274,6 +274,7 @@ ActiveRecord::Schema.define(version: 20180208165438) do
     t.string   "ref",                  limit: 255
     t.boolean  "agreement"
     t.string   "ext_customer_ref",     limit: 255
+    t.string   "approval",             limit: 255
   end
 
   add_index "certificate_contents", ["certificate_order_id"], name: "index_certificate_contents_on_certificate_order_id", using: :btree
@@ -755,6 +756,7 @@ ActiveRecord::Schema.define(version: 20180208165438) do
     t.string   "ext_affiliate_id",       limit: 255
     t.boolean  "ext_affiliate_credited"
     t.string   "ext_customer_ref",       limit: 255
+    t.string   "approval",               limit: 255
   end
 
   add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree
@@ -1181,6 +1183,7 @@ ActiveRecord::Schema.define(version: 20180208165438) do
     t.string   "ssl_slug",               limit: 255
     t.string   "company_name",           limit: 255
     t.string   "issue_dv_no_validation", limit: 255
+    t.string   "billing_method",         limit: 255, default: "monthly"
   end
 
   add_index "ssl_accounts", ["acct_number"], name: "index_ssl_account_on_acct_number", using: :btree

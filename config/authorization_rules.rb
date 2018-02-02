@@ -211,6 +211,7 @@ authorization do
         :create,
         :create_free_ssl,
         :create_multi_free_ssl,
+        :create_reprocess_ucc,
         :delete,
         :read,
         :update

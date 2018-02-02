@@ -326,7 +326,11 @@ class CertificateOrder < ActiveRecord::Base
     :pages=>PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
-
+  REPROCES_SIGNUP_W_PAYMENT = {label: FULL,
+    pages: FULL_SIGNUP_PROCESS[:pages]}
+  REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
+    pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
+    
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -453,7 +457,7 @@ class CertificateOrder < ActiveRecord::Base
   def ucc_prorated_amount(certificate_content)
     wildcard_count        = wildcard_domains.count
     nonwildcard_count     = domains.count - wildcard_count
-    # not charged for tier 1 domains
+    # make sure NOT to charge for tier 1 domains (3 total)
     nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain
     wildcard_cost         = ucc_prorated_domain(:wildcard)
@@ -680,7 +684,11 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_FULL_SIGNUP_PROCESS
     end
   end
-
+  
+  def reprocess_ucc_process
+    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT 
+  end
+  
   def is_express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
