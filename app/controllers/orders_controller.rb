@@ -63,22 +63,26 @@ class OrdersController < ApplicationController
   end
 
   def new
-    if params[:certificate_order]
-      @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
-      unless params["prev.x".intern].nil?
-        redirect_to buy_certificate_url(@certificate) and return
+    if params[:reprocess_ucc]
+      new_reprocess_ucc
+    else  
+      if params[:certificate_order]
+        @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
+        unless params["prev.x".intern].nil?
+          redirect_to buy_certificate_url(@certificate) and return
+        end
+        render(:template => "/certificates/buy",
+          :layout=>"application") and return unless certificate_order_steps
+      else
+        certificates_from_cookie
       end
-      render(:template => "/certificates/buy",
-        :layout=>"application") and return unless certificate_order_steps
-    else
-      certificates_from_cookie
-    end
-    if current_user
-      if @certificate_orders && is_order_free?
-        create_multi_free_ssl
-      elsif current_user.ssl_account.funded_account.cents > 0
-        redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-                        allocate_funds_for_order_path(id: :order)) and return
+      if current_user
+        if @certificate_orders && is_order_free?
+          create_multi_free_ssl
+        elsif current_user.ssl_account.funded_account.cents > 0
+          redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
+                          allocate_funds_for_order_path(id: :order)) and return
+        end
       end
     end
   end
@@ -483,7 +487,15 @@ class OrdersController < ApplicationController
   end
 
   private
-
+  
+  def new_reprocess_ucc
+    if current_user
+      @certificate_order = current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+      @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
+      @reprocess_ucc = true
+    end  
+  end
+  
   def set_row_page
     preferred_row_count = current_user.preferred_order_row_count
     @per_page = params[:per_page] || preferred_row_count.or_else("10")

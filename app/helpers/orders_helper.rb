@@ -30,7 +30,14 @@ module OrdersHelper
         element.attributes_before_type_cast["amount"].to_f}
     order
   end
-
+  
+  def current_order_reprocess_ucc
+    order        = current_user.ssl_account.purchase(@certificate_order)
+    order.cents  = @certificate_order.ucc_prorated_amount(@certificate_content)
+    order.amount = Money.new(order.cents)
+    order
+  end
+  
   def is_current_order_affordable?
     current_user.ssl_account.funded_account.amount.cents >=
       current_order.amount.cents
