@@ -47,6 +47,7 @@ class SignedCertificate < ActiveRecord::Base
   OID_CS = "2.23.140.1.4.1"
   OID_TEST = "2.23.140.2.1"
 
+  ISSUER={sslcom_shadow: "ssl.com shadow"}
 
   after_initialize do
     if new_record?
@@ -313,7 +314,7 @@ class SignedCertificate < ActiveRecord::Base
         end
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-    if Settings.shadow_certificate_recipient and issuer="SSL.com Test"
+    if Settings.shadow_certificate_recipient and issuer=ISSUER[:sslcom_shadow]
       OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, zip_path).deliver
     else
       co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|

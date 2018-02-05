@@ -143,7 +143,7 @@ class SslcomCaApi
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
-      parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
+      parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca])
     unless api_log_entry.username
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     else
