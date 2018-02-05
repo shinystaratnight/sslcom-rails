@@ -9,10 +9,6 @@ class SslcomCaApi
   # SSLcom-SubCA-SSL-ECC-384-R1
   # ManagementCA
 
-  CERTLOCK_CA = "certlock"
-  SSLCOM_CA = "sslcom"
-  MANAGEMENT_CA = "management_ca"
-
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
@@ -55,7 +51,7 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:ca]==SslcomCaApi::CERTLOCK_CA
+    if options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
@@ -64,7 +60,7 @@ class SslcomCaApi
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
               'CertLockECCSSLsubCA'
       end
-    elsif options[:ca]==SslcomCaApi::SSLCOM_CA
+    elsif options[:ca]==Ca::SSLCOM_CA
       case options[:cc].certificate.validation_type
         when "ev"
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
