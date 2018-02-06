@@ -60,16 +60,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue!
+    s.csr.certificate_content.issue! unless self.issuer==Ca::ISSUER[:sslcom_shadow]
   end
 
   after_save do |s|
-    if self.issuer==Ca::ISSUER[:sslcom_shadow]
-      s.send_processed_certificate(issuer: self.issuer)
-    else
-      if s.email_customer
-        s.send_processed_certificate
-      end
+    unless self.issuer==Ca::ISSUER[:sslcom_shadow]
+      s.send_processed_certificate if s.email_customer
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing=false
@@ -85,6 +81,10 @@ class SignedCertificate < ActiveRecord::Base
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
     end
   end
+
+  scope :shadow, -> {where{issuer >> [Ca::ISSUER[:sslcom_shadow]]}}
+
+  scope :live, -> {where{issuer == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
@@ -304,35 +304,30 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   def send_processed_certificate(options=nil)
+    # for production certs, attached the bundle, change workflow and send site seal
+    zip_path =
+        if certificate_order.is_iis?
+          zipped_pkcs7
+        elsif certificate_order.is_nginx?
+          to_nginx_file
+        elsif certificate_order.is_cpanel?
+          zipped_whm_bundle
+        elsif certificate_order.is_apache?
+          zipped_apache_bundle
+        else
+          create_signed_cert_zip_bundle
+        end
+    co=csr.certificate_content.certificate_order
+    co.site_seal.fully_activate! unless co.site_seal.fully_activated?
+    co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+      OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+      OrderNotifier.site_seal_approve(c, co).deliver
+    end
     # for shadow certs, only send the certificate
-    if options[:issuer]==Ca::ISSUER[:sslcom_shadow]
-      sc=co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
-      if Settings.shadow_certificate_recipient
-        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil, sc).deliver
-      end
-    else # for production certs, attached the bundle, change workflow and send site seal
-      zip_path =
-          if certificate_order.is_iis?
-            zipped_pkcs7
-          elsif certificate_order.is_nginx?
-            to_nginx_file
-          elsif certificate_order.is_cpanel?
-            zipped_whm_bundle
-          elsif certificate_order.is_apache?
-            zipped_apache_bundle
-          else
-            create_signed_cert_zip_bundle
-          end
-      co=csr.certificate_content.certificate_order
-      co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-      if Settings.shadow_certificate_recipient
-        sc=co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
-        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil, sc).deliver
-      end
-      co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-        OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-        OrderNotifier.site_seal_approve(c, co).deliver
-      end
+    if Settings.shadow_certificate_recipient
+      co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+      OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
+                                                co.shadow_certificates.last).deliver
     end
   end
 

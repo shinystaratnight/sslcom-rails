@@ -538,7 +538,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def get_domains
     if csr_obj && csr_obj.valid? && domains.nil?
       self.domains={}
-      csr_obj.all_names.each do |name|
+      csr_obj.all_names(san: true).each do |name|
         self.domains.merge!({name => {dcv: 'HTTP_CSR_HASH'}}.with_indifferent_access)
       end
     end

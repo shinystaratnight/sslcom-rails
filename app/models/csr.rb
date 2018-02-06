@@ -7,7 +7,8 @@ require 'uri'
 
 class Csr < ActiveRecord::Base
   has_many    :whois_lookups, :dependent => :destroy
-  has_many    :signed_certificates, :dependent => :destroy
+  has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
+  has_many    :shadow_certificates, -> {SignedCertificate.shadow}, :dependent => :destroy
   has_many    :ca_certificate_requests, as: :api_requestable, dependent: :destroy
   has_many    :sslcom_ca_requests, as: :api_requestable
   has_many    :ca_api_requests, as: :api_requestable
@@ -189,8 +190,8 @@ class Csr < ActiveRecord::Base
     "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
-  def all_names
-    subject_alternative_names ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
+  def all_names(options=nil)
+    (subject_alternative_names and options[:san]) ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
         [common_name]
   end
 

@@ -197,7 +197,7 @@
                                     |
                                     =link_to "delete", certificate_order_physical_token_path(@certificate_order.ref,token), method: :delete,
                                       data: {confirm: 'Are you sure you want to delete this token?'}
-                                -if token.in_transit?
+                                -if token.in_transit? and !token.tracking_number.blank?
                                   %ul
                                     %li=link_to "#{token.shipping_method}: #{token.tracking_number}"
                               -else
@@ -206,7 +206,7 @@
                                   %ul
                                     %li Serial - #{token.serial_number}
                                     %li Activation PIN - #{token.activation_pin}
-                                    %li Admin PIN - #{token.activation_pin}
+                                    %li Admin PIN - #{token.admin_pin}
                       .certificate_details_box
                         %ul
                           -if co.certificate_content.issued? && !co.certificate_content.expired?

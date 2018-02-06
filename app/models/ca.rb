@@ -5,6 +5,6 @@ class Ca < ActiveRecord::Base
   MANAGEMENT_CA = "management_ca"
 
   # issuer (entity and purpose)
-  ISSUER={sslcom_shadow: "ssl.com shadow"}
+  ISSUER={sslcom_shadow: "shadow"}
 
 end

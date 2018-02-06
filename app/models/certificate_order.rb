@@ -19,6 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
