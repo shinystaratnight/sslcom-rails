@@ -53,8 +53,8 @@ class OrderNotifier < ActionMailer::Base
 
   end
 
-  def processed_certificate_order(contact, certificate_order, file_path, signed_certificate=nil)
-    attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)
+  def processed_certificate_order(contact, certificate_order, file_path=nil, signed_certificate=nil)
+    (attachments[certificate_order.friendly_common_name+'.zip'] = File.read(file_path)) unless file_path.blank?
     setup(contact, certificate_order)
     @signed_certificate=signed_certificate || certificate_order.certificate_content.csr.signed_certificate
     mail(

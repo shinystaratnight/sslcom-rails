@@ -82,7 +82,7 @@ class SslcomCaApi
     dn=["CN=#{options[:cn]}"]
     dn << "O=#{options[:o]}" unless options[:o].blank?
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-    dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
+    # dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
     dn << "C=#{options[:country]}" unless options[:country].blank?
     dn << "L=#{options[:city]}" unless options[:city].blank?
     dn << "ST=#{options[:state]}" unless options[:state].blank?
@@ -144,7 +144,7 @@ class SslcomCaApi
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     else
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
-      cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s
+      cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, issuer: options[:issuer]
       SystemAudit.create(
           owner:  options[:current_user],
           target: api_log_entry,
