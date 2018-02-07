@@ -324,10 +324,13 @@ class SignedCertificate < ActiveRecord::Base
       OrderNotifier.site_seal_approve(c, co).deliver
     end
     # for shadow certs, only send the certificate
-    if Settings.shadow_certificate_recipient
-      co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
-      OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
-                                                co.shadow_certificates.last).deliver
+    begin
+      if Settings.shadow_certificate_recipient
+        co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
+                                                  co.shadow_certificates.last).deliver
+      end
+    rescue Exception
     end
   end
 

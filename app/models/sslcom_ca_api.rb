@@ -82,7 +82,7 @@ class SslcomCaApi
     dn=["CN=#{options[:cn]}"]
     dn << "O=#{options[:o]}" unless options[:o].blank?
     dn << "OU=#{options[:ou]}" unless options[:ou].blank?
-    # dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
+    dn << "OU=Key Hash #{options[:cc].csr.sha2_hash}"
     dn << "C=#{options[:country]}" unless options[:country].blank?
     dn << "L=#{options[:city]}" unless options[:city].blank?
     dn << "ST=#{options[:state]}" unless options[:state].blank?
