@@ -6,6 +6,8 @@ require 'net/https'
 require 'uri'
 
 class Csr < ActiveRecord::Base
+  include Encodable
+  
   has_many    :whois_lookups, :dependent => :destroy
   has_many    :signed_certificates, -> {SignedCertificate.live}, :dependent => :destroy
   has_many    :shadow_certificates, -> {SignedCertificate.shadow}, :dependent => :destroy
@@ -82,11 +84,11 @@ class Csr < ActiveRecord::Base
         errors.add :base, 'error: could not parse csr'
       else
         self[:common_name] = parsed.subject.common_name
-        self[:organization] = parsed.subject.organization
-        self[:organization_unit] = parsed.subject.organizational_unit
-        self[:state] = parsed.subject.region
-        self[:locality] = parsed.subject.locality
-        self[:country] = parsed.subject.country
+        self[:organization] = force_string_encoding(parsed.subject.organization)
+        self[:organization_unit] = force_string_encoding(parsed.subject.organizational_unit)
+        self[:state] = force_string_encoding(parsed.subject.region)
+        self[:locality] = force_string_encoding(parsed.subject.locality)
+        self[:country] = force_string_encoding(parsed.subject.country)
         self[:email] = parsed.subject.email
         self[:sig_alg] = parsed.signature_algorithm
         self[:subject_alternative_names] = parsed.subject_alternative_names
