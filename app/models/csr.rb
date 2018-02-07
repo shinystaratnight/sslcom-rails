@@ -190,7 +190,7 @@ class Csr < ActiveRecord::Base
     "#{sha2_hash}\ncomodoca.com#{"\n#{self.unique_value}" unless self.unique_value.blank?}"
   end
 
-  def all_names(options=nil)
+  def all_names(options={})
     (subject_alternative_names and options[:san]) ? (subject_alternative_names.split(",") + [common_name]).flatten.uniq :
         [common_name]
   end
