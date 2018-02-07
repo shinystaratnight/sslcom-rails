@@ -197,7 +197,7 @@ class ApplicationController < ActionController::Base
   def find_certificate_orders(options={})
     return CertificateOrder.none unless current_user # returns null set. Rails 4 is CertificateOrder.none
     @search = params[:search] || ""
-    if is_sandbox? and @search.grep(/is_test\:true/).blank?
+    if is_sandbox? and @search.include?("is_test:true").blank?
       @search << " is_test:true"
     end
     if !@search.blank?

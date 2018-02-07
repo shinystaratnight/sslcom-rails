@@ -6,9 +6,9 @@ require 'tempfile'
 include Open3
 
 class ValidationsController < ApplicationController
+  before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
-  before_filter :require_user, only: [:index, :new]
   filter_access_to :all
   filter_access_to [:upload, :document_upload], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
@@ -258,7 +258,7 @@ class ValidationsController < ApplicationController
   def send_to_ca(options={})
     co=CertificateOrder.find_by_ref(params[:certificate_order_id])
     result = co.apply_for_certificate(params.merge(current_user: current_user))
-    unless [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? params[:ca]
+    unless [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? params[:ca]
       co.certificate_content.pend_validation!(send_to_ca: false, host: request.host_with_port) if result.order_number && !co.certificate_content.pending_validation?
     end
     respond_to do |format|

@@ -17,7 +17,11 @@
     =f.text_field :serial_number
   .clearfix
     %label{:for=>"activation_pin"}
-      Random Value:
+      Activation PIN:
+    =f.text_field :activation_pin
+  .clearfix
+    %label{:for=>"admin_pin"}
+      Admin PIN:
     =f.text_field :activation_pin
   .clearfix
     %label{:for=>"shipping_method"}

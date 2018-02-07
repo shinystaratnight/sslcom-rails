@@ -65,6 +65,6 @@ class PhysicalTokensController < ApplicationController
 
     def physical_token_params
       params.require(:physical_token).permit(:certificate_order_id, :signed_certificate_id, :tracking_number,
-               :shipping_method, :activation_pin, :manufacturer, :model_number, :serial_number, :name)
+               :shipping_method, :activation_pin, :admin_pin, :manufacturer, :model_number, :serial_number, :name)
     end
 end

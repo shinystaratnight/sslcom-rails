@@ -19,6 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
@@ -736,7 +737,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? options[:ca]
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
       SslcomCaApi.apply_for_certificate(self, options)
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"

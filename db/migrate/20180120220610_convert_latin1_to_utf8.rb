@@ -5,7 +5,6 @@ class ConvertLatin1ToUtf8 < ActiveRecord::Migration
   
   def target_tables
     [
-      "auto_renewals",
       "blocklists",
       "ca_api_requests",
       "caa_checks",
