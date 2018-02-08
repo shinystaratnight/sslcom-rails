@@ -5,7 +5,7 @@ class CreateCas < ActiveRecord::Migration
       t.string  :friendly_name
       t.string  :profile_name # name as listed in EJBCA admin
       t.string  :algorithm # rsa or ecc
-      t.integer :size # 2028, 4096, etc
+      t.integer :size # 2048, 4096, etc
       t.string  :description
       t.string  :profile_type # end entity, certificate profile, etc
     end

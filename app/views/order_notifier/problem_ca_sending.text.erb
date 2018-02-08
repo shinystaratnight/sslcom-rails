@@ -10,6 +10,7 @@ Reason:
 <%=ccr.response%>
 <%=ccr.ca%>
 
+<%="Error: #{@error.message}"unless @error.blank?%>
 Regards,
 
 <%=Settings.community_name%> Support Team
