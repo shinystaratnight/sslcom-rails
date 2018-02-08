@@ -331,8 +331,6 @@ class SignedCertificate < ActiveRecord::Base
                                                   co.shadow_certificates.last).deliver
       end
     rescue Exception=>e
-      OrderNotifier.problem_ca_sending(Settings.shadow_certificate_recipient,
-                                       co,Ca.find(Ca::ISSUER[:sslcom_shadow]).ref,e).deliver
     end
   end
 
