@@ -256,15 +256,7 @@ class CertificateContentsController < ApplicationController
   end
   
   def has_all_contacts?
-    if Contact.optional_contacts?
-      if @certificate_content.certificate_order.certificate.is_dv? and Settings.exempt_dv_contacts
-        true
-      else
-        @certificate_content.certificate_contacts.any?
-      end
-    else
-      @certificate_content.has_all_contacts?
-    end
+    @certificate_content.has_all_contacts?
   end
   
   def find_contact_from_team(target_id)

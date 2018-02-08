@@ -371,8 +371,16 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def has_all_contacts?
-    CONTACT_ROLES.all? do |role|
-      send "#{role}_contact"
+    if Contact.optional_contacts?
+      if certificate_order.certificate.is_dv? and Settings.exempt_dv_contacts
+        true
+      else
+        certificate_contacts.any?
+      end
+    else
+      CertificateContent::CONTACT_ROLES.all? do |role|
+        send "#{role}_contact"
+      end
     end
   end
 
