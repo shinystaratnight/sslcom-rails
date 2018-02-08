@@ -60,12 +60,12 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue! unless self.issuer==Ca::ISSUER[:sslcom_shadow]
+    s.csr.certificate_content.issue! unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
   end
 
   after_save do |s|
-    unless self.issuer==Ca::ISSUER[:sslcom_shadow]
-      s.send_processed_certificate if s.email_customer
+    unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+      s.send_processed_certificate # if s.email_customer
       cc=s.csr.certificate_content
       if cc.preferred_reprocessing?
         cc.preferred_reprocessing=false
@@ -82,9 +82,9 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  scope :shadow, -> {where{issuer >> [Ca::ISSUER[:sslcom_shadow]]}}
+  scope :shadow, -> {where{ca_id >> [Ca::ISSUER[:sslcom_shadow]]}}
 
-  scope :live, -> {where{issuer == nil}}
+  scope :live, -> {where{ca_id == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
@@ -326,12 +326,13 @@ class SignedCertificate < ActiveRecord::Base
     # for shadow certs, only send the certificate
     begin
       if Settings.shadow_certificate_recipient
-        co.apply_for_certificate(issuer: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+        co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
         OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
                                                   co.shadow_certificates.last).deliver
       end
-    rescue Exception
-      OrderNotifier.problem_ca_sending(Settings.shadow_certificate_recipient, co,Ca::ISSUER[:sslcom_shadow]).deliver
+    rescue Exception=>e
+      OrderNotifier.problem_ca_sending(Settings.shadow_certificate_recipient,
+                                       co,Ca.find(Ca::ISSUER[:sslcom_shadow]).ref,e).deliver
     end
   end
 
@@ -503,12 +504,8 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  def ca_id
-    {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
-  end
-
   def ca
-    ca_id[:ca]
+    read_attribute(:ca_id).blank? ? ("comodo" if comodo_ca_id) : Ca.find(read_attribute(:ca_id))
   end
 
   def is_SHA2?
