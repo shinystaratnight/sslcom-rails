@@ -5,10 +5,6 @@ class PhysicalToken < ActiveRecord::Base
   belongs_to :certificate_order
   belongs_to :signed_certificate
 
-  after_initialize do
-    self.activation_pin=SecureRandom.base64(8)
-  end
-
   after_save do
     if tracking_number and new?
       ship_token!
