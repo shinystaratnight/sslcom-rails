@@ -549,33 +549,51 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
       <%if @certificate_order%>
-        var domains = $('#domains').val().split(',');
+        var domain_str = $('#domains').val();
+        var domains = domain_str.substr(0, domain_str.length - 1).split(',');
         var ajaxDomainUrl = '<%=domain_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
         var exist_ext_order_number = '<%=@certificate_order.external_order_number%>';
         <%
           mdc_validation = ComodoApi.mdc_status(@certificate_order)
           ds = mdc_validation.domain_status
           is_ucc = @certificate_order.certificate.is_ucc?
-          domain_count = @certificate_order.certificate_content.certificate_names.count
         %>
 
-        $.each(domains, function(key, value) {
+        var all_validated = false;
+        var count_validated = 0;
+        var count_domain = 0;
+        var total = domains.length;
+
+        $.each(domains, function(idx, value) {
           if (value != '') {
             $.ajax({
               url: ajaxDomainUrl,
               data: {
-                domainId: value,
-                domain_count: '<%=domain_count%>',
+                domain_id: value,
+                domain_count: total,
                 exist_ext_order_number: exist_ext_order_number,
-                domain_status: '<%=is_ucc ? (ds[value] ? ds[value]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)%>',
-                domain_method: '<%=is_ucc ? (ds[value] ? ds[value]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)%>',
-                is_ucc: '<%=is_ucc%>'
+                domain_status: JSON.parse('<%= raw ds.to_json%>'),
+                /*domain_status: '< %=is_ucc ? (ds[value] ? ds[value]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)%>',
+                domain_method: '< %=is_ucc ? (ds[value] ? ds[value]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)%>',*/
+                is_ucc: '<%=is_ucc%>',
+                count_validated: count_validated,
+                count_domain: count_domain,
               },
-              type: "GET",
+              type: "POST",
               success: function(result) {
                 // TODO: Loading Domain.
                 Object.keys(result).map(function(key) {
                   if (key == 'tr_info') {
+                    if (result[key]['count_domain']) {
+                      count_domain = result[key]['count_domain'];
+                    }
+                    if (result[key]['count_validated']) {
+                      count_validated = result[key]['count_validated'];
+                    }
+                    if (result[key]['all_validated']) {
+                      all_validated = result[key]['all_validated'] == 'true';
+                    }
+
                     var trElement = document.createElement('tr');
                     trElement.className = 'certificate_name';
                     trElement.id = 'certificate_name_' + value;
@@ -691,13 +709,19 @@ jQuery(function($) {
                   }
                 });
 
+                if (idx === (total - 1) && !all_validated) {
+                  $('#upload_validations').show();
+                }
+
                 $('select[id^=domains]').last().change();
               }
             });
           }
         });
+
       <%end%>
     }
+
   });
 });
 </script>

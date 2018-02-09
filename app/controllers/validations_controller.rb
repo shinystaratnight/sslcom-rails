@@ -40,15 +40,21 @@ class ValidationsController < ApplicationController
   end
 
   def domain
-    cn = CertificateName.find(params['domainId'])
+    cn = CertificateName.find(params['domain_id'])
+    ds = params['domain_status']
+    domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)
+    domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
 
     if params['exist_ext_order_number']
       dcv = cn.domain_control_validations.last
       if params['is_ucc'] == 'true'
-        if params['domain_status'] || params['domain_method']
-          validated = (params['domain_status'] && params['domain_status']=~/validated/i)
+        if ds && ds[cn.name]
           optionsObj = {}
+          validated = (ds[cn.name] && ds[cn.name]=~/validated/i)
+          count_domain = params['count_domain'].to_i + 1
+          count_validated = validated ? (params['count_validated'].to_i + 1) : (params['count_validated'].to_i)
+
           unless validated
             addresses = params['domain_count'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
                             DomainControlValidation.email_address_choices(cn.name) :
@@ -75,13 +81,15 @@ class ValidationsController < ApplicationController
                   'checkbox_id' => cn.id,
                   'domain_name' => cn.name,
                   'options' => optionsObj,
-                  'slt_option' => params['domain_method'] ?
-                                      params['domain_method'].downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
+                  'slt_option' => domain_method ?
+                                      domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
                                       nil,
                   'pretest' => 'n/a',
-                  'attempt' => params['domain_method'] ? params['domain_method'].downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
+                  'attempt' => ds && ds[cn.name] ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
                   'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                  'status' => params['domain_status'] ? params['domain_status'].downcase : '',
+                  'status' => ds && ds[cn.name] ? domain_status.downcase : '',
+                  'count_domain' => count_domain,
+                  'count_validated' => count_validated,
               },
               'tr_instruction' => {
                   'instruction' => "domains[#{cn.name}][dcv]",
@@ -98,8 +106,9 @@ class ValidationsController < ApplicationController
           }
         else
           last_sent = cn.last_dcv
-          if params['domain_status'] || params['domain_method']
-            validated = (params['domain_status'] && params['domain_status']=~/validated/i)
+          all_validated = false
+          if ds
+            validated = all_validated = (ds.to_a[0][1] && ds.to_a[0][1]['status']=~/validated/i)
           else
             validated = (last_sent && last_sent.satisfied?) ? true : false
           end
@@ -131,13 +140,14 @@ class ValidationsController < ApplicationController
                   'checkbox_id' => cn.id,
                   'domain_name' => cn.name,
                   'options' => optionsObj,
-                  'slt_option' => params['domain_method'] ?
-                                      params['domain_method'].downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
+                  'slt_option' => ds ?
+                                      domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
                                       dcv.try(:dcv_method),
                   'pretest' => 'n/a',
-                  'attempt' => params['domain_method'] ? params['domain_method'].downcase.gsub('%28', '').gsub('%29', '') : '',
+                  'attempt' => ds && ds[cn.name] ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
                   'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
-                  'status' => params['domain_status'] ? params['domain_status'].downcase : '',
+                  'status' => ds && ds[cn.name] ? domain_status.downcase : '',
+                  'all_validated' => all_validated,
               },
               'tr_instruction' => {
                   'instruction' => "domains[#{cn.name}][dcv]",
