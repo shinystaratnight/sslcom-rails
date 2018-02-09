@@ -573,8 +573,6 @@ jQuery(function($) {
                 domain_count: total,
                 exist_ext_order_number: exist_ext_order_number,
                 domain_status: JSON.parse('<%= raw ds.to_json%>'),
-                /*domain_status: '< %=is_ucc ? (ds[value] ? ds[value]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)%>',
-                domain_method: '< %=is_ucc ? (ds[value] ? ds[value]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)%>',*/
                 is_ucc: '<%=is_ucc%>',
                 count_validated: count_validated,
                 count_domain: count_domain,
@@ -594,53 +592,45 @@ jQuery(function($) {
                       all_validated = result[key]['all_validated'] == 'true';
                     }
 
-                    var trElement = document.createElement('tr');
-                    trElement.className = 'certificate_name';
-                    trElement.id = 'certificate_name_' + value;
+                    var trElement = $('<tr></tr>');
+                    trElement.attr('class', 'certificate_name');
+                    trElement.attr('id', 'certificate_name_' + value);
 
                     $('.domain_list').append(trElement);
 
-                    var tdElement = document.createElement('td');
-                    tdElement.append(result[key]['status']);
-                    tdElement.className = 'status ' + result[key]['domain_name'];
+                    tdElement = $('<td></td>');
+                    var checkboxElement = $('<input></input>');
+                    checkboxElement.attr('class', 'check_box');
+                    checkboxElement.attr('id', result[key]['checkbox_id']);
+                    checkboxElement.attr('type', 'checkbox');
+                    tdElement.append(checkboxElement);
                     trElement.append(tdElement);
 
-                    tdElement = document.createElement('td');
-                    tdElement.append(result[key]['attempted_on']);
-                    tdElement.className = 'attempted_on ' + result[key]['domain_name'];
-                    trElement.insertBefore(tdElement, trElement.firstChild);
+                    tdElement = $('<td></td>');
+                    tdElement.append(result[key]['domain_name']);
+                    trElement.append(tdElement);
 
-                    tdElement = document.createElement('td');
-                    tdElement.append(result[key]['attempt']);
-                    tdElement.className = 'attempt ' + result[key]['domain_name'];
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-
-                    tdElement = document.createElement('td');
-                    tdElement.append(result[key]['pretest']);
-                    tdElement.className = 'pretest ' + result[key]['domain_name'];
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-
-                    tdElement = document.createElement('td');
+                    tdElement = $('<td></td>');
                     if ($.isEmptyObject(result[key]['options'])) {
                       tdElement.append('Validation satisfied for ' + result[key]['domain_name']);
                     } else {
-                      var sltElement = document.createElement('select');
-                      sltElement.name = 'domains[' + result[key]['domain_name'] + '][dcv]';
-                      sltElement.id = 'domains_' + result[key]['domain_name'] + '_dcv';
-                      sltElement.setAttribute('alt', result[key]['domain_name']);
+                      var sltElement = $('<select></select>');
+                      sltElement.attr('name', 'domains[' + result[key]['domain_name'] + '][dcv]');
+                      sltElement.attr('id', 'domains_' + result[key]['domain_name'] + '_dcv');
+                      sltElement.attr('alt', result[key]['domain_name']);
 
-                      var optElement = document.createElement('option');
-                      optElement.setAttribute('value', '');
+                      var optElement = $('<option></option>');
+                      optElement.attr('value', '');
                       optElement.append('Please select a validation method');
                       sltElement.append(optElement);
 
                       Object.keys(result[key]['options']).map(function(optGroupKey) {
-                        var optGroupElement = document.createElement('optgroup');
-                        optGroupElement.setAttribute('label', optGroupKey);
+                        var optGroupElement = $('<optgroup></optgroup>');
+                        optGroupElement.attr('label', optGroupKey);
 
                         Object.keys(result[key]['options'][optGroupKey]).map(function(optKey) {
-                          var optElement = document.createElement('option');
-                          optElement.setAttribute('value', optKey);
+                          var optElement = $('<option></option>');
+                          optElement.attr('value', optKey);
                           optElement.append(result[key]['options'][optGroupKey][optKey]);
                           optGroupElement.append(optElement);
                         });
@@ -650,62 +640,71 @@ jQuery(function($) {
 
                       tdElement.append(sltElement);
                     }
-                    trElement.insertBefore(tdElement, trElement.firstChild);
+                    trElement.append(tdElement);
                     $('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);
 
-                    tdElement = document.createElement('td');
-                    tdElement.append(result[key]['domain_name']);
-                    trElement.insertBefore(tdElement, trElement.firstChild);
+                    tdElement = $('<td></td>');
+                    tdElement.append(result[key]['pretest']);
+                    tdElement.attr('class', 'pretest ' + result[key]['domain_name']);
+                    trElement.append(tdElement);
 
-                    tdElement = document.createElement('td');
-                    var checkboxElement = document.createElement('input');
-                    checkboxElement.className ='check_box';
-                    checkboxElement.id = result[key]['checkbox_id'];
-                    checkboxElement.type = 'checkbox';
-                    tdElement.append(checkboxElement);
-                    trElement.insertBefore(tdElement, trElement.firstChild);
+                    tdElement = $('<td></td>');
+                    tdElement.append(result[key]['attempt']);
+                    tdElement.attr('class', 'attempt ' + result[key]['domain_name']);
+                    trElement.append(tdElement);
+
+                    tdElement = $('<td></td>');
+                    tdElement.append(result[key]['attempted_on']);
+                    tdElement.attr('class', 'attempted_on ' + result[key]['domain_name']);
+                    trElement.append(tdElement);
+
+                    var tdElement = $('<td></td>');
+                    tdElement.append(result[key]['status']);
+                    tdElement.attr('class', 'status ' + result[key]['domain_name']);
+                    trElement.append(tdElement);
 
                   } else if (key == 'tr_instruction') {
-                    var trElement = document.createElement('tr');
+                    var trElement = $('<tr></tr>');
                     $('.domain_list').append(trElement);
 
-                    var tdElement = document.createElement('td');
-                    tdElement.setAttribute('colspan', 5);
+                    tdElement = $('<td></td>');
+                    trElement.append(tdElement);
+                    tdElement = $('<td></td>');
+                    trElement.append(tdElement);
+
+                    var tdElement = $('<td></td>');
+                    tdElement.attr('colspan', 5);
                     tdElement.append('Instructions: ');
-                    var spanElement = document.createElement('span');
-                    spanElement.setAttribute('alt', result[key]['instruction']);
+
+                    var spanElement = $('<span></span>');
+                    spanElement.attr('alt', result[key]['instruction']);
                     spanElement.append('Please select a validation method');
                     tdElement.append(spanElement);
                     trElement.append(tdElement);
 
-                    tdElement = document.createElement('td');
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-                    tdElement = document.createElement('td');
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-
                   } else if (key == 'caa_test_failed') {
-                    var trElement = document.createElement('tr');
-                    trElement.className = 'certificate_name';
-                    trElement.id = 'certificate_name_' + value;
+                    var trElement = $('<tr></tr>');
+                    trElement.attr('class', 'certificate_name');
+                    trElement.attr('id', 'certificate_name_' + value);
 
-                    var tdElement = document.createElement('td');
-                    tdElement.setAttribute('colspan', 5);
+                    $('.domain_list').append(trElement);
+
+                    tdElement = $('<td></td>');
+                    var checkboxElement = $('<input></input>');
+                    checkboxElement.attr('class', 'check_box');
+                    checkboxElement.attr('id', result[key]['checkbox_id']);
+                    checkboxElement.attr('type', 'checkbox');
+                    tdElement.append(checkboxElement);
+                    trElement.append(tdElement);
+
+                    var tdElement = $('<td></td>');
+                    tdElement.attr('colspan', 5);
                     tdElement.append('CAA Test Failed!');
                     trElement.append(tdElement);
 
-                    tdElement = document.createElement('td');
+                    tdElement = $('<td></td>');
                     tdElement.append(result[key]['domain_name']);
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-
-                    tdElement = document.createElement('td');
-                    var checkboxElement = document.createElement('input');
-                    checkboxElement.className ='check_box';
-                    checkboxElement.id = result[key]['checkbox_id'];
-                    checkboxElement.type = 'checkbox';
-                    tdElement.append(checkboxElement);
-                    trElement.insertBefore(tdElement, trElement.firstChild);
-
-                    $('.domain_list').append(trElement);
+                    trElement.append(tdElement);
                   }
                 });
 
