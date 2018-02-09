@@ -1490,6 +1490,7 @@ class CertificateOrder < ActiveRecord::Base
   def transfer_certificate_content(certificate_content)
     self.site_seal.conditionally_activate! unless self.site_seal.conditionally_activated?
     cc = self.certificate_content
+    cc.domains=certificate_content.domains
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
       certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)).save

@@ -100,7 +100,7 @@ class ApplicationController < ActionController::Base
   def cart_contents
     find_tier
     cart = cookies[:cart]
-    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
+    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
   end
 
   def cart_products

@@ -46,6 +46,8 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org live\.com global\strustee)
 
+  DOMAIN_COUNT_OFFLOAD=50
+
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
       1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
@@ -202,7 +204,7 @@ class CertificateContent < ActiveRecord::Base
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
-    if domains.length <= 20
+    if domains.length <= DOMAIN_COUNT_OFFLOAD
       domains.flatten.each_with_index do |domain, i|
         if certificate_names.find_by_name(domain).blank?
           certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
