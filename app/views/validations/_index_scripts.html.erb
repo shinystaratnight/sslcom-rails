@@ -572,7 +572,7 @@ jQuery(function($) {
                 domain_id: value,
                 domain_count: total,
                 exist_ext_order_number: exist_ext_order_number,
-                domain_status: JSON.parse('<%= raw ds.to_json%>'),
+                domain_status: JSON.parse('<%= raw ds ? ds.to_json : {}%>'),
                 is_ucc: '<%=is_ucc%>',
                 count_validated: count_validated,
                 count_domain: count_domain,
