@@ -42,13 +42,13 @@
     %tr
       %td cname sha2 hash
       %td.dns_sha2_hash=co.csr.dns_sha2_hash
+  -cnIdStr = ''
+  -co.certificate_content.certificate_names.each do |cn|
+    -cnIdStr = cnIdStr + cn.id.to_s + ','
+  =hidden_field_tag :cert_names_ids_str, cnIdStr
   =form_tag(api_domain+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
-    -cnIdStr = ''
-    -co.certificate_content.certificate_names.each do |cn|
-      -cnIdStr = cnIdStr + cn.id.to_s + ','
-    =hidden_field_tag :domains, cnIdStr
     %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
       %thead
         %td=check_box_tag "select_all", nil, {id: "select_all"}

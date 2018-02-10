@@ -9,14 +9,15 @@ class ValidationsController < ApplicationController
   before_filter :require_user, only: [:index, :new, :edit, :show, :upload, :document_upload]
   before_filter :find_validation, only: [:update, :new]
   before_filter :find_certificate_order, only: [:new, :edit, :show, :upload, :document_upload]
-  # before_filter :domain_validation, only: [:new]
+
   filter_access_to :all
   filter_access_to [:upload, :document_upload], :require=>:update
   filter_access_to :requirements, :send_dcv_email, :domain_control, :ev, :organization, require: :read
   filter_access_to :update, :new, :attribute_check=>true
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
-  filter_access_to :send_to_ca, :domain, require: :sysadmin_manage
+  filter_access_to :send_to_ca, require: :sysadmin_manage
+  filter_access_to :get_asynch_domains, :require=>:new
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -39,7 +40,7 @@ class ValidationsController < ApplicationController
     end
   end
 
-  def domain
+  def get_asynch_domains
     cn = CertificateName.find(params['domain_id'])
     ds = params['domain_status']
     domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)
