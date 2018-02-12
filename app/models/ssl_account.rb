@@ -361,7 +361,7 @@ class SslAccount < ActiveRecord::Base
   end
 
   # years back - how many years back do we want to go on expired certificates
-  def expired_certificates(intervals, years_back=3)
+  def expired_certificates(intervals, years_back=1)
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
       if preferred_reminder_status
