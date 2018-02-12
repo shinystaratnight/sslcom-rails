@@ -335,7 +335,7 @@ class SslAccount < ActiveRecord::Base
   def expiring_certificates
     results=[]
 
-    unless preferred_reminder_status
+    if preferred_reminder_status
       exp_dates=ReminderTrigger.all.map do|rt|
         preferred_reminder_notice_triggers(rt).to_i
       end.sort{|a,b|b<=>a} # order from highest to lowest value
@@ -361,10 +361,10 @@ class SslAccount < ActiveRecord::Base
   end
 
   # years back - how many years back do we want to go on expired certificates
-  def expired_certificates(intervals, years_back=1)
+  def expired_certificates(intervals, years_back=3)
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
-      unless preferred_reminder_status
+      if preferred_reminder_status
         unrenewed_signed_certificates.compact.each do |sc|
           sed = sc.expiration_date
           unless sed.blank?
