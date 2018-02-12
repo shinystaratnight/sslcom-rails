@@ -549,9 +549,9 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
       <%if @certificate_order%>
-        var domain_str = $('#domains').val();
+        var domain_str = $('#cert_names_ids_str').val();
         var domains = domain_str.substr(0, domain_str.length - 1).split(',');
-        var ajaxDomainUrl = '<%=domain_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+        var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
         var exist_ext_order_number = '<%=@certificate_order.external_order_number%>';
         <%
           mdc_validation = ComodoApi.mdc_status(@certificate_order)
