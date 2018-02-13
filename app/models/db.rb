@@ -22,7 +22,7 @@ class Db  < ActiveRecord::Base
                      name: "Production Sandbox Site", db_id: sandbox_db.id
       Sandbox.create host: "sandbox2.ssl.#{extension}", api_host: "sws-test2.sslpki.#{extension}",
                      name: "Development Sandbox Site", db_id: sandbox_db.id
-      Sandbox.find_by_host("sandbox2.ssl.#{extension}").revert_database #switch back
+      Website.revert_database #switch back
     end
   end
 end
