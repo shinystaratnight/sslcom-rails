@@ -357,7 +357,7 @@ class Certificate < ActiveRecord::Base
   end
 
   def requires_company_info?
-    is_client_business? || is_client_enterprise? || is_server? || is_code_signing?
+    is_client_business? || is_client_enterprise? || is_server? || is_code_signing? || is_ov?
   end
 
   def is_server?
