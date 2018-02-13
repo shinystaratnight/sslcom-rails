@@ -1,17 +1,21 @@
 site: 'remote'
 root_subdomain: "www"
-actionmailer_host: "www.certassure.com"
-community_name: "CertAssure"
-community_domain: "www.certassure.com"
-api_domain: "api.certassure.com"
-test_api_domain: "api-test.certassure.com"
-dev_api_domain: "api.certassure.local"
-dev_test_api_domain: "api-test.certassure.local"
-support_domain: "support.certassure.com"
-community_tagline: "copyright 2015"
+actionmailer_host: "www.ssl.com"
+community_name: "SSL.com"
+community_domain: "www.ssl.com"
+api_domain: "sws.sslpki.com"
+test_api_domain: "sws-test.sslpki.com"
+dev_api_domain: "sws.sslpki.local"
+dev_test_api_domain: "sws-test.sslpki.local"
+portal_domain: "www.ssl.com"
+sandbox_domain: "sandbox.ssl.com"
+dev_portal_domain: "www.ssl.local"
+dev_sandbox_domain: "sandbox.ssl.local"
+support_domain: "support.ssl.com"
+community_tagline: "copyright 2016"
 merchant_name: "SSL.com"
 community_description:  "SSL.com simplifies SSL certificate procurement and implementation. Integrate security into your websites and applications with SSL.com certificates."
-support_email:  "support@certassure.com"
+support_email:  "support@ssl.com"
 meta_description: "Wildcard SSL Certificates &amp; 2048-Bit Extended Validation SSL Certificate Authentication. Strong Secure Sockets Layer Https Encryption for Network Security."
 meta_keywords: "What is SSL, Best SSL, How SSL works, Learn SSL, SSL Security, Secured SSL"
 meta_title: "SSL Digital Certificate Authority - Authentication & Encryption"
@@ -21,15 +25,19 @@ closed_beta_mode: false
 track_visitors: false
 single_server_license_only: true
 show_csr_submit_on_buy_page: false
+enable_caa_test: true
+dynamic_contact_count: "on"
+send_api_calls: ""
+shadow_certificate_recipient: "shadow-cert@ssl.com" # for test SSL.com certificates parallel issuance
 enable_google_translate: false
-enable_affiliate_program: false
+enable_affiliate_program: true
 enable_exception_notifier: true
 offer_trial: false
 minimum_deposit_amount: 10.00
 ucc_initial_domains_block: 3
 ucc_max_domains: 200
 cert_expiration_threshold_days: 365
-expiring_threshold: 60
+expiring_threshold: 90
 intermediate_certs_path: "<%=Rails.root%>/public/cert_bundles/"
 #header_phone_numbers: "toll free: 1-877-SSL-Secure (1-877-775-7328); intl: +1-SSL-Certificate (+1-775-237-8434)"
 header_phone_numbers: "+1-SSL-Certificate (+1-775-237-8434) or toll free 877-SSL-Secure"
@@ -39,15 +47,15 @@ corp_address2: "Suite 503"
 corp_city: "Houston"
 corp_state: "TX"
 corp_zip: "77098"
-corp_phone_tag: "1 844 SSL FIRE (1 844 775 3473)"
-corp_tollfree_tag: "1 844 SSL FIRE (1 844 775 3473)"
+corp_phone_tag: "+1-SSL-Certificate (+1-775-237-8434)"
+corp_tollfree_tag: "877-SSL-Secure (877-775-7328)"
 corp_fax: "832-201-7706"
-mail_address1: "1769 Hillsdale Ave."
-mail_address2: "Suite 24472"
-mail_city: "San Jose"
-mail_state: "CA"
-mail_zip: "95154"
-public_header_phone_number: "I.844.SSL.FIRE"
+mail_address1: "3100 Richmond Ave"
+mail_address2: "Suite 503"
+mail_city: "Houston"
+mail_state: "TX"
+mail_zip: "77098"
+public_header_phone_number: "1-877-SSL-SECURE"
 # Comment this out if you want to infer the locale
 # off of the http headers
 community_locale: "en"
@@ -58,46 +66,42 @@ production_private_location: "private/"
 csr_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 certificate_parser_wsdl: 'http://ws.ssltools.com/sslutils/wsdl/SSLUtils.wsdl'
 
-installation_support_pages: "http://info.certassure.com"
+installation_support_pages: "http://info.ssl.com"
 
-comodo_api_username: 'certassureneal'
-comodo_api_password: '@Certassure15'
-ca_certificate_id_ev: "552"
-ca_certificate_id_ov: "551"
-ca_certificate_id_dv: "550"
-ca_certificate_id_client: "556"
-ca_certificate_id_code_signing: "557"
+ca_certificate_id_ev: "508"
+ca_certificate_id_ov: "507"
+ca_certificate_id_dv: "506"
+ca_certificate_id_client: "510"
+ca_certificate_id_code_signing: "509"
 
-olark_id: '6197-594-10-8504'
+olark_id: '3356-178-10-2724'
 
-dv_explanation_link: "https://www.ssl.com/certificates/apidocs/dcv/"
+dv_explanation_link: "https://www.ssl.com/faqs/ssl-dv-validation-requirements/"
 
 # 'local' for openssl, 'remote' to use java SOAP
 csr_parser: local
 
-#Email address for sending in case of checked "Generate and Install SSL"
-cdn_ssl_notification_address: ''
+excluded_titles: []
+#  ["--- Personal Basic\n...\n", "--- Personal Pro\n...\n", "--- Personal Enterprise\n...\n", "--- Personal Business\n...\n",
+#  "--- Premium Multi-subdomain SSL\n...\n", "Migrated SSL"] #,"--- Code Signing\n...\n"
 
-excluded_titles:
-  ["--- Personal Basic\n...\n", "--- Personal Pro\n...\n", "--- Personal Enterprise\n...\n", "--- Personal Business\n...\n",
-  "--- Premium Multi-subdomain SSL\n...\n", "Migrated SSL"] #,"--- Code Signing\n...\n"
-
-api_product_codes: 
+api_product_codes:
   {100: "evucc256sslcom", 101: "ucc256sslcom", 102: "ev256sslcom",
    103: "ov256sslcom", 104: "dv256sslcom", 105: "wc256sslcom", 106: "basic256sslcom",
    107: "premium256sslcom",
    204: "evucc256sslcom", 202: "ucc256sslcom", 203: "ev256sslcom",
    200: "basic256sslcom", 201: "wc256sslcom", 300: "personalbasic256sslcom",
    301: "personalpro256sslcom", 302: "personalbusiness256sslcom", 303: "personalenterprise256sslcom",
-   350: "codesigning256sslcom"}
+   350: "codesigning256sslcom", 360: "evcodesigning256sslcom"}
 
 subca_mapping:
-  dv: {product: "assureguard-dv", label: "AssureGuard DV"}
-  ov: {product: "assureguard-ov", label: "AssureGuard OV", info: "http://www.masongraphics.co.za/ov_certificate.html"}
-  ev: {product: "assureguard-ev", label: "AssureGuard EV", info: "http://www.masongraphics.co.za/ev_certificate.html"}
-  evucc: {product: "assureguard-evucc", label: "AssureGuard EV SAN/UCC", info: "http://www.masongraphics.co.za/domain_validation.html"}
-  ucc: {product: "assureguard-ucc", label: "AssureGuard SAN/UCC", info: "http://www.masongraphics.co.za/uss_san.html"}
-  wildcard: {product: "assureguard-wildcard", label: "AssureGuard Wildcard", info: "http://www.masongraphics.co.za/wildcard_ssl.html"}
+  dv: {product: "basicssl", label: "<i>SSL</i>.com Basic"}
+  premiumssl: {product: "premiumssl", label: "<i>SSL</i>.com Premium"}
+  ev: {product: "ev", label: "<i>SSL</i>.com Enterprise EV"}
+  ov: {product: "high_assurance", label: "<i>SSL</i>.com High Assurance"}
+  wildcard: {product: "wildcard", label: "Wildcard (Unlimited Subdomains)"}
+  ucc: {product: "ucc", label: "Multi-Domain (SAN/UCC)"}
+  evucc: {product: "evucc", label: "EV Multi-Domain (EV SAN/UCC)"}
 
 send_dv_first: true
 
@@ -105,14 +109,14 @@ send_dv_first: true
 featured_writer_label: 'Featured Writer'
 allow_anonymous_commenting: false
 require_captcha_on_signup: true
+require_server_software_w_csr_submit: true # Comodo API still relies on this
 recaptcha_pub_key: 6Lch9QYAAAAAAMKfJMXiclR-6EuiZRBr8o98dHdF
 recaptcha_priv_key: 6Lch9QYAAAAAAAlWpfQKWpn7eTkc3f2FWhv4fVIG
 # uncomment these keys if you turn captcha on for commenting or signup
 studio_fee_rate: .3
 affiliate_cookie_days: 30
-affiliate_program: "shareasale"
+affiliate_program: "idevaffiliate"
 cart_cookie_days: 30
-reserved_logins: ['administrator', 'sysadmin', 'admin', 'support', 'sales', 'info', 'eroslife', 'systemadmin', 'moderator', 'operator']
 exclude_amex: true
 number_of_captured_frames: 20
 max_content_size: 10
@@ -122,13 +126,13 @@ thumbnail_tagline_size: 32
 allow_reseller_validation: true
 sync_aid_li_and_cart: false
 browser_acceptance: "99.9%"
-notify_address: "support@certassure.com"
+notify_address: "support@ssl.com"
 disable_links_banner: false
 
 from_email:
-  orders: 'orders@certassure.com'
-  activations: 'noreply@certassure.com'
-  no_reply: 'noreply@certassure.com'
+  orders: 'orders@ssl.com'
+  activations: 'noreply@ssl.com'
+  no_reply: 'noreply@ssl.com'
 
 photo:
   missing_micro: '/plugin_assets/community_engine/images/icon_missing_micro.gif'
