@@ -11,7 +11,13 @@ SslCom::Application.configure do
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
   config.cache_store = :dalli_store
-  config.action_controller.asset_host='wwwsslcom.a.cdnify.io'
+  config.action_controller.asset_host = Proc.new { |source|
+    if source=~/\A\/validation_histories\/.*?\/documents/
+      "https://www.ssl.com"
+    else
+      "https://wwwsslcom.a.cdnify.io"
+    end
+  }
 
   # For nginx:
   # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'

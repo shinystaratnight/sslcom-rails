@@ -11,8 +11,8 @@ class Website < ActiveRecord::Base
   end
 
 # Revert back to the shared database
-  def revert_database
-    ActiveRecord::Base.establish_connection(default_connection)
+  def self.revert_database
+    ActiveRecord::Base.establish_connection(Website::default_connection)
   end
 
   # production api
@@ -38,13 +38,13 @@ class Website < ActiveRecord::Base
   private
   
 # Regular database.yml configuration hash
-  def default_connection
+  def self.default_connection
     @default_config ||= ActiveRecord::Base.connection.instance_variable_get("@config").dup
   end
 
 # Return regular connection hash but with database name changed
 # The database name is a attribute (column in the database)
   def website_connection
-    default_connection.dup.update(database: self.db.name)
+    Website::default_connection.dup.update(database: self.db.name)
   end
 end

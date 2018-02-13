@@ -37,7 +37,7 @@ module ApplicationHelper
   end
 
   def set_database
-    current_website.use_database
+    is_sandbox? ? current_website.use_database : Website.revert_database
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
