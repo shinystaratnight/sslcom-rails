@@ -369,7 +369,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def comodo_server_software_id
-    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
+    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
   end
 
   def has_all_contacts?
