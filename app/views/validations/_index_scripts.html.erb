@@ -572,6 +572,7 @@ jQuery(function($) {
 
               if (domain_ids.length > 0) {
                 $('#upload_validations').hide();
+                $('.domains_loader_wrap').show();
 
                 $.ajax({
                   url: ajaxRemoveDomainUrl,
@@ -608,6 +609,7 @@ jQuery(function($) {
                       }
                     }
 
+                    $('.domains_loader_wrap').hide();
                   }
                 });
               } else {
@@ -642,41 +644,6 @@ jQuery(function($) {
               break;
             default:
           }
-
-          /*$.each(domain_list, function(idx, domain) {
-           var is_checked = $(domain).find('.check_box').prop('checked');
-           if (is_checked) {
-           switch (slt_type) {
-           case 'delete':
-           //TODO: What value should be selected?
-           var ajaxDomainUrl = '< %=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
-           var order_number = '< %=@certificate_order.id%>';
-           $.ajax({
-           url: ajaxDomainUrl,
-           data: {
-           domain_name: value,
-           order_number: order_number,
-           },
-           type: "POST",
-           success: function (result) {
-           alert(result);
-           var parent = $(domain).parent();
-           $(domain).next().remove();
-           $(domain).remove();
-
-           if ($('tbody.domain_list').find('tr.certificate_name').length == 0) {
-           $('#upload_validations').hide();
-           }
-           }
-           });
-           case 'http_csr_hash':
-           case 'https_csr_hash':
-           case 'cname_csr_hash':
-           $(domain).find('select').val(slt_type).trigger('change');
-           default:
-           }
-           }
-           });*/
         });
 
         var domain_str = $('#cert_names_ids_str').val();
@@ -842,6 +809,7 @@ jQuery(function($) {
 
                 if (idx === (total - 1) && !all_validated) {
                   $('#upload_validations').show();
+                  $('.domains_loader_wrap').hide();
                 }
 
                 $('select[id^=domains]').last().change();
