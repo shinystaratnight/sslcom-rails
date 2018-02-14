@@ -549,6 +549,47 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
       <%if @certificate_order%>
+        $(document).on('click', '.btn_remove_domain', function() {
+          var domain_id = $(this).prev().prop('id');
+          var domain_name = $(this).prop('name');
+          $(this).parent().css('background-color', 'white');
+
+          var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+          var confirmMsg = 'Are you sure you want to remove the following domain from this order?';
+          confirmMsg = confirmMsg.concat('\r\n      ' + domain_name);
+
+          if (confirm(confirmMsg)) {
+            $('#upload_validations').hide();
+            $('.domains_loader_wrap').show();
+
+            $.ajax({
+              url: ajaxRemoveDomainUrl,
+              data: {
+                domain_ids: domain_id
+              },
+              type: "POST",
+              success: function (result) {
+                if (Object.keys(result).length > 0) {
+                  Object.keys(result).map(function(key) {
+                    $('#' + key).parent().css('background-color', 'red');
+                  });
+
+                  $('#upload_validations').show();
+                } else {
+                  $('#certificate_name_' + domain_id).next().remove();
+                  $('#certificate_name_' + domain_id).remove();
+
+                  if ($('tbody.domain_list').find('tr.certificate_name').length > 0) {
+                    $('#upload_validations').show();
+                  }
+                }
+
+                $('.domains_loader_wrap').hide();
+              }
+            });
+          }
+        });
+
         $('#validation_common_type').change(function() {
           var slt_type = $(this).val();
           var domain_list = $('tbody.domain_list').find('tr.certificate_name');
@@ -560,58 +601,59 @@ jQuery(function($) {
           switch (slt_type) {
             case 'delete':
               var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
-              var order_number = '<%=@certificate_order.external_order_number%>';
               var domain_ids = '';
+              var confirmMsg = 'Are you sure you want to remove the following domain(s) from this order?';
 
               $.each(domain_list, function(idx, domain) {
                 var is_checked = $(domain).find('.check_box').prop('checked');
                 if (is_checked) {
-                  domain_ids = ',' + domain_ids + $(domain).find('.check_box').prop('id');
+                  confirmMsg = confirmMsg.concat('\r\n      ' + $(domain).find('.check_box').prop('alt'));
+                  domain_ids = domain_ids.concat(',' + $(domain).find('.check_box').prop('id'));
                 }
               });
 
               if (domain_ids.length > 0) {
-                $('#upload_validations').hide();
-                $('.domains_loader_wrap').show();
+                if (confirm(confirmMsg)) {
+                  $('#upload_validations').hide();
+                  $('.domains_loader_wrap').show();
 
-                $.ajax({
-                  url: ajaxRemoveDomainUrl,
-                  data: {
-                    domain_ids: domain_ids.substr(1),
-                    order_number: order_number,
-                  },
-                  type: "POST",
-                  success: function (result) {
-                    if (Object.keys(result).length > 0) {
-                      $.each(domain_ids.substr(1).split(','), function(ids, domain) {
-                        if ($.inArray(domain, Object.keys(result)) == -1) {
+                  $.ajax({
+                    url: ajaxRemoveDomainUrl,
+                    data: {
+                      domain_ids: domain_ids.substr(1)
+                    },
+                    type: "POST",
+                    success: function (result) {
+                      if (Object.keys(result).length > 0) {
+                        $.each(domain_ids.substr(1).split(','), function(ids, domain) {
+                          if ($.inArray(domain, Object.keys(result)) == -1) {
+                            $('#certificate_name_' + domain).next().remove();
+                            $('#certificate_name_' + domain).remove();
+                          }
+                        });
+
+                        Object.keys(result).map(function(key) {
+                          $('#' + key).parent().css('background-color', 'red');
+                        });
+
+                        $('#upload_validations').show();
+                      } else {
+                        $.each(domain_ids.substr(1).split(','), function(ids, domain) {
                           $('#certificate_name_' + domain).next().remove();
                           $('#certificate_name_' + domain).remove();
+                        });
+
+                        if ($('tbody.domain_list').find('tr.certificate_name').length > 0) {
+                          $('#upload_validations').show();
                         }
-                      });
-
-                      Object.keys(result).map(function(key) {
-                        //console.log(result[key].split('|')[0] + " >>> " + result[key].split('|')[1]);
-                        $('#' + key).parent().css('background-color', 'red');
-                      });
-
-                      $('#upload_validations').show();
-                    } else {
-                      $.each(domain_ids.substr(1).split(','), function(ids, domain) {
-                        $('#certificate_name_' + domain).next().remove();
-                        $('#certificate_name_' + domain).remove();
-                      });
-
-                      if ($('tbody.domain_list').find('tr.certificate_name').length == 0) {
-                        $('#upload_validations').hide();
-                      } else {
-                        $('#upload_validations').show();
                       }
-                    }
 
-                    $('.domains_loader_wrap').hide();
-                  }
-                });
+                      $('.domains_loader_wrap').hide();
+                    }
+                  });
+                } else {
+                  $(this).val('');
+                }
               } else {
                 alert('There are no selected domains for delete.');
                 $(this).val('');
@@ -652,11 +694,13 @@ jQuery(function($) {
           domains = domain_str.substr(0, domain_str.length - 1).split(',');
 
           var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
-          var exist_ext_order_number = '<%=@certificate_order.external_order_number%>';
+
           <%
             mdc_validation = ComodoApi.mdc_status(@certificate_order)
             ds = mdc_validation.domain_status
             is_ucc = @certificate_order.certificate.is_ucc?
+            is_evucc = @certificate_order.certificate.is_evucc?
+            is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
           %>
 
           var all_validated = false;
@@ -670,7 +714,6 @@ jQuery(function($) {
               data: {
                 domain_id: value,
                 domain_count: total,
-                exist_ext_order_number: exist_ext_order_number,
                 domain_status: JSON.parse('<%= raw ds ? ds.to_json : {}%>'),
                 is_ucc: '<%=is_ucc%>',
                 count_validated: count_validated,
@@ -698,11 +741,23 @@ jQuery(function($) {
                     $('.domain_list').append(trElement);
 
                     tdElement = $('<td></td>');
+
                     var checkboxElement = $('<input></input>');
                     checkboxElement.attr('class', 'check_box');
                     checkboxElement.attr('id', result[key]['checkbox_id']);
+                    checkboxElement.attr('alt', result[key]['domain_name']);
                     checkboxElement.attr('type', 'checkbox');
                     tdElement.append(checkboxElement);
+
+                    <%if is_ucc || is_evucc || is_premium_ssl%>
+                      var btnElement = $('<input></input>');
+                      btnElement.attr('class', 'btn_remove_domain');
+                      btnElement.attr('name', result[key]['domain_name']);
+                      btnElement.attr('type', 'button');
+                      btnElement.attr('value', 'Remove');
+                      tdElement.append(btnElement);
+                    <%end%>
+
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');

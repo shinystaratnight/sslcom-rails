@@ -42,11 +42,12 @@ class ValidationsController < ApplicationController
 
   def remove_domains
     domain_id_arry = params['domain_ids'].split(',')
+    order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
     result_obj = {}
 
     domain_id_arry.each do |domain_id|
       cn_obj = CertificateName.find(domain_id.to_i)
-      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: params['order_number'])
+      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: order_number)
 
       error_code = 0
       error_message = ''
@@ -73,7 +74,7 @@ class ValidationsController < ApplicationController
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
 
-    if params['exist_ext_order_number'].length > 0
+    if CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
       dcv = cn.domain_control_validations.last
       if params['is_ucc'] == 'true'
         if ds && ds[cn.name]
