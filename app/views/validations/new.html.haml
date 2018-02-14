@@ -49,9 +49,15 @@
   =form_tag(api_domain+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
-    %table{style: "width: 100%; border: 1px solid black; padding: 1em"}
+    -if co.certificate.is_evucc? || co.certificate.is_premium_ssl? || co.certificate.is_ucc?
+      -opts=[["Delete","delete"], ["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
+    -else
+      -opts=[["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
+    %table#domains_validation
       %thead
-        %td=check_box_tag "select_all", nil, {id: "select_all"}
+        %th
+          =select_tag("validation_common_type", options_for_select(opts),prompt: 'Please select a validation method')
+          =check_box_tag "select_all", nil, false, {id: "select_all"}
         %th domain
         %th options
         -#%th description

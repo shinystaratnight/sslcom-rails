@@ -17,7 +17,7 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :require=>:new
+  filter_access_to :get_asynch_domains, :remove_domains, :require=>:new
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -40,6 +40,32 @@ class ValidationsController < ApplicationController
     end
   end
 
+  def remove_domains
+    domain_id_arry = params['domain_ids'].split(',')
+    result_obj = {}
+
+    domain_id_arry.each do |domain_id|
+      cn_obj = CertificateName.find(domain_id.to_i)
+      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: params['order_number'])
+
+      error_code = 0
+      error_message = ''
+
+      if res.index('errorMessage')
+        error_code = res.split('&')[0].split('=')[1]
+        error_message = res.split('&')[1].split('=')[1]
+      end
+
+      if error_code.to_i == 0
+        cn_obj.destroy
+      else
+        result_obj[domain_id] = cn_obj.name + '|' + error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
+      end
+    end
+
+    render :json => result_obj
+  end
+
   def get_asynch_domains
     cn = CertificateName.find(params['domain_id'])
     ds = params['domain_status']
@@ -47,7 +73,7 @@ class ValidationsController < ApplicationController
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
 
-    if params['exist_ext_order_number']
+    if params['exist_ext_order_number'].length > 0
       dcv = cn.domain_control_validations.last
       if params['is_ucc'] == 'true'
         if ds && ds[cn.name]
