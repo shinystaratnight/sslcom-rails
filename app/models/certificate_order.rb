@@ -101,7 +101,7 @@ class CertificateOrder < ActiveRecord::Base
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil}
+               ref: nil, external_order_number: nil, status: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -173,6 +173,12 @@ class CertificateOrder < ActiveRecord::Base
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
             (certificate_contents.csrs.send(field.to_sym) >> query.split(','))} if query
+    end
+    %w(status).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.send(:workflow_state) >> query.split(',')) |
+            (workflow_state >> query.split(','))} if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
       query=filters[field.to_sym]
