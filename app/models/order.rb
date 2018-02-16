@@ -44,7 +44,7 @@ class Order < ActiveRecord::Base
 #  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
   #need to delete some test accounts
-  default_scope ->{includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled']}.
+  default_scope ->{includes(:line_items).where{state << ['payment_declined','fully_refunded','charged_back', 'canceled', 'invoiced']}.
                     order("created_at desc").uniq}
 
   scope :not_new, lambda {
@@ -281,6 +281,10 @@ class Order < ActiveRecord::Base
   workflow_column :state
 
   workflow do
+    state :invoiced do
+      event :invoice_paid!, transitions_to: :paid_by_invoice
+    end
+      
     state :pending do
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
