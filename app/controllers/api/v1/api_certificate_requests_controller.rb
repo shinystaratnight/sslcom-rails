@@ -104,6 +104,38 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_500_error e
   end
 
+  def replace_v1_4
+    set_template "replace_v1_4"
+    if @result.csr_obj && !result.csr_obj.valid?
+      @result = @result.csr_obj
+    else
+      if @result.save
+        if @acr = @result.replace_certificate_order
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+            if @acr.certificate_content.csr && @result.debug=="true"
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+              @result.api_request=ccr.parameters
+              @result.api_response=ccr.response
+            end# @result.error_code=ccr.response_error_code
+            # @result.error_message=ccr.response_error_message
+            # @result.eta=ccr.response_certificate_eta
+            # @result.order_status = ccr.response_certificate_status
+
+            set_result_parameters(@result, @acr)
+            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
+          else
+            @result = @acr #so that rabl can report errors
+          end
+        end
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      end
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
   def update_v1_4
     set_template "update_v1_4"
     if @result.csr_obj && !@result.csr_obj.valid?
@@ -1004,7 +1036,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke

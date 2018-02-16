@@ -43,13 +43,19 @@
       %td cname sha2 hash
       %td.dns_sha2_hash=co.csr.dns_sha2_hash
   -cnIdStr = ''
+  -cnNameStr = ''
   -co.certificate_content.certificate_names.pluck(:name).uniq.each do |cn|
+    -cnNameStr = cnNameStr + ',' + cn if !cn.nil? && !cn.empty?
     -cnIdStr = cnIdStr + co.certificate_content.certificate_names.find_by_name(cn).id.to_s + ','
   =hidden_field_tag :cert_names_ids_str, cnIdStr
-  =form_tag(api_domain+api_certificate_update_v1_4_path(co.ref), method: :put, class: :api_certificate_request) do
+  =hidden_field_tag :ori_domain_names_str, cnNameStr
+  =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key
-    -opts=[["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
+    -if co.certificate.is_evucc? || co.certificate.is_premium_ssl? || co.certificate.is_ucc?
+      -opts=[["Delete","delete"], ["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
+    -else
+      -opts=[["Use http csr hash validation","http_csr_hash"], ["Use https csr hash validation","https_csr_hash"], ["Use cname csr hash validation","cname_csr_hash"]]
     .domains_loader_wrap
       .domains_loader
     %table#domains_validation
