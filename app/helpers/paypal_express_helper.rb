@@ -4,7 +4,7 @@ module PaypalExpressHelper
     @items                       = get_items(cart)
     credit_and_discount params
     load_funds(params) unless params[:reprocess_ucc]
-    
+
     return_url_params = {
       action: 'purchase',
       ssl_slug: params[:ssl_slug],
@@ -13,7 +13,7 @@ module PaypalExpressHelper
     }
     if params[:reprocess_ucc]
       return_url_params.merge!({
-        co_ref: params[:co_ref], 
+        co_ref: params[:co_ref],
         cc_ref: params[:cc_ref],
         reprocess_ucc: true
       })
@@ -107,7 +107,7 @@ module PaypalExpressHelper
   end
 
   def get_totals(cart, params)
-    subtotal = params[:reprocess_ucc] ? params[:amount].to_f : cart.amount.cents
+    subtotal = params[:reprocess_ucc] ? get_amount(params[:amount]) : cart.amount.cents
     discount = get_amount(params[:discount])
     credit   = get_amount(params[:funded_account])
     surplus  = get_surplus_deposit(params) > 0 ? get_surplus_deposit(params) : 0
@@ -158,7 +158,7 @@ module PaypalExpressHelper
   def get_surplus_deposit(params)
     funded      = params[:funded_target]
     final_total = params[:amount].to_i - get_amount(params[:discount]) - get_amount(params[:funded_account])
-    funded ? get_amount(funded) - final_total : 0
+    (funded && !params[:reprocess_ucc]) ? get_amount(funded) - final_total : 0
   end
 
   def get_amount(amount=nil)

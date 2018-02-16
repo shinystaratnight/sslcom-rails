@@ -101,11 +101,24 @@ class PaypalExpressController < ApplicationController
           end
         end
       else
-        setup_orders
+        if params[:reprocess_ucc]
+          setup_reprocess_ucc_order(purchase_params)
+          funded_account_credit(purchase_params)
+          @order.notes += " #paidviapaypal#{purchase.authorization}"
+          @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+          @certificate_order.add_reproces_order @order
+        else
+          setup_orders
+          @order.notes = "#paidviapaypal#{purchase.authorization}"
+        end
         @ssl_account.orders << @order
-        @order.notes = "#paidviapaypal#{purchase.authorization}"
-        @order.finalize_sale(params: params, deducted_from: @deposit,
-                             visitor_token: @visitor_token, cookies: cookies)
+        
+        @order.finalize_sale(
+          params: params,
+          deducted_from: @deposit,
+          visitor_token: @visitor_token,
+          cookies: cookies
+        )
         notice = "Your purchase is now complete!"
         billed_to_address(paypal_details)
         clear_cart
@@ -117,6 +130,19 @@ class PaypalExpressController < ApplicationController
   end
 
   private
+  
+  def setup_reprocess_ucc_order(purchase_params)
+    @order = Order.new(
+      billable_id:   @ssl_account.id,
+      billable_type: 'SslAccount',
+      amount:        Money.new(purchase_params[:subtotal]),
+      cents:         purchase_params[:subtotal],
+      description:   Order::SSL_REPROCESS_UCC,
+      state:         'pending',
+      approval:      'approved',
+      notes:         "Reprocess UCC (certificate order: #{params[:co_ref]}, certificate content: #{params[:cc_ref]})."
+    )
+  end
   
   def billed_to_address(paypal_details)
     attrs = paypal_details.params['PayerInfo']['Address']
@@ -147,6 +173,8 @@ class PaypalExpressController < ApplicationController
   def funded_account_credit(purchase_params)
     funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
     funded_amt    = funded_exists[:amount].abs if funded_exists
+    amount_str    = params[:reprocess_ucc] ? Money.new(@order.cents + funded_amt).format : @order.amount.format
+
     if funded_exists && funded_amt > 0
       fund = Deposit.create(
         amount:         funded_amt,
@@ -155,10 +183,13 @@ class PaypalExpressController < ApplicationController
         last_digits:    'N/A',
         payment_method: 'Funded Account'
       )
-      @funded             = @ssl_account.purchase fund
+      @funded = @ssl_account.purchase fund
       @funded.description = 'Funded Account Withdrawal'
+      @funded.notes = "Partial payment for order ##{@order.reference_number} (#{amount_str})"
+      @funded.notes << ' for UCC certificate reprocess' if params[:reprocess_ucc]
       @funded.save
       @funded.mark_paid!
+      @ssl_account.funded_account.decrement!(:cents, funded_amt) if params[:reprocess_ucc]
     end
   end
 end
