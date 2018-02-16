@@ -19,6 +19,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :affiliate, :dependent => :destroy
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+  has_many  :monthly_invoices, as: :billable
   has_many  :transactions, through: :orders
   has_many  :user_groups
   has_many  :api_certificate_requests, as: :api_requestable, dependent: :destroy

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180208165438) do
+ActiveRecord::Schema.define(version: 20180216083313) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -615,24 +615,31 @@ ActiveRecord::Schema.define(version: 20180208165438) do
   end
 
   create_table "invoices", force: :cascade do |t|
-    t.integer  "order_id",    limit: 4
-    t.text     "description", limit: 65535
-    t.string   "company",     limit: 255
-    t.string   "first_name",  limit: 255
-    t.string   "last_name",   limit: 255
-    t.string   "address_1",   limit: 255
-    t.string   "address_2",   limit: 255
-    t.string   "country",     limit: 255
-    t.string   "city",        limit: 255
-    t.string   "state",       limit: 255
-    t.string   "postal_code", limit: 255
-    t.string   "phone",       limit: 255
-    t.string   "fax",         limit: 255
-    t.string   "vat",         limit: 255
-    t.string   "tax",         limit: 255
-    t.string   "notes",       limit: 255
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.integer  "order_id",         limit: 4
+    t.text     "description",      limit: 65535
+    t.string   "company",          limit: 255
+    t.string   "first_name",       limit: 255
+    t.string   "last_name",        limit: 255
+    t.string   "address_1",        limit: 255
+    t.string   "address_2",        limit: 255
+    t.string   "country",          limit: 255
+    t.string   "city",             limit: 255
+    t.string   "state",            limit: 255
+    t.string   "postal_code",      limit: 255
+    t.string   "phone",            limit: 255
+    t.string   "fax",              limit: 255
+    t.string   "vat",              limit: 255
+    t.string   "tax",              limit: 255
+    t.string   "notes",            limit: 255
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.string   "type",             limit: 255
+    t.integer  "billable_id",      limit: 4
+    t.string   "billable_type",    limit: 255
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "reference_number", limit: 255
+    t.string   "status",           limit: 255
   end
 
   create_table "legacy_v2_user_mappings", force: :cascade do |t|
@@ -757,6 +764,7 @@ ActiveRecord::Schema.define(version: 20180208165438) do
     t.boolean  "ext_affiliate_credited"
     t.string   "ext_customer_ref",       limit: 255
     t.string   "approval",               limit: 255
+    t.integer  "invoice_id",             limit: 4
   end
 
   add_index "orders", ["billable_id", "billable_type"], name: "index_orders_on_billable_id_and_billable_type", using: :btree

@@ -472,7 +472,17 @@ class CertificateOrder < ActiveRecord::Base
     addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
-    
+  
+  def add_reproces_order(order)
+    order.save unless order.persisted?
+    order.line_items.destroy_all
+    if order.valid?
+      line_items << LineItem.create(
+        order_id: order.id, cents: order.cents, amount: order.amount, currency: 'USD'
+      )
+    end
+  end
+      
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
