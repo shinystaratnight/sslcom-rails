@@ -66,16 +66,25 @@
             %a{style:"cursor: pointer;", onclick: "adjust_funds_ssl_account('#{t.ssl_slug}','#{t.get_team_name}')"} $#{t.funded_account.try :amount}
           -else
             $#{t.funded_account.try :amount}
-        %td
+        %td#team-detail-links
           -permissions = team_index_permissions(current_user, t)
-          -if system_admins || permissions.include?(:orders)
-            [#{link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug)}]
-          -if system_admins || permissions.include?(:transactions)
-            [#{link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug)}]
-          -if system_admins || permissions.include?(:validations)
-            [#{link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug)}]
-          -if system_admins || permissions.include?(:users)
-            [#{link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug)}]
+          %div
+            -if system_admins || permissions.include?(:orders)
+              =link_to "orders (#{t.certificate_orders.count})", certificate_orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+            -if system_admins || permissions.include?(:transactions)
+              =link_to "transactions (#{t.orders.count})", orders_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+            -if system_admins || permissions.include?(:validations)
+              =link_to "validations (#{t.validations.count})", validations_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+            -if system_admins || permissions.include?(:users)
+              =link_to "users (#{t.users.count})", users_path(ssl_slug: t.to_slug), class: 'btn-team-links'
+          -if system_admins
+            %div
+              -billing_status = t.billing_monthly? ? 'disable' : 'enable'
+              =link_to "#{billing_status} monthly billing", |
+                ssl_account_path(ssl_slug: t.to_slug, monthly_billing: true, status: billing_status), |
+                method: :put, class: "btn-team-#{billing_status}"
+              
+              
         %td=t.created_at.strftime("%b %d, %Y")
         -unless system_admins
           %td
