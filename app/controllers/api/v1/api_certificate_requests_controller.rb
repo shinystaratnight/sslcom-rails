@@ -779,7 +779,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     client_app  = params[:client_app]
 
     if @result.save
-      @orders = @result.find_certificate_orders(params[:search])
+      @orders = @result.find_certificate_orders(params[:search],is_sandbox_or_test? ? {is_test: true} : nil)
 
       page     = params[:page] || 1
       per_page = params[:per_page] || PER_PAGE_DEFAULT
