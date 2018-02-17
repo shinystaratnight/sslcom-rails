@@ -419,7 +419,9 @@ class OrdersController < ApplicationController
   # Order created for existing UCC certificate order on reprocess/rekey 
   def create_reprocess_ucc
     @ssl_account         = current_user.ssl_account
-    existing_card        = @ssl_account.billing_profiles.find(params[:funding_source]) if params[:funding_source]
+    unless params[:funding_source] && params[:funding_source] == 'paypal'
+      existing_card = @ssl_account.billing_profiles.find(params[:funding_source])
+    end
     @funded_amount       = params[:order][:funded_amount].to_f
     @order_amount        = params[:order][:order_amount].to_f
     @charge_amount       = params[:order][:charge_amount].to_f
@@ -434,27 +436,21 @@ class OrdersController < ApplicationController
     
     @order = Order.new(
       billing_profile_id: params[:funding_source],
-      billable_id:        @ssl_account.id,
-      billable_type:      'SslAccount',
       amount:             @order_amount,
       cents:             (@order_amount * 100).to_i,
       description:        Order::SSL_REPROCESS_UCC,
       state:              'pending',
       approval:           'approved',
-      notes:              "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+      notes:              reprocess_ucc_notes
     )
+    @order.billable = @ssl_account
     
-    if @order_amount == 0
-      # Reprocess is free, no additional domains added
-      reprocess_ucc_order_free(params)
+    if @funded_amount > 0 && (@order_amount <= @funded_amount)
+      # All amount covered by credit from funded account
+      reprocess_ucc_funded_account(params)
     else
-      if @funded_amount > 0 && (@order_amount <= @funded_amount)
-        # All amount covered by credit from funded account
-        reprocess_ucc_funded_account(params)
-      else
-        # Pay full or partial payment by CC or Paypal
-        reprocess_ucc_hybrid_payment(params)
-      end
+      # Pay full or partial payment by CC or Paypal
+      reprocess_ucc_hybrid_payment(params)
     end
   end
     
@@ -620,21 +616,41 @@ class OrdersController < ApplicationController
     @order             = current_order_reprocess_ucc
     @order.description = Order::SSL_REPROCESS_UCC
     @order.state       = 'invoiced'
-    @order.notes       = "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+    @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end
   
+  def reprocess_ucc_notes
+    "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+  end
+    
   def new_reprocess_ucc
     if current_user
       @certificate_order   = current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
       @reprocess_ucc       = true
+      amount               = @certificate_order.ucc_prorated_amount(@certificate_content)
 
-      if @ssl_account.billing_monthly?
-        # Invoice Order, do not charge
-        reprocess_ucc_invoice(params)
+      if @ssl_account.billing_monthly? || amount == 0
+        if amount == 0 # Reprocess is free, no additional domains added
+          @order = Order.new(
+            amount:      0,
+            cents:       0,
+            description: Order::SSL_REPROCESS_UCC,
+            notes:       reprocess_ucc_notes,
+            approval:    'approved'
+          )
+          @order.billable = @ssl_account
+          reprocess_ucc_order_free(params)
+          flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
+        end
+        
+        if @ssl_account.billing_monthly? && amount > 0 # Invoice Order, do not charge
+          reprocess_ucc_invoice(params)
+          flash[:notice] = "This UCC reprocess in the amount of #{Money.new(amount).format} will appear on the monthly invoice."
+        end
         redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
       else
         render 'new_reprocess_ucc'

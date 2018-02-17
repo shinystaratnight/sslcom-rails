@@ -70,8 +70,8 @@
                 Total $:
                 %span.label_desc
                   ="Remaining amount"
-              =f.hidden_field :charge_amount, value: remaining_amt
-              %span.lbl-usd
+              =f.hidden_field :charge_amount, value: remaining_amt, data: {charge_initial: remaining_amt.to_s}
+              %span.lbl-usd#lbl-charge-amount
                 ="#{remaining_amt.format.gsub(/,/, '')}"
           
     #button_container
