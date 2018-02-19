@@ -50,6 +50,10 @@ function reprocessUccAmounts() {
       $('form#new_order').attr('action', reprocess_ucc_url);
     } else {
       total = amount - funded;
+      if( $('#funding_source_paypal').is(':checked') ) {
+        $('[name*=paypal]').show();
+        $('[name*=next]').hide();
+      }
       $('#order_charge_amount').val(total.toFixed(2));
       $('#lbl-charge-amount').text('$' + total.toFixed(2) + ' USD');
     }
