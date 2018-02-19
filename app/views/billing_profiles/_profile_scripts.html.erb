@@ -35,7 +35,7 @@ function reprocessUccAmounts() {
     var funded_max = parseFloat($('#order_funded_amount').attr('max')),
         funded     = parseFloat($('#order_funded_amount').val()),
         amount     = parseFloat($('#order_order_amount').val()),
-        total      = parseFloat($('#order_charge_amount').data('charge-initial'));    
+        total      = parseFloat($('#order_charge_amount').data('charge-initial'));
     if (funded > funded_max) {
       funded = funded_max;
       $('#order_funded_amount').val(funded.toFixed(2));
@@ -53,6 +53,9 @@ function reprocessUccAmounts() {
       if( $('#funding_source_paypal').is(':checked') ) {
         $('[name*=paypal]').show();
         $('[name*=next]').hide();
+      } else {
+        $('[name*=next]').show();
+        $('[name*=paypal]').hide();
       }
       $('#order_charge_amount').val(total.toFixed(2));
       $('#lbl-charge-amount').text('$' + total.toFixed(2) + ' USD');
