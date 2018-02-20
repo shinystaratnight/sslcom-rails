@@ -245,7 +245,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product >> "#{term.split(',')}"}
+        variantable(Certificate)}.where{certificates.product >> term.split(',')}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
