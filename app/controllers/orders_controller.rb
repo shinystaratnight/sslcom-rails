@@ -628,7 +628,9 @@ class OrdersController < ApplicationController
     
   def new_reprocess_ucc
     if current_user
-      @certificate_order   = current_user.ssl_account.certificate_orders.find_by(ref: params[:co_ref])
+      @certificate_order   = (current_user.is_system_admins? ? CertificateOrder :
+                                  current_user.ssl_account.certificate_orders).find_by(ref: params[:co_ref])
+      @ssl_account = @certificate_order.ssl_account
       @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
       @reprocess_ucc       = true
       amount               = @certificate_order.ucc_prorated_amount(@certificate_content)
