@@ -173,6 +173,7 @@ SslCom::Application.routes.draw do
         match :send_to_ca, via: [:get, :post]
         post :get_asynch_domains
         post :remove_domains
+        post :get_email_addresses
         member do
           get :document_upload
         end
