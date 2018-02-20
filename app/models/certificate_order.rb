@@ -95,7 +95,7 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term, options={}|
+  scope :search_with_csr, lambda {|term="", options={}|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
@@ -1053,7 +1053,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def server_software
-    certificate_content.server_software
+    certificate_content.server_software || ServerSoftware.find(1)
   end
   alias :software :server_software
 
