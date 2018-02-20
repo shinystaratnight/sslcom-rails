@@ -166,7 +166,7 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym => query.split(',')) if query
+      result = result.where(field.to_sym  >> query.split(',')) if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
@@ -245,7 +245,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product=="#{term}"}
+        variantable(Certificate)}.where{certificates.product >> "#{term.split(',')}"}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
