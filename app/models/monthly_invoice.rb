@@ -4,8 +4,8 @@ class MonthlyInvoice < Invoice
   
   validates :start_date, :end_date, :status, :billable_id, :billable_type, presence: true
   
-  before_validation :set_duration
-  before_validation :set_status
+  before_validation :set_duration, on: :create
+  before_validation :set_status, on: :create
   after_create :generate_reference_number
   
   def self.invoice_exists?(ssl_account_id)
@@ -21,9 +21,11 @@ class MonthlyInvoice < Invoice
   private
   
   def generate_reference_number
-    update_attribute(
-      :reference_number, "i-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
-    )
+    if reference_number.blank?
+      update_attribute(
+        :reference_number, "i-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
+      )
+    end
   end
   
   def set_duration

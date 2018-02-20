@@ -41,10 +41,11 @@ jQuery(function($) {
       $('.order_amount_desc span').text((domains.length > <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>) ? domains.length : <%=Certificate::UCC_INITIAL_DOMAINS_BLOCK%>);
       
       if (ucc_reprocess.length > 0) {
-        var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count');
-        init_nonwildcard     = init_nonwildcard < 3 ? 3 : init_nonwildcard;
-        var wildcard_domains = $.grep(domains, function(n, i){ return ( n.indexOf('*.')==0); }).filter(Boolean),
-            init_wildcard    = $('#ucc-wildcard-amount').data('initial-count'),
+        var init_nonwildcard = $('#ucc-nonwildcard-amount').data('initial-count'),
+            wildcard         = $('#ucc-wildcard-amount');
+        init_nonwildcard     = (init_nonwildcard < 3 ? 3 : init_nonwildcard);
+        var wildcard_domains = (wildcard.length ? $.grep(domains, function(n, i){ return ( n.indexOf('*.')==0); }).filter(Boolean) : []),
+            init_wildcard    = (wildcard.length ? wildcard.data('initial-count') : 0),
             addt_nonwildcard = (domains.length - wildcard_domains.length) - init_nonwildcard,
             addt_wildcard    =  wildcard_domains.length - init_wildcard;
         addt_nonwildcard     = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard;
@@ -110,9 +111,11 @@ jQuery(function($) {
   <%end%>
   
   $.updateUccReprocessAmount = function(nonwildcard_count, wildcard_count) {
-    var wildcard_cost    = $('#ucc-wildcard-amount').data('cost'),
+    var wildcard         = $('#ucc-wildcard-amount'),
+        wildcard_cost    = (wildcard.length ? wildcard.data('cost') : 0),
         nonwildcard_cost = $('#ucc-nonwildcard-amount').data('cost'),
         final_amount     = (nonwildcard_count * nonwildcard_cost) + (wildcard_count * wildcard_cost);
+        
     $('#calculated_reprocess_price').text('$' + final_amount.toFixed(2) + " USD");
   };
   
