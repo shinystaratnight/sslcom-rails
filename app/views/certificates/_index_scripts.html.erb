@@ -2,6 +2,7 @@
 jQuery.noConflict();
 jQuery(function($) {
   var ucc_reprocess = $('#calculated_reprocess_price');
+  
   $.uniqueStrings = function(list) {
     var result = [];
     $.each(list, function(i, e) {
@@ -9,6 +10,7 @@ jQuery(function($) {
     });
     return result;
   };
+  
   $.domains = function(textArea){
     textArea.value = textArea.value.replace(/(\W)(\s+)/g, "$2").
       replace('_','').
@@ -25,6 +27,7 @@ jQuery(function($) {
     <%end-%>
     return domains.filter(Boolean);
   };
+  
   $('#previous_csr').change(function(){
     if($(this).is(':checked'))
       $('#certificate_order_certificate_contents_attributes_0_signing_request').val($('#previous_csr_body').val());
@@ -35,6 +38,13 @@ jQuery(function($) {
   $('span.use_previous_csr').click(function(){
     $('#previous_csr').click();
   });
+  
+  $.removeFromArray = function(value, arr) {
+      return jQuery.grep(arr, function(elem, index) {
+          return elem !== value;
+      });
+  };
+  
   $.adjust_domain_pricing = function(textArea){
       var domains = $.domains(textArea);
       $.removeFromArray("", domains);
@@ -57,9 +67,11 @@ jQuery(function($) {
         $.update_order_pricing();  
       }
   };
+  
   $("textarea[name*=signing_request]").click(function(){
     $(this).select();
   });
+  
   <% unless @certificate.is_code_signing? || Rails.env.test? %>
     $("textarea[name*=signing_request]").bind("change keyup paste", function() {
       if($(this).val()==""){
