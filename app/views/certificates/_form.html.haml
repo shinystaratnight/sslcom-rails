@@ -345,17 +345,16 @@
           %span
             =Money.new(nonwildcard_cost).format
           %span{id: 'nonwildcard-current-count'}
-      -if wildcard_count > 0
-        %br
-        .clearfix
-          %label{for: "ucc_wildcard_amount"}
-            Wildcard Domain Amount:
-            %span.label_desc prorated cost per additional wildcard
-            %span.label_desc Original order: #{wildcard_count} domains
-          #ucc-wildcard-amount{data: {cost: Money.new(wildcard_cost).to_s, initial_count: wildcard_count}}
-            %span
-              =Money.new(wildcard_cost).format
-            %span{id: 'wildcard-current-count'}
+      %br
+      .clearfix
+        %label{for: "ucc_wildcard_amount"}
+          Wildcard Domain Amount:
+          %span.label_desc prorated cost per additional wildcard
+          %span.label_desc Original order: #{wildcard_count} domains
+        #ucc-wildcard-amount{data: {cost: Money.new(wildcard_cost).to_s, initial_count: wildcard_count}}
+          %span
+            =Money.new(wildcard_cost).format
+          %span{id: 'wildcard-current-count'}
       %br
       .clearfix
         %label{for: "expense_amount"}
