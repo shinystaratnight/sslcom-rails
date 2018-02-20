@@ -8,7 +8,7 @@
         %th.description(scope='col') DESCRIPTION
         %th.quantity(scope='col') QUANTITY
         %th.price(scope='col') PRICE
-      =render partial: '/funded_accounts/certificate_order_row'
+      =render :partial=>'/funded_accounts/certificate_order_row', :collection=>cert, :as=>:cert
       %tr.order-divider
         %td{colspan: '4'}
       %tr.order-subtotal
