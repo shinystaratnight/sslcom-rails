@@ -19,6 +19,7 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :domain_control_validations, through: :certificate_names
   has_many    :csrs, :through=>:certificate_contents
   has_many    :signed_certificates, :through=>:csrs
+  has_many    :shadow_certificates, :through=>:csrs, class_name: "SignedCertificate"
   has_many    :ca_certificate_requests, :through=>:csrs
   has_many    :ca_api_requests, :through=>:csrs
   has_many    :sslcom_ca_requests, :through=>:csrs
@@ -94,13 +95,13 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term, options={}|
+  scope :search_with_csr, lambda {|term="", options={}|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil}
+               ref: nil, external_order_number: nil, status: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -165,13 +166,19 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym => query.split(',')) if query
+      result = result.where(field.to_sym  >> query.split(',')) if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
             (certificate_contents.csrs.send(field.to_sym) >> query.split(','))} if query
+    end
+    %w(status).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.send(:workflow_state) >> query.split(',')) |
+            (workflow_state >> query.split(','))} if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
       query=filters[field.to_sym]
@@ -238,7 +245,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product=="#{term}"}
+        variantable(Certificate)}.where{certificates.product >> term.split(',')}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
@@ -319,7 +326,11 @@ class CertificateOrder < ActiveRecord::Base
     :pages=>PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
-
+  REPROCES_SIGNUP_W_PAYMENT = {label: FULL,
+    pages: FULL_SIGNUP_PROCESS[:pages]}
+  REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
+    pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
+    
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -418,7 +429,60 @@ class CertificateOrder < ActiveRecord::Base
       event :unreject, :transitions_to => :paid
     end
   end
-
+  
+  # Prorated pricing for single domain for ucc certificate,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_prorated_domain(wildcard=nil)
+    if certificate.is_ucc?
+      tiers = ucc_duration_amounts(certificate_duration(:years).to_i)
+      domain_amount  = wildcard ? tiers['tier_3'] : tiers['tier_2']
+      total_duration = certificate_duration(:days)
+      domain_amount - ( (used_days/total_duration) * domain_amount )
+    end
+  end
+  
+  # Get pricing for each tier for a given duration,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_duration_amounts(years=1)
+    if certificate.is_ucc?
+      durations = {}
+      i = years-1
+      certificate.num_domain_tiers.times do |j|
+        durations["tier_#{j+1}"] = (certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
+      end
+      durations
+    end
+  end
+  
+  def ucc_prorated_amount(certificate_content)
+    wildcard_count        = wildcard_domains.count
+    nonwildcard_count     = domains.count - wildcard_count
+    # make sure NOT to charge for tier 1 domains (3 total)
+    nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
+    nonwildcard_cost      = ucc_prorated_domain
+    wildcard_cost         = ucc_prorated_domain(:wildcard)
+    new_nonwildcard_count = 0
+    new_wildcard_count    = 0
+    certificate_content.domains.each do |name|
+      name.include?('*') ? (new_wildcard_count +=1) : (new_nonwildcard_count +=1)
+    end
+    addt_nonwildcard = new_nonwildcard_count - nonwildcard_count
+    addt_wildcard    = new_wildcard_count - wildcard_count
+    addt_nonwildcard = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard
+    addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
+    (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
+  end
+  
+  def add_reproces_order(order)
+    order.save unless order.persisted?
+    order.line_items.destroy_all
+    if order.valid?
+      line_items << LineItem.create(
+        order_id: order.id, cents: order.cents, amount: order.amount, currency: 'USD'
+      )
+    end
+  end
+      
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
@@ -630,7 +694,11 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_FULL_SIGNUP_PROCESS
     end
   end
-
+  
+  def reprocess_ucc_process
+    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT 
+  end
+  
   def is_express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
@@ -736,7 +804,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def apply_for_certificate(options={})
-    if [SslcomCaApi::CERTLOCK_CA,SslcomCaApi::SSLCOM_CA,SslcomCaApi::MANAGEMENT_CA].include? options[:ca]
+    if [Ca::CERTLOCK_CA,Ca::SSLCOM_CA,Ca::MANAGEMENT_CA].include? options[:ca]
       SslcomCaApi.apply_for_certificate(self, options)
     else
       ComodoApi.apply_for_certificate(self, options) if ca_name=="comodo"
@@ -985,7 +1053,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def server_software
-    certificate_content.server_software
+    certificate_content.server_software || ServerSoftware.find(1)
   end
   alias :software :server_software
 
@@ -1489,6 +1557,7 @@ class CertificateOrder < ActiveRecord::Base
   def transfer_certificate_content(certificate_content)
     self.site_seal.conditionally_activate! unless self.site_seal.conditionally_activated?
     cc = self.certificate_content
+    cc.domains=certificate_content.domains
     if certificate_content.preferred_reprocessing?
       self.certificate_contents << certificate_content
       certificate_content.create_registrant(cc.registrant.attributes.except(*ID_AND_TIMESTAMP)).save

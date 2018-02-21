@@ -4404,8 +4404,16 @@ table#line_items_receipt
 #domains_label_text
   padding-bottom: 2px
 
-#current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
-#calculated_price, .displayed_csr_field
+#current_balance, 
+#balance_after_load,
+#tier_load_amount,
+#buying_tier_level,
+#calculated_price,
+#calculated_reprocess_price,
+.displayed_csr_field,
+#ucc-wildcard-amount span,
+#ucc-nonwildcard-amount span,
+#reprocess_ucc_amount
   float: left
   font-size: 1.6em
   font-weight: bold
@@ -6372,3 +6380,29 @@ span.notifications-teams
       .check_box
         vertical-align: middle
 
+#team-detail-links
+  width: 45%
+  div
+    float: left
+  
+.btn-team-links,
+.btn-team-disable,
+.btn-team-enable
+  background-color: grey
+  border-radius: 3px
+  color: #FFFFFF !important
+  cursor: pointer
+  font-weight: 500
+  font-size: 1.1rem
+  letter-spacing: 1px
+  padding: 2px 3px
+  border: 1px solid grey
+  margin: 0.1rem
+  
+.btn-team-disable
+  background-color: #F51C29
+  border: 1px solid #F51C29
+
+.btn-team-enable
+  background-color: #6b9029
+  border: 1px solid #6b9029

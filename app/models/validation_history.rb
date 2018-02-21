@@ -6,6 +6,7 @@ class ValidationHistory < ActiveRecord::Base
   has_many  :validation_rules, :through => :validation_rulings
   has_many  :validation_history_validations
   has_many  :validations, :through=>:validation_history_validations
+  has_many  :certificate_orders, through: :validations
   attr_protected :publish_to_site_seal_approval
   attr_protected :validation_rules
   serialize :satisfies_validation_methods
@@ -22,7 +23,7 @@ class ValidationHistory < ActiveRecord::Base
     :bucket => 'ssl-validation-docs',
     :path => ":id_partition/:random_secret/:style.:extension"
 
-  CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe'], ['image/png','png'],
+  CONTENT_TYPES =   [['image/jpeg', 'jpg, jpeg, jpe, jfif'], ['image/png','png'],
     ['application/pdf', 'pdf'], ['image/tiff', 'tif, tiff'],
     ['image/gif', 'gif'], ['image/bmp', 'bmp'],
     ['application/zip', 'zip'],

@@ -46,6 +46,8 @@ class CertificateContent < ActiveRecord::Base
     google\.com hamdami\.com mossad\.gov\.il sis\.gov\.uk microsoft\.com google\.com
     yahoo\.com login\.skype\.com mozilla\.org live\.com global\strustee)
 
+  DOMAIN_COUNT_OFFLOAD=50
+
   #SSL.com=>Comodo
   COMODO_SERVER_SOFTWARE_MAPPINGS = {
       1=>-1, 2=>1, 3=>2, 4=>3, 5=>4, 6=>33, 7=>34, 8=>5,
@@ -75,7 +77,7 @@ class CertificateContent < ActiveRecord::Base
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       cc = CertificateContent.find cc_id
-      domains.flatten.each_with_index do |domain, i|
+      all_domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
           cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end
@@ -202,14 +204,14 @@ class CertificateContent < ActiveRecord::Base
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
-    if domains.length <= 20
-      domains.flatten.each_with_index do |domain, i|
+    if all_domains.length <= DOMAIN_COUNT_OFFLOAD
+      all_domains.flatten.each_with_index do |domain, i|
         if certificate_names.find_by_name(domain).blank?
           certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
     else
-      domains.flatten.each_slice(100) do |domain_slice|
+      all_domains.flatten.each_slice(100) do |domain_slice|
         Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
       end
     end
@@ -367,12 +369,20 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def comodo_server_software_id
-    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
+    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
   end
 
   def has_all_contacts?
-    CONTACT_ROLES.all? do |role|
-      send "#{role}_contact"
+    if Contact.optional_contacts?
+      if certificate_order.certificate.is_dv? and Settings.exempt_dv_contacts
+        true
+      else
+        certificate_contacts.any?
+      end
+    else
+      CertificateContent::CONTACT_ROLES.all? do |role|
+        send "#{role}_contact"
+      end
     end
   end
 
@@ -495,6 +505,13 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def uniq_certificate_names
+    certificate_names.pluck(:name).uniq.map{|c|certificate_names.order("created_at asc").find_by_name(c).id}
+  end
+
+  def dedupe_certificate_names
+    CertificateName.delete(certificate_names.pluck(:id) - uniq_certificate_names)
+  end
   # 1- End Entity Profile : DV_SERVER_CERT_EE and Certificate Profile: DV_RSA_SERVER_CERT
   #
   # Subject DN
@@ -597,11 +614,16 @@ class CertificateContent < ActiveRecord::Base
       dn << "O=#{options[:o] || registrant.company_name}"
       dn << "C=#{options[:c] || registrant.country}"
       if cert.is_ev?
-        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number)}"
-        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category)}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city)}"
-        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state)}"
-        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country)}"
+        dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
+          ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+        dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category) ||
+          ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city) ||
+          ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+        dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state) ||
+          ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
+        dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country] || certificate_order.jois.last.try(:country) ||
+          ("US" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
       end
     end
     dn << options[:custom_fields] if options[:custom_fields]

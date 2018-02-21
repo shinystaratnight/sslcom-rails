@@ -37,7 +37,7 @@ module ApplicationHelper
   end
 
   def set_database
-    current_website.use_database
+    is_sandbox? ? current_website.use_database : Website.revert_database
     sandbox_notice if @website.instance_of?(Sandbox) and self.is_a?(ApplicationController)
   end
 
@@ -356,9 +356,11 @@ module ApplicationHelper
     co=@certificate_order
     sv=co.certificate ? co.skip_verification? : CertificateOrder.skip_verification?(certificate)
     added_padding=1.54
-    process = skip_payment? ?
-      co.prepaid_signup_process(certificate) :
-      co.signup_process(certificate)
+    process = if params[:reprocess_ucc] || (co.certificate && co.certificate.is_ucc? && params[:action] == "reprocess")
+      co.reprocess_ucc_process
+    else
+      skip_payment? ? co.prepaid_signup_process(certificate) : co.signup_process(certificate)
+    end
     padding = case process
     when CertificateOrder::EXPRESS_SIGNUP_PROCESS, CertificateOrder::PREPAID_FULL_SIGNUP_PROCESS
       "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
@@ -366,6 +368,10 @@ module ApplicationHelper
       "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
     when CertificateOrder::PREPAID_EXPRESS_SIGNUP_PROCESS
       "padding: 0 #{2.9 + (sv ? added_padding : 0.0)}em"
+    when CertificateOrder::REPROCES_SIGNUP_W_PAYMENT,
+      "padding: 0 #{0.5 + (sv ? added_padding : 0.0)}em"
+    when CertificateOrder::REPROCES_SIGNUP_W_INVOICE
+      "padding: 0 #{1.4 + (sv ? added_padding : 0.0)}em"
     end
     pages = sv ? process[:pages] - [CertificateOrder::VERIFICATION_STEP] : process[:pages]
     render(:partial => '/shared/form_progress_indicator',

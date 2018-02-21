@@ -19,6 +19,7 @@ class SslAccount < ActiveRecord::Base
   has_one   :affiliate, :dependent => :destroy
   has_one   :funded_account, :dependent => :destroy
   has_many  :orders, :as=>:billable, :after_add=>:build_line_items
+  has_many  :monthly_invoices, as: :billable
   has_many  :transactions, through: :orders
   has_many  :user_groups
   has_many  :api_certificate_requests, as: :api_requestable, dependent: :destroy
@@ -62,7 +63,8 @@ class SslAccount < ActiveRecord::Base
 
   before_validation :b_create, on: :create
   after_create  :initial_setup
-
+  
+  BILLING_METHODS = ['monthly', 'due_at_checkout']
   PULL_RESELLER = "pull_from_reseller"
   PULL_ADMIN_TECH = "pull_from_admin_and_tech"
   PULL_ADMIN = "pull_from_admin"
@@ -335,7 +337,7 @@ class SslAccount < ActiveRecord::Base
   def expiring_certificates
     results=[]
 
-    unless preferred_reminder_status
+    if preferred_reminder_status
       exp_dates=ReminderTrigger.all.map do|rt|
         preferred_reminder_notice_triggers(rt).to_i
       end.sort{|a,b|b<=>a} # order from highest to lowest value
@@ -364,7 +366,7 @@ class SslAccount < ActiveRecord::Base
   def expired_certificates(intervals, years_back=1)
     year_in_days = 365
     (Array.new(intervals.count){|i|i=[]}).tap do |results|
-      unless preferred_reminder_status
+      if preferred_reminder_status
         unrenewed_signed_certificates.compact.each do |sc|
           sed = sc.expiration_date
           unless sed.blank?
@@ -480,7 +482,11 @@ class SslAccount < ActiveRecord::Base
       end
     end
   end
-
+  
+  def billing_monthly?
+    billing_method == 'monthly'
+  end
+    
   private
 
   # creates dev db from production. NOTE: This will modify the db data so use this on a COPY of the production db

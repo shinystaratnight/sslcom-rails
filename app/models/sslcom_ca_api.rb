@@ -9,10 +9,6 @@ class SslcomCaApi
   # SSLcom-SubCA-SSL-ECC-384-R1
   # ManagementCA
 
-  CERTLOCK_CA = "certlock"
-  SSLCOM_CA = "sslcom"
-  MANAGEMENT_CA = "management_ca"
-
   SIGNATURE_HASH = %w(NO_PREFERENCE INFER_FROM_CSR PREFER_SHA2 PREFER_SHA1 REQUIRE_SHA2)
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
@@ -55,7 +51,7 @@ class SslcomCaApi
   end
 
   def self.ca_name(options)
-    if options[:ca]==SslcomCaApi::CERTLOCK_CA
+    if options[:ca]==Ca::CERTLOCK_CA
       case options[:cc].certificate.product
         when /^ev/
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-EV-SSL-RSA-4096' :
@@ -64,7 +60,7 @@ class SslcomCaApi
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'CertLock-SubCA-SSL-RSA-4096' :
               'CertLockECCSSLsubCA'
       end
-    elsif options[:ca]==SslcomCaApi::SSLCOM_CA
+    elsif options[:ca]==Ca::SSLCOM_CA
       case options[:cc].certificate.validation_type
         when "ev"
           sig_alg_parameter(options[:cc].csr) =~ /rsa/i ? 'SSLcom-SubCA-EV-SSL-RSA-4096-R2' :
@@ -143,12 +139,12 @@ class SslcomCaApi
     req, res = call_ca(host, options, issue_cert_json(options))
     cc.create_csr(body: options[:csr]) if cc.csr.blank?
     api_log_entry=cc.csr.sslcom_ca_requests.create(request_url: host,
-      parameters: req.body, method: "post", response: res.try(:body), ca: "sslcom")
+      parameters: req.body, method: "post", response: res.try(:body), ca: options[:ca])
     unless api_log_entry.username
       OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
     else
       cc.update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
-      cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s
+      cc.csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
       SystemAudit.create(
           owner:  options[:current_user],
           target: api_log_entry,

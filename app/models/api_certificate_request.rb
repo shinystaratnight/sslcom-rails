@@ -126,7 +126,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   # def find_certificate_orders(search,offset,limit)
-  def find_certificate_orders(search)
+  def find_certificate_orders(search,options={})
     is_test = self.test ? "is_test" : "not_test"
     co =
       if self.api_requestable.users.find(&:is_admin?)
@@ -136,7 +136,7 @@ class ApiCertificateRequest < CaApiRequest
         self.api_requestable.certificate_orders.not_new.send(is_test)
       end
       # end.offset(offset).limit(limit)
-    co = co.search_with_csr(search) if search
+    co = co.search_with_csr(search,options) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co
     else

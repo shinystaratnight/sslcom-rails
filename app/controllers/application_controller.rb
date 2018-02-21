@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  rescue_from ActionController::InvalidAuthenticityToken, :with => :invalid_auth_token
   layout 'application'
   #include Authentication
   include ApplicationHelper
@@ -13,7 +14,7 @@ class ApplicationController < ActionController::Base
   helper_method :current_user_session, :current_user, :is_reseller, :cookies, :current_website,
     :cart_contents, :cart_products, :certificates_from_cookie, "is_iphone?", "hide_dcv?", :free_qty_limit,
     "hide_documents?", "hide_both?", "hide_validation?"
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/"
+  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
   before_filter :set_mailer_host
   before_filter :detect_recert, except: [:renew, :reprocess]
   before_filter :set_current_user
@@ -100,7 +101,7 @@ class ApplicationController < ActionController::Base
   def cart_contents
     find_tier
     cart = cookies[:cart]
-    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
+    cart.blank? ? {} : JSON.parse(cart).each{|i|i['pr']=i['pr']+@tier if(i && i['pr'] && !i['pr'].ends_with?(@tier) && @tier)}
   end
 
   def cart_products
@@ -355,6 +356,10 @@ class ApplicationController < ActionController::Base
       current_user_session.destroy
     end
     redirect_to root_url
+  end
+
+  def invalid_auth_token
+    render :text => "Invalid authentication token. Please restart session or go to #{root_url} to start a new session.", :status => 422
   end
 
   #derive the model name from the controller. egs UsersController will return User

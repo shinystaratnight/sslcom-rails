@@ -1,7 +1,7 @@
 class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
-  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/"
+  before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
   before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
@@ -811,7 +811,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     client_app  = params[:client_app]
 
     if @result.save
-      @orders = @result.find_certificate_orders(params[:search])
+      @orders = @result.find_certificate_orders(params[:search],is_sandbox_or_test? ? {is_test: true} : nil)
 
       page     = params[:page] || 1
       per_page = params[:per_page] || PER_PAGE_DEFAULT

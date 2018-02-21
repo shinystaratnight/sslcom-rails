@@ -47,7 +47,6 @@ class SignedCertificate < ActiveRecord::Base
   OID_CS = "2.23.140.1.4.1"
   OID_TEST = "2.23.140.2.1"
 
-
   after_initialize do
     if new_record?
       self.email_customer ||= false
@@ -61,25 +60,31 @@ class SignedCertificate < ActiveRecord::Base
   end
 
   after_create do |s|
-    s.csr.certificate_content.issue!
+    s.csr.certificate_content.issue! unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
   end
 
   after_save do |s|
-    s.send_processed_certificate if s.email_customer
-    cc=s.csr.certificate_content
-    if cc.preferred_reprocessing?
-      cc.preferred_reprocessing=false
-      cc.save
+    unless self.ca_id==Ca::ISSUER[:sslcom_shadow]
+      s.send_processed_certificate # if s.email_customer
+      cc=s.csr.certificate_content
+      if cc.preferred_reprocessing?
+        cc.preferred_reprocessing=false
+        cc.save
+      end
+      co=cc.certificate_order
+      unless co.site_seal.fully_activated?
+        co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
+        co.site_seal.save
+      end
+      co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
+      last_sent=s.csr.domain_control_validations.last_sent
+      last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
     end
-    co=cc.certificate_order
-    unless co.site_seal.fully_activated?
-      co.site_seal.assign_attributes({workflow_state: "fully_activated"}, without_protection: true)
-      co.site_seal.save
-    end
-    co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
-    last_sent=s.csr.domain_control_validations.last_sent
-    last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
   end
+
+  scope :shadow, -> {where{ca_id >> [Ca::ISSUER[:sslcom_shadow]]}}
+
+  scope :live, -> {where{ca_id == nil}}
 
   scope :most_recent_expiring, lambda{|start, finish|
     find_by_sql("select * from signed_certificates as T where expiration_date between '#{start}' AND '#{finish}' AND created_at = ( select max(created_at) from signed_certificates where common_name like T.common_name )")}
@@ -298,7 +303,8 @@ class SignedCertificate < ActiveRecord::Base
     path
   end
 
-  def send_processed_certificate
+  def send_processed_certificate(options=nil)
+    # for production certs, attached the bundle, change workflow and send site seal
     zip_path =
         if certificate_order.is_iis?
           zipped_pkcs7
@@ -313,13 +319,18 @@ class SignedCertificate < ActiveRecord::Base
         end
     co=csr.certificate_content.certificate_order
     co.site_seal.fully_activate! unless co.site_seal.fully_activated?
-    if Settings.shadow_certificate_recipient and issuer="SSL.com Test"
-      OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, zip_path).deliver
-    else
-      co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
-        OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
-        OrderNotifier.site_seal_approve(c, co).deliver
+    co.processed_recipients.map{|r|r.split(" ")}.flatten.uniq.each do |c|
+      OrderNotifier.processed_certificate_order(c, co, zip_path).deliver
+      OrderNotifier.site_seal_approve(c, co).deliver
+    end
+    # for shadow certs, only send the certificate
+    begin
+      if Settings.shadow_certificate_recipient
+        co.apply_for_certificate(ca_id: Ca::ISSUER[:sslcom_shadow], ca: Ca::MANAGEMENT_CA)
+        OrderNotifier.processed_certificate_order(Settings.shadow_certificate_recipient, co, nil,
+                                                  co.shadow_certificates.last).deliver
       end
+    rescue Exception=>e
     end
   end
 
@@ -491,12 +502,8 @@ class SignedCertificate < ActiveRecord::Base
     end
   end
 
-  def ca_id
-    {ca: "comodo", ca_id: comodo_ca_id} if comodo_ca_id
-  end
-
   def ca
-    ca_id[:ca]
+    read_attribute(:ca_id).blank? ? ("comodo" if comodo_ca_id) : Ca.find(read_attribute(:ca_id))
   end
 
   def is_SHA2?
