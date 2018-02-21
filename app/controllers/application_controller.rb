@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  rescue_from ActionController::InvalidAuthenticityToken, :with => :invalid_auth_token
   layout 'application'
   #include Authentication
   include ApplicationHelper
@@ -355,6 +356,10 @@ class ApplicationController < ActionController::Base
       current_user_session.destroy
     end
     redirect_to root_url
+  end
+
+  def invalid_auth_token
+    render :text => "Invalid authentication token. Please restart session or go to #{root_url} to start a new session.", :status => 422
   end
 
   #derive the model name from the controller. egs UsersController will return User
