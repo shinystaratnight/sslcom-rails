@@ -42,13 +42,14 @@
     %tr
       %td cname sha2 hash
       %td.dns_sha2_hash=co.csr.dns_sha2_hash
-  -cnIdStr = ''
-  -cnNameStr = ''
-  -co.certificate_content.certificate_names.pluck(:name).uniq.each do |cn|
-    -cnNameStr = cnNameStr + ',' + cn if !cn.nil? && !cn.empty?
-    -cnIdStr = cnIdStr + co.certificate_content.certificate_names.find_by_name(cn).id.to_s + ','
-  =hidden_field_tag :cert_names_ids_str, cnIdStr
-  =hidden_field_tag :ori_domain_names_str, cnNameStr
+  -#-cnIdStr = ''
+  -#-cnNameStr = ''
+  -#-co.certificate_content.certificate_names.pluck(:name).uniq.each do |cn|
+  -#  -cnNameStr = cnNameStr + ',' + cn if !cn.nil? && !cn.empty?
+  -#  -cnIdStr = cnIdStr + co.certificate_content.certificate_names.find_by_name(cn).id.to_s + ','
+  -#=hidden_field_tag :cert_names_ids_str, cnIdStr
+  -#=hidden_field_tag :ori_domain_names_str, cnNameStr
+  =hidden_field_tag :ori_domain_names_str, co.certificate_content.certificate_names.pluck(:name).uniq.join(',')
   =form_tag('', method: :post, class: :api_certificate_request) do
     =hidden_field_tag :account_key, current_user.ssl_account.api_credential.account_key
     =hidden_field_tag :secret_key, current_user.ssl_account.api_credential.secret_key

@@ -140,10 +140,16 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
         cn_keys = self.cert_names.keys
         @certificate_order.certificate_content.certificate_names.each do |certificate_name|
-          if cn_keys.include? certificate_name.id.to_s
-            certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
-          else
+          # if cn_keys.include? certificate_name.id.to_s
+          #   certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
+          # else
+          #   certificate_name.destroy
+          # end
+
+          if cn_keys.exclude? certificate_name.name
             certificate_name.destroy
+          elsif self.cert_names[certificate_name.name] != certificate_name.name
+            certificate_name.update_column(:name, self.cert_names[certificate_name.name])
           end
         end
         @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
@@ -154,9 +160,9 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
         #send to comodo
         comodo_auto_replace_ssl(
-            certificateOrder: @certificate_order,
-            domainNames: domainNames,
-            domainDcvs: domainDcvs
+          certificateOrder: @certificate_order,
+          domainNames: domainNames,
+          domainDcvs: domainDcvs
         )
       end
       return @certificate_order

@@ -37,6 +37,12 @@ module CollectiveIdea #:nodoc:
           model = model_and_id[0].camelize.constantize
           model.find(model_and_id[1].to_i)
         end
+
+        def find_from_model_and_name model_string
+          model_and_name = model_string.split('__')
+          model = model_and_name[0].camelize.constantize
+          model.find_by_name(model_and_name[1])
+        end
       end
 
       module InstanceMethods
