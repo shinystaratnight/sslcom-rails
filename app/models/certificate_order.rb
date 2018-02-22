@@ -812,11 +812,13 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success?
+    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success? && !rejected?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
         self.orphaned_certificate_contents remove: true
+      elsif retrieve.response_code==-20
+        self.reject!
       end
     end
   end
@@ -1378,7 +1380,8 @@ class CertificateOrder < ActiveRecord::Base
           params.merge!(
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
             'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
-            'serverSoftware' => cc.comodo_server_software_id.to_s,
+            'serverSoftware' => cc.comodo_server_software_id.blank? ? ServerSoftware::OTHER :
+              cc.comodo_server_software_id.to_s,
             'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'N',

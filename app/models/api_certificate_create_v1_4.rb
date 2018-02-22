@@ -61,7 +61,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
-  validate  :renewal_exists, if: lambda{|c|c.renewal_id}
+  validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
     retrieve_registrant
@@ -424,7 +424,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def validate_contacts
     if contacts
-      if contacts.is_a?(Array)
+      if !contacts.is_a?(Hash)
           errors[:contacts] << "expecting hash, not array"
         return false
       end
