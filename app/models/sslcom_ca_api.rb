@@ -172,6 +172,8 @@ class SslcomCaApi
   end
 
   private
+
+  # body - parameters in JSON format
   def self.call_ca(host, options, body)
     uri = URI.parse(host)
     req = Net::HTTP::Post.new(uri, 'Content-Type' => 'application/json')

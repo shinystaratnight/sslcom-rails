@@ -816,6 +816,7 @@ class CertificateOrder < ActiveRecord::Base
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
+        certificate_content.callback unless certificate_content.callback_url.blank?
         self.orphaned_certificate_contents remove: true
       elsif retrieve.response_code==-20
         self.reject!

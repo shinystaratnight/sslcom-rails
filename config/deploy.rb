@@ -33,7 +33,7 @@ set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
 set :branch, "staging"
 
-server = "sandbox2"
+server = "sandbox"
 case server
   when "sandbox"
     require "rvm/capistrano"

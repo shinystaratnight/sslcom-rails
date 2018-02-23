@@ -41,13 +41,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
             if: "csr and Settings.require_server_software_w_csr_submit"
-  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
+  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
             if: lambda{|c|!c.is_dv? && c.post_office_box.blank? &&c.csr} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.locality.blank?)}
-  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? || c.csr_obj.state.blank?)}
+  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
+  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
@@ -61,6 +61,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
+  validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
@@ -425,7 +426,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def validate_contacts
     if contacts
       if !contacts.is_a?(Hash)
-          errors[:contacts] << "expecting hash, not array"
+          errors[:contacts] << "expecting hash"
         return false
       end
       errors[:contacts] = {}
@@ -471,7 +472,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     errors.add(:contacts, cur_err) if cur_err.any?
     errors.get(:contacts) ? false : true
   end
-  
+
+  def validate_callback
+    if !callback.is_a?(Hash)
+        errors[:contacts] << "expecting hash"
+      return false
+    else
+      cb = ::Callback.new(callback)
+      errors[:callback] = cb.errors unless cb.valid?
+    end
+  end
+
   def retrieve_registrant
     id = self.saved_registrant
     if id
