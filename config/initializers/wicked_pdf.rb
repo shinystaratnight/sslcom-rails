@@ -23,5 +23,5 @@ WickedPdf.config = {
   exe_path: wkhtmltopdf_executable,
   page_size: 'A4',
   disable_smart_shrinking: true,
-  footer: {left: '[page] of [topage] | Thank you for using SSL.com. For assistance, please email sales@ssl.com or visit ssl.com.'}
+  footer: {left: '[page] of [topage] | Thank you for using SSL.com. For assistance, please email Sales@SSL.com or visit SSL.com.'}
 }

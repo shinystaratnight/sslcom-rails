@@ -133,6 +133,14 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
+    resources :invoices, only: [:index, :update, :show] do
+      member do
+        get  :download
+        get  :new_payment
+        post :make_payment
+      end
+    end
+      
     resource :user_session
     resources :certificate_orders do
       resources :physical_tokens do

@@ -418,33 +418,20 @@ class OrdersController < ApplicationController
   
   # Order created for existing UCC certificate order on reprocess/rekey 
   def create_reprocess_ucc
-    @ssl_account         = current_user.ssl_account
-    unless params[:funding_source] && params[:funding_source] == 'paypal'
-      existing_card = @ssl_account.billing_profiles.find(params[:funding_source])
-    end
-    @funded_amount       = params[:order][:funded_amount].to_f
-    @order_amount        = params[:order][:order_amount].to_f
-    @charge_amount       = params[:order][:charge_amount].to_f
-    @too_many_declines   = delay_transaction? && (params[:payment_method] == 'credit_card')
-    @billing_profile     = BillingProfile.new(params[:billing_profile]) if params[:billing_profile]
-    @profile             = existing_card || @billing_profile
-    @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
-    @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
-    @credit_card         = @profile.build_credit_card
-    @reprocess_ucc       = true
-    @funded_account_init = @ssl_account.funded_account.cents
+    @reprocess_ucc = true
+    ucc_or_invoice_params
     
     @order = Order.new(
       billing_profile_id: params[:funding_source],
-      amount:             @order_amount,
-      cents:             (@order_amount * 100).to_i,
+      amount:             @target_amount,
+      cents:             (@target_amount * 100).to_i,
       description:        Order::SSL_REPROCESS_UCC,
       state:              'pending',
       approval:           'approved',
       notes:              reprocess_ucc_notes
     )
     @order.billable = @ssl_account
-    
+
     if @funded_amount > 0 && (@order_amount <= @funded_amount)
       # All amount covered by credit from funded account
       reprocess_ucc_funded_account(params)
@@ -538,24 +525,6 @@ class OrdersController < ApplicationController
     )
   end
   
-  def withdraw_funded_account(amount)
-    payment_type = (amount <= @order_amount) ? 'Partial' : 'Full'
-    fund = Deposit.create(
-      amount:         amount,
-      full_name:      "Team #{@ssl_account.get_team_name} funded account",
-      credit_card:    'N/A',
-      last_digits:    'N/A',
-      payment_method: 'Funded Account'
-    )
-    @funded = @ssl_account.purchase fund
-    @funded.description = 'Funded Account Withdrawal'
-    @funded.notes = "#{payment_type} payment for order ##{@order.reference_number} ($#{@order.amount.to_s}) for UCC certificate reprocess."
-    @funded.save
-    @funded.mark_paid!
-    @ssl_account.funded_account.decrement! :cents, amount
-    @ssl_account.funded_account.save
-  end
-  
   def reprocess_ucc_funded_account(params)
     withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
     withdraw_amount     = (withdraw_amount * 100).to_i
@@ -621,10 +590,6 @@ class OrdersController < ApplicationController
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end
-  
-  def reprocess_ucc_notes
-    "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
-  end
     
   def new_reprocess_ucc
     if current_user
@@ -657,6 +622,8 @@ class OrdersController < ApplicationController
       else
         render 'new_reprocess_ucc'
       end
+    else
+      redirect_to login_url and return
     end
   end
   
@@ -706,52 +673,6 @@ class OrdersController < ApplicationController
       @certificate_order.renewal_id=instance_variable_get("@#{CertificateOrder::RENEWING}").id
     end
     @certificate_order.valid?
-  end
-
-  def order_reqs_valid?
-    @objects_valid ||=
-    @order.valid? && (params[:funding_source] ? @profile.valid? :
-      @billing_profile.valid?) && (current_user || @user.valid?)
-  end
-
-  def purchase_successful?
-    return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    description = @reprocess_ucc ? Order::SSL_REPROCESS_UCC : Order::SSL_CERTIFICATE
-    notes = @reprocess_ucc ? "Reprocess UCC Certificate Order ref: #{@certificate_order.ref}" : ''
-    @order.description = description
-    options = @profile.build_info(description).merge(
-      stripe_card_token: params[:billing_profile][:stripe_card_token],
-      owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
-    )
-    options.merge!(amount: (@charge_amount.to_f * 100).to_i) if @reprocess_ucc
-    @gateway_response = @order.purchase(@credit_card, options)
-    log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
-    (@gateway_response.success?).tap do |success|
-      if success
-        flash.now[:notice] = @gateway_response.message
-        @order.mark_paid!
-        # in case the discount becomes invalid before check out, give it to the customer
-        @order.discounts.each do |discount|
-          Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
-        end
-        SystemAudit.create(
-            owner:  current_user,
-            target: @order,
-            action: "purchase successful",
-            notes:  notes
-        )
-      else
-        flash.now[:error] = if @gateway_response.message=~/no match/i
-          "CVV code does not match"
-        else
-          @gateway_response.message #no descriptive enough
-        end
-        @order.transaction_declined!
-        unless @reprocess_ucc
-          @certificate_order.destroy unless @certificate_order.blank?
-        end
-      end
-    end
   end
 
   def find_order

@@ -1,0 +1,70 @@
+-title = "Monthly Invoice"
+-content_for :title, title
+-system_admins = current_user.is_system_admins?
+-descriptions  = @invoice.get_item_descriptions
+
+#validations.monthly-invoice
+  #summary
+    %div
+      reference number: 
+      %strong
+        #{@invoice.reference_number}
+    %div
+      status:
+      %strong
+        #{@invoice.status.upcase}
+    %div
+      due: 
+      %strong
+        #{@invoice.end_date.strftime('%F')}
+    %div
+      amount: 
+      %strong
+        #{Money.new(@invoice.orders.map(&:cents).sum).format}
+
+  %table#tbl-monthly-invoice(cellspacing='0')
+    %thead
+      %tr.heading_row
+        %th #
+        %th Date
+        %th Order
+        %th Description
+        %th Total
+    %tbody
+      -@invoice.orders.each_with_index do |o, i|
+        %tr
+          %td
+            %strong
+              %span #{i+1}
+          %td
+            =o.created_at.strftime('%F')
+          %td
+            =link_to o.reference_number, order_path(@ssl_slug, o)
+          %td
+            %strong
+              %span #{descriptions[o.reference_number.to_s][:item]}
+            %br
+            =descriptions[o.reference_number.to_s][:description]
+          %td
+            %strong
+              =o.amount.format
+
+-if @invoice.paid?
+  #monthly-invoice-actions
+    %h3.order_results_header
+      Payment
+    #invoice-container
+  
+#monthly-invoice-actions
+  %h3.order_results_header
+    Actions
+  #invoice-container
+    #btn-invoice-dwnl
+      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, @invoice.reference_number), class: 'button-invoice'}
+    #btn-invoice-update
+      #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-invoice'}
+    #btn-invoice-generate
+      =link_to "Make Payment".html_safe, |
+        new_payment_invoice_path(@ssl_slug, @invoice.reference_number), |
+        class: 'button-invoice', method: :get   
+  #invoice-container-errors

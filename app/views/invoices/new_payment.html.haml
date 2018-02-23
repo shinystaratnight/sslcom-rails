@@ -1,28 +1,28 @@
--content_for :title, 'Reprocess Payment'
-=order_progress_indicator(2, @certificate_order.certificate) if @certificate_order
--current_order      = current_order_reprocess_ucc
+-content_for :title, 'Invoice Payment'
+-invoice_amount     = @invoice.get_amount
+-invoice_cents      = @invoice.get_cents
 -funded_account_amt = @ssl_account.funded_account(true).amount
--remaining_amt      = current_order.amount - funded_account_amt
--funded_account_amt = remaining_amt.cents < 0 ? current_order.amount : funded_account_amt
+-remaining_amt      = invoice_amount - funded_account_amt
+-funded_account_amt = remaining_amt.cents < 0 ? invoice_amount : funded_account_amt
 -remaining_amt      = remaining_amt.cents < 0 ? Money.new(0) : remaining_amt
+-ssl_slug           = @ssl_slug || (@ssl_account.ssl_slug || @ssl_account.acct_number)
   
 .reseller_registration_select_tier
-  %h3 Reprocess UCC Certificate Payment
+  %h3 Monthly Invoice Payment
   %p
-    Please fill out the (*) required fields below
-    -if current_order.amount.to_s.to_i > 0
+    Please fill out the (*) required fields below.
+    -if invoice_cents > 0
       This charge will appear as #{Settings.merchant_name} on your credit card statement.
   =error_messages_for :user, :billing_profile, :credit_card, object_name: 'transaction'
   
-  =form_for Order.new, url: create_reprocess_ucc_orders_path(@ssl_slug) do |f|
-    =f.hidden_field :co_ref, value: params[:co_ref]
-    =f.hidden_field :cc_ref, value: params[:cc_ref]
+  =form_for Order.new, url: make_payment_invoice_path(ssl_slug) do |f|
+    =f.hidden_field :id, value: params[:id]
     
-    -if current_user && current_order.cents > 0
+    -if current_user && invoice_cents > 0
       -# Funding Sources Section
       #stylized.deposit_funds_form
         -if @ssl_account
-          =render partial: "billing_profiles", locals: {ssl_account: @ssl_account}
+          =render partial: "orders/billing_profiles", locals: {ssl_account: @ssl_account}
         
         -# Funding Sources: New Card
         #billing_section
@@ -40,23 +40,21 @@
                 = render partial: 'billing_profiles/form', locals: { form: form, only_billing_profile: false }
           
           -# Order Amount
-          -amount = current_order.amount
-          -data = {original_amount: amount, cc_ref: @certificate_content.ref, co_ref: @certificate_order.ref}
           .subheading Total Amount To Charge
           .clearfix
             %label{for: "order_amount"}
-              Order Amount:
+              Invoice Amount:
               %span.label_desc charged in $USD
-            #reprocess_ucc_amount{data: data}
-              ="#{amount.format.gsub(',', '')} USD"
-            =f.hidden_field :order_amount, value: (amount || 0)
+            #reprocess_ucc_amount{data: {original_amount: invoice_amount}}
+              ="#{invoice_amount.format} USD"
+            =f.hidden_field :order_amount, value: (invoice_amount || 0)
           
           -# Funded Account Credit
           -if funded_account_amt.cents > 0
             .clearfix
               %label{for: 'funded_amount'}
                 Funded Account Balance:
-                %span.label_desc credit applied towards order amount (maximum amount: #{funded_account_amt.format})
+                %span.label_desc credit applied towards invoice amount (maximum amount: #{funded_account_amt.format})
               =f.number_field :funded_amount, |
                 value: funded_account_amt, |
                 min: 0, |

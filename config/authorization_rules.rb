@@ -181,6 +181,18 @@ authorization do
       if_attribute :users_can_manage => contains {user}
     end
     has_permission_on :billing_profiles, to: [:create, :index]
+    # 
+    # Invoices
+    # 
+    has_permission_on :invoices, to: :index
+    has_permission_on :invoices, to: [
+      :download,
+      :make_payment,
+      :new_payment,
+      :show
+    ] do
+      if_attribute billable: is {user.ssl_account}
+    end
     #
     # FundedAccounts
     #  most routes do not use 'id' in params to denote funded_account id
