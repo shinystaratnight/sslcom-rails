@@ -121,6 +121,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               ssl_account: api_requestable,
               contacts: self.contacts)
         end
+        certificate_content.url_callbacks.create(callback) if callback
         return @certificate_order
       else
         return certificate_content
@@ -159,6 +160,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
                   contacts: self.contacts)
+              certificate_content.url_callbacks.create(callback) if callback
             else
               return certificate_content
             end
@@ -475,10 +477,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def validate_callback
     if !callback.is_a?(Hash)
-        errors[:contacts] << "expecting hash"
+        errors[:callback] << "expecting hash"
       return false
     else
-      cb = ::Callback.new(callback)
+      cb = UrlCallback.new(callback)
       errors[:callback] = cb.errors unless cb.valid?
     end
   end

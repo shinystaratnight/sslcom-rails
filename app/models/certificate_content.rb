@@ -12,7 +12,7 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
-  has_many    :callbacks, as: :callbackable
+  has_many    :url_callbacks, as: :callbackable
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -270,8 +270,9 @@ class CertificateContent < ActiveRecord::Base
     all_domains.map{|d|certificate_names.find_by_name(d)}.compact
   end
 
-  def callback
-    callbacks.last.perform_callback unless callbacks.blank?
+  def url_callback
+    url_callbacks.last.perform_callback(certificate_hook:
+          %x"#{certificate_order.to_api_string(action: "show", domain_override: "https://sws-test.sslpki.local:3000", show_credentials: true)}") unless url_callbacks.blank?
   end
 
   def dcv_domains(options)
