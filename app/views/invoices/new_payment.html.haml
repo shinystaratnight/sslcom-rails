@@ -45,7 +45,8 @@
             %label{for: "order_amount"}
               Invoice Amount:
               %span.label_desc charged in $USD
-            #reprocess_ucc_amount{data: {original_amount: invoice_amount}}
+            -data = {original_amount: invoice_amount, monthly_invoice: 'true', monthly_ref: @invoice.reference_number}
+            #reprocess_ucc_amount{data: data}
               ="#{invoice_amount.format} USD"
             =f.hidden_field :order_amount, value: (invoice_amount || 0)
           

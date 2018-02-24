@@ -3,19 +3,27 @@ module PaypalExpressHelper
     @subtotal, @shipping, @total = get_totals(cart, params)
     @items                       = get_items(cart)
     credit_and_discount params
-    load_funds(params) unless params[:reprocess_ucc]
-
+    load_funds(params) unless params[:reprocess_ucc] || params[:monthly_invoice]
+    
     return_url_params = {
       action: 'purchase',
       ssl_slug: params[:ssl_slug],
       only_path: false,
       deduct_order: params[:deduct_order]
     }
+    
     if params[:reprocess_ucc]
       return_url_params.merge!({
         co_ref: params[:co_ref],
         cc_ref: params[:cc_ref],
         reprocess_ucc: true
+      })
+    end
+    
+    if params[:monthly_invoice]
+      return_url_params.merge!({
+        invoice_ref: params[:invoice_ref],
+        monthly_invoice: true
       })
     end
       
@@ -57,10 +65,17 @@ module PaypalExpressHelper
     if params[:reprocess_ucc]
       [{
         name: "Reprocess UCC Cert",
-        number: "reprocess",
+        number: "reprocess order",
         quantity: 1,
         amount: get_amount(params[:amount])
       }]
+    elsif params[:monthly_invoice]
+      [{
+        name: "Monthly Invoice Pmt",
+        number: "payment",
+        quantity: 1,
+        amount: get_amount(params[:amount])
+      }]  
     else  
       cart.line_items.collect do |line_item|
         if line_item.sellable.is_a?(Deposit)
@@ -107,7 +122,11 @@ module PaypalExpressHelper
   end
 
   def get_totals(cart, params)
-    subtotal = params[:reprocess_ucc] ? get_amount(params[:amount]) : cart.amount.cents
+    subtotal = if params[:reprocess_ucc] || params[:monthly_invoice]
+      get_amount(params[:amount])
+    else
+      cart.amount.cents
+    end
     discount = get_amount(params[:discount])
     credit   = get_amount(params[:funded_account])
     surplus  = get_surplus_deposit(params) > 0 ? get_surplus_deposit(params) : 0
@@ -156,9 +175,10 @@ module PaypalExpressHelper
   end
 
   def get_surplus_deposit(params)
-    funded      = params[:funded_target]
-    final_total = params[:amount].to_i - get_amount(params[:discount]) - get_amount(params[:funded_account])
-    (funded && !params[:reprocess_ucc]) ? get_amount(funded) - final_total : 0
+    special_order = params[:monthly_invoice] || params[:reprocess_ucc]
+    funded        = params[:funded_target]
+    final_total   = params[:amount].to_i - get_amount(params[:discount]) - get_amount(params[:funded_account])
+    (funded && !special_order) ? get_amount(funded) - final_total : 0
   end
 
   def get_amount(amount=nil)
