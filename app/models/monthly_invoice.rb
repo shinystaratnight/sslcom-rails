@@ -11,7 +11,7 @@ class MonthlyInvoice < Invoice
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
-    ssl && ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month)
+    ssl && ssl.monthly_invoices.where(start_date: DateTime.now.beginning_of_month).any?
   end
   
   def self.get_current_invoice(ssl_account_id)
