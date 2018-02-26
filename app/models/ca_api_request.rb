@@ -12,7 +12,6 @@ class CaApiRequest < ActiveRecord::Base
   end
 
   def redacted_responce
-    response.gsub! /&loginName=(.+)&?/, "[REDACTED]"
-    response.gsub! /&loginPassword=(.+)&?/, "[REDACTED]"
+    response.gsub(/(&loginName=).+?(&loginPassword=).+/, '\1[REDACTED]\2[REDACTED]')
   end
 end
