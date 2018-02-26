@@ -48,13 +48,13 @@ class UrlCallback < ActiveRecord::Base
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-    if parameters[:certificate_hook]
-      parameters.merge!(parameters[:certificate_hook]=>options[:certificate_hook])
-      parameters.delete(:certificate_hook)
+    req.body = if parameters['certificate_hook']
+      cert_param = parameters['certificate_hook']
+      parameters.delete('certificate_hook')
+      parameters.merge(cert_param=>options[:certificate_hook])
     else
-      parameters.merge!(certificate_hook: options[:certificate_hook])
-    end
-    req.body = parameters
+      parameters.merge(certificate_hook: options[:certificate_hook])
+    end.to_json
     res = http.request(req)
     return req, res
   end

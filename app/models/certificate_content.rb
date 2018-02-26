@@ -272,7 +272,7 @@ class CertificateContent < ActiveRecord::Base
 
   def url_callback
     url_callbacks.last.perform_callback(certificate_hook:
-          %x"#{certificate_order.to_api_string(action: "show", domain_override: "https://sws-test.sslpki.local:3000", show_credentials: true)}") unless url_callbacks.blank?
+          %x"#{certificate_order.to_api_string(action: "show", domain_override: @cli_domain, show_credentials: true)}") unless url_callbacks.blank?
   end
 
   def dcv_domains(options)

@@ -35,6 +35,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
   has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
+  has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
+
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -816,7 +818,6 @@ class CertificateOrder < ActiveRecord::Base
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
-        certificate_content.callback unless certificate_content.callback_url.blank?
         self.orphaned_certificate_contents remove: true
       elsif retrieve.response_code==-20
         self.reject!
@@ -824,8 +825,14 @@ class CertificateOrder < ActiveRecord::Base
     end
   end
 
+  def cli_test
+    @cli_domain = "https://sws-test.sslpki.local:3000"
+
+  end
+
   def self.retrieve_ca_certs(start, finish, options={})
     Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
+    @cli_domain = "https://sws-test.sslpki.local:3000"
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.unscoped.find_by_ref(co.ref).retrieve_ca_cert(true)}
