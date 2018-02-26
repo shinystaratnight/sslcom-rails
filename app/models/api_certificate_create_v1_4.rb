@@ -302,7 +302,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def send_dcv(cc)
-    if self.debug=="true" || (self.domains && self.domains.keys.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
+    if self.debug=="true" || (self.domains && self.domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
       cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
                       dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
@@ -383,6 +383,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if !csr.blank? || is_processing?
       self.dcv_candidate_addresses = {}
+      if self.domains.is_a?(Array)
+        values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
+        self.domains = (self.domains.zip(values)).to_h
+      end
       self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT

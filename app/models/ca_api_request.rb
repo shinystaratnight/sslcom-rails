@@ -10,4 +10,9 @@ class CaApiRequest < ActiveRecord::Base
   def parameters_to_hash
     JSON.parse self.parameters
   end
+
+  def redacted_responce
+    response.gsub! /&loginName=(.+)&?/, "[REDACTED]"
+    response.gsub! /&loginPassword=(.+)&?/, "[REDACTED]"
+  end
 end
