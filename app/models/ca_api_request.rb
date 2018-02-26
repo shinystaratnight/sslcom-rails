@@ -11,7 +11,7 @@ class CaApiRequest < ActiveRecord::Base
     JSON.parse self.parameters
   end
 
-  def redacted_responce
-    response.gsub(/(&loginName=).+?(&loginPassword=).+/, '\1[REDACTED]\2[REDACTED]')
+  def redacted_parameters
+    parameters.gsub(/(&loginName=).+?(&loginPassword=).+/, '\1[REDACTED]\2[REDACTED]')
   end
 end
