@@ -32,9 +32,9 @@
               %br
           
           %td#invoice-sum
-            %p.font-small-grey Reference Number
+            %p.font-small-grey Invoice #
             %p#ref-num #{@invoice.reference_number}
-            %p#date.font-small-grey Invoice Due Date
+            %p#date.font-small-grey Due Date
             %p#invoice-date #{@invoice.end_date.strftime('%F')}
           
           %td#invoice-total

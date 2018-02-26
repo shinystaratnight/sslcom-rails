@@ -6387,8 +6387,14 @@ span.notifications-teams
     font-size: 1.5rem
     display: flex
     justify-content: center
+    
     div
-      margin-right: 1.8rem
+      margin-right: 1.9rem
+      margin-bottom: 1rem
+    
+    span
+      color: grey
+      font-size: 1.2rem
 
 #validations.monthly-invoice,
 #validations.monthly-invoice > table,
@@ -6398,9 +6404,40 @@ span.notifications-teams
 #tbl-monthly-invoice
   span
     color: grey
+  
+  .description.total_row
+    text-align: right
+  
+  .order-funded td,
+  .order-total td,
+  .order-subtotal td
+    border: none
+    font-weight: 600
+    padding-top: 1rem !important
+    vertical-align: top !important
+      
+    &.price
+      padding-right: 1rem
+  
+  .order-subtotal td
+    border-top: 2px solid grey
+            
+  .order-funded
+    color: grey
 
-#monthly-invoice-actions
+#monthly-invoice-actions,
+#monthly-invoice-pmt
   margin: 2em auto 4em
   width: 99.1%
   clear: both
   border: 1px #ccc solid
+
+#monthly-invoice-pmt
+  div
+    font-size: 1.4rem
+    margin: 1rem
+    color: grey
+  span
+    font-weight: 500
+    color: black
+    

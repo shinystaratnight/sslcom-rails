@@ -2,25 +2,26 @@
 -content_for :title, title
 -system_admins = current_user.is_system_admins?
 -descriptions  = @invoice.get_item_descriptions
+-total_format  = @invoice.get_amount_format
+-funded_amount = @order.get_funded_account_amount if @order
 
 #validations.monthly-invoice
   #summary
     %div
-      reference number: 
-      %strong
-        #{@invoice.reference_number}
+      %span TYPE:
+      %strong Monthly Invoice
     %div
-      status:
-      %strong
-        #{@invoice.status.upcase}
+      %span INVOICE #:
+      %strong #{@invoice.reference_number}
     %div
-      due: 
-      %strong
-        #{@invoice.end_date.strftime('%F')}
+      %span STATUS:
+      %strong #{@invoice.status.upcase}
     %div
-      amount: 
-      %strong
-        #{Money.new(@invoice.orders.map(&:cents).sum).format}
+      %span ITEMS:
+      %strong #{descriptions.count}
+    %div
+      %span DUE:
+      %strong #{@invoice.end_date.strftime('%F')}
 
   %table#tbl-monthly-invoice(cellspacing='0')
     %thead
@@ -48,12 +49,27 @@
           %td
             %strong
               =o.amount.format
-
+      -if @order
+        %tr.order-subtotal
+          %td.description.total_row{colspan: '4'} Subtotal:
+          %td.price.total_row
+            =total_format
+        -if funded_amount > 0
+          %tr.order-funded
+            %td.description.total_row{colspan: '4'} Funded Account Credit:
+            %td.price.total_row -#{Money.new(funded_amount).format}
+        %tr.order-total
+          %td.description.total_row{colspan: '4'} Total:
+          %td.price.total_row
+            #{Money.new(@order.get_total_merchant_amount).format}
+      -else
+        %tr.order-subtotal
+          %td.description.total_row{colspan: '4'} Total:
+          %td.price.total_row
+            =total_format
+            
 -if @invoice.paid?
-  #monthly-invoice-actions
-    %h3.order_results_header
-      Payment
-    #invoice-container
+  =render partial: 'payment_section'
   
 #monthly-invoice-actions
   %h3.order_results_header

@@ -25,7 +25,7 @@ class InvoicesController < ApplicationController
   end
   
   def show
-
+    @order = @invoice.payment unless @invoice.payment.nil?
   end
   
   def new_payment
