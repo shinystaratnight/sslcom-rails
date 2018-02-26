@@ -17,14 +17,24 @@ function paypalCheckoutUrl() {
   }
   
   if (reprocess_ucc.length) {
-    url +='?amount=' + $('#order_order_amount').val()
-        + '&funded_target=' + $('#order_charge_amount').val()
-        + '&funded_account=' + $('#order_funded_amount').val()
+    url +='?amount=' + $('#order_order_amount').val() 
         + '&deduct_order=true'
-        + '&reprocess_ucc=true'
-        + '&order_type=order'
+        + '&order_type=order';
+        
+    if (reprocess_ucc.data('monthly-invoice')) {
+      url += '&monthly_invoice=true'
+        + '&invoice_ref=' + reprocess_ucc.data('monthly-ref');
+    } else {
+      url += '&reprocess_ucc=true'
         + '&co_ref=' + reprocess_ucc.data('co-ref')
         + '&cc_ref=' + reprocess_ucc.data('cc-ref');
+    }
+    if (typeof $('#order_charge_amount').val() !== "undefined") {
+      url += '&funded_target=' + $('#order_charge_amount').val();
+    }
+    if (typeof $('#order_funded_amount').val() !== "undefined") {
+      url += '&funded_account=' + $('#order_funded_amount').val();
+    }
   }
   $('[name*=paypal]').attr('href', url);
   return url;

@@ -36,7 +36,8 @@ class Order < ActiveRecord::Base
   end
   
   SSL_REPROCESS_UCC = "Reprocess UCC Order"
-  SSL_CERTIFICATE = "SSL Certificate Order"
+  SSL_CERTIFICATE   = "SSL Certificate Order"
+  INVOICE_PAYMENT   = "Monthly Invoice Payment"
   # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
   # when running charges at the end of the month for orders from ucc reprocessing.
   BILLING_STATUS = %w{approved pending declined}
@@ -268,7 +269,7 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    unless reprocess_ucc_order?
+    unless reprocess_ucc_order? || monthly_invoice_order?
       self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
     end
   end
@@ -454,6 +455,10 @@ class Order < ActiveRecord::Base
   
   def reprocess_ucc_order?
     description == Order::SSL_REPROCESS_UCC
+  end
+  
+  def monthly_invoice_order?
+    description == Order::INVOICE_PAYMENT
   end
   
   def number

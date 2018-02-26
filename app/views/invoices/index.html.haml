@@ -1,0 +1,33 @@
+-title = 'Monthly Invoices'
+-will_paginate @invoices
+-content_for :title, title
+-system_admins = current_user.is_system_admins?
+
+#validations
+  %table(cellspacing='0')
+    -if will_paginate @invoices
+      %tfoot
+        %tr
+          %td(colspan='7')=will_paginate @invoices
+    %caption
+      %strong
+        =title
+      =will_paginate @invoices
+    %thead
+      %tr.heading_row
+        %th Due Date
+        %th Invoice #
+        %th Amount
+        %th Orders
+        %th Download
+        %th Status
+    %tbody
+      -@invoices.each do |i|
+        %tr
+          %td=i.end_date.strftime('%F')
+          %td=link_to i.reference_number, invoice_path(@ssl_slug, i.reference_number)
+          %td
+            %strong=i.get_amount_format
+          %td=i.orders.count
+          %td=link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, i.reference_number)
+          %td#invoice-status=i.status.upcase

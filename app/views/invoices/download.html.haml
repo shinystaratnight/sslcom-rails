@@ -1,0 +1,99 @@
+!!!
+%html
+  %head
+    %meta{:content => 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type'}/
+    %meta{:charset => 'utf-8'}/
+    =stylesheet_link_tag wicked_pdf_asset_base64('invoice.css')
+  %body
+    #background
+      %p#bg-text #{@invoice.status.upcase}
+    
+    %div#header.alwaysbreak
+      %table
+        %tr
+          %td#header-logo
+            =image_tag wicked_pdf_asset_base64('ssl_logo_print.png')
+          %td#header-address
+            SSL.com
+            %br
+            3100 Richmond Ave
+            %br
+            Ste 503
+            %br
+            Houston, TX, 77098
+    
+    #sub-header
+      %table
+        %tr
+          %td#bill-to
+            %p.font-small-grey Billed To
+            -@invoice.invoice_bill_to_str.each do |line|
+              =line.strip
+              %br
+          
+          %td#invoice-sum
+            %p.font-small-grey Invoice #
+            %p#ref-num #{@invoice.reference_number}
+            %p#date.font-small-grey Due Date
+            %p#invoice-date #{@invoice.end_date.strftime('%F')}
+          
+          %td#invoice-total
+            %p.font-small-grey Invoice Total
+            %p#amount #{@invoice.get_amount_format}
+    
+    #line-items
+      -descriptions = @invoice.get_item_descriptions
+      %table
+        %caption
+          %p#bg-note
+            *Invoice and charges are accurate
+            %br
+            ="as of #{DateTime.now.strftime('%F %I:%M %p')}."
+        %thead
+          %tr
+            %th Description
+            %th Domains
+            %th Wildcard
+            %th Line Total
+        %tbody
+          -@invoice.orders.each_with_index do |o, i|
+            %tr.nobreak
+              %td
+                .description-ext
+                  %strong
+                    %small
+                      =descriptions[o.reference_number.to_s][:item]
+                  %br
+                  =descriptions[o.reference_number.to_s][:description]
+                  Reprocessed on #{o.created_at.strftime('%F')}.
+                .description
+                  .domain-names-medium
+                    ="#{descriptions[o.reference_number.to_s][:new_domains].count} additional domains: " 
+                    =descriptions[o.reference_number.to_s][:new_domains].join(', ')
+              %td.quantity #{descriptions[o.reference_number.to_s][:non_wildcard].count}
+              %td.quantity #{descriptions[o.reference_number.to_s][:wildcard].count}
+              %td.price #{o.amount.format}
+    
+    %div#line-items-total.nobreak
+      -payment = @invoice.payment
+      -paid    = payment && @invoice.payment.paid?
+      -funded  = paid ? payment.get_funded_account_amount : 0
+      -total   = @invoice.get_cents - funded
+      -due     = paid ? Money.new(total - payment.cents).format : @invoice.get_amount_format
+      %table
+        %tr
+          %td#subtotal Subtotal
+          %td.amount #{@invoice.get_amount_format}
+        -if paid
+          %tr
+            %td#fund-lbl Funded Account Credit
+            %td#fund-amt -#{Money.new(funded).format}
+        %tr
+          %td#total-lbl Total
+          %td#total-amt #{Money.new(total).format}
+        %tr
+          %td#paid-lbl Paid
+          %td#paid-amt #{paid ? payment.amount.format : '$0.00'}
+        %tr#amount-due
+          %td#due-lbl Amount Due
+          %td#due-amt #{due}

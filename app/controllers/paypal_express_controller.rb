@@ -101,18 +101,25 @@ class PaypalExpressController < ApplicationController
           end
         end
       else
+        auth_code = "#paidviapaypal#{purchase.authorization}"
+        
         if params[:reprocess_ucc]
           setup_reprocess_ucc_order(purchase_params)
           funded_account_credit(purchase_params)
-          @order.notes += " #paidviapaypal#{purchase.authorization}"
+          @order.notes += " #{auth_code}"
           @certificate_order = @ssl_account.certificate_orders.find_by(ref: params[:co_ref])
           @certificate_order.add_reproces_order @order
+        elsif params[:monthly_invoice]
+          @invoice = MonthlyInvoice.find_by(reference_number: params[:invoice_ref])
+          setup_monthly_invoice_order(purchase_params)
+          funded_account_credit(purchase_params)
+          @order.notes += " #{auth_code}"
         else
           setup_orders
-          @order.notes = "#paidviapaypal#{purchase.authorization}"
+          @order.notes = auth_code
         end
-        @ssl_account.orders << @order
         
+        @ssl_account.orders << @order
         @order.finalize_sale(
           params: params,
           deducted_from: @deposit,
@@ -120,21 +127,28 @@ class PaypalExpressController < ApplicationController
           cookies: cookies
         )
         notice = "Your purchase is now complete!"
-        billed_to_address(paypal_details)
+        billed_to_address(paypal_details) unless params[:monthly_invoice]
         clear_cart
       end
     else
       notice = "Woops. Something went wrong while we were trying to complete the purchase with Paypal. Btw, here's what Paypal said: #{purchase.message}"
     end
-    redirect_to orders_url, :notice => notice
+    
+    if params[:reprocess_ucc]
+      flash[:notice] = "Succesfully paid for UCC reprocess order."
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    elsif params[:monthly_invoice]
+      flash[:notice] = "Succesfully paid for invoice #{@invoice.reference_number}."
+      redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
+    else
+      redirect_to orders_url, notice: notice
+    end
   end
 
   private
   
   def setup_reprocess_ucc_order(purchase_params)
     @order = Order.new(
-      billable_id:   @ssl_account.id,
-      billable_type: 'SslAccount',
       amount:        Money.new(purchase_params[:subtotal]),
       cents:         purchase_params[:subtotal],
       description:   Order::SSL_REPROCESS_UCC,
@@ -142,6 +156,21 @@ class PaypalExpressController < ApplicationController
       approval:      'approved',
       notes:         "Reprocess UCC (certificate order: #{params[:co_ref]}, certificate content: #{params[:cc_ref]})."
     )
+    @order.billable = @ssl_account
+  end
+  
+  def setup_monthly_invoice_order(purchase_params)
+    @order = Order.new(
+      amount:        Money.new(purchase_params[:subtotal]),
+      cents:         purchase_params[:subtotal],
+      description:   Order::INVOICE_PAYMENT,
+      state:         'pending',
+      approval:      'approved',
+      notes:         order_invoice_notes
+    )
+    @order.billable = @ssl_account
+    @order.save
+    @invoice.update(order_id: @order.id, status: 'paid') if @order.persisted?
   end
   
   def billed_to_address(paypal_details)
@@ -171,9 +200,14 @@ class PaypalExpressController < ApplicationController
   end
 
   def funded_account_credit(purchase_params)
+    special_order = params[:reprocess_ucc] || params[:monthly_invoice]
     funded_exists = purchase_params[:items].find {|i| i[:name]=='Funded Account'}
-    funded_amt    = funded_exists[:amount].abs if funded_exists
-    amount_str    = params[:reprocess_ucc] ? Money.new(@order.cents + funded_amt).format : @order.amount.format
+    funded_amt    = funded_exists ? funded_exists[:amount].abs : 0
+    amount_str    = if special_order
+      Money.new(@order.cents + funded_amt).format
+    else
+      @order.amount.format
+    end
 
     if funded_exists && funded_amt > 0
       fund = Deposit.create(
@@ -186,10 +220,11 @@ class PaypalExpressController < ApplicationController
       @funded = @ssl_account.purchase fund
       @funded.description = 'Funded Account Withdrawal'
       @funded.notes = "Partial payment for order ##{@order.reference_number} (#{amount_str})"
-      @funded.notes << ' for UCC certificate reprocess' if params[:reprocess_ucc]
+      @funded.notes << ' for UCC certificate reprocess.' if params[:reprocess_ucc]
+      @funded.notes << " for monthly invoice ##{@invoice.reference_number}." if params[:monthly_invoice]
       @funded.save
       @funded.mark_paid!
-      @ssl_account.funded_account.decrement!(:cents, funded_amt) if params[:reprocess_ucc]
+      @ssl_account.funded_account.decrement!(:cents, funded_amt) if special_order
     end
   end
 end
