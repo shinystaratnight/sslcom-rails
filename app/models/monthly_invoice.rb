@@ -57,7 +57,8 @@ class MonthlyInvoice < Invoice
   def invoice_bill_to_str
     last_profile = billable.billing_profiles.order(created_at: :desc).first
     target = (address_blank? && !last_profile.nil?) ? last_profile : self
-    if target
+
+    if target.is_a?(BillingProfile) || (target.is_a?(MonthlyInvoice) && !address_blank?)
       addr = []
       addr << target.company unless target.company.blank?
       addr << "#{target.first_name} #{target.last_name}"
