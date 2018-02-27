@@ -12,7 +12,7 @@ set :rvm_type, :user
 #tell git to clone only the latest revision and not the whole repository
 set :git_shallow_clone, 1
 
-set :keep_releases, 3
+set :keep_releases, 5
 
 # Bundler
 require "bundler/capistrano"
@@ -27,8 +27,6 @@ ssh_options[:paranoid] = false
 default_run_options[:pty] = true
 
 set :application, "ssl_com"
-set :user, "ubuntu"
-set :branch, "staging"
 set :domain, '172.16.1.12' #Rails 4 staging
 set :user, "ubuntu"
 set :branch, "staging"
