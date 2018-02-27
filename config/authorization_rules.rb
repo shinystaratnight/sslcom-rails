@@ -36,7 +36,11 @@ authorization do
     #
     # Invoices
     #
-    has_permission_on :invoices, to: [:remove_item, :add_item]
+    has_permission_on :invoices, to: [
+      :add_item,
+      :remove_item,
+      :paid_wire_transfer
+    ]
   end
 
   # ============================================================================

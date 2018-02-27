@@ -37,11 +37,17 @@
     Actions
   #invoice-container
     #btn-invoice-dwnl
-      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, @invoice.reference_number), class: 'button-invoice'}
+      #{link_to "\u21E9 Download".html_safe, download_invoice_path(@ssl_slug, @invoice.reference_number), class: 'button-mo-invoice'}
     #btn-invoice-update
-      #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-invoice'}
-    #btn-invoice-generate
-      =link_to "Make Payment".html_safe, |
-        new_payment_invoice_path(@ssl_slug, @invoice.reference_number), |
-        class: 'button-invoice', method: :get   
+      #{link_to "&#x2631; Change Address".html_safe, '#', id: 'lnk-update-invoice', class: 'button-mo-invoice'}
+    -unless @invoice.paid? && @order
+      #btn-invoice-generate
+        =link_to "Make Payment".html_safe, |
+          new_payment_invoice_path(@ssl_slug, @invoice.reference_number), |
+          class: 'button-mo-invoice', method: :get
+      -if system_admins
+        #btn-invoice-generate
+          =link_to "&#x27B2; Wire Tranfer".html_safe, |
+            paid_wire_transfer_invoice_path(@ssl_slug, @invoice.reference_number), |
+            class: 'button-mo-invoice', method: :put
   #invoice-container-errors

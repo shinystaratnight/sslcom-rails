@@ -140,6 +140,7 @@ SslCom::Application.routes.draw do
         post :make_payment
         put  :remove_item
         put  :add_item
+        put  :paid_wire_transfer
       end
     end
       

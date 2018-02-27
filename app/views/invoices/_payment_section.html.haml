@@ -7,6 +7,7 @@
   #order_date
     date of payment:
     %span=h @order.created_at.strftime('%F')
+  
   -if @order.is_free?
     #credit_card_number
       payment method:
@@ -37,3 +38,7 @@
           %span funded account
         -else
           %span=@order.state.humanize.downcase
+
+  #order_ref_num
+    notes:
+    %span=@order.notes
