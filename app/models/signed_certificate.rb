@@ -120,6 +120,14 @@ class SignedCertificate < ActiveRecord::Base
     #expiring.each {|e|e.certificate_order.do_auto_renew}
   end
 
+  def public_key
+    openssl_x509.public_key
+  end
+
+  def public_key_sha1
+    OpenSSL::Digest::SHA1.new(public_key.to_der).to_s
+  end
+
   def common_name
     SimpleIDN.to_unicode read_attribute(:common_name)
   end

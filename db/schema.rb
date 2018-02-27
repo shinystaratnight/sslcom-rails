@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180222185458) do
+ActiveRecord::Schema.define(version: 20180227180106) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -461,12 +461,17 @@ ActiveRecord::Schema.define(version: 20180222185458) do
     t.integer  "certificate_lookup_id",     limit: 4
     t.text     "decoded",                   limit: 65535
     t.string   "ext_customer_ref",          limit: 255
+    t.string   "unique_value",              limit: 255
+    t.string   "public_key_sha1",           limit: 255
+    t.string   "public_key_sha256",         limit: 255
+    t.string   "public_key_md5",            limit: 255
   end
 
   add_index "csrs", ["certificate_content_id", "common_name"], name: "index_csrs_on_common_name_and_certificate_content_id", using: :btree
   add_index "csrs", ["certificate_content_id"], name: "index_csrs_on_certificate_content_id", using: :btree
   add_index "csrs", ["common_name"], name: "index_csrs_on_common_name", using: :btree
   add_index "csrs", ["organization"], name: "index_csrs_on_organization", using: :btree
+  add_index "csrs", ["public_key_sha1", "unique_value"], name: "index_csrs_on_public_key_sha1_and_unique_value", unique: true, using: :btree
 
   create_table "dbs", force: :cascade do |t|
     t.string "name",     limit: 255

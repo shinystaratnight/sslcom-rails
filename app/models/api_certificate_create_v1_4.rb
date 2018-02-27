@@ -58,12 +58,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
+  validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
   validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
-  validate :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}
 
   before_validation do
     retrieve_registrant
