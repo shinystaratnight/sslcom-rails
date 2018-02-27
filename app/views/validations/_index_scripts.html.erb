@@ -590,9 +590,9 @@ jQuery(function($) {
             var replace_ssl = '<%=api_certificate_replace_v1_4_path(@certificate_order.ref)%>';
 
             if ($(ori_domain_names_str).not(domain_names_str).length == 0 && $(domain_names_str).not(ori_domain_names_str).length == 0) {
-              $(this).attr('url', update_dcv);
+              $(this).attr('url', api_domain + update_dcv);
             } else {
-              $(this).attr('url', replace_ssl);
+              $(this).attr('url', api_domain + replace_ssl);
             }
 
             confirmed = confirm('Proceed with validation?');

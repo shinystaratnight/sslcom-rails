@@ -156,7 +156,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
 
         domainNames = self.domains.keys.join(',')
-        domainDcvs = self.domains.keys.map{|k|"#{CertificateName.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
+        domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
 
         #send to comodo
         comodo_auto_replace_ssl(
