@@ -33,6 +33,10 @@ authorization do
     # Users
     #
     has_permission_on :users, :to => :sysadmin_manage
+    #
+    # Invoices
+    #
+    has_permission_on :invoices, to: [:remove_item, :add_item]
   end
 
   # ============================================================================

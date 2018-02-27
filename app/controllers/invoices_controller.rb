@@ -2,7 +2,8 @@ class InvoicesController < ApplicationController
   include OrdersHelper
   
   before_filter    :find_invoice, except: :index
-  before_filter    :find_ssl_account, only: [:new_payment, :make_payment]
+  before_filter    :find_ssl_account, only: [:new_payment, :make_payment, :remove_item]
+  before_filter    :set_ssl_slug, only: [:new_payment, :make_payment, :remove_item, :show]
   filter_access_to :all
   filter_access_to :show, :update_invoice
   
@@ -57,6 +58,28 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def remove_item
+    if @invoice && !@invoice.paid?
+      o = @invoice.orders.find_by(reference_number: params[:item_ref])
+      o.update(approval: 'rejected')
+      flash[:notice] = "Item #{o.reference_number} has been removed from invoice."
+    else
+      flash[:error] = "Something went wrong or invoice has already been paid."
+    end
+    redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
+  end
+  
+  def add_item
+    if @invoice && !@invoice.paid?
+      o = @invoice.orders.find_by(reference_number: params[:item_ref])
+      o.update(approval: 'approved')
+      flash[:notice] = "Item #{o.reference_number} has been added back to invoice."
+    else
+      flash[:error] = "Something went wrong or invoice has already been paid."
+    end
+    redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
+  end
+    
   private
   
   def payment_hybrid
@@ -137,4 +160,9 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def set_ssl_slug(target_user=nil)
+    if current_user && @ssl_account
+      @ssl_slug ||= (@ssl_account.ssl_slug || @ssl_account.acct_number)
+    end
+  end
 end

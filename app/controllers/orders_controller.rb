@@ -587,6 +587,7 @@ class OrdersController < ApplicationController
     @order.state       = 'invoiced'
     @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
+    @order.approval    = 'approved'
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end

@@ -138,6 +138,8 @@ SslCom::Application.routes.draw do
         get  :download
         get  :new_payment
         post :make_payment
+        put  :remove_item
+        put  :add_item
       end
     end
       

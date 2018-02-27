@@ -23,12 +23,24 @@ class MonthlyInvoice < Invoice
     status == 'paid'
   end
   
+  def pending?
+    status == 'pending'
+  end
+  
+  def get_approved_items
+    orders.where(approval: 'approved')
+  end
+  
+  def get_removed_items
+    orders.where(approval: 'rejected')
+  end
+  
   def get_cents
-    orders.map(&:cents).sum
+    get_approved_items.map(&:cents).sum
   end  
   
   def get_amount
-    orders.map(&:amount).sum
+    get_approved_items.map(&:amount).sum
   end  
   
   def get_amount_format

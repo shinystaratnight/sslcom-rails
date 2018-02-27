@@ -4,6 +4,7 @@
 -descriptions  = @invoice.get_item_descriptions
 -total_format  = @invoice.get_amount_format
 -funded_amount = @order.get_funded_account_amount if @order
+-items_params  = {descriptions: descriptions, total_format: total_format, funded_amount: funded_amount}
 
 #validations.monthly-invoice
   #summary
@@ -18,57 +19,17 @@
       %strong #{@invoice.status.upcase}
     %div
       %span ITEMS:
-      %strong #{descriptions.count}
+      %strong #{@invoice.get_approved_items.count}
     %div
       %span DUE:
       %strong #{@invoice.end_date.strftime('%F')}
-
-  %table#tbl-monthly-invoice(cellspacing='0')
-    %thead
-      %tr.heading_row
-        %th #
-        %th Date
-        %th Order
-        %th Description
-        %th Total
-    %tbody
-      -@invoice.orders.each_with_index do |o, i|
-        %tr
-          %td
-            %strong
-              %span #{i+1}
-          %td
-            =o.created_at.strftime('%F')
-          %td
-            =link_to o.reference_number, order_path(@ssl_slug, o)
-          %td
-            %strong
-              %span #{descriptions[o.reference_number.to_s][:item]}
-            %br
-            =descriptions[o.reference_number.to_s][:description]
-          %td
-            %strong
-              =o.amount.format
-      -if @order
-        %tr.order-subtotal
-          %td.description.total_row{colspan: '4'} Subtotal:
-          %td.price.total_row
-            =total_format
-        -if funded_amount > 0
-          %tr.order-funded
-            %td.description.total_row{colspan: '4'} Funded Account Credit:
-            %td.price.total_row -#{Money.new(funded_amount).format}
-        %tr.order-total
-          %td.description.total_row{colspan: '4'} Total:
-          %td.price.total_row
-            #{Money.new(@order.get_total_merchant_amount).format}
-      -else
-        %tr.order-subtotal
-          %td.description.total_row{colspan: '4'} Total:
-          %td.price.total_row
-            =total_format
+  
+  
+  =render partial: 'items_list', locals: items_params.merge(approved_list: true)
+  -if @invoice.get_removed_items.any?
+    =render partial: 'items_list', locals: items_params.merge(approved_list: false)
             
--if @invoice.paid?
+-if @invoice.paid? && @order
   =render partial: 'payment_section'
   
 #monthly-invoice-actions

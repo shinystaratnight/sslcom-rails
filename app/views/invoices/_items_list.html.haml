@@ -1,0 +1,57 @@
+-orders = approved_list ? @invoice.get_approved_items : @invoice.get_removed_items
+-header_descr = approved_list ? "Approved" : "Removed"
+
+%table#tbl-monthly-invoice(cellspacing='0')
+  %thead
+    %tr.heading_row
+      %th #
+      %th Date
+      %th Order
+      %th Description (#{header_descr} Items)
+      %th Total
+  %tbody
+    -orders.each_with_index do |o, i|
+      %tr
+        %td
+          %strong
+            %span #{i+1}
+        %td
+          =o.created_at.strftime('%F')
+        %td
+          =link_to o.reference_number, order_path(@ssl_slug, o)
+        %td
+          %strong
+            %span #{descriptions[o.reference_number.to_s][:item]}
+          %br
+          =descriptions[o.reference_number.to_s][:description]
+          -if current_user.is_system_admins?
+            %br
+            -if o.approved_for_invoice? 
+              =link_to 'REMOVE ITEM', |
+                remove_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: o.reference_number), |
+                method: :put, class: 'btn-rmv-invoice-item'
+            -if o.removed_from_invoice?
+              =link_to 'ADD ITEM', add_item_invoice_path(@ssl_slug, @invoice.reference_number, item_ref: o.reference_number), |
+                method: :put, class: 'btn-add-invoice-item'
+        %td
+          %strong
+            =o.amount.format
+    -if approved_list  
+      -if @order
+        %tr.order-subtotal
+          %td.description.total_row{colspan: '4'} Subtotal:
+          %td.price.total_row
+            =total_format
+        -if funded_amount > 0
+          %tr.order-funded
+            %td.description.total_row{colspan: '4'} Funded Account Credit:
+            %td.price.total_row -#{Money.new(funded_amount).format}
+        %tr.order-total
+          %td.description.total_row{colspan: '4'} Total:
+          %td.price.total_row
+            #{Money.new(@order.get_total_merchant_amount).format}
+      -else
+        %tr.order-subtotal
+          %td.description.total_row{colspan: '4'} Total:
+          %td.price.total_row
+            =total_format
