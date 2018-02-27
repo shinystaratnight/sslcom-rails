@@ -155,6 +155,46 @@ class SslcomCaApi
     api_log_entry
   end
 
+  def self.subject_dn_from_csr(options={})
+    dn=["CN=#{options[:common_name]}"]
+    dn << "O=#{options[:organization]}" unless options[:organization].blank?
+    dn << "OU=#{options[:organization_unit]}" unless options[:organization_unit].blank?
+    dn << "OU=Key Hash #{options.sha2_hash}"
+    dn << "C=#{options[:country]}" unless options[:country].blank?
+    dn << "L=#{options[:locality]}" unless options[:locality].blank?
+    dn << "ST=#{options[:state]}" unless options[:state].blank?
+    # dn << "postalCode=#{options[:postal_code]}" unless options[:postal_code].blank?
+    # dn << "postalAddress=#{options[:postal_address]}" unless options[:postal_address].blank?
+    # dn << "streetAddress=#{options[:street_address]}" unless options[:street_address].blank?
+    # dn << "serialNumber=#{options[:serial_number]}" unless options[:serial_number].blank?
+    # dn << "2.5.4.15=#{options[:business_category]}" unless options[:business_category].blank?
+    # dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality]}" unless options[:joi_locality].blank?
+    # dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state]}" unless options[:joi_state].blank?
+    # dn << "1.3.6.1.4.1.311.60.2.1.3=#{options[:joi_country]}" unless options[:joi_country].blank?
+    # =text_area_tag :csr, @certificate_order.certificate_content.csr.body
+    #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
+
+
+    dn.join(",")
+  end
+
+  def self.generate_for_certificate(csrStr)
+    csr = Csr.new(body: csrStr)
+    host = Rails.application.secrets.sslcom_ca_host + "/v1/certificate/pkcs10"
+
+    options = {}
+    options['subject_dn'] = subject_dn_from_csr(csr)
+    options['ca_name'] = 'ManagementCA'
+    options['certificate_profile'] = 'RSA_CS_CERT'
+    options['end_entity_profile'] = 'CS_CERT_EE'
+    options['duration'] = '365:0:0'
+    options['pkcs10'] = Csr.remove_begin_end_tags(csrStr)
+
+    req, res = call_ca(host, nil, options.to_json)
+
+    res.body
+  end
+
   def self.revoke_ssl(signed_certificate, reason)
     if signed_certificate.is_sslcom_ca?
       host = Rails.application.secrets.sslcom_ca_host+"/v1/certificate/revoke"

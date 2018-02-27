@@ -2,7 +2,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
+  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4, :generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
@@ -102,6 +102,13 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     render_200_status
   rescue => e
     render_500_error e
+  end
+
+  def generate_certificate_v1_4
+    result = {}
+    result['certValue'] = SslcomCaApi.generate_for_certificate(params[:csr])
+
+    render :json => result
   end
 
   def replace_v1_4
