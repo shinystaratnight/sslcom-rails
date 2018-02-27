@@ -79,7 +79,7 @@ class SignedCertificate < ActiveRecord::Base
       co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
       last_sent=s.csr.domain_control_validations.last_sent
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
-      # cc.callback unless cc.callback_url.blank?
+      cc.callback unless cc.callback_url.blank?
     end
   end
 

@@ -63,6 +63,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
   validate :validate_callback, unless: lambda{|c|c.callback.blank?}
   validate :renewal_exists, if: lambda{|c|c.renewal_id}
+  validate :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}
 
   before_validation do
     retrieve_registrant
@@ -72,6 +73,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if self.csr # a single domain validation
         self.dcv_method ||= "http_csr_hash"
         self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
+        self.csr_obj.unique_value = unique_value unless unique_value.blank?
         unless self.csr_obj.errors.empty?
           self.errors[:csr] << "has problems and or errors"
         end

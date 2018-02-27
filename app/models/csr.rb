@@ -383,7 +383,10 @@ class Csr < ActiveRecord::Base
     if ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
       ca_certificate_requests.first.response_value("uniqueValue") # comodo has returned a unique already
     else
-      SecureRandom.hex(5) # generate our own
+      if read_attribute(:unique_value).blank?
+        write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
+      end
+      read_attribute(:unique_value)
     end
   end
 end

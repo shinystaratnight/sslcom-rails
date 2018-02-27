@@ -73,6 +73,8 @@ class CertificateContent < ActiveRecord::Base
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
+  @@cli_domain = nil
+
   preference  :reprocessing, default: false
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
@@ -226,6 +228,14 @@ class CertificateContent < ActiveRecord::Base
     certificate_order.certificate
   end
 
+  def self.cli_domain=(cli_domain)
+    @@cli_domain=cli_domain
+  end
+
+  def cli_domain
+    @@cli_domain
+  end
+
   def domains=(names)
     unless names.blank?
       names = names.split(/\s+/).flatten.uniq.reject{|d|d.blank?}
@@ -272,7 +282,7 @@ class CertificateContent < ActiveRecord::Base
 
   def url_callback
     url_callbacks.last.perform_callback(certificate_hook:
-          %x"#{certificate_order.to_api_string(action: "show", domain_override: "", show_credentials: true)}") unless url_callbacks.blank?
+          %x"#{certificate_order.to_api_string(action: "show", domain_override: "#{@@cli_domain}", show_credentials: true)}") unless url_callbacks.blank?
   end
 
   def dcv_domains(options)
