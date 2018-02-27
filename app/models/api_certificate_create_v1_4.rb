@@ -132,6 +132,48 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self
   end
 
+  def replace_certificate_order
+    @certificate_order = self.find_certificate_order
+    self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
+
+    if @certificate_order.is_a?(CertificateOrder)
+      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
+      @certificate_order.is_test=self.test
+
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
+        cn_keys = self.cert_names.keys
+        @certificate_order.certificate_content.certificate_names.each do |certificate_name|
+          # if cn_keys.include? certificate_name.id.to_s
+          #   certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
+          # else
+          #   certificate_name.destroy
+          # end
+
+          if cn_keys.exclude? certificate_name.name
+            certificate_name.destroy
+          elsif self.cert_names[certificate_name.name] != certificate_name.name
+            certificate_name.update_column(:name, self.cert_names[certificate_name.name])
+          end
+        end
+        @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
+
+        domainNames = self.domains.keys.join(',')
+        domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
+
+        #send to comodo
+        comodo_auto_replace_ssl(
+          certificateOrder: @certificate_order,
+          domainNames: domainNames,
+          domainDcvs: domainDcvs
+        )
+      end
+      return @certificate_order
+    end
+    self
+  end
+
   def update_certificate_order
     @certificate_order=self.find_certificate_order
     self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
@@ -217,6 +259,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       # end
     end
     self
+  end
+
+  def comodo_auto_replace_ssl(options={send_to_ca: true})
+    ComodoApi.auto_replace_ssl(options)
   end
 
   # this update dcv method to comodo for each domain
@@ -539,6 +585,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def domains
     @domains || parameters_to_hash["domains"]
+  end
+
+  def cert_names
+    @cert_names || parameters_to_hash["cert_names"]
   end
 
   def ref

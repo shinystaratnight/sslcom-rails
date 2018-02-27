@@ -38,6 +38,10 @@ SslCom::Application.routes.draw do
           as: :api_user_create_v1_4, via: [:options, :post]
         match '/user/:login' => 'api_user_requests#show_v1_4',
           as: :api_user_show_v1_4, via: [:options, :get], login: /.+\/?/
+
+        # Code Signing.
+        match '/generate_certificate' => 'api_certificate_requests#generate_certificate_v1_4',
+              as: :api_certificate_generate_v1_4, via: [:options, :post]
         
         # Teams
         match '/teams/add_contact' => 'teams#add_contact',
@@ -56,6 +60,8 @@ SslCom::Application.routes.draw do
           as: :api_certificate_create_v1_4, via: [:options, :post]
         match '/certificate/:ref' => 'api_certificate_requests#update_v1_4',
           as: :api_certificate_update_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
+        match '/certificate/:ref/replace' => 'api_certificate_requests#replace_v1_4',
+              as: :api_certificate_replace_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
         
@@ -179,6 +185,7 @@ SslCom::Application.routes.draw do
         match :send_to_ca, via: [:get, :post]
         post :get_asynch_domains
         post :remove_domains
+        post :get_email_addresses
         member do
           get :document_upload
         end

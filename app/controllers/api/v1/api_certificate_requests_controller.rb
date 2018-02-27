@@ -2,7 +2,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters, except: [:scan,:analyze, :download_v1_4]
+  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4, :generate_certificate_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
@@ -98,6 +98,45 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       end
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+    render_200_status
+  rescue => e
+    render_500_error e
+  end
+
+  def generate_certificate_v1_4
+    result = {}
+    result['certValue'] = SslcomCaApi.generate_for_certificate(params[:csr])
+
+    render :json => result
+  end
+
+  def replace_v1_4
+    set_template "replace_v1_4"
+    if @result.csr_obj && !result.csr_obj.valid?
+      @result = @result.csr_obj
+    else
+      if @result.save
+        if @acr = @result.replace_certificate_order
+          if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+            if @acr.certificate_content.csr && @result.debug=="true"
+              ccr = @acr.certificate_content.csr.ca_certificate_requests.last
+              @result.api_request=ccr.parameters
+              @result.api_response=ccr.response
+            end# @result.error_code=ccr.response_error_code
+            # @result.error_message=ccr.response_error_message
+            # @result.eta=ccr.response_certificate_eta
+            # @result.order_status = ccr.response_certificate_status
+
+            set_result_parameters(@result, @acr)
+            @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
+          else
+            @result = @acr #so that rabl can report errors
+          end
+        end
+      else
+        InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+      end
     end
     render_200_status
   rescue => e
@@ -1004,7 +1043,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke

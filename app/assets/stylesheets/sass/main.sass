@@ -6320,7 +6320,36 @@ span.notifications-teams
     td
       border-bottom: 1px solid #ccc
       padding: 2rem !important
-
+.api_certificate_request
+  position: relative
+  .domains_loader_wrap
+    position: absolute
+    background-color: rgba(0, 0, 0, .1)
+    z-index: 100
+    width: 100%
+    height: 100%
+    .domains_loader
+      position: absolute
+      left: calc(50% - 18px)
+      top: calc(50% - 18px)
+      border: 5px solid #f3f3f3
+      border-radius: 50%
+      border-top: 5px solid #9a9a9a
+      width: 26px
+      height: 26px
+      -webkit-animation: spin 2s linear infinite /* Safari */
+      animation: spin 2s linear infinite
+/* Safari */
+@-webkit-keyframes spin
+  0%
+    -webkit-transform: rotate(0deg)
+  100%
+    -webkit-transform: rotate(360deg)
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
 #domains_validation
   width: 100%
   border: 1px solid black
@@ -6335,14 +6364,21 @@ span.notifications-teams
         #validation_common_type
           width: 100px
         input[type='checkbox']
-          vertical-align: bottom
-  tbody tr.certificate_name td
-    padding-bottom: 5px
-    padding-top: 5px
-    padding-left: 5px
-    &:first-child
-      text-align: center
-      padding-left: 0px
+          vertical-align: middle
+  tbody tr
+    &.removed_domain
+      background-color: lightgrey
+    &.certificate_name td
+      padding-bottom: 5px
+      padding-top: 5px
+      padding-left: 5px
+      &:first-child
+        text-align: center
+        padding-left: 0px
+        input[type='button']
+          margin-left: 3px
+      .check_box
+        vertical-align: middle
 
 /*
  * Teams Index Page
@@ -6354,7 +6390,7 @@ span.notifications-teams
   
 .btn-team-links,
 .btn-team-disable,
-.btn-team-enable,
+.btn-team-enable
   background-color: grey
   border-radius: 3px
   color: #FFFFFF !important

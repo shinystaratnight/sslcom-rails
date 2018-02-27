@@ -41,7 +41,7 @@
             Ref
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
-            =text_field_tag :filter_ref, nil, :class=>'filter_cont_text', 'data-field'=>'ref'
+            =text_field_tag :filter_ref, nil, :class=>'filter_cont_text', 'data-field'=>'ref', :placeholder=>'Comma Separater'
       %div.filter_item
         .filter_evt.clearfix
           %label
@@ -74,7 +74,6 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_address, nil, :class=>'filter_cont_text', 'data-field'=>'address'
-    .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
@@ -83,6 +82,7 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_state, nil, :class=>'filter_cont_text', 'data-field'=>'state'
+    .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
@@ -91,6 +91,23 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_postal_code, nil, :class=>'filter_cont_text', 'data-field'=>'postal_code'
+      %div.filter_item
+        .filter_evt.clearfix
+          %label
+            =check_box_tag :filter_status_chk, true, false, :class=>'filter_chk'
+            Status (Ctrl + Click Multi)
+        .filter_label
+          .filter_cont.hidden{'data-type'=>'select-multi'}
+            =select_tag :filter_status,
+            options_for_select([['Contacts Provided', 'contacts_provided'],
+              ['CSR Submitted', 'csr_submitted'],
+              ['Info Provided', 'info_provided'],
+              ['Issued', 'issued'],
+              ['New', 'new'],
+              ['Pending Validation', 'pending_validation'],
+              ['Validated', 'validated'],
+              ['Rejected', 'rejected']]),
+            :class=>'filter_cont_slt slt-large', 'data-field'=>'status', :multiple=> true
       %div.filter_item
         .filter_evt.clearfix
           %label
@@ -119,7 +136,7 @@
         .filter_evt.clearfix
           %label
             =check_box_tag :filter_product_chk, true, false, :class=>'filter_chk'
-            Product
+            Product (Ctrl + Click Multi)
         .filter_label
           .filter_cont.hidden{'data-type'=>'select-multi'}
             =select_tag :filter_product,
@@ -148,7 +165,6 @@
         .filter_label
           .filter_cont.hidden{'data-type'=>'text'}
             =text_field_tag :filter_fingerprint, nil, :class=>'filter_cont_text', 'data-field'=>'fingerprint'
-    .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label
@@ -174,6 +190,7 @@
             .filter_cont_item
               =number_field_tag :filter_strength, nil, :class=>'filter_cont_text'
               Other
+    .filter_items_col
       %div.filter_item
         .filter_evt.clearfix
           %label

@@ -21,6 +21,8 @@ class ApiCertificateRequest < CaApiRequest
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile]
 
+  UPDATE_ACCESSORS_1_4 = [:cert_names]
+
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
@@ -59,7 +61,7 @@ class ApiCertificateRequest < CaApiRequest
   PRETEST_ACCESSOR = [:is_passed]
 
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS).uniq
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS+UPDATE_ACCESSORS_1_4).uniq
 
   before_validation(on: :create) do
     ac=api_credential
