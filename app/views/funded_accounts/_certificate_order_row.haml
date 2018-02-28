@@ -4,7 +4,7 @@
     %td.line-index
       =index+1
     %td.description
-      =row_description(co)
+      ="#{row_description(co)} #{@order.reprocess_ucc_order? ? '(Reprocess)' : ''}"
     %td.quantity 1
     %td.price
       =Money.new(@order.reprocess_ucc_order? ? @order.cents : co.amount).format
@@ -48,7 +48,7 @@
             -unless co.canceled? || co.refunded?
               %div
                 =link_to("CANCEL", '#', onclick:  "refund_reason_#{co.id}(false)", id: 'btn-order-cancel')
-            -if co.price.cents > 0 && !co.refunded?
+            -if co.price.cents > 0 && !co.refunded? && !@order.on_monthly_invoice?
               %div
                 =link_to("CREDIT #{Money.new(@order.make_available_line(co)).format}", '#', onclick:  "refund_reason_#{co.id}(true)", id: 'btn-order-credit')
               -unless fully_refunded

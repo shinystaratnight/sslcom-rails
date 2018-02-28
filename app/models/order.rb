@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
+  belongs_to  :monthly_invoice, class_name: "Invoice", foreign_key: :invoice_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -453,7 +454,7 @@ class Order < ActiveRecord::Base
 
   # BEGIN number
   def on_monthly_invoice?
-    !approval.blank? && !invoice_id.blank?
+    !invoice_id.blank? && state == 'invoiced'
   end
   
   def approved_for_invoice?
@@ -472,6 +473,21 @@ class Order < ActiveRecord::Base
     description == Order::INVOICE_PAYMENT
   end
   
+  # Fetches all domains that were added during UCC certificate reprocess
+  def get_reprocess_domains
+    co           = certificate_orders.first
+    cur_domains  = co.certificate_contents.find_by(ref: notes.split.last.delete(')')).domains
+    new_domains  = cur_domains - co.certificate_contents.first.domains
+    non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
+    wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
+    {
+      all:          cur_domains,
+      new_domains:  new_domains,
+      wildcard:     wildcard,
+      non_wildcard: non_wildcard
+    }
+  end  
+    
   def number
     SecureRandom.base64(32)
   end
