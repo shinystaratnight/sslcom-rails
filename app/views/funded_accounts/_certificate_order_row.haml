@@ -7,7 +7,7 @@
       ="#{row_description(co)} #{@order.reprocess_ucc_order? ? '(Reprocess)' : ''}"
     %td.quantity 1
     %td.price
-      =Money.new(@order.reprocess_ucc_order? ? @order.cents : co.amount).format
+      =Money.new(@order.reprocess_ucc_order? ? @order.get_full_reprocess_amount : co.amount).format
   -if co.migrated_from_v2?
     -co.v2_line_items.each do |item|
       %tr.line_item

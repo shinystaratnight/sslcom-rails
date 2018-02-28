@@ -664,9 +664,13 @@ class Order < ActiveRecord::Base
   end
   
   def make_available_line(item, type=nil)
-    order_total  = line_items.pluck(:cents).sum
+    order_total  = reprocess_ucc_order? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
-    total        = item.is_a?(LineItem) ? item.cents : item.amount
+    total        = if reprocess_ucc_order?
+      get_full_reprocess_amount
+    else  
+      item.is_a?(LineItem) ? item.cents : item.amount
+    end
     percent      = total.to_d/order_total.to_d
     discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
@@ -745,6 +749,14 @@ class Order < ActiveRecord::Base
     else
       0
     end
+  end
+  
+  def get_full_reprocess_amount
+    get_total_merchant_amount + get_funded_account_amount
+  end
+  
+  def get_full_reprocess_format
+    Money.new(get_full_reprocess_amount).format
   end
   
   def get_funded_account_amount

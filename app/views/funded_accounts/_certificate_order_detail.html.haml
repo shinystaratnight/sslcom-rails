@@ -15,7 +15,10 @@
         %tr.order-subtotal
           %td.description.total_row{colspan: '3'} Subtotal:
           %td.price.total_row
-            #{Money.new(order.certificate_orders.map(&:amount).sum).format}
+            -if order.reprocess_ucc_order?
+              #{order.get_full_reprocess_format}
+            -else
+              #{Money.new(order.certificate_orders.map(&:amount).sum).format}
         -if order.discounts.any?
           %tr.order-discount
             %td.description.total_row{colspan: '3'}
