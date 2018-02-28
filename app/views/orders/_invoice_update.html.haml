@@ -1,10 +1,19 @@
--found = Invoice.find_by order_id: @order.id
+-found   = Invoice.find_by order_id: @order.id if @order
+-found   = @invoice if @invoice
 -invoice = found ? found : Invoice.new
--method = found ? :put : :post
-=form_for invoice, url: update_invoice_order_path(@ssl_slug, @order), method: method, remote: true,  data: {type: :json}, html: {id: 'frm-inv-update'} do |f|
-  =f.hidden_field :order_id, value: @order.id
+-method  = found ? :put : :post
+-id      = @order ? @order.id : @invoice.get_approved_items.first
+
+=form_for invoice, url: update_invoice_order_path(@ssl_slug, id), method: method, remote: true,  data: {type: :json}, html: {id: 'frm-inv-update'} do |f|
+  -if @order
+    =f.hidden_field :order_id, value: @order.id
+  -if @invoice
+    =f.hidden_field :invoice_ref, value: @invoice.reference_number
+  
   %p This will update the address (Billed To) that will be displayed in current invoice.
-  %small *Note: Default 'Billed To' address is pulled from the current order.
+  -unless @invoice
+    %small *Note: Default 'Billed To' address is pulled from the current order.
+  
   .registration_form
     %div(class='fields')
       .clearfix

@@ -1,8 +1,10 @@
 class InvoicesController < ApplicationController
   include OrdersHelper
   
-  before_filter    :find_invoice, except: :index
-  before_filter    :find_ssl_account, only: [:new_payment, :make_payment]
+  before_filter :find_invoice, except: :index
+  before_filter :find_ssl_account, except: :index
+  before_filter :set_ssl_slug, except: :index 
+  
   filter_access_to :all
   filter_access_to :show, :update_invoice
   
@@ -57,6 +59,53 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def remove_item
+    if @invoice && !@invoice.paid?
+      o = @invoice.orders.find_by(reference_number: params[:item_ref])
+      o.update(approval: 'rejected')
+      flash[:notice] = "Item #{o.reference_number} has been removed from invoice."
+    else
+      flash[:error] = "Something went wrong or invoice has already been paid."
+    end
+    redirect_to_invoice
+  end
+  
+  def add_item
+    if @invoice && !@invoice.paid?
+      o = @invoice.orders.find_by(reference_number: params[:item_ref])
+      o.update(approval: 'approved')
+      flash[:notice] = "Item #{o.reference_number} has been added back to invoice."
+    else
+      flash[:error] = "Something went wrong or invoice has already been paid."
+    end
+    redirect_to_invoice
+  end
+  
+  def paid_wire_transfer
+    if @invoice && !@invoice.paid?
+      @order = Order.new(
+        amount:      @invoice.get_amount,
+        cents:       @invoice.get_cents,
+        description: Order::INVOICE_PAYMENT,
+        state:       'paid',
+        approval:    'approved',
+        notes:       order_invoice_notes << " Paid full amount of #{@invoice.get_amount_format} by wire transfer."
+      )
+      @order.billable = @ssl_account
+      @order.save
+      
+      if @order.persisted? && @invoice.update(status: 'paid', order_id: @order.id)
+        flash[:notice] = "Paid full amount of #{@invoice.get_amount_format} by wire transfer."
+      else
+        @order.destroy
+        flash[:error] = "Something went wrong, please try again."
+      end
+    else
+      flash[:error] = "Invoice was already paid off."
+    end
+    redirect_to_invoice
+  end
+    
   private
   
   def payment_hybrid
@@ -68,7 +117,7 @@ class InvoicesController < ApplicationController
       record_order_visit(@order)
       
       flash[:notice] = "Succesfully paid for invoice #{@invoice.reference_number}."
-      redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
+      redirect_to_invoice
     else
       if @too_many_declines
         flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
@@ -92,7 +141,7 @@ class InvoicesController < ApplicationController
       save_free_order
       invoice_paid
       flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for invoice."
-      redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
+      redirect_to_invoice
     else
       flash[:error] = "Something went wrong, did not withdraw #{withdraw_amount_str} from funded account!"
       redirect_new_payment
@@ -113,6 +162,10 @@ class InvoicesController < ApplicationController
   
   def redirect_new_payment
     redirect_to new_payment_invoice_path(@ssl_slug, @invoice.reference_number)
+  end
+  
+  def redirect_to_invoice
+    redirect_to invoice_path(@ssl_slug, @invoice.reference_number)
   end
   
   def find_ssl_account
@@ -137,4 +190,9 @@ class InvoicesController < ApplicationController
     end
   end
   
+  def set_ssl_slug(target_user=nil)
+    if current_user && @ssl_account
+      @ssl_slug ||= (@ssl_account.ssl_slug || @ssl_account.acct_number)
+    end
+  end
 end

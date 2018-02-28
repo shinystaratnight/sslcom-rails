@@ -144,9 +144,21 @@ class OrdersController < ApplicationController
   end
   
   def update_invoice
-    found   = Invoice.find_by(order_id: @order.id)
-    update  = found ? found : Invoice.new(params[:invoice])
-    no_errors = found ? update.update_attributes(params[:invoice]) : update.save
+    monthly_invoice = params[:monthly_invoice]
+    
+    found = if monthly_invoice
+      Invoice.find_by(reference_number: monthly_invoice[:invoice_ref])
+    else
+      Invoice.find_by(order_id: @order.id) if @order
+    end
+    update = found ? found : Invoice.new(params[:invoice])
+    
+    no_errors = if found
+      new_params = monthly_invoice ? monthly_invoice : params[:invoice]
+      update.update_attributes(new_params.keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)})
+    else
+      update.save
+    end
 
     respond_to do |format|
       if no_errors
@@ -587,6 +599,7 @@ class OrdersController < ApplicationController
     @order.state       = 'invoiced'
     @order.notes       = reprocess_ucc_notes
     @order.invoice_id  = invoice.id
+    @order.approval    = 'approved'
     @certificate_order.add_reproces_order @order
     record_order_visit(@order)
   end

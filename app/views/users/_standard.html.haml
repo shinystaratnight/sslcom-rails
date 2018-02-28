@@ -123,6 +123,8 @@
                             %li=link_to 'view purchased certificates', certificate_orders_url(ssl_slug: @ssl_slug)
                             -if ssl_account.has_credits?
                               %li=link_to 'use certificate credits', credits_certificate_orders_url(ssl_slug: @ssl_slug)
+                            -if ssl_account && permitted_to?(:index, :invoices) && ssl_account.monthly_invoices.any?
+                              %li=link_to 'monthly invoices', invoices_path(@ssl_slug)
                     -if(ac = ssl_account.api_credential)
                       .half_width_box
                         %ul

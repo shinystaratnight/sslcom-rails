@@ -452,6 +452,17 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+  def on_monthly_invoice?
+    !approval.blank? && !invoice_id.blank?
+  end
+  
+  def approved_for_invoice?
+    on_monthly_invoice? && approval == 'approved'
+  end
+  
+  def removed_from_invoice?
+    on_monthly_invoice? && approval == 'rejected'
+  end
   
   def reprocess_ucc_order?
     description == Order::SSL_REPROCESS_UCC
