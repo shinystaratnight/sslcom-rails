@@ -590,7 +590,7 @@ class CertificateOrder < ActiveRecord::Base
         when 30 #trial
           30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
-          1095
+          SSL_MAX_DURATION
       end
     else
       years
