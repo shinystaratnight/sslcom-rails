@@ -351,6 +351,7 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
+  SSL_MAX_DURATION = 825 # maximum number of days allowed by CAB/F
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -1432,7 +1433,7 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
+          params.merge!('days' => "#{SSL_MAX_DURATION}") if params['days'].to_i > SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end
