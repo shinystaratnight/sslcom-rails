@@ -351,7 +351,7 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
-  SSL_MAX_DURATION = 825 # maximum number of days allowed by CAB/F
+  SSL_MAX_DURATION = 730
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -827,8 +827,12 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.retrieve_ca_certs(start, finish, options={})
-    Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
-    CertificateContent.cli_domain=options[:cli_domain] if options[:cli_domain]
+    CertificateContent.cli_domain="https://sws.sslpki.com"
+    unless options[:db].blank?
+      sb=Sandbox.find_by_host(options[:db])
+      sb.use_database
+      CertificateContent.cli_domain=sb.api_host
+    end
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.unscoped.find_by_ref(co.ref).retrieve_ca_cert(true)}
