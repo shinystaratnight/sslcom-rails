@@ -1,0 +1,23 @@
+#order_details
+  %h3.order_results_header
+    Reprocess Details For Certificate Order ##{co_ref}
+  %table#order_details_reprocess_ucc
+    %thead
+      %tr.heading_row
+        %th DATE
+        %th ORDER
+        %th DOMAINS
+        %th AMOUNT
+      %tr.order-divider
+        %td{colspan: '5'}
+    %tbody
+      -reprocess_orders.each do |result|
+        %tr
+          %td
+            =result[:date]
+          %td.order-edit
+            =link_to result[:order_ref], order_path(@ssl_slug, result[:order_ref])
+          %td.domains-list
+            =result[:domains]
+          %td.reprocess-amount
+            =result[:amount]
