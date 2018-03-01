@@ -25,7 +25,7 @@
           =link_to 'rekey', reprocess_certificate_order_path(@ssl_slug, co)
       -if permitted_to? :read, co.order
         %span :
-        =link_to "invoice", order_path(@ssl_slug, co.order), :title=>"transaction information for "+cn
+        =link_to "invoice", order_path(@ssl_slug, co.orders.first), :title=>"transaction information for "+cn
       -u=co.ssl_account.try(:primary_user)
       -unless u.blank?
         -if permitted_to? :admin_manage, u
