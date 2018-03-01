@@ -73,7 +73,7 @@ class CertificateContent < ActiveRecord::Base
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
-  @@cli_domain = nil
+  @@cli_domain = "https://sws.sslpki.com"
 
   preference  :reprocessing, default: false
   

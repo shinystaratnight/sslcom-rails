@@ -8,6 +8,7 @@ class Website < ActiveRecord::Base
 
   def use_database
     ActiveRecord::Base.establish_connection(website_connection)
+    CertificateContent.cli_domain=self.api_host unless self.api_host.blank?
   end
 
 # Revert back to the shared database

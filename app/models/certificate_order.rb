@@ -827,12 +827,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def self.retrieve_ca_certs(start, finish, options={})
-    CertificateContent.cli_domain="https://sws.sslpki.com"
-    unless options[:db].blank?
-      sb=Sandbox.find_by_host(options[:db])
-      sb.use_database
-      CertificateContent.cli_domain=sb.api_host
-    end
+    Sandbox.find_by_host(options[:db]).use_database unless options[:db].blank?
     cos=Csr.range(start, finish).pending.map(&:certificate_orders).flatten.uniq
     #cannot reference co.retrieve_ca_cert(true) because it filters out issued certificate_contents which contain the external_order_number
     cos.each{|co|CertificateOrder.unscoped.find_by_ref(co.ref).retrieve_ca_cert(true)}
