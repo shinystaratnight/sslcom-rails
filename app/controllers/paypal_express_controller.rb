@@ -157,6 +157,7 @@ class PaypalExpressController < ApplicationController
       notes:         "Reprocess UCC (certificate order: #{params[:co_ref]}, certificate content: #{params[:cc_ref]})."
     )
     @order.billable = @ssl_account
+    @order.save
   end
   
   def setup_monthly_invoice_order(purchase_params)
