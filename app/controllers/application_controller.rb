@@ -425,8 +425,8 @@ class ApplicationController < ActionController::Base
     cookies[name].blank? ? {} : JSON.parse(cookies[name])
   end
 
-  #if in process of recerting (renewal, reprocess, etc), this sets instance
-  #variables from params. Only one type allowed at a time.
+  # if in process of recerting (renewal, reprocess, etc), this sets instance
+  # variables from params. Only one type allowed at a time.
   def detect_recert
     CertificateOrder::RECERTS.each do |r|
       unless params[r.to_sym].blank?
