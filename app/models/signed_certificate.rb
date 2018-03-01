@@ -79,6 +79,7 @@ class SignedCertificate < ActiveRecord::Base
       co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
       last_sent=s.csr.domain_control_validations.last_sent
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
+      cc.callback unless cc.url_callbacks.blank?
     end
   end
 
@@ -117,6 +118,14 @@ class SignedCertificate < ActiveRecord::Base
     end
     expiring = (mre << result).flatten
     #expiring.each {|e|e.certificate_order.do_auto_renew}
+  end
+
+  def public_key
+    openssl_x509.public_key
+  end
+
+  def public_key_sha1
+    OpenSSL::Digest::SHA1.new(public_key.to_der).to_s
   end
 
   def common_name

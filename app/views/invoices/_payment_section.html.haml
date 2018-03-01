@@ -1,0 +1,44 @@
+#monthly-invoice-pmt
+  %h3.order_results_header
+    Payment  
+  #order_ref_num 
+    reference number:
+    %span=h @order.reference_number
+  #order_date
+    date of payment:
+    %span=h @order.created_at.strftime('%F')
+  
+  -if @order.is_free?
+    #credit_card_number
+      payment method:
+      %span n/a (free)
+  -else
+    -unless @order.billing_profile.blank?
+      #credit_card_number
+        payment method:
+        -if current_user.is_super_user?
+          #{@order.billing_profile.card_number} #{@order.billing_profile.expiration_month}/#{@order.billing_profile.expiration_year}
+        -else  
+          xxxx-xxxx-xxxx-#{h @order.billing_profile.last_digits} (#{h @order.billing_profile.credit_card})
+      #credit_card_owner
+        name on card:
+        %span=h @order.billing_profile.full_name
+    -else
+      #credit_card_number
+        payment method:
+        -if @order.po_number
+          %span purchase order #{@order.po_number}
+        -elsif @order.quote_number
+          %span quote #{@order.quote_number}
+        -elsif @order.notes =~ /#paidviapaypal(\S+)?/
+          %span paypal #{$1}
+        -elsif @order.deducted_from.try(:reference_number)
+          %span=link_to @order.deducted_from.reference_number, order_path(@order.deducted_from)
+        -elsif current_user.ssl_account.is_registered_reseller?
+          %span funded account
+        -else
+          %span=@order.state.humanize.downcase
+
+  #order_ref_num
+    notes:
+    %span=@order.notes

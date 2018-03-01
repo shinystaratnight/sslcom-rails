@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
+  belongs_to  :monthly_invoice, class_name: "Invoice", foreign_key: :invoice_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -34,9 +35,13 @@ class Order < ActiveRecord::Base
       self.deposit_mode ||= false
     end
   end
-
-  SSL_CERTIFICATE = "SSL Certificate Order"
-
+  
+  SSL_REPROCESS_UCC = "Reprocess UCC Order"
+  SSL_CERTIFICATE   = "SSL Certificate Order"
+  INVOICE_PAYMENT   = "Monthly Invoice Payment"
+  # If team's billing_method is set to 'monthly', grab all orders w/'approved' approval
+  # when running charges at the end of the month for orders from ucc reprocessing.
+  BILLING_STATUS = %w{approved pending declined}
   #go live with this
 #  default_scope{ includes(:line_items).where({line_items:}
 #    [:sellable_type !~ ResellerTier.to_s]}  & (:billable_id - [13, 5146])).order('created_at desc')
@@ -265,7 +270,9 @@ class Order < ActiveRecord::Base
   end
     
   def total
-    self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+    unless reprocess_ucc_order? || monthly_invoice_order?
+      self.amount = line_items.inject(0.to_money) {|sum,l| sum + l.amount }
+    end
   end
 
   def final_amount
@@ -276,6 +283,10 @@ class Order < ActiveRecord::Base
   workflow_column :state
 
   workflow do
+    state :invoiced do
+      event :invoice_paid!, transitions_to: :paid_by_invoice
+    end
+      
     state :pending do
       event :give_away, transitions_to: :payment_not_required
       event :payment_authorized, transitions_to: :authorized
@@ -442,6 +453,70 @@ class Order < ActiveRecord::Base
   ## END acts_as_state_machine
 
   # BEGIN number
+  def on_monthly_invoice?
+    !invoice_id.blank? && state == 'invoiced'
+  end
+  
+  def approved_for_invoice?
+    on_monthly_invoice? && approval == 'approved'
+  end
+  
+  def removed_from_invoice?
+    on_monthly_invoice? && approval == 'rejected'
+  end
+  
+  def reprocess_ucc_order?
+    description == Order::SSL_REPROCESS_UCC
+  end
+  
+  def reprocess_ucc_free?
+    reprocess_ucc_order? && cents==0
+  end
+  
+  def monthly_invoice_order?
+    description == Order::INVOICE_PAYMENT
+  end
+  
+  # Fetches all domains that were added during UCC certificate reprocess
+  def get_reprocess_domains
+    co           = certificate_orders.first
+    cur_domains  = co.certificate_contents.find_by(ref: get_ccref_from_notes).domains
+    new_domains  = cur_domains - co.certificate_contents.first.domains
+    non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
+    wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
+    {
+      all:          cur_domains,
+      new_domains:  new_domains,
+      wildcard:     wildcard,
+      non_wildcard: non_wildcard
+    }
+  end  
+  
+  def get_ccref_from_notes
+    notes.split(').').first.split.last.delete(')')
+  end
+  
+  def get_reprocess_orders
+    result = {}
+    if certificate_orders.any?
+      certificate_orders.each do |co|
+        current = []
+        co.orders.order(created_at: :desc).each do |o|
+          if o != self && o.reprocess_ucc_order?
+            current << {
+              date:      o.created_at.strftime('%F'),
+              order_ref: o.reference_number,
+              domains:   co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains.count,
+              amount:    o.get_full_reprocess_format
+            }
+          end
+        end
+        result[co.ref] = current if current.any?
+      end
+    end
+    result
+  end
+    
   def number
     SecureRandom.base64(32)
   end
@@ -451,8 +526,8 @@ class Order < ActiveRecord::Base
   def purchase(credit_card, options = {})
     options[:order_id] = number
     transaction do
-      authorization = OrderTransaction.purchase(final_amount, credit_card, options)
-      
+      current_amount = options[:amount] ? Money.new(options[:amount]) : final_amount
+      authorization = OrderTransaction.purchase(current_amount, credit_card, options)
       if authorization && authorization.is_a?(OrderTransaction)
         transactions.push(authorization)
 
@@ -618,9 +693,13 @@ class Order < ActiveRecord::Base
   end
   
   def make_available_line(item, type=nil)
-    order_total  = line_items.pluck(:cents).sum
+    order_total  = reprocess_ucc_order? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
-    total        = item.is_a?(LineItem) ? item.cents : item.amount
+    total        = if reprocess_ucc_order?
+      get_full_reprocess_amount
+    else  
+      item.is_a?(LineItem) ? item.cents : item.amount
+    end
     percent      = total.to_d/order_total.to_d
     discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
@@ -690,7 +769,7 @@ class Order < ActiveRecord::Base
     merchant = get_merchant
     o = get_order_charged
     return o.cents if o && %w{paypal stripe authnet}.include?(merchant)
-    if o #&& %w{paypal stripe authnet}.include?(merchant)
+    if o
       if %w{no_payment zero_amt funded}.include?(merchant)
         0
       else
@@ -699,6 +778,18 @@ class Order < ActiveRecord::Base
     else
       0
     end
+  end
+  
+  def get_full_reprocess_amount
+    get_total_merchant_amount + get_funded_account_amount
+  end
+  
+  def get_full_reprocess_format
+    Money.new(get_full_reprocess_amount).format
+  end
+  
+  def get_paid_reprocess_amount
+    get_total_merchant_amount
   end
   
   def get_funded_account_amount
@@ -743,7 +834,7 @@ class Order < ActiveRecord::Base
     billing_profile_id.nil? &&
       po_number.nil? &&
       quote_number.nil? &&
-      notes.blank? &&
+      ( notes.blank? || (!notes.blank? && notes.include?('Reprocess UCC')) ) &&
       transactions.empty? &&
       deducted_from_id.nil? &&
       state == 'paid'

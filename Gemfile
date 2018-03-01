@@ -39,7 +39,7 @@ gem 'simpleidn'
 gem "oauth-plugin", ">= 0.4.0.pre1"
 gem "therubyracer", '~> 0.12.0', platform: :ruby
 gem "libv8", '~> 3.16.14.0'
-gem 'request_exception_handler'
+# gem 'request_exception_handler'
 gem 'rvm-capistrano'
 # gem 'newrelic_rpm'
 gem 'dalli'

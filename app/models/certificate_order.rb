@@ -35,6 +35,8 @@ class CertificateOrder < ActiveRecord::Base
   has_many    :jois, as: :contactable, class_name: 'Joi' # for SSL.com EV; rw by vetting agents, r by customer
   has_many    :app_reps, as: :contactable, class_name: 'AppRep' # for SSL.com OV and EV; rw by vetting agents, r by customer
   has_many    :physical_tokens
+  has_many    :url_callbacks, as: :callbackable, :through=>:certificate_contents
+
 
   accepts_nested_attributes_for :certificate_contents, :allow_destroy => false
   attr_accessor :duration, :has_csr
@@ -95,13 +97,13 @@ class CertificateOrder < ActiveRecord::Base
   #     merge(options)
   # }
   #
-  scope :search_with_csr, lambda {|term, options={}|
+  scope :search_with_csr, lambda {|term="", options={}|
     term = term.strip.split(/\s(?=(?:[^']|'[^']*')*$)/)
     filters = {common_name: nil, organization: nil, organization_unit: nil, address: nil, state: nil, postal_code: nil,
                subject_alternative_names: nil, locality: nil, country:nil, signature: nil, fingerprint: nil, strength: nil,
                expires_at: nil, created_at: nil, login: nil, email: nil, account_number: nil, product: nil,
                decoded: nil, is_test: nil, order_by_csr: nil, physical_tokens: nil, issued_at: nil, notes: nil,
-               ref: nil, external_order_number: nil}
+               ref: nil, external_order_number: nil, status: nil}
     filters.each{|fn, fv|
       term.delete_if {|s|s =~ Regexp.new(fn.to_s+"\\:\\'?([^']*)\\'?"); filters[fn] ||= $1; $1}
     }
@@ -166,13 +168,19 @@ class CertificateOrder < ActiveRecord::Base
     end
     %w(ref).each do |field|
       query=filters[field.to_sym]
-      result = result.where(field.to_sym => query.split(',')) if query
+      result = result.where(field.to_sym  >> query.split(',')) if query
     end
     %w(country strength).each do |field|
       query=filters[field.to_sym]
       result = result.where{
         (certificate_contents.csr.signed_certificates.send(field.to_sym) >> query.split(',')) |
             (certificate_contents.csrs.send(field.to_sym) >> query.split(','))} if query
+    end
+    %w(status).each do |field|
+      query=filters[field.to_sym]
+      result = result.where{
+        (certificate_contents.send(:workflow_state) >> query.split(',')) |
+            (workflow_state >> query.split(','))} if query
     end
     %w(common_name organization organization_unit state subject_alternative_names locality decoded).each do |field|
       query=filters[field.to_sym]
@@ -239,7 +247,7 @@ class CertificateOrder < ActiveRecord::Base
 
   scope :filter_by, lambda { |term|
     joins{sub_order_items.product_variant_item.product_variant_group.
-        variantable(Certificate)}.where{certificates.product=="#{term}"}
+        variantable(Certificate)}.where{certificates.product >> term.split(',')}
   }
 
   scope :unvalidated, ->{where{(is_expired==false) &
@@ -320,7 +328,11 @@ class CertificateOrder < ActiveRecord::Base
     :pages=>PREPAID_FULL_SIGNUP_PROCESS[:pages] - %w(Submit\ CSR)}
   PREPAID_EXPRESS_SIGNUP_PROCESS = {:label=>PREPAID_EXPRESS,
     :pages=>EXPRESS_SIGNUP_PROCESS[:pages] - %w(Payment)}
-
+  REPROCES_SIGNUP_W_PAYMENT = {label: FULL,
+    pages: FULL_SIGNUP_PROCESS[:pages]}
+  REPROCES_SIGNUP_W_INVOICE = {label: PREPAID_EXPRESS,
+    pages: FULL_SIGNUP_PROCESS[:pages] - %w(Payment)}
+    
   CSR_SUBMITTED = :csr_submitted
   INFO_PROVIDED = :info_provided
   REPROCESS_REQUESTED = :reprocess_requested
@@ -339,6 +351,7 @@ class CertificateOrder < ActiveRecord::Base
   RENEWAL_DATE_CUTOFF = 45.days.ago
   RENEWAL_DATE_RANGE = 45.days.from_now
   ID_AND_TIMESTAMP=["id", "created_at", "updated_at"]
+  SSL_MAX_DURATION = 730
 
   # changed for the migration
   # unless MIGRATING_FROM_LEGACY
@@ -419,7 +432,60 @@ class CertificateOrder < ActiveRecord::Base
       event :unreject, :transitions_to => :paid
     end
   end
-
+  
+  # Prorated pricing for single domain for ucc certificate,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_prorated_domain(wildcard=nil)
+    if certificate.is_ucc?
+      tiers = ucc_duration_amounts(certificate_duration(:years).to_i)
+      domain_amount  = wildcard ? tiers['tier_3'] : tiers['tier_2']
+      total_duration = certificate_duration(:days)
+      domain_amount - ( (used_days/total_duration) * domain_amount )
+    end
+  end
+  
+  # Get pricing for each tier for a given duration,
+  # used in calculating reprocessing amount for additional domains.
+  def ucc_duration_amounts(years=1)
+    if certificate.is_ucc?
+      durations = {}
+      i = years-1
+      certificate.num_domain_tiers.times do |j|
+        durations["tier_#{j+1}"] = (certificate.items_by_domains(true)[i][j].price * ( (j==0) ? 3 : 1 )).cents
+      end
+      durations
+    end
+  end
+  
+  def ucc_prorated_amount(certificate_content)
+    wildcard_count        = wildcard_domains.count
+    nonwildcard_count     = domains.count - wildcard_count
+    # make sure NOT to charge for tier 1 domains (3 total)
+    nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
+    nonwildcard_cost      = ucc_prorated_domain
+    wildcard_cost         = ucc_prorated_domain(:wildcard)
+    new_nonwildcard_count = 0
+    new_wildcard_count    = 0
+    certificate_content.domains.each do |name|
+      name.include?('*') ? (new_wildcard_count +=1) : (new_nonwildcard_count +=1)
+    end
+    addt_nonwildcard = new_nonwildcard_count - nonwildcard_count
+    addt_wildcard    = new_wildcard_count - wildcard_count
+    addt_nonwildcard = (addt_nonwildcard < 0) ? 0 : addt_nonwildcard
+    addt_wildcard    = (addt_wildcard < 0) ? 0 : addt_wildcard
+    (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
+  end
+  
+  def add_reproces_order(order)
+    order.save unless order.persisted?
+    order.line_items.destroy_all
+    if order.valid?
+      line_items << LineItem.create(
+        order_id: order.id, cents: order.cents, amount: order.amount, currency: 'USD'
+      )
+    end
+  end
+      
   def certificate
     sub_order_items[0].product_variant_item.certificate if sub_order_items[0] &&
         sub_order_items[0].product_variant_item
@@ -524,7 +590,7 @@ class CertificateOrder < ActiveRecord::Base
         when 30 #trial
           30
         else #no ssl can go beyond 39 months. 36 months to make adding 1 or 2 years later easier
-          1095
+          SSL_MAX_DURATION
       end
     else
       years
@@ -631,7 +697,11 @@ class CertificateOrder < ActiveRecord::Base
       PREPAID_FULL_SIGNUP_PROCESS
     end
   end
-
+  
+  def reprocess_ucc_process
+    ssl_account.billing_monthly? ? REPROCES_SIGNUP_W_INVOICE : REPROCES_SIGNUP_W_PAYMENT 
+  end
+  
   def is_express_signup?
     !signup_process[:label].scan(EXPRESS).blank?
   end
@@ -745,11 +815,13 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def retrieve_ca_cert(email_customer=false)
-    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success?
+    if external_order_number && !ca_certificate_requests.empty? && ca_certificate_requests.first.success? && !rejected?
       retrieve=ComodoApi.collect_ssl(self)
       if retrieve.response_code==2
         csr.signed_certificates.create(body: retrieve.certificate, email_customer: email_customer)
         self.orphaned_certificate_contents remove: true
+      elsif retrieve.response_code==-20
+        self.reject!
       end
     end
   end
@@ -806,18 +878,22 @@ class CertificateOrder < ActiveRecord::Base
   def to_api_string(options={action: "update"})
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
+    if ssl_account.api_credential
+      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : ""
+      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : ""
+    end
     case options[:action]
       when /update_dcv/
         # registrant_params.merge!(api_domains).merge!(api_contacts)
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     domains: api_domains}
         options[:caller].blank? ?
             'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
                 api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /update/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     server_software: cc.server_software_id.to_s,
                     domains: api_domains,
                     contacts: api_contacts,
@@ -826,16 +902,16 @@ class CertificateOrder < ActiveRecord::Base
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /revoke/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     reason: "development test",
                     serials:signed_certificates.map(&:serial),
                     ref: self.ref}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X DELETE -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /create_w_csr/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     product: certificate.api_product_code,
                     period: certificate_duration(:comodo_api).to_s,
                     server_software: cc.server_software_id.to_s,
@@ -845,40 +921,40 @@ class CertificateOrder < ActiveRecord::Base
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /create/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     product: certificate.api_product_code,
                     period: certificate_duration(:comodo_api).to_s,
                     domains: api_domains}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /show/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     query_type: ("all_certificates" unless signed_certificate.blank?), show_subscriber_agreement: "Y",
                     response_type: ("individually" unless signed_certificate.blank?)}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{self.ref}" : api_params
       when /index/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     per_page: "10", page: "1"}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates" : api_params
       when /dcv_emails/
-        api_params={account_key: "",
-                    secret_key: ""}.
+        api_params={account_key: account_key,
+                    secret_key: secret_key}.
             merge!(certificate.is_ucc? ? {domains: certificate_content.domains} : {domain: csr.common_name})
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/email" : api_params
       when /dcv_methods_wo_csr/
-        api_params={account_key: "",
-                    secret_key: ""}
+        api_params={account_key: account_key,
+                    secret_key: secret_key}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X GET -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificate/#{ref}/validations/methods" : api_params
       when /dcv_methods_w_csr/
-        api_params={account_key: "",
-                    secret_key: "",
+        api_params={account_key: account_key,
+                    secret_key: secret_key,
                     csr: certificate_content.csr.body}
         options[:caller].blank? ? 'curl -k -H "Accept: application/json" -H "Content-type: application/json" -X POST -d "'+
             api_params.to_json.gsub("\"","\\\"") + "\" #{domain}/certificates/validations/csr_hash" : api_params
@@ -986,7 +1062,7 @@ class CertificateOrder < ActiveRecord::Base
   end
 
   def server_software
-    certificate_content.server_software
+    certificate_content.server_software || ServerSoftware.find(1)
   end
   alias :software :server_software
 
@@ -1311,7 +1387,8 @@ class CertificateOrder < ActiveRecord::Base
           params.merge!(
             'test' => (is_test || !(Rails.env =~ /production/i)) ? "Y" : "N",
             'product' => options[:product] || mapped_certificate.comodo_product_id.to_s,
-            'serverSoftware' => cc.comodo_server_software_id.to_s,
+            'serverSoftware' => cc.comodo_server_software_id.blank? ? ServerSoftware::OTHER :
+              cc.comodo_server_software_id.to_s,
             'csr' => csr.to_api,
             'prioritiseCSRValues' => 'N',
             'isCustomerValidated' => 'N',
@@ -1355,7 +1432,7 @@ class CertificateOrder < ActiveRecord::Base
             'primaryDomainName'=>csr.common_name.downcase,
             'maxSubjectCNs'=>1
           )
-          params.merge!('days' => '1095') if params['days'].to_i > 1095 #Comodo doesn't support more than 3 years
+          params.merge!('days' => "#{SSL_MAX_DURATION}") if params['days'].to_i > SSL_MAX_DURATION #Comodo doesn't support more than 3 years
         end
       end
     end

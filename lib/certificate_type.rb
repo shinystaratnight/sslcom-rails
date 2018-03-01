@@ -11,7 +11,7 @@ module CertificateType
     if self.is_a? SignedCertificate
       !!(decoded.include?(SignedCertificate::OID_OV))
     else
-      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(wildcard|high_assurance|ucc)/
+      (self.is_a?(ApiCertificateRequest) ? target_certificate :  self).product =~ /\A(wildcard|high_assurance|ucc|premiumssl)/
     end
   end
   

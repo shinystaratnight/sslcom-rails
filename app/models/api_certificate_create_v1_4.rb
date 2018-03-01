@@ -41,13 +41,13 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       {in: ServerSoftware.pluck(:id).map(&:to_s),
       message: "needs to be one of the following: #{ServerSoftware.pluck(:id).map(&:to_s).join(', ')}"},
             if: "csr and Settings.require_server_software_w_csr_submit"
-  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.organization.blank?)}
+  validates :organization_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.organization.blank?)}
   validates :post_office_box, presence: {message: "is required if street_address_1 is not specified"},
             if: lambda{|c|!c.is_dv? && c.street_address_1.blank? && c.csr} #|| c.parsed_field("POST_OFFICE_BOX").blank?}
   validates :street_address_1, presence: {message: "is required if post_office_box is not specified"},
             if: lambda{|c|!c.is_dv? && c.post_office_box.blank? &&c.csr} #|| c.parsed_field("STREET1").blank?}
-  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? || c.csr_obj.locality.blank?)}
-  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? || c.csr_obj.state.blank?)}
+  validates :locality_name, presence: true, if: lambda{|c|c.csr && (!c.is_dv? && c.csr_obj.locality.blank?)}
+  validates :state_or_province_name, presence: true, if: lambda{|c|csr && (!c.is_dv? && c.csr_obj.state.blank?)}
   validates :postal_code, presence: true, if: lambda{|c|c.csr && !c.is_dv?} #|| c.parsed_field("POSTAL_CODE").blank?}
   validates :country_name, presence: true, inclusion:
       {in: Country.accepted_countries, message: "needs to be one of the following: #{Country.accepted_countries.join(', ')}"},
@@ -58,10 +58,12 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   validates :contact_email_address, email: true, unless: lambda{|c|c.contact_email_address.blank?}
   validates :business_category, format: {with: /[bcd]/}, unless: lambda{|c|c.business_category.blank?}
   validates :common_names_flag, format: {with: /[01]/}, unless: lambda{|c|c.common_names_flag.blank?}
+  validates :unique_value, format: {with: /[a-zA-Z0-9]{1,20}/}, unless: lambda{|c|c.unique_value.blank?}
   # use code instead of serial allows attribute changes without affecting the cert name
   validate :verify_dcv, on: :create, if: "!domains.blank?"
   validate :validate_contacts, if: "api_requestable && api_requestable.reseller.blank? && !csr.blank?"
-  validate  :renewal_exists, if: lambda{|c|c.renewal_id}
+  validate :validate_callback, unless: lambda{|c|c.callback.blank?}
+  validate :renewal_exists, if: lambda{|c|c.renewal_id}
 
   before_validation do
     retrieve_registrant
@@ -71,6 +73,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       if self.csr # a single domain validation
         self.dcv_method ||= "http_csr_hash"
         self.csr_obj = Csr.new(body: self.csr) # this is only for validation and does not save
+        self.csr_obj.unique_value = unique_value unless unique_value.blank?
         unless self.csr_obj.errors.empty?
           self.errors[:csr] << "has problems and or errors"
         end
@@ -120,10 +123,53 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
               ssl_account: api_requestable,
               contacts: self.contacts)
         end
+        certificate_content.url_callbacks.create(callback) if callback
         return @certificate_order
       else
         return certificate_content
       end
+    end
+    self
+  end
+
+  def replace_certificate_order
+    @certificate_order = self.find_certificate_order
+    self.domains={self.csr_obj.common_name=>{"dcv"=>"http_csr_hash"}} if self.domains.blank?
+
+    if @certificate_order.is_a?(CertificateOrder)
+      @certificate_order.update_attribute(:external_order_number, self.ca_order_number) if (self.admin_submitted && self.ca_order_number)
+      @certificate_order.update_attribute(:ext_customer_ref, self.external_order_number) if self.external_order_number
+      @certificate_order.is_test=self.test
+
+      if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
+        cn_keys = self.cert_names.keys
+        @certificate_order.certificate_content.certificate_names.each do |certificate_name|
+          # if cn_keys.include? certificate_name.id.to_s
+          #   certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
+          # else
+          #   certificate_name.destroy
+          # end
+
+          if cn_keys.exclude? certificate_name.name
+            certificate_name.destroy
+          elsif self.cert_names[certificate_name.name] != certificate_name.name
+            certificate_name.update_column(:name, self.cert_names[certificate_name.name])
+          end
+        end
+        @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
+
+        domainNames = self.domains.keys.join(',')
+        domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
+
+        #send to comodo
+        comodo_auto_replace_ssl(
+          certificateOrder: @certificate_order,
+          domainNames: domainNames,
+          domainDcvs: domainDcvs
+        )
+      end
+      return @certificate_order
     end
     self
   end
@@ -158,6 +204,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
                   certificate_order: @certificate_order,
                   certificate_content: certificate_content,
                   contacts: self.contacts)
+              certificate_content.url_callbacks.create(callback) if callback
             else
               return certificate_content
             end
@@ -212,6 +259,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
       # end
     end
     self
+  end
+
+  def comodo_auto_replace_ssl(options={send_to_ca: true})
+    ComodoApi.auto_replace_ssl(options)
   end
 
   # this update dcv method to comodo for each domain
@@ -299,7 +350,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def send_dcv(cc)
-    if self.debug=="true" || (self.domains && self.domains.keys.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
+    if self.debug=="true" || (self.domains && self.domains.count <= Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD)
       cc.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses,
                       dcv_failure_action: self.options.blank? ? nil : self.options['dcv_failure_action']})
       cc.pend_validation!(ca_certificate_id: ca_certificate_id, send_to_ca: send_to_ca || true) unless cc.pending_validation?
@@ -380,6 +431,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     #if submitting domains, then a csr must have been submitted on this or a previous request
     if !csr.blank? || is_processing?
       self.dcv_candidate_addresses = {}
+      if self.domains.is_a?(Array)
+        values = Array.new(self.domains.count,"dcv"=>"HTTP_CSR_HASH")
+        self.domains = (self.domains.zip(values)).to_h
+      end
       self.domains.each do |k,v|
         unless v["dcv"] =~ /https?/i || v["dcv"] =~ /cname/i
           unless v["dcv"]=~EmailValidator::EMAIL_FORMAT
@@ -424,8 +479,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def validate_contacts
     if contacts
-      if contacts.is_a?(Array)
-          errors[:contacts] << "expecting hash, not array"
+      if !contacts.is_a?(Hash)
+          errors[:contacts] << "expecting hash"
         return false
       end
       errors[:contacts] = {}
@@ -471,7 +526,17 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     errors.add(:contacts, cur_err) if cur_err.any?
     errors.get(:contacts) ? false : true
   end
-  
+
+  def validate_callback
+    if !callback.is_a?(Hash)
+        errors[:callback] << "expecting hash"
+      return false
+    else
+      cb = UrlCallback.new(callback)
+      errors[:callback] = cb.errors unless cb.valid?
+    end
+  end
+
   def retrieve_registrant
     id = self.saved_registrant
     if id
@@ -520,6 +585,10 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
   def domains
     @domains || parameters_to_hash["domains"]
+  end
+
+  def cert_names
+    @cert_names || parameters_to_hash["cert_names"]
   end
 
   def ref

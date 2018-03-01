@@ -1,7 +1,7 @@
 class CaRetrieveCertificate < CaApiRequest
 
   def response_code
-    response =~ /\A(\d)\n/
+    response =~ /\A(\-?\d+)/
     $1.to_i
   end
 

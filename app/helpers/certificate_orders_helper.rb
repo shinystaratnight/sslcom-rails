@@ -10,21 +10,33 @@ module CertificateOrdersHelper
           items << pluralize(soi.quantity+1, "server license")
         end
         if certificate_order.certificate.is_ucc?
-          quantity = certificate_order.purchased_domains('all')
+          reprocess_order = @order && @order.reprocess_ucc_order?
+          reprocess_domains = @order.get_reprocess_domains if reprocess_order
+          
+          quantity = reprocess_order ? reprocess_domains[:all].count : certificate_order.purchased_domains('all')
+
           unless certificate_order.certificate_contents.empty?
-            d=certificate_order.all_domains
-            domains = d.blank? ? "" : d.join(", ")
-            wildcard_qty=certificate_order.purchased_domains('wildcard')
+            d            = reprocess_order ? reprocess_domains[:all] : certificate_order.all_domains
+            domains      = d.blank? ? "" : d.join(", ")
+            wildcard_qty = reprocess_order ? reprocess_domains[:wildcard].count : certificate_order.purchased_domains('wildcard')
+            
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
             elsif invoice
               items << pluralize(quantity, "#{certificate_order.certificate.is_premium_ssl? ? 'sub' : ''}domain") +
-                (wildcard_qty==0 ? '' : " (#{pluralize(certificate_order.purchased_domains('wildcard'), 'wildcard ssl domain')})")
+                (wildcard_qty==0 ? '' : " (#{pluralize(wildcard_qty, 'wildcard ssl domain')})")
               items << domains.split('+') unless domains.empty? || domains.blank?
             else
               items << content_tag(:dt,pluralize(quantity, "#{certificate_order.certificate.is_premium_ssl? ? 'sub' : ''}domain")+
-                (wildcard_qty==0 ? '' : " (#{pluralize(certificate_order.purchased_domains('wildcard'), 'wildcard ssl domain')})")) +
+                (wildcard_qty==0 ? '' : " (#{pluralize(wildcard_qty, 'wildcard ssl domain')})")) +
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
+            end
+            
+            if reprocess_order && reprocess_domains[:new_domains].count > 0
+              items << content_tag(:strong, 
+                "Prorated charge for #{reprocess_domains[:new_domains].count} 
+                additional domains: #{reprocess_domains[:new_domains].join(', ')}"
+              )
             end
           end
         end

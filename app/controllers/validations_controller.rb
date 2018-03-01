@@ -17,7 +17,7 @@ class ValidationsController < ApplicationController
   filter_access_to :edit, :show, :attribute_check=>true
   filter_access_to :admin_manage, :attribute_check=>true
   filter_access_to :send_to_ca, require: :sysadmin_manage
-  filter_access_to :get_asynch_domains, :require=>:new
+  filter_access_to :get_asynch_domains, :remove_domains, :get_email_addresses, :require=>:new
   in_place_edit_for :validation_history, :notes
 
   def search
@@ -38,16 +38,83 @@ class ValidationsController < ApplicationController
         format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
       end
     end
+
+    mdc_validation = ComodoApi.mdc_status(@certificate_order)
+    @ds = mdc_validation.domain_status
+
+    if @ds
+      all_validated = true
+      @ds.each do |key, value|
+        if value['status'].downcase != 'validated'
+          all_validated = false
+          break
+        end
+      end
+
+      if all_validated
+        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+      end
+    end
+  end
+
+  def remove_domains
+    domain_name_arry = params['domain_names'].split(',')
+    co = (current_user.is_system_admins? ? CertificateOrder :
+          current_user.ssl_account.certificate_orders).find_by_ref(params['certificate_order_id'])
+    order_number = co.external_order_number
+    result_obj = {}
+
+    domain_name_arry.each do |domain_name|
+      cn_obj = co.certificate_content.certificate_names.find_by_name(domain_name)
+      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: order_number)
+
+      error_code = -1
+      error_message = ''
+
+      if res.index('errorCode') && res.index('errorMessage')
+        error_code = res.split('&')[0].split('=')[1].to_i
+        error_message = res.split('&')[1].split('=')[1]
+      elsif res.index('errorCode') && !res.index('errorMessage')
+        error_code = 0
+      else
+        error_message = res
+      end
+
+      if error_code.zero?
+        cn_obj.destroy
+      else
+        result_obj[domain_name] = error_message.gsub("+", " ").gsub("%27", "'").gsub("%21", "!")
+      end
+    end
+
+    render :json => result_obj
+  end
+
+  def get_email_addresses
+    addresses = params['total_domains'].to_i > Validation::COMODO_EMAIL_LOOKUP_THRESHHOLD ?
+                    DomainControlValidation.email_address_choices(params['domain_name']) :
+                    ComodoApi.domain_control_email_choices(params['domain_name']).email_address_choices
+    addresses.delete("none")
+
+    returnObj = {}
+
+    addresses.each do |addr|
+      returnObj[addr] = addr
+    end
+
+    render :json => returnObj
   end
 
   def get_asynch_domains
-    cn = CertificateName.find(params['domain_id'])
+    co = (current_user.is_system_admins? ? CertificateOrder :
+              current_user.ssl_account.certificate_orders).find_by_ref(params['certificate_order_id'])
+    cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
     ds = params['domain_status']
     domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
 
-    if params['exist_ext_order_number']
+    if co.external_order_number
       dcv = cn.domain_control_validations.last
       if params['is_ucc'] == 'true'
         if ds && ds[cn.name]
@@ -79,8 +146,8 @@ class ValidationsController < ApplicationController
 
           returnObj = {
               'tr_info' => {
-                  'checkbox_id' => cn.id,
-                  'domain_name' => cn.name,
+                  # 'checkbox_id' => cn.id,
+                  # 'domain_name' => cn.name,
                   'options' => optionsObj,
                   'slt_option' => domain_method ?
                                       domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
@@ -92,18 +159,20 @@ class ValidationsController < ApplicationController
                   'count_domain' => count_domain,
                   'count_validated' => count_validated,
               },
-              'tr_instruction' => {
-                  'instruction' => "domains[#{cn.name}][dcv]",
-              }
+              # 'tr_instruction' => {
+              #     'instruction' => "domains[#{cn.name}][dcv]",
+              # }
+              'tr_instruction' => true
           }
         end
       else
         if Settings.enable_caa_test && CaaCheck.caa_lookup(cn)==false
           returnObj = {
-              'caa_test_failed' => {
-                  'checkbox_id' => cn.id,
-                  'domain_name' => cn.name,
-              }
+              # 'caa_test_failed' => {
+              #     'checkbox_id' => cn.id,
+              #     'domain_name' => cn.name,
+              # }
+              'caa_test_failed' => true
           }
         else
           last_sent = cn.last_dcv
@@ -138,8 +207,8 @@ class ValidationsController < ApplicationController
 
           returnObj = {
               'tr_info' => {
-                  'checkbox_id' => cn.id,
-                  'domain_name' => cn.name,
+                  # 'checkbox_id' => cn.id,
+                  # 'domain_name' => cn.name,
                   'options' => optionsObj,
                   'slt_option' => ds ?
                                       domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
@@ -150,9 +219,10 @@ class ValidationsController < ApplicationController
                   'status' => ds && ds[cn.name] ? domain_status.downcase : '',
                   'all_validated' => all_validated,
               },
-              'tr_instruction' => {
-                  'instruction' => "domains[#{cn.name}][dcv]",
-              }
+              # 'tr_instruction' => {
+              #     'instruction' => "domains[#{cn.name}][dcv]",
+              # }
+              'tr_instruction' => true
           }
         end
       end
@@ -178,8 +248,8 @@ class ValidationsController < ApplicationController
 
       returnObj = {
           'tr_info' => {
-              'checkbox_id' => cn.id,
-              'domain_name' => cn.name,
+              # 'checkbox_id' => cn.id,
+              # 'domain_name' => cn.name,
               'options' => optionsObj,
               'slt_option' => le.blank? ? nil : le.email_address,
               'pretest' => 'n/a',
@@ -187,9 +257,10 @@ class ValidationsController < ApplicationController
               'attempted_on' => 'n/a',
               'status' => 'waiting',
           },
-          'tr_instruction' => {
-              'instruction' => "domains[#{cn.name}][dcv]",
-          }
+          # 'tr_instruction' => {
+          #     'instruction' => "domains[#{cn.name}][dcv]",
+          # }
+          'tr_instruction' => true
       }
     end
 

@@ -15,11 +15,46 @@ class ComodoApi
   PLACE_ORDER_URL="https://secure.comodo.net/products/!PlaceOrder"
   RESEND_DCV_URL="https://secure.comodo.net/products/!ResendDCVEmail"
   AUTO_UPDATE_URL="https://secure.comodo.net/products/!AutoUpdateDCV"
+  AUTO_REMOVE_URL="https://secure.comodo.net/products/!AutoRemoveMDCDomain"
   REVOKE_SSL_URL="https://secure.comodo.net/products/!AutoRevokeSSL"
   COLLECT_SSL_URL="https://secure.comodo.net/products/download/CollectSSL"
   GET_MDC_DETAILS="https://secure.comodo.net/products/!GetMDCDomainDetails"
   RESPONSE_TYPE={"zip"=>0,"netscape"=>1, "pkcs7"=>2, "individually"=>3}
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
+
+  def self.auto_replace_ssl(options={})
+    cc = options[:certificateOrder].certificate_content
+    options[:send_to_ca]=true unless options[:send_to_ca]==false
+    comodo_params = {
+        'orderNumber'=>options[:certificateOrder].external_order_number,
+        'domainNames'=>options[:domainNames],
+        'dcvEmailAddresses'=>options[:domainDcvs],
+        'isCustomerValidated'=>'N'
+    }
+    comodo_params = comodo_params.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+
+    host = REPLACE_SSL_URL
+    url = URI.parse(host)
+    con = Net::HTTP.new(url.host, 443)
+    con.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    con.ca_path = '/etc/ssl/certs' if File.exists?('/etc/ssl/certs') # Ubuntu
+    con.use_ssl = true
+    cc.csr.touch
+    res = unless [false,"false"].include? options[:send_to_ca]
+            con.start do |http|
+              http.request_post(url.path, comodo_params)
+            end
+          end
+    ccr=cc.csr.ca_certificate_requests.create(request_url: host,
+                                              parameters: comodo_params, method: "post", response: res.try(:body), ca: "comodo")
+
+    unless ccr.success?
+      OrderNotifier.problem_ca_sending("comodo@ssl.com", options[:certificateOrder],"comodo").deliver
+    else
+      options[:certificateOrder].update_column(:external_order_number, ccr.order_number) if ccr.order_number
+    end
+    ccr
+  end
 
   def self.apply_for_certificate(certificate_order, options={})
     cc = options[:certificate_content] || certificate_order.certificate_content
@@ -78,6 +113,27 @@ class ComodoApi
     attr = {request_url: host,
       parameters: comodo_options, method: "post", response: res.body, ca: "comodo", api_requestable: owner}
     CaDcvResendRequest.create(attr)
+  end
+
+  def self.auto_remove_domain(options={})
+    owner = options[:domain_name]
+    comodo_options = {'orderNumber'=>options[:order_number].to_i, 'domainName'=>owner.name}
+    comodo_options = comodo_options.merge!(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+
+    host = AUTO_REMOVE_URL
+    res = send_comodo(host, comodo_options)
+
+    attr = {
+        request_url: host,
+        parameters: comodo_options,
+        method: "post",
+        response: res.body,
+        ca: "comodo",
+        api_requestable: owner
+    }
+
+    CaDcvResendRequest.create(attr)
+    res.body
   end
 
   # this is the only way to update multi domain dcv after the order is submitted

@@ -2,6 +2,7 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
+  rescue_from ActionController::InvalidAuthenticityToken, :with => :invalid_auth_token
   layout 'application'
   #include Authentication
   include ApplicationHelper
@@ -357,6 +358,10 @@ class ApplicationController < ActionController::Base
     redirect_to root_url
   end
 
+  def invalid_auth_token
+    render :text => "Invalid authentication token. Please restart session or go to #{root_url} to start a new session.", :status => 422
+  end
+
   #derive the model name from the controller. egs UsersController will return User
   def self.permission
     return name = self.name.gsub('Controller','').singularize.split('::').last.constantize.name rescue nil
@@ -420,8 +425,8 @@ class ApplicationController < ActionController::Base
     cookies[name].blank? ? {} : JSON.parse(cookies[name])
   end
 
-  #if in process of recerting (renewal, reprocess, etc), this sets instance
-  #variables from params. Only one type allowed at a time.
+  # if in process of recerting (renewal, reprocess, etc), this sets instance
+  # variables from params. Only one type allowed at a time.
   def detect_recert
     CertificateOrder::RECERTS.each do |r|
       unless params[r.to_sym].blank?

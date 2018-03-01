@@ -21,6 +21,8 @@ class ApiCertificateRequest < CaApiRequest
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :ref, :contacts, :options, :renewal_id, :billing_profile]
 
+  UPDATE_ACCESSORS_1_4 = [:cert_names]
+
   ACCESSORS = [:account_key, :secret_key, :product, :period, :server_count, :server_software, :domains, :options,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
       :street_address_1, :street_address_2, :street_address_3, :locality_name, :state_or_province_name,
@@ -29,7 +31,7 @@ class ApiCertificateRequest < CaApiRequest
       :assumed_name, :business_category, :email_address, :contact_email_address, :dcv_email_address,
       :ca_certificate_id, :is_customer_validated, :hide_certificate_reference, :external_order_number,
       :dcv_candidate_addresses, :dcv_method, :dcv_methods, :certificate_ref, :contacts, :admin_funded,
-      :ca_order_number, :debug, :api_call, :billing_profile]
+      :ca_order_number, :debug, :api_call, :billing_profile, :callback, :unique_value]
 
   REPROCESS_ACCESSORS = [:account_key, :secret_key, :server_count, :server_software, :domains,
       :domain, :common_names_flag, :csr, :organization_name, :organization_unit_name, :post_office_box,
@@ -59,7 +61,7 @@ class ApiCertificateRequest < CaApiRequest
   PRETEST_ACCESSOR = [:is_passed]
 
   # be sure to review wrap_parameters in ApiCertificateRequestsController when modifying attr_accessor below
-  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS).uniq
+  attr_accessor *(ACCESSORS+RETRIEVE_ACCESSORS+DCV_EMAILS_ACCESSORS+REVOKE_ACCESSORS+PRETEST_ACCESSOR+DETAILED_ACCESSORS+UPLOAD_ACCESSORS+UPDATE_ACCESSORS_1_4).uniq
 
   before_validation(on: :create) do
     ac=api_credential
@@ -124,7 +126,7 @@ class ApiCertificateRequest < CaApiRequest
   end
 
   # def find_certificate_orders(search,offset,limit)
-  def find_certificate_orders(search)
+  def find_certificate_orders(search,options={})
     is_test = self.test ? "is_test" : "not_test"
     co =
       if self.api_requestable.users.find(&:is_admin?)
@@ -134,7 +136,7 @@ class ApiCertificateRequest < CaApiRequest
         self.api_requestable.certificate_orders.not_new.send(is_test)
       end
       # end.offset(offset).limit(limit)
-    co = co.search_with_csr(search) if search
+    co = co.search_with_csr(search,options) if search
     if co
       self.filter=="vouchers" ? co.send("unused_credits") : co
     else

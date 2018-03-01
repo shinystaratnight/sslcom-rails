@@ -56,19 +56,10 @@ class SslAccountsController < ApplicationController
       redirect_to edit_ssl_account_path(params[:ssl_account].merge(update_company_name: true))
     end
   end
-
+  
   # PUT /ssl_account/
   def update
-    respond_to do |format|
-      if @ssl_account.update_attributes(params[:ssl_account])
-        flash[:notice] = 'Reseller profile information was successfully updated.'
-        format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
-        format.xml  { head :ok }
-      else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @ssl_account.errors, :status => :unprocessable_entity }
-      end
-    end
+    params[:monthly_billing] ? update_monthly_billing : update_reseller_profile
   end
 
   # PUT /ssl_account/
@@ -100,5 +91,33 @@ class SslAccountsController < ApplicationController
                        notes: "amount (in USD): #{amount.to_s}",
                        action: "FundedAccount#add_cents")
     redirect_to admin_show_user_path(@ssl_account.get_account_owner)
+  end
+  
+  private
+  
+  def update_monthly_billing
+    if current_user.is_system_admins?
+      ssl_account = SslAccount.where(
+        'ssl_slug = ? OR acct_number = ?', params[:ssl_slug], params[:ssl_slug]
+      ).first 
+      ssl_account.update(billing_method: (params[:status] == 'enable' ? 'monthly' : 'due_at_checkout'))
+      flash[:notice] = "Successfully #{params[:status]}d team #{params[:ssl_slug]} monthly billing."
+    else
+      flash[:error] = "You are not authorized to perform this action."
+    end  
+    redirect_to teams_user_path(current_user)
+  end  
+    
+  def update_reseller_profile
+    respond_to do |format|
+      if @ssl_account.update_attributes(params[:ssl_account])
+        flash[:notice] = 'Reseller profile information was successfully updated.'
+        format.html { redirect_to(account_path(ssl_slug: @ssl_slug)) }
+        format.xml  { head :ok }
+      else
+        format.html { render :action => "edit" }
+        format.xml  { render :xml => @ssl_account.errors, :status => :unprocessable_entity }
+      end
+    end
   end
 end

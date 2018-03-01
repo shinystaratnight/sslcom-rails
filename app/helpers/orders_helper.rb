@@ -30,7 +30,17 @@ module OrdersHelper
         element.attributes_before_type_cast["amount"].to_f}
     order
   end
-
+  
+  def current_order_reprocess_ucc
+    if current_user
+      @ssl_account = current_user.is_system_admins? ? @certificate_order.ssl_account : current_user.ssl_account
+      order        = @ssl_account.purchase(@certificate_order)
+      order.cents  = @certificate_order.ucc_prorated_amount(@certificate_content)
+      order.amount = Money.new(order.cents)
+      order
+    end
+  end
+  
   def is_current_order_affordable?
     current_user.ssl_account.funded_account.amount.cents >=
       current_order.amount.cents
@@ -176,6 +186,127 @@ module OrdersHelper
     return false if !declined || (declined && cards && cards.any? && cards.count < 2)
     declined && next_try && (next_try > DateTime.now)
   end
+  
+  def order_invoice_notes
+    "Payment for monthly invoice total of #{@invoice.get_amount_format} due on #{@invoice.end_date.strftime('%F')}."
+  end
+  
+  def reprocess_ucc_notes
+    "Reprocess UCC (certificate order: #{@certificate_order.ref}, certificate content: #{@certificate_content.ref})"
+  end
+  
+  def ucc_or_invoice_params
+    unless @monthly_invoice
+      @ssl_account = if current_user.is_system_admins?
+        CertificateOrder.find_by(ref: params[:order][:co_ref]).ssl_account
+      else
+        current_user.ssl_account
+      end
+    end
+    
+    unless params[:funding_source].nil? || 
+      (params[:funding_source] && params[:funding_source] == 'paypal')
+      existing_card = @ssl_account.billing_profiles.find(params[:funding_source])
+    end
+    
+    @funded_amount       = params[:order][:funded_amount].to_f
+    @order_amount        = params[:order][:order_amount].to_f
+    @charge_amount       = params[:order][:charge_amount].to_f
+    @too_many_declines   = delay_transaction? && (params[:payment_method] == 'credit_card')
+    @billing_profile     = BillingProfile.new(params[:billing_profile]) if params[:billing_profile]
+    @profile             = existing_card || @billing_profile
+    @credit_card         = @profile.build_credit_card
+    @funded_account_init = @ssl_account.funded_account.cents
+    @target_amount       = (@charge_amount.blank? || @charge_amount == 0) ? @order_amount : @charge_amount
+    
+    if @reprocess_ucc
+      @certificate_order   = @ssl_account.certificate_orders.find_by(ref: params[:order][:co_ref])
+      @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:order][:cc_ref])
+    end
+  end
+  
+  def withdraw_funded_account(amount)
+    @order.save unless @order.persisted?
+    payment_type = (amount >= (@order_amount * 100).to_i) ? 'Full' : 'Partial'
+    full_amount  = Money.new(@order.cents + amount).format
+    notes = "#{payment_type} payment for order ##{@order.reference_number} (#{full_amount}) "
+    notes << " for UCC certificate reprocess." if @reprocess_ucc
+    notes << " for monthly invoice ##{@invoice.reference_number}." if @monthly_invoice
+    
+    fund = Deposit.create(
+      amount:         amount,
+      full_name:      "Team #{@ssl_account.get_team_name} funded account",
+      credit_card:    'N/A',
+      last_digits:    'N/A',
+      payment_method: 'Funded Account'
+    )
+    
+    @funded = @ssl_account.purchase fund
+    @funded.description = 'Funded Account Withdrawal'
+    @funded.notes = notes
+    @funded.save
+    @funded.mark_paid!
+    @ssl_account.funded_account.decrement! :cents, amount
+    @ssl_account.funded_account.save
+  end
+  
+  def purchase_successful?
+    return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
+    
+    @order.description = if @reprocess_ucc
+      Order::SSL_REPROCESS_UCC
+    else
+      @monthly_invoice ? Order::INVOICE_PAYMENT : Order::SSL_CERTIFICATE
+    end
+    notes = @reprocess_ucc ? reprocess_ucc_notes : (@monthly_invoice ? order_invoice_notes : '')
+    
+    options = @profile.build_info(@order.description.gsub('Payment', 'Pmt')).merge(
+      stripe_card_token: params[:billing_profile][:stripe_card_token],
+      owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
+    )
+    
+    if @reprocess_ucc || @monthly_invoice
+      options.merge!(amount: (@target_amount.to_f * 100).to_i)
+    end
+    
+    @gateway_response = @order.purchase(@credit_card, options)
+    log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
+    (@gateway_response.success?).tap do |success|
+      if success
+        flash.now[:notice] = @gateway_response.message
+        @order.mark_paid!
+        # in case the discount becomes invalid before check out, give it to the customer
+        unless @reprocess_ucc || @monthly_invoice
+          @order.discounts.each do |discount|
+            Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
+          end
+        end
+        SystemAudit.create(
+            owner:  current_user,
+            target: @order,
+            action: "purchase successful",
+            notes:  notes
+        )
+      else
+        flash.now[:error] = if @gateway_response.message=~/no match/i
+          "CVV code does not match"
+        else
+          @gateway_response.message #no descriptive enough
+        end
+        @order.transaction_declined!
+        unless @reprocess_ucc || @monthly_invoice
+          @certificate_order.destroy unless @certificate_order.blank?
+        end
+      end
+    end
+  end
+
+  def order_reqs_valid?
+    @objects_valid ||=
+    @order.valid? && (params[:funding_source] ? @profile.valid? :
+      @billing_profile.valid?) && (current_user || @user.valid?)
+  end
+
 =begin
   def setup_certificate_order
     #adjusting duration to reflect number of days validity

@@ -1,0 +1,80 @@
+-content_for :title, 'Invoice Payment'
+-invoice_amount     = @invoice.get_amount
+-invoice_cents      = @invoice.get_cents
+-funded_account_amt = @ssl_account.funded_account(true).amount
+-remaining_amt      = invoice_amount - funded_account_amt
+-funded_account_amt = remaining_amt.cents < 0 ? invoice_amount : funded_account_amt
+-remaining_amt      = remaining_amt.cents < 0 ? Money.new(0) : remaining_amt
+-ssl_slug           = @ssl_slug || (@ssl_account.ssl_slug || @ssl_account.acct_number)
+  
+.reseller_registration_select_tier
+  %h3 Monthly Invoice Payment
+  %p
+    Please fill out the (*) required fields below.
+    -if invoice_cents > 0
+      This charge will appear as #{Settings.merchant_name} on your credit card statement.
+  =error_messages_for :user, :billing_profile, :credit_card, object_name: 'transaction'
+  
+  =form_for Order.new, url: make_payment_invoice_path(ssl_slug) do |f|
+    =f.hidden_field :id, value: params[:id]
+    
+    -if current_user && invoice_cents > 0
+      -# Funding Sources Section
+      #stylized.deposit_funds_form
+        -if @ssl_account
+          =render partial: "orders/billing_profiles", locals: {ssl_account: @ssl_account}
+        
+        -# Funding Sources: New Card
+        #billing_section
+          #register_card_form.hidden
+            .subheading Payment Method
+            -unless current_user
+              .paypal.clearfix
+                = label_tag 'Paypal'
+                = radio_button_tag :payment_method, 'paypal', false
+            .credit_card.clearfix
+              = label_tag 'Credit Card'
+              = radio_button_tag :payment_method, 'credit_card', true
+            #credit_card_form
+              =fields_for :billing_profile, @billing_profile do |form|
+                = render partial: 'billing_profiles/form', locals: { form: form, only_billing_profile: false }
+          
+          -# Order Amount
+          .subheading Total Amount To Charge
+          .clearfix
+            %label{for: "order_amount"}
+              Invoice Amount:
+              %span.label_desc charged in $USD
+            -data = {original_amount: invoice_amount, monthly_invoice: 'true', monthly_ref: @invoice.reference_number}
+            #reprocess_ucc_amount{data: data}
+              ="#{invoice_amount.format} USD"
+            =f.hidden_field :order_amount, value: (invoice_amount || 0)
+          
+          -# Funded Account Credit
+          -if funded_account_amt.cents > 0
+            .clearfix
+              %label{for: 'funded_amount'}
+                Funded Account Balance:
+                %span.label_desc credit applied towards invoice amount (maximum amount: #{funded_account_amt.format})
+              =f.number_field :funded_amount, |
+                value: funded_account_amt, |
+                min: 0, |
+                max: funded_account_amt, |
+                step: :any, |
+                required: true
+            
+            -# Remaining Amount
+            .clearfix
+              %label{for: 'charge_amount'}
+                Total $:
+                %span.label_desc
+                  ="Remaining amount"
+              =f.hidden_field :charge_amount, value: remaining_amt, data: {charge_initial: remaining_amt.to_s}
+              %span.lbl-usd#lbl-charge-amount
+                ="#{remaining_amt.format.gsub(/,/, '')}"
+          
+    #button_container
+      =render partial: 'shared/prev_next_buttons'
+    .waiting_bar.clearfix
+      =image_tag('waiting_bar_medium.gif', id: 'waiting_bar', style: 'display: none; vertical-align: middle;')
+=render partial: 'orders/index_scripts'

@@ -122,12 +122,16 @@ caption {
 }
 
 #line-items thead {
+  display: table-row-group;
   font-size: 0.75rem;
   color: #808080;
 }
 
 #line-items tbody tr {
   border-bottom: 1px solid #D3D3D3;
+  page-break-before: always;
+  page-break-after: always;
+  page-break-inside: avoid;
 }
 
 #line-items tbody td {
@@ -165,6 +169,12 @@ caption {
 
 #line-items .domain-names {
   font-size: 0.6rem;
+  color: #808080;
+}
+
+#line-items .domain-names-medium {
+  font-size: 0.8rem;
+  font-weight: 500;
   color: #808080;
 }
 

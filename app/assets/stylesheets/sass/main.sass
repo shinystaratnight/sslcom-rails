@@ -4404,8 +4404,16 @@ table#line_items_receipt
 #domains_label_text
   padding-bottom: 2px
 
-#current_balance, #balance_after_load, #tier_load_amount, #buying_tier_level,
-#calculated_price, .displayed_csr_field
+#current_balance, 
+#balance_after_load,
+#tier_load_amount,
+#buying_tier_level,
+#calculated_price,
+#calculated_reprocess_price,
+.displayed_csr_field,
+#ucc-wildcard-amount span,
+#ucc-nonwildcard-amount span,
+#reprocess_ucc_amount
   float: left
   font-size: 1.6em
   font-weight: bold
@@ -5778,7 +5786,8 @@ span.notifications-teams
   justify-content: center
   font-size: 1rem
 
-  .button-invoice
+  .button-invoice,
+  .button-mo-invoice
     background: -webkit-linear-gradient(#69B3FF, #334DFF)
     background: -o-linear-gradient(#69B3FF, #334DFF)
     background: -moz-linear-gradient(#69B3FF, #334DFF)
@@ -5793,6 +5802,9 @@ span.notifications-teams
     margin: 15px 15px
     padding: 5px 15px
     box-shadow: none
+
+  .button-mo-invoice
+    font-size: 1.3rem
 
 #invoice-container-errors
   .errors-invoice-update
@@ -6312,3 +6324,196 @@ span.notifications-teams
     td
       border-bottom: 1px solid #ccc
       padding: 2rem !important
+.api_certificate_request
+  position: relative
+  .domains_loader_wrap
+    position: absolute
+    background-color: rgba(0, 0, 0, .1)
+    z-index: 100
+    width: 100%
+    height: 100%
+    .domains_loader
+      position: absolute
+      left: calc(50% - 18px)
+      top: calc(50% - 18px)
+      border: 5px solid #f3f3f3
+      border-radius: 50%
+      border-top: 5px solid #9a9a9a
+      width: 26px
+      height: 26px
+      -webkit-animation: spin 2s linear infinite /* Safari */
+      animation: spin 2s linear infinite
+/* Safari */
+@-webkit-keyframes spin
+  0%
+    -webkit-transform: rotate(0deg)
+  100%
+    -webkit-transform: rotate(360deg)
+@keyframes spin
+  0%
+    transform: rotate(0deg)
+  100%
+    transform: rotate(360deg)
+#domains_validation
+  width: 100%
+  border: 1px solid black
+  padding: 1em
+  border-spacing: 0px
+  thead tr
+    height: 25px
+    > th
+      border-bottom: 1px solid grey
+      &:first-child
+        width: 130px
+        #validation_common_type
+          width: 100px
+        input[type='checkbox']
+          vertical-align: middle
+  tbody tr
+    &.removed_domain
+      background-color: lightgrey
+    &.certificate_name td
+      padding-bottom: 5px
+      padding-top: 5px
+      padding-left: 5px
+      &:first-child
+        text-align: center
+        padding-left: 0px
+        input[type='button']
+          margin-left: 3px
+      .check_box
+        vertical-align: middle
+
+/*
+ * Teams Index Page
+ */ 
+#team-detail-links
+  width: 45%
+  div
+    float: left
+  
+.btn-team-links,
+.btn-team-disable,
+.btn-team-enable,
+.btn-rmv-invoice-item,
+.btn-add-invoice-item
+  background-color: grey
+  border-radius: 3px
+  color: #FFFFFF !important
+  cursor: pointer
+  font-weight: 500
+  font-size: 1.1rem
+  letter-spacing: 1px
+  padding: 2px 3px
+  border: 1px solid grey
+  margin: 0.1rem
+  
+.btn-team-disable,
+.btn-rmv-invoice-item
+  background-color: #F51C29
+  border: 1px solid #F51C29
+
+.btn-team-enable,
+.btn-add-invoice-item
+  background-color: #6b9029
+  border: 1px solid #6b9029
+
+/*
+ * Invoices Page
+ */
+#invoice-status
+  color: grey
+  font-weight: 600
+  font-size: 1.2rem
+  
+.monthly-invoice
+  #summary
+    font-size: 1.5rem
+    display: flex
+    justify-content: center
+    
+    div
+      margin-right: 1.9rem
+      margin-bottom: 1rem
+    
+    span
+      color: grey
+      font-size: 1.2rem
+
+#validations.monthly-invoice,
+#validations.monthly-invoice > table,
+#validations.monthly-invoice > table td
+  border-color: #CCCCCC !important
+  
+#tbl-monthly-invoice
+  span
+    color: grey
+  
+  .description.total_row
+    text-align: right
+  
+  .order-funded td,
+  .order-total td,
+  .order-subtotal td
+    border: none
+    font-weight: 600
+    padding-top: 1rem !important
+    vertical-align: top !important
+      
+    &.price
+      padding-right: 1rem
+  
+  .order-subtotal td
+    border-top: 2px solid grey
+            
+  .order-funded
+    color: grey
+
+#monthly-invoice-actions,
+#monthly-invoice-pmt
+  margin: 2em auto 4em
+  width: 99.1%
+  clear: both
+  border: 1px #ccc solid
+
+#monthly-invoice-pmt
+  div
+    font-size: 1.4rem
+    margin: 1rem
+    color: grey
+  span
+    font-weight: 500
+    color: black
+
+/*
+ * Transaction Show: Reprocess UCC Section
+ */ 
+#order_details_reprocess_ucc
+  border: none
+  border-collapse: collapse
+  width: 100%
+  font-size: 1.4em
+  text-align: center
+  
+  tr td:first-child
+    margin-left: 0.5rem
+  
+  td
+    padding-bottom: 0.5rem
+    
+  tr.heading_row
+    color: grey
+    font-size: 1.1rem
+  
+  .domains-list
+  
+  .order-edit
+    font-weight: 500
+    
+  .order-divider
+    td
+      border-bottom: 1px solid #ccc
+      padding: 0.4rem 0 !important
+  
+  .reprocess-amount
+    font-weight: 600

@@ -1,4 +1,4 @@
--unless action_name == "deposit_funds"
+-unless action_name == "deposit_funds" || @order.on_monthly_invoice?
   #completed_order_results
     %h3.order_results_header
       Invoice Detail

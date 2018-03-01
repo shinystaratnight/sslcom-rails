@@ -37,6 +37,7 @@ class Csr < ActiveRecord::Base
   serialize   :subject_alternative_names
   validates_presence_of :body
   validates_presence_of :common_name, :if=> "!body.blank?", :message=> "field blank. Invalid csr."
+  validates   :unique_value, uniqueness: { scope: :public_key_sha1 }
 
   scope :search, lambda {|term|
     where(csrs.common_name =~ "%#{term}%").includes{certificate_content.certificate_order}.references(:all)
@@ -286,9 +287,25 @@ class Csr < ActiveRecord::Base
     sc
   end
 
+  def openssl_request
+    OpenSSL::X509::Request.new(body)
+  end
+
+  def public_key
+    openssl_request.public_key
+  end
+
+  def public_key_sha1
+    if read_attribute(:public_key_sha1).blank?
+      write_attribute(:public_key_sha1, OpenSSL::Digest::SHA1.new(public_key.to_der).to_s)
+      save unless new_record?
+    end
+    read_attribute(:public_key_sha1)
+  end
+
   def decode
     begin
-      OpenSSL::X509::Request.new(body).to_text if body
+      openssl_request.to_text if body
     rescue Exception
     end
   end
@@ -383,7 +400,11 @@ class Csr < ActiveRecord::Base
     if ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
       ca_certificate_requests.first.response_value("uniqueValue") # comodo has returned a unique already
     else
-      SecureRandom.hex(5) # generate our own
+      if read_attribute(:unique_value).blank?
+        write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
+        save unless new_record?
+      end
+      read_attribute(:unique_value)
     end
   end
 end

@@ -12,6 +12,7 @@ class CertificateContent < ActiveRecord::Base
   has_one     :registrant, :as => :contactable
   has_many    :certificate_contacts, :as => :contactable
   has_many    :certificate_names # used for dcv of each domain in a UCC or multi domain ssl
+  has_many    :url_callbacks, as: :callbackable
 
   accepts_nested_attributes_for :certificate_contacts, :allow_destroy => true
   accepts_nested_attributes_for :registrant, :allow_destroy => false
@@ -72,12 +73,14 @@ class CertificateContent < ActiveRecord::Base
   attr_accessor  :ajax_check_csr
   attr_accessor  :rekey_certificate
 
+  @@cli_domain = "https://sws.sslpki.com"
+
   preference  :reprocessing, default: false
   
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       cc = CertificateContent.find cc_id
-      domains.flatten.each_with_index do |domain, i|
+      all_domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
           cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end
@@ -204,14 +207,14 @@ class CertificateContent < ActiveRecord::Base
     if csr && certificate_names.find_by_name(csr.common_name).blank?
       certificate_names.create(name: csr.common_name, is_common_name: true)
     end
-    if domains.length <= DOMAIN_COUNT_OFFLOAD
-      domains.flatten.each_with_index do |domain, i|
+    if all_domains.length <= DOMAIN_COUNT_OFFLOAD
+      all_domains.flatten.each_with_index do |domain, i|
         if certificate_names.find_by_name(domain).blank?
           certificate_names.create(name: domain, is_common_name: csr.try(:common_name)==domain)
         end
       end
     else
-      domains.flatten.each_slice(100) do |domain_slice|
+      all_domains.flatten.each_slice(100) do |domain_slice|
         Delayed::Job.enqueue CertificateNamesJob.new(id, domain_slice)
       end
     end
@@ -223,6 +226,14 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate
     certificate_order.certificate
+  end
+
+  def self.cli_domain=(cli_domain)
+    @@cli_domain=cli_domain
+  end
+
+  def cli_domain
+    @@cli_domain
   end
 
   def domains=(names)
@@ -267,6 +278,11 @@ class CertificateContent < ActiveRecord::Base
 
   def certificate_names_by_domains
     all_domains.map{|d|certificate_names.find_by_name(d)}.compact
+  end
+
+  def callback
+    url_callbacks.last.perform_callback(certificate_hook:
+          %x"#{certificate_order.to_api_string(action: "show", domain_override: "#{@@cli_domain}", show_credentials: true)}") unless url_callbacks.blank?
   end
 
   def dcv_domains(options)
@@ -369,7 +385,7 @@ class CertificateContent < ActiveRecord::Base
   end
 
   def comodo_server_software_id
-    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software.id]
+    COMODO_SERVER_SOFTWARE_MAPPINGS[server_software ? server_software.id : -1]
   end
 
   def has_all_contacts?
@@ -505,6 +521,13 @@ class CertificateContent < ActiveRecord::Base
     end
   end
 
+  def uniq_certificate_names
+    certificate_names.pluck(:name).uniq.map{|c|certificate_names.order("created_at asc").find_by_name(c).id}
+  end
+
+  def dedupe_certificate_names
+    CertificateName.delete(certificate_names.pluck(:id) - uniq_certificate_names)
+  end
   # 1- End Entity Profile : DV_SERVER_CERT_EE and Certificate Profile: DV_RSA_SERVER_CERT
   #
   # Subject DN

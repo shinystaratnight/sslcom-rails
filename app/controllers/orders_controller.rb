@@ -63,22 +63,26 @@ class OrdersController < ApplicationController
   end
 
   def new
-    if params[:certificate_order]
-      @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
-      unless params["prev.x".intern].nil?
-        redirect_to buy_certificate_url(@certificate) and return
+    if params[:reprocess_ucc]
+      new_reprocess_ucc
+    else  
+      if params[:certificate_order]
+        @certificate = Certificate.for_sale.find_by_product(params[:certificate][:product])
+        unless params["prev.x".intern].nil?
+          redirect_to buy_certificate_url(@certificate) and return
+        end
+        render(:template => "/certificates/buy",
+          :layout=>"application") and return unless certificate_order_steps
+      else
+        certificates_from_cookie
       end
-      render(:template => "/certificates/buy",
-        :layout=>"application") and return unless certificate_order_steps
-    else
-      certificates_from_cookie
-    end
-    if current_user
-      if @certificate_orders && is_order_free?
-        create_multi_free_ssl
-      elsif current_user.ssl_account.funded_account.cents > 0
-        redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
-                        allocate_funds_for_order_path(id: :order)) and return
+      if current_user
+        if @certificate_orders && is_order_free?
+          create_multi_free_ssl
+        elsif current_user.ssl_account.funded_account.cents > 0
+          redirect_to(is_current_order_affordable? ? confirm_funds_url(:order) :
+                          allocate_funds_for_order_path(id: :order)) and return
+        end
       end
     end
   end
@@ -140,9 +144,21 @@ class OrdersController < ApplicationController
   end
   
   def update_invoice
-    found   = Invoice.find_by(order_id: @order.id)
-    update  = found ? found : Invoice.new(params[:invoice])
-    no_errors = found ? update.update_attributes(params[:invoice]) : update.save
+    monthly_invoice = params[:monthly_invoice]
+    
+    found = if monthly_invoice
+      Invoice.find_by(reference_number: monthly_invoice[:invoice_ref])
+    else
+      Invoice.find_by(order_id: @order.id) if @order
+    end
+    update = found ? found : Invoice.new(params[:invoice])
+    
+    no_errors = if found
+      new_params = monthly_invoice ? monthly_invoice : params[:invoice]
+      update.update_attributes(new_params.keep_if {|k, v| !['order_id', 'invoice_ref'].include?(k)})
+    else
+      update.save
+    end
 
     respond_to do |format|
       if no_errors
@@ -411,7 +427,32 @@ class OrdersController < ApplicationController
       flash.now[:error] = error.message
       render :action => 'new'
   end
+  
+  # Order created for existing UCC certificate order on reprocess/rekey 
+  def create_reprocess_ucc
+    @reprocess_ucc = true
+    ucc_or_invoice_params
+    
+    @order = Order.new(
+      billing_profile_id: params[:funding_source],
+      amount:             @target_amount,
+      cents:             (@target_amount * 100).to_i,
+      description:        Order::SSL_REPROCESS_UCC,
+      state:              'pending',
+      approval:           'approved',
+      notes:              reprocess_ucc_notes
+    )
+    @order.billable = @ssl_account
 
+    if @funded_amount > 0 && (@order_amount <= @funded_amount)
+      # All amount covered by credit from funded account
+      reprocess_ucc_funded_account(params)
+    else
+      # Pay full or partial payment by CC or Paypal
+      reprocess_ucc_hybrid_payment(params)
+    end
+  end
+    
   def create_free_ssl
     @order = Order.new(params[:order])
     unless current_user
@@ -483,7 +524,122 @@ class OrdersController < ApplicationController
   end
 
   private
+  
+  # ============================================================================
+  # UCC Certificate reprocess/rekey helper methods for 
+  #   Invoiced Order:       will be added to monthly invoice to be charged later
+  #   Free Order:           no additional domains, or fully covered by funded account credit
+  #   Hybrid Payment Order: amount paid by BOTH funded account and (CC or Paypal)
+  # ============================================================================
+  def reprocess_ucc_redirect_back
+    redirect_to new_order_path(@ssl_slug,
+      co_ref: @certificate_order.ref, cc_ref: @certificate_content.ref, reprocess_ucc: true
+    )
+  end
+  
+  def reprocess_ucc_funded_account(params)
+    withdraw_amount     = @order_amount < @funded_amount ? @order_amount : @funded_amount
+    withdraw_amount     = (withdraw_amount * 100).to_i
+    withdraw_amount_str = Money.new(withdraw_amount).format
+    
+    withdraw_funded_account(withdraw_amount)
+    
+    if current_user && @order.valid? &&
+      ((@ssl_account.funded_account.cents + withdraw_amount) == @funded_account_init)
+      reprocess_ucc_order_free(params)
+      flash[:notice] = "Succesfully paid full amount of #{withdraw_amount_str} from funded account for order."
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      flash[:error] = "Something went wrong, did not withdraw #{withdraw_amount_str} from funded account!"
+      reprocess_ucc_redirect_back
+    end
+  end
+    
+  def reprocess_ucc_hybrid_payment(params)
+    if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?
+      save_billing_profile unless (params[:funding_source])
+      @order.billing_profile = @profile
+      @certificate_order.add_reproces_order @order
+      withdraw_funded_account((@funded_amount * 100).to_i) if @funded_amount > 0
+      record_order_visit(@order)
+      redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+    else
+      if @too_many_declines
+        flash[:error] = 'Too many failed attempts, please wait 1 minute to try again!'
+      end
+      reprocess_ucc_redirect_back
+    end
+    rescue Payment::AuthorizationError => error
+      flash[:error] = error.message
+      reprocess_ucc_redirect_back
+  end
+  
+  def reprocess_ucc_order_free(params)
+    # On UCC reprocess, order is FREE if
+    #   fully covered by funded account, or
+    #   there were no additional domains from initial order
+    @order.billing_profile_id = nil
+    @order.deducted_from_id = nil
+    @order.state = 'paid'
+    @certificate_order.add_reproces_order @order
+    record_order_visit(@order)
+    @order.save
+  end
+  
+  def reprocess_ucc_invoice(params)
+    ssl_id  = @ssl_account.id
+    invoice = if MonthlyInvoice.invoice_exists?(ssl_id)
+      MonthlyInvoice.get_current_invoice(ssl_id)
+    else
+      MonthlyInvoice.create(billable_id: ssl_id, billable_type: 'SslAccount')
+    end
+    
+    @order             = current_order_reprocess_ucc
+    @order.description = Order::SSL_REPROCESS_UCC
+    @order.state       = 'invoiced'
+    @order.notes       = reprocess_ucc_notes
+    @order.invoice_id  = invoice.id
+    @order.approval    = 'approved'
+    @certificate_order.add_reproces_order @order
+    record_order_visit(@order)
+  end
+    
+  def new_reprocess_ucc
+    if current_user
+      @certificate_order   = (current_user.is_system_admins? ? CertificateOrder :
+                                  current_user.ssl_account.certificate_orders).find_by(ref: params[:co_ref])
+      @ssl_account = @certificate_order.ssl_account
+      @certificate_content = @certificate_order.certificate_contents.find_by(ref: params[:cc_ref])
+      @reprocess_ucc       = true
+      amount               = @certificate_order.ucc_prorated_amount(@certificate_content)
 
+      if @ssl_account.billing_monthly? || amount == 0
+        if amount == 0 # Reprocess is free, no additional domains added
+          @order = Order.new(
+            amount:      0,
+            cents:       0,
+            description: Order::SSL_REPROCESS_UCC,
+            notes:       reprocess_ucc_notes,
+            approval:    'approved'
+          )
+          @order.billable = @ssl_account
+          reprocess_ucc_order_free(params)
+          flash[:notice] = "This UCC certificate reprocess is free due to no additional domains."
+        end
+        
+        if @ssl_account.billing_monthly? && amount > 0 # Invoice Order, do not charge
+          reprocess_ucc_invoice(params)
+          flash[:notice] = "This UCC reprocess in the amount of #{Money.new(amount).format} will appear on the monthly invoice."
+        end
+        redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order)
+      else
+        render 'new_reprocess_ucc'
+      end
+    else
+      redirect_to login_url and return
+    end
+  end
+  
   def set_row_page
     preferred_row_count = current_user.preferred_order_row_count
     @per_page = params[:per_page] || preferred_row_count.or_else("10")
@@ -530,44 +686,6 @@ class OrdersController < ApplicationController
       @certificate_order.renewal_id=instance_variable_get("@#{CertificateOrder::RENEWING}").id
     end
     @certificate_order.valid?
-  end
-
-  def order_reqs_valid?
-    @objects_valid ||=
-    @order.valid? && (params[:funding_source] ? @profile.valid? :
-      @billing_profile.valid?) && (current_user || @user.valid?)
-  end
-
-  def purchase_successful?
-    return false unless (ActiveMerchant::Billing::Base.mode == :test ? true : @credit_card.valid?)
-    @order.description = Order::SSL_CERTIFICATE
-    options = @profile.build_info(Order::SSL_CERTIFICATE).merge(
-        stripe_card_token: params[:billing_profile][:stripe_card_token],
-        owner_email: current_user.nil? ? params[:user][:email] : current_user.ssl_account.get_account_owner.email
-      )
-    @gateway_response = @order.purchase(@credit_card, options)
-    log_declined_transaction(@gateway_response, @credit_card.number.last(4)) unless @gateway_response.success?
-    (@gateway_response.success?).tap do |success|
-      if success
-        flash.now[:notice] = @gateway_response.message
-        @order.mark_paid!
-        # in case the discount becomes invalid before check out, give it to the customer
-        @order.discounts.each do |discount|
-          Discount.decrement_counter(:remaining, discount) unless discount.remaining.blank?
-        end
-        SystemAudit.create(
-            owner:  current_user,
-            target: @order,
-            action: "purchase successful",
-            notes:  ""
-        )
-      else
-        flash.now[:error] = @gateway_response.message=~/no match/i ? "CVV code does not match" :
-            @gateway_response.message #no descriptive enough
-        @order.transaction_declined!
-        @certificate_order.destroy unless @certificate_order.blank?
-      end
-    end
   end
 
   def find_order

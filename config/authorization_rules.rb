@@ -20,7 +20,7 @@ authorization do
     has_permission_on :managed_users, :ssl_accounts, :validations, :validation_histories,
       :to => :sysadmin_manage
     has_permission_on :resellers,    to: [:create, :read, :update]
-    has_permission_on :orders,       to: :refund_merchant
+    has_permission_on :orders,       to: [:refund_merchant, :update_invoice]
     has_permission_on :ssl_accounts, to: [
       :create,
       :read,
@@ -33,6 +33,14 @@ authorization do
     # Users
     #
     has_permission_on :users, :to => :sysadmin_manage
+    #
+    # Invoices
+    #
+    has_permission_on :invoices, to: [
+      :add_item,
+      :remove_item,
+      :paid_wire_transfer
+    ]
   end
 
   # ============================================================================
@@ -181,6 +189,18 @@ authorization do
       if_attribute :users_can_manage => contains {user}
     end
     has_permission_on :billing_profiles, to: [:create, :index]
+    # 
+    # Invoices
+    # 
+    has_permission_on :invoices, to: :index
+    has_permission_on :invoices, to: [
+      :download,
+      :make_payment,
+      :new_payment,
+      :show
+    ] do
+      if_attribute billable: is {user.ssl_account}
+    end
     #
     # FundedAccounts
     #  most routes do not use 'id' in params to denote funded_account id
@@ -211,6 +231,7 @@ authorization do
         :create,
         :create_free_ssl,
         :create_multi_free_ssl,
+        :create_reprocess_ucc,
         :delete,
         :read,
         :update

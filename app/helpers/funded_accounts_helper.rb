@@ -3,7 +3,8 @@ module FundedAccountsHelper
   # do we show the billing info prompt?
   def initial_display?
     return {} unless current_user
-    ((current_user.ssl_account.billing_profiles(true).reject(&"expired?".to_sym).blank? && !current_page?(action: "allocate_funds")) ||
+    ssl = (@reprocess_ucc || @monthly_invoice) ? @ssl_account : current_user.ssl_account
+    ((ssl.billing_profiles(true).reject(&"expired?".to_sym).blank? && !current_page?(action: "allocate_funds")) ||
       @funded_account.try(:funding_source)==FundedAccount::NEW_CREDIT_CARD ||
       !@billing_profile.try(:errors).blank? || !flash.now[:error].blank?) ?
       {} : {:class => 'hidden'}

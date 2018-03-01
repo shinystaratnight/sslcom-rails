@@ -145,9 +145,10 @@ class CertificateOrdersController < ApplicationController
     unless @certificate_order.blank?
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
-      domains = @certificate_order.all_domains
-      @certificate_content = @certificate_order.certificate_contents.build(domains: domains,
-                                         server_software_id: @certificate_order.certificate_content.server_software_id)
+      @certificate_content = @certificate_order.certificate_contents.build(
+        domains: @certificate_order.domains,
+        server_software_id: @certificate_order.certificate_content.server_software_id
+      )
       # @certificate_content.additional_domains = domains
       #reset dcv validation
       @certificate_content.agreement=true
@@ -245,19 +246,30 @@ class CertificateOrdersController < ApplicationController
     @certificate_order.has_csr=true #we are submitting a csr afterall
     @certificate_content.certificate_order=@certificate_order
     @certificate_content.preferred_reprocessing=true if eval("@#{CertificateOrder::REPROCESSING}")
-
+    reprocess_ucc = params[:reprocessing] && params[:certificate][:product] == 'ucc'
     respond_to do |format|
       if @certificate_content.valid?
         cc = @certificate_order.transfer_certificate_content(@certificate_content)
-        if cc.pending_validation?
-          format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
+        if reprocess_ucc
+          format.html {redirect_to new_order_path(@ssl_slug,
+            co_ref: @certificate_order.ref, cc_ref: cc.ref, reprocess_ucc: true
+          )}
+        else  
+          if cc.pending_validation?
+            format.html { redirect_to certificate_order_path(@ssl_slug, @certificate_order) }
+          end
+          format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
+          format.xml  { head :ok }
         end
-        format.html { redirect_to edit_certificate_order_path(@ssl_slug, @certificate_order) }
-        format.xml  { head :ok }
       else
-        @certificate = @certificate_order.certificate
-        format.html { render '/certificates/buy', :layout=>'application' }
-        format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
+        if reprocess_ucc
+          flash[:error] = "Please correct errors in this step. #{@certificate_content.errors.full_messages.join(', ')}."
+          format.html { redirect_to reprocess_certificate_order_path(@ssl_slug, @certificate_order) }
+        else
+          @certificate = @certificate_order.certificate
+          format.html { render '/certificates/buy', :layout=>'application' }
+          format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
+        end
       end
     end
   end
@@ -444,7 +456,7 @@ class CertificateOrdersController < ApplicationController
     @certificate_order=CertificateOrder.unscoped{
       (current_user.is_system_admins? ? CertificateOrder :
               current_user.ssl_account.certificate_orders).find_by_ref(params[:id])} if current_user
-    render :text => "404 Not Found", :status => 404 unless @certificate_order
+    render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
   def setup_registrant

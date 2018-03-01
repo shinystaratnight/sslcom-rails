@@ -34,5 +34,11 @@
         -elsif current_user.ssl_account.is_registered_reseller?
           %span funded account
         -else
-          %span=@order.state.humanize.downcase
+          -if @order.on_monthly_invoice?
+            -invoice = @order.monthly_invoice
+            %span
+              %strong
+                =link_to "monthly invoice (#{invoice.status})", invoice_path(@ssl_slug, invoice.reference_number)
+          -else
+            %span=@order.state.humanize.downcase
   =render :partial=>'/funded_accounts/certificate_order_detail'

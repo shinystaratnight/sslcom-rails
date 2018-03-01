@@ -222,10 +222,26 @@ jQuery(function($) {
         }
     };
     $('form.edit_validation_ruling').ajaxForm(options);
-    $('form.api_certificate_request').ajaxForm({
+    /*$('form.api_certificate_request').ajaxForm({
       dataType: "json",
       beforeSubmit: function(){
-        confirmed = confirm('Proceed with validation?');
+        var domain_list = $('tbody.domain_list').find('tr.certificate_name');
+        var ori_domain_names_str = $('#ori_domain_names_str').val();
+        var domain_names_str = '';
+        $.each(domain_list, function(idx, domain) {
+          domain_names_str = domain_names_str + ',' + $(domain).find('.check_box').prop('name');
+        });
+
+        var api_domain = '< %=api_domain%>';
+        var update_dcv = '< %api_certificate_update_v1_4_path(@certificate_order.ref)%>';
+
+        if (ori_domain_names_str == domain_names_str) {
+          $(this).attr('action', '');
+        } else {
+          $(this).attr('action', '');
+        }
+
+        confirmed = confirm('Proceed with validation??????');
         if(confirmed){
           $('#waiting_bar').show();
         }
@@ -250,7 +266,7 @@ jQuery(function($) {
 //          alert("Validation updated.");
         }
       }
-    });
+    });*/
     $('input:checkbox[name*=publish_to_site_seal]').click(function(){
       $(this).parents().filter('form').ajaxSubmit();
     });
@@ -349,7 +365,12 @@ jQuery(function($) {
         wwwhttps = "https://"+wwwfile;
         wwwhttp = "http://"+wwwfile;
         cname = $('.dns_md5_hash').text()+"."+$(this).attr("alt").replace("*.", "").toLowerCase()+" -> "+$('.dns_sha2_hash').text()+".comodoca.com";
-        if(/@/.test(methods[0])){
+
+        if (methods[0] == 'Please select a validation method') {
+          $(instruction).html("");
+          $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
+        }
+        else if(/@/.test(methods[0])){
           $(instruction).html("Validation instructions will be emailed to "+methods[0]+". Please follow those instructions.")
           $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html("n/a").css({ background: "white", color:"black" });
         }
@@ -549,30 +570,516 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'new') {
       <%if @certificate_order%>
-        var domain_str = $('#cert_names_ids_str').val();
-        var domains = domain_str.substr(0, domain_str.length - 1).split(',');
-        var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
-        var exist_ext_order_number = '<%=@certificate_order.external_order_number%>';
-        <%
-          mdc_validation = ComodoApi.mdc_status(@certificate_order)
-          ds = mdc_validation.domain_status
-          is_ucc = @certificate_order.certificate.is_ucc?
-        %>
+        // Form Submit by AJAX
+        $('form.api_certificate_request').ajaxForm({
+          dataType: "json",
+          beforeSubmit: function(){
+            var domain_list = $('tbody.domain_list').find('tr.certificate_name');
+            var ori_domain_names_str = $('#ori_domain_names_str').val().split(',');
+            var domain_names_str = '';
+            $.each(domain_list, function(idx, domain) {
+              if ($(domain).hasClass('removed_domain') == false) {
+                /*domain_names_str = domain_names_str + ',' + $(domain).find('.check_box').prop('alt');*/
+                domain_names_str = domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+              }
+            });
+            domain_names_str = domain_names_str.substr(1).split(',');
 
-        var all_validated = false;
-        var count_validated = 0;
-        var count_domain = 0;
-        var total = domains.length;
+            var api_domain = '<%=api_domain%>';
+            var update_dcv = '<%=api_certificate_update_v1_4_path(@certificate_order.ref)%>';
+            var replace_ssl = '<%=api_certificate_replace_v1_4_path(@certificate_order.ref)%>';
 
-        $.each(domains, function(idx, value) {
-          if (value != '') {
+            if ($(ori_domain_names_str).not(domain_names_str).length == 0 && $(domain_names_str).not(ori_domain_names_str).length == 0) {
+              $(this).attr('url', api_domain + update_dcv);
+            } else {
+              $(this).attr('url', api_domain + replace_ssl);
+            }
+
+            confirmed = confirm('Proceed with validation?');
+            if(confirmed){
+              $('#waiting_bar').show();
+            }
+            return confirmed;
+          },
+          success: function(data, status){
+  //        $('#waiting_on_csr').hide();
+  //        $('.submit_csr').removeAttr('disabled');
+  //        $('.submit_csr').attr('value', submit_label);
+            /*location.reload(true);
+            if(data.errors){
+              $('.error').html("The following fields have errors:</br><ul>");
+              $.each(data.errors, function(i, item) {
+                // i = index
+                // item = data for a particular post
+                $('.error').append("<li>"+i+": "+item.toString()+"</li>");
+              });
+              $('.error').append("</ul>").show();
+            }
+            else{
+  //          window.location.href = data.certificate_url;
+  //          alert("Validation updated.");
+            }*/
+
+            if (data.errors) {
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.html('The following fields have errors: </br><ul>');
+              $.each(data.errors, function(i, item) {
+                message_element.append('<li>' + i + ': ' + item.toString() + '</li>');
+              });
+              message_element.append('</ul>');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                $('#content').find('.inner').children().first().remove();
+              }
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              $('#waiting_bar').hide();
+            } else {
+              location.reload(true);
+            }
+          }
+        });
+
+        // Click Remove button per domain.
+        $(document).on('click', '.btn_remove_domain', function() {
+          /*var domain_name = $('input:first-child', $(this).parent()).prop('alt');
+          var confirmMsg = 'Are you sure you want to remove the following domain from this order?';
+          confirmMsg = confirmMsg.concat('\r\n      ' + domain_name);
+
+          if (confirm(confirmMsg)) {
+            $(this).parent().parent().next().remove();
+            $(this).parent().parent().remove();
+          }*/
+
+          /*var domain_id = $(this).prev().prop('id');
+          var domain_name = $(this).prev().prop('alt');*/
+          var domain_name = $(this).prev().prop('id');
+          $(this).parent().css('background-color', 'white');
+
+          var ajaxRemoveDomainUrl = '<%=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+          var confirmMsg = 'Are you sure you want to remove the following domain from this order?';
+          confirmMsg = confirmMsg.concat('\r\n      ' + domain_name);
+
+          if (confirm(confirmMsg)) {
+            /*$('#upload_validations').hide();
+            $('.domains_loader_wrap').show();*/
+            $('[id="certificate_name__' + domain_name + '"]').next().hide();
+            $('[id="certificate_name__' + domain_name + '"]').hide();
+
+            $.ajax({
+              url: ajaxRemoveDomainUrl,
+              data: {
+                domain_names: domain_name
+              },
+              type: "POST",
+              success: function (result) {
+                if (Object.keys(result).length > 0) {
+                  var message_wrap_element = $('<div></div>');
+                  message_wrap_element.attr('class', 'flash_message error');
+
+                  var message_element = $('<span></span>');
+                  Object.keys(result).map(function(key) {
+                    /*$('#' + key).parent().css('background-color', 'red');*/
+                    $('td:first-child', $('[id="certificate_name__' + key + '"]')).css('background-color', 'red');
+                    message_element.append(key + ' : ' + result[key] + '\r\n');
+                  });
+                  message_wrap_element.append(message_element);
+
+                  var btn_element = $('<small></small>');
+                  var close_btn_element = $('<div></div>');
+                  close_btn_element.attr('class', 'close_flash_message');
+
+                  var close_sign_element = $('<span></span>');
+                  close_sign_element.append('X');
+
+                  close_btn_element.append(close_sign_element);
+                  close_btn_element.append('close');
+
+                  btn_element.append(close_btn_element);
+                  message_wrap_element.append(btn_element);
+
+                  if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                    $('#content').find('.inner').children().first().remove();
+                  }
+                  message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+
+                  /*$('#upload_validations').show();*/
+                  $('[id="certificate_name__' + domain_name + '"]').next().show();
+                  $('[id="certificate_name__' + domain_name + '"]').show();
+                } else {
+                  /*$('#certificate_name_' + domain_id).next().remove();
+                  $('#certificate_name_' + domain_id).remove();*/
+                  $('[id="certificate_name__' + domain_name + '"]').next().remove();
+                  $('[id="certificate_name__' + domain_name + '"]').remove();
+
+                  var domain_str = $('#ori_domain_names_str').val();
+                  domain_str = domain_str.replace(',' + domain_name, '');
+                  $('#ori_domain_names_str').val(domain_str);
+
+                  /*if ($('tbody.domain_list').find('tr.certificate_name').length > 0) {
+                    $('#upload_validations').show();
+                  }*/
+                }
+
+                /*$('.domains_loader_wrap').hide();*/
+              }
+            });
+          }
+        });
+
+        // Click Edit button per domain.
+        $(document).on('click', '.btn_edit_domain', function() {
+          $(this).parent().css('background-color', 'white');
+          $(this).siblings().prop('disabled', true);
+
+          var domain_name = $(this).parent().next().text();
+          var inputElement = $('<input></input>');
+          inputElement.attr('value', domain_name);
+
+          $(this).parent().next().empty();
+          $(this).parent().next().append(inputElement);
+
+          $(this).attr('class', 'btn_save_domain');
+          $(this).attr('value', 'Save');
+        });
+
+        // Click Save button per domain.
+        $(document).on('click', '.btn_save_domain', function() {
+          if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+            $('#content').find('.inner').children().first().remove();
+          }
+
+          var new_domain_name = $(this).parent().next().find('input').val();
+          /*var origin_name = $('input:first-child', $(this).parent()).prop('alt');*/
+          var origin_name = $('input:first-child', $(this).parent()).prop('id');
+
+          if (new_domain_name == origin_name) {
+            $(this).parent().next().empty();
+            $(this).parent().next().append(origin_name);
+
+            $(this).siblings().prop('disabled', false);
+            $(this).attr('class', 'btn_edit_domain');
+            $(this).attr('value', 'Edit');
+          } else {
+            // checking domain name's duplication.
+            var domain_list = $('tbody.domain_list').find('tr.certificate_name');
+            var is_duplicated = false;
+            $.each(domain_list, function(idx, domain) {
+              /*var other_domain_name = $(domain).find('.check_box').prop('alt');*/
+              var other_domain_name = $(domain).find('.check_box').prop('id');
+              if (other_domain_name == new_domain_name) {
+                is_duplicated = true;
+                return false;
+              }
+            });
+
+            if (is_duplicated) {
+              $(this).parent().next().find('input').val(origin_name);
+
+              var message_wrap_element = $('<div></div>');
+              message_wrap_element.attr('class', 'flash_message error');
+
+              var message_element = $('<span></span>');
+              message_element.append(new_domain_name + ' : This domain name already exist.\r\n');
+              message_wrap_element.append(message_element);
+
+              var btn_element = $('<small></small>');
+              var close_btn_element = $('<div></div>');
+              close_btn_element.attr('class', 'close_flash_message');
+
+              var close_sign_element = $('<span></span>');
+              close_sign_element.append('X');
+
+              close_btn_element.append(close_sign_element);
+              close_btn_element.append('close');
+
+              btn_element.append(close_btn_element);
+              message_wrap_element.append(btn_element);
+
+              message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+            } else {
+              $(this).siblings().prop('disabled', false);
+              $(this).attr('class', 'btn_edit_domain');
+              $(this).attr('value', 'Edit');
+
+              // Reflecting new domain names to elements related with domain name.
+              $('input:first-child', $(this).parent()).attr('id', new_domain_name);
+              $('input:last-child', $(this).parent()).attr('value', new_domain_name);
+
+              var siblings = $(this).parent().siblings();
+              $.each(siblings, function(idx, sibling) {
+                var class_str = $(sibling).prop('class');
+
+                if (class_str === '') {
+                  $('select', $(sibling)).attr('name', 'domains[' + new_domain_name + '][dcv]');
+                  $('select', $(sibling)).attr('id', 'domains_' + new_domain_name + '_dcv');
+                  $('select', $(sibling)).attr('alt', new_domain_name);
+                } else {
+                  if (class_str.split(' ')[0] === 'domain_name') {
+                    $(sibling).empty();
+                    $(sibling).append(new_domain_name);
+                  }
+                  $(sibling).attr('class', class_str.split(' ')[0] + ' ' + new_domain_name);
+                }
+              });
+
+              $('span', $(this).parent().parent().next()).attr('alt', 'domains[' + new_domain_name + '][dcv]');
+
+              // Getting all email address for new domain.
+              var ajaxGetEmailAddressUrl = '<%=get_email_addresses_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+              /*var domain_str = $('#cert_names_ids_str').val();*/
+              var domain_str = $('#ori_domain_names_str').val();
+              var total = 0;
+              if (domain_str.length > 0) {
+                total = domain_str.split(',').length;
+                $('#upload_validations').hide();
+                $('.domains_loader_wrap').show();
+
+                $.ajax({
+                  url: ajaxGetEmailAddressUrl,
+                  data: {
+                    domain_name: new_domain_name,
+                    total_domains: total
+                  },
+                  type: "POST",
+                  success: function (result) {
+                    var optGroupElement = $('optgroup:first', $('[name="domains[' + new_domain_name + '][dcv]"]'));
+                    optGroupElement.empty();
+
+                    Object.keys(result).map(function (optKey) {
+                      var optElement = $('<option></option>');
+                      optElement.attr('value', optKey);
+                      optElement.append(result[optKey]);
+                      optGroupElement.append(optElement);
+                    });
+
+                    $('[name="domains[' + new_domain_name + '][dcv]"]').change();
+
+                    $('.domains_loader_wrap').hide();
+                    $('#upload_validations').show();
+                  }
+                });
+              }
+            }
+          }
+        });
+
+        // Select Items for selected all domains.
+        $('#validation_common_type').change(function() {
+          var slt_type = $(this).val();
+          $(this).val('');
+
+          var domain_list = $('tbody.domain_list').find('tr.certificate_name');
+          $.each(domain_list, function(idx, domain) {
+            if (!$(domain).hasClass('removed_domain')) {
+              $(domain).find('.check_box').parent().css('background-color', 'white');
+            }
+          });
+
+          switch (slt_type) {
+            case 'delete':
+              /*var ajaxRemoveDomainUrl = '< %=remove_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+              var confirmMsg = 'Are you sure you want to remove the following domain(s) from this order?';*/
+              var domain_names = '';
+
+              $.each(domain_list, function(idx, domain) {
+                if (!$(domain).hasClass('removed_domain')) {
+                  var is_checked = $(domain).find('.check_box').prop('checked');
+                  if (is_checked) {
+                    /*confirmMsg = confirmMsg.concat('\r\n      ' + $(domain).find('.check_box').prop('alt'));*/
+                    domain_names = domain_names.concat(',' + $(domain).find('.check_box').prop('id'));
+                  }
+                }
+              });
+
+              if (domain_names.length > 0) {
+                if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                  $('#content').find('.inner').children().first().remove();
+                }
+
+                var message_wrap_element = $('<div></div>');
+                if (domain_names.substr(1).split(',').length == domain_list.length) {
+                  message_wrap_element.attr('class', 'flash_message error');
+
+                  var message_element = $('<span></span>');
+                  message_element.append('The order must contain at least one domain.\r\n');
+                  message_wrap_element.append(message_element);
+                } else {
+                  $.each(domain_names.substr(1).split(','), function(ids, domain) {
+                    $('[id="certificate_name__' + domain + '"]').addClass('removed_domain');
+                    $('td:first-child', $('[id="certificate_name__' + domain + '"]')).removeAttr('style');
+                    $('td:first-child', $('[id="certificate_name__' + domain + '"]')).empty();
+                    $('select', $('[id="certificate_name__' + domain + '"]')).remove();
+                    $('[id="certificate_name__' + domain + '"]').next().remove();
+                  });
+
+                  message_wrap_element.attr('class', 'flash_message warning');
+
+                  var message_element = $('<span></span>');
+                  message_element.append('Changes will be committed after clicking the Validate button.\r\n');
+                  message_wrap_element.append(message_element);
+
+                  /*var btn_element = $('<small></small>');
+                  var close_btn_element = $('<div></div>');
+                  close_btn_element.attr('class', 'close_flash_message');
+
+                  var close_sign_element = $('<span></span>');
+                  close_sign_element.append('X');
+
+                  close_btn_element.append(close_sign_element);
+                  close_btn_element.append(' close');
+
+                  btn_element.append(close_btn_element);
+                  message_wrap_element.append(btn_element);
+
+                  if ($('#content').find('.inner').children().first().hasClass('flash_message')) {
+                    $('#content').find('.inner').children().first().remove();
+                  }
+                  message_wrap_element.insertBefore($('#content').find('.inner').children().first());*/
+
+                  /*if (confirm(confirmMsg)) {
+                   $('#upload_validations').hide();
+                   $('.domains_loader_wrap').show();
+
+                   $.ajax({
+                   url: ajaxRemoveDomainUrl,
+                   data: {
+                   domain_ids: domain_ids.substr(1)
+                   },
+                   type: "POST",
+                   success: function (result) {
+                   if (Object.keys(result).length > 0) {
+                   $.each(domain_ids.substr(1).split(','), function(ids, domain) {
+                   if ($.inArray(domain, Object.keys(result)) == -1) {
+                   $('#certificate_name_' + domain).next().remove();
+                   $('#certificate_name_' + domain).remove();
+                   }
+                   });
+
+                   Object.keys(result).map(function(key) {
+                   $('#' + key).parent().css('background-color', 'red');
+                   });
+
+                   $('#upload_validations').show();
+                   } else {
+                   $.each(domain_ids.substr(1).split(','), function(ids, domain) {
+                   $('#certificate_name_' + domain).next().remove();
+                   $('#certificate_name_' + domain).remove();
+                   });
+
+                   if ($('tbody.domain_list').find('tr.certificate_name').length > 0) {
+                   $('#upload_validations').show();
+                   }
+                   }
+
+                   $('.domains_loader_wrap').hide();
+                   }
+                   });
+                   } else {
+                   $(this).val('');
+                   }*/
+                }
+
+                var btn_element = $('<small></small>');
+                var close_btn_element = $('<div></div>');
+                close_btn_element.attr('class', 'close_flash_message');
+
+                var close_sign_element = $('<span></span>');
+                close_sign_element.append('X');
+
+                close_btn_element.append(close_sign_element);
+                close_btn_element.append(' close');
+
+                btn_element.append(close_btn_element);
+                message_wrap_element.append(btn_element);
+
+                message_wrap_element.insertBefore($('#content').find('.inner').children().first());
+              } else {
+                alert('There are no selected domains for delete.');
+              }
+
+              break;
+            case 'http_csr_hash':
+            case 'https_csr_hash':
+            case 'cname_csr_hash':
+              var changed_count = 0;
+              $.each(domain_list, function(idx, domain) {
+                if (!$(domain).hasClass('removed_domain')) {
+                  var is_checked = $(domain).find('.check_box').prop('checked');
+                  if (is_checked) {
+                    $(domain).find('select').val(slt_type).trigger('change');
+                    changed_count ++;
+                  }
+                }
+              });
+
+              if (changed_count === 0) {
+                if (slt_type == 'http_csr_hash') {
+                  alert('There are no selected domains for "HTTP CSR HASH"');
+                } else if (slt_type == 'https_csr_hash') {
+                  alert('There are no selected domains for "HTTPS CSR HASH"');
+                } else {
+                  alert('There are no selected domains for "CNAME CAR HASH"');
+                }
+              }
+
+              break;
+            default:
+          }
+        });
+
+        // Loading domains initially.
+        //var domain_str = $('#cert_names_ids_str').val();
+        var domain_str = $('#ori_domain_names_str').val();
+        var domains = [];
+        if (domain_str.length > 0) {
+          domains = domain_str.split(',');
+          var ajaxDomainUrl = '<%=get_asynch_domains_certificate_order_validation_path(@ssl_slug, @certificate_order)%>';
+
+          <%
+            # mdc_validation = ComodoApi.mdc_status(@certificate_order)
+            # ds = mdc_validation.domain_status
+            # byebug
+            # all_validated = true
+            # ds.each {|key, value|
+            #   if value['status'].downcase != 'validated'
+            #     all_validated = false
+            #     break
+            #   end
+            # }
+            is_ucc = @certificate_order.certificate.is_ucc?
+            is_evucc = @certificate_order.certificate.is_evucc?
+            is_premium_ssl = @certificate_order.certificate.is_premium_ssl?
+          %>
+
+          var all_validated = false;
+          var count_validated = 0;
+          var count_domain = 0;
+          var total = domains.length;
+
+          $.each(domains, function(idx, value) {
             $.ajax({
               url: ajaxDomainUrl,
               data: {
-                domain_id: value,
+                domain_name: value,
                 domain_count: total,
-                exist_ext_order_number: exist_ext_order_number,
-                domain_status: JSON.parse('<%= raw ds ? ds.to_json : {}%>'),
+                domain_status: JSON.parse('<%= raw @ds ? @ds.to_json : {}%>'),
                 is_ucc: '<%=is_ucc%>',
                 count_validated: count_validated,
                 count_domain: count_domain,
@@ -594,30 +1101,63 @@ jQuery(function($) {
 
                     var trElement = $('<tr></tr>');
                     trElement.attr('class', 'certificate_name');
-                    trElement.attr('id', 'certificate_name_' + value);
+                    trElement.attr('id', 'certificate_name__' + value);
 
                     $('.domain_list').append(trElement);
 
                     tdElement = $('<td></td>');
+
                     var checkboxElement = $('<input></input>');
                     checkboxElement.attr('class', 'check_box');
-                    checkboxElement.attr('id', result[key]['checkbox_id']);
+                    /*checkboxElement.attr('id', result[key]['checkbox_id']);
+                    checkboxElement.attr('alt', result[key]['domain_name']);*/
+                    checkboxElement.attr('id', value);
                     checkboxElement.attr('type', 'checkbox');
                     tdElement.append(checkboxElement);
+
+                    <%if is_ucc || is_evucc || is_premium_ssl%>
+                      var btnElement = $('<input></input>');
+                      btnElement.attr('class', 'btn_remove_domain');
+                      btnElement.attr('type', 'button');
+                      btnElement.attr('value', 'Remove');
+                      tdElement.append(btnElement);
+                    <%end%>
+
+                    var editBtnElement = $('<input></input>');
+                    editBtnElement.attr('class', 'btn_edit_domain');
+                    editBtnElement.attr('type', 'button');
+                    editBtnElement.attr('value', 'Edit');
+                    tdElement.append(editBtnElement);
+
+                    var cnsElement = $('<input></input>');
+                    cnsElement.attr('type', 'hidden');
+                    /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
+                    /*cnsElement.attr('value', result[key]['domain_name']);*/
+                    cnsElement.attr('name', 'cert_names[' + value + ']');
+                    cnsElement.attr('value', value);
+                    tdElement.append(cnsElement);
+
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
-                    tdElement.append(result[key]['domain_name']);
+                    /*tdElement.attr('class', 'domain_name ' + result[key]['domain_name']);*/
+                    tdElement.attr('class', 'domain_name ' + value);
+                    /*tdElement.append(result[key]['domain_name']);*/
+                    tdElement.append(value);
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
                     if ($.isEmptyObject(result[key]['options'])) {
-                      tdElement.append('Validation satisfied for ' + result[key]['domain_name']);
+                      /*tdElement.append('Validation satisfied for ' + result[key]['domain_name']);*/
+                      tdElement.append('Validation satisfied for ' + value);
                     } else {
                       var sltElement = $('<select></select>');
-                      sltElement.attr('name', 'domains[' + result[key]['domain_name'] + '][dcv]');
+                      /*sltElement.attr('name', 'domains[' + result[key]['domain_name'] + '][dcv]');
                       sltElement.attr('id', 'domains_' + result[key]['domain_name'] + '_dcv');
-                      sltElement.attr('alt', result[key]['domain_name']);
+                      sltElement.attr('alt', result[key]['domain_name']);*/
+                      sltElement.attr('name', 'domains[' + value + '][dcv]');
+                      sltElement.attr('id', 'domains_' + value + '_dcv');
+                      sltElement.attr('alt', value);
 
                       var optElement = $('<option></option>');
                       optElement.attr('value', '');
@@ -641,26 +1181,31 @@ jQuery(function($) {
                       tdElement.append(sltElement);
                     }
                     trElement.append(tdElement);
-                    $('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);
+                    /*$('[name="domains[' + result[key]['domain_name'] + '][dcv]"]').val(result[key]['slt_option']);*/
+                    $('[name="domains[' + value + '][dcv]"]').val(result[key]['slt_option']);
 
                     tdElement = $('<td></td>');
                     tdElement.append(result[key]['pretest']);
-                    tdElement.attr('class', 'pretest ' + result[key]['domain_name']);
+                    /*tdElement.attr('class', 'pretest ' + result[key]['domain_name']);*/
+                    tdElement.attr('class', 'pretest ' + value);
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
                     tdElement.append(result[key]['attempt']);
-                    tdElement.attr('class', 'attempt ' + result[key]['domain_name']);
+                    /*tdElement.attr('class', 'attempt ' + result[key]['domain_name']);*/
+                    tdElement.attr('class', 'attempt ' + value);
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
                     tdElement.append(result[key]['attempted_on']);
-                    tdElement.attr('class', 'attempted_on ' + result[key]['domain_name']);
+                    /*tdElement.attr('class', 'attempted_on ' + result[key]['domain_name']);*/
+                    tdElement.attr('class', 'attempted_on ' + value);
                     trElement.append(tdElement);
 
                     var tdElement = $('<td></td>');
                     tdElement.append(result[key]['status']);
-                    tdElement.attr('class', 'status ' + result[key]['domain_name']);
+                    /*tdElement.attr('class', 'status ' + result[key]['domain_name']);*/
+                    tdElement.attr('class', 'status ' + value);
                     trElement.append(tdElement);
 
                   } else if (key == 'tr_instruction') {
@@ -677,7 +1222,8 @@ jQuery(function($) {
                     tdElement.append('Instructions: ');
 
                     var spanElement = $('<span></span>');
-                    spanElement.attr('alt', result[key]['instruction']);
+                    /*spanElement.attr('alt', result[key]['instruction']);*/
+                    spanElement.attr('alt', 'domains[' + value + '][dcv]');
                     spanElement.append('Please select a validation method');
                     tdElement.append(spanElement);
                     trElement.append(tdElement);
@@ -692,32 +1238,36 @@ jQuery(function($) {
                     tdElement = $('<td></td>');
                     var checkboxElement = $('<input></input>');
                     checkboxElement.attr('class', 'check_box');
-                    checkboxElement.attr('id', result[key]['checkbox_id']);
+                    /*checkboxElement.attr('id', result[key]['checkbox_id']);*/
+                    checkboxElement.attr('id', value);
                     checkboxElement.attr('type', 'checkbox');
                     tdElement.append(checkboxElement);
                     trElement.append(tdElement);
 
                     var tdElement = $('<td></td>');
-                    tdElement.attr('colspan', 5);
-                    tdElement.append('CAA Test Failed!');
+                    /*tdElement.append(result[key]['domain_name']);*/
+                    tdElement.append(value);
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
-                    tdElement.append(result[key]['domain_name']);
+                    tdElement.attr('colspan', 5);
+                    tdElement.append('CAA Test Failed!');
                     trElement.append(tdElement);
                   }
                 });
 
                 if (idx === (total - 1) && !all_validated) {
+                  $('.domains_loader_wrap').hide();
                   $('#upload_validations').show();
                 }
 
                 $('select[id^=domains]').last().change();
               }
             });
-          }
-        });
-
+          });
+        } else {
+          $('.domains_loader_wrap').hide();
+        }
       <%end%>
     }
 

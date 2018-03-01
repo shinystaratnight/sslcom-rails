@@ -61,7 +61,7 @@ jQuery(function($) {
                 $('#filter_' + strengths[cIdx] + '_chk').prop('checked', true);
               }
             });
-          } else if (filterKey == 'product') {
+          } else if (filterKey == 'product' || filterKey == 'status') {
             $('#filter_' + filterKey).val(filterValue.split(','));
           } else {
             if (filterValue.charAt(0) == "'" && filterValue.charAt(filterValue.length - 1) == "'") {
@@ -85,6 +85,7 @@ jQuery(function($) {
       $('.filter_cont_text').val('');
       $('.filter_cont_date').val('');
       $('#filter_product.filter_cont_slt').val([]);
+      $('#filter_status.filter_cont_slt').val([]);
       $('#filter_country.filter_cont_slt').val('US');
       $('.filter_cont_chk').prop('checked', false);
       $('.filter_cont').hide();
@@ -200,7 +201,7 @@ jQuery(function($) {
           || $(this).prop('id') == 'filter_issued_at_chk') {
           filterItem.children().first().children().first().val('');
           filterItem.children().last().children().first().val('');
-        } else if ($(this).prop('id') == 'filter_product_chk') {
+        } else if ($(this).prop('id') == 'filter_product_chk' || $(this).prop('id') == 'filter_status_chk') {
           filterItem.children().val([]);
         } else if ($(this).prop('id') == 'filter_country_chk') {
           filterItem.children().val('us');
