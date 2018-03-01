@@ -91,7 +91,11 @@
       %td{id: 'total-amt'} #{Money.new(order.get_total_merchant_amount).format}
     %tr
       %td{id: 'paid-lbl'} Paid
-      %td{id: 'paid-amt'} -#{order.get_order_charged.amount.format}
+      %td{id: 'paid-amt'}
+        -if reprocess_order 
+          #{Money.new(order.get_paid_reprocess_amount).format}
+        -else
+          ="-#{order.get_order_charged.amount.format}"
     %tr{id: 'amount-due'}
       %td{id: 'due-lbl'} Amount Due
       %td{id: 'due-amt'} $0.00

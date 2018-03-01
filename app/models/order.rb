@@ -469,6 +469,10 @@ class Order < ActiveRecord::Base
     description == Order::SSL_REPROCESS_UCC
   end
   
+  def reprocess_ucc_free?
+    reprocess_ucc_order? && cents==0
+  end
+  
   def monthly_invoice_order?
     description == Order::INVOICE_PAYMENT
   end
@@ -757,6 +761,10 @@ class Order < ActiveRecord::Base
   
   def get_full_reprocess_format
     Money.new(get_full_reprocess_amount).format
+  end
+  
+  def get_paid_reprocess_amount
+    get_total_merchant_amount
   end
   
   def get_funded_account_amount
