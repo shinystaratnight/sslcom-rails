@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to  :billing_profile_unscoped, foreign_key: :billing_profile_id, class_name: "BillingProfileUnscoped"
   belongs_to  :deducted_from, class_name: "Order", foreign_key: "deducted_from_id"
   belongs_to  :visitor_token
+  belongs_to  :monthly_invoice, class_name: "Invoice", foreign_key: :invoice_id
   has_many    :line_items, dependent: :destroy, after_add: Proc.new { |p, d| p.amount += d.amount}
   has_many    :certificate_orders, through: :line_items, :source => :sellable,
               :source_type => 'CertificateOrder', unscoped: true
@@ -453,7 +454,7 @@ class Order < ActiveRecord::Base
 
   # BEGIN number
   def on_monthly_invoice?
-    !approval.blank? && !invoice_id.blank?
+    !invoice_id.blank? && state == 'invoiced'
   end
   
   def approved_for_invoice?
@@ -468,10 +469,54 @@ class Order < ActiveRecord::Base
     description == Order::SSL_REPROCESS_UCC
   end
   
+  def reprocess_ucc_free?
+    reprocess_ucc_order? && cents==0
+  end
+  
   def monthly_invoice_order?
     description == Order::INVOICE_PAYMENT
   end
   
+  # Fetches all domains that were added during UCC certificate reprocess
+  def get_reprocess_domains
+    co           = certificate_orders.first
+    cur_domains  = co.certificate_contents.find_by(ref: get_ccref_from_notes).domains
+    new_domains  = cur_domains - co.certificate_contents.first.domains
+    non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
+    wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
+    {
+      all:          cur_domains,
+      new_domains:  new_domains,
+      wildcard:     wildcard,
+      non_wildcard: non_wildcard
+    }
+  end  
+  
+  def get_ccref_from_notes
+    notes.split(').').first.split.last.delete(')')
+  end
+  
+  def get_reprocess_orders
+    result = {}
+    if certificate_orders.any?
+      certificate_orders.each do |co|
+        current = []
+        co.orders.order(created_at: :desc).each do |o|
+          if o != self && o.reprocess_ucc_order?
+            current << {
+              date:      o.created_at.strftime('%F'),
+              order_ref: o.reference_number,
+              domains:   co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains.count,
+              amount:    o.get_full_reprocess_format
+            }
+          end
+        end
+        result[co.ref] = current if current.any?
+      end
+    end
+    result
+  end
+    
   def number
     SecureRandom.base64(32)
   end
@@ -648,9 +693,13 @@ class Order < ActiveRecord::Base
   end
   
   def make_available_line(item, type=nil)
-    order_total  = line_items.pluck(:cents).sum
+    order_total  = reprocess_ucc_order? ? get_full_reprocess_amount : line_items.pluck(:cents).sum
     discount_amt = discount_amount(:items)
-    total        = item.is_a?(LineItem) ? item.cents : item.amount
+    total        = if reprocess_ucc_order?
+      get_full_reprocess_amount
+    else  
+      item.is_a?(LineItem) ? item.cents : item.amount
+    end
     percent      = total.to_d/order_total.to_d
     discount     = discount_amt==0 ? discount_amt : (discount_amt.cents * percent)
     funded       = get_funded_account_amount == 0 ? 0 : (get_funded_account_amount * percent)
@@ -729,6 +778,18 @@ class Order < ActiveRecord::Base
     else
       0
     end
+  end
+  
+  def get_full_reprocess_amount
+    get_total_merchant_amount + get_funded_account_amount
+  end
+  
+  def get_full_reprocess_format
+    Money.new(get_full_reprocess_amount).format
+  end
+  
+  def get_paid_reprocess_amount
+    get_total_merchant_amount
   end
   
   def get_funded_account_amount

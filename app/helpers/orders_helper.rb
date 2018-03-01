@@ -226,6 +226,7 @@ module OrdersHelper
   end
   
   def withdraw_funded_account(amount)
+    @order.save unless @order.persisted?
     payment_type = (amount >= (@order_amount * 100).to_i) ? 'Full' : 'Partial'
     full_amount  = Money.new(@order.cents + amount).format
     notes = "#{payment_type} payment for order ##{@order.reference_number} (#{full_amount}) "

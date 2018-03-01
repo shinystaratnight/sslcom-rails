@@ -1,3 +1,4 @@
+-reprocess_orders = @order ? @order.get_reprocess_orders : {}
 -unless is_receipt?
   :javascript
     jQuery(function($) {
@@ -92,5 +93,13 @@
         #available_funds_amount=h ssl_account.funded_account.amount.format :with_currency
 .order_container
   =render partial: 'orders/invoice_section'
+  
+-if reprocess_orders.any?
+  -reprocess_orders.each do |ro|
+    .order_container
+      #completed_order_results
+        =render partial: 'orders/reprocess_ucc_report', |
+        locals: {reprocess_orders: ro.last, co_ref: reprocess_orders.keys.first}
+
 =render partial: "orders/adwords_conversion" #must appear before confirm_affiliate_sale since ext_affiliate_credited is toggled there
 =confirm_affiliate_sale
