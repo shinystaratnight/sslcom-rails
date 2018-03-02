@@ -50,8 +50,9 @@ class MonthlyInvoice < Invoice
   end  
   
   def get_amount_format
-     get_amount.format
-  end  
+    amt = get_amount
+    amt.is_a?(Fixnum) ? Money.new(get_cents).format : amt.format
+  end
     
   def get_item_descriptions
     orders.inject({}) do |final, o|
@@ -112,7 +113,7 @@ class MonthlyInvoice < Invoice
   def generate_reference_number
     if reference_number.blank?
       update_attribute(
-        :reference_number, "i-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
+        :reference_number, "mi-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
       )
     end
   end
