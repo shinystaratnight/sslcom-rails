@@ -25,36 +25,39 @@ class ValidationsController < ApplicationController
   end
 
   def new
+    url=nil
     # if CS then go to doc upload
     if @certificate_order.certificate.is_code_signing?
-      redirect_to document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) and return
-    end
-    if @certificate_order.certificate_content.contacts_provided?
-      @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
-    elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
-      checkout={checkout: "true"}
-      flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
-      respond_to do |format|
-        format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
-      end
-    end
-
-    mdc_validation = ComodoApi.mdc_status(@certificate_order)
-    @ds = mdc_validation.domain_status
-
-    if @ds
-      all_validated = true
-      @ds.each do |key, value|
-        if value['status'].downcase != 'validated'
-          all_validated = false
-          break
+      url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) and return
+    else
+      if @certificate_order.certificate_content.contacts_provided?
+        @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
+      elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
+        checkout={checkout: "true"}
+        flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
+        respond_to do |format|
+          format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
       end
 
-      if all_validated
-        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+      mdc_validation = ComodoApi.mdc_status(@certificate_order)
+      @ds = mdc_validation.domain_status
+
+      if @ds
+        all_validated = true
+        @ds.each do |key, value|
+          if value['status'].downcase != 'validated'
+            all_validated = false
+            break
+          end
+        end
+
+        if all_validated
+          url=certificate_order_path(@ssl_slug, @certificate_order) and return
+        end
       end
     end
+    redirect_to url and return unless url.blank?
   end
 
   def remove_domains

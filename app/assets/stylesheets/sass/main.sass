@@ -5806,14 +5806,16 @@ span.notifications-teams
   .button-mo-invoice
     font-size: 1.3rem
 
-#invoice-container-errors
+#invoice-container-errors,
+#invoice-admin-errors
   .errors-invoice-update
     font-size: 1.5rem
     padding: 0.5rem
     background-color: red
     color: white
 
-#invoice-container-ext
+#invoice-container-ext,
+#invoice-container-admin 
   form
     border-top: 1px dashed lightgrey
     margin-top: 2.5rem
@@ -5839,7 +5841,14 @@ span.notifications-teams
     padding: 5px 15px
     box-shadow: none
 
-
+#invoice-container-admin
+  form
+    font-size: 1.3rem !important
+    label
+      font-weight: 600
+      font-size: 1.3rem !important
+      width: 30%
+      
 #cdns
   .sub-title
     font-size: 14px
@@ -6484,7 +6493,7 @@ span.notifications-teams
   span
     font-weight: 500
     color: black
-
+  
 /*
  * Transaction Show: Reprocess UCC Section
  */ 
@@ -6517,3 +6526,32 @@ span.notifications-teams
   
   .reprocess-amount
     font-weight: 600
+
+
+.billing_profile
+  #card-name
+    color: grey
+    font-size: 0.9rem
+    font-weight: 600
+    letter-spacing: 1px
+    text-transform: uppercase
+    
+  #btn-bp-default,
+  #btn-bp-delete
+    border-radius: 3px
+    border: none
+    font-size: 0.9rem
+    font-weight: 500
+    color: #FFFFFF !important
+    cursor: pointer
+    letter-spacing: 1px
+    padding: 2px 3px
+    text-transform: uppercase
+      
+  #btn-bp-default
+    border: 1px solid #6b9029
+    background-color: #6b9029
+
+  #btn-bp-delete
+    border: 1px solid #F51C29
+    background-color: #F51C29

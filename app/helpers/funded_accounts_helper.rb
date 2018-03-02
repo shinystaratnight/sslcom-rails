@@ -46,9 +46,9 @@ module FundedAccountsHelper
     end
   end
 
-  def destroy_credit_card_link(item)
-    link_to 'delete', billing_profile_path(id: item), :remote=>true,
-      :class=>'delete_profile', :method => :delete,
+  def destroy_credit_card_link(item, options={})
+    link_to 'delete', billing_profile_path(id: item), :remote=>true, 
+      :class=>'delete_profile', :method => :delete, id: options[:id],
       :confirm => "Are you sure you want to delete the credit card profile for #{item.masked_card_number}? This action cannot be undone."
   end
 

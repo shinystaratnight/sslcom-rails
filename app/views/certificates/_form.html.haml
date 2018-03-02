@@ -332,7 +332,7 @@
             #{"sub" if @certificate.is_premium_ssl?}domains)
   -else
     -if reprocess_ucc
-      -wildcard_count    = @certificate_order.wildcard_domains.count
+      -wildcard_count    = @certificate_order.wildcard_domains.blank? ? 0 : @certificate_order.wildcard_domains.count
       -nonwildcard_count = @certificate_order.domains.count - wildcard_count
       -nonwildcard_cost  = @certificate_order.ucc_prorated_domain
       

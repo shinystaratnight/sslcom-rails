@@ -1,0 +1,23 @@
+-pm      = MonthlyInvoice::PAYMENT_METHODS
+-pm_text = MonthlyInvoice::PAYMENT_METHODS_TEXT
+
+=form_for @invoice.becomes(Invoice), url: invoice_url(@ssl_slug, @invoice.reference_number), |
+remote: true, method: :put, data: {type: :json}, html: {id: 'frm-mo-inv-update'} do |f|
+  .registration_form
+    .fields
+      .clearfix
+        =f.label :status
+        =f.select :status, MonthlyInvoice::STATUS.map{|s| [s.upcase, s]}, include_blank: false
+      .clearfix
+        =f.label :default_payment
+        =f.select :default_payment, |
+        pm.keys.map {|key| [ pm_text[key.to_sym], pm[key.to_sym] ]}, |
+        include_blank: false
+      .clearfix
+        =f.label :notes
+        =f.text_area :notes, size: "47x10"
+        
+  #button_container
+    #auto_adjust
+      =image_tag 'cancel_bl.gif', id: 'btn-inv-update-cancel'
+      =image_submit_tag 'bl_submit_button.gif'

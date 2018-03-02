@@ -1,8 +1,12 @@
 class BillingProfile < ActiveRecord::Base  
+  include ActiveMerchant::Billing::CreditCardMethods
+  
   belongs_to  :ssl_account
   has_many    :orders, -> { unscope(where: [:state]) }
-  include ActiveMerchant::Billing::CreditCardMethods
-
+  
+  before_create :store_last_digits
+  after_save    :set_one_default
+  
   cattr_accessor :password
   attr_accessor  :number, :stripe_card_token
   attr_encrypted :card_number, :key => 'v1X&3az00c!F',algorithm: 'aes-256-cbc', :mode => :per_attribute_iv_and_salt,
@@ -131,8 +135,22 @@ class BillingProfile < ActiveRecord::Base
   end
 
   private
-
-  before_create :store_last_digits
+  
+  def default_profile_exists?
+    ssl_account.billing_profiles.where(default_profile: true).any?
+  end
+    
+  def set_one_default
+    if default_profile
+      ssl_account.billing_profiles
+        .where(default_profile: true).where.not(id: id)
+        .update_all(default_profile: false)
+    else
+      unless default_profile_exists?
+        self.update(default_profile: true)
+      end
+    end
+  end
 
   def store_last_digits
     self.last_digits = self.class.last_digits(card_number)

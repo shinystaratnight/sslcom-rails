@@ -38,8 +38,10 @@ authorization do
     #
     has_permission_on :invoices, to: [
       :add_item,
+      :edit,
       :remove_item,
-      :paid_wire_transfer
+      :make_payment_other,
+      :update
     ]
   end
 
