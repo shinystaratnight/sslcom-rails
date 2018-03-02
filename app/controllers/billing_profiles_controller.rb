@@ -41,7 +41,17 @@ class BillingProfilesController < ApplicationController
   def new
     @billing_profile=BillingProfile.new
   end
-
+  
+  def update
+    bp = @ssl_account.billing_profiles.find_by(id: params[:id])
+    if bp && params[:set_default]
+      if bp.update(default_profile: true)
+        flash[:notice] = "Succesfully set billing profile ending in #{bp.last_digits} to default"
+      end
+    end
+    redirect_to billing_profiles_path(@ssl_slug)
+  end
+  
   def create
     @billing_profile = @ssl_account.billing_profiles.build(params[:billing_profile])
     if @billing_profile.save

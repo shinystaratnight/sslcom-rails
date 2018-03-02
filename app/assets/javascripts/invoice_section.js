@@ -45,4 +45,37 @@ $(function($) {
       }
     }
   });
+  
+  // Sysadmin Section in Monthly Invoice
+  $('#invoice-container-admin').hide();
+  
+  $('#frm-mo-inv-update').on('ajax:success', function(xhr, data, status) {
+    $('.errors-invoice-update').remove();
+    $('#invoice-container-admin').hide();
+  });
+  
+  $('#invoice-container-admin').on('click', '#btn-inv-update-cancel', function(e) {
+    e.preventDefault();
+    $('#invoice-container-admin').hide();
+  });
+  
+  $('#lnk-mo-invoice-update').on('click', function(e) {
+    console.log('lnk-mo-invoice-update');
+    e.preventDefault();
+    $('#invoice-container-admin').show('slow');
+  });
+  
+  $('#frm-mo-inv-update').on('ajax:error', function(xhr, data, status) {
+    $('.errors-invoice-update').remove();
+    var errors = JSON.parse(data.responseText);
+    for (var key in errors) {
+      if (errors.hasOwnProperty(key)) {
+        $('#invoice-admin-errors').prepend(
+          "<div class='errors-invoice-update'>"
+          + key.replace('_', ' ') + ": " + errors[key] + "</div>"
+        );
+        $('#invoice-admin-errors').focus();
+      }
+    }
+  });
 });

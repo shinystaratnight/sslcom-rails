@@ -501,7 +501,7 @@ class Order < ActiveRecord::Base
     if certificate_orders.any?
       certificate_orders.each do |co|
         current = []
-        co.orders.order(created_at: :desc).each do |o|
+        co.orders.order(created_at: :asc).each do |o|
           if o != self && o.reprocess_ucc_order?
             current << {
               date:      o.created_at.strftime('%F'),

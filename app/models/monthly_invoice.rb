@@ -3,11 +3,17 @@ class MonthlyInvoice < Invoice
   belongs_to :payment, class_name: 'Order', foreign_key: 'order_id'
   has_many   :orders, foreign_key: :invoice_id
   
-  validates :start_date, :end_date, :status, :billable_id, :billable_type, presence: true
+  validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
   
   before_validation :set_duration, on: :create
   before_validation :set_status, on: :create
-  after_create :generate_reference_number
+  before_validation :set_default_billing
+  before_validation :set_address
+  after_create      :generate_reference_number
+  
+  PAYMENT_METHODS = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
+  PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
+  STATUS = %w{pending paid}
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -50,7 +56,7 @@ class MonthlyInvoice < Invoice
   def get_item_descriptions
     orders.inject({}) do |final, o|
       co           = o.certificate_orders.first
-      cur_domains  = co.certificate_contents.find_by(ref: o.notes.split.last.delete(')')).domains
+      cur_domains  = co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains
       new_domains  = cur_domains - co.certificate_contents.first.domains
       non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
       wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
@@ -67,8 +73,7 @@ class MonthlyInvoice < Invoice
   end
   
   def invoice_bill_to_str
-    last_profile = billable.billing_profiles.order(created_at: :desc).first
-    target = (address_blank? && !last_profile.nil?) ? last_profile : self
+    target = get_any_address
 
     if target.is_a?(BillingProfile) || (target.is_a?(MonthlyInvoice) && !address_blank?)
       addr = []
@@ -86,6 +91,16 @@ class MonthlyInvoice < Invoice
   
   private
   
+  # IF team has billing profiles, retreive address from "default" profile
+  # IF default profile is NOT set, then use last created profile address 
+  def get_any_address
+    profiles     = billable.billing_profiles
+    default      = profiles.any? ? profiles.where(default_profile: true) : []
+    last_profile = (profiles.any? && default.any?) ? default.first : nil
+    last_profile = profiles.order(created_at: :desc).first unless last_profile
+    (address_blank? && !last_profile.nil?) ? last_profile : self
+  end
+  
   def address_blank?
     address_1.blank? &&
       country.blank? && 
@@ -102,6 +117,23 @@ class MonthlyInvoice < Invoice
     end
   end
   
+  def set_address
+    if address_blank?
+      target = get_any_address
+      if target.is_a?(BillingProfile)
+        self.company     = target.company
+        self.first_name  = target.first_name
+        self.last_name   = target.last_name
+        self.address_1   = target.address_1
+        self.address_2   = target.address_2
+        self.city        = target.city
+        self.state       = target.state
+        self.postal_code = target.postal_code
+        self.country     = target.country
+      end
+    end
+  end
+  
   def set_duration
     self.start_date = DateTime.now.beginning_of_month
     self.end_date = DateTime.now.end_of_month
@@ -109,5 +141,9 @@ class MonthlyInvoice < Invoice
   
   def set_status
     self.status = 'pending'
+  end
+  
+  def set_default_billing
+    self.default_payment = PAYMENT_METHODS[:bp] if default_payment.blank?
   end
 end
