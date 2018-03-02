@@ -8,7 +8,8 @@ class MonthlyInvoice < Invoice
   before_validation :set_duration, on: :create
   before_validation :set_status, on: :create
   before_validation :set_default_billing
-  after_create :generate_reference_number
+  before_validation :set_address
+  after_create      :generate_reference_number
   
   PAYMENT_METHODS = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
   PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
@@ -72,8 +73,7 @@ class MonthlyInvoice < Invoice
   end
   
   def invoice_bill_to_str
-    last_profile = billable.billing_profiles.order(created_at: :desc).first
-    target = (address_blank? && !last_profile.nil?) ? last_profile : self
+    target = get_any_address
 
     if target.is_a?(BillingProfile) || (target.is_a?(MonthlyInvoice) && !address_blank?)
       addr = []
@@ -91,6 +91,16 @@ class MonthlyInvoice < Invoice
   
   private
   
+  # IF team has billing profiles, retreive address from "default" profile
+  # IF default profile is NOT set, then use last created profile address 
+  def get_any_address
+    profiles     = billable.billing_profiles
+    default      = profiles.any? ? profiles.where(default_profile: true) : []
+    last_profile = (profiles.any? && default.any?) ? default.first : nil
+    last_profile = profiles.order(created_at: :desc).first unless last_profile
+    (address_blank? && !last_profile.nil?) ? last_profile : self
+  end
+  
   def address_blank?
     address_1.blank? &&
       country.blank? && 
@@ -104,6 +114,23 @@ class MonthlyInvoice < Invoice
       update_attribute(
         :reference_number, "i-#{SecureRandom.hex(2)}-#{Time.now.to_i.to_s(32)}"
       )
+    end
+  end
+  
+  def set_address
+    if address_blank?
+      target = get_any_address
+      if target.is_a?(BillingProfile)
+        self.company     = target.company
+        self.first_name  = target.first_name
+        self.last_name   = target.last_name
+        self.address_1   = target.address_1
+        self.address_2   = target.address_2
+        self.city        = target.city
+        self.state       = target.state
+        self.postal_code = target.postal_code
+        self.country     = target.country
+      end
     end
   end
   
