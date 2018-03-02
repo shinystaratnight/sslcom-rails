@@ -51,7 +51,7 @@ class UrlCallback < ActiveRecord::Base
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       req.body = if parameters['certificate_hook']
-        cert_param = parameters['certificate_hook']
+        cert_param = parameters['certificate_hook'] || "certificate_hook"
         parameters.delete('certificate_hook')
         parameters.merge(cert_param=>options[:certificate_hook])
       else
