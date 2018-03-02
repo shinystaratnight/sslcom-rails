@@ -5806,14 +5806,16 @@ span.notifications-teams
   .button-mo-invoice
     font-size: 1.3rem
 
-#invoice-container-errors
+#invoice-container-errors,
+#invoice-admin-errors
   .errors-invoice-update
     font-size: 1.5rem
     padding: 0.5rem
     background-color: red
     color: white
 
-#invoice-container-ext
+#invoice-container-ext,
+#invoice-container-admin 
   form
     border-top: 1px dashed lightgrey
     margin-top: 2.5rem
@@ -5839,7 +5841,14 @@ span.notifications-teams
     padding: 5px 15px
     box-shadow: none
 
-
+#invoice-container-admin
+  form
+    font-size: 1.3rem !important
+    label
+      font-weight: 600
+      font-size: 1.3rem !important
+      width: 30%
+      
 #cdns
   .sub-title
     font-size: 14px
@@ -6484,7 +6493,7 @@ span.notifications-teams
   span
     font-weight: 500
     color: black
-
+  
 /*
  * Transaction Show: Reprocess UCC Section
  */ 

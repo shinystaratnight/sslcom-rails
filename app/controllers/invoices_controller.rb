@@ -3,7 +3,7 @@ class InvoicesController < ApplicationController
   
   before_filter :find_invoice, except: :index
   before_filter :find_ssl_account, except: :index
-  before_filter :set_ssl_slug, except: :index 
+  before_filter :set_ssl_slug, except: :index
   
   filter_access_to :all
   filter_access_to :show, :update_invoice
@@ -28,6 +28,20 @@ class InvoicesController < ApplicationController
   
   def show
     @order = @invoice.payment unless @invoice.payment.nil?
+  end
+  
+  def edit
+  end
+  
+  def update
+    @invoice.update(params[:invoice]) if @invoice && params[:invoice]
+    respond_to do |format|
+      if @invoice.errors.any?
+        format.json { render json: @invoice.errors, status: :unprocessable_entity }
+      else
+        format.json { render json: @invoice, status: :ok }
+      end
+    end
   end
   
   def new_payment
@@ -81,7 +95,8 @@ class InvoicesController < ApplicationController
     redirect_to_invoice
   end
   
-  def paid_wire_transfer
+  def make_payment_other
+    pmt_type = MonthlyInvoice::PAYMENT_METHODS_TEXT[params[:ptm_type].to_sym]
     if @invoice && !@invoice.paid?
       @order = Order.new(
         amount:      @invoice.get_amount,
@@ -89,13 +104,13 @@ class InvoicesController < ApplicationController
         description: Order::INVOICE_PAYMENT,
         state:       'paid',
         approval:    'approved',
-        notes:       order_invoice_notes << " Paid full amount of #{@invoice.get_amount_format} by wire transfer."
+        notes:       order_invoice_notes << " Paid full amount of #{@invoice.get_amount_format} by #{pmt_type}."
       )
       @order.billable = @ssl_account
       @order.save
       
       if @order.persisted? && @invoice.update(status: 'paid', order_id: @order.id)
-        flash[:notice] = "Paid full amount of #{@invoice.get_amount_format} by wire transfer."
+        flash[:notice] = "Paid full amount of #{@invoice.get_amount_format} by #{pmt_type}."
       else
         @order.destroy
         flash[:error] = "Something went wrong, please try again."

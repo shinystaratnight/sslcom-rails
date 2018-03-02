@@ -139,14 +139,14 @@ SslCom::Application.routes.draw do
   end
 
   concern :teamable do
-    resources :invoices, only: [:index, :update, :show] do
+    resources :invoices, only: [:index, :edit, :update, :show] do
       member do
         get  :download
         get  :new_payment
         post :make_payment
         put  :remove_item
         put  :add_item
-        put  :paid_wire_transfer
+        put  :make_payment_other
       end
     end
       

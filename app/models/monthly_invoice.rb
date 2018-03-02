@@ -3,11 +3,16 @@ class MonthlyInvoice < Invoice
   belongs_to :payment, class_name: 'Order', foreign_key: 'order_id'
   has_many   :orders, foreign_key: :invoice_id
   
-  validates :start_date, :end_date, :status, :billable_id, :billable_type, presence: true
+  validates :start_date, :end_date, :status, :billable_id, :billable_type, :default_payment, presence: true
   
   before_validation :set_duration, on: :create
   before_validation :set_status, on: :create
+  before_validation :set_default_billing
   after_create :generate_reference_number
+  
+  PAYMENT_METHODS = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
+  PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
+  STATUS = %w{pending paid}
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -50,7 +55,7 @@ class MonthlyInvoice < Invoice
   def get_item_descriptions
     orders.inject({}) do |final, o|
       co           = o.certificate_orders.first
-      cur_domains  = co.certificate_contents.find_by(ref: o.notes.split.last.delete(')')).domains
+      cur_domains  = co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains
       new_domains  = cur_domains - co.certificate_contents.first.domains
       non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
       wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
@@ -109,5 +114,9 @@ class MonthlyInvoice < Invoice
   
   def set_status
     self.status = 'pending'
+  end
+  
+  def set_default_billing
+    self.default_payment = PAYMENT_METHODS[:bp] if default_payment.blank?
   end
 end
