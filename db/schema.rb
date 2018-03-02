@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180227180106) do
+ActiveRecord::Schema.define(version: 20180301161917) do
 
   create_table "addresses", force: :cascade do |t|
     t.string "name",        limit: 255
@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 20180227180106) do
     t.string   "vat",                        limit: 255
     t.string   "tax",                        limit: 255
     t.string   "status",                     limit: 255
+    t.boolean  "default_profile"
   end
 
   add_index "billing_profiles", ["ssl_account_id"], name: "index_billing_profile_on_ssl_account_id", using: :btree
@@ -613,7 +614,7 @@ ActiveRecord::Schema.define(version: 20180227180106) do
     t.string   "fax",              limit: 255
     t.string   "vat",              limit: 255
     t.string   "tax",              limit: 255
-    t.string   "notes",            limit: 255
+    t.text     "notes",            limit: 65535
     t.datetime "created_at",                     null: false
     t.datetime "updated_at",                     null: false
     t.string   "type",             limit: 255
@@ -623,6 +624,7 @@ ActiveRecord::Schema.define(version: 20180227180106) do
     t.datetime "end_date"
     t.string   "reference_number", limit: 255
     t.string   "status",           limit: 255
+    t.string   "default_payment",  limit: 255
   end
 
   create_table "legacy_v2_user_mappings", force: :cascade do |t|
