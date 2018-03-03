@@ -2,7 +2,7 @@
 -found   = @invoice if @invoice
 -invoice = found ? found : Invoice.new
 -method  = found ? :put : :post
--id      = @order ? @order.id : @invoice.get_approved_items.first
+-id      = @order ? @order : @invoice.orders.first
 
 =form_for invoice, url: update_invoice_order_path(@ssl_slug, id), method: method, remote: true,  data: {type: :json}, html: {id: 'frm-inv-update'} do |f|
   -if @order
