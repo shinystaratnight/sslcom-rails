@@ -378,7 +378,7 @@ jQuery(function($) {
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+https+"' target='_new'>"+https+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=https&dcv='+
-            $(dcv_select).parents('tr').attr('id')}).done(
+            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
@@ -387,7 +387,7 @@ jQuery(function($) {
           instructions="Upload <a href='<%=http_dcv_file_csr_path(@ssl_slug, @certificate_order.csr.id)%>'>this file</a> to this location: <a href='"+http+"' target='_new'>"+http+"</a>";
           $(instruction).html(instructions);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=http&dcv='+
-            $(dcv_select).parents('tr').attr('id')}).done(
+            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
               function(data){
                 $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
               });
@@ -395,10 +395,10 @@ jQuery(function($) {
         else if(/cname/.test(methods[0])){
           $(instruction).html("Create CNAME: "+cname);
           $.ajax({url: '<%=verification_check_csr_path(@ssl_slug, @certificate_order.csr)%>?protocol=cname&dcv='+
-          $(dcv_select).parents('tr').attr('id')}).done(
-                  function(data){
-                    $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
-                  });
+            $(dcv_select).parents('tr').attr('id')+'&ref='+$(dcv_select).parents('tbody').attr('data-ref')}).done(
+              function(data){
+                $('td.pretest[class~="'+$(dcv_select).attr("alt")+'"]').html((data ? "passed" : "failed")).css((data ? { background: "green", color:"white" } : { background: "red", color:"white" }));
+              });
         }
         $(instruction).css({ background: "yellow" });
       });

@@ -62,14 +62,14 @@ class ValidationsController < ApplicationController
 
   def remove_domains
     domain_name_arry = params['domain_names'].split(',')
-    co = (current_user.is_system_admins? ? CertificateOrder :
-          current_user.ssl_account.certificate_orders).find_by_ref(params['certificate_order_id'])
-    order_number = co.external_order_number
+    # order_number = CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
+    certificate_order = (current_user.is_system_admins? ? CertificateOrder :
+         current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
     result_obj = {}
 
     domain_name_arry.each do |domain_name|
-      cn_obj = co.certificate_content.certificate_names.find_by_name(domain_name)
-      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: order_number)
+      cn_obj = certificate_order.certificate_content.certificate_names.find_by_name(domain_name)
+      res = ComodoApi.auto_remove_domain(domain_name: cn_obj, order_number: certificate_order.external_order_number)
 
       error_code = -1
       error_message = ''
@@ -109,14 +109,18 @@ class ValidationsController < ApplicationController
   end
 
   def get_asynch_domains
+    # co = CertificateOrder.find_by_ref(params['certificate_order_id'])
     co = (current_user.is_system_admins? ? CertificateOrder :
-              current_user.ssl_account.certificate_orders).find_by_ref(params['certificate_order_id'])
+                             current_user.ssl_account.certificate_orders).find_by_ref(params[:certificate_order_id])
+
+    # cn = CertificateName.find_by_name(params['domain_name'])
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
     ds = params['domain_status']
     domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds ? ds.to_a[0][1]['status'] : nil)
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
 
+    # if CertificateOrder.find_by_ref(params['certificate_order_id']).external_order_number
     if co.external_order_number
       dcv = cn.domain_control_validations.last
       if params['is_ucc'] == 'true'
