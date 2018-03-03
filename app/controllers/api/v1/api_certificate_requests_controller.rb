@@ -2,7 +2,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   include ActionController::Helpers
   helper SiteSealsHelper
   before_filter :set_database, if: "request.host=~/^sandbox/ || request.host=~/^sws-test/ || request.host=~/ssl.local$/"
-  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4, :generate_certificate_v1_4]
+  before_filter :set_test, :record_parameters, except: [:scan, :analyze, :download_v1_4]
   after_filter :notify_saved_result, except: [:create_v1_4, :download_v1_4]
 
   # parameters listed here made available as attributes in @result
@@ -105,10 +105,26 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   def generate_certificate_v1_4
-    result = {}
-    result['certValue'] = SslcomCaApi.generate_for_certificate(params[:csr])
+    set_template "generate_certificate_v1_4"
 
-    render :json => result
+    if @result.valid? && @result.save
+      co = @result.find_certificate_order
+      co.certificate_content.create_csr(body: params[:csr])
+
+      options = {}
+      options[:ca] = Ca::MANAGEMENT_CA
+      options[:cc] = co.certificate_content
+
+      if res = SslcomCaApi.generate_for_certificate(options)
+        @result.cert_results = res
+      end
+    else
+      InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
+    end
+
+    render_200_status
+  rescue => e
+    render_500_error e
   end
 
   def replace_v1_4
@@ -1047,7 +1063,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke
-              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4", "update_site_seal_v1_4"
+              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4", "update_site_seal_v1_4", "generate_certificate_v1_4"
                 ApiCertificateRetrieve
               when "api_parameters_v1_4"
                 ApiParameters
