@@ -1,0 +1,10 @@
+-if (co.certificate_duration(:days).to_i > CertificateOrder::SSL_MAX_DURATION)
+  %li &nbsp;
+  %li
+    %strong 27 month limit
+  %li
+    Please note that since this certificate order has a duration that exceeds the 27 month hard limit set by the CA/Browser
+    Forum (see #{link_to "https://www.ssl.com/blogs/ssl-certificate-maximum-duration-825-days/", "https://www.ssl.com/blogs/ssl-certificate-maximum-duration-825-days/"}), this certificate will
+    expire in 27 months. However, you will be notified 60 days prior to expiration to reissue this certificate free of cost.
+    A new certificate will then be issued for the remaining duration of the order so that you can continue to benefit from
+    multi-year discounting while remaining compliant with the CA/Browser Forum requirements.
