@@ -168,7 +168,7 @@ class ValidationsController < ApplicationController
             # 'tr_instruction' => {
             #     'instruction' => "domains[#{cn.name}][dcv]",
             # }
-            'tr_instruction' => validated
+            'tr_instruction' => validated ? true : false
           }
         end
       else
@@ -234,7 +234,7 @@ class ValidationsController < ApplicationController
             # 'tr_instruction' => {
             #     'instruction' => "domains[#{cn.name}][dcv]",
             # }
-            'tr_instruction' => validated
+            'tr_instruction' => validated ? true : false
           }
         end
       end

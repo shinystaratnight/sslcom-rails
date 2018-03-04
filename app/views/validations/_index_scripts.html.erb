@@ -1107,21 +1107,21 @@ jQuery(function($) {
 
                     tdElement = $('<td></td>');
 
-                    var checkboxElement = $('<input></input>');
-                    checkboxElement.attr('class', 'check_box');
-                    /*checkboxElement.attr('id', result[key]['checkbox_id']);
-                    checkboxElement.attr('alt', result[key]['domain_name']);*/
-                    checkboxElement.attr('id', value);
-                    checkboxElement.attr('type', 'checkbox');
-                    tdElement.append(checkboxElement);
-
                     if (!$.isEmptyObject(result[key]['options'])) {
+                      var checkboxElement = $('<input></input>');
+                      checkboxElement.attr('class', 'check_box');
+                      /*checkboxElement.attr('id', result[key]['checkbox_id']);
+                       checkboxElement.attr('alt', result[key]['domain_name']);*/
+                      checkboxElement.attr('id', value);
+                      checkboxElement.attr('type', 'checkbox');
+                      tdElement.append(checkboxElement);
+
                       <%if is_ucc || is_evucc || is_premium_ssl%>
-                      var btnElement = $('<input></input>');
-                      btnElement.attr('class', 'btn_remove_domain');
-                      btnElement.attr('type', 'button');
-                      btnElement.attr('value', 'Remove');
-                      tdElement.append(btnElement);
+                        var btnElement = $('<input></input>');
+                        btnElement.attr('class', 'btn_remove_domain');
+                        btnElement.attr('type', 'button');
+                        btnElement.attr('value', 'Remove');
+                        tdElement.append(btnElement);
                       <%end%>
 
                       var editBtnElement = $('<input></input>');
@@ -1129,15 +1129,14 @@ jQuery(function($) {
                       editBtnElement.attr('type', 'button');
                       editBtnElement.attr('value', 'Edit');
                       tdElement.append(editBtnElement);
-
-                      var cnsElement = $('<input></input>');
-                      cnsElement.attr('type', 'hidden');
-                      /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
-                      /*cnsElement.attr('value', result[key]['domain_name']);*/
-                      cnsElement.attr('name', 'cert_names[' + value + ']');
-                      cnsElement.attr('value', value);
-                      tdElement.append(cnsElement);
                     }
+                    var cnsElement = $('<input></input>');
+                    cnsElement.attr('type', 'hidden');
+                    /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
+                    /*cnsElement.attr('value', result[key]['domain_name']);*/
+                    cnsElement.attr('name', 'cert_names[' + value + ']');
+                    cnsElement.attr('value', value);
+                    tdElement.append(cnsElement);
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
@@ -1151,6 +1150,13 @@ jQuery(function($) {
                     if ($.isEmptyObject(result[key]['options'])) {
                       /*tdElement.append('Validation satisfied for ' + result[key]['domain_name']);*/
                       tdElement.append('Validation satisfied for ' + value);
+
+                      var hiddenSltElement = $('<input></input>');
+                      hiddenSltElement.attr('type', 'hidden');
+                      hiddenSltElement.attr('name', 'domains[' + value + '][dcv]');
+                      hiddenSltElement.attr('value', result[key]['slt_option']);
+
+                      tdElement.append(hiddenSltElement);
                     } else {
                       var sltElement = $('<select></select>');
                       /*sltElement.attr('name', 'domains[' + result[key]['domain_name'] + '][dcv]');
@@ -1209,7 +1215,7 @@ jQuery(function($) {
                     tdElement.attr('class', 'status ' + value);
                     trElement.append(tdElement);
 
-                  } else if (key == 'tr_instruction' && result[key] == 'false') {
+                  } else if (key == 'tr_instruction' && !result[key]) {
                     var trElement = $('<tr></tr>');
                     $('.domain_list').append(trElement);
 
