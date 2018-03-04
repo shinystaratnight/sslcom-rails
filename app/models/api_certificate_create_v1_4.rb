@@ -220,6 +220,15 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
     self
   end
 
+  def certificate_order_callback
+    @certificate_order=self.find_certificate_order
+    if @certificate_order.is_a?(CertificateOrder)
+      @certificate_order.certificate_content.callback
+      return @certificate_order
+    end
+    self
+  end
+
   def update_certificate_content_contacts
     @certificate_order=self.find_certificate_order
     if @certificate_order.is_a?(CertificateOrder)
