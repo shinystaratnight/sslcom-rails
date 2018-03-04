@@ -1115,28 +1115,29 @@ jQuery(function($) {
                     checkboxElement.attr('type', 'checkbox');
                     tdElement.append(checkboxElement);
 
-                    <%if is_ucc || is_evucc || is_premium_ssl%>
+                    if (!$.isEmptyObject(result[key]['options'])) {
+                      <%if is_ucc || is_evucc || is_premium_ssl%>
                       var btnElement = $('<input></input>');
                       btnElement.attr('class', 'btn_remove_domain');
                       btnElement.attr('type', 'button');
                       btnElement.attr('value', 'Remove');
                       tdElement.append(btnElement);
-                    <%end%>
+                      <%end%>
 
-                    var editBtnElement = $('<input></input>');
-                    editBtnElement.attr('class', 'btn_edit_domain');
-                    editBtnElement.attr('type', 'button');
-                    editBtnElement.attr('value', 'Edit');
-                    tdElement.append(editBtnElement);
+                      var editBtnElement = $('<input></input>');
+                      editBtnElement.attr('class', 'btn_edit_domain');
+                      editBtnElement.attr('type', 'button');
+                      editBtnElement.attr('value', 'Edit');
+                      tdElement.append(editBtnElement);
 
-                    var cnsElement = $('<input></input>');
-                    cnsElement.attr('type', 'hidden');
-                    /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
-                    /*cnsElement.attr('value', result[key]['domain_name']);*/
-                    cnsElement.attr('name', 'cert_names[' + value + ']');
-                    cnsElement.attr('value', value);
-                    tdElement.append(cnsElement);
-
+                      var cnsElement = $('<input></input>');
+                      cnsElement.attr('type', 'hidden');
+                      /*cnsElement.attr('name', 'cert_names[' + result[key]['checkbox_id'] + ']');*/
+                      /*cnsElement.attr('value', result[key]['domain_name']);*/
+                      cnsElement.attr('name', 'cert_names[' + value + ']');
+                      cnsElement.attr('value', value);
+                      tdElement.append(cnsElement);
+                    }
                     trElement.append(tdElement);
 
                     tdElement = $('<td></td>');
@@ -1208,7 +1209,7 @@ jQuery(function($) {
                     tdElement.attr('class', 'status ' + value);
                     trElement.append(tdElement);
 
-                  } else if (key == 'tr_instruction') {
+                  } else if (key == 'tr_instruction' && result[key] == 'false') {
                     var trElement = $('<tr></tr>');
                     $('.domain_list').append(trElement);
 
