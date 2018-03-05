@@ -45,14 +45,15 @@ class ValidationsController < ApplicationController
     if @ds
       all_validated = true
       @ds.each do |key, value|
-        if value['status'].downcase != 'validated'
+        # if value['status'].downcase != 'validated'
+        if value['status'].casecmp('validated') != 0
           all_validated = false
           break
         end
       end
 
       if all_validated
-        redirect_to certificate_order_path(@ssl_slug, @certificate_order)
+        redirect_to certificate_order_path(@ssl_slug, @certificate_order) and return true
       end
     end
   end
@@ -113,6 +114,8 @@ class ValidationsController < ApplicationController
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
     ds = params['domain_status']
 
+    ds['www.hsrise.com']['status'] = 'Validated'
+
     domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
@@ -153,9 +156,9 @@ class ValidationsController < ApplicationController
               # 'checkbox_id' => cn.id,
               # 'domain_name' => cn.name,
               'options' => optionsObj,
-              'slt_option' => domain_method ?
+              'slt_option' => validated ? 'https_csr_hash' : (domain_method ?
                                   domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
-                                  nil,
+                                  nil),
               'pretest' => 'n/a',
               # 'attempt' => ds && ds[cn.name] ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
               'attempt' => domain_method ? domain_method.downcase.gsub('%28', ' ').gsub('%29', ' ') : '',
@@ -220,9 +223,9 @@ class ValidationsController < ApplicationController
               # 'slt_option' => ds ?
               #                     domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
               #                     dcv.try(:dcv_method),
-              'slt_option' => domain_method ?
+              'slt_option' => validated ? 'https_csr_hash' : (domain_method ?
                                   domain_method.downcase.gsub('pre-validated %28', '').gsub('%29', '').gsub(' ', '_') :
-                                  dcv.try(:dcv_method),
+                                  dcv.try(:dcv_method)),
               'pretest' => 'n/a',
               # 'attempt' => ds && ds[cn.name] ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
               'attempt' => domain_method ? domain_method.downcase.gsub('%28', '').gsub('%29', '') : '',
