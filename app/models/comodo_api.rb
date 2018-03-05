@@ -23,12 +23,12 @@ class ComodoApi
   RESPONSE_ENCODING={"base64"=>0,"binary"=>1}
 
   def self.auto_replace_ssl(options={})
-    cc = options[:certificateOrder].certificate_content
+    cc = options[:certificate_order].certificate_content
     options[:send_to_ca]=true unless options[:send_to_ca]==false
     comodo_params = {
-        'orderNumber'=>options[:certificateOrder].external_order_number,
+        'orderNumber'=>options[:certificate_order].external_order_number,
         'domainNames'=>options[:domainNames],
-        'dcvEmailAddresses'=>options[:domainDcvs],
+        # 'dcvEmailAddresses'=>options[:domainDcvs],
         'isCustomerValidated'=>'N'
     }
     comodo_params = comodo_params.merge(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
@@ -49,11 +49,11 @@ class ComodoApi
                                               parameters: comodo_params, method: "post", response: res.try(:body), ca: "comodo")
 
     unless ccr.success?
-      OrderNotifier.problem_ca_sending("comodo@ssl.com", options[:certificateOrder],"comodo").deliver
+      OrderNotifier.problem_ca_sending("comodo@ssl.com", options[:certificate_order],"comodo").deliver
     else
-      options[:certificateOrder].update_column(:external_order_number, ccr.order_number) if ccr.order_number
+      options[:certificate_order].update_column(:external_order_number, ccr.order_number) if ccr.order_number
     end
-    ccr
+    res.try(:body)
   end
 
   def self.apply_for_certificate(certificate_order, options={})
@@ -157,6 +157,7 @@ class ComodoApi
     comodo_options.merge!('domainName'=>domain_name) if (is_ucc) #domain is no necessary for single name certs
     comodo_options.merge!('newDCVEmailAddress' => options[:dcv].email_address) if (options[:dcv].dcv_method=="email")
     comodo_options=comodo_options.merge!(CREDENTIALS).map{|k,v|"#{k}=#{v}"}.join("&")
+
     if options[:send_to_ca] && order_number
       host = AUTO_UPDATE_URL
       res = send_comodo(host, comodo_options)
