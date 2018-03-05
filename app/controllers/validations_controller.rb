@@ -114,8 +114,6 @@ class ValidationsController < ApplicationController
     cn = co.certificate_content.certificate_names.find_by_name(params['domain_name'])
     ds = params['domain_status']
 
-    ds['www.hsrise.com']['status'] = 'Validated'
-
     domain_status = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['status'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['status'] : nil)
     domain_method = params['is_ucc'] == 'true' ? (ds && ds[cn.name] ? ds[cn.name]['method'] : nil) : (ds && ds.to_a[0] && ds.to_a[0][1] ? ds.to_a[0][1]['method'] : nil)
     returnObj = {}
