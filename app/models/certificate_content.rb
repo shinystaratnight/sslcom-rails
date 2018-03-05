@@ -80,7 +80,7 @@ class CertificateContent < ActiveRecord::Base
   CertificateNamesJob = Struct.new(:cc_id, :domains) do
     def perform
       cc = CertificateContent.find cc_id
-      all_domains.flatten.each_with_index do |domain, i|
+      cc.domains.flatten.each_with_index do |domain, i|
         if cc.certificate_names.find_by_name(domain).blank?
           cc.certificate_names.create(name: domain, is_common_name: cc.csr.try(:common_name)==domain)
         end

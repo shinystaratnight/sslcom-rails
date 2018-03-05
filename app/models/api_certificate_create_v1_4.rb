@@ -143,6 +143,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
 
       if @certificate_order.certificate_content && @certificate_order.certificate_content.pending_validation? && @certificate_order.external_order_number
         cn_keys = self.cert_names.keys
+        cn_vals = self.cert_names.map{|k, v|v}
+
         @certificate_order.certificate_content.certificate_names.each do |certificate_name|
           # if cn_keys.include? certificate_name.id.to_s
           #   certificate_name.update_column(:name, self.cert_names[certificate_name.id.to_s])
@@ -156,17 +158,18 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
             certificate_name.update_column(:name, self.cert_names[certificate_name.name])
           end
         end
-        @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        # @certificate_order.certificate_content.update_attribute(:domains, self.domains.keys)
+        @certificate_order.certificate_content.update_attribute(:domains, cn_vals)
         @certificate_order.certificate_content.dcv_domains({domains: self.domains, emails: self.dcv_candidate_addresses})
 
-        domainNames = self.domains.keys.join(',')
-        domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
+        # domainNames = self.domains.keys.join(',')
+        # domainDcvs = self.domains.keys.map{|k|"#{@certificate_order.certificate_content.certificate_names.find_by_name(k).try(:last_dcv_for_comodo)}"}.join(',')
 
         #send to comodo
         comodo_auto_replace_ssl(
-          certificateOrder: @certificate_order,
-          domainNames: domainNames,
-          domainDcvs: domainDcvs
+          certificate_order: @certificate_order,
+          domainNames: cn_vals.join(',')
+          # domainDcvs: domainDcvs
         )
       end
       return @certificate_order
@@ -271,7 +274,8 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   end
 
   def comodo_auto_replace_ssl(options={send_to_ca: true})
-    ComodoApi.auto_replace_ssl(options)
+    res = ComodoApi.auto_replace_ssl(options)
+    comodo_auto_update_dcv(options) if res[0] == '0'
   end
 
   # this update dcv method to comodo for each domain

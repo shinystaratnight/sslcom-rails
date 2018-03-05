@@ -53,7 +53,7 @@ class ValidationsController < ApplicationController
         end
 
         if all_validated
-          url=certificate_order_path(@ssl_slug, @certificate_order) and return
+          url=certificate_order_path(@ssl_slug, @certificate_order)
         end
       end
     end
