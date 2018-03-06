@@ -477,19 +477,30 @@ class Order < ActiveRecord::Base
     description == Order::INVOICE_PAYMENT
   end
   
-  # Fetches all domains that were added during UCC certificate reprocess
+  # Fetches all domain counts that were added during UCC certificate reprocess
   def get_reprocess_domains
     co           = certificate_orders.first
     cc           = get_reprocess_cc(co)
+    
     cur_domains  = cc.nil? ? [] : cc.domains
-    new_domains  = cur_domains - co.certificate_contents.first.domains
-    non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
-    wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
+    non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
+    wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
+    
+    old_domains      = co.certificate_contents.first.domains
+    old_non_wildcard = old_domains.map {|d| d if !d.include?('*')}.compact
+    old_wildcard     = old_domains.map {|d| d if d.include?('*')}.compact
+    
+    tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
+    tot_wildcard     = wildcard.count - old_wildcard.count
+    
+    new_domains_count = tot_non_wildcard + tot_wildcard
+    
     {
-      all:          cur_domains,
-      new_domains:  new_domains,
-      wildcard:     wildcard,
-      non_wildcard: non_wildcard
+      all:                cur_domains,
+      new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
+      cur_wildcard:       wildcard.count,
+      wildcard:           tot_wildcard,
+      non_wildcard:       tot_non_wildcard
     }
   end  
   

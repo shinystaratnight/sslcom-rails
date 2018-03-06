@@ -56,19 +56,15 @@ class MonthlyInvoice < Invoice
     
   def get_item_descriptions
     orders.inject({}) do |final, o|
-      co           = o.certificate_orders.first
-      cc           = o.get_reprocess_cc(co)
-      cur_domains  = (cc.nil? ? [] : cc.domains)
-      new_domains  = cur_domains - co.certificate_contents.first.domains
-      non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
-      wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
+      co      = o.certificate_orders.first
+      domains = o.get_reprocess_domains
       
       final[o.reference_number] = {
-        description:  "Additional #{non_wildcard.count} non-wildcard and #{wildcard.count} wildcard domains for certificate order #{co.ref}.",
+        description:  "Additional #{domains[:non_wildcard]} non-wildcard and #{domains[:wildcard]} wildcard domains for certificate order #{co.ref}.",
         item:         co.respond_to?(:description_with_tier) ? co.description_with_tier : co.certificate.description['certificate_type'],
-        new_domains:  new_domains,
-        wildcard:     wildcard,
-        non_wildcard: non_wildcard
+        new_domains:  domains[:new_domains_count],
+        wildcard:     domains[:wildcard],
+        non_wildcard: domains[:non_wildcard]
       }
       final
     end
