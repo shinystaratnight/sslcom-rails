@@ -32,28 +32,31 @@ class ValidationsController < ApplicationController
     else
       if @certificate_order.certificate_content.contacts_provided?
         @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)
+
+        mdc_validation = ComodoApi.mdc_status(@certificate_order)
+        @ds = mdc_validation.domain_status
       elsif @certificate_order.certificate_content.issued? # or @certificate_order.all_domains_validated?
         checkout={checkout: "true"}
         flash.now[:notice] = "All domains have been validated, please wait for certificate issuance" if @certificate_order.all_domains_validated?
         respond_to do |format|
           format.html { redirect_to certificate_order_path({id: @certificate_order.ref}.merge!(checkout))}
         end
-      end
+      else
+        mdc_validation = ComodoApi.mdc_status(@certificate_order)
+        @ds = mdc_validation.domain_status
 
-      mdc_validation = ComodoApi.mdc_status(@certificate_order)
-      @ds = mdc_validation.domain_status
-
-      if @ds
-        all_validated = true
-        @ds.each do |key, value|
-          if value['status'].casecmp('validated') != 0
-            all_validated = false
-            break
+        if @ds
+          all_validated = true
+          @ds.each do |key, value|
+            if value['status'].casecmp('validated') != 0
+              all_validated = false
+              break
+            end
           end
-        end
 
-        if all_validated
-          url=certificate_order_path(@ssl_slug, @certificate_order)
+          if all_validated
+            url=certificate_order_path(@ssl_slug, @certificate_order)
+          end
         end
       end
     end
@@ -232,7 +235,7 @@ class ValidationsController < ApplicationController
               'attempted_on' => dcv.blank? ? 'n/a' : dcv.created_at,
               # 'status' => ds && ds[cn.name] ? domain_status.downcase : '',
               'status' => domain_status ? domain_status.downcase : '',
-              'all_validated' => all_validated
+              'all_validated' => all_validated ? true : false
             },
             # 'tr_instruction' => {
             #     'instruction' => "domains[#{cn.name}][dcv]",
