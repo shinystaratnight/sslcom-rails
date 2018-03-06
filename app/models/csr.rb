@@ -397,12 +397,13 @@ class Csr < ActiveRecord::Base
   end
 
   def unique_value(ca="comodo")
-    return read_attribute(:unique_value) unless read_attribute(:unique_value).blank?
-    if ca_certificate_requests.first and !ca_certificate_requests.first.response_value("uniqueValue").blank?
-      ca_certificate_requests.first.response_value("uniqueValue") # comodo has returned a unique already
+    if ca_certificate_requests.first and !ca_certificate_requests.first.unique_value.blank?
+      ca_certificate_requests.first.unique_value # comodo has returned a unique already
     else
-      write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
-      save unless new_record?
+      if read_attribute(:unique_value).blank?
+        write_attribute(:unique_value, SecureRandom.hex(5)) # generate our own
+        save unless new_record?
+      end
       read_attribute(:unique_value)
     end
   end

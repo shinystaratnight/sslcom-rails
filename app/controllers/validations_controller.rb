@@ -28,7 +28,7 @@ class ValidationsController < ApplicationController
     url=nil
     # if CS then go to doc upload
     if @certificate_order.certificate.is_code_signing?
-      url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref) and return
+      url=document_upload_certificate_order_validation_url(certificate_order_id: @certificate_order.ref)
     else
       if @certificate_order.certificate_content.contacts_provided?
         @certificate_order.certificate_content.pend_validation!(host: request.host_with_port)

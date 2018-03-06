@@ -26,6 +26,10 @@ class CaCertificateRequest < CaApiRequest
     key.blank? ? codes : (codes[key].blank? ? "" : codes[key][0])
   end
 
+  def unique_value
+    response_value("uniqueValue").blank? ? (response =~ /.+?\n.+?\n(.+)?\n/ ; $1) : response_value("uniqueValue")
+  end
+
   def response_error_code
     codes = response_to_hash
     codes['errorCode'].blank? ? "" : codes['errorCode'][0]
