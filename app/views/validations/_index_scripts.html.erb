@@ -578,9 +578,11 @@ jQuery(function($) {
             var ori_domain_names_str = $('#ori_domain_names_str').val().split(',');
             var domain_names_str = '';
             $.each(domain_list, function(idx, domain) {
-              if ($(domain).hasClass('removed_domain') == false) {
+              if ($(domain).hasClass('removed_domain') == false && $(domain).hasClass('validated') == false) {
                 /*domain_names_str = domain_names_str + ',' + $(domain).find('.check_box').prop('alt');*/
                 domain_names_str = domain_names_str.concat(',' + $(domain).find('.check_box').prop('id'));
+              } else if ($(domain).hasClass('validated') == true) {
+                domain_names_str = domain_names_str.concat(',' + $(domain).find('td:first-child').children().first().val());
               }
             });
             domain_names_str = domain_names_str.substr(1).split(',');
@@ -1101,7 +1103,7 @@ jQuery(function($) {
                       count_validated = result[key]['count_validated'];
                     }
                     if (result[key]['all_validated']) {
-                      all_validated = result[key]['all_validated'] == 'true';
+                      all_validated = result[key]['all_validated'];
                     }
 
                     var trElement = $('<tr></tr>');
@@ -1272,7 +1274,7 @@ jQuery(function($) {
                   }
                 });
 
-                if (idx === (total - 1) && !all_validated) {
+                if (idx === (total - 1) /*&& !all_validated*/) {
                   $('.domains_loader_wrap').hide();
                   $('#upload_validations').show();
                 }
