@@ -20,7 +20,7 @@ class CertificateOrdersController < ApplicationController
   skip_before_filter :verify_authenticity_token, only: [:parse_csr]
   filter_access_to :all
   filter_access_to :read, :update, :delete, :show, :edit, :developer
-  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :require=>:read
+  filter_access_to :incomplete, :pending, :search, :reprocessing, :order_by_csr, :generate_cert, :require=>:read
   filter_access_to :credits, :filter_by, :filter_by_scope, :require=>:index
   filter_access_to :update_csr, require: [:update]
   filter_access_to :download, :start_over, :reprocess, :admin_update, :change_ext_order_number,
@@ -41,6 +41,16 @@ class CertificateOrdersController < ApplicationController
   in_place_edit_for :csr, :signed_certificate_by_text
 
   NUM_ROWS_LIMIT=2
+
+  def generate_cert
+    @certificate_order = (current_user.is_system_admins? ? CertificateOrder :
+         current_user.ssl_account.certificate_orders).find_by_ref(params[:id])
+
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @certificate_order }
+    end
+  end
 
   def search
     index

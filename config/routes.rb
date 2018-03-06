@@ -183,6 +183,7 @@ SslCom::Application.routes.draw do
         get :sslcom_ca
         match :admin_update, via: [:put, :patch]
         get :change_ext_order_number
+        get :generate_cert
       end
 
       resource :validation do

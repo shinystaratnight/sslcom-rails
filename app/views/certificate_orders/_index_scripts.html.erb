@@ -16,6 +16,32 @@ jQuery(function($) {
       $('#search_form').submit();
     });
 
+    var url = window.location.pathname;
+    if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'generate_cert') {
+      <%if @certificate_order%>
+        $('.cs_generate_cert').click(function() {
+          var account_key = '<%= @certificate_order.ssl_account.api_credential.account_key %>';
+          var secret_key = '<%= @certificate_order.ssl_account.api_credential.secret_key %>';
+          var ref = '<%= @certificate_order.ref %>';
+          var csr = $('.cs_csr').val();
+
+          $.ajax({
+            url: '/generate_certificate',
+            data: {
+              csr: csr,
+              ref: ref,
+              account_key: account_key,
+              secret_key: secret_key
+            },
+            type: "POST",
+            success: function (data) {
+              $('.cs_certificate').val(data.cert_results);
+            }
+          });
+        });
+      <%end%>
+    }
+
     $('#btn_cert_order_filter').click(function() {
       $('#wrap_cert_order_filter').show();
       $('#btn_cert_order_search').prop('disabled', true);

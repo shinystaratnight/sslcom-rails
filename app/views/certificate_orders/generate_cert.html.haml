@@ -1,0 +1,11 @@
+-content_for :title, "Test Certificate generation for CS"
+=render :partial => 'index_scripts'
+%p CSR :
+%textarea.cs_csr{:cols=>80, :rows=>20}=@certificate_order.csr.try(:body)
+%br
+%br
+%input.cs_generate_cert{:type=>'button', :value=>'Generate'}
+%br
+%br
+%p Certificate :
+%textarea.cs_certificate{:cols=>80, :rows=>20}
