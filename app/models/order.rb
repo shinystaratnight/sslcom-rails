@@ -480,7 +480,8 @@ class Order < ActiveRecord::Base
   # Fetches all domains that were added during UCC certificate reprocess
   def get_reprocess_domains
     co           = certificate_orders.first
-    cur_domains  = co.certificate_contents.find_by(ref: get_ccref_from_notes).domains
+    cc           = get_reprocess_cc(co)
+    cur_domains  = cc.nil? ? [] : cc.domains
     new_domains  = cur_domains - co.certificate_contents.first.domains
     non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
@@ -496,6 +497,16 @@ class Order < ActiveRecord::Base
     notes.split(').').first.split.last.delete(')')
   end
   
+  def get_reprocess_cc(co)
+    cc = nil
+    if co
+      str = get_ccref_from_notes
+      cc  = co.certificate_contents.where("ref = ? OR label = ? OR id = ?", str, str, str)
+      cc  = cc.any? ? cc.first : nil
+    end
+    cc
+  end
+  
   def get_reprocess_orders
     result = {}
     if certificate_orders.any?
@@ -503,10 +514,11 @@ class Order < ActiveRecord::Base
         current = []
         co.orders.order(created_at: :asc).each do |o|
           if o != self && o.reprocess_ucc_order?
+            cc = get_reprocess_cc(co)
             current << {
               date:      o.created_at.strftime('%F'),
               order_ref: o.reference_number,
-              domains:   co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains.count,
+              domains:   (cc.nil? ? 0 : cc.domains.count),
               amount:    o.get_full_reprocess_format
             }
           end

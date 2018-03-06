@@ -11,9 +11,9 @@ class MonthlyInvoice < Invoice
   before_validation :set_address
   after_create      :generate_reference_number
   
-  PAYMENT_METHODS = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
+  PAYMENT_METHODS      = {bp: 'billing_profile', wire: 'wire_transfer', po: 'po_other'}
   PAYMENT_METHODS_TEXT = {bp: 'Billing Profile', wire: 'WireXfer', po: 'PO/Other'}
-  STATUS = %w{pending paid}
+  STATUS               = %w{pending paid}
   
   def self.invoice_exists?(ssl_account_id)
     ssl = SslAccount.find ssl_account_id
@@ -57,7 +57,8 @@ class MonthlyInvoice < Invoice
   def get_item_descriptions
     orders.inject({}) do |final, o|
       co           = o.certificate_orders.first
-      cur_domains  = co.certificate_contents.find_by(ref: o.get_ccref_from_notes).domains
+      cc           = o.get_reprocess_cc(co)
+      cur_domains  = (cc.nil? ? [] : cc.domains)
       new_domains  = cur_domains - co.certificate_contents.first.domains
       non_wildcard = new_domains.map {|d| d if !d.include?('*')}.compact
       wildcard     = new_domains.map {|d| d if d.include?('*')}.compact
