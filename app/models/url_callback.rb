@@ -64,6 +64,9 @@ class UrlCallback < ActiveRecord::Base
         url_callback.parameters.merge(certificate_hook: options[:certificate_hook])
       end.to_json
       res = http.request(req)
+      if res.code == "301"
+        res = Net::HTTP.get_response_with_redirect(URI.parse(res.header['location']))
+      end
       return req, res
     rescue Exception=>e
       return false
