@@ -486,9 +486,8 @@ class Order < ActiveRecord::Base
     non_wildcard = cur_domains.map {|d| d if !d.include?('*')}.compact
     wildcard     = cur_domains.map {|d| d if d.include?('*')}.compact
     
-    old_domains      = co.certificate_contents.first.domains
-    old_non_wildcard = old_domains.map {|d| d if !d.include?('*')}.compact
-    old_wildcard     = old_domains.map {|d| d if d.include?('*')}.compact
+    old_non_wildcard = co.get_reprocess_max_nonwildcard(cc)
+    old_wildcard     = co.get_reprocess_max_wildcard(cc)
     
     tot_non_wildcard = non_wildcard.count - old_non_wildcard.count
     tot_wildcard     = wildcard.count - old_wildcard.count
@@ -499,8 +498,8 @@ class Order < ActiveRecord::Base
       all:                cur_domains,
       new_domains_count:  (new_domains_count < 0 ? 0 : new_domains_count),
       cur_wildcard:       wildcard.count,
-      wildcard:           tot_wildcard,
-      non_wildcard:       tot_non_wildcard
+      wildcard:           (tot_wildcard < 0 ? 0 : tot_wildcard),
+      non_wildcard:       (tot_non_wildcard < 0 ? 0 : tot_non_wildcard)
     }
   end  
   
