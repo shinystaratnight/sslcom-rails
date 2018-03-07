@@ -18,7 +18,7 @@ module CertificateOrdersHelper
           unless certificate_order.certificate_contents.empty?
             d            = reprocess_order ? reprocess_domains[:all] : certificate_order.all_domains
             domains      = d.blank? ? "" : d.join(", ")
-            wildcard_qty = reprocess_order ? reprocess_domains[:wildcard].count : certificate_order.purchased_domains('wildcard')
+            wildcard_qty = reprocess_order ? reprocess_domains[:cur_wildcard] : certificate_order.purchased_domains('wildcard')
             
             if email_template
               items << "domains - " +   (domains.empty? ? "" : "("+domains+")")
@@ -32,10 +32,11 @@ module CertificateOrdersHelper
                 (domains.empty? ? "" : content_tag(:dd,"("+domains+")"))
             end
             
-            if reprocess_order && reprocess_domains[:new_domains].count > 0
+            if reprocess_order && reprocess_domains[:new_domains_count] > 0
               items << content_tag(:strong, 
-                "Prorated charge for #{reprocess_domains[:new_domains].count} 
-                additional domains: #{reprocess_domains[:new_domains].join(', ')}"
+                "Prorated charge for #{reprocess_domains[:new_domains_count]} 
+                additional domains. (wildcard: #{reprocess_domains[:wildcard]}, 
+                non wildcard: #{reprocess_domains[:non_wildcard]})"
               )
             end
           end

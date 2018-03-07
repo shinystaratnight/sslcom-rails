@@ -65,13 +65,12 @@
                       =descriptions[o.reference_number.to_s][:item]
                   %br
                   =descriptions[o.reference_number.to_s][:description]
-                  Reprocessed on #{o.created_at.strftime('%F')}.
                 .description
                   .domain-names-medium
-                    ="#{descriptions[o.reference_number.to_s][:new_domains].count} additional domains: " 
-                    =descriptions[o.reference_number.to_s][:new_domains].join(', ')
-              %td.quantity #{descriptions[o.reference_number.to_s][:non_wildcard].count}
-              %td.quantity #{descriptions[o.reference_number.to_s][:wildcard].count}
+                    -quantity = descriptions[o.reference_number.to_s][:new_domains]
+                    Reprocessed on #{o.created_at.strftime('%F')} for #{quantity} additional #{(quantity > 1) ? 'domains' : 'domain'}.
+              %td.quantity #{descriptions[o.reference_number.to_s][:non_wildcard]}
+              %td.quantity #{descriptions[o.reference_number.to_s][:wildcard]}
               %td.price #{o.amount.format}
     
     %div#line-items-total.nobreak

@@ -458,8 +458,8 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def ucc_prorated_amount(certificate_content)
-    wildcard_count        = wildcard_domains.count
-    nonwildcard_count     = domains.count - wildcard_count
+    wildcard_count        = get_reprocess_max_wildcard(certificate_content).count
+    nonwildcard_count     = get_reprocess_max_nonwildcard(certificate_content).count
     # make sure NOT to charge for tier 1 domains (3 total)
     nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain
@@ -476,6 +476,49 @@ class CertificateOrder < ActiveRecord::Base
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
   
+  # Retrieve certificate contents domains. IF certificate content is passed, 
+  # THEN consider ONLY certificate contents prior to passed certificate content.
+  def get_reprocess_cc_domains(cc_id=nil)
+    cur_domains = []
+    if certificate_contents.any?
+      end_target = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
+      cur_domains = if end_target
+        certificate_contents
+          .where(created_at: certificate_contents.first.created_at...end_target.created_at)
+          .pluck(:domains)
+      else
+        certificate_contents.pluck(:domains)
+      end
+    end
+    cur_domains
+  end
+  
+  def get_reprocess_max_nonwildcard(cc_id=nil)
+    max  = 0
+    list = []
+    get_reprocess_cc_domains(cc_id).each do |arr|
+      cur_max = arr.map {|d| d if !d.include?('*')}.compact
+      if cur_max.count > max
+        max  = cur_max.count
+        list = cur_max
+      end
+    end
+    list
+  end
+  
+  def get_reprocess_max_wildcard(cc_id=nil)
+    max  = 0
+    list = []
+    get_reprocess_cc_domains(cc_id).each do |arr|
+      cur_max = arr.map {|d| d if d.include?('*')}.compact
+      if cur_max.count > max
+        max  = cur_max.count
+        list = cur_max
+      end
+    end
+    list
+  end
+
   def add_reproces_order(order)
     order.save unless order.persisted?
     order.line_items.destroy_all

@@ -146,7 +146,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
       @certificate_content = @certificate_order.certificate_contents.build(
-        domains: @certificate_order.domains,
+        domains: @certificate_order.all_domains,
         server_software_id: @certificate_order.certificate_content.server_software_id
       )
       # @certificate_content.additional_domains = domains
