@@ -64,7 +64,7 @@ SslCom::Application.routes.draw do
               as: :api_certificate_replace_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
         match '/certificate/:ref' => 'api_certificate_requests#show_v1_4',
           as: :api_certificate_show_v1_4, via: [:options, :get], ref: /[a-z0-9\-]+/
-        match '/certificate/:ref' => 'api_certificate_requests#callback_v1_4',
+        match '/certificate/:ref/callback' => 'api_certificate_requests#callback_v1_4',
               as: :api_certificate_callback_v1_4, via: [:options, :put, :patch, :post], ref: /[a-z0-9\-]+/
 
         match '/certificate/:ref/contacts' => 'api_certificate_requests#contacts_v1_4',

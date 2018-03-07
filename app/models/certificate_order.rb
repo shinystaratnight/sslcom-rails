@@ -879,8 +879,8 @@ class CertificateOrder < ActiveRecord::Base
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     if ssl_account.api_credential
-      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : ""
-      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : ""
+      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : "[REDACTED]"
+      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : "[REDACTED]"
     end
     case options[:action]
       when /update_dcv/

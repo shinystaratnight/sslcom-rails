@@ -195,24 +195,23 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
 
   def callback_v1_4
     set_template "callback_v1_4"
-    if @result.save #save the api request
-      if @acr = @result.certificate_order_callback
-        if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-          if @acr.certificate_content.csr && @result.debug=="true"
-            ccr = @acr.certificate_content.csr.ca_certificate_requests.first
-            @result.api_request=ccr.parameters
-            @result.api_response=ccr.response
-          end# @result.error_code=ccr.response_error_code
-          # @result.error_message=ccr.response_error_message
-          # @result.eta=ccr.response_certificate_eta
-          # @result.order_status = ccr.response_certificate_status
 
-          set_result_parameters(@result, @acr)
-          @result.debug=(@result.parameters_to_hash["debug"]=="true") # && @acr.admin_submitted = true
-        else
-          @result = @acr #so that rabl can report errors
-        end
+    if @result.save
+      @acr = @result.find_certificate_order
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        cert = ApiCertificateRetrieve.new
+        package_certificate_order(cert,@acr)
+        co_json = Rabl::Renderer.json(@result,File.join("api","v1","api_certificate_requests", "show_v1_4"),
+                                      view_path: 'app/views', locals: {result:cert})
+        # co_json = render_to_string(:template => File.join("api","v1","api_certificate_requests", "show_v1_4"))
+        req,res = @acr.certificate_content.callback(co_json,@result.callback)
+        @result.callback_hook=res.body
       end
+      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+      else
+        @result = @acr #so that rabl can report errors
+      end
+
     else
       InvalidApiCertificateRequest.create parameters: params, ca: "ssl.com"
     end
@@ -627,44 +626,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
       @acr = @result.find_certificate_order
 
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        @result.order_date = @acr.created_at
-        @result.order_status = @acr.status
-        @result.registrant = @acr.certificate_content.registrant.to_api_query if (@acr.certificate_content && @acr.certificate_content.registrant)
-        @result.contacts = @acr.certificate_content.certificate_contacts if (@acr.certificate_content && @acr.certificate_content.certificate_contacts)
-        @result.validations = @result.validations_from_comodo(@acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
-        @result.description = @acr.description
-        @result.product = @acr.certificate.api_product_code
-        @result.product_name = @acr.certificate.product
-        @result.subscriber_agreement = @acr.certificate.subscriber_agreement_content if @result.show_subscriber_agreement=~/[Yy]/
-        @result.external_order_number = @acr.ext_customer_ref
-        @result.server_software = @acr.server_software.id if @acr.server_software
-
-        if @acr.certificate.is_ucc?
-          @result.domains_qty_purchased = @acr.purchased_domains('all').to_s
-          @result.wildcard_qty_purchased = @acr.purchased_domains('wildcard').to_s
-        else
-          @result.domains_qty_purchased = "1"
-          @result.wildcard_qty_purchased = @acr.certificate.is_wildcard? ? "1" : "0"
-        end
-
-        if (@acr.signed_certificate && @result.query_type!="order_status_only")
-          @result.certificates =
-              @acr.signed_certificate.to_format(response_type: @result.response_type, #assume comodo issued cert
-                  response_encoding: @result.response_encoding) || @acr.signed_certificate.to_nginx
-          @result.common_name = @acr.signed_certificate.common_name
-          @result.subject_alternative_names = @acr.signed_certificate.subject_alternative_names
-          @result.effective_date = @acr.signed_certificate.effective_date
-          @result.expiration_date = @acr.signed_certificate.expiration_date
-          @result.algorithm = @acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-          @result.site_seal_code = ERB::Util.json_escape(render_to_string(
-            partial: 'site_seals/site_seal_code.html.haml',
-            locals: {co: @acr},
-            layout: false
-          ))
-        elsif (@acr.csr)
-          @result.certificates = @acr.csr.body
-          @result.common_name = @acr.csr.common_name
-        end
+        package_certificate_order(@result, @acr)
 
         render(:template => @template) and return
       end
@@ -1082,6 +1044,46 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
   end
 
   private
+  def package_certificate_order(result,acr)
+    result.order_date = acr.created_at
+    result.order_status = acr.status
+    result.registrant = acr.certificate_content.registrant.to_api_query if (acr.certificate_content && acr.certificate_content.registrant)
+    result.contacts = acr.certificate_content.certificate_contacts if (acr.certificate_content && acr.certificate_content.certificate_contacts)
+    result.validations = result.validations_from_comodo(acr) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.description = acr.description
+    result.product = acr.certificate.api_product_code
+    result.product_name = acr.certificate.product
+    result.subscriber_agreement = acr.certificate.subscriber_agreement_content if result.show_subscriber_agreement =~ /[Yy]/
+    result.external_order_number = acr.ext_customer_ref
+    result.server_software = acr.server_software.id if acr.server_software
+
+    if acr.certificate.is_ucc?
+      result.domains_qty_purchased = acr.purchased_domains('all').to_s
+      result.wildcard_qty_purchased = acr.purchased_domains('wildcard').to_s
+    else
+      result.domains_qty_purchased = "1"
+      result.wildcard_qty_purchased = acr.certificate.is_wildcard? ? "1" : "0"
+    end
+
+    if (acr.signed_certificate && result.query_type != "order_status_only")
+      result.certificates =
+          acr.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
+                                            response_encoding: result.response_encoding) || acr.signed_certificate.to_nginx
+      result.common_name = acr.signed_certificate.common_name
+      result.subject_alternative_names = acr.signed_certificate.subject_alternative_names
+      result.effective_date = acr.signed_certificate.effective_date
+      result.expiration_date = acr.signed_certificate.expiration_date
+      result.algorithm = acr.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
+      result.site_seal_code = ERB::Util.json_escape(render_to_string(
+                                                         partial: 'site_seals/site_seal_code.html.haml',
+                                                         locals: {co: acr},
+                                                         layout: false
+                                                     ))
+    elsif (acr.csr)
+      result.certificates = acr.csr.body
+      result.common_name = acr.csr.common_name
+    end
+  end
 
   def record_parameters
     klass = case params[:action]

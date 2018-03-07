@@ -226,8 +226,7 @@ class ApiCertificateCreate_v1_4 < ApiCertificateRequest
   def certificate_order_callback
     @certificate_order=self.find_certificate_order
     if @certificate_order.is_a?(CertificateOrder)
-      @certificate_order.certificate_content.callback
-      return @certificate_order
+      self.callback_hook = @certificate_order.certificate_content.callback(self.callback)
     end
     self
   end

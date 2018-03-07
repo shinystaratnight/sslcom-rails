@@ -280,9 +280,13 @@ class CertificateContent < ActiveRecord::Base
     all_domains.map{|d|certificate_names.find_by_name(d)}.compact
   end
 
-  def callback
-    url_callbacks.last.perform_callback(certificate_hook:
-          %x"#{certificate_order.to_api_string(action: "show", domain_override: "#{@@cli_domain}", show_credentials: true)}") unless url_callbacks.blank?
+  def callback(packaged_cert,options={})
+    uc = unless options.blank?
+      UrlCallback.new(options)
+    else
+      url_callbacks.last
+    end
+    uc.perform_callback(certificate_hook:packaged_cert) unless uc.blank?
   end
 
   def dcv_domains(options)
