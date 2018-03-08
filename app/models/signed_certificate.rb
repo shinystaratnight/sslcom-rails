@@ -79,7 +79,13 @@ class SignedCertificate < ActiveRecord::Base
       co.validation.approve! unless(co.validation.approved? || co.validation.approved_through_override?)
       last_sent=s.csr.domain_control_validations.last_sent
       last_sent.satisfy! if(last_sent && !last_sent.satisfied?)
-      cc.callback unless cc.url_callbacks.blank?
+      unless cc.url_callbacks.blank?
+        cert = ApiCertificateRetrieve.new
+        cc.certificate_order.to_api_retrieve cert
+        co_json = Rabl::Renderer.json(@result,File.join("api","v1","api_certificate_requests", "show_v1_4"),
+                                      view_path: 'app/views', locals: {result:cert})
+        cc.callback(co_json)
+      end
     end
   end
 

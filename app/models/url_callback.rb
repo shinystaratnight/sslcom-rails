@@ -7,7 +7,7 @@ class UrlCallback < ActiveRecord::Base
   AUTH = {basic: 'basic'}
   METHODS = {get: 'get', post: 'post'}
 
-  validates   :url, presence: true, format: /\Ahttps:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
+  validates   :url, presence: true, format: /\Ahttps?:\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/i
   validates   :method, inclusion:
       {in: METHODS.values, message: "needs to be one of the following: #{METHODS.values.join(', ')}"}
   # validates   :auth, inclusion:
@@ -54,7 +54,7 @@ class UrlCallback < ActiveRecord::Base
       req.basic_auth url_callback.auth["basic"]["username"],
                      url_callback.auth["basic"]["username"] if (url_callback.auth and url_callback.auth["basic"])
       http = Net::HTTP.new(uri.host, uri.port)
-      if uri=~/^https/i
+      if url_callback.url=~/^https/i
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
       end

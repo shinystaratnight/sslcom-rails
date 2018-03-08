@@ -21,7 +21,7 @@ class Certificate < ActiveRecord::Base
 
   USERTRUST_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ssl_certificate_subscriber_agreement.pdf"
   USERTRUST_EV_AUTHORIZATION="https://wwwsslcom.a.cdnify.io/app/uploads/2015/07/ev-request-form-simplified.pdf"
-  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2017/06/SSL_com_EV_Subscriber_Agreement.pdf"
+  SSLCOM_EV_SUBSCRIBER_AGREEMENT="https://wwwsslcom.a.cdnify.io/app/uploads/2018/02/SSL_com_Subscriber_Agreement_1.2.pdf"
   SSLCOM_EV_AUTHORIZATION="https://www.ssl.com/app/uploads/2017/12/SSL_com_EV_request_form.pdf"
 
   #mapping from old to v2 products (see CertificateOrder#preferred_v2_product_description)
