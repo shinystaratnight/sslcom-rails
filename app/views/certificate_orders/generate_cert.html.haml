@@ -1,11 +1,27 @@
 -content_for :title, "Test Certificate generation for CS"
 =render :partial => 'index_scripts'
+= javascript_include_tag "bundle.umd.min", "bundle.pkcs.umd.min"
+%input.cs_subject_dn{:type=>'hidden', :value=>"#{@certificate_order.certificate_content.subject_dn}"}
+%input.cs_generate_csr_pri_key{:type=>'button', :value=>'Generate CSR / Private Key'}
+%br
+%br
 %p CSR :
-%textarea.cs_csr{:cols=>80, :rows=>20}=@certificate_order.csr.try(:body)
+%textarea.cs_csr{:cols=>80, :rows=>10}
+%br
+%br
+%p Private Key :
+%textarea.cs_pri_key{:cols=>80, :rows=>10}
 %br
 %br
 %input.cs_generate_cert{:type=>'button', :value=>'Generate'}
 %br
 %br
 %p Certificate :
-%textarea.cs_certificate{:cols=>80, :rows=>20}
+%textarea.cs_certificate{:cols=>80, :rows=>10}
+%br
+%br
+%p Password :
+%input.cs_certificate_password{:type=>'text'}
+%br
+%br
+%input.cs_certificate_download{:type=>'button', :value=>'Download'}

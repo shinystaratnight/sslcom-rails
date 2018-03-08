@@ -168,6 +168,7 @@ SslCom::Application.routes.draw do
         get :search
         get :developers
         match :parse_csr, via: [:post, :options]
+        get :show_cert_order
       end
 
       member do
