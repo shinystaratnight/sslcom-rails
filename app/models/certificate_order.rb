@@ -1704,7 +1704,7 @@ class CertificateOrder < ActiveRecord::Base
                                                         layout: false
                                                     ))
     elsif (self.csr)
-      result.certificates = self.csr.body
+      result.certificates = ""
       result.common_name = self.csr.common_name
     end
   end
