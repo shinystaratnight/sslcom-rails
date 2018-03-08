@@ -206,8 +206,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
         # co_json = render_to_string(:template => File.join("api","v1","api_certificate_requests", "show_v1_4"))
         req,res = @acr.certificate_content.callback(co_json,@result.callback)
         @result.callback_hook=res.body
-      end
-      if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
+        @result.api_response=res
       else
         @result = @acr #so that rabl can report errors
       end
@@ -1089,11 +1088,12 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     klass = case params[:action]
               when "create_v1_3"
                 ApiCertificateCreate
-              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4", "callback_v1_4"
+              when "create_v1_4", "update_v1_4", "contacts_v1_4", "replace_v1_4"
                 ApiCertificateCreate_v1_4
               when /revoke/
                 ApiCertificateRevoke
-              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4", "update_site_seal_v1_4", "generate_certificate_v1_4"
+              when "retrieve_v1_3", "show_v1_4", "index_v1_4", "detail_v1_4", "view_upload_v1_4", "upload_v1_4",
+                  "update_site_seal_v1_4", "generate_certificate_v1_4","callback_v1_4"
                 ApiCertificateRetrieve
               when "api_parameters_v1_4"
                 ApiParameters

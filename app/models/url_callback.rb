@@ -54,8 +54,10 @@ class UrlCallback < ActiveRecord::Base
       req.basic_auth url_callback.auth["basic"]["username"],
                      url_callback.auth["basic"]["username"] if (url_callback.auth and url_callback.auth["basic"])
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      if uri=~/^https/i
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      end
       req.body = if url_callback.parameters['certificate_hook']
         cert_param = url_callback.parameters['certificate_hook'] || "certificate_hook"
         url_callback.parameters.delete('certificate_hook')
