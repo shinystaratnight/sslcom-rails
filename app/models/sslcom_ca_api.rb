@@ -98,7 +98,7 @@ class SslcomCaApi
                                           #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
 
 
-    dn.join(",")
+    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
   def self.subject_alt_name(options)
