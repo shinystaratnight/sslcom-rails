@@ -629,16 +629,16 @@ class CertificateContent < ActiveRecord::Base
 
   def subject_dn(options={})
     cert = options[:certificate] || self.certificate
-    dn=["CN=#{options[:common_name] || csr.common_name}"]
+    dn=["CN=#{(options[:common_name] || csr.common_name).gsub(/\\/,'\\\\').gsub(',','\,')}"]
     unless cert.is_dv?
-      dn << "O=#{options[:o] || registrant.company_name}"
+      dn << "O=#{(options[:o] || registrant.company_name).gsub(/\\/,'\\\\').gsub(',','\,')}"
       dn << "C=#{options[:c] || registrant.country}"
       if cert.is_ev?
         dn << "serialNumber=#{options[:serial_number] || certificate_order.jois.last.try(:company_number) ||
           ("11111111" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
         dn << "2.5.4.15=#{options[:business_category] || certificate_order.jois.last.try(:business_category) ||
           ("Private Organization" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
-        dn << "1.3.6.1.4.1.311.60.2.1.1=#{options[:joi_locality] || certificate_order.jois.last.try(:city) ||
+        dn << "1.3.6.1.4.1.311.60.2.1.1=#{(options[:joi_locality] || certificate_order.jois.last.try(:city)).gsub(/\\/,'\\\\').gsub(',','\,') ||
           ("Houston" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
         dn << "1.3.6.1.4.1.311.60.2.1.2=#{options[:joi_state] || certificate_order.jois.last.try(:state) ||
           ("Texas" if options[:ca_id]==Ca::ISSUER[:sslcom_shadow])}"
