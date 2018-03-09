@@ -476,19 +476,23 @@ class CertificateOrder < ActiveRecord::Base
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
   
-  # Retrieve certificate contents domains. IF certificate content is passed, 
-  # THEN consider ONLY certificate contents prior to passed certificate content.
+  # Retrieve certificate contents last signed certificate (subject_alternative_names). 
+  # IF certificate content is passed, THEN consider ONLY certificate 
+  # contents prior to passed certificate content.
   def get_reprocess_cc_domains(cc_id=nil)
     cur_domains = []
     if certificate_contents.any?
-      end_target = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
-      cur_domains = if end_target
-        certificate_contents
-          .where(created_at: certificate_contents.first.created_at...end_target.created_at)
-          .pluck(:domains)
-      else
-        certificate_contents.pluck(:domains)
+      cur_domains = certificate_contents
+      end_target  = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
+      if end_target
+        cur_domains.where(
+          created_at: certificate_contents.first.created_at...end_target.created_at
+        )
       end
+    end
+    if cur_domains.any?
+      cur_domains = cur_domains.map(&:signed_certificates).compact
+        .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
     end
     cur_domains
   end
