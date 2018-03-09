@@ -19,15 +19,6 @@ jQuery(function($) {
     var url = window.location.pathname;
     if (url.substr(url.lastIndexOf('/') + 1, url.length) == 'generate_cert') {
       <%if @certificate_order%>
-        var csrReady=function(csr, pkey) {
-          $('.cs_csr').val(csr);
-          $('.cs_pri_key').val(pkey);
-        }
-
-        var csrError=function(err) {
-          alert(err);
-        }
-
         $('.cs_generate_csr_pri_key').click(function() {
           $('.cs_generate_csr_pri_key').attr('disabled', true);
 
@@ -44,7 +35,12 @@ jQuery(function($) {
             }
           });
 
-          generateCSR(info, undefined, csrReady, csrError);
+          generateCSR(info, undefined, function(csr, pkey) {
+            $('.cs_csr').val(csr);
+            $('.cs_pri_key').val(pkey);
+          }, function(err) {
+            alert(err);
+          });
         });
 
         $('.cs_certificate_download').click(function() {
@@ -389,7 +385,7 @@ jQuery(function($) {
     });
     
     $('.dropdown, .status_message, .expand, .subject_column > a').click(function(){
-      if($(this).parents().filter('tr').next().css('display')!='none'){
+      /*if($(this).parents().filter('tr').next().css('display')!='none'){
         $(this).parents().filter('tr').next().css('display', 'none');
         $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('expand.png') %>");
         $(this).parents().filter('tr').find('.expand').text('open');
@@ -400,21 +396,41 @@ jQuery(function($) {
         $(this).parents().filter('tr').find('.dropdown img').attr('src',"< %= asset_path('contract.png') %>");
         $(this).parents().filter('tr').next().show();
         $(this).parents().filter('tr').find('.expand').text('close');
+      }*/
+
+      var currentElmt = $(this);
+
+      if (currentElmt.parents().filter('tr').next().hasClass('expanded') == true) {
+        if (currentElmt.parents().filter('tr').next().is(":visible")) {
+          currentElmt.parents().filter('tr').next().hide();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('expand.png') %>");
+          currentElmt.parents().filter('tr').find('.expand').text('open');
+        } else {
+          currentElmt.parents().filter('tr').next().show();
+          currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+          currentElmt.parents().filter('tr').find('.expand').text('close');
+        }
+      } else {
+        var cert_order_ref = currentElmt.parents().filter('tr').attr('alt');
+        var ajaxUrl = '<%=show_cert_order_certificate_orders_path%>';
+
+        $.ajax({
+          url: ajaxUrl,
+          data: {
+            id: cert_order_ref
+          },
+          type: "GET",
+          dataType: "html",
+          success: function(result) {
+            if (currentElmt.parents().filter('tr').next().hasClass('expanded') == false) {
+              currentElmt.parents().filter('tr').after(result);
+              currentElmt.parents().filter('tr').find('.dropdown img').attr('src',"<%= asset_path('contract.png') %>");
+              currentElmt.parents().filter('tr').find('.expand').text('close');
+            }
+          }
+        });
       }
 
-      /*var cert_order_ref = $(this).parents().filter('tr').attr('alt');
-      var ajaxUrl = '< %=show_cert_order_certificate_orders_path%>';
-
-      $.ajax({
-        url: ajaxUrl,
-        data: {
-          id: cert_order_ref
-        },
-        type: "GET",
-        success: function(result) {
-          alert(result);
-        }
-      });*/
     });
 
     $('textarea[name*=body]').click(function(){
