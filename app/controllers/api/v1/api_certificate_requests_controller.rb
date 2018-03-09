@@ -199,7 +199,7 @@ class Api::V1::ApiCertificateRequestsController < Api::V1::APIController
     if @result.save
       @acr = @result.find_certificate_order
       if @acr.is_a?(CertificateOrder) && @acr.errors.empty?
-        cert = ApiCertificateRetrieve.new
+        cert = ApiCertificateRetrieve.new(query_type: "all_certificates")
         @acr.to_api_retrieve cert
         co_json = Rabl::Renderer.json(@result,File.join("api","v1","api_certificate_requests", "show_v1_4"),
                                       view_path: 'app/views', locals: {result:cert})

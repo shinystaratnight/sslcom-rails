@@ -1698,11 +1698,11 @@ class CertificateOrder < ActiveRecord::Base
       result.effective_date = self.signed_certificate.effective_date
       result.expiration_date = self.signed_certificate.expiration_date
       result.algorithm = self.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
-      result.site_seal_code = ERB::Util.json_escape(render_to_string(
-                                                        partial: 'site_seals/site_seal_code.html.haml',
-                                                        locals: {co: self},
-                                                        layout: false
-                                                    ))
+      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
+      #                                                   partial: 'site_seals/site_seal_code.html.haml',
+      #                                                   locals: {co: self},
+      #                                                   layout: false
+      #                                               ))
     elsif (self.csr)
       result.certificates = ""
       result.common_name = self.csr.common_name
