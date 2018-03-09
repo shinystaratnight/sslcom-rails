@@ -43,10 +43,10 @@
       %td.dns_sha2_hash=co.csr.dns_sha2_hash
     -unless co.csr.unique_value.blank?
       %tr
-        %td unique value
-        %td.unique_value
-          =co.csr.unique_value
-          (Please note: Any domain name removals or changes will require updating the unique value after clicking the Validate button.)
+        %td unique value*
+        %td.unique_value=co.csr.unique_value
+      %tr
+        %td(colspan="2") (* Any domain name removals or changes will require updating the unique value after clicking the Validate button.)
   -#-cnIdStr = ''
   -#-cnNameStr = ''
   -#-co.certificate_content.certificate_names.pluck(:name).uniq.each do |cn|
