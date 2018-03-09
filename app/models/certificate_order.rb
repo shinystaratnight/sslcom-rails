@@ -491,8 +491,8 @@ class CertificateOrder < ActiveRecord::Base
       end
     end
     if cur_domains.any?
-      cur_domains = cur_domains.map(&:signed_certificate)
-        .compact.map(&:subject_alternative_names)
+      cur_domains = cur_domains.map(&:signed_certificates).compact
+        .reject{ |sc| sc.empty? }.flatten.map(&:subject_alternative_names)
     end
     cur_domains
   end
