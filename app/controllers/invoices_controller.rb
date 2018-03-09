@@ -9,12 +9,9 @@ class InvoicesController < ApplicationController
   filter_access_to :show, :update_invoice
   
   def index
-    @invoices = if current_user && current_user.is_system_admins?
-      MonthlyInvoice.joins(:orders).all.order(updated_at: :asc).uniq
-    else
-      current_user.ssl_account.monthly_invoices.joins(:orders).order(updated_at: :asc).uniq
-    end
-    @invoices = @invoices.paginate(page: params[:page], per_page: 15)
+    @invoices = invoices_base_query
+    @invoices = @invoices.index_filter(params) if params[:commit]
+    @invoices = @invoices.paginate(page: params[:page], per_page: 25)
   end
   
   def download
@@ -122,6 +119,15 @@ class InvoicesController < ApplicationController
   end
     
   private
+  
+  def invoices_base_query
+    base = if current_user && current_user.is_system_admins?
+      MonthlyInvoice
+    else
+      current_user.ssl_account.monthly_invoices
+    end
+    base.joins(:orders).uniq.sort_with(params)
+  end
   
   def payment_hybrid
     if current_user && order_reqs_valid? && !@too_many_declines && purchase_successful?

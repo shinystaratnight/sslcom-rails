@@ -44,7 +44,7 @@ class ApiCertificateRequest < CaApiRequest
 
   RETRIEVE_ACCESSORS = [:account_key, :secret_key, :ref, :query_type, :response_type, :response_encoding,
     :show_validity_period, :show_domains, :show_ext_status, :validations, :registrant, :start, :end, :filter,
-    :show_subscriber_agreement, :product_name, :search, :cert_results]
+    :show_subscriber_agreement, :product_name, :search, :cert_results, :callback_hook]
 
   DETAILED_ACCESSORS = [:menu, :sub_main, :cert_details, :smart_seal, :id, :artifacts_status,
                         :publish_to_site_seal, :viewing_method, :publish_to_site_seal_approval, :is_admin]

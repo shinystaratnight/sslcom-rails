@@ -146,7 +146,7 @@ class CertificateOrdersController < ApplicationController
       @certificate_order.has_csr=true
       @certificate = @certificate_order.mapped_certificate
       @certificate_content = @certificate_order.certificate_contents.build(
-        domains: @certificate_order.domains,
+        domains: @certificate_order.all_domains,
         server_software_id: @certificate_order.certificate_content.server_software_id
       )
       # @certificate_content.additional_domains = domains
@@ -228,9 +228,10 @@ class CertificateOrdersController < ApplicationController
         end
         format.xml  { head :ok }
       else
-        @registrant=Registrant.new(
-            params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes])
-        format.html { render :action => "edit" }
+        setup_registrant(
+          params[:certificate_order][:certificate_contents_attributes]['0'][:registrant_attributes]
+        )
+        format.html { render 'edit' }
         format.xml  { render :xml => @certificate_order.errors, :status => :unprocessable_entity }
       end
     end
@@ -459,11 +460,13 @@ class CertificateOrdersController < ApplicationController
     render 'site/404_not_found', status: 404 unless @certificate_order
   end
 
-  def setup_registrant
-    unless @certificate_order.certificate_content.registrant.blank?
-      @registrant = @certificate_order.certificate_content.registrant
+  def setup_registrant(registrant_params=nil)
+    cc = @certificate_order.certificate_content
+    @registrant = unless cc.registrant.blank?
+      cc.registrant.update(registrant_params) if registrant_params
+      cc.registrant
     else
-      @registrant = @certificate_order.certificate_content.build_registrant
+      registrant_params ? cc.registrant.build(registrant_params) : cc.build_registrant
     end
   end
 end

@@ -308,6 +308,49 @@ module ApplicationHelper
     end
   end
 
+  #
+  # Index Columns Sorting and Filter Helpers
+  #
+  def filter_operators_list
+    [
+      [nil, nil],
+      ["Equal To", "equal"],
+      ["Less than", "less_than"],
+      ["Less or equal", "less_or_equal"],
+      ["Greater than", "greater_than"],
+      ["Greater or equal", "greater_or_equal"]
+    ]
+  end
+  
+  def sort_link(column, direction, title)
+    icon = sort_icon_for(column)
+    direction = if direction.blank?
+                  'asc'
+                else
+                  direction == 'asc' ? 'desc' : 'asc'
+                end
+
+    link_to "#{title} #{icon}".html_safe,
+            get_full_path(
+              params.merge(column: column, direction: direction).permit!
+            ),
+            class: 'tbl-sortable-column'
+  end
+
+  def sort_params_for(column)
+    direction = params[:direction] == 'asc' ? 'desc' : 'asc'
+    params.except(:controller, :action).merge(column: column, direction: direction, page: 1).permit!
+  end
+
+  def sort_icon_for(column)
+    return if column.to_s != params[:column] || params[:direction].blank?
+    params[:direction] == 'asc' ? '&uarr;' : '&darr;'
+  end
+
+  def get_col_direction(column, params)
+    column == params[:column] ? params[:direction] : ''
+  end
+  
   private
 
   def create_tags(label, form_field, options, append)
@@ -475,5 +518,9 @@ module ApplicationHelper
 
   def is_new_order_page?
     current_page?(new_order_path) || current_page?(checkout_orders_path)
+  end
+  
+  def get_full_path(params)
+    send("#{params[:controller]}_path", params.except(:controller, :action))
   end
 end

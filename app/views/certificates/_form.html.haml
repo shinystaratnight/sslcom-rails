@@ -332,15 +332,15 @@
             #{"sub" if @certificate.is_premium_ssl?}domains)
   -else
     -if reprocess_ucc
-      -wildcard_count    = @certificate_order.wildcard_domains.blank? ? 0 : @certificate_order.wildcard_domains.count
-      -nonwildcard_count = @certificate_order.domains.count - wildcard_count
+      -wildcard_count    = @certificate_order.get_reprocess_max_wildcard.count
+      -nonwildcard_count = @certificate_order.get_reprocess_max_nonwildcard.count
       -nonwildcard_cost  = @certificate_order.ucc_prorated_domain
       
       .clearfix
         %label{for: "ucc_nonwildcard_amount"}
           Domain Amount:
           %span.label_desc prorated cost per additional domain
-          %span.label_desc Original order: #{nonwildcard_count} domains
+          %span.label_desc Previous count: #{nonwildcard_count} domains
         #ucc-nonwildcard-amount{data: {cost: Money.new(nonwildcard_cost).to_s, initial_count: nonwildcard_count}}
           %span
             =Money.new(nonwildcard_cost).format
@@ -353,7 +353,7 @@
           %label{for: "ucc_wildcard_amount"}
             Wildcard Domain Amount:
             %span.label_desc prorated cost per additional wildcard
-            %span.label_desc Original order: #{wildcard_count} domains
+            %span.label_desc Previous count: #{wildcard_count} wildcard domains
           #ucc-wildcard-amount{data: {cost: Money.new(wildcard_cost).to_s, initial_count: wildcard_count}}
             %span
               =Money.new(wildcard_cost).format

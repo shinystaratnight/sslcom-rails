@@ -1,0 +1,55 @@
+= form_tag(invoices_path(@ssl_slug), method: :get, class: "filter-form", data: {display: params[:commit] == "Search"}) do
+  = render partial: "shared/sortable_fields"
+  %table
+    %tr
+      %td
+        .clearfix
+          = label_tag(:status, "Status:")
+          = select_tag(:status,                                          |
+            options_for_select(MonthlyInvoice::STATUS, params[:status]), |
+            multiple: true, id: "mo-status")
+      
+      %td
+        -if current_user && current_user.is_system_admins?
+          .clearfix
+            = label_tag(:team, "Team:")
+            = text_field_tag(:team, params[:team])
+        
+        .clearfix
+          = label_tag(:reference_number, "Invoice #:")
+          = text_field_tag(:reference_number, params[:reference_number])
+        
+        .clearfix
+          = label_tag(:order_ref, "Order #:")
+          = text_field_tag(:order_ref, params[:order_ref])
+      
+      %td    
+        .clearfix
+          = label_tag(:start_date, "Start Date:")
+          = select_tag(:start_date_type,                                         |
+            options_for_select(filter_operators_list, params[:start_date_type]), |
+            id: "mo-start-date-type")
+          
+          = date_field_tag(:start_date, nil, id: "mo-start-date", |
+            value: params[:start_date])
+        
+        .clearfix
+          = label_tag(:end_date, "End Date:")
+          = select_tag(:end_date_type,                                         |
+            options_for_select(filter_operators_list, params[:end_date_type]), |
+            id: "mo-end-date-type")
+          
+          = date_field_tag(:end_date, nil, id: "mo-end-date", value: params[:end_date])
+    %tr
+      %td{colspan: '3'}
+        = link_to "Clear", invoices_path(@ssl_slug, commit: "Search"),  |
+          class: "btn-filter-clear"
+
+        = submit_tag "Search", class: "btn-filter-search"
+
+-content_for :js do
+  :javascript
+    $("#mo-status").select2();
+    $(document).ready(function() {
+      $("#mo-status").select2();
+    });

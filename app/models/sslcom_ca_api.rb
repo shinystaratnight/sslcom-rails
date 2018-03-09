@@ -98,7 +98,7 @@ class SslcomCaApi
                                           #    =text_area_tag :san, @certificate_order.all_domains.join("\n"),readonly: true
 
 
-    dn.join(",")
+    dn.map{|d|d.gsub(/\\/,'\\\\').gsub(',','\,')}.join(",")
   end
 
   def self.subject_alt_name(options)
@@ -163,7 +163,7 @@ class SslcomCaApi
                                                method: 'post', response: res.try(:body), ca: options[:ca])
 
     unless api_log_entry.username
-      OrderNotifier.problem_ca_sending("support@ssl.com", cc.certificate_order,"sslcom").deliver
+      OrderNotifier.problem_ca_sending("support@ssl.com", options[:cc].certificate_order,"sslcom").deliver
     else
       options[:cc].update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
       options[:cc].csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]

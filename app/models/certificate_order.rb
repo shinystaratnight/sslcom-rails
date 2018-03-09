@@ -458,8 +458,8 @@ class CertificateOrder < ActiveRecord::Base
   end
   
   def ucc_prorated_amount(certificate_content)
-    wildcard_count        = wildcard_domains.count
-    nonwildcard_count     = domains.count - wildcard_count
+    wildcard_count        = get_reprocess_max_wildcard(certificate_content).count
+    nonwildcard_count     = get_reprocess_max_nonwildcard(certificate_content).count
     # make sure NOT to charge for tier 1 domains (3 total)
     nonwildcard_count     = (nonwildcard_count < 3) ? 3 : nonwildcard_count
     nonwildcard_cost      = ucc_prorated_domain
@@ -476,6 +476,49 @@ class CertificateOrder < ActiveRecord::Base
     (addt_nonwildcard * nonwildcard_cost) + (addt_wildcard * wildcard_cost)
   end
   
+  # Retrieve certificate contents domains. IF certificate content is passed, 
+  # THEN consider ONLY certificate contents prior to passed certificate content.
+  def get_reprocess_cc_domains(cc_id=nil)
+    cur_domains = []
+    if certificate_contents.any?
+      end_target = certificate_contents.find_by(id: cc_id) unless cc_id.nil?
+      cur_domains = if end_target
+        certificate_contents
+          .where(created_at: certificate_contents.first.created_at...end_target.created_at)
+          .pluck(:domains)
+      else
+        certificate_contents.pluck(:domains)
+      end
+    end
+    cur_domains
+  end
+  
+  def get_reprocess_max_nonwildcard(cc_id=nil)
+    max  = 0
+    list = []
+    get_reprocess_cc_domains(cc_id).each do |arr|
+      cur_max = arr.map {|d| d if !d.include?('*')}.compact
+      if cur_max.count > max
+        max  = cur_max.count
+        list = cur_max
+      end
+    end
+    list
+  end
+  
+  def get_reprocess_max_wildcard(cc_id=nil)
+    max  = 0
+    list = []
+    get_reprocess_cc_domains(cc_id).each do |arr|
+      cur_max = arr.map {|d| d if d.include?('*')}.compact
+      if cur_max.count > max
+        max  = cur_max.count
+        list = cur_max
+      end
+    end
+    list
+  end
+
   def add_reproces_order(order)
     order.save unless order.persisted?
     order.line_items.destroy_all
@@ -879,8 +922,8 @@ class CertificateOrder < ActiveRecord::Base
     domain = options[:domain_override] || "https://sws-test.sslpki.com"
     api_contacts, api_domains, cc, registrant_params = base_api_params
     if ssl_account.api_credential
-      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : ""
-      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : ""
+      account_key = options[:show_credentials] ? ssl_account.api_credential.account_key : "[REDACTED]"
+      secret_key = options[:show_credentials] ? ssl_account.api_credential.secret_key : "[REDACTED]"
     end
     case options[:action]
       when /update_dcv/
@@ -1623,6 +1666,47 @@ class CertificateOrder < ActiveRecord::Base
 
   def all_domains_validated?
     return true if domains_validated.count==validating_domains.count
+  end
+
+  def to_api_retrieve(result)
+    result.order_date = self.created_at
+    result.order_status = self.status
+    result.registrant = self.certificate_content.registrant.to_api_query if (self.certificate_content && self.certificate_content.registrant)
+    result.contacts = self.certificate_content.certificate_contacts if (self.certificate_content && self.certificate_content.certificate_contacts)
+    result.validations = result.validations_from_comodo(self) #'validations' kept executing twice so it was renamed to 'validations_from_comodo'
+    result.description = self.description
+    result.product = self.certificate.api_product_code
+    result.product_name = self.certificate.product
+    result.subscriber_agreement = self.certificate.subscriber_agreement_content if result.show_subscriber_agreement =~ /[Yy]/
+    result.external_order_number = self.ext_customer_ref
+    result.server_software = self.server_software.id if self.server_software
+
+    if self.certificate.is_ucc?
+      result.domains_qty_purchased = self.purchased_domains('all').to_s
+      result.wildcard_qty_purchased = self.purchased_domains('wildcard').to_s
+    else
+      result.domains_qty_purchased = "1"
+      result.wildcard_qty_purchased = self.certificate.is_wildcard? ? "1" : "0"
+    end
+
+    if (self.signed_certificate && result.query_type != "order_status_only")
+      result.certificates =
+          self.signed_certificate.to_format(response_type: result.response_type, #assume comodo issued cert
+                                           response_encoding: result.response_encoding) || self.signed_certificate.to_nginx
+      result.common_name = self.signed_certificate.common_name
+      result.subject_alternative_names = self.signed_certificate.subject_alternative_names
+      result.effective_date = self.signed_certificate.effective_date
+      result.expiration_date = self.signed_certificate.expiration_date
+      result.algorithm = self.signed_certificate.is_SHA2? ? "SHA256" : "SHA1"
+      # result.site_seal_code = ERB::Util.json_escape(ApplicationController.new.render_to_string(
+      #                                                   partial: 'site_seals/site_seal_code.html.haml',
+      #                                                   locals: {co: self},
+      #                                                   layout: false
+      #                                               ))
+    elsif (self.csr)
+      result.certificates = ""
+      result.common_name = self.csr.common_name
+    end
   end
   
   private
