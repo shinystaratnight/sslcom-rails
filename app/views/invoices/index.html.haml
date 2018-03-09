@@ -4,6 +4,9 @@
 -system_admins = current_user.is_system_admins?
 
 #validations
+  =render partial: 'filter_form'
+  
+#validations
   %table(cellspacing='0')
     -if will_paginate @invoices
       %tfoot
@@ -15,16 +18,24 @@
       =will_paginate @invoices
     %thead
       %tr.heading_row
-        %th Due Date
-        %th Invoice #
+        %th
+          = sort_link('end_date', get_col_direction('end_date', params), 'Due Date')
+        -if system_admins
+          %th Team
+        %th
+          = sort_link('reference_number', get_col_direction('reference_number', params), 'Invoice #')
         %th Amount
-        %th Orders
+        %th
+          = sort_link('orders', get_col_direction('orders', params), 'Orders')
         %th Download
-        %th Status
+        %th
+          = sort_link('status', get_col_direction('status', params), 'Status')
     %tbody
       -@invoices.each do |i|
         %tr
           %td=i.end_date.strftime('%F')
+          -if system_admins
+            %td=i.billable.get_team_name
           %td=link_to i.reference_number, invoice_path(@ssl_slug, i.reference_number)
           %td
             %strong=i.get_amount_format
