@@ -168,6 +168,7 @@ SslCom::Application.routes.draw do
         get :search
         get :developers
         match :parse_csr, via: [:post, :options]
+        get :show_cert_order
       end
 
       member do
@@ -183,6 +184,7 @@ SslCom::Application.routes.draw do
         get :sslcom_ca
         match :admin_update, via: [:put, :patch]
         get :change_ext_order_number
+        get :generate_cert
       end
 
       resource :validation do

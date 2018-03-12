@@ -166,7 +166,7 @@ class SslcomCaApi
       OrderNotifier.problem_ca_sending("support@ssl.com", options[:cc].certificate_order,"sslcom").deliver
     else
       options[:cc].update_column(:ref, api_log_entry.username) unless api_log_entry.blank?
-      options[:cc].csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
+      # options[:cc].csr.signed_certificates.create body: api_log_entry.end_entity_certificate.to_s, ca_id: options[:ca_id]
     end
 
     api_log_entry.end_entity_certificate.to_s
