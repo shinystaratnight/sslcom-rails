@@ -24,7 +24,7 @@
         -unless tier.label == "1"
           %td
             %span.save
-              -unless item.certificate.product_root=='free'
+              -unless item.certificate.product_root=~/free-?/
                 -p = 1.0-(item.price.cents.to_f / compare_item.price.cents.to_f)
                 #{Integer((p*100).ceil)}%
               -else
