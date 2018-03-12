@@ -15,7 +15,7 @@ gem 'money', '2.1.0'
 gem 'rack-ssl-enforcer'
 gem 'will_paginate'
 gem 'haml', '>= 3.1.alpha.50'
-gem 'paperclip', '~> 4.2.1'
+gem 'paperclip', '~> 6.0.0'
 gem 'declarative_authorization'
 gem "authlogic"
 gem "savon", '~> 2.0'
