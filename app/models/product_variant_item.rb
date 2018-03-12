@@ -68,7 +68,7 @@ class ProductVariantItem < ActiveRecord::Base
 
   # remove reseller_tier
   def base_serial
-    serial.slice(/.+(?=\dtr)/) || serial.slice(/.+(?=\-.+?tr)/)
+    serial.slice(/.+(?=\-.+?tr)/) || serial.slice(/.+(?=\dtr)/)
   end
 
 
