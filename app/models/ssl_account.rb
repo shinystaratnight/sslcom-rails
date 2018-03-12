@@ -6,7 +6,7 @@ class SslAccount < ActiveRecord::Base
   has_many  :billing_profiles
   has_many  :certificate_orders, -> { unscope(where: [:workflow_state, :is_expired]).includes([:orders]) } do
     def current
-      first(:conditions=>{:workflow_state=>['new']})
+      where{workflow_state >>['new']}.first
     end
   end
   has_many  :validations, through: :certificate_orders
@@ -257,7 +257,7 @@ class SslAccount < ActiveRecord::Base
   def adjust_reseller_tier(tier, reseller_fields=Reseller::TEMP_FIELDS)
     #if account is not reseller, do it now else just change the tier number
     if reseller.blank?
-      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find(tier).id))
+      create_reseller(reseller_fields.reverse_merge(reseller_tier_id: ResellerTier.find_by_label(tier).id))
       roles << "reseller"
       set_reseller_default_prefs
       users.each do |u|
@@ -265,7 +265,7 @@ class SslAccount < ActiveRecord::Base
       end
       reseller.update_attribute :workflow_state, "complete"
     else
-      reseller.reseller_tier=ResellerTier.find(tier)
+      reseller.reseller_tier=ResellerTier.find_by_label(tier)
       reseller.save
     end
   end

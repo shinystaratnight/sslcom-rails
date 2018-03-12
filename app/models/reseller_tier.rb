@@ -23,7 +23,7 @@ class ResellerTier < ActiveRecord::Base
   # options[:discount_rate] - discount rate on all items.
   # example - ResellerTier.generate_tier(label: "custom", description: {"name": "bob's tier"}, reseller_ids:[Reseller.last.id], discount_rate: 0.5)
   # ResellerTier.generate_tier(label: "7", description: {"ideal_for"=> "enterprise organizations"}, discount_rate: 0.35, amount: 5000000, roles: "tier_7_reseller")
-  # ResellerTier.generate_tier(label: "6", description: {"ideal_for"=> "enterprise organizations"}, discount_rate: 0.5, amount: 3500000, roles: "tier_6_reseller")  def self.generate_tier(options)
+  # ResellerTier.generate_tier(label: "6", description: {"ideal_for"=> "enterprise organizations"}, discount_rate: 0.5, amount: 3500000, roles: "tier_6_reseller")
   def self.generate_tier(options)
     tier = find_or_create_by(label: options[:label])
     tier.description = options[:description]
